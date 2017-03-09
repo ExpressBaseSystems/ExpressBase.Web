@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://use.fontawesome.com/5eb5791954.js"></script>
+    <link rel="stylesheet" href="~/css/navbootstrap.css" />
+    <style>
+        .nopadding { padding: 0 !important; }
+        .nomargin { margin: 0 !important; }
+        .content_custom {margin-top: 60px; }
+        a:link {text-decoration: none;}
+        a:visited {text-decoration: none;}
+        a:hover {text-decoration: none;}
+        a:active {text-decoration: none;}
+    </style>
+</head>
+<body>
+    <div class="page-header nomargin navbar-fixed-top">
+        @{ Html.RenderPartial("_PageHeader"); }
+    </div>
+    <div class="container-fluid content_custom">
+        @*<ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Library</a></li>
+            <li class="breadcrumb-item active">Data</li>
+        </ol>*@
+        
+        <div class="row">
+            <div class="col-sm-2 nopadding nomargin">
+                <div class="affix">
+                    @{ if (ViewBag.Fname != null) { Html.RenderPartial("_SidebarMenu"); } }
+                </div>
+            </div>
+            <div class="col-sm-10 nopadding nomargin">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</body>
+</html>

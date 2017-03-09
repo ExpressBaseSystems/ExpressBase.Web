@@ -1,0 +1,128 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Disable Closing of Bootstrap Modal on Click of Dark Area</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+	$('#launch-modal').click(function(){
+		$('#myModal').modal({
+			backdrop: 'static'
+		});
+	});
+	$('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+	    translation: {
+	        'Z': {
+	            pattern: /[0-9]/, optional: true
+	        }
+	    }
+	});
+});
+    </script>
+    <style type="text/css">
+        .bs-example {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+@using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
+{
+    <div class="bs-example">
+        <!-- Button HTML (to Trigger Modal) -->
+        <input type="button" id="launch-modal" value="Configure Your Datebase">
+
+        <!-- Modal HTML -->
+        <div id="myModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Database Check</h4>
+                    </div>
+                    <div class="modal-body">
+                        
+                            @{
+                                if (ViewBag.CId != null)
+                                { 
+                                int cID = ViewBag.CId;
+                                <input type="hidden" id="id" name="id" value="@cID" />
+                                }
+
+                            }
+                            <table>
+                            
+                                <tr>
+
+                                    <td><div class="tdd">Database Name</div></td>
+                                    <td><div class="tdd"><input type="text" id="dbname" name="dbname" required /></div></td>
+                                    
+                                </tr>
+                                
+                                <tr>
+
+                                    <td><div class="tdd">Server IP</div></td>
+                                    <td><div class="tdd"><input type="text" id="sip" name="sip" required /></div></td>
+                                </tr>
+
+
+                                <tr>
+                                    <td><div class="tdd">Port Number</div></td>
+                                    <td><div class="tdd"><input type="text" id="pnum" name="pnum" required /></div></td>
+                                    <td><span id="result"></span></td>
+                                </tr>
+
+                                <tr>
+                                    <td><div class="tdd">Username</div></td>
+                                    <td><div class="tdd"><input type="text" id="duname" name="duname" required /></div></td>
+                                    <td><span id="result"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="tdd">Password</div></td>
+                                    <td><div class="tdd"><input type="password" id="pwd" name="pwd" required /></div></td>
+                                    <td><span id="result"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="tdd">Time Out</div></td>
+                                    <td><div class="tdd"><input type="text" id="tout" name="tout" required /></div></td>
+                                    
+                                    <td><span id="result"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><div><input type="submit" value="Test" /></div></td>
+                                    @*<td>Currently you are using same databese for all file.If you want to add more databases</td>*@
+                                </tr>
+                            </table>
+                       
+                    </div>
+                    @*<div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+                                }
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.Message");
+            };
+        </script>
+    }
+</body>
+</html> 
+<style>
+    .tdd {
+        margin: 10px;
+    }
+</style>                               		

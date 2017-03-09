@@ -63,9 +63,8 @@ namespace ExpressBase.Web2
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                routes.MapRoute("login", "login/{*clientid}", defaults: new { controller = "External", action = "LoginTenantUser" });
+                routes.MapRoute("default", "{controller=Tenant}/{action=tenantsignup}");
             });
         }
     }

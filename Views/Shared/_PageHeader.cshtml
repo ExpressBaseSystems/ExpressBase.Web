@@ -1,39 +1,53 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-<div class="container-fluid">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="~/tenant/tenantsignin"><img class="img-responsive" src="~/images/EB_Logo11.png" width="175" /></a>
-    </div>
+﻿@using ExpressBase.Common;
+@{
+    WebPageLoginStateTypes __state = WebPageLoginStateTypes.TenantExt;
+    if (string.IsNullOrEmpty(ViewBag.cid))
+    {
+        __state = string.IsNullOrEmpty(ViewBag.Fname)
+            ? WebPageLoginStateTypes.TenantExt : WebPageLoginStateTypes.TenantInt;
+    }
+    else
+    {
+        __state = string.IsNullOrEmpty(ViewBag.Fname)
+            ? WebPageLoginStateTypes.TenantUserExt : WebPageLoginStateTypes.TenantUserInt;
+    }
 
+    var profile_img_src = (string.IsNullOrEmpty(ViewBag.cid))
+        ? "/images/EB_Logo11.png" : "/images/your_company_logo.png";
+
+    var __tmpStr = "<ul class='list-group' style='list-style-type: none;'> <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li> <li class='list-group-item'><a href='#'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> <li class='list-group-item'><a href='TenantSignup'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>  </ul>";
+}
+
+<div class="container-fluid">
     <div id="navbar" class="navbar-collapse collapse">
-    @{ if (ViewBag.Fname == null)
-            {
+        <a class="navbar-brand" href="~/tenant/signin"><img class="img-responsive" src="@profile_img_src" width="175" height="50" /></a>
+        @if (__state == WebPageLoginStateTypes.TenantUserInt || __state == WebPageLoginStateTypes.TenantInt)
+        {
+            <a href="#" data-toggle="popover" data-placement="bottom" data-content="@__tmpStr" class="navbar-right"><img src="http://graph.facebook.com/1157742291012030/picture?type=square" class="img-circle navbar-right" /></a>
+        }
+
+        @if (__state == WebPageLoginStateTypes.TenantExt) //external
+        {
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="#">Platform</a></li>
                 <li><a href="#">Pricing</a></li>
                 <li><a href="#">FAQs</a></li>
                 <li><a href="#">Resources</a></li>
-                <li><a href="~/Tenant/TenantSignin">Login</a></li>
+                <li><a href="~/Tenant/Signin">Login</a></li>
             </ul>
         }
-        else
-        {       
-             <a href="#" data-toggle="popover" data-placement="bottom" data-content="<ul class='list-group' style='list-style-type: none;'> <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li> <li class='list-group-item'><a href='#'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> <li class='list-group-item'><a href='TenantLogout'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>  </ul>" class="navbar-right"><img src="http://graph.facebook.com/1157742291012030/picture?type=square" class="img-circle navbar-right" /></a>
-        }
-    }
-        </div>
+    </div>
 </div>
+
 <style>
-        .img-cir {
-         
-          /*padding: 20px;*/ 
-          width: 40px;
-          height: 40px;
+    .img-cir {
+        /*padding: 20px;*/
+        width: 40px;
+        height: 40px;
     }
 </style>
 <script>
-$(document).ready(function(){
-    $('[data-toggle="popover"]').popover({html:true});
-});
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover({ html: true });
+    });
 </script>

@@ -1,32 +1,164 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
+<head>
 
-    <div>
-        <table>
-            <tr>
-                <td>
-                    <div><button class="button4" onClick="location.href='PricingSelect?access_token=@ViewBag.token'"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                    <span>Add account</span>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.eb_acc_dbcon_btn').click(function () {
+                var ele = $(this).attr("data-accid");
+                    $('#myModal').modal({
+                        backdrop: 'static'
+                    });
+                });
+           
+                $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+                    translation: {
+                        'Z': {
+                            pattern: /[0-9]/, optional: true
+                        }
+                    }
+                });
+        });
+    </script>
+</head>
+<div>
+    @{
+        List<string>
+            aclist = new List<string>
+                ();
+        aclist = ViewBag.List; 
+        foreach (var element in aclist)
+        {
+            <table>
+                <tr>
+                    <td>
+                        @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
+                        {
+                        <div class="bs-example">
+                            <span>
+                                <input type="button" class="button4" value="@element"/>
+                                <input type="button" class="button4 eb_acc_dbcon_btn" data-accid="@element" value="Configure DB" />
+                            </span>
+
+                            <!-- Modal HTML -->
+                            <div id="myModal" class="modal fade">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                            <h4 class="modal-title">Database Check</h4>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            @{
+                                                if (ViewBag.UId != null)
+                                                {
+                                                    int uID = ViewBag.UId;
+                                            <input type="hidden" id="id" name="id" value="@uID" />
+                                                }
+
+                                            }
+                                            <table>
+                                                <tr>
+                                                    <td><div class="tdd">Database Name</div></td>
+                                                    <td><div class="tdd"><input type="text" id="dbname" name="dbname" required /></div></td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td><div class="tdd">Server IP</div></td>
+                                                    <td><div class="tdd"><input type="text" id="sip" name="sip" required /></div></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><div class="tdd">Port Number</div></td>
+                                                    <td><div class="tdd"><input type="text" id="pnum" name="pnum" required /></div></td>
+                                                    <td><span id="result"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><div class="tdd">Username</div></td>
+                                                    <td><div class="tdd"><input type="text" id="duname" name="duname" required /></div></td>
+                                                    <td><span id="result"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><div class="tdd">Password</div></td>
+                                                    <td><div class="tdd"><input type="password" id="pwd" name="pwd" required /></div></td>
+                                                    <td><span id="result"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><div class="tdd">Time Out</div></td>
+                                                    <td><div class="tdd"><input type="text" id="tout" name="tout" required /></div></td>
+                                                    <td><span id="result"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><div><input type="submit" value="Test" /></div></td>
+                                                    @*
+                                                    <td>Currently you are using same databese for all file.If you want to add more databases</td>*@
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                                }
+                        @if (ViewBag.Message != null)
+                        {
+                        <script type="text/javascript">
+                            window.onload = function () {
+                                alert("@ViewBag.Message");
+                            };
+                        </script>
+                        }
+
+
+                    </td>
+                    @*
+                    <td>
+                        <div>
+                            <button class="button4"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            <span>@element</span>
+                        </div>
+                    </td>*@
+                </tr>
+            </table>
+        }
+     }
+           <table>
+                <tr>
+                    <td>
+                        <div>
+                            <button class="button4" onClick="location.href='PricingSelect?id=@ViewBag.UId'"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            <span>Add account</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+                          
+</div>
 
 
 <style>
     .button4 {
-    background-color: white;
-    color: black;
-    border: 2px solid #e7e7e7;
-    padding: 20px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-}
+        background-color: white;
+        color: black;
+        border: 2px solid #e7e7e7;
+        padding: 20px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        width: 150px;
+    }
+
+    .tdd {
+        margin: 10px;
+        width: 250px;
+    }
 </style>

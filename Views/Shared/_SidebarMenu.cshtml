@@ -1,20 +1,33 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@{
+    @using ServiceStack;
+    IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
+    var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
+}
+
+@if (string.IsNullOrEmpty(ViewBag.cid))
+{
 <div class="btn-group-vertical" role="group" aria-label="..." style="height: 100vh; width:30vh; overflow-y:scroll;">
    
         <ul class="list-group" style="list-style-type: none;">
-        @*<li data-toggle="collapse" data-target="#service" class="collapsed list-group-item">
-            <a href="#"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home<span class="caret"></span></a>
-            <ul style="list-style-type: none;" class="collapse" id="service">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="~/Tenant/TenantSignup">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">Separated link</a></li>
-            </ul></li>
-        <li class="list-group-item"><a href="#"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp; Library</a></li>
-        <li class="list-group-item"><a href="#"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>&nbsp; Applications</a></li>*@
-        <li class="list-group-item"><a href="TenantAccounts?access_token=@ViewBag.token"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; My Accounts</a></li>
+        <li class="list-group-item"><a href="TenantAccounts?id=@ViewBag.UId"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; My Accounts</a></li>
     </ul>  
 </div>
+}
+else
+{
+    <div class="btn-group-vertical" role="group" aria-label="..." style="height: 100vh; width:30vh; overflow-y:scroll;">
+
+        <ul class="list-group" style="list-style-type: none;">
+@{  foreach (var f in fr.Data)
+    {
+        string fname = f.Name;
+        string formid = string.Format("f?fid={0}", f.Id);
+        <li class="list-group-item"><a href="@formid"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; @fname</a></li>
+
+    }
+
+}
+            
+        </ul>
+    </div>
+}

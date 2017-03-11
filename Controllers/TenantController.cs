@@ -12,6 +12,9 @@ using System.Net;
 using System.IO;
 using System.Reflection;
 using System.IdentityModel.Tokens.Jwt;
+using ExpressBase.Data;
+using ServiceStack.Redis;
+using ExpressBase.Objects;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,16 +27,21 @@ namespace ExpressBase.ServiceStack.Controllers
         {
             return View();
         }
-
+        [HttpGet]
+        public IActionResult DBCheck()
+        {
+            return View();
+        }
         [HttpGet]
         public IActionResult TenantDashboard()
         {
-            var token = HttpContext.Request.Query["access_token"];
+            var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             // var jti = tokenS.Claims.First(claim => claim.Type == "preferred_username").Value;
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.CId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
             return View();
         }
@@ -56,31 +64,78 @@ namespace ExpressBase.ServiceStack.Controllers
 
         }
 
+        [HttpGet]
         public IActionResult PricingSelect()
         {
-            var token = HttpContext.Request.Query["access_token"];
+            var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.CId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
             return View();
         }
 
+        [HttpPost]
+        public IActionResult PricingSelect(int i)
+        {
+           
+            var req = this.HttpContext.Request.Form;
+            return RedirectToAction("TenantAddAccount", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAddAccount",tier= req["tier"],id=req["tenantid"] }));
+        }
+
+        [HttpGet]
         public IActionResult TenantAddAccount()
         {
+            
+            var token = Request.Cookies["Token"];
+            var handler = new JwtSecurityTokenHandler();
+            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
+            ViewBag.tier = HttpContext.Request.Query["tier"];
+            ViewBag.tenantid = HttpContext.Request.Query["id"];
+            ViewBag.token = token;
             return View();
         }
+
+        [HttpPost]
+        public IActionResult TenantAddAccount(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+
+            JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
+            var res = client.Post<bool>(new Services.AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),op="insert" });
+            if (res == true)
+            {
+                //return RedirectToAction("TenantAccounts", "Tenant");
+                return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"] }));
+
+
+            }
+            else
+            {
+                return View();
+            }
+        }
+
         public IActionResult TenantAccounts()
         {
-            var token = HttpContext.Request.Query["access_token"];
+            var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             // var jti = tokenS.Claims.First(claim => claim.Type == "preferred_username").Value;
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.CId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
+            IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
+            var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId });
+            
+            ViewBag.List = fr.aclist;
             return View();
+            //JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
+            //var res = client.Get<AccountResponse>(new Services.GetAccount { Uid = ViewBag.UId });
+
+
         }
           
 
@@ -124,13 +179,25 @@ namespace ExpressBase.ServiceStack.Controllers
         }
 
         [HttpGet]
-        public IActionResult TenantSignin()
+        public IActionResult Signin()
         {
+            ViewBag.cookie = Request.Cookies["UserName"];
+           
+            return View();
+        }
+
+        [HttpGet]
+        [Microsoft.AspNetCore.Mvc.Route("/login/{cid}")]
+        public IActionResult Signin(string cid)
+        {
+            
+            ViewBag.cookie = Request.Cookies["UserName"];
+            ViewBag.cid = cid;
             return View();
         }
 
         [HttpPost]
-        public IActionResult TenantSignin(int i)
+        public IActionResult Signin(int i)
         {
             var req = this.HttpContext.Request.Form;
             AuthenticateResponse authResponse = null;
@@ -144,7 +211,7 @@ namespace ExpressBase.ServiceStack.Controllers
                     provider = MyJwtAuthProvider.Name,
                     UserName = req["uname"],
                     Password = req["pass"],
-                    Meta = new Dictionary<string, string> { { "ClientId", req["cid"] }, { "Login", "Client" } },
+                    Meta = new Dictionary<string, string> { { "cid", req["cid"] } },
                     UseTokenCookie = true
                 });
             }
@@ -162,8 +229,8 @@ namespace ExpressBase.ServiceStack.Controllers
             Response.Cookies.Append("Token", authResponse.BearerToken, options);
             if (req.ContainsKey("remember"))
                 Response.Cookies.Append("UserName", req["uname"], options);
-            return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard",  access_token = authResponse.BearerToken, id= 0 }));
-           // return RedirectToAction("DbCheck", "External");
+              return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard",id= authResponse.UserId }));
+  
         }
 
         [HttpGet]
@@ -268,9 +335,77 @@ namespace ExpressBase.ServiceStack.Controllers
             var res = client.Post<InfraResponse>(new Services.InfraRequest { ltype = "update", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
             if (res.id >= 0)
             {
-                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", access_token="", Id = res.id }));
+                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard",Id = res.id }));
 
             }
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult f(int fid, int id)
+        {
+            var token = Request.Cookies["Token"];
+            var handler = new JwtSecurityTokenHandler();
+            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
+            ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+            ViewBag.token = token;
+            var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            Objects.EbForm _form = null;
+            IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
+            var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fid, Token = token });
+            if (id > 0)
+            {
+                if (fr.Data.Count > 0)
+                {
+                    _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
+                    _form.Init4Redis();
+                    _form.IsUpdate = true;
+                    redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
+                }
+                string html = string.Empty;
+                var vr = client.Get<ViewResponse>(new View { TableId = _form.Table.Id, ColId = id, FId = fid });
+                redisClient.Set<EbForm>("cacheform", vr.ebform);
+                ViewBag.EbForm = vr.ebform;
+                ViewBag.FormId = fid;
+                ViewBag.DataId = id;
+                return View();
+            }
+            else
+            {
+                if (fr.Data.Count > 0)
+                {
+                    _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
+                    _form.Init4Redis();
+                    _form.IsUpdate = false;
+                    redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
+                }
+                ViewBag.EbForm = _form;
+                ViewBag.FormId = fid;
+                ViewBag.DataId = id;
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult f()
+        {
+
+            var req = this.HttpContext.Request.Form;
+            var fid = Convert.ToInt32(req["fId"]);
+            var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            Objects.EbForm _form = redisClient.Get<Objects.EbForm>(string.Format("form{0}", fid));
+            bool b = _form.IsUpdate;
+            ViewBag.EbForm = _form;
+            ViewBag.FormId = fid;
+            ViewBag.formcollection = req as FormCollection;
+            //bool bStatus = Insert(req as FormCollection);
+
+            //if (bStatus)
+            //    return RedirectToAction("masterhome", "Sample");
+            //else
+            //    return RedirectToAction("Index", "Home");
+
             return View();
         }
     }

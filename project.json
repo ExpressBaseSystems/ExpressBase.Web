@@ -22,7 +22,8 @@
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
-    "ExpressBase.ServiceStack": "1.0.0-*"
+    "ExpressBase.ServiceStack": "1.0.0-*",
+    "ExpressBase.Common": "1.0.0"
   },
 
   "tools": {

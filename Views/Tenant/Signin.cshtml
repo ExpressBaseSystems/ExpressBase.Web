@@ -1,10 +1,16 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-@using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded", id = "log_form" }))
+<head>
+    <script>
+    function onSubmit(token) {
+        document.getElementById("log_form").submit();
+    }
+    </script>
+</head>
+
+@using (Html.BeginForm(FormMethod.Post, new { enctype = "multipart/form-data", id = "log_form" }))
 {
     <body>
         @*<div style="margin-left:-10%">
@@ -16,24 +22,6 @@
                 <div style="color:red;height:15px">
 
                 </div>
-                @*<table style="margin-top:6%;">
-
-                        <tr>
-                            <td><div class="tdd">UserName</div></td>
-                            <td>
-                                <div class="tdd">
-                                    @{
-                                        string uname = ViewBag.cookie;
-                                        <input type="text" id="uname" name="uname" value="@uname" />
-                                    }
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><div class="tdd">Password</div></td>
-                            <td><div class="tdd"><input type="password" id="pass" name="pass" /></div></td>
-                        </tr>
-                    </table>*@
                 <table style="margin-top:6%;">
                     <tr>
                         <td>
@@ -59,17 +47,14 @@
                             </div>
                         </td>
                     </tr>
-                    @* <tr><td><div class="tdd"><div class="editor-label">Remember me?<input type="checkbox" id="remember" name="remember" /></div></div></td></tr>*@
                     <tr>
                         <td>
                             <div class="tdd">
                                 <div class="editor-label">Remember me?<input type="checkbox" id="remember" name="remember" /></div>
                                 <div class="input-group">
-                                    @*<span class="input-group-addon"><i class="fa fa-sign-in fa-fw"></i></span>*@
-                                    <button class="btn btn-lg btn-primary btn-block" type="submit"><i class="fa fa-sign-in fa-fw"></i>Login</button>
-                                    @*<a class="btn btn-primary" href="javascript: submitForm();">
-                                            <i class="fa fa-sign-in fa-lg"></i> Login
-                                        </a>*@
+                                    
+                                    <button class="btn btn-lg btn-primary btn-block g-recaptcha" data-sitekey="6LcCuhgUAAAAAM5gd62nY4-433v1-JUyv_U01-rP" data-callback='onSubmit' type="submit"><i class="fa fa-sign-in fa-fw"></i>Login</button>
+                                    
                                 </div>
                                 @if (string.IsNullOrEmpty(ViewBag.cid))
                                 {
@@ -139,9 +124,5 @@
         background-color: #cccccc;
     }*/
 </style>
-<script>
-    function submitForm() {
-        $('#log_form').submit();
-    }
-</script>
+
 

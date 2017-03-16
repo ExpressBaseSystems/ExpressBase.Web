@@ -21,7 +21,7 @@ $(document).ready(function () {
 
 window.fbAsyncInit = function () {
     FB.init({
-        appId: '151550788692231',
+        appId: '605126636359062',
         xfbml: true,
         version: 'v2.8'
     });
@@ -92,7 +92,6 @@ function onSignInCallback(authResult) {
 })();
 
 //gapi.signin.render("mySignIn", {
- 
 //    'callback': signinCallback,
 //    'clientid': '873705187391-crnqrfqklcdqn5qnc8fqmrjn33hsnkvi.apps.googleusercontent.com',
 //    'cookiepolicy': 'single_host_origin',

@@ -4,11 +4,28 @@
 <head>
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://use.fontawesome.com/5eb5791954.js"></script>
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://use.fontawesome.com/5eb5791954.js"></script>*@
     <link rel="stylesheet" href="~/css/navbootstrap.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/af-2.1.3/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/cr-1.3.2/fc-3.2.2/fh-3.1.2/kt-2.2.0/r-2.1.1/rr-1.2.0/sc-1.4.2/se-1.2.0/datatables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.0.0/dygraph.min.js"></script>
+    <link rel="stylesheet" src="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.0.0/dygraph.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/af-2.1.3/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/cr-1.3.2/fc-3.2.2/fh-3.1.2/kt-2.2.0/r-2.1.1/rr-1.2.0/sc-1.4.2/se-1.2.0/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+    <script src="~/js/eb_datatable.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"><!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="~/js/eb_common.js"></script>
     <style>
         .nopadding { padding: 0 !important; }
         .nomargin { margin: 0 !important; }
@@ -17,28 +34,143 @@
         a:visited {text-decoration: none;}
         a:hover {text-decoration: none;}
         a:active {text-decoration: none;}
+
+        #wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#wrapper.toggled {
+    padding-left: 250px;
+}
+
+#sidebar-wrapper {
+    position: fixed;
+    left: 250px;
+    z-index: 1000;
+    overflow-y: auto;
+    margin-left: -250px;
+    width: 0;
+    height: 100%;
+    background: #fff;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    max-width: 200px;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+}
+
+#page-content-wrapper {
+    padding: 15px;
+    width: 100%;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    width: 250px;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 20px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    color: #000;
+    text-decoration: none;
+}
+
+/*.sidebar-nav li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    text-decoration: none;
+}*/
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 65px;
+    font-size: 18px;
+    line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    background: none;
+    color: #fff;
+}
     </style>
+    <script>
+        $(document).ready(function () {
+            $("#menu-toggle").click(function (e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="page-header nomargin navbar-fixed-top">
         @{ Html.RenderPartial("_PageHeader"); }
     </div>
-    <div class="container-fluid content_custom">
-        @*<ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Library</a></li>
-            <li class="breadcrumb-item active">Data</li>
-        </ol>*@
-        
-        <div class="row">
-            <div class="col-sm-2 nopadding nomargin">
-                <div class="affix">
-                    @{ if (ViewBag.Fname != null) { Html.RenderPartial("_SidebarMenu"); } }
-                </div>
+    <div id="wrapper" class="toggled">
+        <div class="container-fluid content_custom">
+            @*<ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Library</a></li>
+                    <li class="breadcrumb-item active">Data</li>
+                </ol>*@
+            <div id="sidebar-wrapper">
+                @*<div class="row">
+                    <div class="col-sm-2 nopadding nomargin">
+                        <div class="affix">*@
+                @{ if (ViewBag.Fname != null) { Html.RenderPartial("_SidebarMenu"); } }
+                @*</div>*@
             </div>
-            <div class="col-sm-10 nopadding nomargin">
-                @RenderBody()
-                @RenderSection("EbHead", false)
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    @*<div class="row">
+                        <div class="col-lg-12">
+                            <br>
+                            <h1>Your Title</h1>
+                        </div>
+                    </div>*@
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @RenderBody()
+                            @RenderSection("EbHead", false)
+                        </div>
+                    </div>
+                    @*<div class="col-sm-10 nopadding nomargin">*@
+                    @*@RenderBody()
+                    @RenderSection("EbHead", false)*@
+                    @*</div>*@
+                </div>
             </div>
         </div>
     </div>

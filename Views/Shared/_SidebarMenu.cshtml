@@ -6,28 +6,25 @@
 
 @if (string.IsNullOrEmpty(ViewBag.cid))
 {
-<div class="btn-group-vertical" role="group" aria-label="..." style="height: 100vh; width:30vh; overflow-y:scroll;">
-   
-        <ul class="list-group" style="list-style-type: none;">
+
+        <ul class="sidebar-nav list-group" style="list-style-type: none;">
         <li class="list-group-item"><a href="TenantAccounts?id=@ViewBag.UId"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; My Accounts</a></li>
     </ul>  
-</div>
+
 }
 else
 {
-    <div class="btn-group-vertical" role="group" aria-label="..." style="height: 100vh; width:30vh; overflow-y:scroll;">
 
-        <ul class="list-group" style="list-style-type: none;">
+        <ul class="sidebar-nav list-group" style="list-style-type: none;">
 @{  foreach (var f in fr.Data)
     {
         string fname = f.Name;
         string formid = string.Format("f?fid={0}", f.Id);
-        <li class="list-group-item"><a href="@formid"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; @fname</a></li>
+        <li class="list-group-item"><a href="@formid"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; @fname</a></li>
 
     }
 
 }
             
         </ul>
-    </div>
-}
+    }

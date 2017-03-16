@@ -15,6 +15,8 @@ using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Data;
 using ServiceStack.Redis;
 using ExpressBase.Objects;
+////using Newtonsoft.Json;
+using ExpressBase.Web2.Models;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -38,11 +40,13 @@ namespace ExpressBase.ServiceStack.Controllers
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
-            // var jti = tokenS.Claims.First(claim => claim.Type == "preferred_username").Value;
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
             ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
+            IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
+            var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" });
+            ViewBag.ImgList = fr.aclist;
             return View();
         }
 
@@ -182,7 +186,7 @@ namespace ExpressBase.ServiceStack.Controllers
         public IActionResult Signin()
         {
             ViewBag.cookie = Request.Cookies["UserName"];
-           
+            
             return View();
         }
 
@@ -197,15 +201,48 @@ namespace ExpressBase.ServiceStack.Controllers
         }
 
         [HttpPost]
-        public IActionResult Signin(int i)
+        public async Task<IActionResult> Signin(int i)
         {
             var req = this.HttpContext.Request.Form;
             AuthenticateResponse authResponse = null;
 
+            //string token = req["g-recaptcha-response"];
+            //Recaptcha data = await RecaptchaResponse("6LcCuhgUAAAAADMQr6bUkjZVPLsvTmWom52vWl3r",token);
+            //if (!data.Success)
+            //{
+            //    if (data.ErrorCodes.Count <= 0)
+            //    {
+            //        return View();
+            //    }
+            //    var error = data.ErrorCodes[0].ToLower();
+            //    switch (error)
+            //    {
+            //        case ("missing-input-secret"):
+            //            ViewBag.CaptchaMessage = "The secret parameter is missing.";
+            //            break;
+            //        case ("invalid-input-secret"):
+            //            ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
+            //            break;
 
+            //        case ("missing-input-response"):
+            //            ViewBag.CaptchaMessage = "The captcha input is missing.";
+            //            break;
+            //        case ("invalid-input-response"):
+            //            ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
+            //            break;
+
+            //        default:
+            //            ViewBag.CaptchaMessage = "Error occured. Please try again";
+            //            break;
+            //    }
+            //    return View();
+            //}
+            //else
+            {
             try
             {
                 var authClient = new JsonServiceClient("http://localhost:53125/");
+
                 authResponse = authClient.Send(new Authenticate
                 {
                     provider = MyJwtAuthProvider.Name,
@@ -223,42 +260,85 @@ namespace ExpressBase.ServiceStack.Controllers
             if (authResponse != null && authResponse.ResponseStatus != null
                 && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
                 return View();
-
+           
             CookieOptions options = new CookieOptions();
 
             Response.Cookies.Append("Token", authResponse.BearerToken, options);
+           
             if (req.ContainsKey("remember"))
                 Response.Cookies.Append("UserName", req["uname"], options);
               return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard",id= authResponse.UserId }));
   
         }
-
+        }
         [HttpGet]
         public IActionResult TenantSignup()
-        {
-
+        {  
             return View();
         }
 
         [HttpPost]
-        public IActionResult TenantSignup(int i)
+        public async Task<IActionResult> TenantSignup(int i)
         {
-
             var req = this.HttpContext.Request.Form;
-
-            JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            var res = client.Post<InfraResponse>(new Services.InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-            if (res.id >= 0)
+            ViewBag.cid = "";
+            string token = req["g-recaptcha-response"];
+            Recaptcha data = await RecaptchaResponse("	6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
+            if (!data.Success)
             {
-                return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id }));
+                if (data.ErrorCodes.Count <= 0)
+                {
+                    return View();
+                }
+                var error = data.ErrorCodes[0].ToLower();
+                switch (error)
+                {
+                    case ("missing-input-secret"):
+                        ViewBag.CaptchaMessage = "The secret parameter is missing.";
+                        break;
+                    case ("invalid-input-secret"):
+                        ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
+                        break;
 
+                    case ("missing-input-response"):
+                        ViewBag.CaptchaMessage = "The captcha input is missing.";
+                        break;
+                    case ("invalid-input-response"):
+                        ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
+                        break;
+
+                    default:
+                        ViewBag.CaptchaMessage = "Error occured. Please try again";
+                        break;
+                }
+                return View();
             }
             else
             {
-                return View();
-            }
+                
+                JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
+                var res = client.Post<InfraResponse>(new Services.InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+                if (res.id >= 0)
+                {
+                    return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id }));
 
+                }
+                else
+                {
+                    return View();
+                }
+            } 
+        }
+        private static async Task<Recaptcha> RecaptchaResponse(string secret,string token)
+        {
 
+            string url = string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token);
+            var req = WebRequest.Create(url);
+            var r = await req.GetResponseAsync().ConfigureAwait(false);
+            var responseReader = new StreamReader(r.GetResponseStream());
+            var responseData = await responseReader.ReadToEndAsync();
+            var d = Newtonsoft.Json.JsonConvert.DeserializeObject<Recaptcha>(responseData);
+            return d;
         }
 
         [HttpGet]
@@ -272,7 +352,7 @@ namespace ExpressBase.ServiceStack.Controllers
             var res = client.Post<InfraResponse>(new Services.InfraRequest { Colvalues = Dict, ltype = "fb" });
             if (res.id >= 0)
             {
-                return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id }));
+                return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id, t = 2 }));
 
             }
             return View();
@@ -289,7 +369,6 @@ namespace ExpressBase.ServiceStack.Controllers
             return d;
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Google()
         {
@@ -300,13 +379,13 @@ namespace ExpressBase.ServiceStack.Controllers
             var res = client.Post<InfraResponse>(new Services.InfraRequest { Colvalues = Dict, ltype = "G+" });
             if (res.id >= 0)
             {
-                return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id }));
+               
+                return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id,t = 2}));
 
             }
             return View();
 
         }
-
         private async Task<GoogleUser> GetGoogleUserJSON(string access_token)
         {
             string url = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + access_token;
@@ -322,7 +401,8 @@ namespace ExpressBase.ServiceStack.Controllers
         [HttpGet]
         public IActionResult TenantProfile()
         {
-            ViewBag.CId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.logtype = HttpContext.Request.Query["t"];
+            ViewBag.TId = Convert.ToInt32(HttpContext.Request.Query["id"]);
 
             return View();
         }
@@ -331,14 +411,52 @@ namespace ExpressBase.ServiceStack.Controllers
         public IActionResult TenantProfile(int i)
         {
             var req = this.HttpContext.Request.Form;
-            JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            var res = client.Post<InfraResponse>(new Services.InfraRequest { ltype = "update", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-            if (res.id >= 0)
+            var token = Request.Cookies["Token"];
+            if (!string.IsNullOrEmpty(token))
             {
-                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard",Id = res.id }));
 
+           
+            var handler = new JwtSecurityTokenHandler();
+            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            var id = tokenS.Claims.First(claim => claim.Type == "uid").Value;
+            if (Request.Form.Files.Count > 0)
+            {
+                var files = Request.Form.Files;
+
+                Dictionary<string, object> dict = new Dictionary<string, object>();
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
+                    {
+                        using (var fileStream = file.OpenReadStream())
+                        using (var ms = new MemoryStream())
+                        {
+                            fileStream.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string img = Convert.ToBase64String(fileBytes);
+                            string imgbase = Convert.ToBase64String(fileBytes);
+                            dict.Add("profileimg", imgbase);
+                            dict.Add("id", id);
+                            JsonServiceClient imgclient = new JsonServiceClient("http://localhost:53125/");
+                            var imgres = imgclient.Post<InfraResponse>(new Services.InfraRequest { ltype = "imgupload", Colvalues = dict });
+                        }
+                    }
+                }
+               
             }
-            return View();
+                return View();
+            }
+            else
+            {
+                JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
+                var res = client.Post<InfraResponse>(new Services.InfraRequest { ltype = "update", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+                if (res.id >= 0)
+                {
+                    return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
+
+                }
+                return View();
+            }
         }
 
         [HttpGet]
@@ -351,6 +469,7 @@ namespace ExpressBase.ServiceStack.Controllers
             ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             ViewBag.token = token;
             var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            redisClient.Set<string>("token",token);
             Objects.EbForm _form = null;
             IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
             var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fid, Token = token });

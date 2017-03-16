@@ -27,14 +27,52 @@ $(document).ready(function(){
 		 }
         )
 
+		$("#upload").click(function (evt) {
+            
+		    var fileUpload = $("#files").get(0);
+		    var files = fileUpload.files;
+		 
+		    var data = new FormData();
+		    
+		    for (var i = 0; i < files.length ; i++) {
+		        data.append(files[i].name, files[i]);
+		    }
+		    $.ajax({
+		       
+		        type: "POST",
+		        url: "/Tenant/TenantProfile",
+		        contentType: false,
+		        processData: false,
+		        data: data,
+		        success: function (message) {
+		            alert(message);
+		        },
+		        error: function () {
+		            alert("There was error uploading files!");
+		        }
+		    });
+		});
+
 });
 
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('#img')
+           .attr('src', e.target.result)
+           .width(100)
+           .height(100);
+        };
 
+        reader.readAsDataURL(input.files[0]);
+    }
+}
     </script>
    
 </head>
 <body>
-@using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
+@using (Html.BeginForm(FormMethod.Post,new { enctype = "application/x-www-form-urlencoded" }))
 {
     <div class="bs-example">
 
@@ -52,15 +90,21 @@ $(document).ready(function(){
 
                         <form>
                             @{
-                                int cID = ViewBag.CId;
-                                <input type="hidden" id="id" name="id" value="@cID" />
+                                int tID = ViewBag.TId;
+                                <input type="hidden" id="id" name="id" value="@tID" />
                             }
                             <table>
+                                
+                                @if (String.IsNullOrEmpty(ViewBag.logtype))
+                                {
                                 <tr>
                                    
-                                    <td><div class="tdd">ClientID</div></td>
-                                    <td><div class="tdd"><input type="text" id="cid" name="cid" required /></div></td>
+                                    <td><div class="tdd">Upload Profile Image</div></td>
+                                    <td><div class="tdd"><input type="file" name="pic" id="files" accept="image/*" onchange="readURL(this)"><input type="button" id="upload" value="Upload" /></div></td>
+                                    
+                                    <td><img id="img" src="#" alt="your image1" /></td>
                                 </tr>
+                                }
                                 <tr>
 
                                     <td><div class="tdd">Phone Number</div></td>

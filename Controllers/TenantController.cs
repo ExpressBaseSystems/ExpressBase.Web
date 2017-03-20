@@ -17,6 +17,7 @@ using ServiceStack.Redis;
 using ExpressBase.Objects;
 ////using Newtonsoft.Json;
 using ExpressBase.Web2.Models;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 

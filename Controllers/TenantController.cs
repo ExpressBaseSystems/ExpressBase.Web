@@ -7,7 +7,7 @@ using ServiceStack;
 using Microsoft.AspNetCore.Http;
 using ExpressBase.ServiceStack.Services;
 using Microsoft.AspNetCore.Routing;
-using ExpressBase.ServiceStack.Models;
+using ExpressBase.ServiceStack;
 using System.Net;
 using System.IO;
 using System.Reflection;
@@ -20,7 +20,7 @@ using ExpressBase.Web2.Models;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ExpressBase.ServiceStack.Controllers
+namespace ExpressBase.Web2.Controllers
 {
     public class TenantController : Controller
     {
@@ -37,6 +37,7 @@ namespace ExpressBase.ServiceStack.Controllers
         [HttpGet]
         public IActionResult TenantDashboard()
         {
+            var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
@@ -45,8 +46,15 @@ namespace ExpressBase.ServiceStack.Controllers
             ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
             IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
-            var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" });
-            ViewBag.ImgList = fr.aclist;
+            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" });
+            if(string.IsNullOrEmpty(ViewBag.cid))
+            { 
+                foreach (int element in fr.dict.Keys)
+                {
+                    redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
+                }
+            }
+
             return View();
         }
 
@@ -55,7 +63,7 @@ namespace ExpressBase.ServiceStack.Controllers
         {
             var req = this.HttpContext.Request.Form;
             JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            var res = client.Post<bool>(new Services.DbCheckRequest { CId = Convert.ToInt32(req["id"]), DBColvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+            var res = client.Post<bool>(new DbCheckRequest { CId = Convert.ToInt32(req["id"]), DBColvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
             if (res)
             {
                 return View();
@@ -106,40 +114,97 @@ namespace ExpressBase.ServiceStack.Controllers
         public IActionResult TenantAddAccount(int i)
         {
             var req = this.HttpContext.Request.Form;
-
-            JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            var res = client.Post<bool>(new Services.AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),op="insert" });
-            if (res == true)
+            var token = Request.Cookies["Token"];
+            var handler = new JwtSecurityTokenHandler();
+            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            var id = tokenS.Claims.First(claim => claim.Type == "uid").Value;
+            if (Request.Form.Files.Count > 0)
             {
-                //return RedirectToAction("TenantAccounts", "Tenant");
-                return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"] }));
+                var files = Request.Form.Files;
 
+                Dictionary<string, object> dict = new Dictionary<string, object>();
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
+                    {
+                        using (var fileStream = file.OpenReadStream())
+                        using (var ms = new MemoryStream())
+                        {
+                            fileStream.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string img = Convert.ToBase64String(fileBytes);
+                            string imgbase = Convert.ToBase64String(fileBytes);
+                            dict.Add("profilelogo", imgbase);
+                            dict.Add("id", id);
+                            JsonServiceClient imgclient = new JsonServiceClient("http://localhost:53125/");
+                            var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "accountimg", Colvalues = dict });
+                        }
+                    }
+                }
+                return View();
+            }
+            else
+            {
+                JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
+                var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert",TId=Convert.ToInt32(id) });
+                if (res.id>=0)
+                {
+                    return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"],aid= res.id }));
+
+                }
+                else
+                {
+                    
+                    return View();
+                }
+            }
+        }
+        [HttpGet]
+        public IActionResult TenantAccounts()
+        {
+              var token = Request.Cookies["Token"];
+            var handler = new JwtSecurityTokenHandler();
+            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
+            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.accountid = HttpContext.Request.Query["aid"];
+            ViewBag.token = token;
+            IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
+            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId });
+            ViewBag.dict = fr.dict;
+            return View();
+            //JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
+            //var res = client.Get<AccountResponse>(new Services.GetAccount { Uid = ViewBag.UId });
+
+
+        }
+
+        [HttpPost]
+        public IActionResult TenantAccounts(int i)
+        {
+            var token = Request.Cookies["Token"];
+            var handler = new JwtSecurityTokenHandler();
+            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
+            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.token = token;
+            //IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
+            //var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId });
+            //ViewBag.List = fr.aclist;
+            var req = this.HttpContext.Request.Form;
+            JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
+            var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "Dbcheck", TId = Convert.ToInt32(ViewBag.UId) });
+            if (res.id >= 0)
+            {
+                return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"] }));
 
             }
             else
             {
                 return View();
             }
-        }
 
-        public IActionResult TenantAccounts()
-        {
-            var token = Request.Cookies["Token"];
-            var handler = new JwtSecurityTokenHandler();
-            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
-            // var jti = tokenS.Claims.First(claim => claim.Type == "preferred_username").Value;
-            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
-            ViewBag.token = token;
-            IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
-            var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId });
             
-            ViewBag.List = fr.aclist;
-            return View();
-            //JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            //var res = client.Get<AccountResponse>(new Services.GetAccount { Uid = ViewBag.UId });
-
-
         }
           
 
@@ -283,7 +348,7 @@ namespace ExpressBase.ServiceStack.Controllers
             var req = this.HttpContext.Request.Form;
             ViewBag.cid = "";
             string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse("	6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
+            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
             if (!data.Success)
             {
                 if (data.ErrorCodes.Count <= 0)
@@ -317,7 +382,7 @@ namespace ExpressBase.ServiceStack.Controllers
             {
                 
                 JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-                var res = client.Post<InfraResponse>(new Services.InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+                var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
                     return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id }));
@@ -349,7 +414,7 @@ namespace ExpressBase.ServiceStack.Controllers
 
             Dictionary<string, Object> Dict = (from x in data.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(data, null) == null ? "" : x.GetGetMethod().Invoke(data, null)));
             JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            var res = client.Post<InfraResponse>(new Services.InfraRequest { Colvalues = Dict, ltype = "fb" });
+            var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "fb" });
             if (res.id >= 0)
             {
                 return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id, t = 2 }));
@@ -376,7 +441,7 @@ namespace ExpressBase.ServiceStack.Controllers
             GoogleUser oUser = await GetGoogleUserJSON(HttpContext.Request.Query["accessToken"]);
             Dictionary<string, Object> Dict = (from x in oUser.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(oUser, null) == null ? "" : x.GetGetMethod().Invoke(oUser, null)));
             JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            var res = client.Post<InfraResponse>(new Services.InfraRequest { Colvalues = Dict, ltype = "G+" });
+            var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "G+" });
             if (res.id >= 0)
             {
                
@@ -402,7 +467,8 @@ namespace ExpressBase.ServiceStack.Controllers
         public IActionResult TenantProfile()
         {
             ViewBag.logtype = HttpContext.Request.Query["t"];
-            ViewBag.TId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.TId = Convert.ToInt32(HttpContext.Request.Query["Id"]);
+
 
             return View();
         }
@@ -412,51 +478,45 @@ namespace ExpressBase.ServiceStack.Controllers
         {
             var req = this.HttpContext.Request.Form;
             var token = Request.Cookies["Token"];
-            if (!string.IsNullOrEmpty(token))
-            {
-
-           
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             var id = tokenS.Claims.First(claim => claim.Type == "uid").Value;
-            if (Request.Form.Files.Count > 0)
-            {
-                var files = Request.Form.Files;
-
-                Dictionary<string, object> dict = new Dictionary<string, object>();
-                foreach (var file in files)
+                if (Request.Form.Files.Count > 0)
                 {
-                    if (file.Length > 0)
+                    var files = Request.Form.Files;
+
+                    Dictionary<string, object> dict = new Dictionary<string, object>();
+                    foreach (var file in files)
                     {
-                        using (var fileStream = file.OpenReadStream())
-                        using (var ms = new MemoryStream())
+                        if (file.Length > 0)
                         {
-                            fileStream.CopyTo(ms);
-                            var fileBytes = ms.ToArray();
-                            string img = Convert.ToBase64String(fileBytes);
-                            string imgbase = Convert.ToBase64String(fileBytes);
-                            dict.Add("profileimg", imgbase);
-                            dict.Add("id", id);
-                            JsonServiceClient imgclient = new JsonServiceClient("http://localhost:53125/");
-                            var imgres = imgclient.Post<InfraResponse>(new Services.InfraRequest { ltype = "imgupload", Colvalues = dict });
+                            using (var fileStream = file.OpenReadStream())
+                            using (var ms = new MemoryStream())
+                            {
+                                fileStream.CopyTo(ms);
+                                var fileBytes = ms.ToArray();
+                                string img = Convert.ToBase64String(fileBytes);
+                                string imgbase = Convert.ToBase64String(fileBytes);
+                                dict.Add("profileimg", imgbase);
+                                dict.Add("id", id);
+                                JsonServiceClient imgclient = new JsonServiceClient("http://localhost:53125/");
+                                var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "imgupload", Colvalues = dict });
+                            }
                         }
                     }
+                    return View();
                 }
-               
-            }
-                return View();
-            }
-            else
-            {
-                JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-                var res = client.Post<InfraResponse>(new Services.InfraRequest { ltype = "update", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-                if (res.id >= 0)
+                else
                 {
-                    return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
+                    JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
+                    var res = client.Post<InfraResponse>(new InfraRequest { ltype = "update", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+                    if (res.id >= 0)
+                    {
+                        return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
 
+                    }
+                    return View();
                 }
-                return View();
-            }
         }
 
         [HttpGet]
@@ -525,6 +585,11 @@ namespace ExpressBase.ServiceStack.Controllers
             //else
             //    return RedirectToAction("Index", "Home");
 
+            return View();
+        }
+
+        public IActionResult UserPreferences()
+        {
             return View();
         }
     }

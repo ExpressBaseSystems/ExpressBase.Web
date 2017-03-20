@@ -45,7 +45,7 @@ $(document).ready(function(){
 		        processData: false,
 		        data: data,
 		        success: function (message) {
-		            alert(message);
+		            alert("Image Uploaded Successfully");
 		        },
 		        error: function () {
 		            alert("There was error uploading files!");
@@ -90,7 +90,7 @@ function readURL(input) {
 
                         <form>
                             @{
-                                int tID = ViewBag.TId;
+                                var tID = ViewBag.TId;
                                 <input type="hidden" id="id" name="id" value="@tID" />
                             }
                             <table>

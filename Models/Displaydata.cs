@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExpressBase.ServiceStack
+namespace ExpressBase.Web2.Models
 {
     public class Displaydata
     {

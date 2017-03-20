@@ -10,7 +10,6 @@ using ExpressBase.Common;
 using ExpressBase.Data;
 using ServiceStack;
 using ExpressBase.ServiceStack.Services;
-using ExpressBase.ServiceStack.Models;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Threading;
@@ -21,7 +20,7 @@ using Microsoft.AspNetCore.Routing;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ExpressBase.ServiceStack
+namespace ExpressBase.Web2.Models
 {
     public class HomeController : Controller
     {

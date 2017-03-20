@@ -27,103 +27,123 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="~/js/eb_common.js"></script>
     <style>
-        .nopadding { padding: 0 !important; }
-        .nomargin { margin: 0 !important; }
-        .content_custom {margin-top: 60px; }
-        a:link {text-decoration: none;}
-        a:visited {text-decoration: none;}
-        a:hover {text-decoration: none;}
-        a:active {text-decoration: none;}
+                .nopadding {
+                    padding: 0 !important;
+                }
 
-        #wrapper {
-    padding-left: 0;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
+                .nomargin {
+                    margin: 0 !important;
+                }
 
-#wrapper.toggled {
-    padding-left: 250px;
-}
+                .content_custom {
+                    margin-top: 60px;
+                }
 
-#sidebar-wrapper {
-    position: fixed;
-    left: 250px;
-    z-index: 1000;
-    overflow-y: auto;
-    margin-left: -250px;
-    width: 0;
-    height: 100%;
-    background: #fff;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-    max-width: 200px;
-}
+                a:link {
+                    text-decoration: none;
+                }
 
-#wrapper.toggled #sidebar-wrapper {
-    width: 250px;
-}
+                a:visited {
+                    text-decoration: none;
+                }
 
-#page-content-wrapper {
-    padding: 15px;
-    width: 100%;
-}
+                a:hover {
+                    text-decoration: none;
+                }
 
-#wrapper.toggled #page-content-wrapper {
-    position: absolute;
-    margin-right: -250px;
-}
+                a:active {
+                    text-decoration: none;
+                }
 
-/* Sidebar Styles */
+                #wrapper {
+                    padding-left: 0;
+                    -webkit-transition: all 0.5s ease;
+                    -moz-transition: all 0.5s ease;
+                    -o-transition: all 0.5s ease;
+                    transition: all 0.5s ease;
+                }
 
-.sidebar-nav {
-    position: absolute;
-    top: 0;
-    margin: 0;
-    padding: 0;
-    width: 250px;
-    list-style: none;
-}
+                    #wrapper.toggled {
+                        padding-left: 250px;
+                    }
 
-.sidebar-nav li {
-    text-indent: 20px;
-    line-height: 40px;
-}
+                #sidebar-wrapper {
+                    position: fixed;
+                    left: 250px;
+                    z-index: 1000;
+                    overflow-y: auto;
+                    margin-left: -250px;
+                    width: 0;
+                    height: 100%;
+                    background: #fff;
+                    -webkit-transition: all 0.5s ease;
+                    -moz-transition: all 0.5s ease;
+                    -o-transition: all 0.5s ease;
+                    transition: all 0.5s ease;
+                    max-width: 200px;
+                }
 
-.sidebar-nav li a {
-    display: block;
-    color: #000;
-    text-decoration: none;
-}
+                #wrapper.toggled #sidebar-wrapper {
+                    width: 250px;
+                }
 
-/*.sidebar-nav li a:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    text-decoration: none;
-}*/
+                #page-content-wrapper {
+                    padding: 15px;
+                    width: 100%;
+                }
 
-.sidebar-nav li a:active,
-.sidebar-nav li a:focus {
-    text-decoration: none;
-}
+                #wrapper.toggled #page-content-wrapper {
+                    position: absolute;
+                    margin-right: -250px;
+                }
 
-.sidebar-nav > .sidebar-brand {
-    height: 65px;
-    font-size: 18px;
-    line-height: 60px;
-}
+                /* Sidebar Styles */
 
-.sidebar-nav > .sidebar-brand a {
-    color: #999999;
-}
+                .sidebar-nav {
+                    position: absolute;
+                    top: 0;
+                    margin: 0;
+                    padding: 0;
+                    width: 250px;
+                    list-style: none;
+                }
 
-.sidebar-nav > .sidebar-brand a:hover {
-    background: none;
-    color: #fff;
-}
+                    .sidebar-nav li {
+                        text-indent: 20px;
+                        line-height: 40px;
+                    }
+
+                        .sidebar-nav li a {
+                            display: block;
+                            color: #000;
+                            text-decoration: none;
+                        }
+
+                            /*.sidebar-nav li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            text-decoration: none;
+        }*/
+
+                            .sidebar-nav li a:active,
+                            .sidebar-nav li a:focus {
+                                text-decoration: none;
+                            }
+
+                    .sidebar-nav > .sidebar-brand {
+                        height: 65px;
+                        font-size: 18px;
+                        line-height: 60px;
+                    }
+
+                        .sidebar-nav > .sidebar-brand a {
+                            color: #999999;
+                        }
+
+                            .sidebar-nav > .sidebar-brand a:hover {
+                                background: none;
+                                color: #fff;
+                            }
     </style>
     <script>
         $(document).ready(function () {
@@ -145,21 +165,16 @@
                     <li class="breadcrumb-item"><a href="#">Library</a></li>
                     <li class="breadcrumb-item active">Data</li>
                 </ol>*@
-            <div id="sidebar-wrapper">
-                @*<div class="row">
-                    <div class="col-sm-2 nopadding nomargin">
-                        <div class="affix">*@
-                @{ if (ViewBag.Fname != null) { Html.RenderPartial("_SidebarMenu"); } }
-                @*</div>*@
-            </div>
+            @if (ViewBag.Fname != null)
+            {
+                    <div id="sidebar-wrapper">
+                        @{ Html.RenderPartial("_SidebarMenu");
+                        }
+                        @*</div>*@
+                    </div>
+                } 
             <div id="page-content-wrapper">
                 <div class="container-fluid">
-                    @*<div class="row">
-                        <div class="col-lg-12">
-                            <br>
-                            <h1>Your Title</h1>
-                        </div>
-                    </div>*@
                     <div class="row">
                         <div class="col-lg-12">
                             @RenderBody()
@@ -168,7 +183,7 @@
                     </div>
                     @*<div class="col-sm-10 nopadding nomargin">*@
                     @*@RenderBody()
-                    @RenderSection("EbHead", false)*@
+                        @RenderSection("EbHead", false)*@
                     @*</div>*@
                 </div>
             </div>

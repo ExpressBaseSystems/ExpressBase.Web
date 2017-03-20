@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExpressBase.ServiceStack.Models
+namespace ExpressBase.Web2.Models
 {
     public class GoogleUser
     { 

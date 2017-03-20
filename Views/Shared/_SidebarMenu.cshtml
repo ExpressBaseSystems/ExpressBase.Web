@@ -1,6 +1,9 @@
-﻿@{
-    @using ServiceStack;
-    IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ServiceStack;
+
+@{
+    var EbConfig = ViewBag.EbConfig;
+    IServiceClient client = EbConfig.GetClient(); // new JsonServiceClient("http://localhost:53125/").WithCache();
     var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
 }
 

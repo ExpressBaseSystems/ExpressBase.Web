@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ServiceStack;
 
 namespace ExpressBase.Web2
 {
@@ -37,6 +39,12 @@ namespace ExpressBase.Web2
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddMvc();
+
+            // Added - uses IOptions<T> for your settings.
+            services.AddOptions();
+
+            // Added - Confirms that we have a home for our DemoSettings
+            services.Configure<ServiceStackConfig>(Configuration.GetSection("ServiceStackConfig"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

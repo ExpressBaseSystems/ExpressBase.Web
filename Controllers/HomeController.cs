@@ -20,10 +20,18 @@ using Microsoft.AspNetCore.Routing;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ExpressBase.Web2.Models
+namespace ExpressBase.Web2
 {
     public class HomeController : Controller
     {
+        private IOptions<ServiceStackConfig> ServiceStackConfig { get; set; }
+
+        public HomeController(IOptions<ServiceStackConfig> ss_settings)
+        {
+            ServiceStackConfig = ss_settings;
+        }
+
+
         // GET: /<controller>/
         public IActionResult Index()
         {

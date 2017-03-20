@@ -325,6 +325,7 @@ namespace ExpressBase.Web2.Controllers
                     Password = req["pass"],
                     UseTokenCookie = true
                 };
+                authreq.Meta = new Dictionary<string, string>();
                 authreq.Meta.Add("cid", req["cid"]);
 
                 authResponse = authClient.Send(authreq);

@@ -2,9 +2,13 @@
 @using ServiceStack;
 
 @{
+    EbObjectResponse fr = null;
     var EbConfig = ViewBag.EbConfig;
-    IServiceClient client = EbConfig.GetClient(); // new JsonServiceClient("http://localhost:53125/").WithCache();
-    var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
+    if (EbConfig != null)
+    {
+        IServiceClient client = EbConfig.GetClient();
+        fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
+    }
 }
 
 @if (string.IsNullOrEmpty(ViewBag.cid))
@@ -19,15 +23,17 @@ else
 {
 
         <ul class="sidebar-nav list-group" style="list-style-type: none;">
-@{  foreach (var f in fr.Data)
+@{  if (fr != null)
     {
-        string fname = f.Name;
-        string formid = string.Format("f?fid={0}", f.Id);
+        foreach (var f in fr.Data)
+        {
+            string fname = f.Name;
+            string formid = string.Format("f?fid={0}", f.Id);
         <li class="list-group-item"><a href="@formid"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; @fname</a></li>
 
+            }
+        }
     }
 
-}
-            
         </ul>
     }

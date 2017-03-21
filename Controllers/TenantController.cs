@@ -26,9 +26,9 @@ namespace ExpressBase.Web2.Controllers
 {
     public class TenantController : Controller
     {
-        private readonly ServiceStackConfig EbConfig;
+        private readonly EbSetupConfig EbConfig;
 
-        public TenantController(IOptionsSnapshot<ServiceStackConfig> ss_settings)
+        public TenantController(IOptionsSnapshot<EbSetupConfig> ss_settings)
         {
             this.EbConfig = ss_settings.Value;
         }
@@ -54,7 +54,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
-            IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/").WithCache();
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
             var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" });
             if(string.IsNullOrEmpty(ViewBag.cid))
             { 
@@ -72,7 +72,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantDashboard(int i)
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
             var res = client.Post<bool>(new DbCheckRequest { CId = Convert.ToInt32(req["id"]), DBColvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
             if (res)
             {
@@ -146,7 +146,7 @@ namespace ExpressBase.Web2.Controllers
                             string imgbase = Convert.ToBase64String(fileBytes);
                             dict.Add("profilelogo", imgbase);
                             dict.Add("id", id);
-                            IServiceClient imgclient = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+                            IServiceClient imgclient = this.EbConfig.GetServiceStackClient(); 
                             var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "accountimg", Colvalues = dict });
                         }
                     }
@@ -155,7 +155,7 @@ namespace ExpressBase.Web2.Controllers
             }
             else
             {
-                IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+                IServiceClient client = this.EbConfig.GetServiceStackClient(); 
                 var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert",TId=Convert.ToInt32(id) });
                 if (res.id>=0)
                 {
@@ -179,7 +179,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.accountid = HttpContext.Request.Query["aid"];
             ViewBag.token = token;
-            IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/").WithCache();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
             var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId });
             ViewBag.dict = fr.dict;
             return View();
@@ -202,7 +202,7 @@ namespace ExpressBase.Web2.Controllers
             //var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId });
             //ViewBag.List = fr.aclist;
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
             var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "Dbcheck", TId = Convert.ToInt32(ViewBag.UId) });
             if (res.id >= 0)
             {
@@ -316,7 +316,7 @@ namespace ExpressBase.Web2.Controllers
             {
             try
             {
-                var authClient = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+                var authClient = this.EbConfig.GetServiceStackClient(); 
 
                 var authreq = new Authenticate
                 {
@@ -398,7 +398,7 @@ namespace ExpressBase.Web2.Controllers
             else
             {
                 
-                IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+                IServiceClient client = this.EbConfig.GetServiceStackClient(); 
                 var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
@@ -430,7 +430,7 @@ namespace ExpressBase.Web2.Controllers
             FacebookUser data = await GetFacebookUserJSON(HttpContext.Request.Query["access_token"]);
 
             Dictionary<string, Object> Dict = (from x in data.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(data, null) == null ? "" : x.GetGetMethod().Invoke(data, null)));
-            IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
             var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "fb" });
             if (res.id >= 0)
             {
@@ -457,7 +457,7 @@ namespace ExpressBase.Web2.Controllers
             if (string.IsNullOrEmpty(HttpContext.Request.Query["accessToken"])) return View();
             GoogleUser oUser = await GetGoogleUserJSON(HttpContext.Request.Query["accessToken"]);
             Dictionary<string, Object> Dict = (from x in oUser.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(oUser, null) == null ? "" : x.GetGetMethod().Invoke(oUser, null)));
-            IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
             var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "G+" });
             if (res.id >= 0)
             {
@@ -516,7 +516,7 @@ namespace ExpressBase.Web2.Controllers
                                 string imgbase = Convert.ToBase64String(fileBytes);
                                 dict.Add("profileimg", imgbase);
                                 dict.Add("id", id);
-                                IServiceClient imgclient = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+                                IServiceClient imgclient = this.EbConfig.GetServiceStackClient(); 
                             var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "imgupload", Colvalues = dict });
                             }
                         }
@@ -525,7 +525,7 @@ namespace ExpressBase.Web2.Controllers
                 }
                 else
                 {
-                    IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/");
+                    IServiceClient client = this.EbConfig.GetServiceStackClient(); 
                 var res = client.Post<InfraResponse>(new InfraRequest { ltype = "update", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                     if (res.id >= 0)
                     {
@@ -548,7 +548,7 @@ namespace ExpressBase.Web2.Controllers
             var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
             redisClient.Set<string>("token",token);
             Objects.EbForm _form = null;
-            IServiceClient client = this.EbConfig.GetClient(); //new JsonServiceClient("http://localhost:53125/").WithCache();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
             var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fid, Token = token });
             if (id > 0)
             {

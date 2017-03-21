@@ -44,7 +44,7 @@ namespace ExpressBase.Web2
             services.AddOptions();
 
             // Added - Confirms that we have a home for our DemoSettings
-            services.Configure<ServiceStackConfig>(Configuration.GetSection("ServiceStackConfig"));
+            services.Configure<EbSetupConfig>(Configuration.GetSection("EbSetupConfig"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

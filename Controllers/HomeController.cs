@@ -24,9 +24,9 @@ namespace ExpressBase.Web2
 {
     public class HomeController : Controller
     {
-        private IOptions<ServiceStackConfig> ServiceStackConfig { get; set; }
+        private IOptions<EbSetupConfig> ServiceStackConfig { get; set; }
 
-        public HomeController(IOptions<ServiceStackConfig> ss_settings)
+        public HomeController(IOptions<EbSetupConfig> ss_settings)
         {
             ServiceStackConfig = ss_settings;
         }

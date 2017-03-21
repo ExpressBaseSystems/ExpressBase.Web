@@ -24,7 +24,7 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
-    "ExpressBase.ServiceStack": "1.0.0-*",
+    "ExpressBase.ServiceStack": "1.0.0",
     "ExpressBase.Common": "1.0.0",
     "ExpressBase.Objects": "1.0.0",
     "Microsoft.IdentityModel.Protocols": "2.0.0",

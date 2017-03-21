@@ -11,7 +11,11 @@ namespace ExpressBase.Web2
     {
         public string ServiceStackUrl { get; set; }
 
-        public string RedisUrl { get; set; }
+        public string RedisServer { get; set; }
+
+        public int RedisPort { get; set; }
+
+        public string RedisPassword { get; set; }
 
         public IServiceClient GetServiceStackClient()
         {
@@ -20,7 +24,7 @@ namespace ExpressBase.Web2
 
         public RedisClient GetRedisClient()
         {
-            return new RedisClient("139.59.39.130", 6379, "Opera754$");
+            return new RedisClient(this.RedisServer, this.RedisPort, this.RedisPassword);
         }
     }
 }

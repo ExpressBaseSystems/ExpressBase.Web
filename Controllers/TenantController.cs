@@ -46,7 +46,8 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult TenantDashboard()
         {
-            var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            // var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            var redisClient = this.EbConfig.GetRedisClient();
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
@@ -71,6 +72,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult TenantDashboard(int i)
         {
+            ViewBag.EbConfig = this.EbConfig;
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(); 
             var res = client.Post<bool>(new DbCheckRequest { CId = Convert.ToInt32(req["id"]), DBColvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
@@ -95,6 +97,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
             ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
+            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -103,6 +106,7 @@ namespace ExpressBase.Web2.Controllers
         {
            
             var req = this.HttpContext.Request.Form;
+            ViewBag.EbConfig = this.EbConfig;
             return RedirectToAction("TenantAddAccount", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAddAccount",tier= req["tier"],id=req["tenantid"] }));
         }
 
@@ -117,6 +121,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.tier = HttpContext.Request.Query["tier"];
             ViewBag.tenantid = HttpContext.Request.Query["id"];
             ViewBag.token = token;
+            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -127,6 +132,7 @@ namespace ExpressBase.Web2.Controllers
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            ViewBag.EbConfig = this.EbConfig;
             var id = tokenS.Claims.First(claim => claim.Type == "uid").Value;
             if (Request.Form.Files.Count > 0)
             {
@@ -179,6 +185,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.accountid = HttpContext.Request.Query["aid"];
             ViewBag.token = token;
+            ViewBag.EbConfig = this.EbConfig;
             IServiceClient client = this.EbConfig.GetServiceStackClient(); 
             var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId });
             ViewBag.dict = fr.dict;
@@ -198,6 +205,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
             ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
+            ViewBag.EbConfig = this.EbConfig;
             //IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
             //var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId });
             //ViewBag.List = fr.aclist;
@@ -261,7 +269,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult Signin()
         {
             ViewBag.cookie = Request.Cookies["UserName"];
-            
+            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -269,7 +277,7 @@ namespace ExpressBase.Web2.Controllers
         [Microsoft.AspNetCore.Mvc.Route("/login/{cid}")]
         public IActionResult Signin(string cid)
         {
-            
+            ViewBag.EbConfig = this.EbConfig;
             ViewBag.cookie = Request.Cookies["UserName"];
             ViewBag.cid = cid;
             return View();
@@ -278,6 +286,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public async Task<IActionResult> Signin(int i)
         {
+            ViewBag.EbConfig = this.EbConfig;
             var req = this.HttpContext.Request.Form;
             AuthenticateResponse authResponse = null;
 
@@ -363,7 +372,8 @@ namespace ExpressBase.Web2.Controllers
         }
         [HttpGet]
         public IActionResult TenantSignup()
-        {  
+        {
+            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -371,6 +381,7 @@ namespace ExpressBase.Web2.Controllers
         public async Task<IActionResult> TenantSignup(int i)
         {
             var req = this.HttpContext.Request.Form;
+            ViewBag.EbConfig = this.EbConfig;
             ViewBag.cid = "";
             string token = req["g-recaptcha-response"];
             Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
@@ -434,6 +445,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public async Task<IActionResult> Facebook()
         {
+            ViewBag.EbConfig = this.EbConfig;
             if (string.IsNullOrEmpty(HttpContext.Request.Query["access_token"])) return View(); //ERROR! No token returned from Facebook!!
             FacebookUser data = await GetFacebookUserJSON(HttpContext.Request.Query["access_token"]);
 
@@ -462,6 +474,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public async Task<IActionResult> Google()
         {
+            ViewBag.EbConfig = this.EbConfig;
             if (string.IsNullOrEmpty(HttpContext.Request.Query["accessToken"])) return View();
             GoogleUser oUser = await GetGoogleUserJSON(HttpContext.Request.Query["accessToken"]);
             Dictionary<string, Object> Dict = (from x in oUser.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(oUser, null) == null ? "" : x.GetGetMethod().Invoke(oUser, null)));
@@ -492,6 +505,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantProfile()
         {
             ViewBag.logtype = HttpContext.Request.Query["t"];
+            ViewBag.EbConfig = this.EbConfig;
             ViewBag.TId = Convert.ToInt32(HttpContext.Request.Query["Id"]);
 
 
@@ -501,6 +515,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult TenantProfile(int i)
         {
+            ViewBag.EbConfig = this.EbConfig;
             var req = this.HttpContext.Request.Form;
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
@@ -550,10 +565,12 @@ namespace ExpressBase.Web2.Controllers
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            ViewBag.EbConfig = this.EbConfig;
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
             ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             ViewBag.token = token;
-            var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            //  var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            var redisClient = this.EbConfig.GetRedisClient();
             redisClient.Set<string>("token",token);
             Objects.EbForm _form = null;
             IServiceClient client = this.EbConfig.GetServiceStackClient(); 
@@ -597,7 +614,9 @@ namespace ExpressBase.Web2.Controllers
 
             var req = this.HttpContext.Request.Form;
             var fid = Convert.ToInt32(req["fId"]);
-            var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            // var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+            var redisClient = this.EbConfig.GetRedisClient();
+            ViewBag.EbConfig = this.EbConfig;
             Objects.EbForm _form = redisClient.Get<Objects.EbForm>(string.Format("form{0}", fid));
             bool b = _form.IsUpdate;
             ViewBag.EbForm = _form;

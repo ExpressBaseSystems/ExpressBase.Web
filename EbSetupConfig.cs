@@ -24,7 +24,7 @@ namespace ExpressBase.Web2
 
         public RedisClient GetRedisClient()
         {
-            return new RedisClient(this.RedisServer, this.RedisPort, this.RedisPassword);
+            return new RedisClient(new Uri(string.Format("redis://{0}@{1}:{2}?ssl=true", this.RedisPassword, this.RedisServer, this.RedisPort)));
         }
     }
 }

@@ -2,14 +2,14 @@
 @using ServiceStack.Redis;
 @using ExpressBase.Security;
 @{
-
-    var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+    var EbConfig = ViewBag.EbConfig;
+    var redisClient = EbConfig.GetRedisClient();
     string imgpro="";
     var __tmpStr = "";
     WebPageLoginStateTypes __state = WebPageLoginStateTypes.TenantExt;
     if (string.IsNullOrEmpty(ViewBag.cid))
     {
-       __tmpStr = "<ul class='list-group' style='list-style-type: none;'> <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li> <li class='list-group-item'><a href='#'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> <li class='list-group-item'><a href='TenantSignup'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>  </ul>";
+        __tmpStr = "<ul class='list-group' style='list-style-type: none;'> <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li> <li class='list-group-item'><a href='#'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> <li class='list-group-item'><a href='TenantSignup'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>  </ul>";
         if (ViewBag.UId!=null)
         {
             string profileimg = string.Format("uid_{0}_profileimage", ViewBag.UId);

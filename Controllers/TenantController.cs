@@ -48,6 +48,7 @@ namespace ExpressBase.Web2.Controllers
         {
             // var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
             var redisClient = this.EbConfig.GetRedisClient();
+            redisClient.Set<string>("ss", "ddd");
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;

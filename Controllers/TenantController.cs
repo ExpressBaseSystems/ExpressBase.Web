@@ -46,7 +46,6 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult TenantDashboard()
         {
-            // var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
             var redisClient = this.EbConfig.GetRedisClient();
             redisClient.Set<string>("ss", "ddd");
             var token = Request.Cookies["Token"];
@@ -570,7 +569,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
             ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             ViewBag.token = token;
-            //  var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+
             var redisClient = this.EbConfig.GetRedisClient();
             redisClient.Set<string>("token",token);
             Objects.EbForm _form = null;
@@ -615,7 +614,7 @@ namespace ExpressBase.Web2.Controllers
 
             var req = this.HttpContext.Request.Form;
             var fid = Convert.ToInt32(req["fId"]);
-            // var redisClient = new RedisClient("139.59.39.130", 6379, "Opera754$");
+
             var redisClient = this.EbConfig.GetRedisClient();
             ViewBag.EbConfig = this.EbConfig;
             Objects.EbForm _form = redisClient.Get<Objects.EbForm>(string.Format("form{0}", fid));

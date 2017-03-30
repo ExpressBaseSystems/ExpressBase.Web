@@ -66,6 +66,12 @@ function repopulate_filter_arr(table) {
             }
         }
     });
+
+    //$('thead:eq(0) [data-toggle=toggle]').each(function (i) {
+    //    var boolval = ($(this).checked) ? true : false;
+    //    var colname = $(this).attr('data-colum');
+
+    //});
     return filter_obj_arr;
 }
 
@@ -106,15 +112,22 @@ function showOrHideFilter(objbtn, scrolly) {
         $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
     else
         $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
-    clearFilter(tableid);
 
+    clearFilter(tableid);
     $('#' + tableid + '_tbl').DataTable().columns.adjust();
 }
 
 function clearFilter(tableid) {
+    flag = false;
     $('.' + tableid + '_htext').each(function (i) {
-        $(this).val('');
+        if ($(this).val() !== '') {
+            $(this).val('');
+            flag = true;
+        }
+        
     });
+    if(flag)
+        $('#' + tableid + '_tbl').DataTable().ajax.reload();
 }
 
 function updateAlSlct(objchk) {
@@ -236,6 +249,11 @@ function setLiValue(objli) {
     $(objli).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
 }
 
+function toggleInFilter(obj)
+{
+    console.log('huuu');
+}
+
 function renderProgressCol(data) {
     return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'></div></div>";
 }
@@ -245,8 +263,8 @@ function renderCheckBoxCol(datacolumns, tableid, row) {
     return "<input type='checkbox' name='" + tableid + "_id' value='" + row[idpos].toString() + "' data-table='" + tableid + "' onclick='updateAlSlct(this);' />";
 }
 
-function renderEbVoidCol() {
-    return "<div class='checkbox'><input type='checkbox' data-toggle='toggle'></div>";
+function renderEbVoidCol(data) {
+    return (data === true) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
 }
 //datacolumns, data, meta, colname
 function lineGraphDiv(data) {
@@ -349,7 +367,12 @@ function renderLineGraphs(id) {
 }
 
 function renderLockCol(data) {
-    return (data === 'true') ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "<i class='fa fa-unlock' aria-hidden='true'></i>";
+    return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
+}
+
+function renderToggleCol(data) {
+    alert(data);
+    return (data === true) ? "<input type='checkbox' data-toggle='toggle' checked>" : "<input type='checkbox' data-toggle='toggle'>";
 }
 
 function GPointPopup(e) {

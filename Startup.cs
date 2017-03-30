@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServiceStack;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace ExpressBase.Web2
 {
@@ -71,8 +72,17 @@ namespace ExpressBase.Web2
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute("login", "login/{*clientid}", defaults: new { controller = "Tenant", action = "Signin" });
-                routes.MapRoute("default", "{controller=Tenant}/{action=tenantsignup}");
+                // routes.MapRoute("login", "{*clientid}", defaults: new { controller = "TenantUser", action = "TenantUserLogin" });
+
+                routes.MapRoute(
+                 name: "tenantuser",
+                 template: "{clientid}",
+                 defaults: new { controller = "TenantUser", action = "TenantUserLogin" }
+                );
+
+                routes.MapRoute(
+    name: "default",
+    template: "{controller=Tenant}/{action=tenantsignup}");
             });
         }
     }

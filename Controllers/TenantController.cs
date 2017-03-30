@@ -47,16 +47,15 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantDashboard()
         {
             var redisClient = this.EbConfig.GetRedisClient();
-            redisClient.Set<string>("ss", "ddd");
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
             ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
-            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.UId =Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" });
+            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" ,Token=token});
             if(string.IsNullOrEmpty(ViewBag.cid))
             { 
                 foreach (int element in fr.dict.Keys)
@@ -153,7 +152,7 @@ namespace ExpressBase.Web2.Controllers
                             dict.Add("profilelogo", imgbase);
                             dict.Add("id", id);
                             IServiceClient imgclient = this.EbConfig.GetServiceStackClient(); 
-                            var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "accountimg", Colvalues = dict });
+                            var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "accountimg", Colvalues = dict,Token=token });
                         }
                     }
                 }
@@ -162,7 +161,7 @@ namespace ExpressBase.Web2.Controllers
             else
             {
                 IServiceClient client = this.EbConfig.GetServiceStackClient(); 
-                var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert",TId=Convert.ToInt32(id) });
+                var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert",TId=Convert.ToInt32(id),Token=token });
                 if (res.id>=0)
                 {
                     return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"],aid= res.id }));
@@ -187,7 +186,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.token = token;
             ViewBag.EbConfig = this.EbConfig;
             IServiceClient client = this.EbConfig.GetServiceStackClient(); 
-            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId });
+            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId ,Token=token});
             ViewBag.dict = fr.dict;
             return View();
             //JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
@@ -559,79 +558,7 @@ namespace ExpressBase.Web2.Controllers
                 }
         }
 
-        [HttpGet]
-        public IActionResult f(int fid, int id)
-        {
-            var token = Request.Cookies["Token"];
-            var handler = new JwtSecurityTokenHandler();
-            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
-            ViewBag.EbConfig = this.EbConfig;
-            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
-            ViewBag.token = token;
-
-            var redisClient = this.EbConfig.GetRedisClient();
-            redisClient.Set<string>("token",token);
-            Objects.EbForm _form = null;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
-            var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fid, Token = token });
-            if (id > 0)
-            {
-                if (fr.Data.Count > 0)
-                {
-                    _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis();
-                    _form.IsUpdate = true;
-                    redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
-                }
-                string html = string.Empty;
-                var vr = client.Get<ViewResponse>(new View { TableId = _form.Table.Id, ColId = id, FId = fid });
-                redisClient.Set<EbForm>("cacheform", vr.ebform);
-                ViewBag.EbForm = vr.ebform;
-                ViewBag.FormId = fid;
-                ViewBag.DataId = id;
-                return View();
-            }
-            else
-            {
-                if (fr.Data.Count > 0)
-                {
-                    _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis();
-                    _form.IsUpdate = false;
-                    redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
-                }
-                ViewBag.EbForm = _form;
-                ViewBag.FormId = fid;
-                ViewBag.DataId = id;
-                return View();
-            }
-        }
-
-        [HttpPost]
-        public IActionResult f()
-        {
-
-            var req = this.HttpContext.Request.Form;
-            var fid = Convert.ToInt32(req["fId"]);
-
-            var redisClient = this.EbConfig.GetRedisClient();
-            ViewBag.EbConfig = this.EbConfig;
-            Objects.EbForm _form = redisClient.Get<Objects.EbForm>(string.Format("form{0}", fid));
-            bool b = _form.IsUpdate;
-            ViewBag.EbForm = _form;
-            ViewBag.FormId = fid;
-            ViewBag.formcollection = req as FormCollection;
-            //bool bStatus = Insert(req as FormCollection);
-
-            //if (bStatus)
-            //    return RedirectToAction("masterhome", "Sample");
-            //else
-            //    return RedirectToAction("Index", "Home");
-
-            return View();
-        }
-
+        
         public IActionResult UserPreferences()
         {
             return View();

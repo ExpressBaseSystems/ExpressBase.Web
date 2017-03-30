@@ -1,0 +1,27 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ServiceStack;
+
+@{
+    EbObjectResponse fr = null;
+    var EbConfig = ViewBag.EbConfig;
+    if (EbConfig != null && (!string.IsNullOrEmpty(ViewBag.cid)))
+    {
+        IServiceClient client = EbConfig.GetServiceStackClient();
+        fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
+    }
+}
+
+<ul class="sidebar-nav list-group" style="list-style-type: none;">
+    @{  if (fr != null)
+        {
+            foreach (var f in fr.Data)
+            {
+                string fname = f.Name;
+                string formid = string.Format("f?fid={0}", f.Id);
+                <li class="list-group-item"><a href="@formid"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; @fname</a></li>
+
+            }
+        }
+    }
+
+</ul>

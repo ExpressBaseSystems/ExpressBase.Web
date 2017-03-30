@@ -34,123 +34,123 @@
     
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <style>
-                .nopadding {
-                    padding: 0 !important;
-                }
+        .nopadding {
+            padding: 0 !important;
+        }
 
-                .nomargin {
-                    margin: 0 !important;
-                }
+        .nomargin {
+            margin: 0 !important;
+        }
 
-                .content_custom {
-                    margin-top: 60px;
-                }
+        .content_custom {
+            margin-top: 60px;
+        }
 
-                a:link {
+        a:link {
+            text-decoration: none;
+        }
+
+        a:visited {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        a:active {
+            text-decoration: none;
+        }
+
+        #wrapper {
+            padding-left: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+            #wrapper.toggled {
+                padding-left: 250px;
+            }
+
+        #sidebar-wrapper {
+            position: fixed;
+            left: 250px;
+            z-index: 1000;
+            overflow-y: auto;
+            margin-left: -250px;
+            width: 0;
+            height: 100%;
+            background: #fff;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            max-width: 200px;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            width: 250px;
+        }
+
+        #page-content-wrapper {
+            padding: 15px;
+            width: 100%;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            position: absolute;
+            margin-right: -250px;
+        }
+
+        /* Sidebar Styles */
+
+        .sidebar-nav {
+            position: absolute;
+            top: 0;
+            margin: 0;
+            padding: 0;
+            width: 250px;
+            list-style: none;
+        }
+
+            .sidebar-nav li {
+                text-indent: 20px;
+                line-height: 40px;
+            }
+
+                .sidebar-nav li a {
+                    display: block;
+                    color: #000;
                     text-decoration: none;
                 }
 
-                a:visited {
-                    text-decoration: none;
-                }
-
-                a:hover {
-                    text-decoration: none;
-                }
-
-                a:active {
-                    text-decoration: none;
-                }
-
-                #wrapper {
-                    padding-left: 0;
-                    -webkit-transition: all 0.5s ease;
-                    -moz-transition: all 0.5s ease;
-                    -o-transition: all 0.5s ease;
-                    transition: all 0.5s ease;
-                }
-
-                    #wrapper.toggled {
-                        padding-left: 250px;
-                    }
-
-                #sidebar-wrapper {
-                    position: fixed;
-                    left: 250px;
-                    z-index: 1000;
-                    overflow-y: auto;
-                    margin-left: -250px;
-                    width: 0;
-                    height: 100%;
-                    background: #fff;
-                    -webkit-transition: all 0.5s ease;
-                    -moz-transition: all 0.5s ease;
-                    -o-transition: all 0.5s ease;
-                    transition: all 0.5s ease;
-                    max-width: 200px;
-                }
-
-                #wrapper.toggled #sidebar-wrapper {
-                    width: 250px;
-                }
-
-                #page-content-wrapper {
-                    padding: 15px;
-                    width: 100%;
-                }
-
-                #wrapper.toggled #page-content-wrapper {
-                    position: absolute;
-                    margin-right: -250px;
-                }
-
-                /* Sidebar Styles */
-
-                .sidebar-nav {
-                    position: absolute;
-                    top: 0;
-                    margin: 0;
-                    padding: 0;
-                    width: 250px;
-                    list-style: none;
-                }
-
-                    .sidebar-nav li {
-                        text-indent: 20px;
-                        line-height: 40px;
-                    }
-
-                        .sidebar-nav li a {
-                            display: block;
-                            color: #000;
-                            text-decoration: none;
-                        }
-
-                            /*.sidebar-nav li a:hover {
+                    /*.sidebar-nav li a:hover {
             background: rgba(255, 255, 255, 0.2);
             color: #fff;
             text-decoration: none;
         }*/
 
-                            .sidebar-nav li a:active,
-                            .sidebar-nav li a:focus {
-                                text-decoration: none;
-                            }
-
-                    .sidebar-nav > .sidebar-brand {
-                        height: 65px;
-                        font-size: 18px;
-                        line-height: 60px;
+                    .sidebar-nav li a:active,
+                    .sidebar-nav li a:focus {
+                        text-decoration: none;
                     }
 
-                        .sidebar-nav > .sidebar-brand a {
-                            color: #999999;
-                        }
+            .sidebar-nav > .sidebar-brand {
+                height: 65px;
+                font-size: 18px;
+                line-height: 60px;
+            }
 
-                            .sidebar-nav > .sidebar-brand a:hover {
-                                background: none;
-                                color: #fff;
-                            }
+                .sidebar-nav > .sidebar-brand a {
+                    color: #999999;
+                }
+
+                    .sidebar-nav > .sidebar-brand a:hover {
+                        background: none;
+                        color: #fff;
+                    }
     </style>
     <script>
         $(document).ready(function () {
@@ -163,7 +163,16 @@
 </head>
 <body>
     <div class="page-header nomargin navbar-fixed-top">
-        @{ Html.RenderPartial("_PageHeader"); }
+        @{if (string.IsNullOrEmpty(ViewBag.cid))
+            {
+                Html.RenderPartial("_PageHeader");
+            }
+            else
+            {
+                Html.RenderPartial("_PageheaderTUser");
+
+            }
+        }
     </div>
     <div id="wrapper" class="toggled">
         <div class="container-fluid content_custom">
@@ -174,16 +183,22 @@
                 </ol>*@
             @if (ViewBag.Fname != null)
             {
-                    <div id="sidebar-wrapper">
-                        @{ Html.RenderPartial("_SidebarMenu");
-                        }
-                        @*</div>*@
-                    </div>
-                } 
+                <div id="sidebar-wrapper">
+                    @if (string.IsNullOrEmpty(ViewBag.cid))
+                    {
+                        Html.RenderPartial("_SidebarMenu");
+                    }
+                    else
+                    {
+                        Html.RenderPartial("_SidebarmenuTUser");
+                    }
+                    @*</div>*@
+                </div>
+            }
             <div id="page-content-wrapper">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-12 col-xs-12">
                             @RenderBody()
                             @RenderSection("EbHead", false)
                         </div>

@@ -9,6 +9,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script type="text/javascript">
+
         $(document).ready(function () {
             $('.eb_acc_dbcon_btn').click(function () {
                 var ele = $(this).attr("data-accid");
@@ -16,7 +17,7 @@
                         backdrop: 'static'
                     });
                 });
-           
+
                 $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
                     translation: {
                         'Z': {
@@ -24,141 +25,137 @@
                         }
                     }
                 });
+                $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
 </head>
-<div>
+<div class="container">
     @{
         Dictionary<int, string> dict = new Dictionary<int, string>();
         dict = ViewBag.dict;
+        <div>
+            <input type="button" class="btn btn-success" onClick="location.href='PricingSelect?id=@ViewBag.UId'" value="New Account" />
+        </div>
         foreach (var element in dict)
         {
-            <table>
-                <tr>
-                    <td>
-                        @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
-                        {
-                        <div class="bs-example">
+            <div class="tenant_account z-depth-2">
+                @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
+                {
+                    <div class="bs-example">
+                        <div class="col-xs-12 col-md-12">
+                            <label>@element.Value</label> <br />
                             <span>
-                                
-                                <input type="button" class="button4" value="@element.Value"/>
-                                <input type="button" class="button4 eb_acc_dbcon_btn" data-accid="@element.Value" value="Configure DB" />
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x eb_acc_dbcon_btn" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@element.Value" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
                             </span>
+                        </div>
 
-                            <!-- Modal HTML -->
-                            <div id="myModal" class="modal fade">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                            <h4 class="modal-title">Database Check</h4>
-                                        </div>
-                                        <div class="modal-body">
+                        <!-- Modal HTML -->
+                        <div id="myModal" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        <h4 class="modal-title">Database Check</h4>
+                                    </div>
+                                    <div class="modal-body">
 
-                                            @{
-                                                if (ViewBag.UId != null)
-                                                {
+                                        @{
+                                            if (ViewBag.UId != null)
+                                            {
                                                 int uID = ViewBag.UId;
-                                            <input type="hidden" id="id" name="id" value="@uID" />
-                                            <input type="hidden" id="acid" name="acid" value="@element.Key" />
-                                                }
-
+                                                <input type="hidden" id="id" name="id" value="@uID" />
+                                                <input type="hidden" id="acid" name="acid" value="@element.Key" />
                                             }
-                                            <table>
-                                                <tr>
-                                                    <td><div class="tdd">Database Name</div></td>
-                                                    <td><div class="tdd"><input type="text" id="dbname" name="dbname" required /></div></td>
 
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Server IP</div></td>
-                                                    <td><div class="tdd"><input type="text" id="sip" name="sip" required /></div></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Port Number</div></td>
-                                                    <td><div class="tdd"><input type="text" id="pnum" name="pnum" required /></div></td>
-                                                    <td><span id="result"></span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Username</div></td>
-                                                    <td><div class="tdd"><input type="text" id="duname" name="duname" required /></div></td>
-                                                    <td><span id="result"></span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Password</div></td>
-                                                    <td><div class="tdd"><input type="password" id="pwd" name="pwd" required /></div></td>
-                                                    <td><span id="result"></span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Time Out</div></td>
-                                                    <td><div class="tdd"><input type="text" id="tout" name="tout" required /></div></td>
-                                                    <td><span id="result"></span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div><input type="submit" value="Test" /></div></td>
-                                                    @*
+                                        }
+                                        <table>
+                                            <tr>
+                                                <td><div class="tdd">Database Name</div></td>
+                                                <td><div class="tdd"><input type="text" id="dbname" name="dbname" required /></div></td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Server IP</div></td>
+                                                <td><div class="tdd"><input type="text" id="sip" name="sip" required /></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Port Number</div></td>
+                                                <td><div class="tdd"><input type="text" id="pnum" name="pnum" required /></div></td>
+                                                <td><span id="result"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Username</div></td>
+                                                <td><div class="tdd"><input type="text" id="duname" name="duname" required /></div></td>
+                                                <td><span id="result"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Password</div></td>
+                                                <td><div class="tdd"><input type="password" id="pwd" name="pwd" required /></div></td>
+                                                <td><span id="result"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Time Out</div></td>
+                                                <td><div class="tdd"><input type="text" id="tout" name="tout" required /></div></td>
+                                                <td><span id="result"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div><input type="submit" value="Test" /></div></td>
+                                                @*
                                                     <td>Currently you are using same databese for all file.If you want to add more databases</td>*@
-                                                </tr>
-                                            </table>
-                                        </div>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                                                }
-                        @if (ViewBag.Message != null)
-                        {
-                        <script type="text/javascript">
+                    </div>
+                                            }
+                @if (ViewBag.Message != null)
+                {
+                    <script type="text/javascript">
                             window.onload = function () {
                                 alert("@ViewBag.Message");
                             };
-                        </script>
-                        }
+                    </script>
+                }
 
 
-                    </td>
-                    @*
-                    <td>
-                        <div>
-                            <button class="button4"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                            <span>@element</span>
-                        </div>
-                    </td>*@
-                </tr>
-            </table>
-        }
-     }
-           <table>
-                <tr>
-                    <td>
-                        <div>
-                            <button class="button4" onClick="location.href='PricingSelect?id=@ViewBag.UId'"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                            <span>Add account</span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-                          
+            </div>
+                                            }
+    }
 </div>
 
 
 <style>
-    .button4 {
-        background-color: white;
-        color: black;
-        border: 2px solid #e7e7e7;
-        padding: 20px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        width: 150px;
-    }
-
     .tdd {
         margin: 10px;
         width: 250px;
     }
+
+    .tenant_account {
+        width: 50%;
+        background: #fff;
+        border-radius: 2px;
+        display: inline-block;
+        height: 300px;
+        margin: 1rem;
+        position: relative;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        border-radius: 10px;
+    }
+
+        .tenant_account:hover {
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
 </style>

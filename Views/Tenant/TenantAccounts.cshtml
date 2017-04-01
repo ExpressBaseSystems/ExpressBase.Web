@@ -10,155 +10,377 @@
     <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var navListItems = $('div.setup-panel div a'),
+                    allWells = $('.setup-content'),
+                    allNextBtn = $('.nextBtn');
+
+            allWells.hide();
+
+            navListItems.click(function (e) {
+                e.preventDefault();
+                var $target = $($(this).attr('href')),
+                        $item = $(this);
+
+                if (!$item.hasClass('disabled')) {
+                    navListItems.removeClass('btn-primary').addClass('btn-default');
+                    $item.addClass('btn-primary');
+                    allWells.hide();
+                    $target.show();
+                    $target.find('input:eq(0)').focus();
+                }
+            });
+
+            allNextBtn.click(function () {
+                var curStep = $(this).closest(".setup-content"),
+                    curStepBtn = curStep.attr("id"),
+                    nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
+                    curInputs = curStep.find("input[type='text'],input[type='url']"),
+                    isValid = true;
+
+                $(".form-group").removeClass("has-error");
+                for (var i = 0; i < curInputs.length; i++) {
+                    if (!curInputs[i].validity.valid) {
+                        isValid = false;
+                        $(curInputs[i]).closest(".form-group").addClass("has-error");
+                    }
+                }
+
+                if (isValid)
+                    nextStepWizard.removeAttr('disabled').trigger('click');
+            });
+
+            $('div.setup-panel div a.btn-primary').trigger('click');
+
             $('.eb_acc_dbcon_btn').click(function () {
                 var ele = $(this).attr("data-accid");
-                    $('#myModal').modal({
-                        backdrop: 'static'
-                    });
+                $('#myModal').modal({
+                    backdrop: 'static'
                 });
-           
-                $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
-                    translation: {
-                        'Z': {
-                            pattern: /[0-9]/, optional: true
-                        }
+            });
+
+            $('.users').click(function () {
+                var ele = $(this).attr("data-accid");
+                $('#acid').val(ele);
+                $('#userModal').modal({
+                    backdrop: 'static'
+                });
+            });
+
+            $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+                translation: {
+                    'Z': {
+                        pattern: /[0-9]/, optional: true
                     }
-                });
+                }
+            });
+            $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
 </head>
-<div>
-    @{
-        Dictionary<int, string> dict = new Dictionary<int, string>();
-        dict = ViewBag.dict;
-        foreach (var element in dict)
-        {
-            <table>
-                <tr>
-                    <td>
-                        @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
-                        {
-                        <div class="bs-example">
+<div class="container">
+   @{
+       List<List<object>> list = new List<List<object>>();
+       list = ViewBag.dict;
+       
+        <form>
+            <div class="row">
+                <div class="input-group input-group-lg col-md-3">
+                    <input type="text" class="form-control" placeholder="Search">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <input type="button" class="new btn btn-success" onClick="location.href='PricingSelect?id=@ViewBag.UId'" value="+ New Account" />
+                </div>
+            </div>    
+        </form>
+       foreach (var sublist in list)
+       {
+            <div class="tenant_account z-depth-2">
+                @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
+                {
+                    <div class="bs-example">
+                        <div class="col-xs-12 col-md-12">
+                            <label>@sublist[1]</label> <br/>
+                           <div>@Html.Raw(sublist[2])</div>
                             <span>
-                                
-                                <input type="button" class="button4" value="@element.Value"/>
-                                <input type="button" class="button4 eb_acc_dbcon_btn" data-accid="@element.Value" value="Configure DB" />
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x eb_acc_dbcon_btn" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x users" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
                             </span>
+                        </div>
 
-                            <!-- Modal HTML -->
-                            <div id="myModal" class="modal fade">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                            <h4 class="modal-title">Database Check</h4>
-                                        </div>
-                                        <div class="modal-body">
+                        <!-- Modal HTML -->
+                        <div id="myModal" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        <h4 class="modal-title">Database Check</h4>
+                                    </div>
+                                    <div class="modal-body">
 
-                                            @{
-                                                if (ViewBag.UId != null)
-                                                {
-                                                int uID = ViewBag.UId;
-                                            <input type="hidden" id="id" name="id" value="@uID" />
-                                            <input type="hidden" id="acid" name="acid" value="@element.Key" />
-                                                }
-
+                                        @{
+                                            if (ViewBag.UId != null)
+                                            {
+                                                var uID = ViewBag.UId;
+                                                <input type="hidden" id="id" name="id" value="@uID" />
+                                                <input type="hidden" id="acid" name="acid" />
                                             }
-                                            <table>
-                                                <tr>
-                                                    <td><div class="tdd">Database Name</div></td>
-                                                    <td><div class="tdd"><input type="text" id="dbname" name="dbname" required /></div></td>
 
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Server IP</div></td>
-                                                    <td><div class="tdd"><input type="text" id="sip" name="sip" required /></div></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Port Number</div></td>
-                                                    <td><div class="tdd"><input type="text" id="pnum" name="pnum" required /></div></td>
-                                                    <td><span id="result"></span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Username</div></td>
-                                                    <td><div class="tdd"><input type="text" id="duname" name="duname" required /></div></td>
-                                                    <td><span id="result"></span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Password</div></td>
-                                                    <td><div class="tdd"><input type="password" id="pwd" name="pwd" required /></div></td>
-                                                    <td><span id="result"></span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div class="tdd">Time Out</div></td>
-                                                    <td><div class="tdd"><input type="text" id="tout" name="tout" required /></div></td>
-                                                    <td><span id="result"></span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><div><input type="submit" value="Test" /></div></td>
-                                                    @*
-                                                    <td>Currently you are using same databese for all file.If you want to add more databases</td>*@
-                                                </tr>
-                                            </table>
+                                        }
+                                        <table>
+                                            <tr>
+                                                <td><div class="tdd">Database Name</div></td>
+                                                <td><div class="tdd"><input type="text" class="form-control" id="dbname" name="dbname" required /></div></td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Server IP</div></td>
+                                                <td><div class="tdd"><input type="text" class="form-control" id="sip" name="sip" required /></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Port Number</div></td>
+                                                <td><div class="tdd"><input type="text" class="form-control" id="pnum" name="pnum" required /></div></td>
+                                                <td><span id="result"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Username</div></td>
+                                                <td><div class="tdd"><input type="text" class="form-control" id="duname" name="duname" required /></div></td>
+                                                <td><span id="result"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Password</div></td>
+                                                <td><div class="tdd"><input type="password" class="form-control" id="pwd" name="pwd" required /></div></td>
+                                                <td><span id="result"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Time Out</div></td>
+                                                <td><div class="tdd"><input type="text" class="form-control" id="tout" name="tout" required /></div></td>
+                                                <td><span id="result"></span></td>
+                                            </tr>
+                                            @*<td>Currently you are using same databese for all file.If you want to add more databases</td>*@
+                                        </table>
+                                        <div class="modal-footer tds">
+                                            <input type="submit" value="Test" class="btn-block btn-primary" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                                                }
                         @if (ViewBag.Message != null)
                         {
-                        <script type="text/javascript">
-                            window.onload = function () {
-                                alert("@ViewBag.Message");
-                            };
-                        </script>
+                            <script type="text/javascript">
+                        window.onload = function () {
+                            alert("@ViewBag.Message");
+                        };
+                            </script>
                         }
 
+                        <!-- UserModal HTML -->
+                        <div id="userModal" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        <h4 class="modal-title">Invite Users</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table>
+                                            <tr>
+                                                <td><div class="tdd">Email Address</div></td>
+                                                <td><div class="tdd"><input type="text" class="form-control" id="email" name="email" required /></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div class="tdd">Role</div></td>
+                                                <td>
+                                                    <select class="tdd form-control" id="role" name="role" required>
+                                                        <option value="1">Project Manager/System Admin</option>
+                                                        <option value="2">Developer</option>
+                                                        <option value="3">Tester</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div class="modal-footer tds">
+                                            <input type="submit" value="Invite" class="btn-primary btn-block" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                    </td>
-                    @*
-                    <td>
-                        <div>
-                            <button class="button4"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                            <span>@element</span>
+                        <!-- wizard HTML -->
+                        <div id="user1Modal" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        <h4 class="modal-title">Invite Users</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="stepwizard col-md-offset-3">
+                                            <div class="stepwizard-row setup-panel">
+                                                <div class="stepwizard-step">
+                                                    <a href="#step-1" type="button" class="btn btn-primary btn-circle">1</a>
+                                                    <p>Step 1</p>
+                                                </div>
+                                                <div class="stepwizard-step">
+                                                    <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+                                                    <p>Step 2</p>
+                                                </div>
+                                                <div class="stepwizard-step">
+                                                    <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
+                                                    <p>Step 3</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <form role="form" action="" method="post">
+                                            <div class="row setup-content" id="step-1">
+                                                <div class="col-xs-6 col-md-offset-3">
+                                                    <div class="col-md-12">
+                                                        <h3> Step 1</h3>
+                                                        <div class="form-group">
+                                                            <label class="control-label">First Name</label>
+                                                            <input maxlength="100" type="text" required="required" class="form-control" placeholder="Enter First Name" />
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Last Name</label>
+                                                            <input maxlength="100" type="text" required="required" class="form-control" placeholder="Enter Last Name" />
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Address</label>
+                                                            <textarea required="required" class="form-control" placeholder="Enter your address"></textarea>
+                                                        </div>
+                                                        <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row setup-content" id="step-2">
+                                                <div class="col-xs-6 col-md-offset-3">
+                                                    <div class="col-md-12">
+                                                        <h3> Step 2</h3>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Company Name</label>
+                                                            <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Name" />
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Company Address</label>
+                                                            <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Address" />
+                                                        </div>
+                                                        <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row setup-content" id="step-3">
+                                                <div class="col-xs-6 col-md-offset-3">
+                                                    <div class="col-md-12">
+                                                        <h3> Step 3</h3>
+                                                        <button class="btn btn-success btn-lg pull-right" type="submit">Submit</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </td>*@
-                </tr>
-            </table>
-        }
-     }
-           <table>
-                <tr>
-                    <td>
-                        <div>
-                            <button class="button4" onClick="location.href='PricingSelect?id=@ViewBag.UId'"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                            <span>Add account</span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-                          
+                    </div>
+             }
+            </div>
+         }
+    }
 </div>
+    <style>
+        .new{
+            float:right;
+            margin-right:50%;
+        }
+        .prologo{
+        width:20%;
+        height:20%
 
+        }
+        .tdd {
+            margin: 10px;
+            width: 250px;
+        }
 
-<style>
-    .button4 {
-        background-color: white;
-        color: black;
-        border: 2px solid #e7e7e7;
-        padding: 20px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        width: 150px;
-    }
+        .tds { 
+            margin-top: 50px;
+        }
 
-    .tdd {
-        margin: 10px;
-        width: 250px;
-    }
-</style>
+        .tenant_account {
+            width: 50%;
+            background: #fff;
+            border-radius: 2px;
+            display: inline-block;
+            height: 300px;
+            margin: 1rem;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            border-radius: 10px;
+        }
+
+            .tenant_account:hover {
+                box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            }
+
+        .stepwizard-step p {
+            margin-top: 10px;
+        }
+
+        .stepwizard-row {
+            display: table-row;
+        }
+
+        .stepwizard {
+            display: table;
+            width: 50%;
+            position: relative;
+        }
+
+        .stepwizard-step button[disabled] {
+            opacity: 1 !important;
+            filter: alpha(opacity=100) !important;
+        }
+
+        .stepwizard-row:before {
+            top: 14px;
+            bottom: 0;
+            position: absolute;
+            content: " ";
+            width: 100%;
+            height: 1px;
+            background-color: #ccc;
+            z-order: 0;
+        }
+
+        .stepwizard-step {
+            display: table-cell;
+            text-align: center;
+            position: relative;
+        }
+
+        .btn-circle {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 12px;
+            line-height: 1.428571429;
+            border-radius: 15px;
+        }
+    </style>

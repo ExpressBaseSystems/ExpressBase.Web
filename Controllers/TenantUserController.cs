@@ -141,13 +141,13 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.token = token;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" ,Token=token});
-            if (string.IsNullOrEmpty(ViewBag.cid))
-            {
-                foreach (int element in fr.dict.Keys)
-                {
-                    redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
-                }
-            }
+            //if (string.IsNullOrEmpty(ViewBag.cid))
+            //{
+            //    foreach (int element in fr.dict.Keys)
+            //    {
+            //        redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
+            //    }
+            //}
 
             ViewBag.EbConfig = this.EbConfig;
             return View();

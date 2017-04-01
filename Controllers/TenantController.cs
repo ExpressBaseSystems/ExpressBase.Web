@@ -52,17 +52,17 @@ namespace ExpressBase.Web2.Controllers
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
             ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
-            ViewBag.UId =Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" ,Token=token});
-            if(string.IsNullOrEmpty(ViewBag.cid))
-            { 
-                foreach (int element in fr.dict.Keys)
-                {
-                    redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
-                }
-            }
+            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img", Token = token });
+            //if (string.IsNullOrEmpty(ViewBag.cid))
+            //{
+            //    foreach (int element in fr.dict.Keys)
+            //    {
+            //        redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
+            //    }
+            //}
 
             ViewBag.EbConfig = this.EbConfig;
             return View();
@@ -73,7 +73,7 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.EbConfig = this.EbConfig;
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
             var res = client.Post<bool>(new DbCheckRequest { CId = Convert.ToInt32(req["id"]), DBColvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
             if (res)
             {
@@ -103,16 +103,16 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult PricingSelect(int i)
         {
-           
+
             var req = this.HttpContext.Request.Form;
             ViewBag.EbConfig = this.EbConfig;
-            return RedirectToAction("TenantAddAccount", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAddAccount",tier= req["tier"],id=req["tenantid"] }));
+            return RedirectToAction("TenantAddAccount", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAddAccount", tier = req["tier"], id = req["tenantid"] }));
         }
 
         [HttpGet]
         public IActionResult TenantAddAccount()
         {
-            
+
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
@@ -127,67 +127,41 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult TenantAddAccount(int i)
         {
+
             var req = this.HttpContext.Request.Form;
             var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             ViewBag.EbConfig = this.EbConfig;
             var id = tokenS.Claims.First(claim => claim.Type == "uid").Value;
-            if (Request.Form.Files.Count > 0)
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert", Token = token });
+            if (res.id >= 0)
             {
-                var files = Request.Form.Files;
+                return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"], aid = res.id }));
 
-                Dictionary<string, object> dict = new Dictionary<string, object>();
-                foreach (var file in files)
-                {
-                    if (file.Length > 0)
-                    {
-                        using (var fileStream = file.OpenReadStream())
-                        using (var ms = new MemoryStream())
-                        {
-                            fileStream.CopyTo(ms);
-                            var fileBytes = ms.ToArray();
-                            string img = Convert.ToBase64String(fileBytes);
-                            string imgbase = Convert.ToBase64String(fileBytes);
-                            dict.Add("profilelogo", imgbase);
-                            dict.Add("id", id);
-                            IServiceClient imgclient = this.EbConfig.GetServiceStackClient(); 
-                            var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "accountimg", Colvalues = dict,Token=token });
-                        }
-                    }
-                }
-                return View();
             }
             else
             {
-                IServiceClient client = this.EbConfig.GetServiceStackClient(); 
-                var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert",TId=Convert.ToInt32(id),Token=token });
-                if (res.id>=0)
-                {
-                    return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"],aid= res.id }));
 
-                }
-                else
-                {
-                    
-                    return View();
-                }
+                return View();
             }
+
         }
         [HttpGet]
         public IActionResult TenantAccounts()
         {
-              var token = Request.Cookies["Token"];
+            var token = Request.Cookies["Token"];
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
+            ViewBag.UId = tokenS.Claims.First(claim => claim.Type == "uid").Value;
             ViewBag.accountid = HttpContext.Request.Query["aid"];
             ViewBag.token = token;
             ViewBag.EbConfig = this.EbConfig;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
-            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId ,Token=token});
-            ViewBag.dict = fr.dict;
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var fr = client.Get<GetAccountResponse>(new GetAccount {Uid = Convert.ToInt32(ViewBag.UId), Token = token });
+            ViewBag.dict = fr.returnlist;
             return View();
             //JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
             //var res = client.Get<AccountResponse>(new Services.GetAccount { Uid = ViewBag.UId });
@@ -209,8 +183,8 @@ namespace ExpressBase.Web2.Controllers
             //var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId });
             //ViewBag.List = fr.aclist;
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
-            var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "Dbcheck", TId = Convert.ToInt32(ViewBag.UId) });
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "Dbcheck", TId = Convert.ToInt32(ViewBag.UId),Token=token });
             if (res.id >= 0)
             {
                 return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"] }));
@@ -221,9 +195,9 @@ namespace ExpressBase.Web2.Controllers
                 return View();
             }
 
-            
+
         }
-          
+
 
         public IActionResult TenantHome()
         {
@@ -269,6 +243,9 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.cookie = Request.Cookies["UserName"];
             ViewBag.EbConfig = this.EbConfig;
+            //IServiceClient client = this.EbConfig.GetServiceStackClient();
+            //var fr = client.Get<GetAccountResponse>(new GetAccount { Uname = ViewBag.cookie, restype = "homeimg" });
+            //ViewBag.dict = fr.dict;
             return View();
         }
 
@@ -322,9 +299,9 @@ namespace ExpressBase.Web2.Controllers
             //}
             //else
             {
-            try
-            {
-                var authClient = this.EbConfig.GetServiceStackClient();
+                try
+                {
+                    var authClient = this.EbConfig.GetServiceStackClient();
                     authResponse = authClient.Send(new Authenticate
                     {
                         provider = MyJwtAuthProvider.Name,
@@ -346,28 +323,28 @@ namespace ExpressBase.Web2.Controllers
 
                     //authResponse = authClient.Send(authreq);
                 }
-            catch (WebServiceException wse)
-            {
-                return View();
-            }
-            catch (Exception wse)
-            {
-                return View();
-            }
+                catch (WebServiceException wse)
+                {
+                    return View();
+                }
+                catch (Exception wse)
+                {
+                    return View();
+                }
 
-            if (authResponse != null && authResponse.ResponseStatus != null
-                && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
-                return View();
-           
-            CookieOptions options = new CookieOptions();
+                if (authResponse != null && authResponse.ResponseStatus != null
+                    && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+                    return View();
 
-            Response.Cookies.Append("Token", authResponse.BearerToken, options);
-           
-            if (req.ContainsKey("remember"))
-                Response.Cookies.Append("UserName", req["uname"], options);
-              return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard",id= authResponse.UserId }));
-  
-        }
+                CookieOptions options = new CookieOptions();
+
+                Response.Cookies.Append("Token", authResponse.BearerToken, options);
+
+                if (req.ContainsKey("remember"))
+                    Response.Cookies.Append("UserName", req["uname"], options);
+                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", id = authResponse.UserId }));
+
+            }
         }
         [HttpGet]
         public IActionResult TenantSignup()
@@ -415,8 +392,8 @@ namespace ExpressBase.Web2.Controllers
             }
             else
             {
-                
-                IServiceClient client = this.EbConfig.GetServiceStackClient(); 
+
+                IServiceClient client = this.EbConfig.GetServiceStackClient();
                 var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
@@ -427,9 +404,9 @@ namespace ExpressBase.Web2.Controllers
                 {
                     return View();
                 }
-            } 
+            }
         }
-        private static async Task<Recaptcha> RecaptchaResponse(string secret,string token)
+        private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
         {
 
             string url = string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token);
@@ -449,7 +426,7 @@ namespace ExpressBase.Web2.Controllers
             FacebookUser data = await GetFacebookUserJSON(HttpContext.Request.Query["access_token"]);
 
             Dictionary<string, Object> Dict = (from x in data.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(data, null) == null ? "" : x.GetGetMethod().Invoke(data, null)));
-            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
             var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "fb" });
             if (res.id >= 0)
             {
@@ -477,12 +454,12 @@ namespace ExpressBase.Web2.Controllers
             if (string.IsNullOrEmpty(HttpContext.Request.Query["accessToken"])) return View();
             GoogleUser oUser = await GetGoogleUserJSON(HttpContext.Request.Query["accessToken"]);
             Dictionary<string, Object> Dict = (from x in oUser.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(oUser, null) == null ? "" : x.GetGetMethod().Invoke(oUser, null)));
-            IServiceClient client = this.EbConfig.GetServiceStackClient(); 
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
             var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "G+" });
             if (res.id >= 0)
             {
-               
-                return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id,t = 2}));
+
+                return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id, t = 2 }));
 
             }
             return View();
@@ -520,45 +497,45 @@ namespace ExpressBase.Web2.Controllers
             var handler = new JwtSecurityTokenHandler();
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             var id = tokenS.Claims.First(claim => claim.Type == "uid").Value;
-                if (Request.Form.Files.Count > 0)
-                {
-                    var files = Request.Form.Files;
+            if (Request.Form.Files.Count > 0)
+            {
+                var files = Request.Form.Files;
 
-                    Dictionary<string, object> dict = new Dictionary<string, object>();
-                    foreach (var file in files)
+                Dictionary<string, object> dict = new Dictionary<string, object>();
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
                     {
-                        if (file.Length > 0)
+                        using (var fileStream = file.OpenReadStream())
+                        using (var ms = new MemoryStream())
                         {
-                            using (var fileStream = file.OpenReadStream())
-                            using (var ms = new MemoryStream())
-                            {
-                                fileStream.CopyTo(ms);
-                                var fileBytes = ms.ToArray();
-                                string img = Convert.ToBase64String(fileBytes);
-                                string imgbase = Convert.ToBase64String(fileBytes);
-                                dict.Add("profileimg", imgbase);
-                                dict.Add("id", id);
-                                IServiceClient imgclient = this.EbConfig.GetServiceStackClient(); 
+                            fileStream.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string img = Convert.ToBase64String(fileBytes);
+                            string imgbase = Convert.ToBase64String(fileBytes);
+                            dict.Add("profileimg", imgbase);
+                            dict.Add("id", id);
+                            IServiceClient imgclient = this.EbConfig.GetServiceStackClient();
                             var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "imgupload", Colvalues = dict });
-                            }
                         }
                     }
-                    return View();
                 }
-                else
-                {
-                    IServiceClient client = this.EbConfig.GetServiceStackClient(); 
+                return View();
+            }
+            else
+            {
+                IServiceClient client = this.EbConfig.GetServiceStackClient();
                 var res = client.Post<InfraResponse>(new InfraRequest { ltype = "update", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-                    if (res.id >= 0)
-                    {
-                        return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
+                if (res.id >= 0)
+                {
+                    return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
 
-                    }
-                    return View();
                 }
+                return View();
+            }
         }
 
-        
+
         public IActionResult UserPreferences()
         {
             return View();

@@ -4,66 +4,10 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-@*<body>
-    @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded", id = "signup_form" }))
-    {
-        
-        <style>
-            .tdd {
-                margin: 10px;
-            }
 
-            input[type="text"] {
-                display: block;
-                margin: 0;
-                width: 102%;
-                font-family: sans-serif;
-                font-size: 18px;
-                box-shadow: none;
-                border-radius: none;
-            }
-
-                input[type="text"]:focus {
-                    outline: none;
-                }
-
-            input[type="password"] {
-                display: block;
-                margin: 0;
-                width: 102%;
-                font-family: sans-serif;
-                font-size: 18px;
-                box-shadow: none;
-                border-radius: none;
-            }
-
-            input[type="text"]:focus {
-                outline: none;
-            }
-
-            input[type="submit"] {
-                background-color: #4C50AF; /* blue */
-                border: none;
-                color: white;
-                padding: 8px 42px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-            }
-
-                input[type="submit"]:hover {
-                    background-color: #337; /* blue */
-                }
-            /*body {
-                    background-image: url("http://localhost:53125/images/bgm1.jpg");
-                    background-color: #cccccc;
-                  }*/
-        </style>
-    }
-</body>*@
 <html>
 <head>
+    
 <script>
 $(document).ready(function(){
 	//$('.launch-modal').click(function(){
@@ -81,37 +25,28 @@ $(document).ready(function(){
 		    $('#myModal').modal('hide');
 		 }
         )
-$("#upload").click(function (evt) {
-            
-    var fileUpload = $("#files").get(0);
-    var files = fileUpload.files;
-		 
-    var data = new FormData();
-		    
-    for (var i = 0; i < files.length ; i++) {
-        data.append(files[i].name, files[i]);
-    }
-    $.ajax({      
-        type: "POST",
-        url: "/Tenant/TenantAddAccount",
-        contentType: false,
-        processData: false,
-        data: data,
-        success: function (message) {
-            alert("Image Uploaded Successfully");
-        },
-        error: function () {
-            alert("There was error uploading files!");
-        }
-    });
-});
 
 });
+
+
 
 function readURL(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
+        
+       
         reader.onload = function (e) {
+            var DataCollection = { 'id': $('#tenantid').val(), 'proimg': reader.result };
+            $.post('https://localhost:44377/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
+               function (data) {
+                   if (data) {
+                       $('#tenantuserid').val(data.id);
+                   }
+                   else {
+                       alert("Hii");
+                   }
+               });
+            console.log(reader.result);
             $('#img')
            .attr('src', e.target.result)
            .width(100)
@@ -119,6 +54,7 @@ function readURL(input) {
         };
 
         reader.readAsDataURL(input.files[0]);
+        
     }
 }
     </script>
@@ -133,7 +69,7 @@ function readURL(input) {
                 <div class="modal-dialog">
                     <div class="modal-content" style="height:550px">
                         <div class="modal-header">
-                            @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>*@
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                             <h4 class="modal-title">Add your account information here</h4>
                         </div>
                         <div class="modal-body">
@@ -163,7 +99,7 @@ function readURL(input) {
                                     </tr>
                                     <tr>
                                         <td><div class="tdd">Upload Account Logo</div></td>
-                                        <td><div class="tdd"><input type="file" name="alogo" id="files" accept="image/*" onchange="readURL(this)"><input type="button" id="upload" value="Upload" /></div></td>
+                                        <td><div class="tdd"><input type="file" name="alogo" id="files" accept="image/*" onchange="readURL(this)"></div></td>
                                         <td><img id="img" src="#" alt="your image1" /></td>
                                     </tr>
                                     <tr>
@@ -232,8 +168,11 @@ function readURL(input) {
                                     </tr>
                                 </table>
                                 <div>
+                                   
                                     <input type="hidden" id="tier" name="tier" value="@ViewBag.tier" />
-                                    <input type="hidden" id="tenantid" name="tenantid" value="@ViewBag.tenantid" />
+                                    <input type="hidden" id="tenantid" name="tenantid" value="@ViewBag.tenantid"/>
+                                    <input type="hidden" id="tenantuserid" name="tenantuserid" />
+                                   
                                 </div>
                             </div>
                             

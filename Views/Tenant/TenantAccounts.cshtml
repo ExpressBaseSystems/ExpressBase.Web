@@ -2,11 +2,6 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <head>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -124,9 +119,10 @@
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     var DataCollection = { 'id': $('#tenantid').val(), 'proimg': reader.result };
-                    $.post('https://localhost:44377/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
+                    $.post('https://expressbaseservicestack.azurewebsites.net/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
                        function (data) {
                            if (data) {
+                               alert(data.id);
                                $('#tenantuserid').val(data.id);
                            }
                            else {
@@ -487,8 +483,6 @@
 
                         }
             </div>
-                }
-               
             </div>
         }
      }
@@ -585,9 +579,5 @@
                     margin: 10px;
                     width: 50%;
                     height: 50%;
-                }
-
-                .selected {
-                    box-shadow: 12px 12px 22px 12px #00ff90;
                 }
             </style>

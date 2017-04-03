@@ -105,22 +105,19 @@ namespace ExpressBase.Web2.Controllers
             var fr = client.Get<GetAccountResponse>(new GetAccount {Uid = Convert.ToInt32(ViewBag.UId), Token = ViewBag.token });
             ViewBag.dict = fr.returnlist;
             return View();
-            //JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            //var res = client.Get<AccountResponse>(new Services.GetAccount { Uid = ViewBag.UId });
+           
         }
 
         [HttpPost]
         public IActionResult TenantAccounts(int i)
         {
-            //IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
-            //var fr = client.Get<AccountResponse>(new GetAccount { Uid = ViewBag.UId });
-            //ViewBag.List = fr.aclist;
+          
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "Dbcheck", TId = Convert.ToInt32(ViewBag.UId),Token= ViewBag.token });
+            var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert", Token = ViewBag.token });
             if (res.id >= 0)
             {
-                return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"] }));
+                return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"], aid = res.id }));
             }
             else
             {

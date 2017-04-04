@@ -138,6 +138,7 @@ function updateAlSlct(objchk) {
             CkFlag = false;
     });
     $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', CkFlag);
+    //$('#' + tableid + '_container tbody [type=checkbox]:checked').closest('tr').css("background-color","blue");
 }
 
 function clickAlSlct(e, objchk) {

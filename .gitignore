@@ -68,6 +68,10 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+project.json
+project_working.json
+project_publish.json
+web.config
 
 # Chutzpah Test files
 _Chutzpah*

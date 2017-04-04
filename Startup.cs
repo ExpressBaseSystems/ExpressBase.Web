@@ -82,7 +82,7 @@ namespace ExpressBase.Web2
 
                 routes.MapRoute(
     name: "default",
-    template: "{controller=Tenant}/{action=tenantsignup}");
+    template: "{controller=TenantExt}/{action=tenantsignup}");
             });
         }
     }

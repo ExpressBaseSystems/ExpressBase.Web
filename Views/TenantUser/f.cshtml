@@ -73,9 +73,15 @@
     foreach (EbControl c in _form.Controls)
     {
         head += c.GetHead();
+        if (c is EbDataGridView && ViewBag.FormId == 22)
+        {
+            (c as EbDataGridView).SetFilterForm(ViewBag.EbForm37);
+        }
+
         html += c.GetHtml();
+
+        html += "</form></div>";
     }
-    html += "</form></div>";
 }
 
 @section EbHead {

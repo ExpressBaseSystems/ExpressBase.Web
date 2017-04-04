@@ -137,7 +137,8 @@ function updateAlSlct(objchk) {
         if (!this.checked)
             CkFlag = false;
     });
-    $('#' + tableid + '_container table:eq(0) thead [type=checkbox]').prop('checked', CkFlag);
+    $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', CkFlag);
+    //$('#' + tableid + '_container tbody [type=checkbox]:checked').closest('tr').css("background-color","blue");
 }
 
 function clickAlSlct(e, objchk) {
@@ -249,13 +250,14 @@ function setLiValue(objli) {
     $(objli).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
 }
 
+
 function toggleInFilter(obj)
 {
     console.log('huuu');
 }
 
 function renderProgressCol(data) {
-    return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'></div></div>";
+    return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>";
 }
 
 function renderCheckBoxCol(datacolumns, tableid, row) {
@@ -370,9 +372,11 @@ function renderLockCol(data) {
     return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
 }
 
-function renderToggleCol(data) {
-    alert(data);
-    return (data === true) ? "<input type='checkbox' data-toggle='toggle' checked>" : "<input type='checkbox' data-toggle='toggle'>";
+function renderToggleCol(data, isEditable) {
+    if (isEditable)
+        return (data === true) ? "<input type='checkbox' data-toggle='toggle' data-size='mini'  checked>" : "<input type='checkbox' data-toggle='toggle' data-size='mini'>";
+    else
+        return (data === true) ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
 }
 
 function GPointPopup(e) {

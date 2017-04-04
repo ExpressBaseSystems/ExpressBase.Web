@@ -1,4 +1,5 @@
 ﻿/// <autosync enabled="true" />
+/// <reference path="js/bootstrap-checkbox.js" />
 /// <reference path="js/colreorderwithresize.js" />
 /// <reference path="js/datatables.colresize.js" />
 /// <reference path="js/dygraphplotters.js" />

@@ -67,7 +67,6 @@
                     backdrop: 'static'
                 });
             });
-
             $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
                 translation: {
                     'Z': {
@@ -161,7 +160,7 @@
                             <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
                             <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
                             <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x" aria-hidden="true"></i></a>
+                            <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
                         </span>
                     </div>
 

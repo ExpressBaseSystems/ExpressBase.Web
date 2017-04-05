@@ -50,7 +50,7 @@ function loginByFacebook() {
 }
 
 function FacebookLoggedIn(response) {
-    var loc = 'Tenant/Facebook';
+    var loc = '/TenantExt/Facebook';
     if (loc.indexOf('?') > -1)
         window.location = loc + '&authprv=facebook&access_token=' + response.authResponse.accessToken;
     else

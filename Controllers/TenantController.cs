@@ -34,7 +34,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantDashboard()
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img", Token = ViewBag.token });
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img", Token = ViewBag.token });
             //if (string.IsNullOrEmpty(ViewBag.cid))
             //{
             //    foreach (int element in fr.dict.Keys)
@@ -87,7 +87,7 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert", Token = ViewBag.token });
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insertaccount", Token = ViewBag.token });
             if (res.id >= 0)
             {
                 return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"], aid = res.id }));
@@ -102,7 +102,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantAccounts()
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<GetAccountResponse>(new GetAccount {Uid = Convert.ToInt32(ViewBag.UId), Token = ViewBag.token });
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = Convert.ToInt32(ViewBag.UId), Token = ViewBag.token });
             ViewBag.dict = fr.returnlist;
             return View();
            
@@ -114,7 +114,7 @@ namespace ExpressBase.Web2.Controllers
           
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var res = client.Post<AccountResponse>(new AccountRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insert", Token = ViewBag.token });
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insertaccount", Token = ViewBag.token });
             if (res.id >= 0)
             {
                 return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"], aid = res.id }));
@@ -203,7 +203,7 @@ namespace ExpressBase.Web2.Controllers
                             dict.Add("profileimg", imgbase);
                             dict.Add("id", ViewBag.UId);
                             IServiceClient imgclient = this.EbConfig.GetServiceStackClient();
-                            var imgres = imgclient.Post<InfraResponse>(new InfraRequest { ltype = "imgupload", Colvalues = dict });
+                            var imgres = imgclient.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "tenantimgupload", Colvalues = dict });
                         }
                     }
                 }
@@ -212,7 +212,7 @@ namespace ExpressBase.Web2.Controllers
             else
             {
                 IServiceClient client = this.EbConfig.GetServiceStackClient();
-                var res = client.Post<InfraResponse>(new InfraRequest { ltype = "update", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+                var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
                     return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));

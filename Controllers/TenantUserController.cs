@@ -140,7 +140,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
             ViewBag.token = token;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<GetAccountResponse>(new GetAccount { Uid = ViewBag.UId, restype = "img" ,Token=token});
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img" ,Token=token});
             //if (string.IsNullOrEmpty(ViewBag.cid))
             //{
             //    foreach (int element in fr.dict.Keys)

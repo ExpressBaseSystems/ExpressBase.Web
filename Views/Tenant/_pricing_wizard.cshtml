@@ -1,0 +1,383 @@
+﻿<head>
+    <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var navListItems = $('div.setup-panel div a'),
+                    allWells = $('.setup-content'),
+                    allNextBtn = $('.nextBtn');
+
+            allWells.hide();
+
+            navListItems.click(function (e) {
+                e.preventDefault();
+                var $target = $($(this).attr('href')),
+                        $item = $(this);
+
+                if (!$item.hasClass('disabled')) {
+                    navListItems.removeClass('btn-primary').addClass('btn-default');
+                    $item.addClass('btn-primary');
+                    allWells.hide();
+                    $target.show();
+                    $target.find('input:eq(0)').focus();
+                }
+            });
+
+            allNextBtn.click(function () {
+                var curStep = $(this).closest(".setup-content"),
+                    curStepBtn = curStep.attr("id"),
+                    nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
+                    curInputs = curStep.find("input[type='text'],input[type='url']"),
+                    isValid = true;
+
+                $(".form-group").removeClass("has-error");
+                for (var i = 0; i < curInputs.length; i++) {
+                    if (!curInputs[i].validity.valid) {
+                        isValid = false;
+                        $(curInputs[i]).closest(".form-group").addClass("has-error");
+                    }
+                }
+
+                if (isValid)
+                    nextStepWizard.removeAttr('disabled').trigger('click');
+            });
+
+            $('div.setup-panel div a.btn-primary').trigger('click');
+
+            $('.eb_acc_dbcon_btn').click(function () {
+                var ele = $(this).attr("data-accid");
+                $('#myModal').modal({
+                    backdrop: 'static'
+                });
+            });
+
+            $('.new').click(function () {
+                var ele = $(this).attr("data-accid");
+                $('#acid').val(ele);
+                $('#new').modal({
+                    backdrop: 'static'
+                });
+            });
+            $('.users').click(function () {
+                var ele = $(this).attr("data-accid");
+                $('#acid').val(ele);
+                $('#userModal').modal({
+                    backdrop: 'static'
+                });
+            });
+
+            $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+                translation: {
+                    'Z': {
+                        pattern: /[0-9]/, optional: true
+                    }
+                }
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('img').click(function () {
+                $('.selected').removeClass('selected'); // removes the previous selected class
+                $(this).addClass('selected'); // adds the class to the clicked image
+            });
+            $("#tid td").click(function () {
+                $("#tid td").removeClass("border_blue");
+                $(this).addClass("border_blue");
+            });
+        });
+        function SetValue(id) {
+
+            document.getElementById('tier').value = id;
+        }
+
+        function readURL(input) {
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var DataCollection = { 'id': $('#tenantid').val(), 'proimg': reader.result };
+                    $.post('https://expressbaseservicestack.azurewebsites.net/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
+                       function (data) {
+                           if (data) {
+                               alert(data.id);
+                               $('#tenantuserid').val(data.id);
+                           }
+                           else {
+                               alert("Hii");
+                           }
+                       });
+                    console.log(reader.result);
+                    $('#img')
+                   .attr('src', e.target.result)
+                   .width(100)
+                   .height(100);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+
+            }
+        }
+
+    </script>
+</head>
+                <div class="stepwizard col-md-offset-3">
+                    <div class="stepwizard-row setup-panel">
+                        <div class="stepwizard-step">
+                            <a href="#step-1" type="button" class="btn btn-primary btn-circle">1</a>
+                            <p>Step 1</p>
+                        </div>
+                        <div class="stepwizard-step">
+                            <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+                            <p>Step 2</p>
+                        </div>
+                        <div class="stepwizard-step">
+                            <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
+                            <p>Step 3</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row setup-content" id="step-1">
+                    <div class="col-xs-6 col-md-12">
+                        <div class="col-md-12">
+                            <h3> Step 1</h3>
+                            <div class="row">
+                                <div class="col-xs-1 col-md-3">
+                                    <table id="tid">
+                                        <tr>
+                                            <td valign="top" class="border_trans hov col-md-3">
+                                                <a id="1" href="#" name="1" onclick="SetValue(this.id)">
+                                                    <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
+                                                </a>
+                                                <h4>Free</h4>
+                                                <p>Expressbase Studio free version</p>
+                                            </td>
+                                            <td valign="top" class="border_trans hov col-md-3">
+                                                <a href="#" id="2" name="2" onclick="SetValue(this.id)">
+                                                    <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
+                                                </a>
+                                                <h4>Professional</h4>
+                                                <p>Expressbase Studio Professional version</p>
+                                            </td>
+                                            <td valign="top" class="border_trans hov col-md-3">
+                                                <a href="#" id="3" onclick="SetValue(this.id)">
+                                                    <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
+                                                </a>
+                                                <h4>Enterprise</h4>
+                                                <p>Expressbase Studio Enterprise version</p>
+                                            </td>
+                                            <td valign="top" class="border_trans hov col-md-3">
+                                                <a href="#" id="4" onclick="SetValue(this.id)">
+                                                    <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
+                                                </a>
+                                                <h4>Unlimited</h4>
+                                                <p>Expressbase Studio Unlimited version</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input type="hidden" id="tier" name="tier" />
+                                                <input type="hidden" id="tenantid" name="tenantid" value="@ViewBag.UId" />
+                                                <input type="hidden" id="tenantuserid" name="tenantuserid" />
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row setup-content" id="step-2">
+                    <div class="col-xs-6 col-md-offset-3">
+                        <div class="col-md-12">
+                            <h3> Step 2</h3>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div class="tdd">
+                                            <div class="input-group margin-bottom-sm">
+                                                <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+                                                <input class="form-control" type="text" id="accountname" name="accountname" placeholder="Account Name" required />
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="tdd">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                                <input class="form-control" type="text" id="cid" name="cid" placeholder="Client ID" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div class="tdd">Upload Account Logo</div></td>
+                                    <td><div class="tdd"><input type="file" name="alogo" id="files" accept="image/*" onchange="readURL(this)"></div></td>
+                                    <td><img id="img" src="#" alt="your image1" /></td>
+                                </tr>
+                            </table>
+                            <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row setup-content" id="step-3">
+                    <div class="col-xs-6 col-md-offset-3">
+                        <div class="col-md-12">
+                            <h3> Step 3</h3>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div class="tdd">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                                <input class="form-control" type="text" id="tenantname" name="tenantname" placeholder="Full Name" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="tdd">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                                <input class="form-control" type="text" id="address" name="address" placeholder="Address" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="tdd">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                                <input class="form-control" type="text" id="phone" name="phone" placeholder="Contact Number" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="tdd">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                                <input class="form-control" type="text" id="email" name="email" placeholder="Email" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="tdd">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                                <input class="form-control" type="text" id="website" name="website" placeholder="Website Address" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <button class="btn btn-success btn-lg pull-right" type="submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+<style>
+    .new {
+        float: right;
+        margin-right: 50%;
+    }
+
+    .prologo {
+        width: 20%;
+        height: 20%;
+    }
+
+    .tdd {
+        margin: 10px;
+        width: 100px;
+    }
+
+    .tds {
+        margin-top: 50px;
+    }
+
+    .tenant_account {
+        width: 50%;
+        background: #fff;
+        border-radius: 2px;
+        display: inline-block;
+        height: 300px;
+        margin: 1rem;
+        position: relative;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        border-radius: 10px;
+    }
+
+        .tenant_account:hover {
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+
+    .stepwizard-step p {
+        margin-top: 10px;
+    }
+
+    .stepwizard-row {
+        display: table-row;
+    }
+
+    .stepwizard {
+        display: table;
+        width: 50%;
+        position: relative;
+    }
+
+    .stepwizard-step button[disabled] {
+        opacity: 1 !important;
+        filter: alpha(opacity=100) !important;
+    }
+
+    .stepwizard-row:before {
+        top: 14px;
+        bottom: 0;
+        position: absolute;
+        content: " ";
+        width: 100%;
+        height: 1px;
+        background-color: #ccc;
+        z-order: 0;
+    }
+
+    .stepwizard-step {
+        display: table-cell;
+        text-align: center;
+        position: relative;
+    }
+
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        padding: 6px 0;
+        font-size: 12px;
+        line-height: 1.428571429;
+        border-radius: 15px;
+    }
+
+    img {
+        border: solid 0px yellow;
+        margin: 10px;
+        width: 50%;
+        height: 50%;
+    }
+
+    .hov:hover {
+        border: solid 2px blue;
+    }
+
+    .border_blue {
+        border: solid 2px blue;
+    }
+</style>

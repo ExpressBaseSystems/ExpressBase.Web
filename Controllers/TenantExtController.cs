@@ -215,7 +215,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Facebook()
-        {
+        {            
             ViewBag.EbConfig = this.EbConfig;
             if (string.IsNullOrEmpty(HttpContext.Request.Query["access_token"])) return View(); //ERROR! No token returned from Facebook!!
             FacebookUser data = await GetFacebookUserJSON(HttpContext.Request.Query["access_token"]);

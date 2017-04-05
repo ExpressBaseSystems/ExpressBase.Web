@@ -75,6 +75,7 @@
         head += c.GetHead();
         if (c is EbDataGridView && ViewBag.FormId == 22)
         {
+            head += (ViewBag.EbForm37 as EbForm).GetHead();
             (c as EbDataGridView).SetFilterForm(ViewBag.EbForm37);
         }
 

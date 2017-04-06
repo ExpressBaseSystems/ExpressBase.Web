@@ -20,8 +20,8 @@ function getFilterValues() {
         var params = paramstxt.split(',');
         $.each(params, function (i, id) {
             var v = null;
-            var dtype = $('#' + id).attr('data-type');
-            if (dtype === 'datetime') 
+            var dtype = $('#' + id).attr('data-ebtype');
+            if (dtype === '6') 
                 v = $('#' + id).val().substring(0, 10);
             else
                 v = $('#' + id).val();

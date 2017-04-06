@@ -46,8 +46,8 @@
 
               <span style='font-size:20px;'>{0}</span>
               <a href='' onclick=submitbutton() class='btn-toolbar btn-toolbar-warning fa fa-floppy-o fa-2x' id='button'></a>
-              <input type='hidden' value='datefrom,dateto' id='hiddenparams'/>
-        ", _form.Label, fid, _form.Table.Id, _form.IsUpdate);
+              <input type='hidden' value='{4}' id='hiddenparams'/>
+        ", _form.Label, fid, _form.Table.Id, _form.IsUpdate, (ViewBag.EbForm37 as EbForm).GetControlNames());
     if (_form.IsUpdate)
     {
         html += @"<a href='' onclick=deletebutton() class='btn-toolbar btn-toolbar-light fa fa-trash' id='delbtn'></a>

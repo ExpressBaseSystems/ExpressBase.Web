@@ -18,9 +18,9 @@ Array.prototype.min = function () {
 var gi = 0;
 
 function filter_obj(colu, oper, valu) {
-    this.column = colu;
-    this.operator = oper;
-    this.value = valu;
+    this.c = colu;
+    this.o = oper;
+    this.v = valu;
 }
 
 function call_filter(e, objin) {

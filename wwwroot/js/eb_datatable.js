@@ -18,9 +18,9 @@ Array.prototype.min = function () {
 var gi = 0;
 
 function filter_obj(colu, oper, valu) {
-    this.column = colu;
-    this.operator = oper;
-    this.value = valu;
+    this.c = colu;
+    this.o = oper;
+    this.v = valu;
 }
 
 function call_filter(e, objin) {
@@ -138,12 +138,10 @@ function updateAlSlct(objchk) {
             CkFlag = false;
     });
     $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', CkFlag);
-    //$('#' + tableid + '_container tbody [type=checkbox]:checked').closest('tr').css("background-color","blue");
 }
 
 function clickAlSlct(e, objchk) {
     var tableid = $(objchk).attr('data-table');
-
     if (objchk.checked)
         $('#' + tableid + '_container tbody [type=checkbox]:not(:checked)').trigger('click');
     else
@@ -175,7 +173,7 @@ function summarize2(tableId, eb_agginfo, scrollY) {
             summary_val = col.data().average();
         }
         // IF decimal places SET, round using toFixed
-        $(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val);
+        $(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val.toFixed(2));
     });
 }
 
@@ -198,7 +196,7 @@ function fselect_func(objsel, scrollY) {
         pageTotal = col.data().average();
     // IF decimal places SET, round using toFixed
 
-    $(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal);
+    $(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal.toFixed(2));
 }
 
 function colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull, columns) {

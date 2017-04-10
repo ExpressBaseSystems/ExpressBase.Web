@@ -15,17 +15,19 @@ function fltr_obj(type, name, value) {
 
 function getFilterValues() {
     var fltr_collection = [];
-    var params = [] ;
-    params = $('#hiddenparams').val().split(',');
-    $.each(params, function (i, id) {
-        var v;
-        var dtype = $('#' + id).attr('data-type');
-        if(dtype === 'datetime') {
-            v = $('#' + id).val().substring(0, 10);
-        }
-        else 
-            v = $('#' + id).val();
-        fltr_collection.push(new fltr_obj(dtype, id, v));
-    });
+    var paramstxt = $('#hiddenparams').val().trim();
+    if (paramstxt.length > 0) {
+        var params = paramstxt.split(',');
+        $.each(params, function (i, id) {
+            var v = null;
+            var dtype = $('#' + id).attr('data-ebtype');
+            if (dtype === '6') 
+                v = $('#' + id).val().substring(0, 10);
+            else
+                v = $('#' + id).val();
+            fltr_collection.push(new fltr_obj(dtype, id, v));
+        });
+    }
+
     return fltr_collection;
 }

@@ -13,7 +13,7 @@
 @using (Html.BeginForm(FormMethod.Post, new { enctype = "multipart/form-data", id = "tulog_form" }))
 {
     <body>
-        <div class="container">
+        <div class="container" style="margin-left:300px !important;width:1000px">
             <div class="card card-container">
                 
            @{ if (ViewBag.ProfileImage==null)
@@ -33,7 +33,7 @@
                     <span id="reauth-email" class="reauth-email"></span>
                     @{
                         string uname = ViewBag.cookie;
-                        <input type="text" id="uname" name="uname" value="@uname" class="form-control" placeholder="Email address" required autofocus>
+                        <input type="text" id="uname" name="uname" value="@uname" class="form-control" placeholder="Email address" required autofocus><br />
                     }
                     <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
                     <div id="remember" class="checkbox">
@@ -53,7 +53,7 @@
     </body> }
 <style>
        body, html {
-           height: 100%;
+          height: 80%;
            background-repeat: no-repeat;
        }
 

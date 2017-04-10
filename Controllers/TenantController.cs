@@ -133,7 +133,8 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantLogout()
         {
             ViewBag.Fname = null;
-            return View();
+            return RedirectToAction("TenantSignup","TenantExt");
+             
         }
 
         public IActionResult ResetPassword()

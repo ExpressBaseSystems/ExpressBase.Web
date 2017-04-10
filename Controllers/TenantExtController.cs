@@ -36,11 +36,16 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult Signin()
         {
-            ViewBag.cookie = Request.Cookies["UserName"];
             ViewBag.EbConfig = this.EbConfig;
-            //IServiceClient client = this.EbConfig.GetServiceStackClient();
-            //var fr = client.Get<GetAccountResponse>(new GetAccount { Uname = ViewBag.cookie, restype = "homeimg" });
-            //ViewBag.dict = fr.dict;
+            ViewBag.cookie = Request.Cookies["UserName"];
+            ViewBag.Userid = Request.Cookies["UId"];
+          
+            if (!string.IsNullOrEmpty(ViewBag.cookie))
+            {
+                var redisClient = EbConfig.GetRedisClient();
+                ViewBag.ProfileImage = redisClient.Get<string>(string.Format("uid_{0}_pimg", ViewBag.Userid));
+            }
+
             return View();
         }
 
@@ -136,7 +141,11 @@ namespace ExpressBase.Web2.Controllers
                 Response.Cookies.Append("Token", authResponse.BearerToken, options);
 
                 if (req.ContainsKey("remember"))
+                {
                     Response.Cookies.Append("UserName", req["uname"], options);
+                    Response.Cookies.Append("UId", authResponse.UserId, options);
+                }
+                   
                 return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", id = authResponse.UserId }));
 
             }

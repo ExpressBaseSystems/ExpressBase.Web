@@ -97,18 +97,7 @@ namespace ExpressBase.Web2.Controllers
                         Meta = new Dictionary<string, string> { { "cid", req["cid"] }, { "Login", "Client" } },
                         UseTokenCookie = true
                     });
-
-                    //var authreq = new Authenticate
-                    //{
-                    //    provider = MyJwtAuthProvider.Name,
-                    //    UserName = req["uname"],
-                    //    Password = req["pass"],
-                    //    UseTokenCookie = true
-                    //};
-                    //authreq.Meta = new Dictionary<string, string>();
-                    //authreq.Meta.Add("cid", req["cid"]);
-
-                    //authResponse = authClient.Send(authreq);
+                    
                 }
                 catch (WebServiceException wse)
                 {

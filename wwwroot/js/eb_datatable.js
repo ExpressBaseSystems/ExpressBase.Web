@@ -33,45 +33,48 @@ function repopulate_filter_arr(table) {
     $.each($('#' + table + '_tbl').DataTable().columns().header().toArray(), function (i, obj) {
         var colum = $(obj).children(0).text();
         if (colum !== '') {
-            var oper = $('#' + table + '_' + colum + '_hdr_sel').text();
+            var oper;
+            var val1, val2;
             var textid = '#' + table + '_' + colum + '_hdr_txt1';
             var type = $(textid).attr('data-coltyp');
-            var val1, val2;
-            if ($('#' + table + '_tbl').DataTable().columns(i).visible()[0]) {
-                if (oper !== '' && $(textid).val() !== '') {
-                    if (oper === 'B') {
-                        val1 = $(textid).val();
-                        val2 = $(textid).siblings('input').val();
-                    }
+            if (type == 'boolean') {
+                val1 = ($(textid).is(':checked')) ? "true" : "false";
+                if (!($(textid).is(':indeterminate')))
+                    filter_obj_arr.push(new filter_obj("INV." + colum, "=", val1));
+            }
+            else {
+                oper = $('#' + table + '_' + colum + '_hdr_sel').text();
+                if ($('#' + table + '_tbl').DataTable().columns(i).visible()[0]) {
+                    if (oper !== '' && $(textid).val() !== '') {
+                        if (oper === 'B') {
+                            val1 = $(textid).val();
+                            val2 = $(textid).siblings('input').val();
+                        }
 
-                    if (oper === 'B' && val1 !== '' && val2 !== '') {
-                        if (type === 'numeric') {
-                            filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
-                        }
-                        else if (type === 'date') {
-                            if (val2 > val1) {
-                                filter_obj_arr.push(new filter_obj(colum, ">=", val1));
-                                filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                        if (oper === 'B' && val1 !== '' && val2 !== '') {
+                            if (type === 'numeric') {
+                                filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
+                                filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
                             }
-                            else {
-                                filter_obj_arr.push(new filter_obj(colum, ">=", val2));
-                                filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                            else if (type === 'date') {
+                                if (val2 > val1) {
+                                    filter_obj_arr.push(new filter_obj(colum, ">=", val1));
+                                    filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                                }
+                                else {
+                                    filter_obj_arr.push(new filter_obj(colum, ">=", val2));
+                                    filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                                }
                             }
                         }
+                        else
+                            filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
                     }
-                    else
-                        filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
                 }
             }
         }
     });
 
-    //$('thead:eq(0) [data-toggle=toggle]').each(function (i) {
-    //    var boolval = ($(this).checked) ? true : false;
-    //    var colname = $(this).attr('data-colum');
-
-    //});
     return filter_obj_arr;
 }
 
@@ -119,29 +122,52 @@ function showOrHideFilter(objbtn, scrolly) {
 
 function clearFilter(tableid) {
     flag = false;
-    $('.' + tableid + '_htext').each(function (i) {
-        if ($(this).val() !== '') {
-            $(this).val('');
-            flag = true;
+    $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) 
+    {
+        if ($(this).hasClass(tableid + '_hchk')) {
+            if (!($(this).is(':indeterminate'))) {
+                flag = true;
+                $(this).prop("indeterminate", true);
+            }
         }
-        
+        else 
+        {
+            if ($(this).val() !== '') {
+                flag = true;
+                $(this).val('');
+            }
+        }
     });
-    if(flag)
+
+    if (flag)
         $('#' + tableid + '_tbl').DataTable().ajax.reload();
 }
 
-function updateAlSlct(objchk) {
-    var tableid = $(objchk).attr('data-table');
-    var CkFlag = true;
-    $('#' + tableid + '_container tbody [type=checkbox]').each(function (i) {
-        if (!this.checked)
-            CkFlag = false;
-    });
-    $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', CkFlag);
+function updateAlSlct(objchk, rowId) {
+    
+    var tableid = $(objchk).attr('data-table'); 
+    if (objchk.checked) {
+        $('#' + tableid + '_tbl').DataTable().rows(rowId).select();
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
+    }
+    else {
+        $('#' + tableid + '_tbl').DataTable().rows(rowId).deselect();
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
+    }
+    var CheckedCount = $('.' + tableid + '_select:checked').length;
+    var UncheckedCount = $('#' + tableid + '_tbl').DataTable().rows().count() - CheckedCount;
+    if (CheckedCount === $('#' + tableid + '_tbl').DataTable().rows().count()) {
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', true);
+    }
+    else if (UncheckedCount === $('#' + tableid + '_tbl').DataTable().rows().count()) {
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
+    }
 }
 
 function clickAlSlct(e, objchk) {
-    var tableid = $(objchk).attr('data-table');
+    var tableid = $(objchk).attr('data-table'); 
     if (objchk.checked)
         $('#' + tableid + '_container tbody [type=checkbox]:not(:checked)').trigger('click');
     else
@@ -249,18 +275,18 @@ function setLiValue(objli) {
 }
 
 
-function toggleInFilter(obj)
+function toggleInFilter(objchk)
 {
-    console.log('huuu');
+    $('#' + $(objchk).attr('data-table') + '_tbl').DataTable().ajax.reload();
 }
 
 function renderProgressCol(data) {
     return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>";
 }
 
-function renderCheckBoxCol(datacolumns, tableid, row) {
+function renderCheckBoxCol(datacolumns, tableid, row,meta) {
     var idpos = (_.find(datacolumns, { 'columnName': 'id' })).columnIndex;
-    return "<input type='checkbox' name='" + tableid + "_id' value='" + row[idpos].toString() + "' data-table='" + tableid + "' onclick='updateAlSlct(this);' />";
+    return "<input type='checkbox' class='" + tableid + "_select' name='" + tableid + "_id' value='" + row[idpos].toString() + "' data-table='" + tableid + "' onchange='updateAlSlct(this," + meta.row + ");' />";
 }
 
 function renderEbVoidCol(data) {
@@ -381,5 +407,29 @@ function GPointPopup(e) {
     //alert(e.pageX);
 
 }
+
+function printSelected(tableid){
+    $('#' + tableid + '_container').find('.buttons-print')[1].click();
+}
+function printAll(tableid) {
+    $('#' + tableid + '_container').find('.buttons-print')[0].click();
+}
+function ExportToPrint(tableid) {
+    $('#' + tableid + '_container').find('.buttons-print')[0].click();
+}
+function CopyToClipboard(tableid) {
+    $('#' + tableid + '_container').find('.buttons-copy').click();
+}
+function ExportToPdf(tableid) {
+    $('#' + tableid + '_container').find('.buttons-pdf').click();
+}
+function ExportToCsv(tableid) {
+    $('#' + tableid + '_container').find('.buttons-csv').click();
+}
+function ExportToExcel(tableid) {
+    $('#' + tableid + '_container').find('.buttons-excel').click();
+}
+
+
 
 

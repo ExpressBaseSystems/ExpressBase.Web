@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.ServiceStack;
-using ExpressBase.Web2;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +16,7 @@ using System.Threading.Tasks;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ExpressBase.Web.Controllers
+namespace ExpressBase.Web2.Controllers
 {
     public class TenantExtController : Controller
     {
@@ -267,5 +266,7 @@ namespace ExpressBase.Web.Controllers
             var d = Newtonsoft.Json.JsonConvert.DeserializeObject<GoogleUser>(responseData);
             return d;
         }
+
+      
     }
 }

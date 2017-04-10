@@ -47,6 +47,8 @@
     @*Bini*@
 
     <script src="~/js/jquery.cookie.js"></script>
+    <script src="~/js/thirdpartysignup.js"></script>
+  
 
     @*Bini*@
     <style>
@@ -179,6 +181,7 @@
 </head>
 <body>
     <div class="page-header nomargin navbar-fixed-top">
+       
         @{if (string.IsNullOrEmpty(ViewBag.cid))
             {
                 Html.RenderPartial("_PageHeader");

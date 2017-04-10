@@ -165,11 +165,6 @@ namespace ExpressBase.Web2.Controllers
             }
         }
 
-        public IActionResult UserPreferences()
-        {
-            return View();
-        }
-
         [HttpGet]
         public IActionResult TenantProfile()
         {
@@ -220,6 +215,7 @@ namespace ExpressBase.Web2.Controllers
                 return View();
             }
         }
+
         public IActionResult marketPlace()
         {
             return View();

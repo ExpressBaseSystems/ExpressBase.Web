@@ -6,12 +6,11 @@
 }
 <head>
     <script src="~/js/Pswrd.js"></script>
-    <script src="~/js/thirdpartysignup.js"></script>
     <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <script>
-
+     
         function onSubmit(token) {
             document.getElementById("signup_form").submit();
         }
@@ -78,7 +77,7 @@
                             <button class="btn btn-lg btn-primary btn-block g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' type="submit"><i class="fa fa-sign-in fa-fw"></i>Sign up</button>
                         </div>
 
-                        <a href='#' class="fa fa-facebook-official fa-2x" onclick="loginByFacebook()"></a>
+                        @*<a href='#' class="fa fa-facebook-official fa-2x" onclick="loginByFacebook()"></a>
 
                         <div id="gConnect">
                             <button class="g-signin" style="max-width:34px!important"
@@ -89,10 +88,29 @@
                                     data-callback="onSignInCallback"
                                     data-theme="dark"
                                     data-cookiepolicy="single_host_origin"></button>
-                        </div>
+                        </div>*@
                     </td>
                 </tr>
             </table>
+
+            <div style="float: left; width: 250px; padding: 0 0 0 0;">
+                <a class="btn btn-block btn-social btn-twitter" href="https://localhost:44377/auth/twitter">
+                    <b class="fa fa-twitter">T</b>Sign in with Twitter
+                </a>
+                <a class="btn btn-block btn-social btn-facebook"href="https://localhost:44377/auth/facebook">
+                    <b class="fa fa-facebook-official">T</b>Sign in with facebook
+                </a>
+               
+                <a class="btn btn-block btn-social btn-github" href="https://localhost:44377/auth/github">
+                    <b class="fa fa-github"></b>Sign in with GitHub
+                </a>
+                <a class="btn btn-block btn-social btn-vk" href="https://localhost:44377/auth/vkcom">
+                    <b class="fa fa-vk"></b>Sign in with VK
+                </a>
+                <a class="btn btn-block btn-social btn-yandex" href="https://localhost:44377/auth/Yandex">
+                    <b class="fa fa-yandex">Y</b>Sign in with <b>Y</b>andex
+                </a>
+            </div>
         </div>
         <style>
             .tdd {

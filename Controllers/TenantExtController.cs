@@ -66,38 +66,38 @@ namespace ExpressBase.Web2.Controllers
             var req = this.HttpContext.Request.Form;
             AuthenticateResponse authResponse = null;
 
-            //string token = req["g-recaptcha-response"];
-            //Recaptcha data = await RecaptchaResponse("6LcCuhgUAAAAADMQr6bUkjZVPLsvTmWom52vWl3r",token);
-            //if (!data.Success)
-            //{
-            //    if (data.ErrorCodes.Count <= 0)
-            //    {
-            //        return View();
-            //    }
-            //    var error = data.ErrorCodes[0].ToLower();
-            //    switch (error)
-            //    {
-            //        case ("missing-input-secret"):
-            //            ViewBag.CaptchaMessage = "The secret parameter is missing.";
-            //            break;
-            //        case ("invalid-input-secret"):
-            //            ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
-            //            break;
+            string token = req["g-recaptcha-response"];
+            Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
+            if (!data.Success)
+            {
+                if (data.ErrorCodes.Count <= 0)
+                {
+                    return View();
+                }
+                var error = data.ErrorCodes[0].ToLower();
+                switch (error)
+                {
+                    case ("missing-input-secret"):
+                        ViewBag.CaptchaMessage = "The secret parameter is missing.";
+                        break;
+                    case ("invalid-input-secret"):
+                        ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
+                        break;
 
-            //        case ("missing-input-response"):
-            //            ViewBag.CaptchaMessage = "The captcha input is missing.";
-            //            break;
-            //        case ("invalid-input-response"):
-            //            ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
-            //            break;
+                    case ("missing-input-response"):
+                        ViewBag.CaptchaMessage = "The captcha input is missing.";
+                        break;
+                    case ("invalid-input-response"):
+                        ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
+                        break;
 
-            //        default:
-            //            ViewBag.CaptchaMessage = "Error occured. Please try again";
-            //            break;
-            //    }
-            //    return View();
-            //}
-            //else
+                    default:
+                        ViewBag.CaptchaMessage = "Error occured. Please try again";
+                        break;
+                }
+                return View();
+            }
+            else
             {
                 try
                 {
@@ -165,7 +165,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.EbConfig = this.EbConfig;
             ViewBag.cid = "";
             string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
+            Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
             if (!data.Success)
             {
                 if (data.ErrorCodes.Count <= 0)

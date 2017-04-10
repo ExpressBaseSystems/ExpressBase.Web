@@ -31,6 +31,7 @@ namespace ExpressBase.Web.Filters
             controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
             controller.ViewBag.token = token;
             controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
+            controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             controller.ViewBag.EbConfig = this.EbConfig;
 
             base.OnActionExecuting(context);

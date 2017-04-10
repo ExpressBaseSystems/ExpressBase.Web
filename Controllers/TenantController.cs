@@ -133,7 +133,8 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantLogout()
         {
             ViewBag.Fname = null;
-            return View();
+            return RedirectToAction("TenantSignup","TenantExt");
+             
         }
 
         public IActionResult ResetPassword()
@@ -163,11 +164,6 @@ namespace ExpressBase.Web2.Controllers
             {
                 return View();
             }
-        }
-
-        public IActionResult UserPreferences()
-        {
-            return View();
         }
 
         [HttpGet]
@@ -220,6 +216,7 @@ namespace ExpressBase.Web2.Controllers
                 return View();
             }
         }
+
         public IActionResult marketPlace()
         {
             return View();

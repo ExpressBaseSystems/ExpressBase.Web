@@ -6,12 +6,11 @@
 }
 <head>
     <script src="~/js/Pswrd.js"></script>
-    <script src="~/js/thirdpartysignup.js"></script>
     <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <script>
-
+     
         function onSubmit(token) {
             document.getElementById("signup_form").submit();
         }
@@ -38,7 +37,7 @@
     @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded", id = "signup_form" }))
     {
 
-        <div align="center" style="margin-left:400px;margin-top:250px;height:400px">
+        <div align="center" style="margin-left:850px;margin-top:250px;height:300px">
             <table>
                 <tr>
                     <td>
@@ -75,10 +74,10 @@
                     <td>
                         <div class="input-group">
 
-                            <button class="btn btn-lg btn-primary btn-block g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' type="submit"><i class="fa fa-sign-in fa-fw"></i>Sign up</button>
+                            <button class="btn btn-lg btn-primary btn-block g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSubmit' type="submit"><i class="fa fa-sign-in fa-fw"></i>Sign up</button>
                         </div>
 
-                        <a href='#' class="fa fa-facebook-official fa-2x" onclick="loginByFacebook()"></a>
+                        @*<a href='#' class="fa fa-facebook-official fa-2x" onclick="loginByFacebook()"></a>
 
                         <div id="gConnect">
                             <button class="g-signin" style="max-width:34px!important"
@@ -89,10 +88,11 @@
                                     data-callback="onSignInCallback"
                                     data-theme="dark"
                                     data-cookiepolicy="single_host_origin"></button>
-                        </div>
+                        </div>*@
                     </td>
                 </tr>
             </table>
+  
         </div>
         <style>
             .tdd {

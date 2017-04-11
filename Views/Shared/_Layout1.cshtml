@@ -29,13 +29,33 @@
     <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
     <script src="~/js/eb_datatable.js"></script>
+    <script src="~/js/bootstrap-checkbox.js"></script>
+    <script src="~/js/ElementQueries.js"></script>
+    <script src="~/js/ResizeSensor.js"></script>
+    <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
+    <script src="~/js/jquery.datetimepicker.min.js"></script>
+    <script src="~/js/eb_common.js"></script>
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> Optional theme*@ 
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="~/js/eb_common.js"></script>
+    
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/se-1.2.0/datatables.min.css" />
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/se-1.2.0/datatables.min.js"></script>
+
+    @*Bini*@
+
+    <script src="~/js/jquery.cookie.js"></script>
+    <script src="~/js/thirdpartysignup.js"></script>
+  
+
+    @*Bini*@
     <script src="~/js/jquery.datetimepicker.min.js"></script>
     <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script src="~/js/eb_validations.js"></script>
-
     <style>
         .nopadding {
             padding: 0 !important;
@@ -165,7 +185,8 @@
     </script>
 </head>
 <body>
-    <div class="page-header nomargin navbar-fixed-top">
+    <div class="page-header nomargin navbar-fixed-top" style="background-color:aliceblue">
+       
         @{if (string.IsNullOrEmpty(ViewBag.cid))
             {
                 Html.RenderPartial("_PageHeader");
@@ -177,7 +198,7 @@
             }
         }
     </div>
-    <div id="wrapper" class="toggled">
+    <div id="wrapper">
         <div class="container-fluid content_custom">
             @*<ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>

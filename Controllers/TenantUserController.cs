@@ -11,16 +11,17 @@ using Microsoft.AspNetCore.Routing;
 using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects;
+using ExpressBase.Web.Filters;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web2.Controllers
 {
-    public class TenantUserController : Controller
+    public class TenantUserController : EbBaseController
     {
         private readonly EbSetupConfig EbConfig;
 
-        public TenantUserController(IOptionsSnapshot<EbSetupConfig> ss_settings)
+        public TenantUserController(IOptionsSnapshot<EbSetupConfig> ss_settings) : base(ss_settings)
         {
             this.EbConfig = ss_settings.Value;
         }
@@ -30,115 +31,12 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-
-        [HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("{cid}")]
-        public IActionResult TenantUserLogin(string cid)
-        {
-            ViewBag.EbConfig = this.EbConfig;
-            ViewBag.cookie = Request.Cookies["UserName"];
-            ViewBag.cid = cid;
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> TenantUserLogin()
-        {
-            ViewBag.EbConfig = this.EbConfig;
-            var req = this.HttpContext.Request.Form;
-            AuthenticateResponse authResponse = null;
-
-            //string token = req["g-recaptcha-response"];
-            //Recaptcha data = await RecaptchaResponse("6LcCuhgUAAAAADMQr6bUkjZVPLsvTmWom52vWl3r",token);
-            //if (!data.Success)
-            //{
-            //    if (data.ErrorCodes.Count <= 0)
-            //    {
-            //        return View();
-            //    }
-            //    var error = data.ErrorCodes[0].ToLower();
-            //    switch (error)
-            //    {
-            //        case ("missing-input-secret"):
-            //            ViewBag.CaptchaMessage = "The secret parameter is missing.";
-            //            break;
-            //        case ("invalid-input-secret"):
-            //            ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
-            //            break;
-
-            //        case ("missing-input-response"):
-            //            ViewBag.CaptchaMessage = "The captcha input is missing.";
-            //            break;
-            //        case ("invalid-input-response"):
-            //            ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
-            //            break;
-
-            //        default:
-            //            ViewBag.CaptchaMessage = "Error occured. Please try again";
-            //            break;
-            //    }
-            //    return View();
-            //}
-            //else
-            {
-                try
-                {
-                    var authClient = this.EbConfig.GetServiceStackClient();
-                    authResponse = authClient.Send(new Authenticate
-                    {
-                        provider = MyJwtAuthProvider.Name,
-                        UserName = req["uname"],
-                        Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "cid", req["cid"] }, { "Login", "Client" } },
-                        UseTokenCookie = true
-                    });
-
-                    //var authreq = new Authenticate
-                    //{
-                    //    provider = MyJwtAuthProvider.Name,
-                    //    UserName = req["uname"],
-                    //    Password = req["pass"],
-                    //    UseTokenCookie = true
-                    //};
-                    //authreq.Meta = new Dictionary<string, string>();
-                    //authreq.Meta.Add("cid", req["cid"]);
-
-                    //authResponse = authClient.Send(authreq);
-                }
-                catch (WebServiceException wse)
-                {
-                    return View();
-                }
-                catch (Exception wse)
-                {
-                    return View();
-                }
-
-                if (authResponse != null && authResponse.ResponseStatus != null
-                    && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
-                    return View();
-
-                CookieOptions options = new CookieOptions();
-
-                Response.Cookies.Append("Token", authResponse.BearerToken, options);
-
-                if (req.ContainsKey("remember"))
-                    Response.Cookies.Append("UserName", req["uname"], options);
-                return RedirectToAction("UserDashboard", new RouteValueDictionary(new { controller = "TenantUser", action = "UserDashboard", id = authResponse.UserId }));
-
-            }
-        }
+  
 
         public IActionResult UserDashboard()
         {
-            var redisClient = this.EbConfig.GetRedisClient();
-            var token = Request.Cookies["Token"];
-            var handler = new JwtSecurityTokenHandler();
-            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
-            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
-            ViewBag.UId = Convert.ToInt32(HttpContext.Request.Query["id"]);
-            ViewBag.token = token;
+           
+            var token = Request.Cookies["Token"];     
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img" ,Token=token});
             //if (string.IsNullOrEmpty(ViewBag.cid))
@@ -148,8 +46,7 @@ namespace ExpressBase.Web2.Controllers
             //        redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
             //    }
             //}
-
-            ViewBag.EbConfig = this.EbConfig;
+           
             return View();
         }
 
@@ -217,12 +114,23 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.EbForm = _form;
             ViewBag.FormId = fid;
             ViewBag.formcollection = req as FormCollection;
-            //bool bStatus = Insert(req as FormCollection);
+          
+            return View();
+        }
 
-            //if (bStatus)
-            //    return RedirectToAction("masterhome", "Sample");
-            //else
-            //    return RedirectToAction("Index", "Home");
+        [HttpGet]
+        public IActionResult UserPreferences()
+        {
+           
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult UserPreferences(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
 
             return View();
         }

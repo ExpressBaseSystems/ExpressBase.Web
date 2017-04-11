@@ -7,7 +7,7 @@
     string imgpro = "";
     var __tmpStr = "";
     WebPageLoginStateTypes __state = WebPageLoginStateTypes.TenantUserInt;
-    __tmpStr = "<ul class='list-group' style='list-style-type: none;'> <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li> <li class='list-group-item'><a href='UserPreferences'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> <li class='list-group-item'><a href='TenantSignup'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>  </ul>";
+    __tmpStr = "<ul class='list-group' style='list-style-type: none;'> <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li> <li class='list-group-item'><a href='UserPreferences'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> <li class='list-group-item'><a href='TenantLogout'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>  </ul>";
     string profileimg = string.Format("uid_{0}_cid_{1}_profileimage", ViewBag.UId, ViewBag.cid);
     imgpro = redisClient.Get<string>(profileimg);
 
@@ -35,8 +35,6 @@
             {
                 <a href="#" data-toggle="popover" data-placement="bottom" data-content="@__tmpStr" style="margin-right:30px" class="navbar-right"><img src="~/images/proimg.jpg" class="img-circle navbar-right" /></a>
             }
-
-
         }
     </div>
 </div>

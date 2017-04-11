@@ -125,16 +125,21 @@ namespace ExpressBase.Web2.Controllers
                 }
                 catch (WebServiceException wse)
                 {
+                    ViewBag.errormsg = wse.Message;
                     return View();
                 }
                 catch (Exception wse)
                 {
+                    ViewBag.errormsg = wse.Message;
                     return View();
                 }
 
                 if (authResponse != null && authResponse.ResponseStatus != null
                     && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+                {
+                    ViewBag.errormsg = "Please enter a valid Username/Password";
                     return View();
+                }  
 
                 CookieOptions options = new CookieOptions();
 

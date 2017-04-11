@@ -53,7 +53,9 @@ namespace ExpressBase.Web2.Controllers
         public async Task<IActionResult> TenantUserLogin()
         {
             ViewBag.EbConfig = this.EbConfig;
+           
             var req = this.HttpContext.Request.Form;
+            ViewBag.cid = req["cid"];
             AuthenticateResponse authResponse = null;
 
             string token = req["g-recaptcha-response"];
@@ -104,16 +106,22 @@ namespace ExpressBase.Web2.Controllers
                 }
                 catch (WebServiceException wse)
                 {
+                    ViewBag.errormsg = wse.Message;
                     return View();
                 }
                 catch (Exception wse)
                 {
+                    ViewBag.errormsg = wse.Message;
                     return View();
                 }
 
                 if (authResponse != null && authResponse.ResponseStatus != null
                     && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
-                    return View();
+                {
+                    ViewBag.errormsg = "Please enter a valid Username/Password";
+                    return View("TenantUserLogin");
+                }
+                   
 
                 CookieOptions options = new CookieOptions();
 

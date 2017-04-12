@@ -26,46 +26,61 @@
 @using (Html.BeginForm(FormMethod.Post, new { enctype = "multipart/form-data", id = "log_form" }))
 {
     <body>
+       
         <div class="container" style="margin-left:300px !important;width:1000px">
-            <div class="card card-container">
+        @if (!string.IsNullOrEmpty(ViewBag.errormsg))
+        {
+            <div class="alert alert-danger" style="width:350px !important;margin-left:150px">
+                <label>@ViewBag.errormsg</label>
+            </div>
 
-                @{ if (ViewBag.ProfileImage == null)
-                    {
-                        <img id="profile-img" class="profile-img-card" src="~/images/proimg.jpg" />
-                        <p id="profile-name" class="profile-name-card"></p>
-                    }
-                    else
-                    {
-                        @Html.Raw(ViewBag.ProfileImage)
-                        <p id="profile-name" class="profile-name-card"></p>
+        }
+            
+                <div class="card card-container">
+                   
+                    @{ if (ViewBag.ProfileImage == null)
+                        {
+                            <img id="profile-img" class="img-cir" src="~/images/proimg.jpg" />
+                            <p id="profile-name" class="profile-name-card"></p>
+                        }
+                        else
+                        {
+                            @Html.Raw(ViewBag.ProfileImage)
+                            <p id="profile-name" class="profile-name-card"></p>
 
+                        }
                     }
-                }
 
-                <form class="form-signin">
-                    <span id="reauth-email" class="reauth-email"></span>
-                    @{
-                        string uname = ViewBag.cookie;
-                        <input type="text" id="uname" name="uname" value="@uname" class="form-control" placeholder="Email address" required autofocus><br />
-                    }
-                    <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
-                    <div id="remember" class="checkbox">
-                        <label>
-                            <input type="checkbox" id="remember" name="remember" value="remember-me"> Remember me
-                        </label>
-                    </div>
-                    @*<button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>*@
-                    <button class="btn btn-lg btn-primary btn-block g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSubmit' type="submit"><i class="fa fa-sign-in fa-fw"></i>Sign in</button>
-                </form><!-- /form -->
-                <a href="#" class="forgot-password">
-                    Forgot the password?
-                </a><br />
-                <a href="~/TenantExt/TenantSignup" class="forgot-password">
-                    Not Registered?
-                </a>
-                <input type="hidden" name="cid" value="@ViewBag.cid" />
-            </div><!-- /card-container -->
-        </div><!-- /container -->
+                    <form class="form-signin">
+                        <span id="reauth-email" class="reauth-email"></span>
+                        @{
+                            string uname = ViewBag.cookie;
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                                <input type="text" id="uname" name="uname" value="@uname" class="form-control" placeholder="Email address" required autofocus><br />
+                            </div><br />
+                        }
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                            <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div id="remember" class="checkbox">
+                            <label>
+                                <input type="checkbox" id="remember" name="remember" value="remember-me"> Remember me
+                            </label>
+                        </div>
+                        @*<button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>*@
+                        <button class="btn btn-lg btn-primary btn-block btn-signin g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSubmit' type="submit">Sign in</button>
+                    </form><!-- /form -->
+                    <a href="#" class="forgot-password">
+                        Forgot the password?
+                    </a><br />
+                    <a href="~/TenantExt/TenantSignup" class="forgot-password">
+                        Not Registered?
+                    </a>
+                    <input type="hidden" name="cid" value="@ViewBag.cid" />
+                </div><!-- /card-container -->
+            </div><!-- /container -->
 
     </body> }
 <style>
@@ -125,6 +140,7 @@
         font-size: 16px;
         font-weight: bold;
         text-align: center;
+
         margin: 10px 0 0;
         min-height: 1em;
     }

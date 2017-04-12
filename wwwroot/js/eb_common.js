@@ -15,12 +15,12 @@ function fltr_obj(type, name, value) {
 
 function getFilterValues() {
     var fltr_collection = [];
-    var paramstxt = $('#hiddenparams').val().trim();
+    var paramstxt = $('#hiddenparams').val().trim(); 
     if (paramstxt.length > 0) {
         var params = paramstxt.split(',');
         $.each(params, function (i, id) {
             var v = null;
-            var dtype = $('#' + id).attr('data-ebtype');
+            var dtype = $('#' + id).attr('data-EbType');
             if (dtype === '6') 
                 v = $('#' + id).val().substring(0, 10);
             else

@@ -95,7 +95,7 @@ namespace ExpressBase.Web2.Controllers
                 ViewBag.EbForm = _form;
                 ViewBag.FormId = fid;
                 ViewBag.DataId = id;
-                ViewBag.EbForm37 = redisClient.Get<EbForm>(string.Format("form{0}", 37));
+                ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 38));
                 return View();
             }
         }

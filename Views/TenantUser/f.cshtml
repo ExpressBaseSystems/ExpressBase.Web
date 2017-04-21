@@ -39,6 +39,8 @@
     //    }
     //}
 
+    var cnames = (ViewBag.EbForm38 != null) ? (ViewBag.EbForm38 as EbForm).GetControlNames() : string.Empty;
+
     html += "<div> <form id ='Form_0' method='post'> <div class='temp'>";
     html += string.Format(@"<input type='text' style='visibility:hidden;' name='isUpdate' value='{3}' id='isUpdate'/>
               <input type='text' style='visibility:hidden;' name='FId' value={1} id='FId'/>
@@ -46,8 +48,8 @@
 
               <span style='font-size:20px;'>{0}</span>
               <a href='' onclick=submitbutton() class='btn-toolbar btn-toolbar-warning fa fa-floppy-o fa-2x' id='button'></a>
-
-        ", _form.Label, fid, _form.Table.Id, _form.IsUpdate);
+              <input type='hidden' value='{4}' id='hiddenparams'/>
+        ", _form.Label, fid, ((_form.Table != null) ?_form.Table.Id : 1), _form.IsUpdate, cnames);
     if (_form.IsUpdate)
     {
         html += @"<a href='' onclick=deletebutton() class='btn-toolbar btn-toolbar-light fa fa-trash' id='delbtn'></a>
@@ -75,14 +77,13 @@
         head += c.GetHead();
         if (c is EbDataGridView && ViewBag.FormId == 22)
         {
-            head += (ViewBag.EbForm37 as EbForm).GetHead();
-            (c as EbDataGridView).SetFilterForm(ViewBag.EbForm37);
+            head += (ViewBag.EbForm38 as EbForm).GetHead();
+            (c as EbDataGridView).SetFilterForm(ViewBag.EbForm38);
         }
 
         html += c.GetHtml();
-
-        html += "</form></div>";
     }
+    html += "</form></div>";
 }
 
 @section EbHead {

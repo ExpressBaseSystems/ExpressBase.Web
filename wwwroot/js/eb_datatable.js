@@ -18,60 +18,64 @@ Array.prototype.min = function () {
 var gi = 0;
 
 function filter_obj(colu, oper, valu) {
-    this.column = colu;
-    this.operator = oper;
-    this.value = valu;
+    this.c = colu;
+    this.o = oper;
+    this.v = valu;
 }
 
 function call_filter(e, objin) {
     if (e.keyCode === 13)
-        $('#' + $(objin).attr('data-table') + '_tbl').DataTable().ajax.reload();
+        $('#' + $(objin).attr('data-table') ).DataTable().ajax.reload();
 }
 
 function repopulate_filter_arr(table) {
+    var tableObj = $("#" + table).DataTable();
     var filter_obj_arr = [];
-    $.each($('#' + table + '_tbl').DataTable().columns().header().toArray(), function (i, obj) {
+    $.each(tableObj.columns().header().toArray(), function (i, obj) {
         var colum = $(obj).children(0).text();
         if (colum !== '') {
-            var oper = $('#' + table + '_' + colum + '_hdr_sel').text();
+            var oper;
+            var val1, val2;
             var textid = '#' + table + '_' + colum + '_hdr_txt1';
             var type = $(textid).attr('data-coltyp');
-            var val1, val2;
-            if ($('#' + table + '_tbl').DataTable().columns(i).visible()[0]) {
-                if (oper !== '' && $(textid).val() !== '') {
-                    if (oper === 'B') {
-                        val1 = $(textid).val();
-                        val2 = $(textid).siblings('input').val();
-                    }
+            if (type == 'boolean') {
+                val1 = ($(textid).is(':checked')) ? "true" : "false";
+                if (!($(textid).is(':indeterminate')))
+                    filter_obj_arr.push(new filter_obj("INV." + colum, "=", val1));
+            }
+            else {
+                oper = $('#' + table + '_' + colum + '_hdr_sel').text();
+                if (tableObj.columns(i).visible()[0]) {
+                    if (oper !== '' && $(textid).val() !== '') {
+                        if (oper === 'B') {
+                            val1 = $(textid).val();
+                            val2 = $(textid).siblings('input').val();
+                        }
 
-                    if (oper === 'B' && val1 !== '' && val2 !== '') {
-                        if (type === 'numeric') {
-                            filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
-                        }
-                        else if (type === 'date') {
-                            if (val2 > val1) {
-                                filter_obj_arr.push(new filter_obj(colum, ">=", val1));
-                                filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                        if (oper === 'B' && val1 !== '' && val2 !== '') {
+                            if (type === 'numeric') {
+                                filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
+                                filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
                             }
-                            else {
-                                filter_obj_arr.push(new filter_obj(colum, ">=", val2));
-                                filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                            else if (type === 'date') {
+                                if (val2 > val1) {
+                                    filter_obj_arr.push(new filter_obj(colum, ">=", val1));
+                                    filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                                }
+                                else {
+                                    filter_obj_arr.push(new filter_obj(colum, ">=", val2));
+                                    filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                                }
                             }
                         }
+                        else
+                            filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
                     }
-                    else
-                        filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
                 }
             }
         }
     });
 
-    //$('thead:eq(0) [data-toggle=toggle]').each(function (i) {
-    //    var boolval = ($(this).checked) ? true : false;
-    //    var colname = $(this).attr('data-colum');
-
-    //});
     return filter_obj_arr;
 }
 
@@ -114,36 +118,57 @@ function showOrHideFilter(objbtn, scrolly) {
         $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
 
     clearFilter(tableid);
-    $('#' + tableid + '_tbl').DataTable().columns.adjust();
+    $('#' + tableid).DataTable().columns.adjust();
 }
 
 function clearFilter(tableid) {
-    flag = false;
-    $('.' + tableid + '_htext').each(function (i) {
-        if ($(this).val() !== '') {
-            $(this).val('');
-            flag = true;
+    var flag = false;
+    var tableObj = $("#" + tableid).DataTable();
+    $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) 
+    {
+        if ($(this).hasClass(tableid + '_hchk')) {
+            if (!($(this).is(':indeterminate'))) {
+                flag = true;
+                $(this).prop("indeterminate", true);
+            }
         }
-        
+        else 
+        {
+            if ($(this).val() !== '') {
+                flag = true;
+                $(this).val('');
+            }
+        }
     });
-    if(flag)
-        $('#' + tableid + '_tbl').DataTable().ajax.reload();
+    if (flag)
+        tableObj.ajax.reload();
 }
 
-function updateAlSlct(objchk) {
+function updateAlSlct( objchk, rowId) {    
     var tableid = $(objchk).attr('data-table');
-    var CkFlag = true;
-    $('#' + tableid + '_container tbody [type=checkbox]').each(function (i) {
-        if (!this.checked)
-            CkFlag = false;
-    });
-    $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', CkFlag);
-    //$('#' + tableid + '_container tbody [type=checkbox]:checked').closest('tr').css("background-color","blue");
+    var tableObj = $("#" + tableid).DataTable();
+    if (objchk.checked) {
+        tableObj.rows(rowId).select();
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
+    }
+    else {
+        tableObj.rows(rowId).deselect();
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
+    }
+    var CheckedCount = $('.' + tableid + '_select:checked').length;
+    var UncheckedCount = tableObj.rows().count() - CheckedCount;
+    if (CheckedCount === tableObj.rows().count()) {
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', true);
+    }
+    else if (UncheckedCount === tableObj.rows().count()) {
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
+        $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
+    }
 }
 
 function clickAlSlct(e, objchk) {
-    var tableid = $(objchk).attr('data-table');
-
+    var tableid = $(objchk).attr('data-table'); 
     if (objchk.checked)
         $('#' + tableid + '_container tbody [type=checkbox]:not(:checked)').trigger('click');
     else
@@ -152,12 +177,10 @@ function clickAlSlct(e, objchk) {
     e.stopPropagation();
 }
 
-function summarize2(tableId, eb_agginfo, scrollY) {
-    var api = $('#' + tableId + '_tbl').DataTable();
+function summarize2(api, tableId, eb_agginfo, scrollY) {
     var p;
     var ftrtxt;
     $.each(eb_agginfo, function (index, agginfo) {
-
         if (scrollY > 0) {
             p = $('table:eq(2) tfoot #' + tableId + '_' + agginfo.colname + '_ftr_sel1').text().trim();
             ftrtxt = '.dataTables_scrollFoot #' + tableId + '_' + agginfo.colname + '_ftr_txt1';
@@ -175,17 +198,16 @@ function summarize2(tableId, eb_agginfo, scrollY) {
             summary_val = col.data().average();
         }
         // IF decimal places SET, round using toFixed
-        $(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val);
+        $(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val.toFixed(2));
     });
 }
 
-function fselect_func(objsel, scrollY) {
+function fselect_func(api, objsel, scrollY) {
     var selValue = $(objsel).text().trim();
     $(objsel).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
     var table = $(objsel).attr('data-table');
     var colum = $(objsel).attr('data-column');
     var decip = $(objsel).attr('data-decip');
-    var api = $('#' + table + '_tbl').DataTable();
     var col = api.column(colum + ':name');
     var ftrtxt;
     if (scrollY > 0)
@@ -198,7 +220,7 @@ function fselect_func(objsel, scrollY) {
         pageTotal = col.data().average();
     // IF decimal places SET, round using toFixed
 
-    $(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal);
+    $(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal.toFixed(2));
 }
 
 function colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull, columns) {
@@ -251,18 +273,19 @@ function setLiValue(objli) {
 }
 
 
-function toggleInFilter(obj)
+function toggleInFilter(objChk)
 {
-    console.log('huuu');
+    var table = $(objChk).attr('data-table');
+    $("#"+ table).DataTable().ajax.reload();
 }
 
 function renderProgressCol(data) {
     return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>";
 }
 
-function renderCheckBoxCol(datacolumns, tableid, row) {
+function renderCheckBoxCol(tableObj, datacolumns, tableid, row,meta) {
     var idpos = (_.find(datacolumns, { 'columnName': 'id' })).columnIndex;
-    return "<input type='checkbox' name='" + tableid + "_id' value='" + row[idpos].toString() + "' data-table='" + tableid + "' onclick='updateAlSlct(this);' />";
+    return "<input type='checkbox' class='" + tableid + "_select' name='" + tableid + "_id' value='" + row[idpos].toString() + "' data-table='" + tableid + "' onchange='updateAlSlct( this," + meta.row + ");' />";
 }
 
 function renderEbVoidCol(data) {
@@ -383,5 +406,35 @@ function GPointPopup(e) {
     //alert(e.pageX);
 
 }
+
+function printSelected(tableid){
+    $('#' + tableid + '_container').find('.buttons-print')[1].click();
+}
+
+function printAll(tableid) {
+    $('#' + tableid + '_container').find('.buttons-print')[0].click();
+}
+
+function ExportToPrint(tableid) {
+    $('#' + tableid + '_container').find('.buttons-print')[0].click();
+}
+
+function CopyToClipboard(tableid) {
+    $('#' + tableid + '_container').find('.buttons-copy').click();
+}
+
+function ExportToPdf(tableid) {
+    $('#' + tableid + '_container').find('.buttons-pdf').click();
+}
+
+function ExportToCsv(tableid) {
+    $('#' + tableid + '_container').find('.buttons-csv').click();
+}
+
+function ExportToExcel(tableid) {
+    $('#' + tableid + '_container').find('.buttons-excel').click();
+}
+
+
 
 

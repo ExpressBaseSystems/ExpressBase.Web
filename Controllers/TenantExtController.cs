@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.ServiceStack;
-using ExpressBase.Web2;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +16,7 @@ using System.Threading.Tasks;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ExpressBase.Web.Controllers
+namespace ExpressBase.Web2.Controllers
 {
     public class TenantExtController : Controller
     {
@@ -37,11 +36,16 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult Signin()
         {
-            ViewBag.cookie = Request.Cookies["UserName"];
             ViewBag.EbConfig = this.EbConfig;
-            //IServiceClient client = this.EbConfig.GetServiceStackClient();
-            //var fr = client.Get<GetAccountResponse>(new GetAccount { Uname = ViewBag.cookie, restype = "homeimg" });
-            //ViewBag.dict = fr.dict;
+            ViewBag.cookie = Request.Cookies["UserName"];
+            ViewBag.Userid = Request.Cookies["UId"];
+          
+            if (!string.IsNullOrEmpty(ViewBag.cookie))
+            {
+                var redisClient = EbConfig.GetRedisClient();
+                ViewBag.ProfileImage = redisClient.Get<string>(string.Format("uid_{0}_pimg", ViewBag.Userid));
+            }
+
             return View();
         }
 
@@ -62,38 +66,38 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             AuthenticateResponse authResponse = null;
 
-            //string token = req["g-recaptcha-response"];
-            //Recaptcha data = await RecaptchaResponse("6LcCuhgUAAAAADMQr6bUkjZVPLsvTmWom52vWl3r",token);
-            //if (!data.Success)
-            //{
-            //    if (data.ErrorCodes.Count <= 0)
-            //    {
-            //        return View();
-            //    }
-            //    var error = data.ErrorCodes[0].ToLower();
-            //    switch (error)
-            //    {
-            //        case ("missing-input-secret"):
-            //            ViewBag.CaptchaMessage = "The secret parameter is missing.";
-            //            break;
-            //        case ("invalid-input-secret"):
-            //            ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
-            //            break;
+            string token = req["g-recaptcha-response"];
+            Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
+            if (!data.Success)
+            {
+                if (data.ErrorCodes.Count <= 0)
+                {
+                    return View();
+                }
+                var error = data.ErrorCodes[0].ToLower();
+                switch (error)
+                {
+                    case ("missing-input-secret"):
+                        ViewBag.CaptchaMessage = "The secret parameter is missing.";
+                        break;
+                    case ("invalid-input-secret"):
+                        ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
+                        break;
 
-            //        case ("missing-input-response"):
-            //            ViewBag.CaptchaMessage = "The captcha input is missing.";
-            //            break;
-            //        case ("invalid-input-response"):
-            //            ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
-            //            break;
+                    case ("missing-input-response"):
+                        ViewBag.CaptchaMessage = "The captcha input is missing.";
+                        break;
+                    case ("invalid-input-response"):
+                        ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
+                        break;
 
-            //        default:
-            //            ViewBag.CaptchaMessage = "Error occured. Please try again";
-            //            break;
-            //    }
-            //    return View();
-            //}
-            //else
+                    default:
+                        ViewBag.CaptchaMessage = "Error occured. Please try again";
+                        break;
+                }
+                return View();
+            }
+            else
             {
                 try
                 {
@@ -121,23 +125,32 @@ namespace ExpressBase.Web.Controllers
                 }
                 catch (WebServiceException wse)
                 {
+                    ViewBag.errormsg = wse.Message;
                     return View();
                 }
                 catch (Exception wse)
                 {
+                    ViewBag.errormsg = wse.Message;
                     return View();
                 }
 
                 if (authResponse != null && authResponse.ResponseStatus != null
                     && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+                {
+                    ViewBag.errormsg = "Please enter a valid Username/Password";
                     return View();
+                }  
 
                 CookieOptions options = new CookieOptions();
 
                 Response.Cookies.Append("Token", authResponse.BearerToken, options);
 
                 if (req.ContainsKey("remember"))
+                {
                     Response.Cookies.Append("UserName", req["uname"], options);
+                    Response.Cookies.Append("UId", authResponse.UserId, options);
+                }
+                   
                 return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", id = authResponse.UserId }));
 
             }
@@ -157,7 +170,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EbConfig = this.EbConfig;
             ViewBag.cid = "";
             string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
+            Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
             if (!data.Success)
             {
                 if (data.ErrorCodes.Count <= 0)
@@ -267,5 +280,7 @@ namespace ExpressBase.Web.Controllers
             var d = Newtonsoft.Json.JsonConvert.DeserializeObject<GoogleUser>(responseData);
             return d;
         }
+
+      
     }
 }

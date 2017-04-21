@@ -283,9 +283,8 @@ function renderProgressCol(data) {
     return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>";
 }
 
-function renderCheckBoxCol(tableObj, datacolumns, tableid, row,meta) {
-    var idpos = (_.find(datacolumns, { 'columnName': 'id' })).columnIndex;
-    return "<input type='checkbox' class='" + tableid + "_select' name='" + tableid + "_id' value='" + row[idpos].toString() + "' data-table='" + tableid + "' onchange='updateAlSlct( this," + meta.row + ");' />";
+function renderCheckBoxCol(tableObj, columnIndex, tableid, row, meta) {
+    return "<input type='checkbox' class='" + tableid + "_select' name='" + tableid + "_id' value='" + row[columnIndex].toString() + "' data-table='" + tableid + "' onchange='updateAlSlct( this," + meta.row + ");' />";
 }
 
 function renderEbVoidCol(data) {

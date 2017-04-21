@@ -71,7 +71,7 @@ namespace ExpressBase.Web2.Controllers
                 if (fr.Data.Count > 0)
                 {
                     _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis();
+                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient());
                     _form.IsUpdate = true;
                     redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
                 }
@@ -88,7 +88,7 @@ namespace ExpressBase.Web2.Controllers
                 if (fr.Data.Count > 0)
                 {
                     _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis();
+                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient());
                     _form.IsUpdate = false;
                     redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
                 }

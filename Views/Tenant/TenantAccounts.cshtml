@@ -3,7 +3,6 @@
 }
 <head>
     <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
-    @*<link href="~/css/TenantAccounts.css" rel="stylesheet" type="text/css" />*@
     <script type="text/javascript">
         $(document).ready(function () {
             var myEbWizard = new EbWizard();
@@ -101,8 +100,8 @@
         </form>
 
 
-        <div id="dbModal" class="modal fade" >
-            <div class="modal-dialog container" style="width:60%">
+        <div id="dbModal" class="modal fade">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -112,22 +111,22 @@
                         <div class="stepwizard">
                             <div class="stepwizard-row setup-panel" id="wizprogress"></div>
                         </div>
-                        <div id="wiz"></div><span>.</span>
+                        <div id="wiz" class="wiz-inputs"></div><span>.</span>
                     </div>
                     <div class="modal-footer">
                         <div id="wizfoot">
                             <button name="previousB" id="ebWizPrevB" class="btn btn-sm btn-primary btn-lg pull-left" type="button">Previous</button>
                             <button name="nextB" id="ebWizNextB" class="btn btn-sm btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
-                            <button name="submitB" onclick="myEbWizard." id="ebWizFinishB" class="btn btn-sm btn-success btn-lg pull-right" type="submit">Submit</button>
+                            <button name="submitB" id="ebWizFinishB" class="btn btn-sm btn-success btn-lg pull-right" type="submit">Submit</button>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
-        </div>
 
-                                foreach (var sublist in list)
-                                {
-                                    
+        foreach (var sublist in list)
+        {
+
             <div class="tenant_account z-depth-2">
                 <div class="bs-example">
                     <div class="col-xs-12 col-md-12">
@@ -149,13 +148,13 @@
                         </span>
                     </div>
                     <!-- Database Modal -->
-                    
+
                     @if (ViewBag.Message != null)
-            {
+                    {
                         <script type="text/javascript">
                             window.onload = function () {
-                    alert("@ViewBag.Message");
-                };
+                                alert("@ViewBag.Message");
+                            };
                         </script>
                     }
 
@@ -211,10 +210,10 @@
                                 </div>
                             </div>
                         </div>
-                  }
+                                            }
                 </div>
             </div>
-     }
+                                            }
     }
 </div>
 <style>
@@ -250,11 +249,11 @@
         border-radius: 10px;
     }
 
-  .tenant_account:hover {
+        .tenant_account:hover {
             box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
         }
 
-  
+
     img {
         border: solid 0px yellow;
         margin: 10px;

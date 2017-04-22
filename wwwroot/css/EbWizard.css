@@ -19,7 +19,7 @@
 }
 
 .stepwizard-row::before {
-    top: 70px;
+    top: 0px;
     bottom: 0;
     position: absolute;
     content: " ";
@@ -27,7 +27,7 @@
     height: 1px;
     background-color: #ccc;
     z-order: 0;
-    margin-top: -10%;
+    margin-top: 15px;
 }
 
 .stepwizard-step {
@@ -48,6 +48,10 @@
 
 .stepwizard-step > .btn {
     padding: 4px 10px!important;
+}
+
+.wiz-inputs{
+    margin-left: 5%;
 }
 
 

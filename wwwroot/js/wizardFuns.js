@@ -4,6 +4,8 @@
 };
 
 EbWizard.prototype = {
+    width: "60%",
+    height:"500px",
     Steps: null,
     Navs: null,
     currentStepNo: 0,
@@ -37,6 +39,9 @@ EbWizard.prototype = {
             setTimeout(function () {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
             }, 10);
+
+            $(".modal-content").css("height", EbWizard.prototype.height);
+            $(".modal-dialog").css("width", EbWizard.prototype.width);
         });
     },
 

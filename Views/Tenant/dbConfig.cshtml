@@ -1,82 +1,269 @@
-﻿<div class="col-md-12 ebWizStep">
-    <h3> Step 1</h3>
-    <div class="controls-group">
+﻿   <div class="col-md-12 ebWizStep">
+        <h4> Step 1</h4>
+        
+       <div class="form-group align_singleLine">
+           <label class="control-label">Server IP/ Domain Name</label>
+           <input maxlength="100" type="text" required="required" id="sip" name="sip_datarw" class="form-control"/>
+       </div>
+       <div class="form-group align_singleLine">
+           <label class="control-label">Port Number</label>
+           <input maxlength="100" type="text" required="required" id="pnum" name="pnum_datarw" class="form-control"/>
+       </div>
+       <div class="form-group align_singleLine">
+           <label class="control-label">SSL</label>
+           <input maxlength="100" type="checkbox" data-toggle="toggle" id="ssl" name="ssl_datarw" class="" checked />
+       </div>
+       <div class="form-group align_singleLine">
+           <label class="control-label">Time Out</label>
+           <input maxlength="100" type="text" required="required" id="tout" name="tout_datarw" class="form-control" />
+       </div>
+       <div class="form-group align_singleLine">
+           <label class="control-label">Database Name</label>
+           <input maxlength="100" type="text" id="dbname" required="required" name="dbname_datarw" class="form-control" />
+       </div>
+       <div class="form-group align_singleLine">
+           <label class="control-label">Username</label>
+           <input maxlength="100" type="text" required="required" id="duname" name="duname_datarw" class="form-control"/>
+       </div>
+       <div class="form-group align_singleLine">
+           <label class="control-label">Password</label>
+           <input maxlength="100" type="password" required="required" id="pwd" name="pwd_datarw" class="form-control"/>
+       </div>
+      
+    </div>
+    <div class="col-md-12 ebWizStep">
+    <h3> Step 2</h3>
         <div class="form-group">
             <label class="control-label">Database Name</label>
-            <input maxlength="100" type="email" required="required" id="dbname" name="dbname" class="form-control" placeholder="Enter Database Name" />
+            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_dataro" class="form-control" placeholder="Enter Database Name" />
         </div>
-    </div>
-</div>
-<div class="col-md-12 ebWizStep">
-    <h3> Step 2</h3>
-    <div class="controls-group">
         <div class="form-group">
-            <label class="contrlol-label">Server IP</label>
-            <input maxlength="100" type="text" id="sip" name="sip" class="form-control" placeholder="Enter Server IP" />
+            <label class="control-label">Server IP</label>
+            <input maxlength="100" type="text" required="required" id="sip" name="sip_dataro" class="form-control" placeholder="Enter Server IP" />
         </div>
         <div class="form-group">
             <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum" class="form-control" placeholder="Enter Port Number" />
+            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_dataro" class="form-control" placeholder="Enter Port Number" />
         </div>
         <div class="form-group">
             <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname" class="form-control" placeholder="Enter Username" />
-        </div>
-    </div>
-</div>
-<div class="col-md-12 ebWizStep">
-    <h3> Step 3</h3>
-    <div class="controls-group">
-        <div class="form-group">
-            <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum" class="form-control" placeholder="Enter Port Number" />
+            <input maxlength="100" type="text" required="required" id="duname" name="duname_dataro" class="form-control" placeholder="Enter Username" />
         </div>
         <div class="form-group">
-            <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname" class="form-control" placeholder="Enter Username" />
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_dataro" class="form-control" placeholder="Enter Password" />
         </div>
         <div class="form-group">
             <label class="control-label">SSL</label>
-            <input id="ssl" name="ssl" maxlength="100" type="text" class="form-control" value="true" disabled />
-        </div>
-        <div class="form-group">
-            <label class="control-label">SSL</label>
-            <input id="ssl" name="ssl" maxlength="100" type="text" class="form-control" value="true" disabled />
+            <input maxlength="100" type="text" id="ssl" name="ssl_dataro" class="form-control" value="true" disabled />
         </div>
         <div class="form-group">
             <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout" class="form-control" placeholder="Enter Time Out" />
+            <input maxlength="100" type="text" required="required" id="tout" name="tout_dataro" class="form-control" placeholder="Enter Time Out" />
         </div>
-    </div>
 </div>
-@*<div class="col-md-12 ebWizStep">
-        <h3> Step 4</h3>
+    <div class="col-md-12 ebWizStep">
+        <h3> Step 3</h3>
+        <div class="form-group">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_objrw" class="form-control" placeholder="Enter Database Name" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Server IP</label>
+            <input maxlength="100" type="text" required="required" id="sip" name="sip_objrw" class="form-control" placeholder="Enter Server IP" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_objrw" class="form-control" placeholder="Enter Port Number" />
+        </div>
         <div class="form-group">
             <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname" class="form-control" placeholder="Enter Username" />
+            <input maxlength="100" type="text" required="required" id="duname" name="duname_objrw" class="form-control" placeholder="Enter Username" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_objrw" class="form-control" placeholder="Enter Password" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">SSL</label>
+            <input maxlength="100" type="text" id="ssl" name="ssl_objrw" class="form-control" value="true" disabled />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout" name="tout_objrw" class="form-control" placeholder="Enter Time Out" />
+        </div>
+    </div>
+    <div class="col-md-12 ebWizStep">
+        <h3> Step 4</h3>
+        <div class="form-group">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_objro" class="form-control" placeholder="Enter Database Name" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Server IP</label>
+            <input maxlength="100" type="text" required="required" id="sip" name="sip_objro" class="form-control" placeholder="Enter Server IP" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_objro" class="form-control" placeholder="Enter Port Number" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname" name="duname_objro" class="form-control" placeholder="Enter Username" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_objro" class="form-control" placeholder="Enter Password" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">SSL</label>
+            <input maxlength="100" type="text" id="ssl" name="ssl_objro" class="form-control" value="true" disabled />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout" name="tout_objro" class="form-control" placeholder="Enter Time Out" />
         </div>
     </div>
     <div class="col-md-12 ebWizStep">
         <h3> Step 5</h3>
         <div class="form-group">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_logrw" class="form-control" placeholder="Enter Database Name" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Server IP</label>
+            <input maxlength="100" type="text" required="required" id="sip" name="sip_logrw" class="form-control" placeholder="Enter Server IP" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_logrw" class="form-control" placeholder="Enter Port Number" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname" name="duname_logrw" class="form-control" placeholder="Enter Username" />
+        </div>
+        <div class="form-group">
             <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd" class="form-control" placeholder="Enter Password" />
+            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_logrw" class="form-control" placeholder="Enter Password" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">SSL</label>
+            <input maxlength="100" type="text" id="ssl" name="ssl_logrw" class="form-control" value="true" disabled />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout" name="tout_logrw" class="form-control" placeholder="Enter Time Out" />
         </div>
     </div>
     <div class="col-md-12 ebWizStep">
         <h3> Step 6</h3>
         <div class="form-group">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_logro" class="form-control" placeholder="Enter Database Name" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Server IP</label>
+            <input maxlength="100" type="text" required="required" id="sip" name="sip_logro" class="form-control" placeholder="Enter Server IP" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_logro" class="form-control" placeholder="Enter Port Number" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname" name="duname_logro" class="form-control" placeholder="Enter Username" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_logro" class="form-control" placeholder="Enter Password" />
+        </div>
+        <div class="form-group">
             <label class="control-label">SSL</label>
-            <input id="ssl" name="ssl" maxlength="100" type="text" class="form-control" value="true" disabled />
+            <input maxlength="100" type="text" id="ssl" name="ssl_logro" class="form-control" value="true" disabled />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout" name="tout_logro" class="form-control" placeholder="Enter Time Out" />
         </div>
     </div>
     <div class="col-md-12 ebWizStep">
         <h3> Step 7</h3>
         <div class="form-group">
-            <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout" class="form-control" placeholder="Enter Time Out" />
+            <label class="control-label">Server IP</label>
+            <input maxlength="100" type="text" required="required" id="sip" name="sip_logrw" class="form-control" placeholder="Enter Server IP" />
         </div>
-    </div>*@
+        <div class="form-group">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_logrw" class="form-control" placeholder="Enter Port Number" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout" name="tout_logrw" class="form-control" placeholder="Enter Time Out" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">SSL</label>
+            <input maxlength="100" type="text" id="ssl" name="ssl_logrw" class="form-control" value="true" disabled />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="email" id="dbname" required="required" name="dbname_logrw" class="form-control" placeholder="Enter Database Name" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname" name="duname_logrw" class="form-control" placeholder="Enter Username" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_logrw" class="form-control" placeholder="Enter Password" />
+        </div>
+       
+       
+    </div>
+    <div class="col-md-12 ebWizStep">
+      <h3> Step 8</h3>
+        <div class="form-group">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_filero" class="form-control" placeholder="Enter Database Name" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Server IP</label>
+            <input maxlength="100" type="text" required="required" id="sip" name="sip_filero" class="form-control" placeholder="Enter Server IP" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_filero" class="form-control" placeholder="Enter Port Number" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname" name="duname_filero" class="form-control" placeholder="Enter Username" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_filero" class="form-control" placeholder="Enter Password" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">SSL</label>
+            <input maxlength="100" type="text" id="ssl" name="ssl_filero" class="form-control" value="true" disabled />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout" name="tout_filero" class="form-control" placeholder="Enter Time Out" />
+        </div>
+    </div>
+
+
+<style>
+    .form-control{
+        /*display: inline-block;*/
+    }
+    .align_singleLine{
+    display: inline-block;                                   
+    width:35%;
+    margin-right:5px;
+
+}
+</style>
+
 
 
 

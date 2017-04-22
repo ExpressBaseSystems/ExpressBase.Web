@@ -56,7 +56,7 @@
 
 .controls-group{
     overflow-y:auto;
-    height:300px;
+    min-height:75px;
 }
 
 .controls-group::-webkit-scrollbar {

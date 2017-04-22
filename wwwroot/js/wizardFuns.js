@@ -4,8 +4,8 @@
 };
 
 EbWizard.prototype = {
-    width: "60%",
-    height:"500px",
+    width: "700px",
+    height: "500px",
     Steps: null,
     Navs: null,
     currentStepNo: 0,
@@ -38,6 +38,7 @@ EbWizard.prototype = {
             EbWizard.prototype.SyncProgress();
             setTimeout(function () {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
+                $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
 
             $(".modal-content").css("height", EbWizard.prototype.height);
@@ -65,13 +66,13 @@ EbWizard.prototype = {
         if (clickedStepNo > EbWizard.prototype.currentStepNo)
             for (var i = EbWizard.prototype.currentStepNo; i < clickedStepNo - 1; i++)
                 EbWizard.prototype.NextB(null);
-        else 
-            for (var i = EbWizard.prototype.currentStepNo; i > (clickedStepNo - 1) ; i--) 
+        else
+            for (var i = EbWizard.prototype.currentStepNo; i > (clickedStepNo - 1); i--)
                 EbWizard.prototype.PrevB(null);
     },
 
     NextB: function (e) {
-        if (EbWizard.prototype.IsStepValid()) {
+        if(EbWizard.prototype.IsStepValid()) {
             ++EbWizard.prototype.currentStepNo;
             EbWizard.prototype.ShowStep();
             if (EbWizard.prototype.currentStepNo > 0) {
@@ -89,7 +90,7 @@ EbWizard.prototype = {
     },
 
     PrevB: function (e) {
-        if (EbWizard.prototype.IsStepValid()) {
+        if(EbWizard.prototype.IsStepValid()) {
             --EbWizard.prototype.currentStepNo;
             EbWizard.prototype.ShowStep();
             if (EbWizard.prototype.currentStepNo > 0) {
@@ -109,7 +110,7 @@ EbWizard.prototype = {
     },
 
     SyncProgress: function () {
-        for (i = 0; i < EbWizard.prototype.Steps.length; i++)
+        for(i = 0; i < EbWizard.prototype.Steps.length; i++)
             $($(EbWizard.prototype.Navs[i]).children()[0]).removeClass("btn-primary");
 
         $($(EbWizard.prototype.Navs[EbWizard.prototype.currentStepNo]).children()[0]).removeClass("btn-default").removeClass("btn-success").addClass("btn-primary");
@@ -144,8 +145,7 @@ EbWizard.prototype = {
 
     },
 
-    ShowStep : function(stepno)
-    {
+    ShowStep: function(stepno) {
         $(EbWizard.prototype.Steps).hide();
         $(EbWizard.prototype.Steps[EbWizard.prototype.currentStepNo]).show().find('input:eq(0)').focus();
     }

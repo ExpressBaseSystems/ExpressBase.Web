@@ -5,52 +5,15 @@
     <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            var navListItems = $('div.setup-panel div a'),
-                    allWells = $('.setup-content'),
-                    allNextBtn = $('.nextBtn');
 
-            allWells.hide();
-
-            navListItems.click(function (e) {
-                e.preventDefault();
-                var $target = $($(this).attr('href')),
-                        $item = $(this);
-
-                if (!$item.hasClass('disabled')) {
-                    navListItems.removeClass('btn-primary').addClass('btn-default');
-                    $item.addClass('btn-primary');
-                    allWells.hide();
-                    $target.show();
-                    $target.find('input:eq(0)').focus();
-                }
-            });
-
-            allNextBtn.click(function () {
-                var curStep = $(this).closest(".setup-content"),
-                    curStepBtn = curStep.attr("id"),
-                    nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
-                    curInputs = curStep.find("input[type='text'],input[type='url']"),
-                    isValid = true;
-
-                $(".form-group").removeClass("has-error");
-                for (var i = 0; i < curInputs.length; i++) {
-                    if (!curInputs[i].validity.valid) {
-                        isValid = false;
-                        $(curInputs[i]).closest(".form-group").addClass("has-error");
-                    }
-                }
-
-                if (isValid)
-                    nextStepWizard.removeAttr('disabled').trigger('click');
-            });
-
-            $('div.setup-panel div a.btn-primary').trigger('click');
-
+            var myEbWizard = new EbWizard();
             $('.eb_acc_dbcon_btn').click(function () {
-                var ele = $(this).attr("data-accid");
-                $('#myModal').modal({
-                    backdrop: 'static'
-                });
+                var accid = $(this).attr("data-accid");
+                $('#dbModal').modal({ backdrop: 'static' });
+                myEbWizard.Populate("http://localhost:53431/Tenant/dbConfig");
+                $("div [type=submit]").on("click",function(){
+                    myEbWizard.SaveWizard();
+                })
             });
 
             $('.new').click(function () {
@@ -86,12 +49,9 @@
             });
         });
         function SetValue(id) {
-
             document.getElementById('tier').value = id;
         }
-
         function readURL(input) {
-
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
@@ -112,19 +72,15 @@
                    .width(100)
                    .height(100);
                 };
-
                 reader.readAsDataURL(input.files[0]);
-
             }
         }
-
     </script>
 </head>
 <div class="container">
     @{
         List<List<object>> list = new List<List<object>>();
         list = ViewBag.dict;
-
         <form>
             <div class="row">
                 <div class="input-group input-group-lg col-md-3">
@@ -137,52 +93,61 @@
                     <input type="button" class="new btn btn-success" value="New Account" />
                 </div>
                 <div class="col-md-4">
-                    <input type="button" class="new btn btn-success" value="Download Studio" />
+                    <input type="button" class="btn btn-success" value="Download Studio" />
                 </div>
             </div>
         </form>
+
+
+        <div id="dbModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Database Check</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="stepwizard">
+                            <div class="stepwizard-row setup-panel" id="wizprogress"></div>
+                        </div>
+                        <div id="wiz" class="wiz-inputs"></div><span>.</span>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="wizfoot">
+                            <button name="previousB" id="ebWizPrevB" class="btn btn-sm btn-primary btn-lg pull-left" type="button">Previous</button>
+                            <button name="nextB" id="ebWizNextB" class="btn btn-sm btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
+                            <button name="submitB" id="ebWizFinishB" class="btn btn-sm btn-success btn-lg pull-right" type="submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         foreach (var sublist in list)
         {
+
             <div class="tenant_account z-depth-2">
                 <div class="bs-example">
                     <div class="col-xs-12 col-md-12">
                         <label>@sublist[1]</label> <br />
                         <div>@Html.Raw(sublist[2])</div>
                         <span>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x eb_acc_dbcon_btn" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x users" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x users" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
                             <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
                         </span>
                     </div>
+                    <!-- Database Modal -->
 
-                    <!-- Modal HTML Database -->
-                    <div id="myModal" class="modal fade">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                    <h4 class="modal-title">Database Check</h4>
-                                </div>
-                                <div class="modal-body">
-                                   @{
-                                       Html.RenderPartial("DBCheck");
-                                }
-                                    <div class="modal-footer tds">
-                                        <input type="submit" value="Test" class="btn-block btn-primary" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     @if (ViewBag.Message != null)
                     {
                         <script type="text/javascript">
@@ -235,116 +200,71 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                                         <h4 class="modal-title">Create Account</h4>
                                     </div>
-                                    <div class="modal-body">
+                                    <div id="pricingW" class="modal-body">
                                         @{
                                             Html.RenderPartial("_pricing_wizard");
                                         }
+
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                                             }
                 </div>
-                    </div>
-                                        }
+            </div>
+                                            }
     }
-    </div>
-    <style>
-        .new {
-            float: right;
-            margin-right: 50%;
+</div>
+<style>
+    .new {
+        float: right;
+        margin-right: 50%;
+    }
+
+    .prologo {
+        width: 20%;
+        height: 20%;
+    }
+
+    .tdd {
+        margin: 10px;
+        width: 100px;
+    }
+
+    .tds {
+        margin-top: 50px;
+    }
+
+    .tenant_account {
+        width: 50%;
+        background: #fff;
+        border-radius: 2px;
+        display: inline-block;
+        height: 300px;
+        margin: 1rem;
+        position: relative;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        border-radius: 10px;
+    }
+
+        .tenant_account:hover {
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
         }
 
-        .prologo {
-            width: 20%;
-            height: 20%;
-        }
 
-        .tdd {
-            margin: 10px;
-            width: 100px;
-        }
+    img {
+        border: solid 0px yellow;
+        margin: 10px;
+        width: 20%;
+        height: 20%;
+    }
 
-        .tds {
-            margin-top: 50px;
-        }
+    .hov:hover {
+        border: solid 2px blue;
+    }
 
-        .tenant_account {
-            width: 50%;
-            background: #fff;
-            border-radius: 2px;
-            display: inline-block;
-            height: 300px;
-            margin: 1rem;
-            position: relative;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-            border-radius: 10px;
-        }
-
-            .tenant_account:hover {
-                box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-            }
-
-        .stepwizard-step p {
-            margin-top: 10px;
-        }
-
-        .stepwizard-row {
-            display: table-row;
-        }
-
-        .stepwizard {
-            display: table;
-            width: 50%;
-            position: relative;
-        }
-
-        .stepwizard-step button[disabled] {
-            opacity: 1 !important;
-            filter: alpha(opacity=100) !important;
-        }
-
-        .stepwizard-row:before {
-            top: 14px;
-            bottom: 0;
-            position: absolute;
-            content: " ";
-            width: 100%;
-            height: 1px;
-            background-color: #ccc;
-            z-order: 0;
-        }
-
-        .stepwizard-step {
-            display: table-cell;
-            text-align: center;
-            position: relative;
-        }
-
-        .btn-circle {
-            width: 30px;
-            height: 30px;
-            text-align: center;
-            padding: 6px 0;
-            font-size: 12px;
-            line-height: 1.428571429;
-            border-radius: 15px;
-        }
-
-        img {
-            border: solid 0px yellow;
-            margin: 10px;
-            width: 50%;
-            height: 50%;
-        }
-
-        .hov:hover {
-            border: solid 2px blue;
-        }
-
-        .border_blue {
-            border: solid 2px blue;
-        }
-    </style>
+    .border_blue {
+        border: solid 2px blue;
+    }
+</style>

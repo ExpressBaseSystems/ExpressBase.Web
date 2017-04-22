@@ -158,7 +158,6 @@ input[type="text"], input[type="email"], input[type="password"], input[type="sin
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
     border: 1px solid rgba(34,36,38,.15);
-    color: rgba(0,0,0,.87)!important;
     padding:3px;
     font-size:13px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
@@ -172,7 +171,6 @@ input[type="color"] {
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
     border: 1px solid rgba(34,36,38,.15);
-    color: rgba(0,0,0,.87)!important;
     padding:3px;
     font-size:13px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
@@ -185,14 +183,12 @@ input[type="color"] {
  .numinput{
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     text-align: right;
-    background: #FFF;
     border: 1px solid rgba(34,36,38,.15);
-    color: rgba(0,0,0,.87)!important;
     padding:3px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
-    border-radius:.28571429rem;
+    /*border-radius:.28571429rem;*/
 }
 
 .numinputL{

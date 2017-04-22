@@ -4,7 +4,7 @@
 };
 
 EbWizard.prototype = {
-    width: "60%",
+    width: "400px",
     height:"500px",
     Steps: null,
     Navs: null,
@@ -40,8 +40,9 @@ EbWizard.prototype = {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
             }, 10);
 
-            $(".modal-content").css("height", EbWizard.prototype.height);
-            $(".modal-dialog").css("width", EbWizard.prototype.width);
+            $(".modal-content").css("width", EbWizard.prototype.width);
+            $(".modal-body").css("height", (parseInt(EbWizard.prototype.height) - 159) + "px");
+            $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 325) + "px");
         });
     },
 

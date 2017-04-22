@@ -51,9 +51,27 @@
 }
 
 .wiz-inputs{
-    margin-left: 5%;
+    margin-left: 0%;
 }
 
+.controls-group{
+    overflow-y:auto;
+    height:300px;
+}
+
+.controls-group::-webkit-scrollbar {
+    width: 8px;
+}
+ 
+.controls-group::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px #337ab7; 
+    border-radius: 10px;
+}
+ 
+.controls-group::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px #888888; 
+}
 
 
 /*.stepwizard-step p {

@@ -33,8 +33,8 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult TenantDashboard()
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img", Token = ViewBag.token });
+            //IServiceClient client = this.EbConfig.GetServiceStackClient();
+            //var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img", Token = ViewBag.token });
             //if (string.IsNullOrEmpty(ViewBag.cid))
             //{
             //    foreach (int element in fr.dict.Keys)
@@ -179,42 +179,15 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult TenantProfile(int i)
         {
-            var req = this.HttpContext.Request.Form;
-            if (Request.Form.Files.Count > 0)
+            var req = this.HttpContext.Request.Form;      
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),Token= ViewBag.token });
+            if (res.id >= 0)
             {
-                var files = Request.Form.Files;
-
-                Dictionary<string, object> dict = new Dictionary<string, object>();
-                foreach (var file in files)
-                {
-                    if (file.Length > 0)
-                    {
-                        using (var fileStream = file.OpenReadStream())
-                        using (var ms = new MemoryStream())
-                        {
-                            fileStream.CopyTo(ms);
-                            var fileBytes = ms.ToArray();
-                            string img = Convert.ToBase64String(fileBytes);
-                            string imgbase = Convert.ToBase64String(fileBytes);
-                            dict.Add("profileimg", imgbase);
-                            dict.Add("id", ViewBag.UId);
-                            IServiceClient imgclient = this.EbConfig.GetServiceStackClient();
-                            var imgres = imgclient.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "tenantimgupload", Colvalues = dict });
-                        }
-                    }
-                }
-                return View();
-            }
-            else
-            {
-                IServiceClient client = this.EbConfig.GetServiceStackClient();
-                var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-                if (res.id >= 0)
-                {
-                    return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
-                }
-                return View();
-            }
+              return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
+             }
+            return View();
+           
         }
 
         public IActionResult marketPlace()

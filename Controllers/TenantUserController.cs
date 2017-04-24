@@ -134,10 +134,17 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
+        public IActionResult TenantLogout()
+        {
+            ViewBag.Fname = null;
+            return RedirectToAction("TenantSignup", "TenantExt");
 
         public void TVPref4User(int tvid, string json)
         {
             this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, tvid, ViewBag.UId), json);
+        }
+    }
+}
         }
     }
 }

@@ -90,33 +90,6 @@
             document.getElementById('tier').value = id;
         }
 
-        function readURL(input) {
-
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var DataCollection = { 'id': $('#tenantid').val(), 'proimg': reader.result };
-                    $.post('https://expressbaseservicestack.azurewebsites.net/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
-                       function (data) {
-                           if (data) {
-                               alert(data.id);
-                               $('#tenantuserid').val(data.id);
-                           }
-                           else {
-                               alert("Hii");
-                           }
-                       });
-                    console.log(reader.result);
-                    $('#img')
-                   .attr('src', e.target.result)
-                   .width(100)
-                   .height(100);
-                };
-
-                reader.readAsDataURL(input.files[0]);
-
-            }
-        }
 
     </script>
 </head>

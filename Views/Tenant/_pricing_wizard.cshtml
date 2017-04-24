@@ -89,21 +89,32 @@
         }
 
         function readURL(input) {
-
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
+
                 reader.onload = function (e) {
-                    var DataCollection = { 'id': $('#tenantid').val(), 'proimg': reader.result };
-                    $.post('https://expressbaseservicestack.azurewebsites.net/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
+                    ////var DataCollection = '{ "id" :"' + $('#tenantid').val() + '","proimg":"' + reader.result + '"}';
+                    //var param = JSON.stringify({ "id": $('#tenantid').val() , "proimg": reader.result  });
+                    $.post('https://localhost:44377/infra', { "Token": $.cookie('Token'), "op": "tenantaccountimg", "Colvalues": JSON.stringify({ "id": $('#tenantid').val(), "proimg": reader.result }) },
                        function (data) {
                            if (data) {
-                               alert(data.id);
                                $('#tenantuserid').val(data.id);
                            }
                            else {
                                alert("Hii");
                            }
                        });
+                    
+                    //var proimg =reader.result; alert(proimg);
+                    //$.ajax({
+                    //    type: "POST",
+                    //    url: 'https://localhost:44377/infra',
+                    //    data: { "Token": $.cookie('Token'), "op": "tenantaccountimg", "Colvalues": JSON.stringify({ "id": $('#tenantid').val(), "proimg": reader.result }) },
+                    //    success: function (data, status, xhr) {
+                    //        alert("hii");
+                    //        $('#tenantuserid').val(data.id);
+                    //    }
+                    //});
                     console.log(reader.result);
                     $('#img')
                    .attr('src', e.target.result)

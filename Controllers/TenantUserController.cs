@@ -134,6 +134,11 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
+        public IActionResult TenantLogout()
+        {
+            ViewBag.Fname = null;
+            return RedirectToAction("TenantSignup", "TenantExt");
 
+        }
     }
 }

@@ -25,12 +25,13 @@ function filter_obj(colu, oper, valu) {
 
 function call_filter(e, objin) {
     if (e.keyCode === 13)
-        $('#' + $(objin).attr('data-table') + '_tbl').DataTable().ajax.reload();
+        $('#' + $(objin).attr('data-table') ).DataTable().ajax.reload();
 }
 
 function repopulate_filter_arr(table) {
+    var tableObj = $("#" + table).DataTable();
     var filter_obj_arr = [];
-    $.each($('#' + table + '_tbl').DataTable().columns().header().toArray(), function (i, obj) {
+    $.each(tableObj.columns().header().toArray(), function (i, obj) {
         var colum = $(obj).children(0).text();
         if (colum !== '') {
             var oper;
@@ -44,7 +45,7 @@ function repopulate_filter_arr(table) {
             }
             else {
                 oper = $('#' + table + '_' + colum + '_hdr_sel').text();
-                if ($('#' + table + '_tbl').DataTable().columns(i).visible()[0]) {
+                if (tableObj.columns(i).visible()[0]) {
                     if (oper !== '' && $(textid).val() !== '') {
                         if (oper === 'B') {
                             val1 = $(textid).val();
@@ -117,11 +118,12 @@ function showOrHideFilter(objbtn, scrolly) {
         $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
 
     clearFilter(tableid);
-    $('#' + tableid + '_tbl').DataTable().columns.adjust();
+    $('#' + tableid).DataTable().columns.adjust();
 }
 
 function clearFilter(tableid) {
-    flag = false;
+    var flag = false;
+    var tableObj = $("#" + tableid).DataTable();
     $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) 
     {
         if ($(this).hasClass(tableid + '_hchk')) {
@@ -138,29 +140,28 @@ function clearFilter(tableid) {
             }
         }
     });
-
     if (flag)
-        $('#' + tableid + '_tbl').DataTable().ajax.reload();
+        tableObj.ajax.reload();
 }
 
-function updateAlSlct(objchk, rowId) {
-    
-    var tableid = $(objchk).attr('data-table'); 
+function updateAlSlct( objchk, rowId) {    
+    var tableid = $(objchk).attr('data-table');
+    var tableObj = $("#" + tableid).DataTable();
     if (objchk.checked) {
-        $('#' + tableid + '_tbl').DataTable().rows(rowId).select();
+        tableObj.rows(rowId).select();
         $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
     }
     else {
-        $('#' + tableid + '_tbl').DataTable().rows(rowId).deselect();
+        tableObj.rows(rowId).deselect();
         $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
     }
     var CheckedCount = $('.' + tableid + '_select:checked').length;
-    var UncheckedCount = $('#' + tableid + '_tbl').DataTable().rows().count() - CheckedCount;
-    if (CheckedCount === $('#' + tableid + '_tbl').DataTable().rows().count()) {
+    var UncheckedCount = tableObj.rows().count() - CheckedCount;
+    if (CheckedCount === tableObj.rows().count()) {
         $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
         $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', true);
     }
-    else if (UncheckedCount === $('#' + tableid + '_tbl').DataTable().rows().count()) {
+    else if (UncheckedCount === tableObj.rows().count()) {
         $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
         $('#' + tableid + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
     }
@@ -176,12 +177,10 @@ function clickAlSlct(e, objchk) {
     e.stopPropagation();
 }
 
-function summarize2(tableId, eb_agginfo, scrollY) {
-    var api = $('#' + tableId + '_tbl').DataTable();
+function summarize2(api, tableId, eb_agginfo, scrollY) {
     var p;
     var ftrtxt;
     $.each(eb_agginfo, function (index, agginfo) {
-
         if (scrollY > 0) {
             p = $('table:eq(2) tfoot #' + tableId + '_' + agginfo.colname + '_ftr_sel1').text().trim();
             ftrtxt = '.dataTables_scrollFoot #' + tableId + '_' + agginfo.colname + '_ftr_txt1';
@@ -203,13 +202,12 @@ function summarize2(tableId, eb_agginfo, scrollY) {
     });
 }
 
-function fselect_func(objsel, scrollY) {
+function fselect_func(api, objsel, scrollY) {
     var selValue = $(objsel).text().trim();
     $(objsel).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
     var table = $(objsel).attr('data-table');
     var colum = $(objsel).attr('data-column');
     var decip = $(objsel).attr('data-decip');
-    var api = $('#' + table + '_tbl').DataTable();
     var col = api.column(colum + ':name');
     var ftrtxt;
     if (scrollY > 0)
@@ -275,18 +273,18 @@ function setLiValue(objli) {
 }
 
 
-function toggleInFilter(objchk)
+function toggleInFilter(objChk)
 {
-    $('#' + $(objchk).attr('data-table') + '_tbl').DataTable().ajax.reload();
+    var table = $(objChk).attr('data-table');
+    $("#"+ table).DataTable().ajax.reload();
 }
 
 function renderProgressCol(data) {
     return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>";
 }
 
-function renderCheckBoxCol(datacolumns, tableid, row,meta) {
-    var idpos = (_.find(datacolumns, { 'columnName': 'id' })).columnIndex;
-    return "<input type='checkbox' class='" + tableid + "_select' name='" + tableid + "_id' value='" + row[idpos].toString() + "' data-table='" + tableid + "' onchange='updateAlSlct(this," + meta.row + ");' />";
+function renderCheckBoxCol(tableObj, columnIndex, tableid, row, meta) {
+    return "<input type='checkbox' class='" + tableid + "_select' name='" + tableid + "_id' value='" + row[columnIndex].toString() + "' data-table='" + tableid + "' onchange='updateAlSlct( this," + meta.row + ");' />";
 }
 
 function renderEbVoidCol(data) {
@@ -411,21 +409,27 @@ function GPointPopup(e) {
 function printSelected(tableid){
     $('#' + tableid + '_container').find('.buttons-print')[1].click();
 }
+
 function printAll(tableid) {
     $('#' + tableid + '_container').find('.buttons-print')[0].click();
 }
+
 function ExportToPrint(tableid) {
     $('#' + tableid + '_container').find('.buttons-print')[0].click();
 }
+
 function CopyToClipboard(tableid) {
     $('#' + tableid + '_container').find('.buttons-copy').click();
 }
+
 function ExportToPdf(tableid) {
     $('#' + tableid + '_container').find('.buttons-pdf').click();
 }
+
 function ExportToCsv(tableid) {
     $('#' + tableid + '_container').find('.buttons-csv').click();
 }
+
 function ExportToExcel(tableid) {
     $('#' + tableid + '_container').find('.buttons-excel').click();
 }

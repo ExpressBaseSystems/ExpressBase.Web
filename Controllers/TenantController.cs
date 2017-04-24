@@ -194,6 +194,9 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-    
+        public IActionResult dbConfig()
+        {
+            return View();
+        }
     }
 }

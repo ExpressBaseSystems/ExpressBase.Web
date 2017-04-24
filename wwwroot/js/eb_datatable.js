@@ -434,6 +434,81 @@ function ExportToExcel(tableid) {
     $('#' + tableid + '_container').find('.buttons-excel').click();
 }
 
+function GetFiltersFromStudio(tvPref4User)
+{
+    alert(tvPref4User);
+    return null;
+}
 
+var colCollection = {
+    name : "",
+    title : "",
+    type : null,
+    data : null,
+    visible : null,
+    width: null,
+};
 
+function GetFiltersFromSettingsTbl(tvPref4User,tableId) {
+    var ResArray = [];
+    $.each(tvPref4User, function (i, col) {
+        var _ls = "";
+        if (col.visible == true)
+        {
+            var span = "<span hidden>" + col.name + "</span>";
 
+            var htext_class =  tableId + "_htext";
+
+            var data_colum = "data-colum='" + col.name + "'";
+            var data_table = "data-table='" + tableId + "'";
+
+            var header_select = tableId+"_"+col.name+"_hdr_sel";
+            var header_text1 = tableId+"_"+col.name+"_hdr_txt1";
+            var header_text2 = tableId+"_"+col.name+"_hdr_txt2";
+
+            _ls += "<th style='padding: 0px; margin: 0px'>";
+
+            if (col.type === "Numeric")
+                _ls +=  (span + getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
+            //else if (col.type === "Text")
+            //    _ls += (span + getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
+            //else if (col.type === "DateTime")
+            //    _ls += (span + getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
+            //else if (col.type === EbDataGridViewColumnType.Boolean)
+            //    _ls += (span + getFilterForBoolean(col.name));
+            else
+                _ls += (span);
+
+            _ls += ("</th>");
+        }
+        ResArray.push(_ls);
+    });
+
+    return ResArray;
+}
+
+function getFilterForNumeric(header_text1, header_select,  data_table, htext_class, data_colum, header_text2)
+{
+   var coltype = "data-coltyp='numeric'";
+   var drptext = "";
+
+drptext = "<div class='input-group'>" +
+"<div class='input-group-btn'>" +
+    " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='"+ header_select +"'> = </button>" +
+    " <ul class='dropdown-menu'>" +
+    "   <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
+      " <li><a href ='#' onclick='setLiValue(this);' " + data_table +   data_colum + "><</a></li>" +
+      " <li><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">></a></li>" +
+      " <li><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + "><=</a></li>" +
+      " <li><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">>=</a></li>" +
+      "<li ><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">B</a></li>" +
+    " </ul>" +
+" </div>" +
+" <input type='number' class='form-control "+ htext_class +"' id='" +header_text1+ "' onkeypress='call_filter(event, this); '" +data_table + data_colum +coltype +  ">" +
+" <span class='input-group-btn'></span>" +
+" <input type='number' class='form-control " +htext_class+ "' id='"+ header_text2 +"' style='visibility: hidden' onkeypress='call_filter(event, this);' " +data_table+  data_colum + coltype + ">" +
+" </div> ";
+        return drptext;
+}
+
+ 

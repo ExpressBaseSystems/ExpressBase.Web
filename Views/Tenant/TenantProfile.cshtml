@@ -5,10 +5,7 @@
 <html lang="en">
 <head>
     <title>Disable Closing of Bootstrap Modal on Click of Dark Area</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    
     <script type="text/javascript">
 $(document).ready(function(){
 	//$('.launch-modal').click(function(){
@@ -55,10 +52,23 @@ $(document).ready(function(){
 
 });
 
+
 function readURL(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
         reader.onload = function (e) {
+            alert($('#id').val());
+            var DataCollection = { 'id': $('#id').val(), 'proimg': reader.result };
+            $.post('https://localhost:44377/infra/', { crossDomain: true, op: "tenantimgupload", Colvalues: JSON.stringify(DataCollection), Token: $.cookie('Token') },
+               function (data) {
+                   if (data) {
+                       alert("Success");
+                   }
+                   else {
+                       alert("Hii");
+                   }
+               });
+            console.log(reader.result);
             $('#img')
            .attr('src', e.target.result)
            .width(100)
@@ -66,6 +76,7 @@ function readURL(input) {
         };
 
         reader.readAsDataURL(input.files[0]);
+
     }
 }
     </script>
@@ -99,9 +110,8 @@ function readURL(input) {
                                 {
                                 <tr>
                                    
-                                    <td><div class="tdd">Upload Profile Image</div></td>
-                                    <td><div class="tdd"><input type="file" name="pic" id="files" accept="image/*" onchange="readURL(this)"><input type="button" id="upload" value="Upload" /></div></td>
-                                    
+                                    <td><div class="tdd">Upload Logo</div></td>
+                                    <td><div class="tdd"><input type="file" name="alogo" id="files" accept="image/*" onchange="readURL(this)"></div></td>
                                     <td><img id="img" src="#" alt="your image1" /></td>
                                 </tr>
                                 }

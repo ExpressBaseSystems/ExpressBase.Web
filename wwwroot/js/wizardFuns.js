@@ -5,7 +5,7 @@
 
 EbWizard.prototype = {
     width: "400px",
-    height:"500px",
+    height: "500px",
     Steps: null,
     Navs: null,
     currentStepNo: 0,
@@ -30,34 +30,51 @@ EbWizard.prototype = {
             $(EbWizard.prototype.NextBtn).off("click").on("click", EbWizard.prototype.NextB);
             $(EbWizard.prototype.PrevBtn).off("click").on("click", EbWizard.prototype.PrevB);
             $(EbWizard.prototype.Navs).off("click").on("click", EbWizard.prototype.NavsClick);
-
-            EbWizard.prototype.NextBtn.show();
-            EbWizard.prototype.PrevBtn.hide();
-            EbWizard.prototype.FinishBtn.hide();
-
+            $('#dropdown ul li').click(function(){
+                $('#dropdown input[type="hidden"]').val($(this).attr("value"));
+                $('[data-toggle = "dropdown"]').html("<span>" + $(this).html() + "</span>");
+            });
+            $('[data-toggle=toggle]').bootstrapToggle();
+            $(this).prop("checked") = true;
+            $('[data-toggle=toggle]').on("click", function () {
+                $(this).prop("checked", !$(this).prop("checked"));
+                $(this).children().val($(this).prop("checked"));
+            });
+            $(".modal-content").css("width", EbWizard.prototype.width);
+            $(".modal-body").css("height", (parseInt(EbWizard.prototype.height) - 159) + "px");
+            if (EbWizard.prototype.Steps.length === 1) {
+                $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 255) + "px");
+                $("#wizprogress").hide();
+                EbWizard.prototype.NextBtn.hide();
+                EbWizard.prototype.PrevBtn.hide();
+                EbWizard.prototype.FinishBtn.show();
+            }
+            else {
+                EbWizard.prototype.NextBtn.show();
+                EbWizard.prototype.PrevBtn.hide();
+                EbWizard.prototype.FinishBtn.hide();
+                $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 325) + "px");
+            }
             EbWizard.prototype.SyncProgress();
             setTimeout(function () {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
-                $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
-
-            $(".modal-content").css("width", EbWizard.prototype.width);
-            $(".modal-body").css("height", (parseInt(EbWizard.prototype.height) - 159) + "px");
-            $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 325) + "px");
         });
     },
 
     SaveWizard: function (e) {
-        var html = "";
-        ObjString = "";
-        for (i = 0; i < EbWizard.prototype.Steps.length; i++)
-            html += $(EbWizard.prototype.Steps[i]).html();
+        if (EbWizard.prototype.IsStepValid()) {
+            var html = "";
+            ObjString = "";
+            for (i = 0; i < EbWizard.prototype.Steps.length; i++)
+                html += $(EbWizard.prototype.Steps[i]).html();
 
-        var AllInputs = $(html).find("input");
-        $.each(AllInputs, function (i, inp) {
-            ObjString += $(inp).attr("name") + ':"' + $("#" + $(inp).attr("id")).val() + '",';
-        })
-        console.log("JSON data : " + ObjString);
+            var AllInputs = $(html).find("input");
+            $.each(AllInputs, function (i, inp) {
+                ObjString += $(inp).attr("id") + ':"' + $("#" + $(inp).attr("id")).val() + '",';
+            })
+            console.log("JSON data : " + ObjString);
+        }
     },
 
     NavsClick: function (e) {
@@ -68,12 +85,12 @@ EbWizard.prototype = {
             for (var i = EbWizard.prototype.currentStepNo; i < clickedStepNo - 1; i++)
                 EbWizard.prototype.NextB(null);
         else
-            for (var i = EbWizard.prototype.currentStepNo; i > (clickedStepNo - 1); i--)
+            for (var i = EbWizard.prototype.currentStepNo; i > (clickedStepNo - 1) ; i--)
                 EbWizard.prototype.PrevB(null);
     },
 
     NextB: function (e) {
-        if(EbWizard.prototype.IsStepValid()) {
+        if (EbWizard.prototype.IsStepValid()) {
             ++EbWizard.prototype.currentStepNo;
             EbWizard.prototype.ShowStep();
             if (EbWizard.prototype.currentStepNo > 0) {
@@ -91,7 +108,7 @@ EbWizard.prototype = {
     },
 
     PrevB: function (e) {
-        if(EbWizard.prototype.IsStepValid()) {
+        if (EbWizard.prototype.IsStepValid()) {
             --EbWizard.prototype.currentStepNo;
             EbWizard.prototype.ShowStep();
             if (EbWizard.prototype.currentStepNo > 0) {
@@ -111,7 +128,7 @@ EbWizard.prototype = {
     },
 
     SyncProgress: function () {
-        for(i = 0; i < EbWizard.prototype.Steps.length; i++)
+        for (i = 0; i < EbWizard.prototype.Steps.length; i++)
             $($(EbWizard.prototype.Navs[i]).children()[0]).removeClass("btn-primary");
 
         $($(EbWizard.prototype.Navs[EbWizard.prototype.currentStepNo]).children()[0]).removeClass("btn-default").removeClass("btn-success").addClass("btn-primary");
@@ -146,7 +163,7 @@ EbWizard.prototype = {
 
     },
 
-    ShowStep: function(stepno) {
+    ShowStep: function (stepno) {
         $(EbWizard.prototype.Steps).hide();
         $(EbWizard.prototype.Steps[EbWizard.prototype.currentStepNo]).show().find('input:eq(0)').focus();
     }

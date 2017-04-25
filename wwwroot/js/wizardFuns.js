@@ -4,8 +4,8 @@
 };
 
 EbWizard.prototype = {
-    width: "400px",
-    height:"500px",
+    width: null,
+    height: null,
     Steps: null,
     Navs: null,
     currentStepNo: 0,
@@ -13,10 +13,12 @@ EbWizard.prototype = {
     PrevBtn: null,
     FinishBtn: null,
 
-    Populate: function (url) {
+    Populate: function (url, w, h) {
         EbWizard.prototype.Steps = null;
         EbWizard.prototype.Navs = null;
         EbWizard.prototype.currentStepNo = 0;
+        EbWizard.prototype.width = w;
+        EbWizard.prototype.height = h;
 
         $.get(url, function (data) {
             $("#wiz").empty().append($.parseHTML(data));
@@ -41,9 +43,9 @@ EbWizard.prototype = {
                 $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
 
-            $(".modal-content").css("width", EbWizard.prototype.width);
-            $(".modal-body").css("height", (parseInt(EbWizard.prototype.height) - 159) + "px");
-            $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 325) + "px");
+            $(".modal-content").css("width", EbWizard.prototype.width + "px");
+            $(".modal-body").css("height", EbWizard.prototype.height - 159 + "px");
+            $(".controls-group").css("height", EbWizard.prototype.height - 325 + "px");
         });
     },
 

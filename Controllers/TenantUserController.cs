@@ -138,6 +138,7 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.Fname = null;
             return RedirectToAction("TenantSignup", "TenantExt");
+        }
 
         public void TVPref4User(int tvid, string json)
         {
@@ -145,6 +146,4 @@ namespace ExpressBase.Web2.Controllers
         }
     }
 }
-        }
-    }
-}
+        

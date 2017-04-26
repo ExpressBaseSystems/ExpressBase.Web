@@ -198,5 +198,9 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
+        public IActionResult AddAccount2()
+        {
+            return View();
+        }
     }
 }

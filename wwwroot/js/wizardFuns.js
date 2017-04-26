@@ -1,5 +1,4 @@
-﻿
-var EbWizard = function (data, accid) {
+﻿var EbWizard = function (data, accid) {
     this.d = data;
     this.id = accid;
 };
@@ -13,13 +12,15 @@ EbWizard.prototype = {
     NextBtn: null,
     PrevBtn: null,
     FinishBtn: null,
+    destUrl: null,
 
-    Populate: function (url, w, h) {
+    Populate: function (srcUrl, destUrl, w, h) {
         EbWizard.prototype.Steps = null;
         EbWizard.prototype.Navs = null;
         EbWizard.prototype.currentStepNo = 0;
         EbWizard.prototype.width = w;
         EbWizard.prototype.height = h;
+        EbWizard.prototype.destUrl = destUrl;
 
         $(".modal-content").css("width", EbWizard.prototype.width + "px");
         $(".modal-dialog").css("width", EbWizard.prototype.width + "px");
@@ -68,6 +69,10 @@ EbWizard.prototype = {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
                 $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
+
+            $(".modal-content").css("width", EbWizard.prototype.width + "px");
+            $(".modal-body").css("height", EbWizard.prototype.height - 159 + "px");
+            $(".controls-group").css("height", EbWizard.prototype.height - 325 + "px");
         });
     },
 
@@ -82,6 +87,16 @@ EbWizard.prototype = {
             ObjString += $(inp).attr("name") + ':"' + $("#" + $(inp).attr("id")).val() + '",';
         })
         console.log("JSON data : " + ObjString);
+       
+
+        $.post(EbWizard.prototype.destUrl, { "Colvalues": ObjString },
+        function (result) {
+            if (result) 
+                alert(result);
+            else 
+                alert(result);
+        });
+
     },
 
     NavsClick: function (e) {

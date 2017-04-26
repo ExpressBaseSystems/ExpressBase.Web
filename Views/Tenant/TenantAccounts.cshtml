@@ -16,12 +16,17 @@
                 })
             });
 
+            var addaccountwzd = new EbWizard();
             $('.new').click(function () {
                 var ele = $(this).attr("data-accid");
                 $('#acid').val(ele);
-                $('#new').modal({
+                $('#dbModal').modal({
                     backdrop: 'static'
                 });
+                addaccountwzd.Populate("http://localhost:53431/Tenant/AddAccount2",600,500);
+                $("div [type=submit]").on("click", function () {
+                    addaccountwzd.SaveWizard();
+                })
             });
             $('.users').click(function () {
                 var ele = $(this).attr("data-accid");
@@ -48,33 +53,7 @@
                 $(this).addClass("border_blue");
             });
         });
-        function SetValue(id) {
-            document.getElementById('tier').value = id;
-        }
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var DataCollection = { 'id': $('#tenantid').val(), 'proimg': reader.result };
-                    $.post('https://expressbaseservicestack.azurewebsites.net/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
-                       function (data) {
-                           if (data) {
-                               alert(data.id);
-                               $('#tenantuserid').val(data.id);
-                           }
-                           else {
-                               alert("Hii");
-                           }
-                       });
-                    console.log(reader.result);
-                    $('#img')
-                   .attr('src', e.target.result)
-                   .width(100)
-                   .height(100);
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+       
     </script>
 </head>
 <div class="container">
@@ -190,29 +169,9 @@
                         </div>
                     </div>
 
-                    <!-- pricing wizard  Modal Add User-->
-                    @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
-                    {
-                        <div id="new" class="modal fade">
-                            <div class="modal-dialog">
-                                <div class="modal-content" style="width:100%">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                        <h4 class="modal-title">Create Account</h4>
-                                    </div>
-                                    <div id="pricingW" class="modal-body">
-                                        @{
-                                            Html.RenderPartial("_pricing_wizard");
-                                        }
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                                            }
                 </div>
             </div>
-                                            }
+        }
     }
 </div>
 <style>
@@ -268,3 +227,5 @@
         border: solid 2px blue;
     }
 </style>
+
+

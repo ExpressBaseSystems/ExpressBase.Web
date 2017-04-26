@@ -45,17 +45,24 @@ EbWizard.prototype = {
             $(EbWizard.prototype.PrevBtn).off("click").on("click", EbWizard.prototype.PrevB);
             $(EbWizard.prototype.Navs).off("click").on("click", EbWizard.prototype.NavsClick);
 
-            EbWizard.prototype.NextBtn.show();
-            EbWizard.prototype.PrevBtn.hide();
-            EbWizard.prototype.FinishBtn.hide();
-
+            if (EbWizard.prototype.Steps.length === 1) {
+                $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 255) + "px");
+                $("#wizprogress").hide();
+                EbWizard.prototype.NextBtn.hide();
+                EbWizard.prototype.PrevBtn.hide();
+                EbWizard.prototype.FinishBtn.show();
+            }
+            else {
+                EbWizard.prototype.NextBtn.show();
+                EbWizard.prototype.PrevBtn.hide();
+                EbWizard.prototype.FinishBtn.hide();
+                $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 325) + "px");
+            }
             EbWizard.prototype.SyncProgress();
             setTimeout(function () {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
                 $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
-
-            $(".controls-group").css("height", EbWizard.prototype.height - 325 + "px");
         });
     },
 

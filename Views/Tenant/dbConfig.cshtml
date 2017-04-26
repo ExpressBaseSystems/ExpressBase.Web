@@ -1,16 +1,17 @@
 ﻿<div class="col-md-12 ebWizStep">
-    <h3> Configure DATA-RW </h3>
+    <h4>Configure database for data</h4>
+    <h5>Read Write</h5>
     <div class="controls-group">
         <div class="form-group dropdown" id="dropdown">
-            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+            <div class="dropdown-toggle dropdownBtn form-control" type="button" data-toggle="dropdown">
                 Select Database
                 <span class="caret"></span>
             </div>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
-                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+                <li purpose="dropdown" role="presentation" value="4"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
             </ul>
             <input type="hidden" id="db_datarw" name="db" class="form-control" />
         </div>
@@ -28,7 +29,7 @@
         </div>
         <div class="form-group align_singleLine">
             <label class="control-label">SSL</label>
-            <input id="ssl_datarw" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+            <input type="checkbox" required="required" data-toggle="toggle" id="ssl_datarw" name="ssl" class="ssl" />
         </div>
         <div class="form-group align_singleLine">
             <label class="control-label">Database Name</label>
@@ -42,24 +43,7 @@
             <label class="control-label">Password</label>
             <input maxlength="100" type="password" required="required" id="pwd_datarw" name="pwd" class="form-control" />
         </div>
-    </div>
-</div>
-<div class="col-md-12 ebWizStep">
-    <h3> Configure DATA-RO </h3>
-    <div class="controls-group">
-        <div class="form-group dropdown" id="dropdown">
-            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
-                Select Database
-                <span class="caret"></span>
-            </div>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
-                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
-            </ul>
-            <input type="hidden" id="db_dataro" name="db" class="form-control" />
-        </div>
+        <h5>Read Only</h5>
         <div class="form-group align_singleLine">
             <label class="control-label">Server IP/ Domain Name</label>
             <input maxlength="100" type="text" required="required" id="sip_dataro" name="sip" class="form-control" />
@@ -76,7 +60,7 @@
             <label class="control-label">SSL</label>
             <input id="ssl_dataro" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
         </div>
-        <div class="form-group">
+        <div class="form-group  align_singleLine">
             <label class="control-label">Database Name</label>
             <input maxlength="100" type="text" required="required" id="dbname_dataro" name="dbname" class="form-control" />
         </div>
@@ -89,9 +73,10 @@
             <input maxlength="100" type="password" required="required" id="pwd_dataro" name="pwd" class="form-control" />
         </div>
     </div>
-</div>
+    </div>
 <div class="col-md-12 ebWizStep">
-    <h3> Configure OBJECT-RW </h3>
+    <h4>Configure database for Object</h4>
+    <h5>Read Write</h5>
     <div class="controls-group">
         <div class="form-group dropdown" id="dropdown">
             <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
@@ -99,10 +84,10 @@
                 <span class="caret"></span>
             </div>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
-                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+                <li purpose="dropdown" role="presentation" value="4"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
             </ul>
             <input type="hidden" id="db_objrw" name="db" class="form-control" />
         </div>
@@ -134,24 +119,7 @@
             <label class="control-label">Password</label>
             <input maxlength="100" type="password" required="required" id="pwd_objrw" name="pwd" class="form-control" />
         </div>
-    </div>
-    </div>
-    <div class="col-md-12 ebWizStep">
-    <h3> Configure OBJECT-RO </h3>
-    <div class="controls-group">
-        <div class="form-group dropdown" id="dropdown">
-            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
-                Select Database
-                <span class="caret"></span>
-            </div>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
-                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
-            </ul>
-            <input type="hidden" id="db_objro" name="db" class="form-control" />
-        </div>
+        <h5>Read Only</h5>
         <div class="form-group align_singleLine">
             <label class="control-label">Server IP/ Domain Name</label>
             <input maxlength="100" type="text" required="required" id="sip_objro" name="sip" class="form-control" />
@@ -183,7 +151,8 @@
     </div>
 </div>
     <div class="col-md-12 ebWizStep">
-    <h3> Configure LOG-RW </h3>
+        <h4>Configure database for Log</h4>
+        <h5>Read Write</h5>
     <div class="controls-group">
         <div class="form-group dropdown" id="dropdown">
             <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
@@ -191,10 +160,10 @@
                 <span class="caret"></span>
             </div>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
-                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+                <li purpose="dropdown" role="presentation" value="4"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage"/>  SQLServer</li>
             </ul>
             <input type="hidden" id="db_logrw" name="db" class="form-control" />
         </div>
@@ -226,24 +195,7 @@
             <label class="control-label">Password</label>
             <input maxlength="100" type="password" required="required" id="pwd_logrw" name="datarw" class="form-control" />
         </div>
-    </div>
-</div>
-   <div class="col-md-12 ebWizStep">
-    <h3> Configure LOG-RO </h3>
-    <div class="controls-group">
-        <div class="form-group dropdown" id="dropdown">
-            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
-                Select Database
-                <span class="caret"></span>
-            </div>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
-                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
-            </ul>
-            <input type="hidden" id="db_logro" name="db" class="form-control" />
-        </div>
+        <h5>Read Only</h5>
         <div class="form-group align_singleLine">
             <label class="control-label">Server IP/ Domain Name</label>
             <input maxlength="100" type="text" required="required" id="sip_logro" name="sip" class="form-control" />
@@ -275,7 +227,8 @@
     </div>
 </div>
    <div class="col-md-12 ebWizStep">
-    <h3> Configure FILE-RW </h3>
+       <h4>Configure database for File</h4>
+       <h5>Read Write</h5>
     <div class="controls-group">
         <div class="form-group dropdown" id="dropdown">
             <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
@@ -283,10 +236,10 @@
                 <span class="caret"></span>
             </div>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
-                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+                <li purpose="dropdown" role="presentation" value="4"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
             </ul>
             <input type="hidden" id="db_filerw" name="db" class="form-control" />
         </div>
@@ -318,24 +271,7 @@
             <label class="control-label">Password</label>
             <input maxlength="100" type="password" required="required" id="pwd_filerw" name="datarw" class="form-control" />
         </div>
-    </div>
-</div>
-<div class="col-md-12 ebWizStep">
-    <h3> Configure FILE-RO </h3>
-    <div class="controls-group">
-        <div class="form-group dropdown" id="dropdown">
-            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
-                Select Database
-                <span class="caret"></span>
-            </div>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
-                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
-            </ul>
-            <input type="hidden" id="db_filero" name="db" class="form-control" />
-        </div>
+        <h5>Read Only</h5>
         <div class="form-group align_singleLine">
             <label class="control-label">Server IP/ Domain Name</label>
             <input maxlength="100" type="text" required="required" id="sip_filero" name="sip" class="form-control" />

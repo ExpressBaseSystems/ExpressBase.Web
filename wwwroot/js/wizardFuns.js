@@ -12,15 +12,27 @@ EbWizard.prototype = {
     NextBtn: null,
     PrevBtn: null,
     FinishBtn: null,
+    destUrl: null,
 
-    Populate: function (url, w, h) {
+    Populate: function (srcUrl, destUrl, w, h) {
         EbWizard.prototype.Steps = null;
         EbWizard.prototype.Navs = null;
         EbWizard.prototype.currentStepNo = 0;
         EbWizard.prototype.width = w;
         EbWizard.prototype.height = h;
+        EbWizard.prototype.destUrl = destUrl;
 
-        $.get(url, function (data) {
+        $(".modal-dialog").css("width", EbWizard.prototype.width + "px");
+        $(".modal-content").css("width", EbWizard.prototype.width + "px");
+        $(".modal-body").css("height", EbWizard.prototype.height - 159 + "px");
+        $("#wiz").empty().append("<div class='controls-group'><i class='fa fa-spinner fa-pulse fa-3x fa-fw eb-loader'></i></div>");
+
+        //alert(((EbWizard.prototype.height - 159) / 2) + "px");
+        //$(".modal-content").css("height", EbWizard.prototype.height+100 + "px");
+        //$(".controls-group").css("height", 500 + "px");
+        //$("[class=controls-group]").children().css("margin-top", ((EbWizard.prototype.height - 159) / 2) + "px");
+
+        $.get(srcUrl, function (data) {
             $("#wiz").empty().append($.parseHTML(data));
             EbWizard.prototype.Steps = $(".ebWizStep");
             EbWizard.prototype.ShowStep();
@@ -43,8 +55,6 @@ EbWizard.prototype = {
                 $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
 
-            $(".modal-content").css("width", EbWizard.prototype.width + "px");
-            $(".modal-body").css("height", EbWizard.prototype.height - 159 + "px");
             $(".controls-group").css("height", EbWizard.prototype.height - 325 + "px");
         });
     },
@@ -60,6 +70,16 @@ EbWizard.prototype = {
             ObjString += $(inp).attr("name") + ':"' + $("#" + $(inp).attr("id")).val() + '",';
         })
         console.log("JSON data : " + ObjString);
+       
+
+        $.post(EbWizard.prototype.destUrl, { "Colvalues": ObjString },
+        function (result) {
+            if (result) 
+                alert(result);
+            else 
+                alert(result);
+        });
+
     },
 
     NavsClick: function (e) {

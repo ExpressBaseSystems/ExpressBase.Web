@@ -13,14 +13,20 @@ EbWizard.prototype = {
     PrevBtn: null,
     FinishBtn: null,
     destUrl: null,
+    SrcUrl: null,
+    Heading: null,
+    HeadingIcon: null,
 
-    Populate: function (srcUrl, destUrl, w, h) {
+    Init: function (srcUrl, destUrl, w, h, heading, headingIcon) {
         EbWizard.prototype.Steps = null;
         EbWizard.prototype.Navs = null;
         EbWizard.prototype.currentStepNo = 0;
         EbWizard.prototype.width = w;
         EbWizard.prototype.height = h;
+        EbWizard.prototype.SrcUrl = srcUrl;
         EbWizard.prototype.destUrl = destUrl;
+        EbWizard.prototype.Heading = heading;
+        EbWizard.prototype.HeadingIcon = headingIcon;
 
         $(".modal-dialog").css("width", EbWizard.prototype.width + "px");
         $(".modal-content").css("width", EbWizard.prototype.width + "px");
@@ -31,8 +37,9 @@ EbWizard.prototype = {
         //$(".modal-content").css("height", EbWizard.prototype.height+100 + "px");
         //$(".controls-group").css("height", 500 + "px");
         //$("[class=controls-group]").children().css("margin-top", ((EbWizard.prototype.height - 159) / 2) + "px");
-
-        $.get(srcUrl, function (data) {
+        EbWizard.prototype.RenderModal();
+        
+        $.get(EbWizard.prototype.SrcUrl, function (data) {
             $("#wiz").empty().append($.parseHTML(data));
             EbWizard.prototype.Steps = $(".ebWizStep");
             EbWizard.prototype.ShowStep();
@@ -44,6 +51,7 @@ EbWizard.prototype = {
             $(EbWizard.prototype.NextBtn).off("click").on("click", EbWizard.prototype.NextB);
             $(EbWizard.prototype.PrevBtn).off("click").on("click", EbWizard.prototype.PrevB);
             $(EbWizard.prototype.Navs).off("click").on("click", EbWizard.prototype.NavsClick);
+            EbWizard.prototype.FinishBtn.on("click", EbWizard.prototype.SaveWizard);
 
             if (EbWizard.prototype.Steps.length === 1) {
                 $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 255) + "px");
@@ -67,26 +75,27 @@ EbWizard.prototype = {
     },
 
     SaveWizard: function (e) {
-        var html = "";
-        ObjString = "";
-        for (i = 0; i < EbWizard.prototype.Steps.length; i++)
-            html += $(EbWizard.prototype.Steps[i]).html();
+        if (EbWizard.prototype.IsStepValid()) {
+            var html = "";
+            ObjString = "";
+            for (i = 0; i < EbWizard.prototype.Steps.length; i++)
+                html += $(EbWizard.prototype.Steps[i]).html();
 
-        var AllInputs = $(html).find("input");
-        $.each(AllInputs, function (i, inp) {
-            ObjString += $(inp).attr("name") + ':"' + $("#" + $(inp).attr("id")).val() + '",';
-        })
-        console.log("JSON data : " + ObjString);
-       
+            var AllInputs = $(html).find("input");
+            $.each(AllInputs, function (i, inp) {
+                ObjString += $(inp).attr("name") + ':"' + $("#" + $(inp).attr("id")).val() + '",';
+            })
+            console.log("JSON data : " + ObjString);
 
-        $.post(EbWizard.prototype.destUrl, { "Colvalues": ObjString },
-        function (result) {
-            if (result) 
-                alert(result);
-            else 
-                alert(result);
-        });
 
+            $.post(EbWizard.prototype.destUrl, { "Colvalues": ObjString, "Token": getToken() },
+            function (result) {
+                if (result)
+                    alert(result);
+                else
+                    alert(result);
+            });
+        }
     },
 
     NavsClick: function (e) {
@@ -178,5 +187,32 @@ EbWizard.prototype = {
     ShowStep: function(stepno) {
         $(EbWizard.prototype.Steps).hide();
         $(EbWizard.prototype.Steps[EbWizard.prototype.currentStepNo]).show().find('input:eq(0)').focus();
+    },
+
+    RenderModal:function(){
+        $(document.body).append( ("<div id='dbModal' class='modal fade'>" +
+            "<div class='modal-dialog'>" +
+             "   <div class='modal-content'>" +
+              "      <div class='modal-header'>" +
+               "         <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>×</button>" +
+                "        <h4 class='modal-title'><i class='fa @HeadingIcon' aria-hidden='true'></i> @wizHead</h4>" +
+                 "   </div>" +
+                  "  <div class='modal-body'>" +
+                   "     <div class='stepwizard'>" +
+                    "        <div class='stepwizard-row setup-panel' id='wizprogress'></div>" +
+                     "   </div>" +
+                      "  <div id='wiz' class='wiz-inputs'></div>" +
+                  "  </div>" +
+                 "   <div class='modal-footer'>" +
+                "        <div id='wizfoot'>" +
+               "             <button name='previousB' id='ebWizPrevB' class='btn btn-sm btn-primary btn-lg pull-left' type='button'>Previous</button>" +
+              "              <button name='nextB' id='ebWizNextB' class='btn btn-sm btn-primary nextBtn btn-lg pull-right' type='button'>Next</button>" +
+             "               <button name='submitB' id='ebWizFinishB' class='btn btn-sm btn-success btn-lg pull-right' type='submit'>Submit</button>" +
+            "            </div>" +
+           "         </div>" +
+          "      </div>" +
+         "   </div>" +
+        "</div>").replace("@wizHead", EbWizard.prototype.Heading).replace("@HeadingIcon", EbWizard.prototype.HeadingIcon));
     }
+
 };

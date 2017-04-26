@@ -1,273 +1,382 @@
-﻿   <div class="col-md-12 ebWizStep">
-        <h4> Step 1</h4>
-        
-       <div class="form-group align_singleLine">
-           <label class="control-label">Server IP/ Domain Name</label>
-           <input maxlength="100" type="text" required="required" id="sip" name="sip_datarw" class="form-control"/>
-       </div>
-       <div class="form-group align_singleLine">
-           <label class="control-label">Port Number</label>
-           <input maxlength="100" type="text" required="required" id="pnum" name="pnum_datarw" class="form-control"/>
-       </div>
-       <div class="form-group align_singleLine">
-           @*<label class="control-label">SSL</label>
-           <input  type="checkbox" data-toggle="toggle"  name="ssl_datarw" class=""  />
-           <label>*@
-               <input id="ssl" data-toggle="toggle" type="checkbox">
-               Option one is enabled
-           </label>
-       </div>
-       <div class="form-group align_singleLine">
-           <label class="control-label">Time Out</label>
-           <input maxlength="100" type="text" required="required" id="tout" name="tout_datarw" class="form-control" />
-       </div>
-       <div class="form-group align_singleLine">
-           <label class="control-label">Database Name</label>
-           <input maxlength="100" type="text" id="dbname" required="required" name="dbname_datarw" class="form-control" />
-       </div>
-       <div class="form-group align_singleLine">
-           <label class="control-label">Username</label>
-           <input maxlength="100" type="text" required="required" id="duname" name="duname_datarw" class="form-control"/>
-       </div>
-       <div class="form-group align_singleLine">
-           <label class="control-label">Password</label>
-           <input maxlength="100" type="password" required="required" id="pwd" name="pwd_datarw" class="form-control"/>
-       </div>
-      
+﻿<div class="col-md-12 ebWizStep">
+    <h3> Configure DATA-RW </h3>
+    <div class="controls-group">
+        <div class="form-group dropdown" id="dropdown">
+            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+                Select Database
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
+                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+            </ul>
+            <input type="hidden" id="db_datarw" name="db" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Server IP/ Domain Name</label>
+            <input maxlength="100" type="text" required="required" id="sip_datarw" name="sip" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum_datarw" name="pnum" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout_datarw" name="tout" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">SSL</label>
+            <input id="ssl_datarw" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" required="required" id="dbname_datarw" name="dbname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname_datarw" name="duname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd_datarw" name="pwd" class="form-control" />
+        </div>
     </div>
-    <div class="col-md-12 ebWizStep">
-    <h3> Step 2</h3>
+</div>
+<div class="col-md-12 ebWizStep">
+    <h3> Configure DATA-RO </h3>
+    <div class="controls-group">
+        <div class="form-group dropdown" id="dropdown">
+            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+                Select Database
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
+                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+            </ul>
+            <input type="hidden" id="db_dataro" name="db" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Server IP/ Domain Name</label>
+            <input maxlength="100" type="text" required="required" id="sip_dataro" name="sip" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum_dataro" name="pnum" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout_dataro" name="tout" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">SSL</label>
+            <input id="ssl_dataro" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+        </div>
         <div class="form-group">
             <label class="control-label">Database Name</label>
-            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_dataro" class="form-control" placeholder="Enter Database Name" />
+            <input maxlength="100" type="text" required="required" id="dbname_dataro" name="dbname" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Server IP</label>
-            <input maxlength="100" type="text" required="required" id="sip" name="sip_dataro" class="form-control" placeholder="Enter Server IP" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_dataro" class="form-control" placeholder="Enter Port Number" />
-        </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname_dataro" class="form-control" placeholder="Enter Username" />
+            <input maxlength="100" type="text" required="required" id="duname_dataro" name="duname" class="form-control" />
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_dataro" class="form-control" placeholder="Enter Password" />
+            <input maxlength="100" type="password" required="required" id="pwd_dataro" name="pwd" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">SSL</label>
-            <input maxlength="100" type="text" id="ssl" name="ssl_dataro" class="form-control" value="true" disabled />
+    </div>
+</div>
+<div class="col-md-12 ebWizStep">
+    <h3> Configure OBJECT-RW </h3>
+    <div class="controls-group">
+        <div class="form-group dropdown" id="dropdown">
+            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+                Select Database
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
+                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+            </ul>
+            <input type="hidden" id="db_objrw" name="db" class="form-control" />
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
+            <label class="control-label">Server IP/ Domain Name</label>
+            <input maxlength="100" type="text" required="required" id="sip_objrw" name="sip" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum_objrw" name="pnum" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
             <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout_dataro" class="form-control" placeholder="Enter Time Out" />
+            <input maxlength="100" type="text" required="required" id="tout_objrw" name="tout" class="form-control" />
         </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">SSL</label>
+            <input id="ssl_objrw" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" required="required" id="dbname_objrw" name="dbname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname_objrw" name="duname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd_objrw" name="pwd" class="form-control" />
+        </div>
+    </div>
+    </div>
+    <div class="col-md-12 ebWizStep">
+    <h3> Configure OBJECT-RO </h3>
+    <div class="controls-group">
+        <div class="form-group dropdown" id="dropdown">
+            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+                Select Database
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
+                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+            </ul>
+            <input type="hidden" id="db_objro" name="db" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Server IP/ Domain Name</label>
+            <input maxlength="100" type="text" required="required" id="sip_objro" name="sip" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Port Number</label>
+            <input maxlength="100" type="text" required="required" id="pnum_objro" name="pnum" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Time Out</label>
+            <input maxlength="100" type="text" required="required" id="tout_objro" name="tout" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">SSL</label>
+            <input id="ssl_objro" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" required="required" id="dbname_objro" name="dbname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname_objro" name="duname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd_objro" name="pwd" class="form-control" />
+        </div>
+    </div>
 </div>
     <div class="col-md-12 ebWizStep">
-        <h3> Step 3</h3>
-        <div class="form-group">
-            <label class="control-label">Database Name</label>
-            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_objrw" class="form-control" placeholder="Enter Database Name" />
+    <h3> Configure LOG-RW </h3>
+    <div class="controls-group">
+        <div class="form-group dropdown" id="dropdown">
+            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+                Select Database
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
+                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+            </ul>
+            <input type="hidden" id="db_logrw" name="db" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Server IP</label>
-            <input maxlength="100" type="text" required="required" id="sip" name="sip_objrw" class="form-control" placeholder="Enter Server IP" />
+        <div class="form-group align_singleLine">
+            <label class="control-label">Server IP/ Domain Name</label>
+            <input maxlength="100" type="text" required="required" id="sip_logrw" name="sip" class="form-control" />
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_objrw" class="form-control" placeholder="Enter Port Number" />
+            <input maxlength="100" type="text" required="required" id="pnum_logrw" name="pnum" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname_objrw" class="form-control" placeholder="Enter Username" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_objrw" class="form-control" placeholder="Enter Password" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">SSL</label>
-            <input maxlength="100" type="text" id="ssl" name="ssl_objrw" class="form-control" value="true" disabled />
-        </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout_objrw" class="form-control" placeholder="Enter Time Out" />
+            <input maxlength="100" type="text" required="required" id="tout_logrw" name="tout" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">SSL</label>
+            <input id="ssl_logrw" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" required="required" id="dbname_logrw" name="dbname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname_logrw" name="duname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd_logrw" name="datarw" class="form-control" />
         </div>
     </div>
-    <div class="col-md-12 ebWizStep">
-        <h3> Step 4</h3>
-        <div class="form-group">
-            <label class="control-label">Database Name</label>
-            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_objro" class="form-control" placeholder="Enter Database Name" />
+</div>
+   <div class="col-md-12 ebWizStep">
+    <h3> Configure LOG-RO </h3>
+    <div class="controls-group">
+        <div class="form-group dropdown" id="dropdown">
+            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+                Select Database
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
+                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+            </ul>
+            <input type="hidden" id="db_logro" name="db" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Server IP</label>
-            <input maxlength="100" type="text" required="required" id="sip" name="sip_objro" class="form-control" placeholder="Enter Server IP" />
+        <div class="form-group align_singleLine">
+            <label class="control-label">Server IP/ Domain Name</label>
+            <input maxlength="100" type="text" required="required" id="sip_logro" name="sip" class="form-control" />
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_objro" class="form-control" placeholder="Enter Port Number" />
+            <input maxlength="100" type="text" required="required" id="pnum_logro" name="pnum" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname_objro" class="form-control" placeholder="Enter Username" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_objro" class="form-control" placeholder="Enter Password" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">SSL</label>
-            <input maxlength="100" type="text" id="ssl" name="ssl_objro" class="form-control" value="true" disabled />
-        </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout_objro" class="form-control" placeholder="Enter Time Out" />
+            <input maxlength="100" type="text" required="required" id="tout_logro" name="tout" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">SSL</label>
+            <input id="ssl_logro" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" required="required" id="dbname_logro" name="dbname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname_logro" name="duname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd_logro" name="datarw" class="form-control" />
         </div>
     </div>
-    <div class="col-md-12 ebWizStep">
-        <h3> Step 5</h3>
-        <div class="form-group">
-            <label class="control-label">Database Name</label>
-            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_logrw" class="form-control" placeholder="Enter Database Name" />
+</div>
+   <div class="col-md-12 ebWizStep">
+    <h3> Configure FILE-RW </h3>
+    <div class="controls-group">
+        <div class="form-group dropdown" id="dropdown">
+            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+                Select Database
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
+                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+            </ul>
+            <input type="hidden" id="db_filerw" name="db" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Server IP</label>
-            <input maxlength="100" type="text" required="required" id="sip" name="sip_logrw" class="form-control" placeholder="Enter Server IP" />
+        <div class="form-group align_singleLine">
+            <label class="control-label">Server IP/ Domain Name</label>
+            <input maxlength="100" type="text" required="required" id="sip_filerw" name="sip" class="form-control" />
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_logrw" class="form-control" placeholder="Enter Port Number" />
+            <input maxlength="100" type="text" required="required" id="pnum_filerw" name="pnum" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname_logrw" class="form-control" placeholder="Enter Username" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_logrw" class="form-control" placeholder="Enter Password" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">SSL</label>
-            <input maxlength="100" type="text" id="ssl" name="ssl_logrw" class="form-control" value="true" disabled />
-        </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout_logrw" class="form-control" placeholder="Enter Time Out" />
+            <input maxlength="100" type="text" required="required" id="tout_filerw" name="tout" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">SSL</label>
+            <input id="ssl_filerw" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" required="required" id="dbname_filerw" name="dbname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname_filerw" name="duname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd_filerw" name="datarw" class="form-control" />
         </div>
     </div>
-    <div class="col-md-12 ebWizStep">
-        <h3> Step 6</h3>
-        <div class="form-group">
-            <label class="control-label">Database Name</label>
-            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_logro" class="form-control" placeholder="Enter Database Name" />
+</div>
+<div class="col-md-12 ebWizStep">
+    <h3> Configure FILE-RO </h3>
+    <div class="controls-group">
+        <div class="form-group dropdown" id="dropdown">
+            <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+                Select Database
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</a></li>
+                <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</a></li>
+                <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</a></li>
+                <li purpose="dropdown" role="presentation" value="4"><a role="menuitem" tabindex="-1" href="#"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</a></li>
+            </ul>
+            <input type="hidden" id="db_filero" name="db" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Server IP</label>
-            <input maxlength="100" type="text" required="required" id="sip" name="sip_logro" class="form-control" placeholder="Enter Server IP" />
+        <div class="form-group align_singleLine">
+            <label class="control-label">Server IP/ Domain Name</label>
+            <input maxlength="100" type="text" required="required" id="sip_filero" name="sip" class="form-control" />
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_logro" class="form-control" placeholder="Enter Port Number" />
+            <input maxlength="100" type="text" required="required" id="pnum_filero" name="pnum" class="form-control" />
         </div>
-        <div class="form-group">
-            <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname_logro" class="form-control" placeholder="Enter Username" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_logro" class="form-control" placeholder="Enter Password" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">SSL</label>
-            <input maxlength="100" type="text" id="ssl" name="ssl_logro" class="form-control" value="true" disabled />
-        </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout_logro" class="form-control" placeholder="Enter Time Out" />
+            <input maxlength="100" type="text" required="required" id="tout_filero" name="tout" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">SSL</label>
+            <input id="ssl_filero" type="checkbox" data-toggle="toggle" name="ssl" class="ssl" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Database Name</label>
+            <input maxlength="100" type="text" required="required" id="dbname_filero" name="dbname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Username</label>
+            <input maxlength="100" type="text" required="required" id="duname_filero" name="duname" class="form-control" />
+        </div>
+        <div class="form-group align_singleLine">
+            <label class="control-label">Password</label>
+            <input maxlength="100" type="password" required="required" id="pwd_filero" name="datarw" class="form-control" />
         </div>
     </div>
-    <div class="col-md-12 ebWizStep">
-        <h3> Step 7</h3>
-        <div class="form-group">
-            <label class="control-label">Server IP</label>
-            <input maxlength="100" type="text" required="required" id="sip" name="sip_logrw" class="form-control" placeholder="Enter Server IP" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_logrw" class="form-control" placeholder="Enter Port Number" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout_logrw" class="form-control" placeholder="Enter Time Out" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">SSL</label>
-            <input maxlength="100" type="text" id="ssl" name="ssl_logrw" class="form-control" value="true" disabled />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Database Name</label>
-            <input maxlength="100" type="email" id="dbname" required="required" name="dbname_logrw" class="form-control" placeholder="Enter Database Name" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname_logrw" class="form-control" placeholder="Enter Username" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_logrw" class="form-control" placeholder="Enter Password" />
-        </div>
-       
-       
-    </div>
-    <div class="col-md-12 ebWizStep">
-      <h3> Step 8</h3>
-        <div class="form-group">
-            <label class="control-label">Database Name</label>
-            <input maxlength="100" type="text" id="dbname" required="required" name="dbname_filero" class="form-control" placeholder="Enter Database Name" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Server IP</label>
-            <input maxlength="100" type="text" required="required" id="sip" name="sip_filero" class="form-control" placeholder="Enter Server IP" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum_filero" class="form-control" placeholder="Enter Port Number" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname_filero" class="form-control" placeholder="Enter Username" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd_filero" class="form-control" placeholder="Enter Password" />
-        </div>
-        <div class="form-group">
-            <label class="control-label">SSL</label>
-            <input maxlength="100" type="text" id="ssl" name="ssl_filero" class="form-control" value="true" disabled />
-        </div>
-        <div class="form-group">
-            <label class="control-label">Time Out</label>
-            <input maxlength="100" type="text" required="required" id="tout" name="tout_filero" class="form-control" placeholder="Enter Time Out" />
-        </div>
-    </div>
-
-
+</div>
 <style>
-    .form-control{
-        /*display: inline-block;*/
+    .form-group {
+        width: 20%;
     }
-    .align_singleLine{
-    display: inline-block;                                   
-    width:35%;
-    margin-right:5px;
-
-}
+    .align_singleLine {
+        display: inline-block;
+        width: 20%;
+        margin-right: 5px;
+    }
+    .align_singleLine_first {
+        width: 20%;
+        margin-right: 5px;
+    }
 </style>
-
-
-
-

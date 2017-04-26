@@ -17,7 +17,7 @@
     var tid = ViewBag.tenantid;
  }
 <div class="col-md-12 ebWizStep">
-    <h4> Step 1</h4>
+    <h4>Select Tier</h4>
     <div class="controls-group">
         <table id="tid">
             <tr>
@@ -55,48 +55,49 @@
 </div>
 
 <div class="col-md-12 ebWizStep">
-    <h4> Step 2</h4>
+    <h4>Account Information</h4>
     <div class="controls-group">
         <div class="form-group">
             <label class="control-label">Account Name</label>
-            <input maxlength="100" type="text" required="required" id="accountname" name="accountname" class="form-control" />
+            <input maxlength="100" type="text" required="required" id="accountname" name="accountname" class="form-control" style="width:360px;" />
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Client id</label>
             <input maxlength="100" type="text" required="required" id="cid" name="cid" class="form-control" />
         </div>
         <div class="form-group">
             <label class="control-label">Upload Logo</label>
-            <input type="file" name="alogo" id="files" accept="image/*" onchange="readURL(this)">
+            <input type="file" name="alogo" id="files" accept="image/*" onchange="readURL(this)" class="file">
             <img id="img" src="#" alt="your image1" />
         </div>
     </div>
 </div>
 <div class="col-md-12 ebWizStep">
-    <h3> Step 3</h3>
+    <h3> Personal details</h3>
     <div class="controls-group">
         <div class="form-group">
             <label class="control-label">Full Name</label>
-            <input maxlength="100" type="text" id="tenantname" name="tenantname" required="required" class="form-control"/>
+            <input maxlength="100" type="text" id="tenantname" name="tenantname" required="required" class="form-control" style="width:360px;"/>
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Address</label>
             <input maxlength="100" type="text" required="required" id="address" name="address" class="form-control"/>
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Phone</label>
             <input maxlength="100" type="text" required="required" id="phone" name="phone" class="form-control" />
         </div>
         <div class="form-group">
             <label class="control-label">Email</label>
-            <input maxlength="100" type="text" required="required" id="email" name="email" class="form-control"/>
+            <input maxlength="100" type="email" required="required" id="email" name="email" class="form-control" style="width:360px;"/>
         </div>
-        <div class="form-group">
+        <div class="form-group align_singleLine">
             <label class="control-label">Website</label>
-            <input maxlength="100" type="password" required="required" id="website" name="website" class="form-control"/>
+            <input maxlength="100" type="text" required="required" id="website" name="website" class="form-control" style="width:360px;"/>
         </div>
         <div>
-
+            <input type="hidden" id="imgpro" name="imgpro" />
+            <input type="hidden" id="op" name="op" value="insertaccount" />
             <input type="hidden" id="tier" name="tier" value="@ViewBag.tier" />
             <input type="hidden" id="tenantid" name="tenantid" value="@ViewBag.tenantid" />
             <input type="hidden" id="tenantuserid" name="tenantuserid" />

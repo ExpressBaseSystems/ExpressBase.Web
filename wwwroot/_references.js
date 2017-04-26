@@ -9,11 +9,13 @@
 /// <reference path="js/elementqueries.js" />
 /// <reference path="js/gridstack.jqueryui.min.js" />
 /// <reference path="js/gridstack.js" />
+/// <reference path="js/infra.js" />
 /// <reference path="js/jquery mask plugin v1.14.9.js" />
 /// <reference path="js/jquery.cookie.js" />
 /// <reference path="js/jquery.datetimepicker.min.js" />
 /// <reference path="js/jquery.toolbar.js" />
 /// <reference path="js/jquery-ui-timepicker-addon.min.js" />
+/// <reference path="js/jwt-decode.min.js" />
 /// <reference path="js/mobile.js" />
 /// <reference path="js/pswrd.js" />
 /// <reference path="js/resizesensor.js" />

@@ -1,0 +1,123 @@
+﻿
+<script>
+    $(document).ready(function () {
+        $('img').click(function () {
+            $('.selected').removeClass('selected'); // removes the previous selected class
+            $(this).addClass('selected'); // adds the class to the clicked image
+        });
+        $("#tid td").click(function () {
+            $("#tid td").removeClass("border_blue");
+            $(this).addClass("border_blue");
+        });
+    });
+
+    
+</script>
+@{
+    var tid = ViewBag.tenantid;
+ }
+<div class="col-md-12 ebWizStep">
+    <h4> Step 1</h4>
+    <div class="controls-group">
+        <table id="tid">
+            <tr>
+                <td valign="top" class="border_trans hov col-md-3">
+                    <a id="1" href="#" name="1" onclick="SetValue(this.id)">
+                        <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
+                    </a>
+                    <h4>Free</h4>
+                    <p>Expressbase Studio free version</p>
+                </td>
+                <td valign="top" class="border_trans hov col-md-3">
+                    <a href="#" id="2" name="2" onclick="SetValue(this.id)">
+                        <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
+                    </a>
+                    <h4>Professional</h4>
+                    <p>Expressbase Studio Professional version</p>
+                </td>
+                <td valign="top" class="border_trans hov col-md-3">
+                    <a href="#" id="3" onclick="SetValue(this.id)">
+                        <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
+                    </a>
+                    <h4>Enterprise</h4>
+                    <p>Expressbase Studio Enterprise version</p>
+                </td>
+                <td valign="top" class="border_trans hov col-md-3">
+                    <a href="#" id="4" onclick="SetValue(this.id)">
+                        <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
+                    </a>
+                    <h4>Unlimited</h4>
+                    <p>Expressbase Studio Unlimited version</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="col-md-12 ebWizStep">
+    <h4> Step 2</h4>
+    <div class="controls-group">
+        <div class="form-group">
+            <label class="control-label">Account Name</label>
+            <input maxlength="100" type="text" required="required" id="accountname" name="accountname" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Client id</label>
+            <input maxlength="100" type="text" required="required" id="cid" name="cid" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Upload Logo</label>
+            <input type="file" name="alogo" id="files" accept="image/*" onchange="readURL(this)">
+            <img id="img" src="#" alt="your image1" />
+        </div>
+    </div>
+</div>
+<div class="col-md-12 ebWizStep">
+    <h3> Step 3</h3>
+    <div class="controls-group">
+        <div class="form-group">
+            <label class="control-label">Full Name</label>
+            <input maxlength="100" type="text" id="tenantname" name="tenantname" required="required" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Address</label>
+            <input maxlength="100" type="text" required="required" id="address" name="address" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Phone</label>
+            <input maxlength="100" type="text" required="required" id="phone" name="phone" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Email</label>
+            <input maxlength="100" type="text" required="required" id="email" name="email" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Website</label>
+            <input maxlength="100" type="password" required="required" id="website" name="website" class="form-control"/>
+        </div>
+        <div>
+
+            <input type="hidden" id="tier" name="tier" value="@ViewBag.tier" />
+            <input type="hidden" id="tenantid" name="tenantid" value="@ViewBag.tenantid" />
+            <input type="hidden" id="tenantuserid" name="tenantuserid" />
+
+        </div>
+    </div>
+</div>
+<style>
+    .form-control {
+        /*display: inline-block;*/
+    }
+
+    .align_singleLine {
+        display: inline-block;
+        width: 35%;
+        margin-right: 5px;
+    }
+</style>
+
+
+
+
+
+

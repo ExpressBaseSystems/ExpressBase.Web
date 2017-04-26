@@ -71,7 +71,7 @@ namespace ExpressBase.Web2.Controllers
                 if (fr.Data.Count > 0)
                 {
                     _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis();
+                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient());
                     _form.IsUpdate = true;
                     redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
                 }
@@ -88,7 +88,7 @@ namespace ExpressBase.Web2.Controllers
                 if (fr.Data.Count > 0)
                 {
                     _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis();
+                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient());
                     _form.IsUpdate = false;
                     redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
                 }
@@ -134,6 +134,16 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
+        public IActionResult TenantLogout()
+        {
+            ViewBag.Fname = null;
+            return RedirectToAction("TenantSignup", "TenantExt");
+        }
 
+        public void TVPref4User(int tvid, string json)
+        {
+            this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, tvid, ViewBag.UId), json);
+        }
     }
 }
+        

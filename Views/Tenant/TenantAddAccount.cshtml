@@ -37,7 +37,7 @@ function readURL(input) {
        
         reader.onload = function (e) {
             var DataCollection = { 'id': $('#tenantid').val(), 'proimg': reader.result };
-            $.post('https://localhost:44377/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
+            $.post('https://expressbaseservicestack.azurewebsites.net/infra/', { crossDomain: 'true', "op": "tenantaccountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
                function (data) {
                    if (data) {
                        $('#tenantuserid').val(data.id);

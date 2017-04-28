@@ -16,9 +16,10 @@ EbWizard.prototype = {
     destUrl: null,
     SrcUrl: null,
     Heading: null,
-    HeadingIcon: null,  
+    HeadingIcon: null,
+    ValSrcUrl: null,
 
-    Init: function (srcUrl, destUrl, w, h, heading, headingIcon) {
+    Init: function (srcUrl, destUrl, w, h, heading, headingIcon, valSrcUrl) {
         EbWizard.prototype.Steps = null;
         EbWizard.prototype.Navs = null;
         EbWizard.prototype.currentStepNo = 0;
@@ -28,6 +29,7 @@ EbWizard.prototype = {
         EbWizard.prototype.destUrl = destUrl;
         EbWizard.prototype.Heading = heading;
         EbWizard.prototype.HeadingIcon = headingIcon;
+        EbWizard.prototype.ValSrcUrl = valSrcUrl;
 
         EbWizard.prototype.RenderModal();
         $(".modal-content").css("width", EbWizard.prototype.width + "px");
@@ -58,7 +60,7 @@ EbWizard.prototype = {
                 $('#dropdown input[type="hidden"]').val($(this).attr("value"));
                 $('[data-toggle = "dropdown"]').empty().html("<span>" + $(this).html() + "</span>");
             });
-         
+
             if (EbWizard.prototype.Steps.length === 1) {
                 $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 255) + "px");
                 $("#wizprogress").hide();
@@ -78,6 +80,7 @@ EbWizard.prototype = {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
                 $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
+            EbWizard.prototype.EditWiz();
         });
     },
 
@@ -90,13 +93,13 @@ EbWizard.prototype = {
 
             var AllInputs = $(html).find("input");
             $.each(AllInputs, function (i, inp) {
-                ObjString += '"' + $(inp).attr("name") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
+                ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
 
             })
             ObjString = ObjString.slice(0, -1) + '}';
             valObj = ObjString;
-            console.log("JSON data : " + ObjString );
-
+            console.log("JSON data : " + ObjString);
+            //EbWizard.prototype.EditWiz();
 
             $.post(EbWizard.prototype.destUrl, { "Colvalues": ObjString, "Token": getToken() },
             function (result) {
@@ -116,12 +119,12 @@ EbWizard.prototype = {
             for (var i = EbWizard.prototype.currentStepNo; i < clickedStepNo - 1; i++)
                 EbWizard.prototype.NextB(null);
         else
-            for (var i = EbWizard.prototype.currentStepNo; i > (clickedStepNo - 1); i--)
+            for (var i = EbWizard.prototype.currentStepNo; i > (clickedStepNo - 1) ; i--)
                 EbWizard.prototype.PrevB(null);
     },
 
     NextB: function (e) {
-        if(EbWizard.prototype.IsStepValid()) {
+        if (EbWizard.prototype.IsStepValid()) {
             ++EbWizard.prototype.currentStepNo;
             EbWizard.prototype.ShowStep();
             if (EbWizard.prototype.currentStepNo > 0) {
@@ -139,7 +142,7 @@ EbWizard.prototype = {
     },
 
     PrevB: function (e) {
-        if(EbWizard.prototype.IsStepValid()) {
+        if (EbWizard.prototype.IsStepValid()) {
             --EbWizard.prototype.currentStepNo;
             EbWizard.prototype.ShowStep();
             if (EbWizard.prototype.currentStepNo > 0) {
@@ -159,7 +162,7 @@ EbWizard.prototype = {
     },
 
     SyncProgress: function () {
-        for(i = 0; i < EbWizard.prototype.Steps.length; i++)
+        for (i = 0; i < EbWizard.prototype.Steps.length; i++)
             $($(EbWizard.prototype.Navs[i]).children()[0]).removeClass("btn-primary");
 
         $($(EbWizard.prototype.Navs[EbWizard.prototype.currentStepNo]).children()[0]).removeClass("btn-default").removeClass("btn-success").addClass("btn-primary");
@@ -194,13 +197,13 @@ EbWizard.prototype = {
 
     },
 
-    ShowStep: function(stepno) {
+    ShowStep: function (stepno) {
         $(EbWizard.prototype.Steps).hide();
         $(EbWizard.prototype.Steps[EbWizard.prototype.currentStepNo]).show().find('input:eq(0)').focus();
     },
 
-    RenderModal:function(){
-        $(document.body).append( ("<div id='dbModal' class='modal fade'>" +
+    RenderModal: function () {
+        $(document.body).append(("<div id='dbModal' class='modal fade'>" +
             "<div class='modal-dialog'>" +
              "   <div class='modal-content'>" +
               "      <div class='modal-header'>" +
@@ -215,9 +218,9 @@ EbWizard.prototype = {
                   "  </div>" +
                  "   <div class='modal-footer'>" +
                 "        <div id='wizfoot'>" +
-               "             <button name='previousB' id='ebWizPrevB' class='btn btn-sm btn-primary btn-lg pull-left' type='button'>Previous</button>" +
-              "              <button name='nextB' id='ebWizNextB' class='btn btn-sm btn-primary nextBtn btn-lg pull-right' type='button'>Next</button>" +
-             "               <button name='submitB' id='ebWizFinishB' class='btn btn-sm btn-success btn-lg pull-right' type='submit'>Submit</button>" +
+               "             <button name='previousB' id='ebWizPrevB' class='btn btn-md btn-primary btn-lg pull-left' type='button'><i class='fa fa-backward' aria-hidden='true'> Previous</i></button>" +
+              "              <button name='nextB' id='ebWizNextB' class='btn btn-md btn-primary nextBtn btn-lg pull-right' type='button'>Next <i class='fa fa-forward' aria-hidden='true'></i></button>" +
+             "               <button name='submitB' id='ebWizFinishB' class='btn btn-md btn-success btn-lg pull-right' type='submit'><i class='fa fa-floppy-o' aria-hidden='true'> Submit</i></button>" +
             "            </div>" +
            "         </div>" +
           "      </div>" +
@@ -226,8 +229,9 @@ EbWizard.prototype = {
     },
 
     EditWiz: function () {
-        alert("rob:" + JSON.parse(valObj));
+        $('#dbModal').on('shown.bs.modal', function (e) {
+            $.each(JSON.parse(valObj), function (key, val) { $("#" + key).val(val); })
+        })
 
     }
 };
-        

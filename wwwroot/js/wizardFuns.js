@@ -216,9 +216,9 @@ EbWizard.prototype = {
                   "  </div>" +
                  "   <div class='modal-footer'>" +
                 "        <div id='wizfoot'>" +
-               "             <button name='previousB' id='ebWizPrevB' class='btn btn-md btn-primary btn-lg pull-left' type='button'><i class='fa fa-backward' aria-hidden='true'> Previous</i></button>" +
-              "              <button name='nextB' id='ebWizNextB' class='btn btn-md btn-primary nextBtn btn-lg pull-right' type='button'>Next <i class='fa fa-forward' aria-hidden='true'></i></button>" +
-             "               <button name='submitB' id='ebWizFinishB' class='btn btn-md btn-success btn-lg pull-right' type='submit'><i class='fa fa-floppy-o' aria-hidden='true'> Submit</i></button>" +
+               "             <button name='previousB' id='ebWizPrevB' class='btn btn-md btn-primary  pull-left' type='button'><i class='fa fa-backward' aria-hidden='true'> Previous</i></button>" +
+              "              <button name='nextB' id='ebWizNextB' class='btn btn-md btn-primary nextBtn pull-right' type='button'>Next <i class='fa fa-forward' aria-hidden='true'></i></button>" +
+             "               <button name='submitB' id='ebWizFinishB' class='btn btn-md btn-success  pull-right' type='submit'><i class='fa fa-floppy-o' aria-hidden='true'> Submit</i></button>" +
             "            </div>" +
            "         </div>" +
           "      </div>" +

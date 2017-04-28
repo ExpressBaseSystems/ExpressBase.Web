@@ -8,11 +8,12 @@
 
             var DBWizard = new EbWizard();
             $('.eb_acc_dbcon_btn').click(function () {
+                DBwizard.Init("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 500, 500, "500, 500", "fa-database");
                 var accid = $(this).attr("data-accid");
-                //$('#dbModal').modal({ backdrop: 'static' });
-                DBWizard.Init("http://localhost:53431/Tenant/dbConfig", "http://localhost:53431/Tenant/dbConfig", 850, 600, "database check", "fa-fa-database", "fxdgf");
+                $('#dbModal').modal({ backdrop: 'static' });
+                myEbWizard.Populate("http://localhost:53431/Tenant/dbConfig",800,600);
                 $("div [type=submit]").on("click",function(){
-                    DBWizard.SaveWizard();
+                    myEbWizard.SaveWizard();
                 })
             });
 
@@ -20,20 +21,11 @@
             $('.new').click(function () {
                 var ele = $(this).attr("data-accid");
                 $('#acid').val(ele);
-                $('#dbModal').modal({
-                    backdrop: 'static'
-                });
-                addaccountwzd.Init("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 600, 600);
-                $("div [type=submit]").on("click", function () {
-                    addaccountwzd.SaveWizard();
-                })
+                //addaccountwzd.Init("http://localhost:53431/Tenant/AddAccount2", "http://localhost:53431/Tenant/dbConfig", 400, 400, " 400, 400", "fa-database");
             });
             $('.users').click(function () {
                 var ele = $(this).attr("data-accid");
                 $('#acid').val(ele);
-                $('#userModal').modal({
-                    backdrop: 'static'
-                });
             });
             $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
                 translation: {
@@ -78,29 +70,7 @@
         </form>
 
 
-        <div id="dbModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h4 class="modal-title">Database Check</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="stepwizard">
-                            <div class="stepwizard-row setup-panel" id="wizprogress"></div>
-                        </div>
-                        <div id="wiz" class="wiz-inputs"></div><span>.</span>
-                    </div>
-                    <div class="modal-footer">
-                        <div id="wizfoot">
-                            <button name="previousB" id="ebWizPrevB" class="btn btn-sm btn-primary btn-lg pull-left" type="button">Previous</button>
-                            <button name="nextB" id="ebWizNextB" class="btn btn-sm btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
-                            <button name="submitB" id="ebWizFinishB" class="btn btn-sm btn-success btn-lg pull-right" type="submit">Submit</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         foreach (var sublist in list)
         {
@@ -137,37 +107,7 @@
                     }
 
                     <!-- UserModal HTML Invite User -->
-                    <div id="userModal" class="modal fade">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                    <h4 class="modal-title">Invite Users</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <table>
-                                        <tr>
-                                            <td><div class="tdd">Email Address</div></td>
-                                            <td><div class="tdd"><input type="text" class="form-control" id="email" name="email" required /></div></td>
-                                        </tr>
-                                        <tr>
-                                            <td><div class="tdd">Role</div></td>
-                                            <td>
-                                                <select class="tdd form-control" id="role" name="role" required>
-                                                    <option value="1">Project Manager/System Admin</option>
-                                                    <option value="2">Developer</option>
-                                                    <option value="3">Tester</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div class="modal-footer tds">
-                                        <input type="submit" value="Invite" class="btn-primary btn-block" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                 </div>
             </div>

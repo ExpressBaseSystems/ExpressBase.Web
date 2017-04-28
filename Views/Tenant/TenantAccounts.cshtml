@@ -23,7 +23,7 @@
                 $('#dbModal').modal({
                     backdrop: 'static'
                 });
-                addaccountwzd.Populate("http://localhost:53431/Tenant/AddAccount2",600,500);
+                addaccountwzd.Populate("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 600, 600);
                 $("div [type=submit]").on("click", function () {
                     addaccountwzd.SaveWizard();
                 })

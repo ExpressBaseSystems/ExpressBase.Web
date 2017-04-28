@@ -1,4 +1,5 @@
-﻿var EbWizard = function (data, accid) {
+﻿var valObj;// "{'db':'','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','}";
+var EbWizard = function (data, accid) {
     this.d = data;
     this.id = accid;
 };
@@ -13,21 +14,36 @@ EbWizard.prototype = {
     PrevBtn: null,
     FinishBtn: null,
     destUrl: null,
+    SrcUrl: null,
+    Heading: null,
+    HeadingIcon: null,
+    ValSrcUrl: null,
 
-    Populate: function (srcUrl, destUrl, w, h) {
+    Init: function (srcUrl, destUrl, w, h, heading, headingIcon, valSrcUrl) {
         EbWizard.prototype.Steps = null;
         EbWizard.prototype.Navs = null;
         EbWizard.prototype.currentStepNo = 0;
         EbWizard.prototype.width = w;
         EbWizard.prototype.height = h;
+        EbWizard.prototype.SrcUrl = srcUrl;
         EbWizard.prototype.destUrl = destUrl;
+        EbWizard.prototype.Heading = heading;
+        EbWizard.prototype.HeadingIcon = headingIcon;
+        EbWizard.prototype.ValSrcUrl = valSrcUrl;
 
+        EbWizard.prototype.RenderModal();
         $(".modal-content").css("width", EbWizard.prototype.width + "px");
         $(".modal-dialog").css("width", EbWizard.prototype.width + "px");
         $(".modal-body").css("height", EbWizard.prototype.height - 159 + "px");
         $("#wiz").empty().append("<div class='controls-group'><i class='fa fa-spinner fa-pulse fa-3x fa-fw eb-loader'></i></div>");
 
-        $.get(url, function (data) {
+        //alert(((EbWizard.prototype.height - 159) / 2) + "px");
+        //$(".modal-content").css("height", EbWizard.prototype.height+100 + "px");
+        //$(".controls-group").css("height", 500 + "px");
+        //$("[class=controls-group]").children().css("margin-top", ((EbWizard.prototype.height - 159) / 2) + "px");
+        $('#dbModal').modal({ backdrop: 'static' });
+
+        $.get(EbWizard.prototype.SrcUrl, function (data) {
             $("#wiz").empty().append($.parseHTML(data));
             EbWizard.prototype.Steps = $(".ebWizStep");
             EbWizard.prototype.ShowStep();
@@ -39,17 +55,12 @@ EbWizard.prototype = {
             $(EbWizard.prototype.NextBtn).off("click").on("click", EbWizard.prototype.NextB);
             $(EbWizard.prototype.PrevBtn).off("click").on("click", EbWizard.prototype.PrevB);
             $(EbWizard.prototype.Navs).off("click").on("click", EbWizard.prototype.NavsClick);
+            $(EbWizard.prototype.FinishBtn).on("click", EbWizard.prototype.SaveWizard);
             $('#dropdown ul li').click(function () {
                 $('#dropdown input[type="hidden"]').val($(this).attr("value"));
                 $('[data-toggle = "dropdown"]').empty().html("<span>" + $(this).html() + "</span>");
             });
-            $('[data-toggle=toggle]').bootstrapToggle();
-            $(this).prop("checked") = true;
-            $('[data-toggle=toggle]').on("click", function () {
-                $(this).prop("checked", !$(this).prop("checked"));
-                $(this).children().val($(this).prop("checked"));
-            });
-         
+
             if (EbWizard.prototype.Steps.length === 1) {
                 $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 255) + "px");
                 $("#wizprogress").hide();
@@ -69,34 +80,35 @@ EbWizard.prototype = {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
                 $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
-
-            $(".modal-content").css("width", EbWizard.prototype.width + "px");
-            $(".modal-body").css("height", EbWizard.prototype.height - 159 + "px");
-            $(".controls-group").css("height", EbWizard.prototype.height - 325 + "px");
+            EbWizard.prototype.EditWiz();
         });
     },
 
     SaveWizard: function (e) {
-        var html = "";
-        ObjString = "";
-        for (i = 0; i < EbWizard.prototype.Steps.length; i++)
-            html += $(EbWizard.prototype.Steps[i]).html();
+        if (EbWizard.prototype.IsStepValid()) {
+            var html = "";
+            ObjString = "{";
+            for (i = 0; i < EbWizard.prototype.Steps.length; i++)
+                html += $(EbWizard.prototype.Steps[i]).html();
 
-        var AllInputs = $(html).find("input");
-        $.each(AllInputs, function (i, inp) {
-            ObjString += $(inp).attr("name") + ':"' + $("#" + $(inp).attr("id")).val() + '",';
-        })
-        console.log("JSON data : " + ObjString);
-       
+            var AllInputs = $(html).find("input");
+            $.each(AllInputs, function (i, inp) {
+                ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
 
-        $.post(EbWizard.prototype.destUrl, { "Colvalues": ObjString },
-        function (result) {
-            if (result) 
-                alert(result);
-            else 
-                alert(result);
-        });
+            })
+            ObjString = ObjString.slice(0, -1) + '}';
+            valObj = ObjString;
+            console.log("JSON data : " + ObjString);
+            //EbWizard.prototype.EditWiz();
 
+            $.post(EbWizard.prototype.destUrl, { "Colvalues": ObjString, "Token": getToken() },
+            function (result) {
+                if (result)
+                    alert(result);
+                else
+                    alert(result);
+            });
+        }
     },
 
     NavsClick: function (e) {
@@ -107,12 +119,12 @@ EbWizard.prototype = {
             for (var i = EbWizard.prototype.currentStepNo; i < clickedStepNo - 1; i++)
                 EbWizard.prototype.NextB(null);
         else
-            for (var i = EbWizard.prototype.currentStepNo; i > (clickedStepNo - 1); i--)
+            for (var i = EbWizard.prototype.currentStepNo; i > (clickedStepNo - 1) ; i--)
                 EbWizard.prototype.PrevB(null);
     },
 
     NextB: function (e) {
-        if(EbWizard.prototype.IsStepValid()) {
+        if (EbWizard.prototype.IsStepValid()) {
             ++EbWizard.prototype.currentStepNo;
             EbWizard.prototype.ShowStep();
             if (EbWizard.prototype.currentStepNo > 0) {
@@ -130,7 +142,7 @@ EbWizard.prototype = {
     },
 
     PrevB: function (e) {
-        if(EbWizard.prototype.IsStepValid()) {
+        if (EbWizard.prototype.IsStepValid()) {
             --EbWizard.prototype.currentStepNo;
             EbWizard.prototype.ShowStep();
             if (EbWizard.prototype.currentStepNo > 0) {
@@ -150,7 +162,7 @@ EbWizard.prototype = {
     },
 
     SyncProgress: function () {
-        for(i = 0; i < EbWizard.prototype.Steps.length; i++)
+        for (i = 0; i < EbWizard.prototype.Steps.length; i++)
             $($(EbWizard.prototype.Navs[i]).children()[0]).removeClass("btn-primary");
 
         $($(EbWizard.prototype.Navs[EbWizard.prototype.currentStepNo]).children()[0]).removeClass("btn-default").removeClass("btn-success").addClass("btn-primary");
@@ -185,9 +197,41 @@ EbWizard.prototype = {
 
     },
 
-    ShowStep: function(stepno) {
+    ShowStep: function (stepno) {
         $(EbWizard.prototype.Steps).hide();
         $(EbWizard.prototype.Steps[EbWizard.prototype.currentStepNo]).show().find('input:eq(0)').focus();
+    },
+
+    RenderModal: function () {
+        $(document.body).append(("<div id='dbModal' class='modal fade'>" +
+            "<div class='modal-dialog'>" +
+             "   <div class='modal-content'>" +
+              "      <div class='modal-header'>" +
+               "         <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>×</button>" +
+                "        <h4 class='modal-title'><i class='fa @HeadingIcon' aria-hidden='true'></i> @wizHead</h4>" +
+                 "   </div>" +
+                  "  <div class='modal-body'>" +
+                   "     <div class='stepwizard'>" +
+                    "        <div class='stepwizard-row setup-panel' id='wizprogress'></div>" +
+                     "   </div>" +
+                      "  <div id='wiz' class='wiz-inputs'></div>" +
+                  "  </div>" +
+                 "   <div class='modal-footer'>" +
+                "        <div id='wizfoot'>" +
+               "             <button name='previousB' id='ebWizPrevB' class='btn btn-md btn-primary btn-lg pull-left' type='button'><i class='fa fa-backward' aria-hidden='true'> Previous</i></button>" +
+              "              <button name='nextB' id='ebWizNextB' class='btn btn-md btn-primary nextBtn btn-lg pull-right' type='button'>Next <i class='fa fa-forward' aria-hidden='true'></i></button>" +
+             "               <button name='submitB' id='ebWizFinishB' class='btn btn-md btn-success btn-lg pull-right' type='submit'><i class='fa fa-floppy-o' aria-hidden='true'> Submit</i></button>" +
+            "            </div>" +
+           "         </div>" +
+          "      </div>" +
+         "   </div>" +
+        "</div>").replace("@wizHead", EbWizard.prototype.Heading).replace("@HeadingIcon", EbWizard.prototype.HeadingIcon));
+    },
+
+    EditWiz: function () {
+        $('#dbModal').on('shown.bs.modal', function (e) {
+            $.each(JSON.parse(valObj), function (key, val) { $("#" + key).val(val); })
+        })
+
     }
 };
-        

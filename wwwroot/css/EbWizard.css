@@ -58,6 +58,7 @@
     overflow-y:auto;
     min-height:75px;
     margin-bottom:5px;
+    padding-right:15px;
 }
 
 .controls-group::-webkit-scrollbar {

@@ -9,8 +9,8 @@
             var myEbWizard = new EbWizard();
             $('.eb_acc_dbcon_btn').click(function () {
                 var accid = $(this).attr("data-accid");
-                $('#dbModal').modal({ backdrop: 'static' });
-                myEbWizard.Populate("http://localhost:53431/Tenant/dbConfig",800,600);
+                //$('#dbModal').modal({ backdrop: 'static' });
+                myEbWizard.Init("http://localhost:53431/Tenant/dbConfig", "http://localhost:53431/Tenant/dbConfig", 850, 600, "database check", "fa-fa-database", "fxdgf");
                 $("div [type=submit]").on("click",function(){
                     myEbWizard.SaveWizard();
                 })
@@ -23,7 +23,7 @@
                 $('#dbModal').modal({
                     backdrop: 'static'
                 });
-                addaccountwzd.Populate("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 600, 600);
+                addaccountwzd.Init("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 600, 600);
                 $("div [type=submit]").on("click", function () {
                     addaccountwzd.SaveWizard();
                 })

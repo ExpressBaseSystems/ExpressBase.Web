@@ -1,7 +1,6 @@
 ﻿var valObj;// "{'db':'','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','}";
 var EbWizard = function (data, accid) {
     this.d = data;
-    this.id = accid;
 };
 
 EbWizard.prototype = {
@@ -18,8 +17,10 @@ EbWizard.prototype = {
     Heading: null,
     HeadingIcon: null,
     ValSrcUrl: null,
+    Accid: null,
 
-    Init: function (srcUrl, destUrl, w, h, heading, headingIcon, valSrcUrl) {
+
+    Init: function (srcUrl, destUrl, w, h, heading, headingIcon, valSrcUrl,accid) {
         EbWizard.prototype.Steps = null;
         EbWizard.prototype.Navs = null;
         EbWizard.prototype.currentStepNo = 0;
@@ -30,7 +31,7 @@ EbWizard.prototype = {
         EbWizard.prototype.Heading = heading;
         EbWizard.prototype.HeadingIcon = headingIcon;
         EbWizard.prototype.ValSrcUrl = valSrcUrl;
-
+        EbWizard.prototype.Accid = accid;
         EbWizard.prototype.RenderModal();
         $(".modal-content").css("width", EbWizard.prototype.width + "px");
         $(".modal-dialog").css("width", EbWizard.prototype.width + "px");
@@ -56,10 +57,6 @@ EbWizard.prototype = {
             $(EbWizard.prototype.PrevBtn).off("click").on("click", EbWizard.prototype.PrevB);
             $(EbWizard.prototype.Navs).off("click").on("click", EbWizard.prototype.NavsClick);
             $(EbWizard.prototype.FinishBtn).on("click", EbWizard.prototype.SaveWizard);
-            $('#dropdown ul li').click(function () {
-                $('#dropdown input[type="hidden"]').val($(this).attr("value"));
-                $('[data-toggle = "dropdown"]').empty().html("<span>" + $(this).html() + "</span>");
-            });
 
             if (EbWizard.prototype.Steps.length === 1) {
                 $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 255) + "px");
@@ -74,13 +71,14 @@ EbWizard.prototype = {
                 EbWizard.prototype.FinishBtn.hide();
                 $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 325) + "px");
             }
-
+            EbWizard.prototype.DbCheck();
             EbWizard.prototype.SyncProgress();
             setTimeout(function () {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
-                $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
-            EbWizard.prototype.EditWiz();
+            if (valSrcUrl != null) {
+                EbWizard.prototype.EditWiz();
+            }
         });
     },
 
@@ -229,9 +227,69 @@ EbWizard.prototype = {
     },
 
     EditWiz: function () {
+        $.get(EbWizard.prototype.destUrl, { "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": EbWizard.prototype.Accid }), "Token": getToken() },
+          function (result) {
+              alert(JSON.stringify(result.data));
+              if (result)
+                  alert(result);
+              else
+                  alert(result);
+          });
         $('#dbModal').on('shown.bs.modal', function (e) {
             $.each(JSON.parse(valObj), function (key, val) { $("#" + key).val(val); })
         })
 
+    },
+    DbCheck: function () {
+        $('.dropdown ul li').on("click", function () {
+            var v = $(this).attr("value");
+            var port_num;
+            if (v === '1') {
+                port_num = 5432;
+            }
+            else if (v === '2') {
+                port_num = 3306;
+            }
+            else if (v === '3') {
+                port_num = 27017;
+            }
+            else if (v === '4') {
+                port_num = 1433;
+            }
+            else if (v === '5') {
+                port_num = 1521;
+            }
+
+            $(this).parent().parent().siblings('.pnum').children('input').val(port_num);
+        });
+        $('.useSame').on('change', function () {
+            if ($(this).is(':checked')) {
+                $(this).parent().siblings('.form-group').children('[name=sip_ro]').val($(this).parent().siblings('.form-group').children('[name=sip_rw]').val());
+                $(this).parent().siblings('.form-group').children('[name=tout_ro]').val($(this).parent().siblings('.form-group').children('[name=tout_rw]').val());
+                $(this).parent().siblings('.form-group').children('[name=ssl_ro]').val($(this).parent().siblings('.form-group').children('[name=ssl_rw]').val());
+                $(this).parent().siblings('.form-group').children('[name=dbname_ro]').val($(this).parent().siblings('.form-group').children('[name=dbname_rw]').val());
+                $(this).parent().siblings('.form-group').children('[name=duname_ro]').val($(this).parent().siblings('.form-group').children('[name=duname_rw]').val());
+                $(this).parent().siblings('.form-group').children('[name=pwd_ro]').val($(this).parent().siblings('.form-group').children('[name=pwd_rw]').val());
+            }
+            if ($(this).is(':not(:checked)')){
+                $(this).parent().siblings('.form-group').children('[name=sip_ro]').val("");
+                $(this).parent().siblings('.form-group').children('[name=tout_ro]').val("");
+                $(this).parent().siblings('.form-group').children('[name=ssl_ro]').val("");
+                $(this).parent().siblings('.form-group').children('[name=dbname_ro]').val("");
+                $(this).parent().siblings('.form-group').children('[name=duname_ro]').val("");
+                $(this).parent().siblings('.form-group').children('[name=pwd_ro]').val("");
+            }
+        });
+        $('.dropdown ul li').click(function () {
+            $(this).parent().siblings('input').val($(this).attr("value"));
+            $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
+        });
+        $('[data-toggle=toggle]').bootstrapToggle("on");//toggle init
+        $('[data-toggle=toggle]').children().val("true");//set initial value of control
+        $('[data-toggle=toggle]').prop("checked", true);// set initial value of  toggle 
+        $('[data-toggle=toggle]').on("click", function () {
+            $(this).prop("checked", !$(this).prop("checked"));// toggle toggle value
+            $(this).children().val($(this).prop("checked"));// set toggle value to control value
+        });
     }
 };

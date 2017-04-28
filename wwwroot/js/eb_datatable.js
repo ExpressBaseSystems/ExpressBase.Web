@@ -202,8 +202,9 @@ function summarize2(api, tableId, eb_agginfo, scrollY) {
     });
 }
 
-function fselect_func(api, objsel, scrollY) {
-    var selValue = $(objsel).text().trim();
+function fselect_func(tableid, objsel, scrollY) {
+    var api = $("#" + tableid).DataTable();
+    var selValue = $(objsel).text().trim(); 
     $(objsel).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
     var table = $(objsel).attr('data-table');
     var colum = $(objsel).attr('data-column');
@@ -219,7 +220,6 @@ function fselect_func(api, objsel, scrollY) {
     else if (selValue === '∓')
         pageTotal = col.data().average();
     // IF decimal places SET, round using toFixed
-
     $(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal.toFixed(2));
 }
 
@@ -434,20 +434,6 @@ function ExportToExcel(tableid) {
     $('#' + tableid + '_container').find('.buttons-excel').click();
 }
 
-function GetFiltersFromStudio(tvPref4User)
-{
-    alert(tvPref4User);
-    return null;
-}
-
-var colCollection = {
-    name : "",
-    title : "",
-    type : null,
-    data : null,
-    visible : null,
-    width: null,
-};
 
 function GetFiltersFromSettingsTbl(tvPref4User,tableId) {
     var ResArray = [];
@@ -468,14 +454,14 @@ function GetFiltersFromSettingsTbl(tvPref4User,tableId) {
 
             _ls += "<th style='padding: 0px; margin: 0px'>";
 
-            if (col.type === "Numeric")
+            if (col.type === "System.Int32" || col.type === "System.Decimal")
                 _ls +=  (span + getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
-            //else if (col.type === "Text")
-            //    _ls += (span + getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
-            //else if (col.type === "DateTime")
-            //    _ls += (span + getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
-            //else if (col.type === EbDataGridViewColumnType.Boolean)
-            //    _ls += (span + getFilterForBoolean(col.name));
+            else if (col.type === "System.String")
+                _ls += (span + getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
+            else if (col.type === "System.DateTime")
+                _ls += (span + getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
+            else if (col.type === "System.Boolean")
+                    _ls += (span + getFilterForBoolean(col.name,tableId));
             else
                 _ls += (span);
 
@@ -483,7 +469,6 @@ function GetFiltersFromSettingsTbl(tvPref4User,tableId) {
         }
         ResArray.push(_ls);
     });
-
     return ResArray;
 }
 
@@ -511,4 +496,261 @@ drptext = "<div class='input-group'>" +
         return drptext;
 }
 
+function getFilterForDateTime( header_text1,  header_select, data_table, htext_class, data_colum, header_text2)
+{
+var coltype = "data-coltyp='date'";
+var filter = "<div class='input-group'>" +
+"<div class='input-group-btn'>" +
+   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+    "<ul class='dropdown-menu'>" +
+     " <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
+     " <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + "><</a></li>" +
+     " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">></a></li>" +
+     " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + "><=</a></li>" +
+     " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">>=</a></li>" +
+     " <li ><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">B</a></li>" +
+   " </ul>" +
+" </div>" +
+" <input type='date' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
+" <span class='input-group-btn'></span>" +
+" <input type='date' class='form-control " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
+" </div> ";
+        return filter;
+}
+
+function getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2)
+{
+var drptext = "";
+drptext = "<div class='input-group'>"+
+"<div class='input-group-btn'>"+
+   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='"+ header_select +"'>x*</button>"+
+   " <ul class='dropdown-menu'>"+
+   "   <li ><a href ='#' onclick='setLiValue(this);' "+ data_table + data_colum +">x*</a></li>"+
+    "  <li><a href ='#' onclick='setLiValue(this);' "+ data_table + data_colum +">*x</a></li>"+
+    "  <li><a href='#' onclick='setLiValue(this);' "+ data_table + data_colum +">*x*</a></li>"+
+     " <li><a href='#' onclick='setLiValue(this);' "+ data_table + data_colum +">=</a></li>"+
+   " </ul>"+
+" </div>"+
+" <input type='text' class='form-control "+ htext_class +"' id='"+ header_text1 +"' onkeypress='call_filter(event, this);' "+ data_table + data_colum +">"+
+" </div> " ;
+        return drptext;
+}
+
+function getFilterForBoolean(colum, tableId)
+{
+var filter = "";
+var id = tableId+"_"+ colum + "_hdr_txt1";
+var cls = tableId + "_hchk";
+filter = "<input type='checkbox' id='"+ id +"' data-colum='"+ colum +"' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='"+ tableId +"' class='"+ cls + tableId +"_htext'>";
+return filter;
+}
+
+function getFooterFromSettingsTbl(tvPref4User)
+{
+    var ftr_part = "";
+    $.each(tvPref4User, function (i, col) {
+        if (col.visible)
+            ftr_part += "<th style=\"padding: 0px; margin: 0px\"></th>";
+        else
+            ftr_part += "<th style=\"display:none;\"></th>";
+    });
+    return "<tfoot>" + ftr_part + "<tr>" + ftr_part + "</tr></tfoot>";
+}
+
+function Agginfo(col) {
+    this.colname = col;
+}
+
+function getAgginfo(tvPref4User)
+{
+    var _ls = [];
+    $.each(tvPref4User, function (i, col) {
+        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal"))
+            _ls.push(new Agginfo(col.name));
+    });
+
+    return _ls;
+}
+
+function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api)
+{
+    var ResArray = [];
+    var _ls;
+    $.each(tvPref4User, function (i, col) {
+        if (col.visible) {
+            if (col.type === "System.Int32" || col.type === "System.Decimal") {
+                var footer_select_id = tableId + "_" + col.name + "_ftr_sel" + footer_id;
+                var fselect_class = tableId + "_fselect";
+                var data_colum = "data-column=" + col.name;
+                var data_table = "data-table=" + tableId;
+                var footer_txt = tableId + "_" + col.name + "_ftr_txt" + footer_id;
+                var data_decip = "data-decip=2";
+
+                _ls = "<div class='input-group'>" +
+                "<div class='input-group-btn'>" +
+                "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
+               " <ul class='dropdown-menu'>" +
+                "  <li><a href ='#' onclick=\"fselect_func( '" + tableId + "', this, " + ScrollY + ");\" data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + ">&sum;</a></li>" +
+                "  <li><a href ='#' onclick=\"fselect_func('" + tableId + "', this, " + ScrollY + ");\"" + data_table + " " + data_colum + " " + data_decip + " {4}>&mnplus;</a></li>" +
+               " </ul>" +
+               " </div>" +
+               " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;'>" +
+               " </div>";
+            }
+            else
+                _ls = "&nbsp;";
+
+            ResArray.push(_ls);
+        }
+    });
+    return ResArray;
+}
+
+var coldef = function ( d, t, v, w, n, ty) {
+    this.data = d;
+    this.title = t;
+    this.visible = v;
+    this.width = w;
+    this.name = n;
+    this.type = ty;
+};
+
+function getData4SettingsTbl(tvPref4User)
+{
+    var colarr = [];
+    var n, d, t, v, w, ty;
+    $.each(tvPref4User, function (i, col) {
+        n = col.name;
+        d = col.data;
+        t = col.title.substr(0, col.title.indexOf('<'));
+        v = (col.visible).toString().toLowerCase();
+        w = col.width.toString();
+        ty = col.type.toString();
+        colarr.push(new coldef(d, t, v, w, n, ty));
+    });
+    return colarr;
+}
+
+function getIndex(ds_columns, col_name)
+{
+    var colindex = -1;
+    $.each(ds_columns, function (i, col) {
+        if (col.ColumnName.trim() === col_name.trim()) {
+            colindex = col.ColumnIndex;
+            return false;
+        }
+    });
+
+    return colindex;
+}
+
+function GetSettingsModal(tableid, tvId, tvName) {
+    var OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
+    var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg");
+    var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content");
+    var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
+    var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
+    var title = $(document.createElement('h4')).attr("class", "modal-title").text(tvName+": SettingsTable");
+    var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
+    var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
+    var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
+    var ModalBodyAnchorCol = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#1a").text("Columns");
+    var ModalBodyliGen = $(document.createElement("li")).attr("class", "nav-item");
+    var ModalBodyAnchorGen = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#2a").text("General");
+    var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
+    var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "1a");
+    var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
+    var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
+    var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
+    var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
+
+    ModalFooterDiv.append(FooterButton);
+    ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
+    ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
+    ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
+    ModalBodyliCol.append(ModalBodyAnchorCol);
+    ModalBodyliGen.append(ModalBodyAnchorGen);
+    ModalBodyUl.append(ModalBodyliCol);
+    ModalBodyUl.append(ModalBodyliGen);
+    ModalBodyDiv.append(ModalBodyUl);
+    ModalBodyDiv.append(ModalBodyTabDiv);
+    ModalHeaderDiv.append(headerButton);
+    ModalHeaderDiv.append(title);
+    ModalContentDiv.append(ModalHeaderDiv);
+    ModalContentDiv.append(ModalBodyDiv);
+    ModalContentDiv.append(ModalFooterDiv);
+    ModalSizeDiv.append(ModalContentDiv);
+    OuterModalDiv.append(ModalSizeDiv);
+
+    $(OuterModalDiv).on('shown.bs.modal', callPost4SettingsTable);
+    $(OuterModalDiv).modal('show');
+
+    $(OuterModalDiv).on('hidden.bs.modal', function () {
+        $('#Table_Settings').DataTable().destroy();
+        $(OuterModalDiv).remove();
+    });
+
+    $(FooterButton).click(function () {
+        var ct = 0; var objarr = [];
+        var api = $('#Table_Settings').DataTable();
+        var n, d, t, v, w, ty;
+
+        $.each(api.$('input'), function (i, obj) {
+            ct++;
+            if (obj.type == 'text' && obj.name == 'name')
+                n = obj.value;
+            else if (obj.type == 'text' && obj.name == 'index')
+                d = obj.value;
+            else if (obj.type == 'text' && obj.name == 'title')
+                t = obj.value + '<span hidden>' + n + '</span>';
+            else if (obj.type == 'checkbox')
+                v = obj.checked;
+            else if (obj.type == 'text' && obj.name == 'width')
+                w = obj.value;
+            else if (obj.type == 'text' && obj.name == 'type')
+                ty = obj.value;
+            if (ct === api.columns().count()) { ct = 0; objarr.push(new coldef(d, t, v, w, n, ty)); }
+        });
+        $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objarr) });
+        $(OuterModalDiv).modal('hide');
+        $('#' + tableid).DataTable().destroy();
+        $('#'+tableid+'_divcont').children()[1].remove();
+        var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', tableid);
+        $('#' + tableid + '_divcont').append(table);
+        eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.stringify(objarr)));
+    });
+}
+
+function callPost4SettingsTable() {
+    $.post('GetTVPref4User', { tvid: '0' },
+        function (data2) {
+            $('#Table_Settings').DataTable(
+            {
+                columns: column4SettingsTbl(),
+                data: getData4SettingsTbl(JSON.parse(data2)),
+                paging: false,
+                ordering: false,
+                searching: false,
+                info: false,
+            });
+        });
+}
+
+var coldef4Setting = function (d, t, cls,rnd) {
+    this.data = d;
+    this.title = t;
+    this.className = cls;
+    this.render = rnd;
+};
+function column4SettingsTbl()
+{
+    var colArr = [];
+    colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));
+    colArr.push(new coldef4Setting('name', 'Column Name', '', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;' readonly>" : data; }));
+    colArr.push(new coldef4Setting('type', 'Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
+    colArr.push(new coldef4Setting('title', 'Column Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='title'>" : data; }));
+    colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }));
+    colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width'>" : data; }));
+    return colArr;
+}
  

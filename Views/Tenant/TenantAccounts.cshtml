@@ -6,29 +6,21 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var myEbWizard = new EbWizard();
+            var DBwizard = new EbWizard();
             $('.eb_acc_dbcon_btn').click(function () {
+                DBwizard.Init("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 500, 500, "500, 500", "fa-database");
                 var accid = $(this).attr("data-accid");
-                $('#dbModal').modal({ backdrop: 'static' });
-                myEbWizard.Populate("http://localhost:53431/Tenant/dbConfig");
-                $("div [type=submit]").on("click",function(){
-                    myEbWizard.SaveWizard();
-                })
             });
 
+            var addaccountwzd = new EbWizard();
             $('.new').click(function () {
                 var ele = $(this).attr("data-accid");
                 $('#acid').val(ele);
-                $('#new').modal({
-                    backdrop: 'static'
-                });
+                //addaccountwzd.Init("http://localhost:53431/Tenant/AddAccount2", "http://localhost:53431/Tenant/dbConfig", 400, 400, " 400, 400", "fa-database");
             });
             $('.users').click(function () {
                 var ele = $(this).attr("data-accid");
                 $('#acid').val(ele);
-                $('#userModal').modal({
-                    backdrop: 'static'
-                });
             });
             $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
                 translation: {
@@ -48,33 +40,7 @@
                 $(this).addClass("border_blue");
             });
         });
-        function SetValue(id) {
-            document.getElementById('tier').value = id;
-        }
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var DataCollection = { 'id': $('#tenantid').val(), 'proimg': reader.result };
-                    $.post('https://expressbaseservicestack.azurewebsites.net/infra/', { crossDomain: 'true', "ltype": "accountimg", "Colvalues": JSON.stringify(DataCollection), "Token": $.cookie('Token') },
-                       function (data) {
-                           if (data) {
-                               alert(data.id);
-                               $('#tenantuserid').val(data.id);
-                           }
-                           else {
-                               alert("Hii");
-                           }
-                       });
-                    console.log(reader.result);
-                    $('#img')
-                   .attr('src', e.target.result)
-                   .width(100)
-                   .height(100);
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+
     </script>
 </head>
 <div class="container">
@@ -99,29 +65,7 @@
         </form>
 
 
-        <div id="dbModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h4 class="modal-title">Database Check</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="stepwizard">
-                            <div class="stepwizard-row setup-panel" id="wizprogress"></div>
-                        </div>
-                        <div id="wiz" class="wiz-inputs"></div><span>.</span>
-                    </div>
-                    <div class="modal-footer">
-                        <div id="wizfoot">
-                            <button name="previousB" id="ebWizPrevB" class="btn btn-sm btn-primary btn-lg pull-left" type="button">Previous</button>
-                            <button name="nextB" id="ebWizNextB" class="btn btn-sm btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
-                            <button name="submitB" id="ebWizFinishB" class="btn btn-sm btn-success btn-lg pull-right" type="submit">Submit</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         foreach (var sublist in list)
         {
@@ -158,61 +102,11 @@
                     }
 
                     <!-- UserModal HTML Invite User -->
-                    <div id="userModal" class="modal fade">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                    <h4 class="modal-title">Invite Users</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <table>
-                                        <tr>
-                                            <td><div class="tdd">Email Address</div></td>
-                                            <td><div class="tdd"><input type="text" class="form-control" id="email" name="email" required /></div></td>
-                                        </tr>
-                                        <tr>
-                                            <td><div class="tdd">Role</div></td>
-                                            <td>
-                                                <select class="tdd form-control" id="role" name="role" required>
-                                                    <option value="1">Project Manager/System Admin</option>
-                                                    <option value="2">Developer</option>
-                                                    <option value="3">Tester</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div class="modal-footer tds">
-                                        <input type="submit" value="Invite" class="btn-primary btn-block" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- pricing wizard  Modal Add User-->
-                    @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
-                    {
-                        <div id="new" class="modal fade">
-                            <div class="modal-dialog">
-                                <div class="modal-content" style="width:100%">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                        <h4 class="modal-title">Create Account</h4>
-                                    </div>
-                                    <div id="pricingW" class="modal-body">
-                                        @{
-                                            Html.RenderPartial("_pricing_wizard");
-                                        }
 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                                            }
                 </div>
             </div>
-                                            }
+        }
     }
 </div>
 <style>
@@ -268,3 +162,5 @@
         border: solid 2px blue;
     }
 </style>
+
+

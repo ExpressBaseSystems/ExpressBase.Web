@@ -144,6 +144,11 @@ namespace ExpressBase.Web2.Controllers
         {
             this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, tvid, ViewBag.UId), json);
         }
+
+        public string GetTVPref4User(int tvid)
+        {
+            return this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, tvid, ViewBag.UId));
+        }
     }
 }
         

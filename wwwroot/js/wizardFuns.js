@@ -18,10 +18,9 @@ EbWizard.prototype = {
     HeadingIcon: null,
     ValSrcUrl: null,
     Accid: null,
-    
 
-    Init: function (srcUrl, destUrl, w, h, heading, headingIcon, valSrcUrl, accid) {
-        alert("hii");
+
+    Init: function (srcUrl, destUrl, w, h, heading, headingIcon, valSrcUrl,accid) {
         EbWizard.prototype.Steps = null;
         EbWizard.prototype.Navs = null;
         EbWizard.prototype.currentStepNo = 0;
@@ -45,7 +44,7 @@ EbWizard.prototype = {
         //$("[class=controls-group]").children().css("margin-top", ((EbWizard.prototype.height - 159) / 2) + "px");
         $('#dbModal').modal({ backdrop: 'static' });
 
-        $.get(EbWizard.prototype.SrcUrl, function (data) {      
+        $.get(EbWizard.prototype.SrcUrl, function (data) {
             $("#wiz").empty().append($.parseHTML(data));
             EbWizard.prototype.Steps = $(".ebWizStep");
             EbWizard.prototype.ShowStep();
@@ -58,10 +57,6 @@ EbWizard.prototype = {
             $(EbWizard.prototype.PrevBtn).off("click").on("click", EbWizard.prototype.PrevB);
             $(EbWizard.prototype.Navs).off("click").on("click", EbWizard.prototype.NavsClick);
             $(EbWizard.prototype.FinishBtn).on("click", EbWizard.prototype.SaveWizard);
-            $('#dropdown ul li').click(function () {
-                $('#dropdown input[type="hidden"]').val($(this).attr("value"));
-                $('[data-toggle = "dropdown"]').empty().html("<span>" + $(this).html() + "</span>");
-            });
 
             if (EbWizard.prototype.Steps.length === 1) {
                 $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 255) + "px");
@@ -76,18 +71,14 @@ EbWizard.prototype = {
                 EbWizard.prototype.FinishBtn.hide();
                 $(".controls-group").css("height", (parseInt(EbWizard.prototype.height) - 325) + "px");
             }
-
+            EbWizard.prototype.DbCheck();
             EbWizard.prototype.SyncProgress();
             setTimeout(function () {
                 $(EbWizard.prototype.Steps[0]).find('input:eq(0)').focus();
-                $('[data-toggle=toggle]').bootstrapToggle();
             }, 10);
-
-            if (valSrcUrl != null)
-            {
+            if (valSrcUrl != null) {
                 EbWizard.prototype.EditWiz();
             }
-           
         });
     },
 
@@ -107,7 +98,7 @@ EbWizard.prototype = {
             valObj = ObjString;
             console.log("JSON data : " + ObjString);
             //EbWizard.prototype.EditWiz();
-           
+
             $.post(EbWizard.prototype.destUrl, { "Colvalues": ObjString, "Token": getToken() },
             function (result) {
                 if (result)
@@ -145,7 +136,6 @@ EbWizard.prototype = {
                 EbWizard.prototype.FinishBtn.show();
             }
         }
-        EbWizard.prototype.DbCheck();
         EbWizard.prototype.SyncProgress();
     },
 
@@ -237,17 +227,14 @@ EbWizard.prototype = {
     },
 
     EditWiz: function () {
-        alert("in function");
-       // var TokenRequiredUploadRequest = { };
         $.get(EbWizard.prototype.destUrl, { "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": EbWizard.prototype.Accid }), "Token": getToken() },
-           function (result) {
+          function (result) {
               alert(JSON.stringify(result.data));
-               if (result)
-                   alert(result);
-               else
-                   alert(result);
-           });
-
+              if (result)
+                  alert(result);
+              else
+                  alert(result);
+          });
         $('#dbModal').on('shown.bs.modal', function (e) {
             $.each(JSON.parse(valObj), function (key, val) { $("#" + key).val(val); })
         })
@@ -284,7 +271,7 @@ EbWizard.prototype = {
                 $(this).parent().siblings('.form-group').children('[name=duname_ro]').val($(this).parent().siblings('.form-group').children('[name=duname_rw]').val());
                 $(this).parent().siblings('.form-group').children('[name=pwd_ro]').val($(this).parent().siblings('.form-group').children('[name=pwd_rw]').val());
             }
-            if ($(this).is(':not(:checked)')) {
+            if ($(this).is(':not(:checked)')){
                 $(this).parent().siblings('.form-group').children('[name=sip_ro]').val("");
                 $(this).parent().siblings('.form-group').children('[name=tout_ro]').val("");
                 $(this).parent().siblings('.form-group').children('[name=ssl_ro]').val("");
@@ -299,7 +286,7 @@ EbWizard.prototype = {
         });
         $('[data-toggle=toggle]').bootstrapToggle("on");//toggle init
         $('[data-toggle=toggle]').children().val("true");//set initial value of control
-        $('[data-toggle=toggle]').prop("checked", true);// set initial value of  toggle
+        $('[data-toggle=toggle]').prop("checked", true);// set initial value of  toggle 
         $('[data-toggle=toggle]').on("click", function () {
             $(this).prop("checked", !$(this).prop("checked"));// toggle toggle value
             $(this).children().val($(this).prop("checked"));// set toggle value to control value

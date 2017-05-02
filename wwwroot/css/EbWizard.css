@@ -56,7 +56,8 @@
 
 .controls-group{
     overflow-y:auto;
-    min-height:75px;
+    /*min-height:75px;*/
+    min-height:10px;
     margin-bottom:5px;
     padding-right:15px;
 }

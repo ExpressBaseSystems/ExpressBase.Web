@@ -8,15 +8,23 @@
 
             var DBwizard = new EbWizard();
             $('.eb_acc_dbcon_btn').click(function () {
-                DBwizard.Init("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 500, 500, "500, 500", "fa-database");
-                var accid = $(this).attr("data-accid");
+                DBwizard.Init("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 800, 800, "500, 500", "fa-database");
+                var ele = $(this).attr("data-accid");
+                $('#acid').val(ele);
             });
 
             var addaccountwzd = new EbWizard();
             $('.new').click(function () {
                 var ele = $(this).attr("data-accid");
                 $('#acid').val(ele);
-                //addaccountwzd.Init("http://localhost:53431/Tenant/AddAccount2", "http://localhost:53431/Tenant/dbConfig", 400, 400, " 400, 400", "fa-database");
+                addaccountwzd.Init("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 400, 400, " 400, 400", "fa-database");
+            });
+
+            var editaccountwzd = new EbWizard();
+            $('.edit').click(function () {
+                var ele = $(this).attr("data-accid");
+                $('#acid').val(ele);
+                editaccountwzd.Init("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 400, 400, "400, 400", "https://localhost:44377/infra/", "fa-database", ele);
             });
             $('.users').click(function () {
                 var ele = $(this).attr("data-accid");
@@ -60,6 +68,7 @@
                 </div>
                 <div class="col-md-4">
                     <input type="button" class="btn btn-success" value="Download Studio" />
+                   
                 </div>
             </div>
         </form>
@@ -88,6 +97,7 @@
                             <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
                             <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
                             <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
+                            <a href="#" class="edit" data-accid="@sublist[0]" data-toggle="tooltip" title="Edit Data"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
                         </span>
                     </div>
                     <!-- Database Modal -->

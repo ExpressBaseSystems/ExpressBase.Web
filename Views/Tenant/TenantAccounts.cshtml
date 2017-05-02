@@ -6,7 +6,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            
+
             $('.eb_acc_dbcon_btn').click(function () {
                 var DBwizard = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 500, 500, "500, 500", "fa-database");
                 DBwizard.Init();
@@ -18,6 +18,14 @@
                 var ele = $(this).attr("data-accid");
                 $('#acid').val(ele);
                 addaccountwzd.Init();
+            });
+
+            var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 400, 400, "400, 400", "https://localhost:44377/infra/", "fa-database", ele);
+            $('.edit').click(function () {
+                var ele = $(this).attr("data-accid");
+                $('#acid').val(ele);
+                editaccountwzd.Init();
+                
             });
             $('.users').click(function () {
                 var ele = $(this).attr("data-accid");
@@ -61,6 +69,7 @@
                 </div>
                 <div class="col-md-4">
                     <input type="button" class="btn btn-success" value="Download Studio" />
+                   
                 </div>
             </div>
         </form>
@@ -89,6 +98,7 @@
                             <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
                             <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
                             <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
+                            <a href="#" class="edit" data-accid="@sublist[0]" data-toggle="tooltip" title="Edit Data"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
                         </span>
                     </div>
                     <!-- Database Modal -->

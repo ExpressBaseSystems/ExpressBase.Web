@@ -11,6 +11,8 @@
                 var DBwizard = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 800, 600, "500, 500", "fa-database");
                 DBwizard.Init();
                 var accid = $(this).attr("data-accid");
+                $('#acid').val(accid);
+
             });
 
             $('.new').click(function () {
@@ -20,34 +22,36 @@
                 addaccountwzd.Init();
             });
 
-            var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 400, 400, "400, 400", "https://localhost:44377/infra/", "fa-database", ele);
             $('.edit').click(function () {
-                var ele = $(this).attr("data-accid");
-                $('#acid').val(ele);
-                editaccountwzd.Init();
-                
+                var accId = $(this).attr("data-accid");
+                $('#acid').val(accId);
+                $.get('https://localhost:44377/infra/',{ "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": accId }), "Token": getToken() }, function (result) {
+                    
+                    var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 600, 600, "600, 600", "fa-database",result.data);
+                    editaccountwzd.Init();
+                })
             });
-            $('.users').click(function () {
-                var ele = $(this).attr("data-accid");
-                $('#acid').val(ele);
-            });
-            $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
-                translation: {
-                    'Z': {
-                        pattern: /[0-9]/, optional: true
-                    }
+        $('.users').click(function () {
+            var ele = $(this).attr("data-accid");
+            $('#acid').val(ele);
+        });
+        $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+            translation: {
+                'Z': {
+                    pattern: /[0-9]/, optional: true
                 }
-            });
-            $('[data-toggle="tooltip"]').tooltip();
+            }
+        });
+        $('[data-toggle="tooltip"]').tooltip();
 
-            $('img').click(function () {
-                $('.selected').removeClass('selected'); // removes the previous selected class
-                $(this).addClass('selected'); // adds the class to the clicked image
-            });
-            $("#tid td").click(function () {
-                $("#tid td").removeClass("border_blue");
-                $(this).addClass("border_blue");
-            });
+        $('img').click(function () {
+            $('.selected').removeClass('selected'); // removes the previous selected class
+            $(this).addClass('selected'); // adds the class to the clicked image
+        });
+        $("#tid td").click(function () {
+            $("#tid td").removeClass("border_blue");
+            $(this).addClass("border_blue");
+        });
         });
 
     </script>
@@ -69,7 +73,7 @@
                 </div>
                 <div class="col-md-4">
                     <input type="button" class="btn btn-success" value="Download Studio" />
-                   
+
                 </div>
             </div>
         </form>

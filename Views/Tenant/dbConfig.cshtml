@@ -8,12 +8,12 @@
                     <span class="caret"></span>
                 </div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
-                    <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
-                    <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
-                    <li purpose="dropdown" role="presentation" value="4"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
-                    <li purpose="dropdown" role="presentation" value="5"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
-                </ul>
+                    <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                    <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
+                    <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
+                    <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+               </ul>
                 <input type="text" id="db_datarw" name="db_rw" class="form-control" style="visibility:hidden" />
             </div>
             <div class="form-group align_singleLine">
@@ -89,12 +89,12 @@
                     <span class="caret"></span>
                 </div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
-                    <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
-                    <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
-                    <li purpose="dropdown" role="presentation" value="4"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
-                    <li purpose="dropdown" role="presentation" value="5"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
-                </ul>
+                    <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                    <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
+                    <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
+                    <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+               </ul>
                 <input type="hidden" id="db_objrw" name="db_rw" class="form-control" />
             </div>
             <div class="form-group align_singleLine">
@@ -124,6 +124,10 @@
             <div class="form-group align_singleLine">
                 <label class="control-label">Password</label>
                 <input maxlength="100" type="password" required="required" id="pwd_objrw" name="pwd_rw" class="form-control" />
+            </div>
+            <div class="">
+                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" />
+                <label class="checkbox-inline">Use the same configuration for read only</label>
             </div>
             <h4>Read Only</h4>
             <div class="form-group align_singleLine">
@@ -167,7 +171,7 @@
                 </div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                     <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
-                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li> 
+                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
                     <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
                     <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
                     <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
@@ -202,6 +206,10 @@
                 <label class="control-label">Password</label>
                 <input maxlength="100" type="password" required="required" id="pwd_logrw" name="datarw" class="form-control" />
             </div>
+            <div class="">
+                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" />
+                <label class="checkbox-inline">Use the same configuration for read only</label>
+            </div>
             <h4>Read Only</h4>
             <div class="form-group align_singleLine">
                 <label class="control-label">Server IP/ Domain Name</label>
@@ -219,7 +227,7 @@
                 <label class="control-label">SSL</label>
                 <input id="ssl_logro" type="checkbox" data-toggle="toggle" name="ssl_ro" class="ssl" />
             </div>
-            <div class="form-group">
+            <div class="form-group align_singleLine">
                 <label class="control-label">Database Name</label>
                 <input maxlength="100" type="text" required="required" id="dbname_logro" name="dbname_ro" class="form-control" />
             </div>
@@ -243,12 +251,12 @@
                     <span class="caret"></span>
                 </div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
-                    <li purpose="dropdown" role="presentation" value="2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
-                    <li purpose="dropdown" role="presentation" value="3"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
-                    <li purpose="dropdown" role="presentation" value="4"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
-                    <li purpose="dropdown" role="presentation" value="5"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
-                </ul>
+                    <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                    <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
+                    <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
+                    <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+               </ul>
                 <input type="hidden" id="db_filerw" name="db_rw" class="form-control" />
             </div>
             <div class="form-group align_singleLine">
@@ -279,6 +287,10 @@
                 <label class="control-label">Password</label>
                 <input maxlength="100" type="password" required="required" id="pwd_filerw" name="datarw_rw" class="form-control" />
             </div>
+            <div class="">
+                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" />
+                <label class="checkbox-inline">Use the same configuration for read only</label>
+            </div>
             <h4>Read Only</h4>
             <div class="form-group align_singleLine">
                 <label class="control-label">Server IP/ Domain Name</label>
@@ -307,6 +319,8 @@
             <div class="form-group align_singleLine">
                 <label class="control-label">Password</label>
                 <input maxlength="100" type="password" required="required" id="pwd_filero" name="datarw_ro" class="form-control" />
+                <input type="hidden" id="dbcheck" name="dbcheck" value="dbconfig" />
+                <input type="hidden" id="acid" name="acid" />
             </div>
         </div>
     </div>
@@ -324,9 +338,6 @@
         display: inline-block;
         margin-right: 5px;
         align-content:center;
-    }
-    .align_singleLine_first {
-        margin-right: 5px;
     }
     .dropdown_size{
         height:44px;

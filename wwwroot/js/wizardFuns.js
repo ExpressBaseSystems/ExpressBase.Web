@@ -1,5 +1,5 @@
 ﻿var EditObj;// "{'db':'','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','}";
-var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, EditObj) {
+var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon,EditObj) {
     this.width = w;
     this.height = h;
     this.Steps;
@@ -12,12 +12,12 @@ var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, EditObj) {
     this.destUrl = destUrl;
     this.Heading = heading;
     this.HeadingIcon = headingIcon;
-    this.ValSrcUrl = EditObj;
-    //alert(this.Heading);
-    //this.Init();
+    this.EditObj = EditObj;
+    
 };
 
 EbWizard.prototype.Init = function () {
+ 
     this.RenderModal();
     $(".modal-content").css("width", this.width + "px");
     $(".modal-dialog").css("width", this.width + "px");
@@ -27,6 +27,13 @@ EbWizard.prototype.Init = function () {
         $('#dbModal').remove();
     });
     $.get(this.SrcUrl, this.Drawsteps.bind(this));
+    var self = this;
+    
+    $('#dbModal').on('shown.bs.modal', function (e) {
+       
+        if (self.EditObj)
+            self.EditWiz();
+    });
 };
 
 EbWizard.prototype.Drawsteps = function (data) {
@@ -54,14 +61,12 @@ EbWizard.prototype.Drawsteps = function (data) {
         this.NextBtn.show();
         this.PrevBtn.hide();
         this.FinishBtn.hide();
-        alert((parseInt(this.height) - 325) + "px");
         $(".controls-group").css("height", (parseInt(this.height) - 315) + "px");
     }
     $(".modal-body").css("height", this.height - 163 + "px");
     this.SyncProgress();
     this.DbCheck();
     setTimeout(this.TimeOutFunc.bind(this), 10);
-    this.EditWiz();
 }
 
 EbWizard.prototype.TimeOutFunc = function () {
@@ -83,7 +88,6 @@ EbWizard.prototype.SaveWizard = function () {
         ObjString = ObjString.slice(0, -1) + '}';
         EditObj = ObjString;
         console.log("JSON data : " + ObjString);
-        //this.EditWiz();
 
         $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },
         function (result) {
@@ -212,8 +216,9 @@ EbWizard.prototype.RenderModal = function () {
 };
 
 EbWizard.prototype.EditWiz = function () {
-    $('#dbModal').on('shown.bs.modal', function (e) {
-        $.each(JSON.parse(EditObj), function (key, val) { $("#" + key).val(val); })
+    $.each(this.EditObj, function (key, val) {
+        $("#" + key).val(val);
+        //console.log("key= " + key + "val=" + val);
     });
 };
 

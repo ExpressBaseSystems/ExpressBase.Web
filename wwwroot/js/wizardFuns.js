@@ -268,4 +268,20 @@ EbWizard.prototype.DbCheck = function () {
         $(this).prop("checked", !$(this).prop("checked"));// toggle toggle value
         $(this).children().val($(this).prop("checked"));// set toggle value to control value
     });
+    $('.cc-selector input[type=radio]').on("click", function () {     var dbconf = $('.cc-selector input[type=radio]:checked').val();
+    alert(dbconf);
+    if(dbconf==='simple')
+    {
+        var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://localhost:44377/infra/", 800, 600, "500, 500", "fa-database");
+        DBwizard_sim.Init();
+        var accid = $(this).attr("data-accid")
+    }
+    if(dbconf==='advanced')
+    {
+        var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 800, 600, "500, 500", "fa-database");
+        DBwizard_adv.Init();
+        var accid = $(this).attr("data-accid")
+    }
+    });
+
 };

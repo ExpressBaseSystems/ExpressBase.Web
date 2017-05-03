@@ -202,5 +202,13 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
+        public IActionResult SimpleAdvanced()
+        {
+            return View();
+        }
+        public IActionResult SimpleDbConf()
+        {
+            return View();
+        }
     }
 }

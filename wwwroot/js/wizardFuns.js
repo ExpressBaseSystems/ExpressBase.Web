@@ -42,10 +42,6 @@ EbWizard.prototype.Drawsteps = function (data) {
     $(this.PrevBtn).off("click").on("click", this.PrevB.bind(this));
     $(this.Navs).off("click").on("click", this.NavsClick.bind(this));
     $(this.FinishBtn).on("click", this.SaveWizard.bind(this));
-    $('#dropdown ul li').click(function () {
-        $('#dropdown input[type="hidden"]').val($(this).attr("value"));
-        $('[data-toggle = "dropdown"]').empty().html("<span>" + $(this).html() + "</span>");
-    });
 
     if (this.Steps.length === 1) {
         $(".controls-group").css("height", (parseInt(this.height) - 245) + "px");
@@ -63,13 +59,13 @@ EbWizard.prototype.Drawsteps = function (data) {
     }
     $(".modal-body").css("height", this.height - 163 + "px");
     this.SyncProgress();
+    this.DbCheck();
     setTimeout(this.TimeOutFunc.bind(this), 10);
     this.EditWiz();
 }
 
 EbWizard.prototype.TimeOutFunc = function () {
     $(this.Steps[0]).find('input:eq(0)').focus();
-    $('[data-toggle=toggle]').bootstrapToggle();
 }
 
 EbWizard.prototype.SaveWizard = function () {
@@ -218,5 +214,58 @@ EbWizard.prototype.RenderModal = function () {
 EbWizard.prototype.EditWiz = function () {
     $('#dbModal').on('shown.bs.modal', function (e) {
         $.each(JSON.parse(EditObj), function (key, val) { $("#" + key).val(val); })
+    });
+};
+
+EbWizard.prototype.DbCheck = function () {
+    $('.dropdown ul li').on("click", function () {
+        var v = $(this).attr("value");
+        var port_num;
+        if (v === '0') {
+            port_num = 5432;
+        }
+        else if (v === '1') {
+            port_num = 3306;
+        }
+        else if (v === '2') {
+            port_num = 1433;
+        }
+        else if (v === '3') {
+            port_num = 1521;
+        }
+        else if (v === '4') {
+            port_num = 27017;
+        }
+
+        $(this).parent().parent().siblings('.pnum').children('input').val(port_num);
+    });
+    $('.useSame').on('change', function () {
+        if ($(this).is(':checked')) {
+            $(this).parent().siblings('.form-group').children('[name=sip_ro]').val($(this).parent().siblings('.form-group').children('[name=sip_rw]').val());
+            $(this).parent().siblings('.form-group').children('[name=tout_ro]').val($(this).parent().siblings('.form-group').children('[name=tout_rw]').val());
+            $(this).parent().siblings('.form-group').children('[name=ssl_ro]').val($(this).parent().siblings('.form-group').children('[name=ssl_rw]').val());
+            $(this).parent().siblings('.form-group').children('[name=dbname_ro]').val($(this).parent().siblings('.form-group').children('[name=dbname_rw]').val());
+            $(this).parent().siblings('.form-group').children('[name=duname_ro]').val($(this).parent().siblings('.form-group').children('[name=duname_rw]').val());
+            $(this).parent().siblings('.form-group').children('[name=pwd_ro]').val($(this).parent().siblings('.form-group').children('[name=pwd_rw]').val());
+        }
+        if ($(this).is(':not(:checked)')) {
+            $(this).parent().siblings('.form-group').children('[name=sip_ro]').val("");
+            $(this).parent().siblings('.form-group').children('[name=tout_ro]').val("");
+            $(this).parent().siblings('.form-group').children('[name=ssl_ro]').val("");
+            $(this).parent().siblings('.form-group').children('[name=dbname_ro]').val("");
+            $(this).parent().siblings('.form-group').children('[name=duname_ro]').val("");
+            $(this).parent().siblings('.form-group').children('[name=pwd_ro]').val("");
+        }
+    });
+    $('.dropdown ul li').click(function () {
+        $(this).parent().siblings('input').val($(this).attr("value"));
+        $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
+    });
+    $('[data-toggle=toggle]').bootstrapToggle("on");//toggle init
+    $('[data-toggle=toggle]').children().val("true");//set initial value of control
+    $('[data-toggle=toggle]').prop("checked", true);// set initial value of  toggle 
+    $('[data-toggle=toggle]').on("click", function () {
+        $(this).prop("checked", !$(this).prop("checked"));// toggle toggle value
+        $(this).children().val($(this).prop("checked"));// set toggle value to control value
     });
 };

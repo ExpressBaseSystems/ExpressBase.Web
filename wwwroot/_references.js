@@ -13,6 +13,7 @@
 /// <reference path="js/jquery mask plugin v1.14.9.js" />
 /// <reference path="js/jquery.cookie.js" />
 /// <reference path="js/jquery.datetimepicker.min.js" />
+/// <reference path="js/jquery.fontselect.min.js" />
 /// <reference path="js/jquery.toolbar.js" />
 /// <reference path="js/jquery-ui-timepicker-addon.min.js" />
 /// <reference path="js/jwt-decode.min.js" />

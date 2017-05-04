@@ -606,19 +606,21 @@ function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api)
     return ResArray;
 }
 
-var coldef = function ( d, t, v, w, n, ty) {
+var coldef = function ( d, t, v, w, n, ty, cls) {
     this.data = d;
     this.title = t;
     this.visible = v;
     this.width = w;
     this.name = n;
     this.type = ty;
+    this.className = cls;
 };
 
 function getData4SettingsTbl(tvPref4User)
 {
+    alert(JSON.stringify(tvPref4User));
     var colarr = [];
-    var n, d, t, v, w, ty;
+    var n, d, t, v, w, ty,cls;
     $.each(tvPref4User, function (i, col) {
         n = col.name;
         d = col.data;
@@ -626,7 +628,10 @@ function getData4SettingsTbl(tvPref4User)
         v = (col.visible).toString().toLowerCase();
         w = col.width.toString();
         ty = col.type.toString();
-        colarr.push(new coldef(d, t, v, w, n, ty));
+        cls = col.className;
+        if (cls == undefined)
+            cls = "";
+        colarr.push(new coldef(d, t, v, w, n, ty,cls));
     });
     return colarr;
 }
@@ -693,9 +698,8 @@ function GetSettingsModal(tableid, tvId, tvName) {
     $(FooterButton).click(function () {
         var ct = 0; var objarr = [];
         var api = $('#Table_Settings').DataTable();
-        var n, d, t, v, w, ty;
-
-        $.each(api.$('input'), function (i, obj) {
+        var n, d, t, v, w, ty, cls;
+        $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
             ct++;
             if (obj.type == 'text' && obj.name == 'name')
                 n = obj.value;
@@ -709,7 +713,20 @@ function GetSettingsModal(tableid, tvId, tvName) {
                 w = obj.value;
             else if (obj.type == 'text' && obj.name == 'type')
                 ty = obj.value;
-            if (ct === api.columns().count()) { ct = 0; objarr.push(new coldef(d, t, v, w, n, ty)); }
+            else if (obj.className == 'font-select') {
+                if (!($(this).children('a').children('span').attr('style') == undefined)) {
+                    var style = document.createElement('style');
+                    style.type = 'text/css';
+                    var fontName = $(this).children('a').children('span').css('font-family');
+                    var replacedName = fontName.replace(/ /g, "_");
+                    style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
+                    document.getElementsByTagName('head')[0].appendChild(style);
+                    cls = 'font_' + replacedName;
+                }
+                else
+                    cls = '';
+            }
+            if (ct === api.columns().count()) { ct = 0; objarr.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
         $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objarr) });
         $(OuterModalDiv).modal('hide');
@@ -732,25 +749,40 @@ function callPost4SettingsTable() {
                 ordering: false,
                 searching: false,
                 info: false,
+                initComplete: function (settings, json) {
+                    $('.font').fontselect();
+                },
             });
         });
 }
 
-var coldef4Setting = function (d, t, cls,rnd) {
+var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.data = d;
     this.title = t;
     this.className = cls;
     this.render = rnd;
+    this.width = wid;
 };
 function column4SettingsTbl()
 {
     var colArr = [];
     colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));
-    colArr.push(new coldef4Setting('name', 'Column Name', '', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;' readonly>" : data; }));
-    colArr.push(new coldef4Setting('type', 'Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
-    colArr.push(new coldef4Setting('title', 'Column Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='title'>" : data; }));
-    colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }));
-    colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width'>" : data; }));
+    colArr.push(new coldef4Setting('name', 'Name', '', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, "30"));
+    colArr.push(new coldef4Setting('type', ' Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
+    colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='title' style='width: 100px;'>" : data; }, "30"));
+    colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, "56"));
+    colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, "20"));
+    colArr.push(new coldef4Setting('className', 'Font', "", function (data, type, row, meta)
+    {
+        if (data.length > 0 && data !== undefined) {
+            var fontName = data.substring(5).replace(/_/g, " ");
+            alert("fontName:" + fontName);
+            return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
+    }
+    else 
+        return "<input type='text' class='font' style='width: 100px;' name='font'>";
+    }
+        , "30"));
     return colArr;
 }
  

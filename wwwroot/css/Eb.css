@@ -265,8 +265,4 @@ input[type="color"] {
     background-color: #6699bb;
     height: 30px;
 }
-.eb-loader{
-    margin-left: calc(50% - 0.642857145em);
-    display: table-cell;
-    vertical-align: middle;
-}
+

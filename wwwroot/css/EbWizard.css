@@ -10,7 +10,7 @@
     display: table;
     width: 100%;
     position: relative;
-    margin-top:20px;
+    margin-top: 20px;
 }
 
 .stepwizard-step button[disabled] {
@@ -47,41 +47,45 @@
 }
 
 .stepwizard-step > .btn {
-    padding: 4px 10px!important;
+    padding: 4px 10px !important;
 }
 
-.wiz-inputs{
+.wiz-inputs {
     margin-left: 0%;
 }
 
-.controls-group{
-    overflow-y:auto;
-    min-height:75px;
-    margin-bottom:5px;
-    padding-right:15px;
+.controls-group {
+    overflow-y: auto;
+    /*min-height:75px;*/
+    min-height: 10px;
+    margin-bottom: 5px;
+    padding-right: 15px;
 }
 
-.controls-group::-webkit-scrollbar {
-    width: 8px;
-}
-
-.controls-group::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px #337ab7;
-    border-radius: 10px;
-}
-
-.controls-group::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px #888888; 
-}
-  .drpdwnimage {
-        width: 15px;
-        height: 15px;
+    .controls-group::-webkit-scrollbar {
+        width: 8px;
     }
- .dropdown-toggle > .btn{
-  padding: 0px 0px;
- }
- .dropdownBtn {
+
+    .controls-group::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px #337ab7;
+        border-radius: 10px;
+    }
+
+    .controls-group::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px #888888;
+    }
+
+.drpdwnimage {
+    width: 15px;
+    height: 15px;
+}
+
+.dropdown-toggle > .btn {
+    padding: 0px 0px;
+}
+
+.dropdownBtn {
     display: inline-block;
     margin-bottom: 0;
     font-size: 14px;
@@ -100,5 +104,20 @@
     background-image: none;
     border: 1px solid transparent;
     border-radius: 4px;
-    width:30px;
- }
+    width: 30px;
+}
+
+.eb-loader {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    z-index:10000;
+}
+.wiz-error {
+    position: absolute;
+    top: 15px;
+    left: 0px;
+    width: 100%;
+    z-index:10000;
+}

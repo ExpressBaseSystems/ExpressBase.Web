@@ -22,6 +22,7 @@
 /// <reference path="js/resizesensor.js" />
 /// <reference path="js/selectize.min.js" />
 /// <reference path="js/site.js" />
+/// <reference path="js/ss-utils.js" />
 /// <reference path="js/thirdpartysignup.js" />
 /// <reference path="js/vue-select.js" />
 /// <reference path="js/wizardFuns.js" />

@@ -114,3 +114,10 @@
     width: 100%;
     z-index:10000;
 }
+.wiz-error {
+    position: absolute;
+    top: 15px;
+    left: 0px;
+    width: 100%;
+    z-index:10000;
+}

@@ -50,11 +50,14 @@ EbWizard.prototype.Drawsteps = function (data) {
     $(".eb-loader").hide();
     this.Steps = $(".ebWizStep");
     this.ShowStep();
+    var me = this;
     $("#wizprogress").empty().append(this.CreateProgress());
     this.Navs = $("#wizprogress").children();
     $(this.NextBtn).off("click").on("click", this.NextB.bind(this));
     $(this.PrevBtn).off("click").on("click", this.PrevB.bind(this));
-    $(this.Navs).off("click").on("click", this.NavsClick.bind(this));
+    $(this.Navs).off("click").on("click", this.NavsClick(me)); //do not BIND this
+
+    alert(me.currentStepNo);
     $(this.FinishBtn).on("click", this.SaveWizard.bind(this));
 
     if (this.Steps.length === 1) {
@@ -68,7 +71,6 @@ EbWizard.prototype.Drawsteps = function (data) {
         this.NextBtn.show();
         this.PrevBtn.hide();
         this.FinishBtn.hide();
-        alert((parseInt(this.height) - 325) + "px");
         $(".controls-group").css("height", (parseInt(this.height) - 315) + "px");
     }
     $(".modal-body").css("height", this.height - 163 + "px");
@@ -110,15 +112,19 @@ EbWizard.prototype.SaveWizard = function () {
     }
 };
 
-EbWizard.prototype.NavsClick = function () {
+EbWizard.prototype.NavsClick = function (me) {
+    alert("NavsClick");
+    alert("currentStepNo NavsClick===" + me.currentStepNo);
     var clickedStepNo = $($(this).children()[0]).text().trim();
     var clickedStep = $("#step-" + clickedStepNo);
-    //alert("NavsClick =" + this.currentStepNo);
+    alert("Navs clickedStepNo =" + clickedStepNo + "currentStepNo" + me.currentStepNo);
     if (clickedStepNo > this.currentStepNo) {
+
+        alert("if > NavsClick =" + this.currentStepNo);
         for (var i = this.currentStepNo; i < (clickedStepNo - 1); i++)
             this.NextB.bind(this)();
     }
-    else {
+    else if (clickedStepNo < this.currentStepNo){
         for (var i = this.currentStepNo; i > (clickedStepNo - 1) ; i--)
             this.PrevB.bind(this)();
     }
@@ -206,6 +212,12 @@ EbWizard.prototype.RenderModal = function () {
     $(document.body).append(("<div id='dbModal' class='modal fade'>" +
         "<div class='modal-dialog'>" +
          "   <div class='modal-content'>" +
+
+        "<div class='wiz-error'><div class='alert alert-danger center-block' style='width:98%;'>" +
+            "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+
+            "<strong>Danger!</strong> Indicates a dangerous or potentially negative action." +
+        "</div></div>" +
+
         "<div class='eb-loader'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>" +
           "      <div class='modal-header'>" +
            "         <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>×</button>" +

@@ -1,5 +1,5 @@
 ﻿var EditObj;// "{'db':'','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','}";
-var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon,EditObj) {
+var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, EditObj) {
     this.width = w;
     this.height = h;
     this.Steps;
@@ -13,10 +13,12 @@ var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon,EditObj) {
     this.Heading = heading;
     this.HeadingIcon = headingIcon;
     this.EditObj = EditObj;
-    
+    this.Acid = acid;
+
 };
 
 EbWizard.prototype.Init = function () {
+
     this.RenderModal();
     this.NextBtn = $("#ebWizNextB");
     this.PrevBtn = $("#ebWizPrevB");
@@ -37,9 +39,9 @@ EbWizard.prototype.Init = function () {
     });
     $.get(this.SrcUrl, this.Drawsteps.bind(this));
     var self = this;
-    
+
     $('#dbModal').on('shown.bs.modal', function (e) {
-       
+
         if (self.EditObj)
             self.EditWiz();
     });
@@ -47,6 +49,7 @@ EbWizard.prototype.Init = function () {
 
 EbWizard.prototype.Drawsteps = function (data) {
     $("#wiz").empty().append($.parseHTML(data));
+    $('#acid').val(this.Acid);
     $(".eb-loader").hide();
     this.Steps = $(".ebWizStep");
     this.ShowStep();
@@ -100,7 +103,7 @@ EbWizard.prototype.SaveWizard = function () {
         EditObj = ObjString;
         console.log("JSON data : " + ObjString);
 
-        $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },
+        var jqxhr = $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },
         function (result) {
             if (result){
                 $(".eb-loader").hide();
@@ -108,6 +111,15 @@ EbWizard.prototype.SaveWizard = function () {
             }
             else
                 alert(result);
+        }).fail(function (jq, jqStatus, statusDesc) {
+            var status = $.ss.parseResponseStatus(jq.responseText, statusDesc);
+            alert(status.message);
+            Actions.logEntry({
+                cmd: cmd,
+                result: status.message,
+                stackTrace: status.stackTrace,
+                type: 'err',
+            });
         });
     }
 };

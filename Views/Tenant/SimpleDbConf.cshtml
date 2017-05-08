@@ -1,5 +1,5 @@
 ﻿<div class="col-md-12 ebWizStep">
-    <h4>Configure database for data </h4>
+    <h4>Data </h4>
     <div class="controls-group">
         <h4>Read Write</h4>
         <div class="form-group dropdown dropdown_size" id="dropdown1">
@@ -16,21 +16,21 @@
             </ul>
             <input type="text" id="db_rw" name="db_rw" class="form-control" style="visibility:hidden" />
         </div>
-        <div class="form-group align_singleLine">
+        <div class="form-group align_singleLine large_inputBox">
             <label class="control-label">Server IP/ Domain Name</label>
-            <input maxlength="100" type="text" required="required" id="sip_rw" name="sip_rw" class="form-control" />
+            <input maxlength="100" type="text" required="required" id="sip_rw" name="sip_rw" class="form-control " />
         </div>
-        <div class="form-group align_singleLine pnum">
+        <div class="form-group align_singleLine pnum small_inputBox">
             <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum_rw" name="pnum_rw" class="form-control small_inputBox" />
+            <input maxlength="100" type="text" required="required" id="pnum_rw" name="pnum_rw" class="form-control" />
         </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Time Out</label></br>
-            <input maxlength="100" type="number" required="required" id="tout_rw" name="tout_rw" class="form-control small_inputBox" />
+        <div class="form-group align_singleLine small_inputBox">
+            <label class="control-label">Time Out</label><br />
+            <input maxlength="100" type="number" required="required" id="tout_rw" name="tout_rw" class="form-control tout" value="500" />
         </div>
         <div class="form-group align_singleLine">
             <label class="control-label">SSL</label>
-            <input type="checkbox" required="required" data-toggle="toggle" data-size="mini" id="ssl_rw" name="ssl_rw" class="ssl" />
+            <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_rw" name="ssl_rw" class="ssl" />
         </div>
         <div class="form-group align_singleLine">
             <label class="control-label">Database Name</label>
@@ -44,55 +44,72 @@
             <label class="control-label">Password</label>
             <input maxlength="100" type="password" required="required" id="pwd_rw" name="pwd_rw" class="form-control" />
         </div>
-        <div class="">
-            <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" />
+        <div class="usesameval">
+            <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked />
             <label class="checkbox-inline">Use the same configuration for read only</label>
         </div>
-        <h4>Read Only</h4>
-        <div class="form-group align_singleLine">
+        <h4 class="ro">Read Only</h4>
+        <div class="form-group align_singleLine large_inputBox ro">
             <label class="control-label">Server IP/ Domain Name</label>
             <input maxlength="100" type="text" required="required" id="sip_ro" name="sip_ro" class="form-control" />
         </div>
-        <div class="form-group align_singleLine pnum">
+        <div class="form-group align_singleLine pnum small_inputBox ro">
             <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum_ro" name="pnum_ro" class="form-control small_inputBox" />
+            <input maxlength="100" type="text" required="required" id="pnum_ro" name="pnum_ro" class="form-control" />
         </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Time Out</label>
-            <input maxlength="100" type="number" required="required" id="tout_ro" name="tout_ro" class="form-control small_inputBox" />
+        <div class="form-group align_singleLine small_inputBox ro">
+            <label class="control-label">Time Out</label> <br />
+            <input maxlength="100" type="number" required="required" id="tout_ro" name="tout_ro" class="form-control tout" value="500" />
         </div>
-        <div class="form-group align_singleLine">
+        <div class="form-group align_singleLine ro">
             <label class="control-label">SSL</label>
-            <input id="ssl_ro" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
+            <input  type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_ro" name="ssl_ro" class="ssl" />
         </div>
-        <div class="form-group  align_singleLine">
+        <div class="form-group  align_singleLine ro">
             <label class="control-label">Database Name</label>
             <input maxlength="100" type="text" required="required" id="dbname_ro" name="dbname_ro" class="form-control" />
         </div>
-        <div class="form-group align_singleLine">
+        <div class="form-group align_singleLine ro">
             <label class="control-label">Username</label>
             <input maxlength="100" type="text" required="required" id="duname_ro" name="duname_ro" class="form-control" />
         </div>
-        <div class="form-group align_singleLine">
+        <div class="form-group align_singleLine ro">
             <label class="control-label">Password</label>
             <input maxlength="100" type="password" required="required" id="pwd_ro" name="pwd_ro" class="form-control" />
         </div>
     </div>
 </div>
 <style>
-     .form-group {
-        width: 20%;
+  .form-group {
+     /*width: 20%;*/
     }
     .form-control {
         height: 28px;
     }
     .small_inputBox{
-         width: 50%;
+         width: 13%;
+    }
+    .large_inputBox{
+         width: 42%;
     }
     .align_singleLine {
         display: inline-block;
         margin-right: 5px;
         align-content:center;
+    }
+    .toggle{
+        width: 38px;
+        height: 27px;
+        margin-top: 84%;
+        margin-left: -47%;
+    }
+    .dropdown_size{
+        height:44px;
+    }
+     .dropdown_btn_size{
+        height: 32px;
+        width:24%;
+        padding-top: 0px;
     }
    </style>
 

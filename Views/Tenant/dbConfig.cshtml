@@ -1,7 +1,6 @@
 ﻿<div class="col-md-12 ebWizStep">
-        <h4>Configure database for data </h4>
+        <h4>Data </h4>
         <div class="controls-group">
-            <h4>Read Write</h4>
             <div class="form-group dropdown dropdown_size" id="dropdown1">
                 <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
                     Select Database
@@ -16,21 +15,22 @@
                </ul>
                 <input type="text" id="db_datarw" name="db_rw" class="form-control" style="visibility:hidden" />
             </div>
-            <div class="form-group align_singleLine">
+            <h4>Read Write</h4>
+            <div class="form-group align_singleLine large_inputBox">
                 <label class="control-label">Server IP/ Domain Name</label>
-                <input maxlength="100" type="text" required="required" id="sip_datarw" name="sip_rw" class="form-control" />
+                <input maxlength="100" type="text" required="required" id="sip_datarw" name="sip_rw" class="form-control " />
             </div>
-            <div class="form-group align_singleLine pnum">
+            <div class="form-group align_singleLine pnum small_inputBox">
                 <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_datarw" name="pnum_rw" class="form-control small_inputBox" />
+                <input maxlength="100" type="text" required="required" id="pnum_datarw" name="pnum_rw" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Time Out</label></br>
-                <input maxlength="100" type="number" required="required" id="tout_datarw" name="tout_rw" class="form-control small_inputBox" />
+            <div class="form-group align_singleLine small_inputBox">
+                <label class="control-label">Time Out</label><br />
+                <input maxlength="100" type="number" required="required" id="tout_datarw" name="tout_rw" class="form-control tout" value="500"/>
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">SSL</label>
-                <input type="checkbox" required="required" data-toggle="toggle" data-size="mini" id="ssl_datarw" name="ssl_rw" class="ssl" />
+                <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_datarw" name="ssl_rw" class="ssl" />
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">Database Name</label>
@@ -44,128 +44,129 @@
                 <label class="control-label">Password</label>
                 <input maxlength="100" type="password" required="required" id="pwd_datarw" name="pwd_rw" class="form-control" />
             </div>
-            <div class="">
-                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" />
+            <div class="usesameval">
+                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked/>
                 <label class="checkbox-inline">Use the same configuration for read only</label>
             </div>
-            <h4>Read Only</h4>
-            <div class="form-group align_singleLine">
+            <h4 class="ro">Read Only</h4>
+            <div class="form-group align_singleLine large_inputBox ro">
                 <label class="control-label">Server IP/ Domain Name</label>
                 <input maxlength="100" type="text" required="required" id="sip_dataro" name="sip_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine pnum">
+            <div class="form-group align_singleLine pnum small_inputBox ro">
                 <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_dataro" name="pnum_ro" class="form-control small_inputBox" />
+                <input maxlength="100" type="text" required="required" id="pnum_dataro" name="pnum_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Time Out</label>
-                <input maxlength="100" type="number" required="required" id="tout_dataro" name="tout_ro" class="form-control small_inputBox" />
+            <div class="form-group align_singleLine small_inputBox ro">
+                <label class="control-label">Time Out</label> <br />
+                <input maxlength="100" type="number" required="required" id="tout_dataro" name="tout_ro" class="form-control tout" value="500" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">SSL</label>
                 <input id="ssl_dataro" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
             </div>
-            <div class="form-group  align_singleLine">
+            <div class="form-group  align_singleLine ro">
                 <label class="control-label">Database Name</label>
                 <input maxlength="100" type="text" required="required" id="dbname_dataro" name="dbname_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">Username</label>
                 <input maxlength="100" type="text" required="required" id="duname_dataro" name="duname_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">Password</label>
                 <input maxlength="100" type="password" required="required" id="pwd_dataro" name="pwd_ro" class="form-control" />
             </div>
         </div>
     </div>
+
    <div class="col-md-12 ebWizStep">
-        <h4>Configure database for Object</h4>
-        <h4>Read Write</h4>
-        <div class="controls-group">
-            <div class="form-group dropdown" id="dropdown2">
-                <div class="dropdown-toggle dropdownBtn xx" type="button" data-toggle="dropdown">
-                    Select Database
-                    <span class="caret"></span>
-                </div>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                    <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
-                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
-                    <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
-                    <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
-                    <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+        <h4>Object</h4>
+       <div class="controls-group">
+           <div class="form-group dropdown dropdown_size" id="dropdown2">
+               <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
+                   Select Database
+                   <span class="caret"></span>
+               </div>
+               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                   <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                   <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                   <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer </li>
+                   <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
+                   <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
                </ul>
-                <input type="hidden" id="db_objrw" name="db_rw" class="form-control" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Server IP/ Domain Name</label>
-                <input maxlength="100" type="text" required="required" id="sip_objrw" name="sip_rw" class="form-control" />
-            </div>
-            <div class="form-group align_singleLine pnum">
-                <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_objrw" name="pnum_rw" class="form-control small_inputBox" disabled />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Time Out</label>
-                <input maxlength="100" type="number" required="required" id="tout_objrw" name="tout_rw" class="form-control small_inputBox" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">SSL</label>
-                <input id="ssl_objrw" type="checkbox" data-toggle="toggle" name="ssl_rw" data-size="mini" class="ssl" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Database Name</label>
-                <input maxlength="100" type="text" required="required" id="dbname_objrw" name="dbname_rw" class="form-control" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Username</label>
-                <input maxlength="100" type="text" required="required" id="duname_objrw" name="duname_rw" class="form-control" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_objrw" name="pwd_rw" class="form-control" />
-            </div>
-            <div class="">
-                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" />
-                <label class="checkbox-inline">Use the same configuration for read only</label>
-            </div>
-            <h4>Read Only</h4>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Server IP/ Domain Name</label>
-                <input maxlength="100" type="text" required="required" id="sip_objro" name="sip_ro" class="form-control" />
-            </div>
-            <div class="form-group align_singleLine pnum">
-                <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_objro" name="pnum_ro" class="form-control small_inputBox" disabled/>
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Time Out</label>
-                <input maxlength="100" type="number" required="required" id="tout_objro" name="tout_ro" class="form-control small_inputBox" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">SSL</label>
-                <input id="ssl_objro" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Database Name</label>
-                <input maxlength="100" type="text" required="required" id="dbname_objro" name="dbname_ro" class="form-control" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Username</label>
-                <input maxlength="100" type="text" required="required" id="duname_objro" name="duname_ro" class="form-control" />
-            </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_objro" name="pwd_ro" class="form-control" />
-            </div>
-        </div>
+               <input type="text" id="db_objrw" name="db_rw" class="form-control" style="visibility:hidden" />
+           </div>
+           <h4>Read Write</h4>
+           <div class="form-group align_singleLine large_inputBox">
+               <label class="control-label">Server IP/ Domain Name</label>
+               <input maxlength="100" type="text" required="required" id="sip_objrw" name="sip_rw" class="form-control" />
+           </div>
+           <div class="form-group align_singleLine pnum small_inputBox">
+               <label class="control-label">Port Number</label>
+               <input maxlength="100" type="text" required="required" id="pnum_objrw" name="pnum_rw" class="form-control" />
+           </div>
+           <div class="form-group align_singleLine small_inputBox">
+               <label class="control-label">Time Out</label><br />
+               <input maxlength="100" type="number" required="required" id="tout_objrw" name="tout_rw" class="form-control tout" value="500" />
+           </div>
+           <div class="form-group align_singleLine">
+               <label class="control-label">SSL</label>
+               <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_objrw" name="ssl_rw" class="ssl" />
+           </div>
+           <div class="form-group align_singleLine">
+               <label class="control-label">Database Name</label>
+               <input maxlength="100" type="text" required="required" id="dbname_objrw" name="dbname_rw" class="form-control" />
+           </div>
+           <div class="form-group align_singleLine">
+               <label class="control-label">Username</label>
+               <input maxlength="100" type="text" required="required" id="duname_objrw" name="duname_rw" class="form-control" />
+           </div>
+           <div class="form-group align_singleLine">
+               <label class="control-label">Password</label>
+               <input maxlength="100" type="password" required="required" id="pwd_objrw" name="pwd_rw" class="form-control" />
+           </div>
+           <div class="usesameval">
+               <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked />
+               <label class="checkbox-inline">Use the same configuration for read only</label>
+           </div>
+           <h4 class="ro">Read Only</h4>
+           <div class="form-group align_singleLine large_inputBox ro">
+               <label class="control-label">Server IP/ Domain Name</label>
+               <input maxlength="100" type="text" required="required" id="sip_objro" name="sip_ro" class="form-control" />
+           </div>
+           <div class="form-group align_singleLine pnum small_inputBox ro">
+               <label class="control-label">Port Number</label>
+               <input maxlength="100" type="text" required="required" id="pnum_objro" name="pnum_ro" class="form-control " />
+           </div>
+           <div class="form-group align_singleLine small_inputBox ro">
+               <label class="control-label">Time Out</label><br />
+               <input maxlength="100" type="number" required="required" id="tout_objro" name="tout_ro" class="form-control tout" value="500" />
+           </div>
+           <div class="form-group align_singleLine ro">
+               <label class="control-label">SSL</label>
+               <input id="ssl_objro" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
+           </div>
+           <div class="form-group align_singleLine ro">
+               <label class="control-label">Database Name</label>
+               <input maxlength="100" type="text" required="required" id="dbname_objro" name="dbname_ro" class="form-control" />
+           </div>
+           <div class="form-group align_singleLine ro">
+               <label class="control-label">Username</label>
+               <input maxlength="100" type="text" required="required" id="duname_objro" name="duname_ro" class="form-control" />
+           </div>
+           <div class="form-group align_singleLine ro">
+               <label class="control-label">Password</label>
+               <input maxlength="100" type="password" required="required" id="pwd_objro" name="pwd_ro" class="form-control" />
+           </div>
+       </div>
     </div>
+
     <div class="col-md-12 ebWizStep">
-        <h4>Configure database for Log</h4>
-        <h4>Read Write</h4>
+        <h4>Log</h4>
         <div class="controls-group">
-            <div class="form-group dropdown" id="dropdown3">
-                <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+            <div class="form-group dropdown dropdown_size" id="dropdown3">
+                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
                     Select Database
                     <span class="caret"></span>
                 </div>
@@ -176,25 +177,26 @@
                     <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
                     <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
                 </ul>
-                <input type="hidden" id="db_logrw" name="db_rw" class="form-control" />
+                <input type="text" id="db_logrw" name="db_rw" class="form-control" style="visibility:hidden" />
             </div>
-            <div class="form-group align_singleLine">
+            <h4>Read Write</h4>
+            <div class="form-group align_singleLine large_inputBox">
                 <label class="control-label">Server IP/ Domain Name</label>
                 <input maxlength="100" type="text" required="required" id="sip_logrw" name="sip_rw" class="form-control" />
             </div>
-            <div class="form-group align_singleLine pnum">
+            <div class="form-group align_singleLine pnum small_inputBox">
                 <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_logrw" name="pnum_rw" class="form-control small_inputBox" disabled/>
+                <input maxlength="100" type="text" required="required" id="pnum_logrw" name="pnum_rw" class="form-control " />
             </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Time Out</label>
-                <input maxlength="100" type="number" required="required" id="tout_logrw" name="tout_rw" class="form-control small_inputBox" />
+            <div class="form-group align_singleLine small_inputBox">
+                <label class="control-label">Time Out</label><br />
+                <input maxlength="100" type="number" required="required" id="tout_logrw" name="tout_rw" class="form-control  tout" value="500" />
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">SSL</label>
-                <input id="ssl_logrw" type="checkbox" data-toggle="toggle" name="ssl_rw" class="ssl" />
+                <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_logrw" name="ssl_rw" class="ssl" />
             </div>
-            <div class="form-group">
+            <div class="form-group align_singleLine">
                 <label class="control-label">Database Name</label>
                 <input maxlength="100" type="text" required="required" id="dbname_logrw" name="dbname_rw" class="form-control" />
             </div>
@@ -204,49 +206,48 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_logrw" name="datarw" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_logrw" name="pwd_rw" class="form-control" />
             </div>
-            <div class="">
-                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" />
+            <div class="usesameval">
+                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked />
                 <label class="checkbox-inline">Use the same configuration for read only</label>
             </div>
-            <h4>Read Only</h4>
-            <div class="form-group align_singleLine">
+            <h4 class="ro">Read Only</h4>
+            <div class="form-group align_singleLine large_inputBox ro">
                 <label class="control-label">Server IP/ Domain Name</label>
                 <input maxlength="100" type="text" required="required" id="sip_logro" name="sip_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine pnum">
+            <div class="form-group align_singleLine pnum small_inputBox ro">
                 <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_logro" name="pnum_ro" class="form-control small_inputBox" disabled/>
+                <input maxlength="100" type="text" required="required" id="pnum_logro" name="pnum_ro" class="form-control " />
             </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Time Out</label>
-                <input maxlength="100" type="number" required="required" id="tout_logro" name="tout_ro" class="form-control small_inputBox" />
+            <div class="form-group align_singleLine small_inputBox ro">
+                <label class="control-label">Time Out</label><br />
+                <input maxlength="100" type="number" required="required" id="tout_logro" name="tout_ro" class="form-control tout" value="500" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">SSL</label>
-                <input id="ssl_logro" type="checkbox" data-toggle="toggle" name="ssl_ro" class="ssl" />
+                <input id="ssl_logro" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">Database Name</label>
                 <input maxlength="100" type="text" required="required" id="dbname_logro" name="dbname_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">Username</label>
                 <input maxlength="100" type="text" required="required" id="duname_logro" name="duname_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_logro" name="datarw_ro" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_logro" name="pwd_ro" class="form-control" />
             </div>
         </div>
     </div>
     <div class="col-md-12 ebWizStep">
-        <h4>Configure database for File</h4>
-        <h4>Read Write</h4>
+        <h4>File</h4>
         <div class="controls-group">
-            <div class="form-group dropdown" id="dropdown4">
-                <div class="dropdown-toggle dropdownBtn" type="button" data-toggle="dropdown">
+            <div class="form-group dropdown dropdown_size" id="dropdown4">
+                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
                     Select Database
                     <span class="caret"></span>
                 </div>
@@ -256,24 +257,25 @@
                     <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
                     <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
                     <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
-               </ul>
-                <input type="hidden" id="db_filerw" name="db_rw" class="form-control" />
+                </ul>
+                <input type="text" id="db_filerw" name="db_rw" class="form-control" style="visibility:hidden" />
             </div>
-            <div class="form-group align_singleLine">
+            <h4>Read Write</h4>
+            <div class="form-group align_singleLine large_inputBox">
                 <label class="control-label">Server IP/ Domain Name</label>
-                <input maxlength="100" type="text" required="required" id="sip_filerw" name="sip_rw" class="form-control" />
+                <input maxlength="100" type="text" required="required" id="sip_filerw" name="sip_rw" class="form-control " />
             </div>
-            <div class="form-group align_singleLine pnum">
+            <div class="form-group align_singleLine pnum small_inputBox">
                 <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_filerw" name="pnum_rw" class="form-control small_inputBox" disabled/>
+                <input maxlength="100" type="text" required="required" id="pnum_filerw" name="pnum_rw" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Time Out</label>
-                <input maxlength="100" type="number" required="required" id="tout_filerw" name="tout_rw" class="form-control small_inputBox" />
+            <div class="form-group align_singleLine small_inputBox">
+                <label class="control-label">Time Out</label><br />
+                <input maxlength="100" type="number" required="required" id="tout_filerw" name="tout_rw" class="form-control tout" value="500" />
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">SSL</label>
-                <input id="ssl_filerw" type="checkbox" data-toggle="toggle" name="ssl_rw" class="ssl" />
+                <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_filerw" name="ssl_rw" class="ssl" />
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">Database Name</label>
@@ -285,40 +287,40 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_filerw" name="datarw_rw" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_filerw" name="pwd_rw" class="form-control" />
             </div>
-            <div class="">
-                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" />
+            <div class="usesameval">
+                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked />
                 <label class="checkbox-inline">Use the same configuration for read only</label>
             </div>
-            <h4>Read Only</h4>
-            <div class="form-group align_singleLine">
+            <h4 class="ro">Read Only</h4>
+            <div class="form-group align_singleLine large_inputBox ro">
                 <label class="control-label">Server IP/ Domain Name</label>
                 <input maxlength="100" type="text" required="required" id="sip_filero" name="sip_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine pnum">
+            <div class="form-group align_singleLine pnum small_inputBox ro">
                 <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_filero" name="pnum_ro" class="form-control small_inputBox" disabled/>
+                <input maxlength="100" type="text" required="required" id="pnum_filero" name="pnum_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
-                <label class="control-label">Time Out</label>
-                <input maxlength="100" type="number" required="required" id="tout_filero" name="tout_ro" class="form-control small_inputBox" />
+            <div class="form-group align_singleLine small_inputBox ro">
+                <label class="control-label">Time Out</label><br />
+                <input maxlength="100" type="number" required="required" id="tout_filero" name="tout_ro" class="form-control tout" value="500" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">SSL</label>
-                <input id="ssl_filero" type="checkbox" data-toggle="toggle" name="ssl_ro" class="ssl" />
+                <input id="ssl_filero" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">Database Name</label>
                 <input maxlength="100" type="text" required="required" id="dbname_filero" name="dbname_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">Username</label>
                 <input maxlength="100" type="text" required="required" id="duname_filero" name="duname_ro" class="form-control" />
             </div>
-            <div class="form-group align_singleLine">
+            <div class="form-group align_singleLine ro">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_filero" name="datarw_ro" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_filero" name="pwd_ro" class="form-control" />
                 <input type="hidden" id="dbcheck" name="dbcheck" value="dbconfig" />
                 <input type="hidden" id="acid" name="acid" />
             </div>
@@ -326,23 +328,34 @@
     </div>
 <style>
     .form-group {
-        width: 20%;
+     /*width: 20%;*/
     }
     .form-control {
         height: 28px;
     }
     .small_inputBox{
-         width: 50%;
+         width: 13%;
+    }
+    .large_inputBox{
+         width: 42%;
     }
     .align_singleLine {
         display: inline-block;
         margin-right: 5px;
         align-content:center;
     }
+    .toggle{
+        width: 38px;
+        height: 27px;
+        margin-top: 84%;
+        margin-left: -47%;
+    }
     .dropdown_size{
         height:44px;
     }
     .dropdown_btn_size{
-        height: 43px;
+        height: 32px;
+        width:24%;
+        padding-top: 0px;
     }
 </style>

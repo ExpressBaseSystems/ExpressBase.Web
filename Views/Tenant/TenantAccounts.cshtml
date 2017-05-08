@@ -14,7 +14,7 @@
             });
 
             $('.new').click(function () {
-                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "http://localhost:53431/Tenant/dbConfig", 800, 800, "800, 800", "fa-database");
+                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 800, 800, "800, 800", "fa-database");
                 var ele = $(this).attr("data-accid");
                 $('#acid').val(ele);
                 addaccountwzd.Init();

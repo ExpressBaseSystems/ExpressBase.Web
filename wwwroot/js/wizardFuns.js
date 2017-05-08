@@ -1,6 +1,6 @@
 ﻿var _this = null;
 
-var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, EditObj) {
+var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, EditObj, NoFinishbtn) {
     this.width = w;
     this.height = h;
     this.Steps;
@@ -15,6 +15,7 @@ var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, Edit
     this.HeadingIcon = headingIcon;
     this.EditObj = EditObj;
     this.Acid = acid;
+    this.NoFinishbtn = NoFinishbtn;
 };
 
 EbWizard.prototype.Init = function () {
@@ -60,6 +61,8 @@ EbWizard.prototype.Drawsteps = function (data) {
         $("#wizprogress").hide();
         this.NextBtn.hide();
         this.PrevBtn.hide();
+        if (this.NoFinishbtn)
+            this.FinishBtn.css("visibility", "hidden");
         this.FinishBtn.show();
     }
     else {
@@ -138,7 +141,7 @@ EbWizard.prototype.SaveWizard = function () {
                 $("#errmsg").empty().append("<strong>Error!</strong>Input string was not in a correct format.");
             }
             else
-                $("#errmsg").empty().append("<strong>Error!</strong>An Unhandles Error."); 
+                $("#errmsg").empty().append("<strong>Error!</strong>An Unhandles Error.");
             _this.ShowStep();
             _this.SyncProgress();
         });
@@ -279,7 +282,7 @@ EbWizard.prototype.DbCheck = function () {
                 $(this).parent().siblings('.form-group').children('[name=pnum_ro]').val($(this).val());
             }
         });
-        $('[name=tout_rw]').on('keyup mouseup',function () {
+        $('[name=tout_rw]').on('keyup mouseup', function () {
             if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
                 $(this).parent().siblings('.form-group').children('[name=tout_ro]').val($(this).val());
             }
@@ -308,7 +311,7 @@ EbWizard.prototype.DbCheck = function () {
     }
     $('#dbModal').on('shown.bs.modal', function (e) {
         if ($('.useSame').is(':checked')) {
-         $('.useSame').parent().siblings('.ro').hide();
+            $('.useSame').parent().siblings('.ro').hide();
         }
         if ($('.useSame').is(':not(:checked)')) {
             $(this).parent().siblings('.ro').show();

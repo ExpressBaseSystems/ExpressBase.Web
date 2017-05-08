@@ -95,18 +95,17 @@ EbWizard.prototype.SaveWizard = function () {
         var jqxhr = $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },
         function (result) {
             $(".eb-loader").hide();
+            $(".wiz-error").show();
+            $(".wiz-error").children().removeClass("alert-danger").addClass("alert-success");
+            $("#errmsg").empty().append("<strong> Success <i class='fa fa-check fa-2x' aria-hidden='true'></i></strong>");
             setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
-            alert(result);
+            alert("Success status.message = " + status.message);
         }).fail(function (jq, jqStatus, statusDesc) {
             $(".eb-loader").hide();
             $(".wiz-error").show();
             var status = $.ss.parseResponseStatus(jq.responseText, statusDesc);
-            alert("status.message = " + status.message);
-            if (status.message.trim() === "Success" || status.message === null) {
-                $("#wiz-error").children()[0].removeClass("alert-danger").addClass("alert-success");
-                $("#errmsg").empty().append("<strong> Success </strong>");
-                setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
-            } else if (status.message.trim() === "Error in data") {
+            alert("Error status.message = " + status.message);
+            if (status.message.trim() === "Error in data") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Data");
                 _this.currentStepNo = 0;
             }

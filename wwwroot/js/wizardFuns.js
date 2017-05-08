@@ -1,6 +1,6 @@
-﻿var EditObj;// "{'db':'','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','}";
+﻿var _this = null;
 
-var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, EditObj) {
+var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, EditObj, NoFinishbtn) {
     this.width = w;
     this.height = h;
     this.Steps;
@@ -15,7 +15,7 @@ var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, Edit
     this.HeadingIcon = headingIcon;
     this.EditObj = EditObj;
     this.Acid = acid;
-
+    this.NoFinishbtn = NoFinishbtn;
 };
 
 EbWizard.prototype.Init = function () {
@@ -33,7 +33,7 @@ EbWizard.prototype.Init = function () {
     $("#wiz").children().css("margin-top", this.height / 2 - 110 + "px");
     $(".modal-body").css("height", this.height - 163 + "px");
     $('#dbModal').modal({ backdrop: 'static' });
-    $('#dbModal').on('hidden.bs.modal', function (e) { $('#dbModal').remove(); });
+    $('#dbModal').on('hidden.bs.modal', function (e) { $('#dbModal').remove(); _this = null });
     $.get(this.SrcUrl, this.Drawsteps.bind(this));
     var self = this;
     $('#dbModal').on('shown.bs.modal', function (e) { if (self.EditObj) self.EditWiz(); });
@@ -56,20 +56,20 @@ EbWizard.prototype.Drawsteps = function (data) {
     $(this.Navs).off("click").on("click", this.NavsClick); //do not BIND this
     $(this.FinishBtn).on("click", this.SaveWizard.bind(this));
 
-
     if (this.Steps.length === 1) {
         $(".controls-group").css("height", (parseInt(this.height) - 245) + "px");
         $("#wizprogress").hide();
         this.NextBtn.hide();
-        this.PrevBtn.hide();
+        if (this.NoFinishbtn)
+            this.FinishBtn.css("visibility", "hidden");
         this.FinishBtn.show();
     }
     else {
         this.NextBtn.show();
-        this.PrevBtn.hide();
         this.FinishBtn.hide();
         $(".controls-group").css("height", (parseInt(this.height) - 315) + "px");
     }
+    this.PrevBtn.hide();
     $(".modal-body").css("height", this.height - 163 + "px");
     this.SyncProgress();
     this.DbCheck();
@@ -86,83 +86,62 @@ EbWizard.prototype.SaveWizard = function () {
         var html = ""; ObjString = "{";
         for (i = 0; i < this.Steps.length; i++)
             html += $(this.Steps[i]).html();
-
         var AllInputs = $(html).find("input");
         $.each(AllInputs, function (i, inp) {
             ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
         })
         ObjString = ObjString.slice(0, -1) + '}';
         EditObj = ObjString;
-        console.log("JSON data : " + ObjString);
-
         var jqxhr = $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },
         function (result) {
             $(".eb-loader").hide();
+            $(".wiz-error").show();
+            $(".wiz-error").children().removeClass("alert-danger").addClass("alert-success");
+            $("#errmsg").empty().append("<strong> Success <i class='fa fa-check fa-2x' aria-hidden='true'></i></strong>");
             setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
-            alert(result);
+            alert("Success status.message = " + status.message);
         }).fail(function (jq, jqStatus, statusDesc) {
             $(".eb-loader").hide();
             $(".wiz-error").show();
             var status = $.ss.parseResponseStatus(jq.responseText, statusDesc);
-            alert("status.message = " + status.message);
-            if (status.message === "success" || status.message === null) {
-                $("#wiz-error").children()[0].removeClass("alert-danger").addClass("alert-success");
-                $("#errmsg").empty().append("<strong> Success </strong>");
-                setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
-            } else if (status.message.trim() === "Error in data") {
+            alert("Error status.message = " + status.message);
+            if (status.message.trim() === "Error in data") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Data");
                 _this.currentStepNo = 0;
-                //1st
             }
             else if (status.message.trim() === "Error in data read only") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for read only");
                 _this.currentStepNo = 0;
-                //1st
             }
             else if (status.message.trim() === "Error in objects ") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Object.");
                 _this.currentStepNo = 1;
-                //2st
             }
             else if (status.message.trim() === "Error in objects read only") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for Object read only.");
                 _this.currentStepNo = 1;
-                //2st
             }
             else if (status.message.trim() === "Error in logs") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs.");
                 _this.currentStepNo = 2;
-                //3st
             } else if (status.message.trim() === "Error in log read only") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs read only.");
                 _this.currentStepNo = 2;
-                //3st
             }
             else if (status.message.trim() === "Error in files") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files.");
                 _this.currentStepNo = 3;
-                //4st
             } else if (status.message.trim() === "Error in files read only") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files read only.");
                 _this.currentStepNo = 3;
-                //4st
             }
             else if (status.message.trim() === "Input string was not in a correct format.") {
                 $("#errmsg").empty().append("<strong>Error!</strong>Input string was not in a correct format.");
             }
-            else {
+            else
                 $("#errmsg").empty().append("<strong>Error!</strong>An Unhandles Error.");
-            } 
             _this.ShowStep();
             _this.SyncProgress();
-
-
-            //Actions.logEntry({
-            //    cmd: cmd,
-            //    result: status.message,
-            //    stackTrace: status.stackTrace,
-            //    type: 'err',
-            //});
         });
     }
 };
@@ -183,14 +162,13 @@ EbWizard.prototype.NextB = function () {
         this.ShowStep();
         if (this.currentStepNo > 0) {
             this.NextBtn.show();
-            this.PrevBtn.show();
             this.FinishBtn.hide();
         }
         if (this.currentStepNo === this.Steps.length - 1) {
             this.NextBtn.hide();
-            this.PrevBtn.show();
             this.FinishBtn.show();
         }
+        this.PrevBtn.show();
     }
     this.SyncProgress();
 };
@@ -199,17 +177,12 @@ EbWizard.prototype.PrevB = function () {
     if (this.IsStepValid()) {
         --this.currentStepNo;
         this.ShowStep();
-        if (this.currentStepNo > 0) {
-            this.NextBtn.show();
+        if (this.currentStepNo > 0)
             this.PrevBtn.show();
-            this.FinishBtn.hide();
-
-        }
-        if (this.currentStepNo === 0) {
-            this.NextBtn.show();
+        if (this.currentStepNo === 0)
             this.PrevBtn.hide();
-            this.FinishBtn.hide();
-        }
+        this.NextBtn.show();
+        this.FinishBtn.hide();
         $($(this.Navs[this.currentStepNo]).children()[0]).removeClass("btn-success");
     }
     this.SyncProgress();
@@ -218,7 +191,6 @@ EbWizard.prototype.PrevB = function () {
 EbWizard.prototype.SyncProgress = function () {
     for (i = 0; i < this.Steps.length; i++)
         $($(this.Navs[i]).children()[0]).removeClass("btn-primary");
-
     $($(this.Navs[this.currentStepNo]).children()[0]).removeClass("btn-default").removeClass("btn-success").addClass("btn-primary");
 };
 
@@ -228,7 +200,6 @@ EbWizard.prototype.CreateProgress = function () {
 
     for (i = 0; i < this.Steps.length; i++)
         html += repl.replace("@stepName", $(this.Steps[i]).children(0).html()).replace("@idx", (i + 1).toString());
-
     return html;
 };
 
@@ -289,10 +260,7 @@ EbWizard.prototype.RenderModal = function () {
 };
 
 EbWizard.prototype.EditWiz = function () {
-    $.each(this.EditObj, function (key, val) {
-        $("#" + key).val(val);
-        //console.log("key= " + key + "val=" + val);
-    });
+    $.each(this.EditObj, function (key, val) { $("#" + key).val(val); });
 };
 
 EbWizard.prototype.DbCheck = function () {
@@ -307,7 +275,7 @@ EbWizard.prototype.DbCheck = function () {
                 $(this).parent().siblings('.form-group').children('[name=pnum_ro]').val($(this).val());
             }
         });
-        $('[name=tout_rw]').on('keyup mouseup',function () {
+        $('[name=tout_rw]').on('keyup mouseup', function () {
             if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
                 $(this).parent().siblings('.form-group').children('[name=tout_ro]').val($(this).val());
             }
@@ -336,7 +304,7 @@ EbWizard.prototype.DbCheck = function () {
     }
     $('#dbModal').on('shown.bs.modal', function (e) {
         if ($('.useSame').is(':checked')) {
-         $('.useSame').parent().siblings('.ro').hide();
+            $('.useSame').parent().siblings('.ro').hide();
         }
         if ($('.useSame').is(':not(:checked)')) {
             $(this).parent().siblings('.ro').show();
@@ -403,7 +371,6 @@ EbWizard.prototype.DbCheck = function () {
             $(this).parent().siblings().children().children('[name=ssl_ro]').val($(this).prop("checked"));
             $(this).val($(this).prop("checked"));
         }
-
     });
 
     $('.db_selector input[type=radio]').on("click", function () {
@@ -423,5 +390,4 @@ EbWizard.prototype.DbCheck = function () {
         }, 401);
 
     });
-
 };

@@ -7,6 +7,12 @@
 //    return sum / this.length;
 //});
 
+if (!String.prototype.splice) {
+    String.prototype.splice = function (start, delCount, newSubStr) {
+        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+    };
+}
+
 Array.prototype.max = function () {
     return Math.max.apply(null, this);
 };
@@ -618,20 +624,21 @@ var coldef = function ( d, t, v, w, n, ty, cls) {
 
 function getData4SettingsTbl(tvPref4User)
 {
-    alert(JSON.stringify(tvPref4User));
     var colarr = [];
     var n, d, t, v, w, ty,cls;
     $.each(tvPref4User, function (i, col) {
-        n = col.name;
-        d = col.data;
-        t = col.title.substr(0, col.title.indexOf('<'));
-        v = (col.visible).toString().toLowerCase();
-        w = col.width.toString();
-        ty = col.type.toString();
-        cls = col.className;
-        if (cls == undefined)
-            cls = "";
-        colarr.push(new coldef(d, t, v, w, n, ty,cls));
+        if (col.name !== "serial" && col.name !== "id") {
+            n = col.name;
+            d = col.data;
+            t = col.title.substr(0, col.title.indexOf('<'));
+            v = (col.visible).toString().toLowerCase();
+            w = col.width.toString();
+            if (col.type) ty = col.type.toString();
+            cls = col.className;
+            if (cls == undefined)
+                cls = "";
+            colarr.push(new coldef(d, t, v, w, n, ty, cls));
+        }
     });
     return colarr;
 }
@@ -666,10 +673,17 @@ function GetSettingsModal(tableid, tvId, tvName) {
     var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "1a");
     var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
     var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
+    var hideSerial = $(document.createElement("input")).attr("type", "checkbox").attr("id", "serial_check");
+    var labelforSerial = $(document.createElement('label')).attr("htmlFor", "id");
+    labelforSerial.append(document.createTextNode('Hide Serial'));
+    var hideCheckbox = $(document.createElement("input")).attr("type", "checkbox").attr("id", "select_check");
     var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
     var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
     ModalFooterDiv.append(FooterButton);
+    ModalBodyTabPaneGenDiv.append(hideSerial);
+    ModalBodyTabPaneGenDiv.append(labelforSerial);
+    ModalBodyTabPaneGenDiv.append(hideCheckbox);
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
@@ -728,23 +742,27 @@ function GetSettingsModal(tableid, tvId, tvName) {
             }
             if (ct === api.columns().count()) { ct = 0; objarr.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
-        $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objarr) });
+        var stringforSerial = "\"hideSerial\":" + $("#serial_check").prop("checked");
+        objarr = "{" + stringforSerial + ",\"columns\":" + JSON.stringify(objarr) + "}";
+        alert("objarr = " + objarr);
+        $.post('TVPref4User', { tvid: '0', json: objarr });
         $(OuterModalDiv).modal('hide');
         $('#' + tableid).DataTable().destroy();
         $('#'+tableid+'_divcont').children()[1].remove();
         var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', tableid);
         $('#' + tableid + '_divcont').append(table);
-        eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.stringify(objarr)));
+        eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.parse(objarr).columns));
     });
 }
 
 function callPost4SettingsTable() {
     $.post('GetTVPref4User', { tvid: '0' },
         function (data2) {
+            $("#serial_check").prop("checked", JSON.parse(data2).hideSerial);
             $('#Table_Settings').DataTable(
             {
                 columns: column4SettingsTbl(),
-                data: getData4SettingsTbl(JSON.parse(data2)),
+                data: getData4SettingsTbl(JSON.parse(data2).columns),
                 paging: false,
                 ordering: false,
                 searching: false,
@@ -776,7 +794,6 @@ function column4SettingsTbl()
     {
         if (data.length > 0 && data !== undefined) {
             var fontName = data.substring(5).replace(/_/g, " ");
-            alert("fontName:" + fontName);
             return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
     }
     else 
@@ -784,5 +801,11 @@ function column4SettingsTbl()
     }
         , "30"));
     return colArr;
+}
+
+function AddSerialColumn(tx)
+{
+    if (!tx.hideSerial)
+        tx.columns.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
 }
  

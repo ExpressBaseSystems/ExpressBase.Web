@@ -13,6 +13,7 @@
 /// <reference path="js/jquery mask plugin v1.14.9.js" />
 /// <reference path="js/jquery.cookie.js" />
 /// <reference path="js/jquery.datetimepicker.min.js" />
+/// <reference path="js/jquery.fontselect.min.js" />
 /// <reference path="js/jquery.toolbar.js" />
 /// <reference path="js/jquery-ui-timepicker-addon.min.js" />
 /// <reference path="js/jwt-decode.min.js" />
@@ -21,6 +22,7 @@
 /// <reference path="js/resizesensor.js" />
 /// <reference path="js/selectize.min.js" />
 /// <reference path="js/site.js" />
+/// <reference path="js/ss-utils.js" />
 /// <reference path="js/thirdpartysignup.js" />
 /// <reference path="js/vue-select.js" />
 /// <reference path="js/wizardFuns.js" />

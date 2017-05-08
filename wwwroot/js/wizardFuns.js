@@ -1,4 +1,5 @@
 ﻿var EditObj;// "{'db':'','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','}";
+
 var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, EditObj) {
     this.width = w;
     this.height = h;
@@ -18,50 +19,43 @@ var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, Edit
 };
 
 EbWizard.prototype.Init = function () {
-
     this.RenderModal();
+    $(".wiz-error").hide();
     this.NextBtn = $("#ebWizNextB");
     this.PrevBtn = $("#ebWizPrevB");
     this.FinishBtn = $("#ebWizFinishB");
-
     this.NextBtn.hide();
     this.PrevBtn.hide();
     this.FinishBtn.hide();
     $(".eb-loader").css("top", (parseInt(this.height) / 2) + "px");
     $(".modal-content").css("width", this.width + "px");
     $(".modal-dialog").css("width", this.width + "px");
-   // $("#wiz").empty().append("<i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i>");
     $("#wiz").children().css("margin-top", this.height / 2 - 110 + "px");
     $(".modal-body").css("height", this.height - 163 + "px");
     $('#dbModal').modal({ backdrop: 'static' });
-    $('#dbModal').on('hidden.bs.modal', function (e) {
-        $('#dbModal').remove();
-    });
+    $('#dbModal').on('hidden.bs.modal', function (e) { $('#dbModal').remove(); });
     $.get(this.SrcUrl, this.Drawsteps.bind(this));
     var self = this;
-
-    $('#dbModal').on('shown.bs.modal', function (e) {
-
-        if (self.EditObj)
-            self.EditWiz();
-    });
+    $('#dbModal').on('shown.bs.modal', function (e) { if (self.EditObj) self.EditWiz(); });
 };
 
+EbWizard.prototype.GetThis = function (data) { return this }
+
 EbWizard.prototype.Drawsteps = function (data) {
+    this.DbCheck();
     $("#wiz").empty().append($.parseHTML(data));
-    $('#acid').val(this.Acid);
     $(".eb-loader").hide();
+    $('#acid').val(this.Acid);
     this.Steps = $(".ebWizStep");
     this.ShowStep();
-    var me = this;
     $("#wizprogress").empty().append(this.CreateProgress());
     this.Navs = $("#wizprogress").children();
     $(this.NextBtn).off("click").on("click", this.NextB.bind(this));
     $(this.PrevBtn).off("click").on("click", this.PrevB.bind(this));
-    $(this.Navs).off("click").on("click", this.NavsClick(me)); //do not BIND this
-
-    alert(me.currentStepNo);
+    _this = this;
+    $(this.Navs).off("click").on("click", this.NavsClick); //do not BIND this
     $(this.FinishBtn).on("click", this.SaveWizard.bind(this));
+
 
     if (this.Steps.length === 1) {
         $(".controls-group").css("height", (parseInt(this.height) - 245) + "px");
@@ -80,24 +74,22 @@ EbWizard.prototype.Drawsteps = function (data) {
     this.SyncProgress();
     this.DbCheck();
     setTimeout(this.TimeOutFunc.bind(this), 10);
-}
+};
 
 EbWizard.prototype.TimeOutFunc = function () {
     $(this.Steps[0]).find('input:eq(0)').focus();
-}
+};
 
 EbWizard.prototype.SaveWizard = function () {
     if (this.IsStepValid()) {
         $(".eb-loader").show();
-        var html = "";
-        ObjString = "{";
+        var html = ""; ObjString = "{";
         for (i = 0; i < this.Steps.length; i++)
             html += $(this.Steps[i]).html();
 
         var AllInputs = $(html).find("input");
         $.each(AllInputs, function (i, inp) {
             ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
-
         })
         ObjString = ObjString.slice(0, -1) + '}';
         EditObj = ObjString;
@@ -105,41 +97,84 @@ EbWizard.prototype.SaveWizard = function () {
 
         var jqxhr = $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },
         function (result) {
-            if (result){
-                $(".eb-loader").hide();
-                alert(result);
-            }
-            else
-                alert(result);
+            $(".eb-loader").hide();
+            setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
+            alert(result);
         }).fail(function (jq, jqStatus, statusDesc) {
+            $(".eb-loader").hide();
+            $(".wiz-error").show();
             var status = $.ss.parseResponseStatus(jq.responseText, statusDesc);
-            alert(status.message);
-            Actions.logEntry({
-                cmd: cmd,
-                result: status.message,
-                stackTrace: status.stackTrace,
-                type: 'err',
-            });
+            alert("status.message = " + status.message);
+            if (status.message === "success" || status.message === null) {
+                $("#wiz-error").children()[0].removeClass("alert-danger").addClass("alert-success");
+                $("#errmsg").empty().append("<strong> Success </strong>");
+                setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
+            } else if (status.message.trim() === "Error in data") {
+                $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Data");
+                _this.currentStepNo = 0;
+                //1st
+            }
+            else if (status.message.trim() === "Error in data read only") {
+                $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for read only");
+                _this.currentStepNo = 0;
+                //1st
+            }
+            else if (status.message.trim() === "Error in objects ") {
+                $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Object.");
+                _this.currentStepNo = 1;
+                //2st
+            }
+            else if (status.message.trim() === "Error in objects read only") {
+                $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for Object read only.");
+                _this.currentStepNo = 1;
+                //2st
+            }
+            else if (status.message.trim() === "Error in logs") {
+                $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs.");
+                _this.currentStepNo = 2;
+                //3st
+            } else if (status.message.trim() === "Error in log read only") {
+                $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs read only.");
+                _this.currentStepNo = 2;
+                //3st
+            }
+            else if (status.message.trim() === "Error in files") {
+                $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files.");
+                _this.currentStepNo = 3;
+                //4st
+            } else if (status.message.trim() === "Error in files read only") {
+                $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files read only.");
+                _this.currentStepNo = 3;
+                //4st
+            }
+            else if (status.message.trim() === "Input string was not in a correct format.") {
+                $("#errmsg").empty().append("<strong>Error!</strong>Input string was not in a correct format.");
+            }
+            else {
+                $("#errmsg").empty().append("<strong>Error!</strong>An Unhandles Error.");
+            } 
+            _this.ShowStep();
+            _this.SyncProgress();
+
+
+            //Actions.logEntry({
+            //    cmd: cmd,
+            //    result: status.message,
+            //    stackTrace: status.stackTrace,
+            //    type: 'err',
+            //});
         });
     }
 };
 
-EbWizard.prototype.NavsClick = function (me) {
-    alert("NavsClick");
-    alert("currentStepNo NavsClick===" + me.currentStepNo);
-    var clickedStepNo = $($(this).children()[0]).text().trim();
-    var clickedStep = $("#step-" + clickedStepNo);
-    alert("Navs clickedStepNo =" + clickedStepNo + "currentStepNo" + me.currentStepNo);
-    if (clickedStepNo > this.currentStepNo) {
-
-        alert("if > NavsClick =" + this.currentStepNo);
-        for (var i = this.currentStepNo; i < (clickedStepNo - 1); i++)
-            this.NextB.bind(this)();
-    }
-    else if (clickedStepNo < this.currentStepNo){
-        for (var i = this.currentStepNo; i > (clickedStepNo - 1) ; i--)
-            this.PrevB.bind(this)();
-    }
+EbWizard.prototype.NavsClick = function () {
+    var clickedStepNo = parseInt($($(this).children()[0]).text().trim()) - 1;
+    if (clickedStepNo > _this.currentStepNo)
+        for (var i = _this.currentStepNo; i < (clickedStepNo) ; i++)
+            _this.NextB.bind(_this)();
+    else if (clickedStepNo < _this.currentStepNo)
+        for (var i = _this.currentStepNo; i > (clickedStepNo) ; i--)
+            _this.PrevB.bind(_this)();
 };
 
 EbWizard.prototype.NextB = function () {
@@ -226,8 +261,8 @@ EbWizard.prototype.RenderModal = function () {
          "   <div class='modal-content'>" +
 
         "<div class='wiz-error'><div class='alert alert-danger center-block' style='width:98%;'>" +
-            "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+
-            "<strong>Danger!</strong> Indicates a dangerous or potentially negative action." +
+            "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+            "<div id='errmsg'><strong>Danger!</strong> Indicates a dangerous or potentially negative action.</div>" +
         "</div></div>" +
 
         "<div class='eb-loader'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>" +
@@ -261,6 +296,54 @@ EbWizard.prototype.EditWiz = function () {
 };
 
 EbWizard.prototype.DbCheck = function () {
+    function UseSame() {
+        $('[name=sip_rw]').keyup(function () {
+            if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
+                $(this).parent().siblings('.form-group').children('[name=sip_ro]').val($(this).val());
+            }
+        });
+        $('[name=pnum_rw]').keyup(function () {
+            if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
+                $(this).parent().siblings('.form-group').children('[name=pnum_ro]').val($(this).val());
+            }
+        });
+        $('[name=tout_rw]').on('keyup mouseup',function () {
+            if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
+                $(this).parent().siblings('.form-group').children('[name=tout_ro]').val($(this).val());
+            }
+        });
+        $('[name=ssl_rw]').keyup(function () {
+            if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
+                alert($(this).parent().siblings('.form-group').children().children('[name=ssl_ro]').val() + $(this).val());
+                $(this).parent().siblings('.form-group').children().children('[name=ssl_ro]').val($(this).val());
+            }
+        });
+        $('[name=dbname_rw]').keyup(function () {
+            if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
+                $(this).parent().siblings('.form-group').children('[name=dbname_ro]').val($(this).val());
+            }
+        });
+        $('[name=duname_rw]').keyup(function () {
+            if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
+                $(this).parent().siblings('.form-group').children('[name=duname_ro]').val($(this).val());
+            }
+        });
+        $('[name=pwd_rw]').keyup(function () {
+            if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
+                $(this).parent().siblings('.form-group').children('[name=pwd_ro]').val($(this).val());
+            }
+        });
+    }
+    $('#dbModal').on('shown.bs.modal', function (e) {
+        if ($('.useSame').is(':checked')) {
+         $('.useSame').parent().siblings('.ro').hide();
+        }
+        if ($('.useSame').is(':not(:checked)')) {
+            $(this).parent().siblings('.ro').show();
+        }
+        UseSame();
+    });
+
     $('.dropdown ul li').on("click", function () {
         var v = $(this).attr("value");
         var port_num;
@@ -286,14 +369,16 @@ EbWizard.prototype.DbCheck = function () {
         if ($(this).is(':checked')) {
             $(this).parent().siblings('.form-group').children('[name=sip_ro]').val($(this).parent().siblings('.form-group').children('[name=sip_rw]').val());
             $(this).parent().siblings('.form-group').children('[name=tout_ro]').val($(this).parent().siblings('.form-group').children('[name=tout_rw]').val());
-            $(this).parent().siblings('.form-group').children('[name=ssl_ro]').val($(this).parent().siblings('.form-group').children('[name=ssl_rw]').val());
+            $(this).parent().siblings('.form-group').children('[name=ssl_ro]').val($(this).parent().siblings('.form-group').children().children('[name=ssl_rw]').val());
             $(this).parent().siblings('.form-group').children('[name=dbname_ro]').val($(this).parent().siblings('.form-group').children('[name=dbname_rw]').val());
             $(this).parent().siblings('.form-group').children('[name=duname_ro]').val($(this).parent().siblings('.form-group').children('[name=duname_rw]').val());
             $(this).parent().siblings('.form-group').children('[name=pwd_ro]').val($(this).parent().siblings('.form-group').children('[name=pwd_rw]').val());
+            $(this).parent().siblings('.ro').hide();
         }
         if ($(this).is(':not(:checked)')) {
+            $(this).parent().siblings('.ro').show();
             $(this).parent().siblings('.form-group').children('[name=sip_ro]').val("");
-            $(this).parent().siblings('.form-group').children('[name=tout_ro]').val("");
+            $(this).parent().siblings('.form-group').children('[name=tout_ro]').val(500);
             $(this).parent().siblings('.form-group').children('[name=ssl_ro]').val("");
             $(this).parent().siblings('.form-group').children('[name=dbname_ro]').val("");
             $(this).parent().siblings('.form-group').children('[name=duname_ro]').val("");
@@ -304,27 +389,39 @@ EbWizard.prototype.DbCheck = function () {
         $(this).parent().siblings('input').val($(this).attr("value"));
         $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
     });
-    $('[data-toggle=toggle]').bootstrapToggle("on");//toggle init
-    $('[data-toggle=toggle]').children().val("true");//set initial value of control
+    $('[data-toggle=toggle]').bootstrapToggle('on');//toggle init
+    $('[data-toggle=toggle]').val("true");//set initial value of control
     $('[data-toggle=toggle]').prop("checked", true);// set initial value of  toggle 
+
     $('[data-toggle=toggle]').on("click", function () {
-        $(this).prop("checked", !$(this).prop("checked"));// toggle toggle value
+        $(this).prop("checked", !$(this).prop("checked"));// toggles toggle value
         $(this).children().val($(this).prop("checked"));// set toggle value to control value
+        var IsChkd = ($(this).parent().siblings().children('.useSame').is(':checked'));
+        var isUpperToggle = ($(this).children('input').attr('name') === 'ssl_rw');
+        if (IsChkd && isUpperToggle) {
+            $(this).parent().siblings().children().children('[name=ssl_ro]').prop("checked", $(this).prop("checked"));
+            $(this).parent().siblings().children().children('[name=ssl_ro]').val($(this).prop("checked"));
+            $(this).val($(this).prop("checked"));
+        }
+
     });
-    $('.cc-selector input[type=radio]').on("click", function () {     var dbconf = $('.cc-selector input[type=radio]:checked').val();
-    alert(dbconf);
-    if(dbconf==='simple')
-    {
-        var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://localhost:44377/infra/", 800, 600, "500, 500", "fa-database");
-        DBwizard_sim.Init();
-        var accid = $(this).attr("data-accid")
-    }
-    if(dbconf==='advanced')
-    {
-        var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 800, 600, "500, 500", "fa-database");
-        DBwizard_adv.Init();
-        var accid = $(this).attr("data-accid")
-    }
+
+    $('.db_selector input[type=radio]').on("click", function () {
+        var dbconf = $('.db_selector input[type=radio]:checked').val();
+        $('#dbModal').modal('hide');
+        setTimeout(function () {
+            if (dbconf === 'simple') {
+                var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://localhost:44377/infra/", 800, 600, "Configure Database - Simple", "fa-database");
+                DBwizard_sim.Init();
+                var accid = $(this).attr("data-accid")
+            }
+            if (dbconf === 'advanced') {
+                var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 800, 600, "Configure Database - Advanced", "fa-database");
+                DBwizard_adv.Init();
+                var accid = $(this).attr("data-accid")
+            }
+        }, 401);
+
     });
 
 };

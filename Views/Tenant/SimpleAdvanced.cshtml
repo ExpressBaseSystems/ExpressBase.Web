@@ -1,7 +1,14 @@
-﻿<div class="col-md-12 ebWizStep">
+﻿<script>
+    $(document).ready(function () {
+      alert('hi');
+    $('#ebWizFinishB').hide();
+    });
+   
+</script>
+<div class="col-md-12 ebWizStep">
         <h4>Select database type</h4>
         <div class="controls-group">
-            <div class="cc-selector">
+            <div class="db_selector">
                 <input id="simple" type="radio" name="dbconf" value="simple" class="" />
                 <label class="drinkcard-cc simple" for="simple">Simple</label>
                 <input id="advanced" type="radio" name="dbconf" value="advanced" class="" />
@@ -10,7 +17,7 @@
         </div>
     </div>
     <style>
-        .cc-selector input {
+        .db_selector input {
             margin: 0;
             padding: 0;
             -webkit-appearance: none;
@@ -26,11 +33,11 @@
             background-image: url(http://www.avsipcctv.com/sites/default/files/images/cms/multiple_databases.jpg);
         }
 
-        .cc-selector input:active + .drinkcard-cc {
+        .db_selector input:active + .drinkcard-cc {
             opacity: .9;
         }
 
-        .cc-selector input:checked + .drinkcard-cc {
+        .db_selector input:checked + .drinkcard-cc {
             -webkit-filter: none;
             -moz-filter: none;
             filter: none;

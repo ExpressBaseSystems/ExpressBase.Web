@@ -60,17 +60,16 @@ EbWizard.prototype.Drawsteps = function (data) {
         $(".controls-group").css("height", (parseInt(this.height) - 245) + "px");
         $("#wizprogress").hide();
         this.NextBtn.hide();
-        this.PrevBtn.hide();
         if (this.NoFinishbtn)
             this.FinishBtn.css("visibility", "hidden");
         this.FinishBtn.show();
     }
     else {
         this.NextBtn.show();
-        this.PrevBtn.hide();
         this.FinishBtn.hide();
         $(".controls-group").css("height", (parseInt(this.height) - 315) + "px");
     }
+    this.PrevBtn.hide();
     $(".modal-body").css("height", this.height - 163 + "px");
     this.SyncProgress();
     this.DbCheck();
@@ -103,7 +102,7 @@ EbWizard.prototype.SaveWizard = function () {
             $(".wiz-error").show();
             var status = $.ss.parseResponseStatus(jq.responseText, statusDesc);
             alert("status.message = " + status.message);
-            if (status.message === "success" || status.message === null) {
+            if (status.message.trim() === "Success" || status.message === null) {
                 $("#wiz-error").children()[0].removeClass("alert-danger").addClass("alert-success");
                 $("#errmsg").empty().append("<strong> Success </strong>");
                 setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
@@ -164,14 +163,13 @@ EbWizard.prototype.NextB = function () {
         this.ShowStep();
         if (this.currentStepNo > 0) {
             this.NextBtn.show();
-            this.PrevBtn.show();
             this.FinishBtn.hide();
         }
         if (this.currentStepNo === this.Steps.length - 1) {
             this.NextBtn.hide();
-            this.PrevBtn.show();
             this.FinishBtn.show();
         }
+        this.PrevBtn.show();
     }
     this.SyncProgress();
 };
@@ -180,16 +178,12 @@ EbWizard.prototype.PrevB = function () {
     if (this.IsStepValid()) {
         --this.currentStepNo;
         this.ShowStep();
-        if (this.currentStepNo > 0) {
-            this.NextBtn.show();
+        if (this.currentStepNo > 0)
             this.PrevBtn.show();
-            this.FinishBtn.hide();
-        }
-        if (this.currentStepNo === 0) {
-            this.NextBtn.show();
+        if (this.currentStepNo === 0)
             this.PrevBtn.hide();
-            this.FinishBtn.hide();
-        }
+        this.NextBtn.show();
+        this.FinishBtn.hide();
         $($(this.Navs[this.currentStepNo]).children()[0]).removeClass("btn-success");
     }
     this.SyncProgress();

@@ -15,7 +15,6 @@ var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, Edit
     this.HeadingIcon = headingIcon;
     this.EditObj = EditObj;
     this.Acid = acid;
-
 };
 
 EbWizard.prototype.Init = function () {
@@ -56,7 +55,6 @@ EbWizard.prototype.Drawsteps = function (data) {
     $(this.Navs).off("click").on("click", this.NavsClick); //do not BIND this
     $(this.FinishBtn).on("click", this.SaveWizard.bind(this));
 
-
     if (this.Steps.length === 1) {
         $(".controls-group").css("height", (parseInt(this.height) - 245) + "px");
         $("#wizprogress").hide();
@@ -86,14 +84,12 @@ EbWizard.prototype.SaveWizard = function () {
         var html = ""; ObjString = "{";
         for (i = 0; i < this.Steps.length; i++)
             html += $(this.Steps[i]).html();
-
         var AllInputs = $(html).find("input");
         $.each(AllInputs, function (i, inp) {
             ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
         })
         ObjString = ObjString.slice(0, -1) + '}';
         EditObj = ObjString;
-
         var jqxhr = $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },
         function (result) {
             $(".eb-loader").hide();
@@ -185,7 +181,6 @@ EbWizard.prototype.PrevB = function () {
             this.NextBtn.show();
             this.PrevBtn.show();
             this.FinishBtn.hide();
-
         }
         if (this.currentStepNo === 0) {
             this.NextBtn.show();
@@ -200,7 +195,6 @@ EbWizard.prototype.PrevB = function () {
 EbWizard.prototype.SyncProgress = function () {
     for (i = 0; i < this.Steps.length; i++)
         $($(this.Navs[i]).children()[0]).removeClass("btn-primary");
-
     $($(this.Navs[this.currentStepNo]).children()[0]).removeClass("btn-default").removeClass("btn-success").addClass("btn-primary");
 };
 
@@ -210,7 +204,6 @@ EbWizard.prototype.CreateProgress = function () {
 
     for (i = 0; i < this.Steps.length; i++)
         html += repl.replace("@stepName", $(this.Steps[i]).children(0).html()).replace("@idx", (i + 1).toString());
-
     return html;
 };
 
@@ -271,9 +264,7 @@ EbWizard.prototype.RenderModal = function () {
 };
 
 EbWizard.prototype.EditWiz = function () {
-    $.each(this.EditObj, function (key, val) {
-        $("#" + key).val(val);
-    });
+    $.each(this.EditObj, function (key, val) { $("#" + key).val(val); });
 };
 
 EbWizard.prototype.DbCheck = function () {
@@ -384,7 +375,6 @@ EbWizard.prototype.DbCheck = function () {
             $(this).parent().siblings().children().children('[name=ssl_ro]').val($(this).prop("checked"));
             $(this).val($(this).prop("checked"));
         }
-
     });
 
     $('.db_selector input[type=radio]').on("click", function () {
@@ -404,5 +394,4 @@ EbWizard.prototype.DbCheck = function () {
         }, 401);
 
     });
-
 };

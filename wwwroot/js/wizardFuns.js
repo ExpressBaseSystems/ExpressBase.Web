@@ -1,4 +1,4 @@
-﻿var EditObj;// "{'db':'','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','sip':'11','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','pwd':'1','db':'','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','sip':'1','pnum':'1','tout':'1','ssl':'on','dbname':'1','duname':'1','datarw':'1','}";
+﻿var _this = null;
 
 var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, EditObj) {
     this.width = w;
@@ -33,7 +33,7 @@ EbWizard.prototype.Init = function () {
     $("#wiz").children().css("margin-top", this.height / 2 - 110 + "px");
     $(".modal-body").css("height", this.height - 163 + "px");
     $('#dbModal').modal({ backdrop: 'static' });
-    $('#dbModal').on('hidden.bs.modal', function (e) { $('#dbModal').remove(); });
+    $('#dbModal').on('hidden.bs.modal', function (e) { $('#dbModal').remove(); _this = null });
     $.get(this.SrcUrl, this.Drawsteps.bind(this));
     var self = this;
     $('#dbModal').on('shown.bs.modal', function (e) { if (self.EditObj) self.EditWiz(); });
@@ -91,7 +91,6 @@ EbWizard.prototype.SaveWizard = function () {
         })
         ObjString = ObjString.slice(0, -1) + '}';
         EditObj = ObjString;
-        console.log("JSON data : " + ObjString);
 
         var jqxhr = $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },
         function (result) {
@@ -110,57 +109,40 @@ EbWizard.prototype.SaveWizard = function () {
             } else if (status.message.trim() === "Error in data") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Data");
                 _this.currentStepNo = 0;
-                //1st
             }
             else if (status.message.trim() === "Error in data read only") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for read only");
                 _this.currentStepNo = 0;
-                //1st
             }
             else if (status.message.trim() === "Error in objects ") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Object.");
                 _this.currentStepNo = 1;
-                //2st
             }
             else if (status.message.trim() === "Error in objects read only") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for Object read only.");
                 _this.currentStepNo = 1;
-                //2st
             }
             else if (status.message.trim() === "Error in logs") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs.");
                 _this.currentStepNo = 2;
-                //3st
             } else if (status.message.trim() === "Error in log read only") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs read only.");
                 _this.currentStepNo = 2;
-                //3st
             }
             else if (status.message.trim() === "Error in files") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files.");
                 _this.currentStepNo = 3;
-                //4st
             } else if (status.message.trim() === "Error in files read only") {
                 $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files read only.");
                 _this.currentStepNo = 3;
-                //4st
             }
             else if (status.message.trim() === "Input string was not in a correct format.") {
                 $("#errmsg").empty().append("<strong>Error!</strong>Input string was not in a correct format.");
             }
-            else {
-                $("#errmsg").empty().append("<strong>Error!</strong>An Unhandles Error.");
-            } 
+            else
+                $("#errmsg").empty().append("<strong>Error!</strong>An Unhandles Error."); 
             _this.ShowStep();
             _this.SyncProgress();
-
-
-            //Actions.logEntry({
-            //    cmd: cmd,
-            //    result: status.message,
-            //    stackTrace: status.stackTrace,
-            //    type: 'err',
-            //});
         });
     }
 };
@@ -289,7 +271,6 @@ EbWizard.prototype.RenderModal = function () {
 EbWizard.prototype.EditWiz = function () {
     $.each(this.EditObj, function (key, val) {
         $("#" + key).val(val);
-        //console.log("key= " + key + "val=" + val);
     });
 };
 

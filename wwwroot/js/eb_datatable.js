@@ -7,6 +7,12 @@
 //    return sum / this.length;
 //});
 
+if (!String.prototype.splice) {
+    String.prototype.splice = function (start, delCount, newSubStr) {
+        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+    };
+}
+
 Array.prototype.max = function () {
     return Math.max.apply(null, this);
 };
@@ -325,7 +331,7 @@ function renderMainGraph(objCan) {
     setTimeout(function () {
         console.log('2sec');
         var gdata = null;
-        gdata = $(objCan).attr("data-graph").toString(); alert(gdata);
+        gdata = $(objCan).attr("data-graph").toString();
         var gcsv = csv(gdata);
         g = new Dygraph(
             document.getElementById('graphdiv'),
@@ -618,20 +624,21 @@ var coldef = function ( d, t, v, w, n, ty, cls) {
 
 function getData4SettingsTbl(tvPref4User)
 {
-    alert(JSON.stringify(tvPref4User));
     var colarr = [];
     var n, d, t, v, w, ty,cls;
     $.each(tvPref4User, function (i, col) {
-        n = col.name;
-        d = col.data;
-        t = col.title.substr(0, col.title.indexOf('<'));
-        v = (col.visible).toString().toLowerCase();
-        w = col.width.toString();
-        ty = col.type.toString();
-        cls = col.className;
-        if (cls == undefined)
-            cls = "";
-        colarr.push(new coldef(d, t, v, w, n, ty,cls));
+        if (col.name !== "serial" && col.name !== "id") {
+            n = col.name;
+            d = col.data;
+            t = col.title.substr(0, col.title.indexOf('<'));
+            v = (col.visible).toString().toLowerCase();
+            w = col.width.toString();
+            if (col.type) ty = col.type.toString();
+            cls = col.className;
+            if (cls == undefined)
+                cls = "";
+            colarr.push(new coldef(d, t, v, w, n, ty, cls));
+        }
     });
     return colarr;
 }
@@ -659,24 +666,25 @@ function GetSettingsModal(tableid, tvId, tvName) {
     var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
     var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
     var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
-    var ModalBodyAnchorCol = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#1a").text("Columns");
+    var ModalBodyAnchorCol = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#2a").text("Columns");
     var ModalBodyliGen = $(document.createElement("li")).attr("class", "nav-item");
-    var ModalBodyAnchorGen = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#2a").text("General");
+    var ModalBodyAnchorGen = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#1a").text("General");
     var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
-    var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "1a");
+    var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
     var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
-    var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
+    var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "1a");
     var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
     var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
     ModalFooterDiv.append(FooterButton);
+    ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox")
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
-    ModalBodyliCol.append(ModalBodyAnchorCol);
     ModalBodyliGen.append(ModalBodyAnchorGen);
-    ModalBodyUl.append(ModalBodyliCol);
+    ModalBodyliCol.append(ModalBodyAnchorCol);
     ModalBodyUl.append(ModalBodyliGen);
+    ModalBodyUl.append(ModalBodyliCol);
     ModalBodyDiv.append(ModalBodyUl);
     ModalBodyDiv.append(ModalBodyTabDiv);
     ModalHeaderDiv.append(headerButton);
@@ -696,7 +704,7 @@ function GetSettingsModal(tableid, tvId, tvName) {
     });
 
     $(FooterButton).click(function () {
-        var ct = 0; var objarr = [];
+        var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
         var n, d, t, v, w, ty, cls;
         $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
@@ -726,25 +734,32 @@ function GetSettingsModal(tableid, tvId, tvName) {
                 else
                     cls = '';
             }
-            if (ct === api.columns().count()) { ct = 0; objarr.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
+            if (ct === api.columns().count()) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
-        $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objarr) });
+        var objconf = new Object();
+        objconf.hideSerial = $("#serial_check").prop("checked");
+        objconf.hideCheckbox = $("#select_check").prop("checked");
+        objconf.columns = objcols;
+        $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objconf) });
         $(OuterModalDiv).modal('hide');
         $('#' + tableid).DataTable().destroy();
         $('#'+tableid+'_divcont').children()[1].remove();
         var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', tableid);
         $('#' + tableid + '_divcont').append(table);
-        eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.stringify(objarr)));
+        eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.stringify(objconf)));
     });
 }
 
 function callPost4SettingsTable() {
     $.post('GetTVPref4User', { tvid: '0' },
         function (data2) {
+            var data2Obj = JSON.parse(data2);
+            $("#serial_check").prop("checked", data2Obj.hideSerial);
+            $("#select_check").prop("checked", data2Obj.hideCheckbox);
             $('#Table_Settings').DataTable(
             {
                 columns: column4SettingsTbl(),
-                data: getData4SettingsTbl(JSON.parse(data2)),
+                data: getData4SettingsTbl(data2Obj.columns),
                 paging: false,
                 ordering: false,
                 searching: false,
@@ -776,7 +791,6 @@ function column4SettingsTbl()
     {
         if (data.length > 0 && data !== undefined) {
             var fontName = data.substring(5).replace(/_/g, " ");
-            alert("fontName:" + fontName);
             return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
     }
     else 
@@ -785,4 +799,21 @@ function column4SettingsTbl()
         , "30"));
     return colArr;
 }
- 
+
+function AddSerialAndOrCheckBoxColumns(tx, tableId, data_cols)
+{
+    if (!tx.hideCheckbox) {
+        var chkObj = new Object();
+        chkObj.data = null;
+        chkObj.title = "<input id='{0}_select-all' type='checkbox' onclick='clickAlSlct(event, this);' data-table='{0}'/>".replace("{0}", tableid);
+        chkObj.width = 10;
+        chkObj.orderable = false;
+        chkObj.visible = true;
+        var idpos = $.grep(data_cols, function (e) { return e.ColumnName === "id"; })[0].ColumnIndex; 
+        chkObj.render = function( data2, type, row, meta ) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
+        tx.columns.unshift(chkObj);
+    }
+
+    if (!tx.hideSerial)
+        tx.columns.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
+}

@@ -1,9 +1,9 @@
 ﻿<div class="col-md-12 ebWizStep">
-        <h4>Data </h4>
+        <h3>Data </h3>
         <div class="controls-group">
             <div class="form-group dropdown dropdown_size" id="dropdown1">
                 <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                    Select Database
+                    Select Database Vendor
                     <span class="caret"></span>
                 </div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -22,14 +22,14 @@
             </div>
             <div class="form-group align_singleLine pnum small_inputBox">
                 <label class="control-label">Port Number</label>
-                <input maxlength="100" type="text" required="required" id="pnum_datarw" name="pnum_rw" class="form-control" />
+                <input maxlength="100" type="text" required="required" id="pnum_datarw" name="pnum_rw" class="form-control" pattern="(?=.*[0-9]).{8,}"/>
             </div>
             <div class="form-group align_singleLine small_inputBox">
                 <label class="control-label">Time Out</label><br />
                 <input maxlength="100" type="number" required="required" id="tout_datarw" name="tout_rw" class="form-control tout" value="500"/>
             </div>
             <div class="form-group align_singleLine">
-                <label class="control-label">SSL</label>
+                <label class="control-label ssl_label">SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
                 <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_datarw" name="ssl_rw" class="ssl" />
             </div>
             <div class="form-group align_singleLine">
@@ -42,7 +42,7 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_datarw" name="pwd_rw" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_datarw" name="pwd_rw" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" />
             </div>
             <div class="usesameval">
                 <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked/>
@@ -62,7 +62,7 @@
                 <input maxlength="100" type="number" required="required" id="tout_dataro" name="tout_ro" class="form-control tout" value="500" />
             </div>
             <div class="form-group align_singleLine ro">
-                <label class="control-label">SSL</label>
+                <label class="control-label ssl_label">SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
                 <input id="ssl_dataro" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
             </div>
             <div class="form-group  align_singleLine ro">
@@ -75,17 +75,17 @@
             </div>
             <div class="form-group align_singleLine ro">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_dataro" name="pwd_ro" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_dataro" name="pwd_ro" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"/>
             </div>
         </div>
     </div>
 
    <div class="col-md-12 ebWizStep">
-        <h4>Object</h4>
+        <h3>Objects</h3>
        <div class="controls-group">
            <div class="form-group dropdown dropdown_size" id="dropdown2">
                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                   Select Database
+                   Select Database Vendor
                    <span class="caret"></span>
                </div>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -111,7 +111,7 @@
                <input maxlength="100" type="number" required="required" id="tout_objrw" name="tout_rw" class="form-control tout" value="500" />
            </div>
            <div class="form-group align_singleLine">
-               <label class="control-label">SSL</label>
+               <label class="control-label ssl_label" > SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
                <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_objrw" name="ssl_rw" class="ssl" />
            </div>
            <div class="form-group align_singleLine">
@@ -124,7 +124,7 @@
            </div>
            <div class="form-group align_singleLine">
                <label class="control-label">Password</label>
-               <input maxlength="100" type="password" required="required" id="pwd_objrw" name="pwd_rw" class="form-control" />
+               <input maxlength="100" type="password" required="required" id="pwd_objrw" name="pwd_rw" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"/>
            </div>
            <div class="usesameval">
                <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked />
@@ -144,7 +144,7 @@
                <input maxlength="100" type="number" required="required" id="tout_objro" name="tout_ro" class="form-control tout" value="500" />
            </div>
            <div class="form-group align_singleLine ro">
-               <label class="control-label">SSL</label>
+               <label class="control-label ssl_label">SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
                <input id="ssl_objro" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
            </div>
            <div class="form-group align_singleLine ro">
@@ -157,17 +157,17 @@
            </div>
            <div class="form-group align_singleLine ro">
                <label class="control-label">Password</label>
-               <input maxlength="100" type="password" required="required" id="pwd_objro" name="pwd_ro" class="form-control" />
+               <input maxlength="100" type="password" required="required" id="pwd_objro" name="pwd_ro" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"/>
            </div>
        </div>
     </div>
 
     <div class="col-md-12 ebWizStep">
-        <h4>Log</h4>
+        <h3>Logs</h3>
         <div class="controls-group">
             <div class="form-group dropdown dropdown_size" id="dropdown3">
                 <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                    Select Database
+                    Select Database Vendor
                     <span class="caret"></span>
                 </div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -193,7 +193,7 @@
                 <input maxlength="100" type="number" required="required" id="tout_logrw" name="tout_rw" class="form-control  tout" value="500" />
             </div>
             <div class="form-group align_singleLine">
-                <label class="control-label">SSL</label>
+                <label class="control-label ssl_label">SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
                 <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_logrw" name="ssl_rw" class="ssl" />
             </div>
             <div class="form-group align_singleLine">
@@ -206,7 +206,7 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_logrw" name="pwd_rw" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_logrw" name="pwd_rw" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"/>
             </div>
             <div class="usesameval">
                 <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked />
@@ -226,7 +226,7 @@
                 <input maxlength="100" type="number" required="required" id="tout_logro" name="tout_ro" class="form-control tout" value="500" />
             </div>
             <div class="form-group align_singleLine ro">
-                <label class="control-label">SSL</label>
+                <label class="control-label ssl_label" >SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
                 <input id="ssl_logro" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
             </div>
             <div class="form-group align_singleLine ro">
@@ -239,16 +239,16 @@
             </div>
             <div class="form-group align_singleLine ro">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_logro" name="pwd_ro" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_logro" name="pwd_ro" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"/>
             </div>
         </div>
     </div>
     <div class="col-md-12 ebWizStep">
-        <h4>File</h4>
+        <h3>Files</h3>
         <div class="controls-group">
             <div class="form-group dropdown dropdown_size" id="dropdown4">
                 <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                    Select Database
+                    Select Database Vendor
                     <span class="caret"></span>
                 </div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -274,7 +274,7 @@
                 <input maxlength="100" type="number" required="required" id="tout_filerw" name="tout_rw" class="form-control tout" value="500" />
             </div>
             <div class="form-group align_singleLine">
-                <label class="control-label">SSL</label>
+                <label class="control-label ssl_label" >SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
                 <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl_filerw" name="ssl_rw" class="ssl" />
             </div>
             <div class="form-group align_singleLine">
@@ -287,7 +287,7 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_filerw" name="pwd_rw" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_filerw" name="pwd_rw" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"/>
             </div>
             <div class="usesameval">
                 <input maxlength="100" type="checkbox" id="useSame" name="useSame_ro" class="useSame" checked />
@@ -307,7 +307,7 @@
                 <input maxlength="100" type="number" required="required" id="tout_filero" name="tout_ro" class="form-control tout" value="500" />
             </div>
             <div class="form-group align_singleLine ro">
-                <label class="control-label">SSL</label>
+                <label class="control-label ssl_label">SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
                 <input id="ssl_filero" type="checkbox" data-toggle="toggle" data-size="mini" name="ssl_ro" class="ssl" />
             </div>
             <div class="form-group align_singleLine ro">
@@ -320,16 +320,13 @@
             </div>
             <div class="form-group align_singleLine ro">
                 <label class="control-label">Password</label>
-                <input maxlength="100" type="password" required="required" id="pwd_filero" name="pwd_ro" class="form-control" />
+                <input maxlength="100" type="password" required="required" id="pwd_filero" name="pwd_ro" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"/>
                 <input type="hidden" id="dbcheck" name="dbcheck" value="dbconfig" />
                 <input type="hidden" id="acid" name="acid" />
             </div>
         </div>
     </div>
 <style>
-    .form-group {
-     /*width: 20%;*/
-    }
     .form-control {
         height: 28px;
     }
@@ -341,13 +338,13 @@
     }
     .align_singleLine {
         display: inline-block;
-        margin-right: 5px;
+        margin-right: 10px;
         align-content:center;
     }
     .toggle{
         width: 38px;
         height: 27px;
-        margin-top: 84%;
+        margin-top: 69%;
         margin-left: -47%;
     }
     .dropdown_size{
@@ -355,7 +352,18 @@
     }
     .dropdown_btn_size{
         height: 32px;
-        width:24%;
+        width:58%;
         padding-top: 0px;
+        margin-left:20%;
+    }
+    .dropdown-menu{
+        width:58%;
+        margin-left:20%;
+    }
+    h3{
+        display: none;
+    }
+    .ssl_label{
+    padding-right:5px
     }
 </style>

@@ -8,7 +8,7 @@
             $('.eb_acc_dbcon_btn').click(function () {
 
                 var accid = $(this).attr("data-accid");
-                var DBwizard = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "500, 500", "fa-database", accid);
+                var DBwizard = new EbWizard("http://localhost:53431/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "500, 500", "fa-database", accid);
                 DBwizard.Init();  
 
             });

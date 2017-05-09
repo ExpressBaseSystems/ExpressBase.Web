@@ -678,7 +678,7 @@ function GetSettingsModal(tableid, tvId, tvName) {
 
     ModalFooterDiv.append(FooterButton);
     ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox");
-    ModalBodyTabPaneGenDiv.append("<br><input type'numeric' id='pageLength_text' value='100'>")
+    ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>")
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
@@ -741,6 +741,7 @@ function GetSettingsModal(tableid, tvId, tvName) {
         objconf.hideSerial = $("#serial_check").prop("checked");
         objconf.hideCheckbox = $("#select_check").prop("checked");
         objconf.lengthMenu = GetLengthOption($("#pageLength_text").val());
+        objconf.scrollY = $("#scrollY_text").val();
         objconf.columns = objcols;
         $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objconf) });
         $(OuterModalDiv).modal('hide');
@@ -759,6 +760,7 @@ function callPost4SettingsTable() {
             $("#serial_check").prop("checked", data2Obj.hideSerial);
             $("#select_check").prop("checked", data2Obj.hideCheckbox);
             $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
+            $("#scrollY_text").val(data2Obj.scrollY);
             var settings_tbl = $('#Table_Settings').DataTable(
             {
                 columns: column4SettingsTbl(),
@@ -768,10 +770,14 @@ function callPost4SettingsTable() {
                 searching: false,
                 info: false,
                 scrollY: '300',
+                //select:true,
                 initComplete: function (settings, json) {
                     $('.font').fontselect();
-                    settings_tbl.columns.adjust();
+                    this.api().columns.adjust();
                 },
+            });
+            $('#Table_Settings tbody').on('click', 'tr', function () {
+                alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
             });
         });
 }

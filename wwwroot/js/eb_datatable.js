@@ -677,7 +677,8 @@ function GetSettingsModal(tableid, tvId, tvName) {
     var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
     ModalFooterDiv.append(FooterButton);
-    ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox")
+    ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox");
+    ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>")
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
@@ -739,6 +740,8 @@ function GetSettingsModal(tableid, tvId, tvName) {
         var objconf = new Object();
         objconf.hideSerial = $("#serial_check").prop("checked");
         objconf.hideCheckbox = $("#select_check").prop("checked");
+        objconf.lengthMenu = GetLengthOption($("#pageLength_text").val());
+        objconf.scrollY = $("#scrollY_text").val();
         objconf.columns = objcols;
         $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objconf) });
         $(OuterModalDiv).modal('hide');
@@ -756,7 +759,9 @@ function callPost4SettingsTable() {
             var data2Obj = JSON.parse(data2);
             $("#serial_check").prop("checked", data2Obj.hideSerial);
             $("#select_check").prop("checked", data2Obj.hideCheckbox);
-            $('#Table_Settings').DataTable(
+            $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
+            $("#scrollY_text").val(data2Obj.scrollY);
+            var settings_tbl = $('#Table_Settings').DataTable(
             {
                 columns: column4SettingsTbl(),
                 data: getData4SettingsTbl(data2Obj.columns),
@@ -764,11 +769,25 @@ function callPost4SettingsTable() {
                 ordering: false,
                 searching: false,
                 info: false,
+                scrollY: '300',
+                //select:true,
                 initComplete: function (settings, json) {
                     $('.font').fontselect();
+                    this.api().columns.adjust();
                 },
             });
+            $('#Table_Settings tbody').on('click', 'tr', function () {
+                alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
+            });
         });
+}
+
+function GetLengthOption(len)
+{
+    var ia=[];
+    for (var i = 0; i < 10; i++)
+        ia[i] = (len * (i + 1));
+    return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
 }
 
 var coldef4Setting = function (d, t, cls, rnd, wid) {
@@ -782,11 +801,11 @@ function column4SettingsTbl()
 {
     var colArr = [];
     colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));
-    colArr.push(new coldef4Setting('name', 'Name', '', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, "30"));
+    colArr.push(new coldef4Setting('name', 'Name', '', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
     colArr.push(new coldef4Setting('type', ' Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
-    colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='title' style='width: 100px;'>" : data; }, "30"));
-    colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, "56"));
-    colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, "20"));
+    colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='title' style='width: 100px;'>" : data; }, ""));
+    colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
+    colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
     colArr.push(new coldef4Setting('className', 'Font', "", function (data, type, row, meta)
     {
         if (data.length > 0 && data !== undefined) {

@@ -269,6 +269,7 @@ EbWizard.prototype.DbCheck = function () {
     usesame_change();
     ssl_toggle();
     pwd_strength();
+    dropdown();
     function UseSame() {
         $('[name=sip_rw]').keyup(function () {
             if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
@@ -309,7 +310,7 @@ EbWizard.prototype.DbCheck = function () {
     }
 
     function drop_portnum(){
-    $('.dropdown ul li').on("click", function () {
+    $('.db_dropdown ul li').on("click", function () {
         var v = $(this).attr("value");
         var port_num;
         if (v === '0') {
@@ -420,12 +421,24 @@ EbWizard.prototype.DbCheck = function () {
         }
         UseSame();
     });
-
-    $('.dropdown ul li').click(function () {
-        $(this).parent().siblings('input').val($(this).attr("value"));
-        $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
+function dropdown(){
+    $('#dbModal').on('shown.bs.modal', function (e) {
+        $('.db_dropdown [data-toggle=dropdown]').html("Select Database Vendor<span class=" + '"caret"></span>')
     });
-
+    var dbvendor=$('.db_dropdown ul li').parent().siblings('input').val();
+    if (dbvendor == "") {
+        $('.db_dropdown ul li').click(function () {
+            $(this).parent().siblings('input').val($(this).attr("value"));
+            $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
+        });
+    }
+    else {
+        alert(dbvendor);
+        var dropval = $($('.db_dropdown ul li')[2]).html();
+      //  $('.db_dropdown ul li').parent().siblings('[data-toggle=dropdown]').html(dropval);
+        $('.db_dropdown ul li').parent().siblings('[data-toggle=dropdown]').html(dropval);
+}
+    }
    
 
     $('.small_inputBox').on('keydown',function (e) { -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) || /65|67|86|88/.test(e.keyCode) && (!0 === e.ctrlKey || !0 === e.metaKey) || 35 <= e.keyCode && 40 >= e.keyCode || (e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) && (96 > e.keyCode || 105 < e.keyCode) && e.preventDefault() });

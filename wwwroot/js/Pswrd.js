@@ -10,7 +10,7 @@ $(document).ready(function () {
         if (password.length < 6) {
             $('#result').removeClass()
             $('#result').addClass('short')
-            return 'Too short'
+            return 'Tooshort'
         }
         if (password.length > 7) strength += 1
         // If password contains both lower and uppercase characters, increase strength value.

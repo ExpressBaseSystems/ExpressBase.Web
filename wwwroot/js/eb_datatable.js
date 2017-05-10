@@ -86,15 +86,33 @@ function repopulate_filter_arr(table) {
 }
 
 function createFilterRowHeader(tableid, eb_filter_controls, scrolly) {
-    var __tr = $("<tr role='row'>");
+    setTimeout(function () {
+        $('#' + tableid + '_container table thead').append($("<tr role='row' class='addedbyeb'/>"));
+        var trs = $('#' + tableid + '_container table thead tr[class=addedbyeb]');
+        for(var i=0; i < trs.length; i++)
+        {
+            for (var j = 0; j < eb_filter_controls.length; j++) {
+                $(trs[i]).append($(eb_filter_controls[j]));
+            }
+        }
 
-    for (var i = 0; i < eb_filter_controls.length; i++)
-        __tr.append($(eb_filter_controls[i]));
-    __tr.append("</tr>");
-    var __thead = $('#' + tableid + '_container table:eq(0) thead');
-    __thead.append(__tr);
+        $('#' + tableid + '_container table thead tr:eq(1)').hide();
+    }, 1000);
+        
 
-    $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
+
+
+
+
+        //var __tr = $("<tr role='row'>");
+
+        //for (var i = 0; i < eb_filter_controls.length; i++)
+        //    __tr.append($(eb_filter_controls[i]));
+        //__tr.append("</tr>");
+        //var __thead = $('#' + tableid + '_container table:eq(0) thead');
+        //__thead.append(__tr);
+
+        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
 }
 
 function createFooter(tableid, eb_footer_controls, scrolly, pos) {
@@ -118,10 +136,14 @@ function showOrHideAggrControl(objbtn, scrolly) {
 
 function showOrHideFilter(objbtn, scrolly) {
     var tableid = $(objbtn).attr('data-table');
-    if ($('#' + tableid + '_container table:eq(0) thead tr:eq(1)').is(':visible'))
-        $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
-    else
-        $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
+    //if ($('#' + tableid + '_container table:eq(0) thead tr:eq(1)').is(':visible'))
+    if ($('#' + tableid + '_container table thead tr:eq(1)').is(':visible'))
+        $('#' + tableid + '_container table thead tr:eq(1)').hide();
+        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
+    else {
+        $('#' + tableid + '_container table thead tr:eq(1)').show();
+        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
+    }
 
     clearFilter(tableid);
     $('#' + tableid).DataTable().columns.adjust();
@@ -678,7 +700,10 @@ function GetSettingsModal(tableid, tvId, tvName) {
 
     ModalFooterDiv.append(FooterButton);
     ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox");
-    ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>")
+    ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>");
+    ModalBodyTabPaneGenDiv.append("<br>Row Grouping<input type='numeric' id='rowGrouping_text'>");
+    ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
+    ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
@@ -742,7 +767,15 @@ function GetSettingsModal(tableid, tvId, tvName) {
         objconf.hideCheckbox = $("#select_check").prop("checked");
         objconf.lengthMenu = GetLengthOption($("#pageLength_text").val());
         objconf.scrollY = $("#scrollY_text").val();
+        objconf.rowGrouping = $("#rowGrouping_text").val();
+        objconf.leftFixedColumns = $("#leftFixedColumns_text").val();
+        objconf.rightFixedColumns = $("#rightFixedColumns_text").val();
         objconf.columns = objcols;
+        if (objconf.rowGrouping.length > 0)
+        {
+            var groupcols = $.grep(objconf.columns, function (e) { return e.name === objconf.rowGrouping });
+            groupcols[0].visible = false;
+        }
         $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objconf) });
         $(OuterModalDiv).modal('hide');
         $('#' + tableid).DataTable().destroy();
@@ -761,6 +794,9 @@ function callPost4SettingsTable() {
             $("#select_check").prop("checked", data2Obj.hideCheckbox);
             $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
             $("#scrollY_text").val(data2Obj.scrollY);
+            $("#rowGrouping_text").val(data2Obj.rowGrouping);
+            $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
+            $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
             var settings_tbl = $('#Table_Settings').DataTable(
             {
                 columns: column4SettingsTbl(),
@@ -835,4 +871,19 @@ function AddSerialAndOrCheckBoxColumns(tx, tableId, data_cols)
 
     if (!tx.hideSerial)
         tx.columns.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
+}
+
+function doRowgrouping(api,tx) {
+    var rows = api.rows({ page: 'current' }).nodes();
+    var last = null;
+    
+    api.column(api.columns(tx.rowGrouping + ':name').indexes()[0], { page: 'current' }).data().each(function (group, i) {
+        if (last !== group) {
+            $(rows).eq(i).before(
+                '<tr class=\'group\'><td colspan=\'15\'>' + group + '</td></tr>'
+            );
+
+            last = group;
+        }
+    });
 }

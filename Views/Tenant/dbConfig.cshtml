@@ -1,11 +1,8 @@
 ﻿<div class="col-md-11 col-md-offset-1 ebWizStep">
         <h3>Data </h3>
         <div class="controls-group">
-            <div class="form-group dropdown dropdown_size" id="dropdown1">
-                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                    Select Database Vendor
-                    <span class="caret"></span>
-                </div>
+            <div class="form-group dropdown dropdown_size db_dropdown" id="dropdown1">
+                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown"></div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                     <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
                     <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
@@ -44,7 +41,7 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label align_singleLine">Password</label>
-                <label id="result" class="align_singleLine"></label>
+                <label id="result" class="align_singleLine" name="result"></label>
                 <input maxlength="100" type="password" required="required" id="pwd_datarw" name="pwd_rw" class="form-control" />
             </div>
             <div class="usesameval">
@@ -78,7 +75,7 @@
             </div>
             <div class="form-group align_singleLine ro">
                 <label class="control-label align_singleLine">Password</label>
-                <label id="result" class="align_singleLine"></label>
+                <label id="result" class="align_singleLine" name="result"></label>
                 <input maxlength="100" type="password" required="required" id="pwd_dataro" name="pwd_ro" class="form-control" />
             </div>
         </div>
@@ -87,11 +84,8 @@
    <div class="col-md-11 col-md-offset-1 ebWizStep">
         <h3>Objects</h3>
        <div class="controls-group">
-           <div class="form-group dropdown dropdown_size" id="dropdown2">
-               <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                   Select Database Vendor
-                   <span class="caret"></span>
-               </div>
+           <div class="form-group dropdown dropdown_size db_dropdown" id="dropdown2">
+               <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown"></div>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                    <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
@@ -128,7 +122,7 @@
            </div>
            <div class="form-group align_singleLine">
                <label class="control-label align_singleLine">Password</label>
-               <label id="result" class="align_singleLine"></label>
+               <label id="result" class="align_singleLine" name="result"></label>
                <input maxlength="100" type="password" required="required" id="pwd_objrw" name="pwd_rw" class="form-control" />
            </div>
            <div class="usesameval">
@@ -162,7 +156,7 @@
            </div>
            <div class="form-group align_singleLine ro">
                <label class="control-label align_singleLine">Password</label>
-               <label id="result" class="align_singleLine"></label>
+               <label id="result" class="align_singleLine" name="result"></label>
                <input maxlength="100" type="password" required="required" id="pwd_objro" name="pwd_ro" class="form-control" />
            </div>
        </div>
@@ -171,11 +165,8 @@
     <div class="col-md-11 col-md-offset-1 ebWizStep">
         <h3>Logs</h3>
         <div class="controls-group">
-            <div class="form-group dropdown dropdown_size" id="dropdown3">
-                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                    Select Database Vendor
-                    <span class="caret"></span>
-                </div>
+            <div class="form-group dropdown dropdown_size db_dropdown" id="dropdown3">
+                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown"></div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                     <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
                     <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
@@ -212,7 +203,7 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label align_singleLine">Password</label>
-                <label id="result" class="align_singleLine"></label>
+                <label id="result" class="align_singleLine" name="result"></label>
                 <input maxlength="100" type="password" required="required" id="pwd_logrw" name="pwd_rw" class="form-control" />
             </div>
             <div class="usesameval">
@@ -246,7 +237,7 @@
             </div>
             <div class="form-group align_singleLine ro">
                 <label class="control-label align_singleLine">Password</label>
-                <label id="result" class="align_singleLine"></label>
+                <label id="result" class="align_singleLine" name="result"></label>
                 <input maxlength="100" type="password" required="required" id="pwd_logro" name="pwd_ro" class="form-control" />
             </div>
         </div>
@@ -254,11 +245,8 @@
     <div class="col-md-11 col-md-offset-1 ebWizStep">
         <h3>Files</h3>
         <div class="controls-group">
-            <div class="form-group dropdown dropdown_size" id="dropdown4">
-                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                    Select Database Vendor
-                    <span class="caret"></span>
-                </div>
+            <div class="form-group dropdown dropdown_size db_dropdown" id="dropdown4">
+                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown"></div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                     <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
                     <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
@@ -295,7 +283,7 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label align_singleLine">Password</label>
-                <label id="result" class="align_singleLine"></label>
+                <label id="result" class="align_singleLine" name="result"></label>
                 <input maxlength="100" type="password" required="required" id="pwd_filerw" name="pwd_rw" class="form-control" />
             </div>
             <div class="usesameval">
@@ -329,7 +317,7 @@
             </div>
             <div class="form-group align_singleLine ro">
                 <label class="control-label align_singleLine">Password</label>
-                <label id="result" class="align_singleLine"></label>
+                <label id="result" class="align_singleLine" name="result"></label>
                 <input maxlength="100" type="password" required="required" id="pwd_filero" name="pwd_ro" class="form-control" />
             </div>
         </div>
@@ -382,22 +370,22 @@
         
 .short{
 font-weight:bold;
-color:#FF0000;
-font-size:small;
+color:red;
+font-size:smaller;
 }
 .weak{
 font-weight:bold;
 color:orange;
-font-size:small;
+font-size:smaller;
 }
 .good{
 font-weight:bold;
 color:#2D98F3;
-font-size:small;
+font-size:smaller;
 }
 .strong{
 font-weight:bold;
 color: limegreen;
-font-size:small;
+font-size:smaller;
 }
 </style>

@@ -96,7 +96,7 @@ function createFilterRowHeader(tableid, eb_filter_controls, scrolly) {
             }
         }
 
-        $('#' + tableid + '_container table thead tr:eq(1)').hide();
+        $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
     }, 1000);
         
 
@@ -137,11 +137,14 @@ function showOrHideAggrControl(objbtn, scrolly) {
 function showOrHideFilter(objbtn, scrolly) {
     var tableid = $(objbtn).attr('data-table');
     //if ($('#' + tableid + '_container table:eq(0) thead tr:eq(1)').is(':visible'))
-    if ($('#' + tableid + '_container table thead tr:eq(1)').is(':visible'))
-        $('#' + tableid + '_container table thead tr:eq(1)').hide();
-        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
+    if ($('#' + tableid + '_container table thead tr[class=addedbyeb]').is(':visible'))
+        $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
+        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();:not(.Class)
     else {
-        $('#' + tableid + '_container table thead tr:eq(1)').show();
+        $.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
+            if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
+                $(obj).show();
+        });
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
     }
 
@@ -813,6 +816,8 @@ function callPost4SettingsTable() {
                 },
             });
             $('#Table_Settings tbody').on('click', 'tr', function () {
+                var idx = settings_tbl.row(this).index();
+                alert(settings_tbl.row(idx).data().name.toString());
                 alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
             });
         });

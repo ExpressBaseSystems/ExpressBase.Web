@@ -2,13 +2,32 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <head>
+    <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('.eb_acc_dbcon_btn').click(function () {
-
                 var accid = $(this).attr("data-accid");
-                var DBwizard = new EbWizard("http://localhost:53431/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "500, 500", "fa-database", accid);
-                DBwizard.Init();  
+                $.get('https://expressbaseservicestack.azurewebsites.net/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
+                    alert(JSON.stringify(result.data));
+                    if (result.data.conf_dbtype === 1)
+                    {
+                        var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", null, result.data);
+                        DBwizard_sim.Init();
+                        
+                    }
+                    else if (result.data.conf_dbtype === 2)
+                    {
+                        var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "500, 500", "fa-database", null, result.data);
+                        DBwizard_adv.Init();
+                    }
+                    else
+                    {
+                        var DBwizard = new EbWizard("http://localhost:53431/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "500, 500", "fa-database", accid);
+                        DBwizard.Init();
+
+        
+                    }
+                })
 
             });
 
@@ -22,26 +41,33 @@
             $('.edit').click(function () {
                 var accId = $(this).attr("data-accid");
                 $('#acid').val(accId);
-                $.get('https://localhost:44377/infra/',{ "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": accId }), "Token": getToken() }, function (result) {
-                    
+                $.get('https://localhost:44377/infra/', { "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": accId }), "Token": getToken() }, function (result) {
+
                     var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 600, 600, "600, 600", "fa-database", result.data);
                     editaccountwzd.Init();
                 })
             });
-        $('.users').click(function () {
-            var ele = $(this).attr("data-accid");
-            $('#acid').val(ele);
-        });
-        $('[data-toggle="tooltip"]').tooltip();
+            $('.users').click(function () {
+                var ele = $(this).attr("data-accid");
+                $('#acid').val(ele);
+            });
+            $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+                translation: {
+                    'Z': {
+                        pattern: /[0-9]/, optional: true
+                    }
+                }
+            });
+            $('[data-toggle="tooltip"]').tooltip();
 
-        $('img').click(function () {
-            $('.selected').removeClass('selected'); // removes the previous selected class
-            $(this).addClass('selected'); // adds the class to the clicked image
-        });
-        $("#tid td").click(function () {
-            $("#tid td").removeClass("border_blue");
-            $(this).addClass("border_blue");
-        });
+            $('img').click(function () {
+                $('.selected').removeClass('selected'); // removes the previous selected class
+                $(this).addClass('selected'); // adds the class to the clicked image
+            });
+            $("#tid td").click(function () {
+                $("#tid td").removeClass("border_blue");
+                $(this).addClass("border_blue");
+            });
         });
 
     </script>

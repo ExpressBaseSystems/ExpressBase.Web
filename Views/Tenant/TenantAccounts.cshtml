@@ -11,13 +11,13 @@
                     alert(JSON.stringify(result.data));
                     if (result.data.conf_dbtype === 1)
                     {
-                        var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", null, result.data);
+                        var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", accid, result.data);
                         DBwizard_sim.Init();
                         
                     }
                     else if (result.data.conf_dbtype === 2)
                     {
-                        var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "500, 500", "fa-database", null, result.data);
+                        var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "500, 500", "fa-database", accid, result.data);
                         DBwizard_adv.Init();
                     }
                     else

@@ -264,6 +264,11 @@ EbWizard.prototype.EditWiz = function () {
 };
 
 EbWizard.prototype.DbCheck = function () {
+    UseSame();
+    drop_portnum();
+    usesame_change();
+    ssl_toggle();
+    pwd_strength();
     function UseSame() {
         $('[name=sip_rw]').keyup(function () {
             if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
@@ -302,16 +307,8 @@ EbWizard.prototype.DbCheck = function () {
             }
         });
     }
-    $('#dbModal').on('shown.bs.modal', function (e) {
-        if ($('.useSame').is(':checked')) {
-            $('.useSame').parent().siblings('.ro').hide();
-        }
-        if ($('.useSame').is(':not(:checked)')) {
-            $(this).parent().siblings('.ro').show();
-        }
-        UseSame();
-    });
 
+    function drop_portnum(){
     $('.dropdown ul li').on("click", function () {
         var v = $(this).attr("value");
         var port_num;
@@ -333,6 +330,9 @@ EbWizard.prototype.DbCheck = function () {
 
         $(this).parent().parent().siblings('.pnum').children('input').val(port_num);
     });
+    }
+
+    function usesame_change(){
     $('.useSame').on('change', function () {
         if ($(this).is(':checked')) {
             $(this).parent().siblings('.form-group').children('[name=sip_ro]').val($(this).parent().siblings('.form-group').children('[name=sip_rw]').val());
@@ -354,26 +354,82 @@ EbWizard.prototype.DbCheck = function () {
             $(this).parent().siblings('.form-group').children('[name=pwd_ro]').val("");
         }
     });
+    }
+    function ssl_toggle() {
+        $('[data-toggle=toggle]').bootstrapToggle('on');//toggle init
+        $('[data-toggle=toggle]').val("true");//set initial value of control
+        $('[data-toggle=toggle]').prop("checked", true);// set initial value of  toggle 
+
+        $('[data-toggle=toggle]').on("click", function () {
+            $(this).prop("checked", !$(this).prop("checked"));// toggles toggle value
+            $(this).children().val($(this).prop("checked"));// set toggle value to control value
+            var IsChkd = ($(this).parent().siblings().children('.useSame').is(':checked'));
+            var isUpperToggle = ($(this).children('input').attr('name') === 'ssl_rw');
+            if (IsChkd && isUpperToggle) {
+                $(this).parent().siblings().children().children('[name=ssl_ro]').prop("checked", $(this).prop("checked"));
+                $(this).parent().siblings().children().children('[name=ssl_ro]').val($(this).prop("checked"));
+                $(this).val($(this).prop("checked"));
+            }
+        });
+    }
+
+    function pwd_strength() {
+        $('[type=password]').keyup(function () {
+            var strength = 0
+            var password = $(this).val().toString();
+            if (password.length <= 6) {
+                $(this).prev('[name=result]').removeClass()
+                $(this).prev('[name=result]').addClass('short')
+                res = 'Too short'
+            }
+            if (password.length > 7) strength += 1
+            // If password contains both lower and uppercase characters, increase strength value.
+            if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 1
+            // If it has numbers and characters, increase strength value.
+            if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/)) strength += 1
+            // If it has one special character, increase strength value.
+            if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1
+            // If it has two special characters, increase strength value.
+            if (password.match(/(.*[!,%,&,@,#,$,^,*,?,_,~].*[!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1
+            // Calculated strength value, we can return messages
+            // If value is less than 2
+            if (strength < 2 && password.length > 6) {
+                alert('weak')
+                $(this).prev('[name=result]').removeClass()
+                $(this).prev('[name=result]').addClass('weak')
+                res = 'Weak'
+            } else if (strength == 2) {
+                $(this).prev('[name=result]').removeClass()
+                $(this).prev('[name=result]').addClass('good')
+                res = 'Good'
+            } else if (strength > 2) {
+                $(this).prev('[name=result]').removeClass()
+                $(this).prev('[name=result]').addClass('strong')
+                res = 'Strong'
+            }
+            $(this).prev('[name=result]').html(res);
+        })
+    }
+
+    $('#dbModal').on('shown.bs.modal', function (e) {
+        if ($('.useSame').is(':checked')) {
+            $('.useSame').parent().siblings('.ro').hide();
+        }
+        if ($('.useSame').is(':not(:checked)')) {
+            $(this).parent().siblings('.ro').show();
+        }
+        UseSame();
+    });
+
     $('.dropdown ul li').click(function () {
         $(this).parent().siblings('input').val($(this).attr("value"));
         $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
     });
-    $('[data-toggle=toggle]').bootstrapToggle('on');//toggle init
-    $('[data-toggle=toggle]').val("true");//set initial value of control
-    $('[data-toggle=toggle]').prop("checked", true);// set initial value of  toggle 
 
-    $('[data-toggle=toggle]').on("click", function () {
-        $(this).prop("checked", !$(this).prop("checked"));// toggles toggle value
-        $(this).children().val($(this).prop("checked"));// set toggle value to control value
-        var IsChkd = ($(this).parent().siblings().children('.useSame').is(':checked'));
-        var isUpperToggle = ($(this).children('input').attr('name') === 'ssl_rw');
-        if (IsChkd && isUpperToggle) {
-            $(this).parent().siblings().children().children('[name=ssl_ro]').prop("checked", $(this).prop("checked"));
-            $(this).parent().siblings().children().children('[name=ssl_ro]').val($(this).prop("checked"));
-            $(this).val($(this).prop("checked"));
-        }
-    });
+   
+
     $('.small_inputBox').on('keydown',function (e) { -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) || /65|67|86|88/.test(e.keyCode) && (!0 === e.ctrlKey || !0 === e.metaKey) || 35 <= e.keyCode && 40 >= e.keyCode || (e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) && (96 > e.keyCode || 105 < e.keyCode) && e.preventDefault() });
+
     $('.db_selector input[type=radio]').on("click", function () {
         var dbconf = $('.db_selector input[type=radio]:checked').val();
         $('#dbModal').modal('hide');
@@ -391,44 +447,5 @@ EbWizard.prototype.DbCheck = function () {
         }, 401);
 
     });
-    $('[type=password]').keyup(function () {
-        $(this).prev('#result').html(checkStrength($(this).val()))
-        //$($('#result')[0]).html(checkStrength($(this).val()))
-    })
-    function checkStrength(password) {
-        var strength = 0
-        if (password.length < 6) {
-            $('#result').removeClass()
-            $('#result').addClass('short')
-            $('#result').addClass('result')
-            return 'Too short'
-        }
-        if (password.length > 7) strength += 1
-        // If password contains both lower and uppercase characters, increase strength value.
-        if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 1
-        // If it has numbers and characters, increase strength value.
-        if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/)) strength += 1
-        // If it has one special character, increase strength value.
-        if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1
-        // If it has two special characters, increase strength value.
-        if (password.match(/(.*[!,%,&,@,#,$,^,*,?,_,~].*[!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1
-        // Calculated strength value, we can return messages
-        // If value is less than 2
-        if (strength < 2) {
-            $('#result').removeClass()
-            $('#result').addClass('weak')
-            $('#result').addClass('result')
-            return 'Weak'
-        } else if (strength == 2) {
-            $('#result').removeClass()
-            $('#result').addClass('good')
-            $('#result').addClass('result')
-            return 'Good'
-        } else {
-            $('#result').removeClass()
-            $('#result').addClass('strong')
-            $('#result').addClass('result')
-            return 'Strong'
-        }
-    }
+
 };

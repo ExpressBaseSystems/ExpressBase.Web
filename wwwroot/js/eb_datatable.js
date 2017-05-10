@@ -93,7 +93,7 @@ function createFilterRowHeader(tableid, eb_filter_controls, scrolly) {
     {
         for (var j = 0; j < eb_filter_controls.length; j++) {
             trs[i].append($(eb_filter_controls[j]));
-            alert(eb_filter_controls[j]);
+            //alert(eb_filter_controls[j]);
         }
     }
 
@@ -696,6 +696,12 @@ function GetSettingsModal(tableid, tvId, tvName) {
     ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
     ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
+    ModalBodyTabPaneColDiv.append(" <div style='display:inline-block' id='propGrid' style='float:left'></div>" +
+                                    "<div>" +
+                                        "<textarea id='txtValues' rows='20' cols='50'></textarea>" +
+                                        "<input id='btnGetValues' type='button' value='Get values'/>" +
+                                    "</div>");
+
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
     ModalBodyliGen.append(ModalBodyAnchorGen);
@@ -806,6 +812,7 @@ function callPost4SettingsTable() {
             $('#Table_Settings tbody').on('click', 'tr', function () {
                 alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
             });
+            CreatePropGrid(data2Obj.columnsext);
         });
 }
 

@@ -46,6 +46,7 @@ EbWizard.prototype.Drawsteps = function (data) {
     $("#wiz").empty().append($.parseHTML(data));
     $(".eb-loader").hide();
     $('#acid').val(this.Acid);
+   
     this.Steps = $(".ebWizStep");
     this.ShowStep();
     $("#wizprogress").empty().append(this.CreateProgress());
@@ -264,6 +265,7 @@ EbWizard.prototype.EditWiz = function () {
 };
 
 EbWizard.prototype.DbCheck = function () {
+   
     function UseSame() {
         $('[name=sip_rw]').keyup(function () {
             if (($(this).parent().siblings('.usesameval').children('.useSame')).is(':checked')) {
@@ -373,20 +375,27 @@ EbWizard.prototype.DbCheck = function () {
             $(this).val($(this).prop("checked"));
         }
     });
-    $('.small_inputBox').on('keydown',function (e) { -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) || /65|67|86|88/.test(e.keyCode) && (!0 === e.ctrlKey || !0 === e.metaKey) || 35 <= e.keyCode && 40 >= e.keyCode || (e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) && (96 > e.keyCode || 105 < e.keyCode) && e.preventDefault() });
+    $('.small_inputBox').on('keydown', function (e) { -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) || /65|67|86|88/.test(e.keyCode) && (!0 === e.ctrlKey || !0 === e.metaKey) || 35 <= e.keyCode && 40 >= e.keyCode || (e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) && (96 > e.keyCode || 105 < e.keyCode) && e.preventDefault() });
+
     $('.db_selector input[type=radio]').on("click", function () {
         var dbconf = $('.db_selector input[type=radio]:checked').val();
+        var AcntId = _this.Acid;
+       
         $('#dbModal').modal('hide');
         setTimeout(function () {
+
+           
             if (dbconf === 'simple') {
-                var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database");
+                var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", AcntId);
                 DBwizard_sim.Init();
-                var accid = $(this).attr("data-accid")
+                var accid = $(this).attr("data-accid");
             }
             if (dbconf === 'advanced') {
-                var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 630, "Configure DB Connectivity - Advanced", "fa-database");
+                var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 630, "Configure DB Connectivity - Advanced", "fa-database", AcntId);
                 DBwizard_adv.Init();
-                var accid = $(this).attr("data-accid")
+                var accid = $(this).attr("data-accid");
+
+
             }
         }, 401);
 

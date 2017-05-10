@@ -1,51 +1,55 @@
-﻿<div class="col-md-12 ebWizStep">
-    <div class="controls-group">
-        <div class="form-group dropdown dropdown_size" id="dropdown">
-            <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
-                Select Database
-                <span class="caret"></span>
+﻿    <div class="col-md-offset-1 col-md-11 ebWizStep">
+        <h3>Data </h3>
+        <div class="controls-group">
+            <div class="form-group dropdown dropdown_size" id="dropdown5">
+                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
+                    Select Database
+                    <span class="caret"></span>
+                </div>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                    <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                    <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
+                    <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
+                    <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+                </ul>
+                <input type="text" id="db" name="db" class="form-control" style="visibility:hidden" required="required"/>
             </div>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
-                <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
-                <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
-                <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
-                <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
-            </ul>
-            <input type="text" id="db_" name="db" class="form-control" style="visibility:hidden" />
-        </div>
-        <div class="form-group align_singleLine large_inputBox">
-            <label class="control-label">Server IP/ Domain Name</label>
-            <input maxlength="100" type="text" required="required" id="sip" name="sip" class="form-control " />
-        </div>
-        <div class="form-group align_singleLine pnum small_inputBox">
-            <label class="control-label">Port Number</label>
-            <input maxlength="100" type="text" required="required" id="pnum" name="pnum" class="form-control" />
-        </div>
-        <div class="form-group align_singleLine small_inputBox">
-            <label class="control-label">Time Out</label><br />
-            <input maxlength="100" type="text" required="required" id="tout" name="tout" class="form-control tout" value="500" />
-        </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label ssl_label">SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
-            <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl" name="ssl" class="ssl" />
-        </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Database Name</label>
-            <input maxlength="100" type="text" required="required" id="dbname" name="dbname" class="form-control" />
-        </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Username</label>
-            <input maxlength="100" type="text" required="required" id="duname" name="duname" class="form-control" />
-        </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Password</label>
-            <input maxlength="100" type="password" required="required" id="pwd" name="pwd" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" />
+            <div class="form-group align_singleLine large_inputBox">
+                <label class="control-label">Server IP/ Domain Name</label>
+                <input maxlength="100" type="text" required="required" id="sip" name="sip" class="form-control " />
+            </div>
+            <div class="form-group align_singleLine pnum small_inputBox">
+                <label class="control-label">Port Number</label>
+                <input maxlength="100" type="text" required="required" id="pnum" name="pnum" class="form-control" />
+            </div>
+            <div class="form-group align_singleLine small_inputBox">
+                <label class="control-label">Time Out</label><br />
+                <input maxlength="100" type="text" required="required" id="tout" name="tout" class="form-control tout" value="500" />
+            </div>
+            <div class="form-group align_singleLine">
+                <label class="control-label ssl_label">SSL</label><i class="fa fa-lock" aria-hidden="true"></i>
+                <input type="checkbox" data-toggle="toggle" data-size="mini" id="ssl" name="ssl" class="ssl" />
+            </div>
+            <div class="form-group align_singleLine">
+                <label class="control-label">Database Name</label>
+                <input maxlength="100" type="text" required="required" id="dbname" name="dbname" class="form-control" />
+            </div>
+            <div class="form-group align_singleLine">
+                <label class="control-label">Username</label>
+                <input maxlength="100" type="text" required="required" id="duname" name="duname" class="form-control"/>
+            </div>
+            <div class="form-group align_singleLine">
+                <label class="control-label align_singleLine">Password</label>
+                <label id="result" class="align_singleLine"></label>
+                <input maxlength="100" type="password" required="required" id="pwd" name="pwd" class="form-control"/>
+            </div>
             <input type="hidden" id="dbcheck" name="dbcheck" value="dbconfig" />
             <input type="hidden" id="acid" name="acid" />
+            <input type="hidden" id="dbtype" name="dbtype" value="1" />
         </div>
     </div>
-</div>
+
 <style>
     .form-control {
         height: 28px;
@@ -54,7 +58,7 @@
          width: 13%;
     }
     .large_inputBox{
-         width: 42%;
+         width: 47%;
     }
     .align_singleLine {
         display: inline-block;
@@ -64,7 +68,7 @@
      .toggle{
         width: 38px;
         height: 27px;
-        margin-top: 80%;
+        margin-top: 69%;
         margin-left: -47%;
     }
     .dropdown_size{
@@ -75,14 +79,38 @@
         height: 32px;
         width:58%;
         padding-top: 0px;
-        margin-left:20%;
+        margin-left:15%;
        }
     .dropdown-menu{
         width:58%;
-        margin-left:20%;
+        margin-left:15%;
     }
      .ssl_label{
     padding-right:5px
     }
+     h3{
+         display:none;
+     }
+     
+.short{
+font-weight:bold;
+color:#FF0000;
+font-size:small;
+}
+.weak{
+font-weight:bold;
+color:orange;
+font-size:small;
+}
+.good{
+font-weight:bold;
+color:#2D98F3;
+font-size:small;
+}
+.strong{
+font-weight:bold;
+color: limegreen;
+font-size:small;
+}
    </style>
 

@@ -384,11 +384,51 @@ EbWizard.prototype.DbCheck = function () {
                 var accid = $(this).attr("data-accid")
             }
             if (dbconf === 'advanced') {
-                var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Advanced", "fa-database");
+                var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 630, "Configure DB Connectivity - Advanced", "fa-database");
                 DBwizard_adv.Init();
                 var accid = $(this).attr("data-accid")
             }
         }, 401);
 
     });
+    $('[type=password]').keyup(function () {
+        $(this).prev('#result').html(checkStrength($(this).val()))
+        //$($('#result')[0]).html(checkStrength($(this).val()))
+    })
+    function checkStrength(password) {
+        var strength = 0
+        if (password.length < 6) {
+            $('#result').removeClass()
+            $('#result').addClass('short')
+            $('#result').addClass('result')
+            return 'Too short'
+        }
+        if (password.length > 7) strength += 1
+        // If password contains both lower and uppercase characters, increase strength value.
+        if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 1
+        // If it has numbers and characters, increase strength value.
+        if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/)) strength += 1
+        // If it has one special character, increase strength value.
+        if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1
+        // If it has two special characters, increase strength value.
+        if (password.match(/(.*[!,%,&,@,#,$,^,*,?,_,~].*[!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1
+        // Calculated strength value, we can return messages
+        // If value is less than 2
+        if (strength < 2) {
+            $('#result').removeClass()
+            $('#result').addClass('weak')
+            $('#result').addClass('result')
+            return 'Weak'
+        } else if (strength == 2) {
+            $('#result').removeClass()
+            $('#result').addClass('good')
+            $('#result').addClass('result')
+            return 'Good'
+        } else {
+            $('#result').removeClass()
+            $('#result').addClass('strong')
+            $('#result').addClass('result')
+            return 'Strong'
+        }
+    }
 };

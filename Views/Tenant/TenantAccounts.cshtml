@@ -2,7 +2,6 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <head>
-    <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('.eb_acc_dbcon_btn').click(function () {
@@ -32,13 +31,6 @@
         $('.users').click(function () {
             var ele = $(this).attr("data-accid");
             $('#acid').val(ele);
-        });
-        $('#sip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
-            translation: {
-                'Z': {
-                    pattern: /[0-9]/, optional: true
-                }
-            }
         });
         $('[data-toggle="tooltip"]').tooltip();
 

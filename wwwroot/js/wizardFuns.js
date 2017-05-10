@@ -310,7 +310,7 @@ EbWizard.prototype.DbCheck = function () {
     }
 
     function drop_portnum(){
-    $('.db_dropdown ul li').on("click", function () {
+        $('.db_dropdown ul li').on("click", function () {
         var v = $(this).attr("value");
         var port_num;
         if (v === '0') {
@@ -421,23 +421,22 @@ EbWizard.prototype.DbCheck = function () {
         }
         UseSame();
     });
-function dropdown(){
-    $('#dbModal').on('shown.bs.modal', function (e) {
-        $('.db_dropdown [data-toggle=dropdown]').html("Select Database Vendor<span class=" + '"caret"></span>')
-    });
-    var dbvendor=$('.db_dropdown ul li').parent().siblings('input').val();
-    if (dbvendor == "") {
+
+    function dropdown() {
         $('.db_dropdown ul li').click(function () {
             $(this).parent().siblings('input').val($(this).attr("value"));
             $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
         });
-    }
-    else {
-        alert(dbvendor);
-        var dropval = $($('.db_dropdown ul li')[2]).html();
-      //  $('.db_dropdown ul li').parent().siblings('[data-toggle=dropdown]').html(dropval);
-        $('.db_dropdown ul li').parent().siblings('[data-toggle=dropdown]').html(dropval);
-}
+
+        $('#dbModal').on('shown.bs.modal', function (e) {
+            var dbvendor = parseInt($('.db_dropdown ul li').parent().siblings('input').val());
+            if (dbvendor >= 0) {
+                var dropval = $($('.db_dropdown ul li')[dbvendor]).html();
+                $('.db_dropdown ul li').parent().siblings('[data-toggle=dropdown]').html(dropval);
+            }
+            else
+                $('.db_dropdown [data-toggle=dropdown]').html("Select Database Vendor<span class=" + '"caret"></span>');
+        });
     }
    
 

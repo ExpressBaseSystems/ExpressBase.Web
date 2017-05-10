@@ -86,28 +86,33 @@ function repopulate_filter_arr(table) {
 }
 
 function createFilterRowHeader(tableid, eb_filter_controls, scrolly) {
-    $('#' + tableid + '_container table thead').append($("<tr role='row' class='addedbyeb'/>"));
-    var trs = $('#' + tableid + '_container table thead tr[class=addedbyeb]');
-
-    for(var i=0; i < trs.length; i++)
-    {
-        for (var j = 0; j < eb_filter_controls.length; j++) {
-            trs[i].append($(eb_filter_controls[j]));
-            alert(eb_filter_controls[j]);
+    setTimeout(function () {
+        $('#' + tableid + '_container table thead').append($("<tr role='row' class='addedbyeb'/>"));
+        var trs = $('#' + tableid + '_container table thead tr[class=addedbyeb]');
+        for(var i=0; i < trs.length; i++)
+        {
+            for (var j = 0; j < eb_filter_controls.length; j++) {
+                $(trs[i]).append($(eb_filter_controls[j]));
+            }
         }
-    }
 
-    $('#' + tableid + '_container table thead tr:eq(1)').hide();
+        $('#' + tableid + '_container table thead tr:eq(1)').hide();
+    }, 1000);
+        
 
-    //var __tr = $("<tr role='row'>");
 
-    //for (var i = 0; i < eb_filter_controls.length; i++)
-    //    __tr.append($(eb_filter_controls[i]));
-    //__tr.append("</tr>");
-    //var __thead = $('#' + tableid + '_container table:eq(0) thead');
-    //__thead.append(__tr);
 
-    //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
+
+
+        //var __tr = $("<tr role='row'>");
+
+        //for (var i = 0; i < eb_filter_controls.length; i++)
+        //    __tr.append($(eb_filter_controls[i]));
+        //__tr.append("</tr>");
+        //var __thead = $('#' + tableid + '_container table:eq(0) thead');
+        //__thead.append(__tr);
+
+        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
 }
 
 function createFooter(tableid, eb_footer_controls, scrolly, pos) {
@@ -131,10 +136,14 @@ function showOrHideAggrControl(objbtn, scrolly) {
 
 function showOrHideFilter(objbtn, scrolly) {
     var tableid = $(objbtn).attr('data-table');
-    if ($('#' + tableid + '_container table:eq(0) thead tr:eq(1)').is(':visible'))
-        $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
-    else
-        $('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
+    //if ($('#' + tableid + '_container table:eq(0) thead tr:eq(1)').is(':visible'))
+    if ($('#' + tableid + '_container table thead tr:eq(1)').is(':visible'))
+        $('#' + tableid + '_container table thead tr:eq(1)').hide();
+        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
+    else {
+        $('#' + tableid + '_container table thead tr:eq(1)').show();
+        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
+    }
 
     clearFilter(tableid);
     $('#' + tableid).DataTable().columns.adjust();

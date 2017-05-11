@@ -85,7 +85,7 @@ function repopulate_filter_arr(table) {
     return filter_obj_arr;
 }
 
-function createFilterRowHeader(tableid, eb_filter_controls, scrolly) {
+function createFilterRowHeader(tableid, eb_filter_controls, scrolly, order_info_ref) {
     setTimeout(function () {
         $('#' + tableid + '_container table thead').append($("<tr role='row' class='addedbyeb'/>"));
         var trs = $('#' + tableid + '_container table thead tr[class=addedbyeb]');
@@ -97,8 +97,21 @@ function createFilterRowHeader(tableid, eb_filter_controls, scrolly) {
         }
 
         $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
-    }, 1000);
         
+        $('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
+
+        $('#' + tableid + '_container thead').off('click').on('click', 'th', function () {
+            var col = $(this).children('span').text();
+            var dir = $(this).attr('class');
+            alert("Got "+col + ", " + dir);
+            if(col !== '') {
+                order_info_ref.col = col;
+                order_info_ref.dir = (dir === 'sorting') ? 1 : ((dir === 'sorting_asc') ? 2 : 1);
+            }
+        });
+        $('#' + tableid).DataTable().columns.adjust();
+
+    }, 1000);
 
 
 

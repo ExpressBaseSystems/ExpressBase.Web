@@ -459,5 +459,9 @@ EbWizard.prototype.DbCheck = function () {
         }, 401);
 
     });
-
+ $("#dtb td").click(function () {
+     $("#dtb td").removeClass("border_blue");
+            $(this).addClass("border_blue");
+        });
+ dbconf = $(this).val();
 };

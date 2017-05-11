@@ -1,14 +1,17 @@
 ﻿    <div class="col-md-offset-1 col-md-11 ebWizStep">
         <h3>Data </h3>
         <div class="controls-group">
-            <div class="form-group dropdown dropdown_size db_dropdown" id="dropdown5">
-                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown"></div>
+            <div class="form-group dropdown dropdown_size" id="dropdown5">
+                <div class="dropdown-toggle dropdownBtn form-control dropdown_btn_size" type="button" data-toggle="dropdown">
+                    Select Database
+                    <span class="caret"></span>
+                </div>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                    <li class="enabled" purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
-                    <li class="disabled" purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
-                    <li class="disabled" purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
-                    <li class="disabled" purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
-                    <li class="disabled" purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
+                    <li purpose="dropdown" role="presentation" value="0"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" class="drpdwnimage" />  PostgreSQL</li>
+                    <li purpose="dropdown" role="presentation" value="1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Database-mysql.svg/2000px-Database-mysql.svg.png" class="drpdwnimage" />  MySQL</li>
+                    <li purpose="dropdown" role="presentation" value="2"><img src="https://stephanefrechette.com/blog/wp-content/uploads/2016/09/sql-server.png" class="drpdwnimage" />  SQLServer</li>
+                    <li purpose="dropdown" role="presentation" value="3"><img src="http://www.axxana.com/wp-content/uploads/2017/03/20150310_logo_oracle.png" class="drpdwnimage" />  ORACLE</li>
+                    <li purpose="dropdown" role="presentation" value="4"><img src="http://orig11.deviantart.net/21b0/f/2010/168/e/1/icon_mongodb_by_xkneo.png" class="drpdwnimage" />  mongoDB</li>
                 </ul>
                 <input type="text" id="db" name="db" class="form-control" style="visibility:hidden" required="required"/>
             </div>
@@ -38,7 +41,7 @@
             </div>
             <div class="form-group align_singleLine">
                 <label class="control-label align_singleLine">Password</label>
-                <label id="result" class="align_singleLine" name="result"></label>
+                <label id="result" class="align_singleLine"></label>
                 <input maxlength="100" type="password" required="required" id="pwd" name="pwd" class="form-control"/>
             </div>
             <input type="hidden" id="dbcheck" name="dbcheck" value="dbconfig" />
@@ -92,27 +95,22 @@
 .short{
 font-weight:bold;
 color:#FF0000;
-font-size:smaller;
+font-size:small;
 }
 .weak{
 font-weight:bold;
 color:orange;
-font-size:smaller;
+font-size:small;
 }
 .good{
 font-weight:bold;
 color:#2D98F3;
-font-size:smaller;
+font-size:small;
 }
 .strong{
 font-weight:bold;
 color: limegreen;
-font-size:smaller;
-}
-.disabled{
-   pointer-events: none;
-   cursor: default;
-   opacity:.4;
+font-size:small;
 }
    </style>
 

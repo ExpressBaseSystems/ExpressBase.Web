@@ -38,22 +38,22 @@ width: 272px;
 font-size: 1em;
 height: 25px;
 }*/
-#result .short{
+#register .short{
 font-weight:bold;
 color:#FF0000;
 font-size:larger;
 }
-#result .weak{
+#register .weak{
 font-weight:bold;
 color:orange;
 font-size:larger;
 }
-#result .good{
+#register .good{
 font-weight:bold;
 color:#2D98F3;
 font-size:larger;
 }
-#result .strong{
+#register .strong{
 font-weight:bold;
 color: limegreen;
 font-size:larger;

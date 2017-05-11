@@ -721,6 +721,12 @@ function GetSettingsModal(tableid, tvId, tvName) {
     ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
     ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
+    ModalBodyTabPaneColDiv.append(" <div style='display:inline-block' id='propGrid' style='float:left'></div>" +
+                                    "<div>" +
+                                        "<textarea id='txtValues' rows='20' cols='50'></textarea>" +
+                                        "<input id='btnGetValues' type='button' value='Get values'/>" +
+                                    "</div>");
+
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
     ModalBodyliGen.append(ModalBodyAnchorGen);
@@ -833,6 +839,7 @@ function callPost4SettingsTable() {
                 alert(settings_tbl.row(idx).data().name.toString());
                 alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
             });
+            CreatePropGrid(data2Obj.columnsext);
         });
 }
 

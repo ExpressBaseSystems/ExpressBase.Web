@@ -310,7 +310,7 @@ EbWizard.prototype.DbCheck = function () {
     }
 
     function drop_portnum(){
-        $('.db_dropdown ul li').on("click", function () {
+        $('.db_dropdown ul li.enabled').on("click", function () {
         var v = $(this).attr("value");
         var port_num;
         if (v === '0') {
@@ -423,11 +423,10 @@ EbWizard.prototype.DbCheck = function () {
     });
 
     function dropdown() {
-        $('.db_dropdown ul li').click(function () {
+        $('.db_dropdown ul li.enabled').click(function () {
             $(this).parent().siblings('input').val($(this).attr("value"));
             $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
         });
-
         $('#dbModal').on('shown.bs.modal', function (e) {
             var dbvendor = parseInt($('.db_dropdown ul li').parent().siblings('input').val());
             if (dbvendor >= 0) {
@@ -444,20 +443,25 @@ EbWizard.prototype.DbCheck = function () {
 
     $('.db_selector input[type=radio]').on("click", function () {
         var dbconf = $('.db_selector input[type=radio]:checked').val();
+        var AcntId = _this.Acid;
         $('#dbModal').modal('hide');
         setTimeout(function () {
             if (dbconf === 'simple') {
-                var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database");
+                var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", AcntId);
                 DBwizard_sim.Init();
                 var accid = $(this).attr("data-accid")
             }
             if (dbconf === 'advanced') {
-                var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 630, "Configure DB Connectivity - Advanced", "fa-database");
+                var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", AcntId);
                 DBwizard_adv.Init();
                 var accid = $(this).attr("data-accid")
             }
         }, 401);
 
     });
-
+ $("#dtb td").click(function () {
+     $("#dtb td").removeClass("border_blue");
+            $(this).addClass("border_blue");
+        });
+ dbconf = $(this).val();
 };

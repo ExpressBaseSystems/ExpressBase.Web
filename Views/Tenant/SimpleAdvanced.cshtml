@@ -1,29 +1,55 @@
 ﻿<script>
     $(document).ready(function () {
-      alert('hi');
-    $('#ebWizFinishB').hide();
+        alert('hi');
+        $('#ebWizFinishB').hide();
     });
-   
+
 </script>
-<div class="col-md-12 ebWizStep">
-    <h4>Select database type</h4>
+<div class="col-md-9 ebWizStep col-md-offset-2">
+    <h4 class="col-md-offset-3">Select database type</h4>
+    <p><h6>     We have 4 databases for data, objects, logs and their read only databases.</h6></p>
     <div class="controls-group">
         <table id="dtb">
             <tr>
-                <td valign="top" class="border_trans hov col-md-3">
-                    <a id="1" href="#" name="1" onclick="SetValue('simple')">
-                        <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
-                    </a>
-                    <h4>Simple</h4>
+                <td valign="top" class="col-md-3">
+                    <button id="1" href="#" name="1" value="simple" class="sim_adv_btn btn-primary">
+                        <i class="fa fa-database fa-4x" aria-hidden="true"></i>
+                        <h4>Simple</h4>
+                        <ul>
+                            <li>Same configuration for all databases</li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </button>
+
                 </td>
-                <td valign="top" class="border_trans hov col-md-3">
-                    <a href="#" id="2" name="2" onclick="SetValue('advanced')">
-                        <i class="fa fa-gift fa-5x" aria-hidden="true"></i>
-                    </a>
-                    <h4>Advanced</h4>
+                <td valign="top" class="col-md-3">
+                    <button href="#" id="2" name="2" value="advanced" class="sim_adv_btn btn-primary">
+                        @*<span class="fa-stack fa-lg">
+                                <i class="fa fa-database fa-stack-2x"></i>
+                                <i class="fa fa-database fa-stack-1x"></i>
+                            </span>*@
+                        <i class="fa fa-database fa-4x" aria-hidden="true"></i>
+                        <i class="fa fa-database fa-3x" aria-hidden="true"></i>
+                        <i class="fa fa-database fa-2x" aria-hidden="true"></i>
+                        <h4>Advanced</h4>
+                        <ul>
+                            <li>Diffrent configuration for databases</li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </button>
                 </td>
             </tr>
         </table>
     </div>
 </div>
+<style>
+    .sim_adv_btn {
+        padding-top: 30px;
+    }
 
+        .sim_adv_btn:hover {
+            opacity: .9;
+        }
+</style>

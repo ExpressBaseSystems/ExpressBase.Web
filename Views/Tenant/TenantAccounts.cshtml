@@ -7,19 +7,14 @@
             $('.eb_acc_dbcon_btn').click(function () {
                 var accid = $(this).attr("data-accid");
                 $.get('https://expressbaseservicestack.azurewebsites.net/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
-                    alert(JSON.stringify(result.data));
                     if (result.data.conf_dbtype === 1) {
                         var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", accid, result.data);
-                        DBwizard_sim.Init();
-
                     }
                     else if (result.data.conf_dbtype === 2) {
                         var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", accid, result.data);
-                        DBwizard_adv.Init();
                     }
                     else {
                         var DBwizard = new EbWizard("http://localhost:53431/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity", "fa-database", accid);
-                        DBwizard.Init();
                     }
                 })
 
@@ -27,9 +22,7 @@
 
             $('.new').click(function () {
                 var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 800, "Add Account", "fa-database");
-                var ele = $(this).attr("data-accid");
-                $('#acid').val(ele);
-                addaccountwzd.Init();
+               
             });
 
             $('.edit').click(function () {
@@ -38,7 +31,7 @@
                 $.get('https://localhost:44377/infra/', { "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": accId }), "Token": getToken() }, function (result) {
 
                     var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 600, 600, "600, 600", "fa-database", result.data);
-                    editaccountwzd.Init();
+                   
                 })
             });
             $('.users').click(function () {

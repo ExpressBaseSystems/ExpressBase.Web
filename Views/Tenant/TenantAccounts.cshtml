@@ -2,6 +2,9 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <head>
+    <script src="lib/codemirror.js"></script>
+    <link rel="stylesheet" href="lib/codemirror.css">
+    <script src="mode/javascript/javascript.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('.eb_acc_dbcon_btn').click(function () {
@@ -24,7 +27,10 @@
                 })
 
             });
-
+            $('.eng').click(function () {
+                var myCodeMirror = CodeMirror.fromTextArea(myTextArea);
+                //openInNewTab('Engineering');
+            });
             $('.new').click(function () {
                 var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 800, "Add Account", "fa-database");
                 var ele = $(this).attr("data-accid");
@@ -55,6 +61,10 @@
                     $(this).addClass("border_blue");
                 });
             });
+            function openInNewTab(url) {
+                var win = window.open(url, '_blank');
+                win.focus();
+            }
         })
     </script>
 </head>
@@ -94,7 +104,7 @@
                         <span>
                             <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
                             <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
+                            <a href="#" class="eng" data-accid="@sublist[0]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
                             <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
                             <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
                             <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>

@@ -439,7 +439,7 @@
             var AcntId = this.Acid;
             $('#dbModal').modal('hide');
             setTimeout(function () {
-                if (simp_adv === 'simple') {
+                if (simp_adv === 'simple') {  
                     var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", AcntId);
                    
                 }

@@ -57,49 +57,56 @@
         list = ViewBag.dict;
         <form>
             <div class="row">
-                <div class="input-group input-group-lg col-md-3">
-                    <input type="text" class="form-control" placeholder="Search">
-                    <div class="input-group-btn">
-                        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                    <div class="input-group input-group-lg col-md-3" style="width: 600px;margin-left: 190px;">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
+                <div class="input-group-btn col-md-4">
                     <input type="button" class="new btn btn-success" value="New Account" />
-                </div>
-                <div class="col-md-4">
-                    <input type="button" class="btn btn-success" value="Download Studio" />
-
                 </div>
             </div>
         </form>
-
-
-
-
         foreach (var sublist in list)
         {
 
             <div class="tenant_account z-depth-2">
                 <div class="bs-example">
                     <div class="col-xs-12 col-md-12">
-                        <label>@sublist[1]</label> <br />
-                        <div>@Html.Raw(sublist[2])</div>
-                        <span>
-                            <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x users" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
-                            <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
-                            <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
-                            <a href="#" class="edit" data-accid="@sublist[0]" data-toggle="tooltip" title="Edit Data"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
-                        </span>
-                    </div>
+                        <div style="margin-left: 300px;">
+                            <div><label>@sublist[1]</label></div> <br />
+                            @{
+                                if (string.IsNullOrEmpty(sublist[2].ToString()))
+                                {
+                                    <img src="~/images/your-logo.png" class="prologo" />
+
+                                }
+                                else
+                                {
+                                    @Html.Raw(sublist[2])
+                                }
+                            }
+                        </div>
+                        <div style="margin-left: 80px;">
+                            <span>
+                                <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x users" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
+                                <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
+                                <a href="#" class="edit" data-accid="@sublist[0]" data-toggle="tooltip" title="Edit Data"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
+                            </span>
+                            </div>
+                        </div>
+
                     <!-- Database Modal -->
 
                     @if (ViewBag.Message != null)
@@ -126,8 +133,8 @@
     }
 
     .prologo {
-        width: 20%;
-        height: 20%;
+        width: 25%;
+        height: 15%;
     }
 
     .tdd {
@@ -140,11 +147,11 @@
     }
 
     .tenant_account {
-        width: 50%;
+        width: 65%;
         background: #fff;
         border-radius: 2px;
         display: inline-block;
-        height: 300px;
+        height: 200px;
         margin: 1rem;
         position: relative;
         box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);

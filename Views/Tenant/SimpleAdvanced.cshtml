@@ -1,81 +1,55 @@
 ﻿<script>
     $(document).ready(function () {
-      alert('hi');
-    $('#ebWizFinishB').hide();
+        alert('hi');
+        $('#ebWizFinishB').hide();
     });
-   
+
 </script>
-<div class="col-md-12 ebWizStep">
-        <h4>Select database type</h4>
-        <div class="controls-group">
-            <div class="db_selector">
-                <input id="simple" type="radio" name="dbconf" value="simple" class="" />
-                <label class="drinkcard-cc simple" for="simple">Simple</label>
-                <input id="advanced" type="radio" name="dbconf" value="advanced" class="" />
-                <label class="drinkcard-cc advanced" for="advanced">Advanced</label>
-            </div>
-        </div>
+<div class="col-md-9 ebWizStep col-md-offset-2">
+    <h4 class="col-md-offset-3">Select database type</h4>
+    <p><h6>     We have 4 databases for data, objects, logs and their read only databases.</h6></p>
+    <div class="controls-group">
+        <table id="dtb">
+            <tr>
+                <td valign="top" class="col-md-3">
+                    <button id="1" href="#" name="1" value="simple" class="sim_adv_btn btn-primary">
+                        <i class="fa fa-database fa-4x" aria-hidden="true"></i>
+                        <h4>Simple</h4>
+                        <ul>
+                            <li>Same configuration for all databases</li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </button>
+
+                </td>
+                <td valign="top" class="col-md-3">
+                    <button href="#" id="2" name="2" value="advanced" class="sim_adv_btn btn-primary">
+                        @*<span class="fa-stack fa-lg">
+                                <i class="fa fa-database fa-stack-2x"></i>
+                                <i class="fa fa-database fa-stack-1x"></i>
+                            </span>*@
+                        <i class="fa fa-database fa-4x" aria-hidden="true"></i>
+                        <i class="fa fa-database fa-3x" aria-hidden="true"></i>
+                        <i class="fa fa-database fa-2x" aria-hidden="true"></i>
+                        <h4>Advanced</h4>
+                        <ul>
+                            <li>Diffrent configuration for databases</li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </button>
+                </td>
+            </tr>
+        </table>
     </div>
-    <style>
-        .db_selector input {
-            margin: 0;
-            padding: 0;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
+</div>
+<style>
+    .sim_adv_btn {
+        padding-top: 30px;
+    }
 
-        .simple {
-            background-image: url(http://2s7gjr373w3x22jf92z99mgm5w-wpengine.netdna-ssl.com/wp-content/uploads/2014/05/database.png);
-        }
-
-        .advanced {
-            background-image: url(http://www.avsipcctv.com/sites/default/files/images/cms/multiple_databases.jpg);
-        }
-
-        .db_selector input:active + .drinkcard-cc {
+        .sim_adv_btn:hover {
             opacity: .9;
         }
-
-        .db_selector input:checked + .drinkcard-cc {
-            -webkit-filter: none;
-            -moz-filter: none;
-            filter: none;
-        }
-
-        .drinkcard-cc {
-            cursor: pointer;
-            background-size: contain;
-            background-repeat: no-repeat;
-            display: inline-block;
-            width: 100px;
-            height: 70px;
-            -webkit-transition: all 100ms ease-in;
-            -moz-transition: all 100ms ease-in;
-            transition: all 100ms ease-in;
-            /*-webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
-            -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
-            filter: brightness(1.8) grayscale(1) opacity(.7);*/
-        }
-
-            .drinkcard-cc:hover {
-                -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
-                -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
-                filter: brightness(1.2) grayscale(.5) opacity(.9);
-            }
-
-        /* Extras */
-        a:visited {
-            color: #888;
-        }
-
-        a {
-            color: #444;
-            text-decoration: none;
-        }
-
-        p {
-            margin-bottom: .3em;
-        }
-
-    </style>
+</style>

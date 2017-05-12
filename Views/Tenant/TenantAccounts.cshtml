@@ -19,7 +19,10 @@
                 })
 
             });
-
+            $('.eng').click(function () {
+                var myCodeMirror = CodeMirror.fromTextArea(myTextArea);
+                //openInNewTab('Engineering');
+            });
             $('.new').click(function () {
                 var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 800, "Add Account", "fa-database");
                
@@ -48,6 +51,10 @@
                     $(this).addClass("border_blue");
                 });
             });
+            function openInNewTab(url) {
+                var win = window.open(url, '_blank');
+                win.focus();
+            }
         })
     </script>
 </head>

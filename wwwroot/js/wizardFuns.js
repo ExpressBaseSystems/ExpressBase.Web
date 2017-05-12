@@ -328,7 +328,14 @@ EbWizard.prototype.DbCheck = function () {
         }
 
         $(this).parent().parent().siblings('.pnum').children('input').val(port_num);
-    });
+        });
+        $('.pnum').children('input').keyup(function () {
+            $(this).parent().removeClass("has-error");
+            var port_num = parseInt($(this).val());
+            if ((port_num > 65536)) {
+                $(this).parent().addClass("has-error") ;
+            }
+        });
     }
 
     function usesame_change(){

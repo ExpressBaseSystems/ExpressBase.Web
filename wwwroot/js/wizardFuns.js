@@ -413,7 +413,6 @@
             if ($('.useSame').is(':not(:checked)')) {
                 $(this).parent().siblings('.ro').show();
             }
-            UseSame();
         });
 
         function dropdown() {

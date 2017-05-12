@@ -1,0 +1,21 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<head>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function openInNewTab(url) {
+                var win = window.open(url, '_blank');
+                win.focus();
+            }
+            $('.code_edit').click(function () {
+                openInNewTab('code_editor');
+            });
+
+
+        });
+    </script>
+</head>
+<body>
+
+</body>

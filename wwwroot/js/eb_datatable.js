@@ -91,7 +91,7 @@ function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref,tx) 
         var fc_rh_tbl = $('#' + tableid + '_container .DTFC_RightHeadWrapper table');
 
         if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
-            var eb_filter_controls_4fc = GetFiltersFromSettingsTbl(tvprefuser, tableid, 0);
+            var eb_filter_controls_4fc = GetFiltersFromSettingsTbl(tvprefuser, tableid, 50);
             if (fc_lh_tbl !== null) {
                 fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
                 for (var j = 0; j < tx.leftFixedColumns; j++)
@@ -106,7 +106,7 @@ function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref,tx) 
 
         var sc_h_tbl = $('#' + tableid + '_container .dataTables_scrollHeadInner table');
         if (sc_h_tbl !== null) {
-            var eb_filter_controls_4sb = GetFiltersFromSettingsTbl(tvprefuser, tableid, -1000);
+            var eb_filter_controls_4sb = GetFiltersFromSettingsTbl(tvprefuser, tableid, 1);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
             for (var j = 0; j < eb_filter_controls_4sb.length; j++)
                 $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4sb[j]));
@@ -531,7 +531,7 @@ function GetFiltersFromSettingsTbl(tvPref4User,tableId, zindex) {
             else if (col.type === "System.Boolean")
                 _ls += (span + getFilterForBoolean(col.name, tableId, zindex));
             else
-                _ls += (span);
+                _ls += (span+"<div></div>");
 
             _ls += ("</th>");
         }
@@ -545,10 +545,10 @@ function getFilterForNumeric(header_text1, header_select,  data_table, htext_cla
    var coltype = "data-coltyp='numeric'";
    var drptext = "";
 
-drptext = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
+drptext = "<div class='input-group'>" +
 "<div class='input-group-btn'>" +
-    " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='"+ header_select +"'> = </button>" +
-    " <ul class='dropdown-menu'>" +
+    " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+    " <ul class='dropdown-menu' style='z-index:" + zindex.toString() + "'>" +
     "   <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
       " <li><a href ='#' onclick='setLiValue(this);' " + data_table +   data_colum + "><</a></li>" +
       " <li><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">></a></li>" +
@@ -557,7 +557,7 @@ drptext = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" 
       "<li ><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">B</a></li>" +
     " </ul>" +
 " </div>" +
-" <input type='number' class='form-control "+ htext_class +"' id='" +header_text1+ "' onkeypress='call_filter(event, this); '" +data_table + data_colum +coltype +  ">" +
+" <input type='number' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this); '" + data_table + data_colum + coltype + " >" +
 " <span class='input-group-btn'></span>" +
 " <input type='number' class='form-control " +htext_class+ "' id='"+ header_text2 +"' style='visibility: hidden' onkeypress='call_filter(event, this);' " +data_table+  data_colum + coltype + ">" +
 " </div> ";
@@ -567,10 +567,10 @@ drptext = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" 
 function getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex)
 {
 var coltype = "data-coltyp='date'";
-var filter = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
+var filter = "<div class='input-group' >" +
 "<div class='input-group-btn'>" +
-   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-    "<ul class='dropdown-menu'>" +
+   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "' > = </button>" +
+    "<ul class='dropdown-menu' style='z-index:" + zindex.toString() + "'>" +
      " <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
      " <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + "><</a></li>" +
      " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">></a></li>" +
@@ -579,7 +579,7 @@ var filter = "<div class='input-group' style='z-index:" + zindex.toString() + "'
      " <li ><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">B</a></li>" +
    " </ul>" +
 " </div>" +
-" <input type='date' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
+" <input type='date' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + " >" +
 " <span class='input-group-btn'></span>" +
 " <input type='date' class='form-control " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
 " </div> ";
@@ -589,17 +589,17 @@ var filter = "<div class='input-group' style='z-index:" + zindex.toString() + "'
 function getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex)
 {
 var drptext = "";
-drptext = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
+drptext = "<div class='input-group' >" +
 "<div class='input-group-btn'>"+
-   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='"+ header_select +"'>x*</button>"+
-   " <ul class='dropdown-menu'>"+
+   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
+   " <ul class='dropdown-menu' style='z-index:" + zindex.toString() + "'>" +
    "   <li ><a href ='#' onclick='setLiValue(this);' "+ data_table + data_colum +">x*</a></li>"+
     "  <li><a href ='#' onclick='setLiValue(this);' "+ data_table + data_colum +">*x</a></li>"+
     "  <li><a href='#' onclick='setLiValue(this);' "+ data_table + data_colum +">*x*</a></li>"+
      " <li><a href='#' onclick='setLiValue(this);' "+ data_table + data_colum +">=</a></li>"+
    " </ul>"+
 " </div>"+
-" <input type='text' class='form-control "+ htext_class +"' id='"+ header_text1 +"' onkeypress='call_filter(event, this);' "+ data_table + data_colum +">"+
+" <input type='text' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + " >" +
 " </div> " ;
         return drptext;
 }
@@ -609,7 +609,7 @@ function getFilterForBoolean(colum, tableId, zindex)
 var filter = "";
 var id = tableId+"_"+ colum + "_hdr_txt1";
 var cls = tableId + "_hchk";
-filter = "<input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext' style='z-index:" + zindex.toString() + "'>";
+filter = "<input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext'>";
 return filter;
 }
 

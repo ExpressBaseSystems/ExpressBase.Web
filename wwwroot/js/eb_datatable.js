@@ -683,8 +683,8 @@ function getIndex(ds_columns, col_name)
 
 function GetSettingsModal(tableid, tvId, tvName) {
     var OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
-    var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg");
-    var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content");
+    var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
+    var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
     var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
     var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
     var title = $(document.createElement('h4')).attr("class", "modal-title").text(tvName+": SettingsTable");
@@ -708,10 +708,12 @@ function GetSettingsModal(tableid, tvId, tvName) {
     ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
     ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
-    ModalBodyTabPaneColDiv.append(" <div style='display:inline-block' id='propGrid' style='float:left'></div>" +
-                                    "<div>" +
-                                        "<textarea id='txtValues' rows='20' cols='50'></textarea>" +
-                                        "<input id='btnGetValues' type='button' value='Get values'/>" +
+    ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
+"                                        <div id='propHead'></div><div id='propGrid'></div>" +
+                                        "<div>" +
+                                            "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
+                                            "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
+                                        "</div>" +
                                     "</div>");
 
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
@@ -823,10 +825,10 @@ function callPost4SettingsTable() {
             });
             $('#Table_Settings tbody').on('click', 'tr', function () {
                 var idx = settings_tbl.row(this).index();
-                alert(settings_tbl.row(idx).data().name.toString());
-                alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
+                //alert("(purath) " + settings_tbl.row(idx).data().name.toString());
+                //alert("(purath) data2Obj.columnsext:" + JSON.stringify(data2Obj.columnsext));
+                CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
             });
-            CreatePropGrid(data2Obj.columnsext);
         });
 }
 

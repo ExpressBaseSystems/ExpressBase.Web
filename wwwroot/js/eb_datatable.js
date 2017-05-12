@@ -178,10 +178,11 @@ function showOrHideFilter(objbtn, scrolly) {
         $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();:not(.Class)
     else {
-        $.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
-            if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
-                $(obj).show();
-        });
+        $('#' + tableid + '_container table thead tr[class=addedbyeb]').show();
+        //$.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
+        //    if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
+        //        $(obj).show();
+        //});
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
     }
 
@@ -522,7 +523,7 @@ function GetFiltersFromSettingsTbl(tvPref4User,tableId, zindex) {
 
             _ls += "<th style='padding: 0px; margin: 0px'>";
 
-            if (col.type === "System.Int32" || col.type === "System.Decimal")
+            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
                 _ls +=  (span + getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
             else if (col.type === "System.String")
                 _ls += (span + getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
@@ -609,7 +610,7 @@ function getFilterForBoolean(colum, tableId, zindex)
 var filter = "";
 var id = tableId+"_"+ colum + "_hdr_txt1";
 var cls = tableId + "_hchk";
-filter = "<input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext'>";
+filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext'></center>";
 return filter;
 }
 
@@ -633,7 +634,7 @@ function getAgginfo(tvPref4User)
 {
     var _ls = [];
     $.each(tvPref4User, function (i, col) {
-        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal"))
+        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64"))
             _ls.push(new Agginfo(col.name));
     });
 
@@ -646,7 +647,7 @@ function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api)
     var _ls;
     $.each(tvPref4User, function (i, col) {
         if (col.visible) {
-            if (col.type === "System.Int32" || col.type === "System.Decimal") {
+            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
                 var footer_select_id = tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;

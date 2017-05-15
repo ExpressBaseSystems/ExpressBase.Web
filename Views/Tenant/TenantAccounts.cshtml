@@ -20,7 +20,8 @@
 
             });
             $('.obj').click(function () {
-                openInNewTab('objects');
+                var ele = $(this).attr("data-cid");
+                openInNewTab('objects',ele);
             });
             $('.new').click(function () {
                 var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 800, "Add Account", "fa-database");
@@ -50,7 +51,8 @@
                     $(this).addClass("border_blue");
                 });
             });
-            function openInNewTab(url) {
+            function openInNewTab(url, ele) {
+                sessionStorage.setItem("cid", ele);
                 var win = window.open(url, '_blank');
                 win.focus();
             }
@@ -96,20 +98,20 @@
                         </div>
                         <div style="margin-left: 80px;">
                             <span>
-                                <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="eng" data-accid="@sublist[0]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="obj" data-accid="@sublist[0]" data-toggle="tooltip" title="Objects"><i class="btn btn-default fa fa-file-text fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x users" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
-                                <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
-                                <a href="#" class="edit" data-accid="@sublist[0]" data-toggle="tooltip" title="Edit Data"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="eng" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="obj" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Objects"><i class="btn btn-default fa fa-file-text fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x users" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
+                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
+                                <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
+                                <a href="#" class="edit" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Edit Data"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
                             </span>
                             </div>
                         </div>

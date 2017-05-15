@@ -9,6 +9,9 @@ using System.IO;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.Extensions.Options;
 using ExpressBase.Web.Filters;
+using ExpressBase.Common;
+using ExpressBase.Objects;
+using System.Net;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -214,8 +217,33 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
+        [HttpGet]
         public IActionResult code_editor()
         {
+            
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult code_editor(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var f = new EbObjectWrapper
+            {
+                Token= ViewBag.token,
+                TenantAccountId= req["cid"],
+                EbObjectType = Objects.EbObjectType.DataSource,
+                Name ="dhdhsgd",
+                Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
+                { 
+                    Name = "dhdhsgd",
+                    Sql = req["code"]
+                })
+            };
+
+            using (client.Post<HttpWebResponse>(f)) { }
+
             return View();
         }
         public IActionResult objects()

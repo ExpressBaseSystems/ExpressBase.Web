@@ -218,6 +218,10 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-        
+        public IActionResult objects()
+        {
+            return View();
+        }
+
     }
 }

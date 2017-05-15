@@ -30,6 +30,23 @@
         $("#wiz").children().css("margin-top", this.height / 2 - 110 + "px");
         $(".modal-body").css("height", this.height - 163 + "px");
         $('#dbModal').off("hidden.bs.modal").on('hidden.bs.modal', function (e) { $('#dbModal').remove(); });
+
+        $('#dbModal').on('shown.bs.modal', function (e) {
+            if ($('.useSame').is(':checked')) {
+                $('.useSame').parent().siblings('.ro').hide();
+            }
+            if ($('.useSame').is(':not(:checked)')) {
+                $(this).parent().siblings('.ro').show();
+            };
+
+            var dbvendor = parseInt($('.db_dropdown ul li').parent().siblings('input').val());
+            if (dbvendor >= 0) {
+                var dropval = $($('.db_dropdown ul li')[dbvendor]).html();
+                $('.db_dropdown ul li').parent().siblings('[data-toggle=dropdown]').html(dropval);
+            }
+            else
+                $('.db_dropdown [data-toggle=dropdown]').html("Select Database Vendor<span class=" + '"caret"></span>');
+        });
         $('#dbModal').modal({ backdrop: 'static' });
         $.get(this.SrcUrl, this.Drawsteps.bind(this));
     };
@@ -325,6 +342,13 @@
 
                 $(this).parent().parent().siblings('.pnum').children('input').val(port_num);
             });
+            $('.pnum').children('input').keyup(function () {
+                $(this).parent().removeClass("has-error");
+                var port_num = parseInt($(this).val());
+                if ((port_num > 65536)) {
+                    $(this).parent().addClass("has-error");
+                }
+            });
         }
 
         function usesame_change() {
@@ -405,30 +429,11 @@
                 $(this).prev('[name=result]').html(res);
             })
         }
-
-        $('#dbModal').on('shown.bs.modal', function (e) {
-            if ($('.useSame').is(':checked')) {
-                $('.useSame').parent().siblings('.ro').hide();
-            }
-            if ($('.useSame').is(':not(:checked)')) {
-                $(this).parent().siblings('.ro').show();
-            }
-            UseSame();
-        });
-
+        
         function dropdown() {
             $('.db_dropdown ul li.enabled').click(function () {
                 $(this).parent().siblings('input').val($(this).attr("value"));
                 $(this).parent().siblings('[data-toggle=dropdown]').html("<span>" + $(this).html() + "</span>");
-            });
-            $('#dbModal').on('shown.bs.modal', function (e) {
-                var dbvendor = parseInt($('.db_dropdown ul li').parent().siblings('input').val());
-                if (dbvendor >= 0) {
-                    var dropval = $($('.db_dropdown ul li')[dbvendor]).html();
-                    $('.db_dropdown ul li').parent().siblings('[data-toggle=dropdown]').html(dropval);
-                }
-                else
-                    $('.db_dropdown [data-toggle=dropdown]').html("Select Database Vendor<span class=" + '"caret"></span>');
             });
         }
 

@@ -809,7 +809,7 @@ function GetSettingsModal(tableid, tvId, tvName) {
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
         var n, d, t, v, w, ty, cls;
-        objcols.push(new coldef(getIndex(__tvPrefUser, "id"), "", false, "", "id", "", ""));
+        objcols.push(new coldef(getIndex(__tvPrefUser.columns, "id"), "", false, "", "id", "", ""));
         $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
             ct++;
             if (obj.type == 'text' && obj.name == 'name')
@@ -848,6 +848,7 @@ function GetSettingsModal(tableid, tvId, tvName) {
         objconf.leftFixedColumns = $("#leftFixedColumns_text").val();
         objconf.rightFixedColumns = $("#rightFixedColumns_text").val();
         objconf.columns = objcols;
+        objconf.columnsext = __tvPrefUser.columnsext;
         if (objconf.rowGrouping.length > 0) {
             var groupcols = $.grep(objconf.columns, function (e) { return e.name === objconf.rowGrouping });
             groupcols[0].visible = false;
@@ -872,7 +873,7 @@ function callPost4SettingsTable() {
     $.post('GetTVPref4User', { tvid: '0' },
         function (data2) {
             var data2Obj = JSON.parse(data2);
-            __tvPrefUser = data2Obj.columns;
+            __tvPrefUser = data2Obj;
             $("#serial_check").prop("checked", data2Obj.hideSerial);
             $("#select_check").prop("checked", data2Obj.hideCheckbox);
             $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
@@ -899,7 +900,7 @@ function callPost4SettingsTable() {
             $('#Table_Settings tbody').on('click', 'tr', function () {
                 var idx = settings_tbl.row(this).index();
                 //alert(settings_tbl.row(idx).data().name.toString());
-                //alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
+                alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
                 CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
             });
         });

@@ -1,4 +1,4 @@
-﻿var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, editObj, NoFinishbtn) {
+﻿var EbWizard = function (srcUrl, destUrl, w, h, heading, headingIcon, acid, editObj, customWizFunc, noFinishbtn) {
     this.width = w;
     this.height = h;
     this.Steps;
@@ -13,7 +13,8 @@
     this.HeadingIcon = headingIcon;
     this.EditObj = editObj;
     this.Acid = acid;
-    this.NoFinishbtn = NoFinishbtn;
+    this.CustomWizFunc = customWizFunc;
+    this.NoFinishbtn = noFinishbtn;
 
     this.Init = function () {
         this.RenderModal();
@@ -80,7 +81,7 @@
         this.PrevBtn.hide();
         $(".modal-body").css("height", this.height - 163 + "px");
         this.SyncProgress();
-        this.DbCheck();
+        this.CustomWizFunc();
         setTimeout(this.TimeOutFunc.bind(this), 10);
         if (this.EditObj) this.EditWiz();
     };
@@ -95,7 +96,7 @@
             var html = ""; ObjString = "{";
             for (i = 0; i < this.Steps.length; i++)
                 html += $(this.Steps[i]).html();
-            var AllInputs = $(html).find("input");
+            var AllInputs = $(html).find("input, textarea");
             $.each(AllInputs, function (i, inp) {
                 ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
             })
@@ -108,7 +109,7 @@
                 $(".wiz-error").children().removeClass("alert-danger").addClass("alert-success");
                 $("#errmsg").empty().append("<strong> Success <i class='fa fa-check fa-2x' aria-hidden='true'></i></strong>");
                 setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
-                alert("Success status.message = " + status.message);
+                //alert("Success status.message = " + status.message);
             }).fail(function (jq, jqStatus, statusDesc) {
                 $(".eb-loader").hide();
                 $(".wiz-error").show();
@@ -215,7 +216,7 @@
     };
 
     this.IsStepValid = function () {
-        var currentInputs = $(this.Steps[this.currentStepNo]).find("input");
+        var currentInputs = $(this.Steps[this.currentStepNo]).find("input, textarea");
         var res = true;
         for (var i = 0; i < currentInputs.length; i++) {
             if (!currentInputs[i].validity.valid) {
@@ -273,6 +274,11 @@
     this.EditWiz = function () {
         $.each(this.EditObj, function (key, val) { $("#" + key).val(val); });
     };
+
+    this.Init();
+};
+
+var CustomWizFuncs = function () {
 
     this.DbCheck = function () {
         UseSame();
@@ -429,7 +435,7 @@
                 $(this).prev('[name=result]').html(res);
             })
         }
-        
+
         function dropdown() {
             $('.db_dropdown ul li.enabled').click(function () {
                 $(this).parent().siblings('input').val($(this).attr("value"));
@@ -444,17 +450,19 @@
             var AcntId = this.Acid;
             $('#dbModal').modal('hide');
             setTimeout(function () {
-                if (simp_adv === 'simple') {  
+                if (simp_adv === 'simple') {
                     var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", AcntId);
-                   
+
                 }
                 if (simp_adv === 'advanced') {
                     var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", AcntId);
-                    
+
                 }
             }, 401);
         });
     };
 
-    this.Init();
+    this.DataSource = function () {
+
+    };
 };

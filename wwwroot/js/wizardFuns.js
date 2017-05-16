@@ -461,8 +461,8 @@ var CustomWizFuncs = function () {
             }, 401);
         });
     };
-
     this.DataSource = function () {
-
+        $('#Sql').val(sql);
+        $('#tcid').val($('#cid').val());
     };
 };

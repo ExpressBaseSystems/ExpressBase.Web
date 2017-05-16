@@ -3,11 +3,11 @@
     $('#propHead').empty().html("<strong> " + RowObj.name + "</strong>");
     var NumProps = null;
     var metaObj = null;
-    //alert("ji=" + JSON.stringify(RowObj));
+    alert("colExt= " + JSON.stringify( colExt) );
     $.each(colExt, function (i, obj) {
         if (obj.name === RowObj.name) {
             alert("type= " + RowObj.type.toString());
-            if (RowObj.type.toString().trim() === "System.Int32" || RowObj.type.toString().trim() === "System.Decimal") {
+            if (RowObj.type.toString().trim() === "System.Int32" || RowObj.type.toString().trim() === "System.Decimal" ||  RowObj.type.toString().trim() === "System.Int16" ||  RowObj.type.toString().trim() === "System.Int64"){
                 NumProps = {
                     AggInfo: obj.AggInfo,
                     DecimalPlace: obj.DecimalPlace,
@@ -16,7 +16,7 @@
                 metaObj = {
                     AggInfo: { group: 'Behavior ', name: 'Aggragate', type: 'boolean' },
                     DecimalPlace: { group: 'Behavior ', name: 'DecimalPlace', type: 'number', options: { min: 0, max: 500, step: 10 } },
-                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'options', options: [{ text: 'default', value: "default" }, { text: 'Progressbar', value: "Progressbar" }] },
+                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', "Progressbar" ] },
                 };
             } else if (RowObj.type.toString().trim() === "System.Boolean") {
                 NumProps = {
@@ -25,17 +25,21 @@
                 };
                 metaObj = {
                     IsEditable: { group: 'Behavior ', name: 'IsEditable', type: 'boolean' },
-                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD' },
+                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', 'Text', "Icon"] },
                 };
             } else if (RowObj.type.toString().trim() === "System.DateTime") {
                 NumProps = {
+                    Format: obj.Format
                 };
                 metaObj = {
+                    Format: { group: 'Behavior ', name: 'Format', type: 'BootstrapDD', options: ['Date', 'Time', "DateTime"] },
                 };
             } else if (RowObj.type.toString().trim() === "System.String") {
                 NumProps = {
+                    RenderAs: obj.RenderAs
                 };
                 metaObj = {
+                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', 'Graph'] },
                 };
             }
             else
@@ -55,15 +59,16 @@
         },
         BootstrapDD: {
             html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                return "<div class='dropdown'>" +
+                var _html = "<div class='dropdown'>" +
     "<button class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" + value +
     " <span class='caret'></span></button>" +
-                "<ul class='dropdown-menu'>" +
-      "<li><a href='#'>Default</a></li>" +
-      "<li><a href='#'>Text</a></li>" +
-      "<li><a href='#'>Icon</a></li>" +
-    "</ul>" +
-  "</div>";
+                "<ul class='dropdown-menu'>"
+                $.each(meta.options, function (i, val) {
+                    _html += "<li><a href='#'>" + val + "</a></li>"
+                })
+                _html += "</ul></div>";
+                return _html
+    
             },
             valueFn: function () { return $('.dropdown button').text().trim() }
         }

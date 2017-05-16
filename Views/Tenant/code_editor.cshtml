@@ -1,5 +1,8 @@
-﻿<html lang="en">
-<head>
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<html lang="en">
+<head><title>CodeMirror</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css">
@@ -14,8 +17,8 @@
     <script src="~/lib/codemirror/addon/fold/xml-fold.js"></script>
     <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
-    <script>
-       $(document).ready(function () {
+    <script type="text/javascript">
+        $(document).ready(function () {
             CodeMirror.commands.autocomplete = function (cm) {
                 CodeMirror.showHint(cm, CodeMirror.hint.sql);
             };
@@ -31,22 +34,34 @@
             });
             var cid = sessionStorage.getItem("cid");
             $('#cid').val(cid);
-       });
-
+        });
+        function func()
+        {
+            sql = window.editor.getValue();
+            var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database");
+            Dswzd.CustomWizFunc = (new CustomWizFuncs).DataSource;
+        }
     </script>
-    <title>CodeMirror Example : Autocomplete and Code folding</title>
 </head>
 <body>
 
-  @using (Html.BeginForm(FormMethod.Post, new { enctype = "multipart/form-data", id = "code_edit" }))
-  {
-        <textarea id="code" name="code"> enter code</textarea>
+        <textarea id="code" name="code" class="code"> enter code</textarea>
         <p>Hit Ctrl+Space to trigger autocomplete</p>
         <input type="hidden" id="cid" name="cid" />
-        <button class="btn btn-lg btn-primary" type="submit"><i class="fa fa-sign-in fa-fw"></i>Save</button>
-  }
+        <div class="btn btn-lg btn-primary save_ds" id="save" onclick="func();">Save</div>
 
 
 </body>
 
 </html>
+<style>
+      .align_singleLine {
+        display: inline-block;
+        margin-right: 10px;
+        align-content: center;
+    }
+      .CodeMirror{
+          height:500px;
+          background-color:azure;
+      }
+</style>

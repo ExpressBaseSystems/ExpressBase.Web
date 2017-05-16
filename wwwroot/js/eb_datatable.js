@@ -91,7 +91,7 @@ function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref,tx) 
         var fc_rh_tbl = $('#' + tableid + '_container .DTFC_RightHeadWrapper table');
 
         if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
-            var eb_filter_controls_4fc = GetFiltersFromSettingsTbl(tvprefuser, tableid, 50);
+            var eb_filter_controls_4fc = GetFiltersFromSettingsTbl(tvprefuser, tableid, 0);
             if (fc_lh_tbl !== null) {
                 fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
                 for (var j = 0; j < tx.leftFixedColumns; j++)
@@ -106,7 +106,7 @@ function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref,tx) 
 
         var sc_h_tbl = $('#' + tableid + '_container .dataTables_scrollHeadInner table');
         if (sc_h_tbl !== null) {
-            var eb_filter_controls_4sb = GetFiltersFromSettingsTbl(tvprefuser, tableid, 1);
+            var eb_filter_controls_4sb = GetFiltersFromSettingsTbl(tvprefuser, tableid, -1000);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
             for (var j = 0; j < eb_filter_controls_4sb.length; j++)
                 $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4sb[j]));
@@ -178,11 +178,10 @@ function showOrHideFilter(objbtn, scrolly) {
         $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();:not(.Class)
     else {
-        $('#' + tableid + '_container table thead tr[class=addedbyeb]').show();
-        //$.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
-        //    if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
-        //        $(obj).show();
-        //});
+        $.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
+            if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
+                $(obj).show();
+        });
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
     }
 
@@ -523,7 +522,7 @@ function GetFiltersFromSettingsTbl(tvPref4User,tableId, zindex) {
 
             _ls += "<th style='padding: 0px; margin: 0px'>";
 
-            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
+            if (col.type === "System.Int32" || col.type === "System.Decimal")
                 _ls +=  (span + getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
             else if (col.type === "System.String")
                 _ls += (span + getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
@@ -532,7 +531,7 @@ function GetFiltersFromSettingsTbl(tvPref4User,tableId, zindex) {
             else if (col.type === "System.Boolean")
                 _ls += (span + getFilterForBoolean(col.name, tableId, zindex));
             else
-                _ls += (span+"<div></div>");
+                _ls += (span);
 
             _ls += ("</th>");
         }
@@ -546,10 +545,10 @@ function getFilterForNumeric(header_text1, header_select,  data_table, htext_cla
    var coltype = "data-coltyp='numeric'";
    var drptext = "";
 
-drptext = "<div class='input-group'>" +
+drptext = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
 "<div class='input-group-btn'>" +
-    " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-    " <ul class='dropdown-menu' style='z-index:" + zindex.toString() + "'>" +
+    " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='"+ header_select +"'> = </button>" +
+    " <ul class='dropdown-menu'>" +
     "   <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
       " <li><a href ='#' onclick='setLiValue(this);' " + data_table +   data_colum + "><</a></li>" +
       " <li><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">></a></li>" +
@@ -558,7 +557,7 @@ drptext = "<div class='input-group'>" +
       "<li ><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">B</a></li>" +
     " </ul>" +
 " </div>" +
-" <input type='number' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this); '" + data_table + data_colum + coltype + " >" +
+" <input type='number' class='form-control "+ htext_class +"' id='" +header_text1+ "' onkeypress='call_filter(event, this); '" +data_table + data_colum +coltype +  ">" +
 " <span class='input-group-btn'></span>" +
 " <input type='number' class='form-control " +htext_class+ "' id='"+ header_text2 +"' style='visibility: hidden' onkeypress='call_filter(event, this);' " +data_table+  data_colum + coltype + ">" +
 " </div> ";
@@ -568,10 +567,10 @@ drptext = "<div class='input-group'>" +
 function getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex)
 {
 var coltype = "data-coltyp='date'";
-var filter = "<div class='input-group' >" +
+var filter = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
 "<div class='input-group-btn'>" +
-   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "' > = </button>" +
-    "<ul class='dropdown-menu' style='z-index:" + zindex.toString() + "'>" +
+   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+    "<ul class='dropdown-menu'>" +
      " <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
      " <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + "><</a></li>" +
      " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">></a></li>" +
@@ -580,7 +579,7 @@ var filter = "<div class='input-group' >" +
      " <li ><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">B</a></li>" +
    " </ul>" +
 " </div>" +
-" <input type='date' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + " >" +
+" <input type='date' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
 " <span class='input-group-btn'></span>" +
 " <input type='date' class='form-control " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
 " </div> ";
@@ -590,17 +589,17 @@ var filter = "<div class='input-group' >" +
 function getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex)
 {
 var drptext = "";
-drptext = "<div class='input-group' >" +
+drptext = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
 "<div class='input-group-btn'>"+
-   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
-   " <ul class='dropdown-menu' style='z-index:" + zindex.toString() + "'>" +
+   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='"+ header_select +"'>x*</button>"+
+   " <ul class='dropdown-menu'>"+
    "   <li ><a href ='#' onclick='setLiValue(this);' "+ data_table + data_colum +">x*</a></li>"+
     "  <li><a href ='#' onclick='setLiValue(this);' "+ data_table + data_colum +">*x</a></li>"+
     "  <li><a href='#' onclick='setLiValue(this);' "+ data_table + data_colum +">*x*</a></li>"+
      " <li><a href='#' onclick='setLiValue(this);' "+ data_table + data_colum +">=</a></li>"+
    " </ul>"+
 " </div>"+
-" <input type='text' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + " >" +
+" <input type='text' class='form-control "+ htext_class +"' id='"+ header_text1 +"' onkeypress='call_filter(event, this);' "+ data_table + data_colum +">"+
 " </div> " ;
         return drptext;
 }
@@ -610,7 +609,7 @@ function getFilterForBoolean(colum, tableId, zindex)
 var filter = "";
 var id = tableId+"_"+ colum + "_hdr_txt1";
 var cls = tableId + "_hchk";
-filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext'></center>";
+filter = "<input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext' style='z-index:" + zindex.toString() + "'>";
 return filter;
 }
 
@@ -634,7 +633,7 @@ function getAgginfo(tvPref4User)
 {
     var _ls = [];
     $.each(tvPref4User, function (i, col) {
-        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64"))
+        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal"))
             _ls.push(new Agginfo(col.name));
     });
 
@@ -647,7 +646,7 @@ function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api)
     var _ls;
     $.each(tvPref4User, function (i, col) {
         if (col.visible) {
-            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
+            if (col.type === "System.Int32" || col.type === "System.Decimal") {
                 var footer_select_id = tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
@@ -721,8 +720,8 @@ function getIndex(ds_columns, col_name)
 
 function GetSettingsModal(tableid, tvId, tvName) {
     var OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
-    var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
-    var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
+    var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg");
+    var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content");
     var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
     var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
     var title = $(document.createElement('h4')).attr("class", "modal-title").text(tvName+": SettingsTable");
@@ -746,12 +745,9 @@ function GetSettingsModal(tableid, tvId, tvName) {
     ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
     ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
-    ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
-"                                        <div id='propHead'></div><div id='propGrid'></div>" +
-                                        "<div>" +
-                                            "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
-                                            "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
-                                        "</div>" +
+    ModalBodyTabPaneColDiv.append(" <div style='display:inline-block' id='propGrid' style='float:left'></div>" +
+                                    "<div>" +
+                                        
                                     "</div>");
 
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
@@ -863,10 +859,10 @@ function callPost4SettingsTable() {
             });
             $('#Table_Settings tbody').on('click', 'tr', function () {
                 var idx = settings_tbl.row(this).index();
-                //alert("(purath) " + settings_tbl.row(idx).data().name.toString());
-                //alert("(purath) data2Obj.columnsext:" + JSON.stringify(data2Obj.columnsext));
-                CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
+                //alert(settings_tbl.row(idx).data().name.toString());
+                //alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
             });
+            CreatePropGrid(data2Obj.columnsext);
         });
 }
 

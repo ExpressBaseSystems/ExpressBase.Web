@@ -4,18 +4,23 @@
 <head>
     <script type="text/javascript">
         $(document).ready(function () {
-            function openInNewTab(url) {
-                var win = window.open(url, '_blank');
+            function openInNewTab(url,ele) {
+                sessionStorage.setItem("cid", ele);
+                var win = window.open(url,'_blank');
                 win.focus();
             }
-            $('.code_edit').click(function () {
-                openInNewTab('code_editor');
+            $('#code_edit').click(function () {
+                
+                var cid = sessionStorage.getItem("cid");
+                openInNewTab('code_editor',cid);
             });
 
-
+          
         });
     </script>
 </head>
 <body>
-
+    <div class="container">
+        <button id="code_edit" class="btn"> code editor</button>
+    </div>
 </body>

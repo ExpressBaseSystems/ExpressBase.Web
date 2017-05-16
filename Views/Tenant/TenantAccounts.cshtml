@@ -9,12 +9,15 @@
                 $.get('https://expressbaseservicestack.azurewebsites.net/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
                     if (result.data.conf_dbtype === 1) {
                         var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", accid, result.data);
+                        DBwizard_sim.CustomWizFunc = (new CustomWizFuncs).DbCheck;
                     }
                     else if (result.data.conf_dbtype === 2) {
                         var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", accid, result.data);
+                        DBwizard_adv.CustomWizFunc = (new CustomWizFuncs).DbCheck;
                     }
                     else {
                         var DBwizard = new EbWizard("http://localhost:53431/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity", "fa-database", accid);
+                        DBwizard.CustomWizFunc = (new CustomWizFuncs).DbCheck;
                     }
                 })
 
@@ -24,17 +27,14 @@
                 openInNewTab('objects',ele);
             });
             $('.new').click(function () {
-                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 800, "Add Account", "fa-database");
-               
+                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 800, "Add Account", "fa-database");             
             });
-
             $('.edit').click(function () {
                 var accId = $(this).attr("data-accid");
                 $('#acid').val(accId);
                 $.get('https://localhost:44377/infra/', { "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": accId }), "Token": getToken() }, function (result) {
 
-                    var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 600, 600, "600, 600", "fa-database", result.data);
-                   
+                    var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 600, 600, "600, 600", "fa-database", result.data);                  
                 })
             });
             $('.users').click(function () {
@@ -96,7 +96,7 @@
                                 }
                             }
                         </div>
-                        <div style="margin-left: 80px;">
+                        <div style="margin-left: 50px;">
                             <span>
                                 <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
                                 <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>

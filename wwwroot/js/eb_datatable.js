@@ -1,12 +1,3 @@
-//$.fn.dataTable.Api.register('column().data().sum()', function () {
-//    return this.reduce(function (a, b) { return a + b; });
-//});
-
-//$.fn.dataTable.Api.register('column().data().average()', function () {
-//    var sum = this.reduce(function (a, b) { return a + b; });
-//    return sum / this.length;
-//});
-
 if (!String.prototype.splice) {
     String.prototype.splice = function (start, delCount, newSubStr) {
         return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
@@ -85,19 +76,70 @@ function repopulate_filter_arr(table) {
     return filter_obj_arr;
 }
 
-function createFilterRowHeader(tableid, eb_filter_controls, scrolly) {
+function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref, tx) {
     setTimeout(function () {
-        $('#' + tableid + '_container table thead').append($("<tr role='row' class='addedbyeb'/>"));
-        var trs = $('#' + tableid + '_container table thead tr[class=addedbyeb]');
-        for (var i = 0; i < trs.length; i++) {
-            for (var j = 0; j < eb_filter_controls.length; j++) {
-                $(trs[i]).append($(eb_filter_controls[j]));
+        var fc_lh_tbl = $('#' + tableid + '_container .DTFC_LeftHeadWrapper table');
+        var fc_rh_tbl = $('#' + tableid + '_container .DTFC_RightHeadWrapper table');
+
+        if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
+            var eb_filter_controls_4fc = GetFiltersFromSettingsTbl(tvprefuser, tableid, 50);
+            if (fc_lh_tbl !== null) {
+                fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+                for (var j = 0; j < tx.leftFixedColumns; j++)
+                    $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4fc[j]));
+            }
+            if (fc_rh_tbl !== null) {
+                fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+                for (var j = eb_filter_controls_4fc.length - tx.rightFixedColumns; j < eb_filter_controls_4fc.length; j++)
+                    $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4fc[j]));
             }
         }
 
-        $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
-    }, 1000);
+        var sc_h_tbl = $('#' + tableid + '_container .dataTables_scrollHeadInner table');
+        if (sc_h_tbl !== null) {
+            var eb_filter_controls_4sb = GetFiltersFromSettingsTbl(tvprefuser, tableid, 1);
+            sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+            if (tx.leftFixedColumns + tx.rightFixedColumns > 0) {
+                for (var j = 0; j < eb_filter_controls_4sb.length; j++) {
+                    if (j < tx.leftFixedColumns)
+                        $(sc_h_tbl.find("tr[class=addedbyeb]")).append("<th>&nbsp;</th>");
+                    else {
+                        if (j < eb_filter_controls_4sb.length - tx.rightFixedColumns)
+                            $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4sb[j]));
+                        else
+                            $(sc_h_tbl.find("tr[class=addedbyeb]")).append("<th>&nbsp;</th>");
+                    }
+                }
+            }
+            else {
+                for (var j = 0; j < eb_filter_controls_4sb.length; j++)
+                    $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4sb[j]));
+            }
+        }
+        // $(this).find('thead').append($("<tr role='row' class='addedbyeb'/>"));
 
+        //var trs = $('#' + tableid + '_container table thead tr[class=addedbyeb]');
+        //for(var i=0; i < trs.length; i++)
+        //{
+        //    for (var j = 0; j < eb_filter_controls.length; j++) {
+        //        $(trs[i]).append($(eb_filter_controls[j]));
+        //    }
+        //}
+
+        $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
+
+        $('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
+
+        $('#' + tableid + '_container thead').off('click').on('click', 'th', function () {
+            var col = $(this).children('span').text();
+            var cls = $(this).attr('class');
+            if (col !== '') {
+                order_info_ref.col = col;
+                order_info_ref.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
+            }
+        });
+        // $('#' + tableid).DataTable().columns.adjust();
+    }, 1000);
 
 
 
@@ -114,13 +156,49 @@ function createFilterRowHeader(tableid, eb_filter_controls, scrolly) {
     //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
 }
 
-function createFooter(tableid, eb_footer_controls, scrolly, pos) {
+function createFooter(tableid, tvPref4User, scrolly, pos, tx) {
+    var lfoot = $('#' + tableid + '_container .DTFC_LeftFootWrapper table');
+    var rfoot = $('#' + tableid + '_container .DTFC_RightFootWrapper table');
+    var scrollfoot = $('#' + tableid + '_container .dataTables_scrollFootInner table');
+    if (lfoot !== null || rfoot !== null)
+        var eb_footer_controls_lfoot = GetAggregateControls(tvPref4User, tableid, pos, scrolly, 50);
+    if (scrollfoot !== null)
+        var eb_footer_controls_scrollfoot = GetAggregateControls(tvPref4User, tableid, pos, scrolly, 1);
     $('#' + tableid + '_btntotalpage').show();
     if (pos === 1)
         $('#' + tableid + '_container tfoot tr:eq(' + pos + ')').hide();
+    var j = 0;
     $('#' + tableid + '_container tfoot tr:eq(' + pos + ') th').each(function (idx) {
-        $(this).html(eb_footer_controls[idx]);
+        if (lfoot !== null) {
+            if (j < tx.leftFixedColumns)
+                $(this).html(eb_footer_controls_lfoot[idx]);
+        }
+
+        if (rfoot !== null) {
+            if (j == eb_footer_controls_lfoot.length - tx.rightFixedColumns) {
+                if (j < eb_footer_controls_lfoot.length)
+                    $(this).html(eb_footer_controls_lfoot[idx]);
+            }
+        }
+
+        if (scrollfoot !== null) {
+            if (tx.leftFixedColumns + tx.rightFixedColumns > 0) {
+                if (j < eb_footer_controls_scrollfoot.length - tx.rightFixedColumns)
+                    $(this).html(eb_footer_controls_scrollfoot[idx]);
+            }
+
+            else {
+                if (j < eb_footer_controls_scrollfoot.length)
+                    $(this).html(eb_footer_controls_scrollfoot[idx]);
+            }
+        }
+
+        //$(this).html(eb_footer_controls[idx]);
+        j++;
     });
+    var eb_agginfo = getAgginfo(tvPref4User);
+    summarize2(tableid, eb_agginfo, scrolly);
+
 }
 
 function showOrHideAggrControl(objbtn, scrolly) {
@@ -140,15 +218,16 @@ function showOrHideFilter(objbtn, scrolly) {
         $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();:not(.Class)
     else {
-        $.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
-            if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
-                $(obj).show();
-        });
+        $('#' + tableid + '_container table thead tr[class=addedbyeb]').show();
+        //$.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
+        //    if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
+        //        $(obj).show();
+        //});
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
     }
 
     clearFilter(tableid);
-    $('#' + tableid).DataTable().columns.adjust();
+    //$('#' + tableid).DataTable().columns.adjust();
 }
 
 function clearFilter(tableid) {
@@ -205,17 +284,18 @@ function clickAlSlct(e, objchk) {
     e.stopPropagation();
 }
 
-function summarize2(api, tableId, eb_agginfo, scrollY) {
+function summarize2(tableId, eb_agginfo, scrollY) {
+    var api = $("#" + tableId).DataTable();
     var p;
     var ftrtxt;
     $.each(eb_agginfo, function (index, agginfo) {
         if (scrollY > 0) {
-            p = $('table:eq(2) tfoot #' + tableId + '_' + agginfo.colname + '_ftr_sel1').text().trim();
-            ftrtxt = '.dataTables_scrollFoot #' + tableId + '_' + agginfo.colname + '_ftr_txt1';
+            p = $('table:eq(2) tfoot #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+            ftrtxt = '.dataTables_scrollFoot #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
         }
         else {
-            p = $('#' + tableId + '_' + agginfo.colname + '_ftr_sel1').text().trim();
-            ftrtxt = '#' + tableId + '_' + agginfo.colname + '_ftr_txt1';
+            p = $('#' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+            ftrtxt = '#' + tableId + '_' + agginfo.colname + '_ftr_txt0';
         }
         var col = api.column(agginfo.colname + ':name');
 
@@ -240,9 +320,9 @@ function fselect_func(tableid, objsel, scrollY) {
     var col = api.column(colum + ':name');
     var ftrtxt;
     if (scrollY > 0)
-        ftrtxt = '.dataTables_scrollFoot #' + table + '_' + colum + '_ftr_txt1';
+        ftrtxt = '.dataTables_scrollFoot #' + table + '_' + colum + '_ftr_txt0';
     else
-        ftrtxt = '#' + table + '_' + colum + '_ftr_txt1';
+        ftrtxt = '#' + table + '_' + colum + '_ftr_txt0';
     if (selValue === '∑')
         pageTotal = col.data().sum();
     else if (selValue === '∓')
@@ -462,7 +542,7 @@ function ExportToExcel(tableid) {
 }
 
 
-function GetFiltersFromSettingsTbl(tvPref4User, tableId) {
+function GetFiltersFromSettingsTbl(tvPref4User, tableId, zindex) {
     var ResArray = [];
     $.each(tvPref4User, function (i, col) {
         var _ls = "";
@@ -478,16 +558,16 @@ function GetFiltersFromSettingsTbl(tvPref4User, tableId) {
             var header_text1 = tableId + "_" + col.name + "_hdr_txt1";
             var header_text2 = tableId + "_" + col.name + "_hdr_txt2";
 
-            _ls += "<th style='padding: 0px; margin: 0px'>";
+            _ls += "<th style='padding: 0px; margin: 0px; height: 40px;'>";
 
-            if (col.type === "System.Int32" || col.type === "System.Decimal")
-                _ls += (span + getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
+            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
+                _ls += (span + getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
             else if (col.type === "System.String")
-                _ls += (span + getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
+                _ls += (span + getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
             else if (col.type === "System.DateTime")
-                _ls += (span + getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2));
+                _ls += (span + getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
             else if (col.type === "System.Boolean")
-                _ls += (span + getFilterForBoolean(col.name, tableId));
+                _ls += (span + getFilterForBoolean(col.name, tableId, zindex));
             else
                 _ls += (span);
 
@@ -498,14 +578,14 @@ function GetFiltersFromSettingsTbl(tvPref4User, tableId) {
     return ResArray;
 }
 
-function getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2) {
+function getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex) {
     var coltype = "data-coltyp='numeric'";
     var drptext = "";
 
     drptext = "<div class='input-group'>" +
     "<div class='input-group-btn'>" +
         " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-        " <ul class='dropdown-menu'>" +
+        " <ul class='dropdown-menu'  style='z-index:" + zindex.toString() + "'>" +
         "   <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
           " <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + "><</a></li>" +
           " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">></a></li>" +
@@ -521,12 +601,12 @@ function getFilterForNumeric(header_text1, header_select, data_table, htext_clas
     return drptext;
 }
 
-function getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2) {
+function getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex) {
     var coltype = "data-coltyp='date'";
     var filter = "<div class='input-group'>" +
     "<div class='input-group-btn'>" +
        " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-        "<ul class='dropdown-menu'>" +
+        "<ul class='dropdown-menu'  style='z-index:" + zindex.toString() + "'>" +
          " <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
          " <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + "><</a></li>" +
          " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">></a></li>" +
@@ -542,10 +622,10 @@ function getFilterForDateTime(header_text1, header_select, data_table, htext_cla
     return filter;
 }
 
-function getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2) {
+function getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex) {
     var drptext = "";
     drptext = "<div class='input-group'>" +
-    "<div class='input-group-btn'>" +
+    "<div class='input-group-btn' style='z-index:" + zindex.toString() + "'>" +
        " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
        " <ul class='dropdown-menu'>" +
        "   <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">x*</a></li>" +
@@ -559,11 +639,11 @@ function getFilterForString(header_text1, header_select, data_table, htext_class
     return drptext;
 }
 
-function getFilterForBoolean(colum, tableId) {
+function getFilterForBoolean(colum, tableId, zindex) {
     var filter = "";
     var id = tableId + "_" + colum + "_hdr_txt1";
     var cls = tableId + "_hchk";
-    filter = "<input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext'>";
+    filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext'></center>";
     return filter;
 }
 
@@ -585,19 +665,19 @@ function Agginfo(col) {
 function getAgginfo(tvPref4User) {
     var _ls = [];
     $.each(tvPref4User, function (i, col) {
-        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal"))
+        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64"))
             _ls.push(new Agginfo(col.name));
     });
 
     return _ls;
 }
 
-function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api) {
+function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, zindex) {
     var ResArray = [];
     var _ls;
     $.each(tvPref4User, function (i, col) {
         if (col.visible) {
-            if (col.type === "System.Int32" || col.type === "System.Decimal") {
+            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
                 var footer_select_id = tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
@@ -613,7 +693,7 @@ function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api) {
                 "  <li><a href ='#' onclick=\"fselect_func('" + tableId + "', this, " + ScrollY + ");\"" + data_table + " " + data_colum + " " + data_decip + " {4}>&mnplus;</a></li>" +
                " </ul>" +
                " </div>" +
-               " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;'>" +
+               " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;' style='z-index:" + zindex.toString() + "'>" +
                " </div>";
             }
             else
@@ -655,12 +735,11 @@ function getData4SettingsTbl(tvPref4User) {
     return colarr;
 }
 
-function getIndex(ds_columns, col_name) {
+function getIndex(tvPref4User, col_name) {
     var colindex = -1;
-    $.each(ds_columns, function (i, col) {
-        if (col.ColumnName.trim() === col_name.trim()) {
-            colindex = col.ColumnIndex;
-            return false;
+    $.each(tvPref4User, function (i, col) {
+        if (col.name.trim() === col_name.trim()) {
+            colindex = col.data;
         }
     });
 
@@ -695,12 +774,12 @@ function GetSettingsModal(tableid, tvId, tvName) {
     ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
     ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
-"                                        <div id='propHead'></div><div id='propGrid'></div>" +
-                                        "<div>" +
-                                            "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
-                                            "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
-                                        "</div>" +
-                                    "</div>");
+ "                                        <div id='propHead'></div><div id='propGrid'></div>" +
+                                         "<div>" +
+                                             "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
+                                             "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
+                                         "</div>" +
+ "</div>");
 
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
@@ -730,6 +809,7 @@ function GetSettingsModal(tableid, tvId, tvName) {
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
         var n, d, t, v, w, ty, cls;
+        objcols.push(new coldef(getIndex(__tvPrefUser, "id"), "", false, "", "id", "", ""));
         $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
             ct++;
             if (obj.type == 'text' && obj.name == 'name')
@@ -752,10 +832,10 @@ function GetSettingsModal(tableid, tvId, tvName) {
                     var replacedName = fontName.replace(/ /g, "_");
                     style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
                     document.getElementsByTagName('head')[0].appendChild(style);
-                    cls = 'font_' + replacedName;
+                    cls = 'font_' + replacedName + ' tdheight';
                 }
                 else
-                    cls = '';
+                    cls = 'tdheight';
             }
             if (ct === api.columns().count()) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
@@ -782,10 +862,17 @@ function GetSettingsModal(tableid, tvId, tvName) {
     });
 }
 
+function getData4Id() {
+
+}
+
+var __tvPrefUser = null;
+
 function callPost4SettingsTable() {
     $.post('GetTVPref4User', { tvid: '0' },
         function (data2) {
             var data2Obj = JSON.parse(data2);
+            __tvPrefUser = data2Obj.columns;
             $("#serial_check").prop("checked", data2Obj.hideSerial);
             $("#select_check").prop("checked", data2Obj.hideCheckbox);
             $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
@@ -805,13 +892,14 @@ function callPost4SettingsTable() {
                 //select:true,
                 initComplete: function (settings, json) {
                     $('.font').fontselect();
-                    this.api().columns.adjust();
+                    $('#Table_Settings').DataTable().columns.adjust();
+                    //settings_tbl.columns.adjust();
                 },
             });
             $('#Table_Settings tbody').on('click', 'tr', function () {
                 var idx = settings_tbl.row(this).index();
-                //alert("(purath) " + settings_tbl.row(idx).data().name.toString());
-                //alert("(purath) data2Obj.columnsext:" + JSON.stringify(data2Obj.columnsext));
+                //alert(settings_tbl.row(idx).data().name.toString());
+                //alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
                 CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
             });
         });
@@ -841,7 +929,10 @@ function column4SettingsTbl() {
     colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
     colArr.push(new coldef4Setting('className', 'Font', "", function (data, type, row, meta) {
         if (data.length > 0 && data !== undefined) {
-            var fontName = data.substring(5).replace(/_/g, " ");
+            var fontName = data.replace("tdheight", " ");
+            fontName = fontName.substring(5).replace(/_/g, " ");
+            index = fontName.lastIndexOf(" ");
+            fontName = fontName.substring(0, index);
             return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
         }
         else

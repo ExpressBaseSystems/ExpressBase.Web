@@ -70,7 +70,7 @@
     };
 
     setTimeout(function () {
-        $('#Table_Settings_wrapper').css("width", "823px").css("border", "solid 1px #dededf").css("border-top", "transparent");
+        $('#Table_Settings_wrapper').css("width", "822px").css("border", "solid 1px #dededf").css("border-top", "transparent");
         $('.prop-grid-cont').css("visibility", "visible");
         $('#propGrid table').removeClass("pgTable").addClass("table-bordered table-hover");
         $('.dropdown ul li').click(function () {

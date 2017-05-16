@@ -265,4 +265,19 @@ input[type="color"] {
     background-color: #6699bb;
     height: 30px;
 }
+.prop-grid-cont {
+     display: inline-block;
+     vertical-align: top;
+     height: 346px;
+     visibility: hidden;
+     overflow-y: auto;
+     border: solid 1px #dededf;
+     margin-left:8px;
+     margin-top:7px;
+ }
+ 
+ #Table_Settings_wrapper{
+     display:inline-block;
+     width:1015px;
+ }
 

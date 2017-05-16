@@ -1,23 +1,51 @@
-﻿function CreatePropGrid(columnsext) {
-    var setObj = {
-        AggInfo: true,
-        DecimalPlace: 2,
-        buyColor: '#00ff00',
-        RenderAs: "default",
-        ebtype: 'I am ebtype'
-    };
+﻿function CreatePropGrid(RowObj, colExt) {
+    $('#propGrid').empty();
+    $('#propHead').empty().html("<strong> " + RowObj.name + "</strong>");
+    var NumProps = null;
+    var metaObj = null;
+    //alert("ji=" + JSON.stringify(RowObj));
+    $.each(colExt, function (i, obj) {
+        if (obj.name === RowObj.name) {
+            alert("type= " + RowObj.type.toString());
+            if (RowObj.type.toString().trim() === "System.Int32" || RowObj.type.toString().trim() === "System.Decimal") {
+                NumProps = {
+                    AggInfo: obj.AggInfo,
+                    DecimalPlace: obj.DecimalPlace,
+                    RenderAs: obj.RenderAs.toString()
+                };
+                metaObj = {
+                    AggInfo: { group: 'Behavior ', name: 'Aggragate', type: 'boolean' },
+                    DecimalPlace: { group: 'Behavior ', name: 'DecimalPlace', type: 'number', options: { min: 0, max: 500, step: 10 } },
+                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'options', options: [{ text: 'default', value: "default" }, { text: 'Progressbar', value: "Progressbar" }] },
+                };
+            } else if (RowObj.type.toString().trim() === "System.Boolean") {
+                NumProps = {
+                    IsEditable: obj.IsEditable,
+                    RenderAs: obj.RenderAs//(obj.RenderAs.type.toString() === "default") ? "default" : (obj.RenderAs.type.toString() === "text") ? "text" : "icon"
+                };
+                metaObj = {
+                    IsEditable: { group: 'Behavior ', name: 'IsEditable', type: 'boolean' },
+                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD' },
+                };
+            } else if (RowObj.type.toString().trim() === "System.DateTime") {
+                NumProps = {
+                };
+                metaObj = {
+                };
+            } else if (RowObj.type.toString().trim() === "System.String") {
+                NumProps = {
+                };
+                metaObj = {
+                };
+            }
+            else
+                alert("No matching case found for " + obj.name + "!! \n type : '" + RowObj.type.toString().trim() + "'");
+        }
 
-    // This is our settings object metadata
-    var cpOptions = { preferredFormat: 'hex', showInput: true, showInitial: true };
-    var metaObj = {
-        AggInfo: { group: 'Behavior ', name: 'Aggragate', type: 'boolean' },
-        DecimalPlace: { group: 'Behavior ', name: 'DecimalPlace', type: 'number', options: { min: 0, max: 500, step: 10 } },
-        RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'options', options: [{ text: 'default', value: "default" }, { text: 'Progressbar', value: "Progressbar" }] },
-        buyColor: { group: 'Appearance', name: 'Buy color', type: 'color', options: cpOptions },
-        ebtype: { group: 'Misc ', name: 'Ebtype', type: 'options', options: ['Yes', 'No', { text: 'Not sure', value: 'Maybe' }] }
-    };
 
-// This is the metadata object that describes the target object properties (optional)
+    });
+
+    // This is the metadata object that describes the target object properties (optional)
     var theCustomTypes = {
         icon: {
             html: function (elemId, name, value, meta) { // custom renderer for type (required)
@@ -25,26 +53,54 @@
             },
             valueFn: function () { return 'Icon field value'; }
         },
-        ebtype: {
+        BootstrapDD: {
             html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                return '<div style="background:pink" onclick = "f()"><i  class="fa fa-' + 'database' + '"></i></div>';
+                return "<div class='dropdown'>" +
+    "<button class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" + value +
+    " <span class='caret'></span></button>" +
+                "<ul class='dropdown-menu'>" +
+      "<li><a href='#'>Default</a></li>" +
+      "<li><a href='#'>Text</a></li>" +
+      "<li><a href='#'>Icon</a></li>" +
+    "</ul>" +
+  "</div>";
             },
-            valueFn: function () { return JSON.stringify(JSON.parse('{ "name":"John", "age":30, "city":"New York"}')) }
+            valueFn: function () { return $('.dropdown button').text().trim() }
         }
     };
 
     setTimeout(function () {
-        $('#Table_Settings_wrapper').css("display", "inline-block");
-        $("#settingsmodal [class=modal-content]").css("width", "1000px");
+        $('#Table_Settings_wrapper').css("width", "823px").css("border", "solid 1px #dededf").css("border-top", "transparent");
+        $('.prop-grid-cont').css("visibility", "visible");
+        $('#propGrid table').removeClass("pgTable").addClass("table-bordered table-hover");
+        $('.dropdown ul li').click(function () {
+            $(this).parent().siblings('[data-toggle=dropdown]').text($(this).text());
+            saveObj();
+        });
+
+        $('#propGrid table td').find("input").change(function () {
+            alert("val:" + $(this).val());
+            saveObj();
+        });
     }, 1);
 
+    $('#propGrid').jqPropertyGrid(NumProps, { meta: metaObj, customTypes: theCustomTypes });
 
-    alert(JSON.stringify(columnsext));
-    $('#propGrid').jqPropertyGrid(setObj, { meta: metaObj, customTypes: theCustomTypes });
+    function saveObj() {
+        var fObj = $('#propGrid').jqPropertyGrid('get');
+        fObj["name"] = RowObj.name;
+        $.each(colExt, function (i, obj) {
+            if (obj.name === RowObj.name) {
+                colExt[i] = fObj;
+            }
+
+        });
+        var first = JSON.stringify(fObj, null, '\t');
+        $('#txtValues').val(first + '\n\n');
+    }
 
     $('#btnGetValues').click(function () {
-
-        var first = JSON.stringify($('#propGrid').jqPropertyGrid('get'), null, '\t');
-        $('#txtValues').val(first + '\n\n');
+        saveObj();
+        alert("colExt.AggInfo=" + JSON.stringify(colExt));
     });
 }

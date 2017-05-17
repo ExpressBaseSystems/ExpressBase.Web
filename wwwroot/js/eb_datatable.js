@@ -767,11 +767,19 @@ function GetSettingsModal(tableid, tvId, tvName) {
     var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
     ModalFooterDiv.append(FooterButton);
-    ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox");
-    ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>");
-    ModalBodyTabPaneGenDiv.append("<br>Row Grouping<input type='numeric' id='rowGrouping_text'>");
-    ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
-    ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
+    ModalBodyTabPaneGenDiv.append("<div class='table-responsive'>"+          
+    "<table class='table table-bordered table-hover'>"+
+        "<tbody>"+
+	        "<tr> <td>Hide Serial</td>           <td><input type='checkbox' id='serial_check'></td> </tr>"+
+	        "<tr> <td>Hide Chechbox</td>         <td><input type='checkbox' id='select_check'></td> </tr>"+
+	        "<tr> <td>Page Length</td>           <td><input type='numeric' id='pageLength_text' value='100'></td> </tr>"+
+	        "<tr> <td>Table Height</td>          <td><input type='numeric' id='scrollY_text' value='300'></td> </tr>"+
+	        "<tr> <td>Row Grouping</td>          <td><input type='numeric' id='rowGrouping_text'></td> </tr>"+
+	        "<tr> <td>Left Fixed Columns         </td><td><input type='numeric' id='leftFixedColumns_text' value='0'></td> </tr>"+
+	        "<tr> <td>Right Fixed Columns</td>   <td><input type='numeric' id='rightFixedColumns_text' value='0'></td> </tr>"+
+        "</tbody>"+
+    "</table>"+
+"</div>");
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
     ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
  "                                        <div id='propHead'></div><div id='propGrid'></div>" +
@@ -905,6 +913,7 @@ function callPost4SettingsTable() {
                 searching: false,
                 info: false,
                 scrollY: '300',
+                scrollX: true,
                 select:true,
                 initComplete: function (settings, json) {
                     $('.font').fontselect();

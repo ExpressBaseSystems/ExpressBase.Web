@@ -42,4 +42,11 @@ Array.prototype.contains = function (element) {
     return false;
 };
 
-Array.prototype.splice.apply(arr, [0, anotherArr.length].concat(anotherArr))
+//Array.prototype.splice = function (startIdx, noOfEleRet) {
+//    var arr = [];
+//    for (var i = startIdx; i < (startIdx+noOfEleRet); i++) {
+//        arr.push(this[i]);
+//    }
+
+//    return arr;
+//};

@@ -3,10 +3,8 @@
     $('#propHead').empty().html("<strong> " + RowObj.name + "</strong>");
     var NumProps = null;
     var metaObj = null;
-    alert("colExt= " + JSON.stringify( colExt) );
     $.each(colExt, function (i, obj) {
         if (obj.name === RowObj.name) {
-            alert("type= " + RowObj.type.toString());
             if (RowObj.type.toString().trim() === "System.Int32" || RowObj.type.toString().trim() === "System.Decimal" ||  RowObj.type.toString().trim() === "System.Int16" ||  RowObj.type.toString().trim() === "System.Int64"){
                 NumProps = {
                     AggInfo: obj.AggInfo,
@@ -75,18 +73,16 @@
     };
 
     setTimeout(function () {
-        $('#Table_Settings_wrapper').css("width", "822px").css("border", "solid 1px #dededf").css("border-top", "transparent");
+        $('#Table_Settings_wrapper').css("width", "813px");
+        $('#Table_Settings_wrapper table:eq(0)').css("min-width", "813px");
+        $('#Table_Settings_wrapper table:eq(1)').css("min-width", "805px");
         $('.prop-grid-cont').css("visibility", "visible");
         $('#propGrid table').removeClass("pgTable").addClass("table-bordered table-hover");
         $('.dropdown ul li').click(function () {
             $(this).parent().siblings('[data-toggle=dropdown]').text($(this).text());
             saveObj();
         });
-
-        $('#propGrid table td').find("input").change(function () {
-            alert("val:" + $(this).val());
-            saveObj();
-        });
+        $('#propGrid table td').find("input").change(function () { saveObj(); });
     }, 1);
 
     $('#propGrid').jqPropertyGrid(NumProps, { meta: metaObj, customTypes: theCustomTypes });

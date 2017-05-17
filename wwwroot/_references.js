@@ -8,6 +8,7 @@
 /// <reference path="js/eb_jqpropertygrid.js" />
 /// <reference path="js/Eb_PropertyGrid.js" />
 /// <reference path="js/eb_validations.js" />
+/// <reference path="js/ebdatatable.js" />
 /// <reference path="js/elementqueries.js" />
 /// <reference path="js/gridstack.jqueryui.min.js" />
 /// <reference path="js/gridstack.js" />

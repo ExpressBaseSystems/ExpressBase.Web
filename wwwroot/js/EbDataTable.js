@@ -1,0 +1,991 @@
+﻿var Agginfo = function (col) {
+    this.colname = col;
+};
+
+var filter_obj = function (colu, oper, valu) {
+    this.c = colu;
+    this.o = oper;
+    this.v = valu;
+};
+
+var coldef = function (d, t, v, w, n, ty, cls) {
+    this.data = d;
+    this.title = t;
+    this.visible = v;
+    this.width = w;
+    this.name = n;
+    this.type = ty;
+    this.className = cls;
+};
+
+var coldef4Setting = function (d, t, cls, rnd, wid) {
+    this.data = d;
+    this.title = t;
+    this.className = cls;
+    this.render = rnd;
+    this.width = wid;
+};
+
+var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
+    this.dsid = ds_id;
+    this.dvid = dv_id;
+    this.ssurl = ss_url;
+    this.ebSettings = setting;
+    this.ebSettingsCopy = $.extend(true, {}, setting);
+    this.tableId = tid;
+    this.eb_agginfo = null;
+    this.isSecondTime = false;
+    this.Api = null;
+    this.order_info = new Object();
+    this.order_info.col = '';
+    this.order_info.dir = 0;
+
+    //Controls & Buttons
+    this.table_jQO = null;
+    this.btnGo = $('#btnGo');
+    this.filterBox = null;
+    this.filterbtn = null;
+    this.clearfilterbtn = null;
+    this.totalpagebtn = null;
+    this.copybtn = null;
+    this.printbtn = null;
+    this.settingsbtn = null;
+    this.OuterModalDiv = null;
+
+    //temp
+    this.eb_filter_controls_4fc = [];
+    this.eb_filter_controls_4sb = [];
+    this.zindex = 0;
+    this.rowId = -1;
+
+    this.Init = function () {
+        this.table_jQO = $('#' + this.tableId);
+        this.filterBox = $('#filterBox');
+        this.filterbtn = $('#4filterbtn');
+        this.clearfilterbtn = $("#clearfilterbtn");
+        this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
+        this.copybtn = $("#btnCopy");
+        this.printbtn = $("#btnPrint");
+        this.printAllbtn = $("#btnprintAll");
+        this.printSelectedbtn = $("#btnprintSelected");
+        this.excelbtn = $("#btnExcel");
+        this.csvbtn = $("#btnCsv");
+        this.pdfbtn = $("#btnPdf");
+        this.settingsbtn = $("#"+ this.tableId+ "_btnSettings");
+
+        this.eb_agginfo = this.getAgginfo();
+
+        this.table_jQO.append($(this.getFooterFromSettingsTbl()));
+
+        if (!this.ebSettings.hideCheckbox) {
+            this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
+            this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
+        }
+
+        this.Api = this.table_jQO.DataTable({
+            dom:'<\'col-sm-2\'l><\'col-sm-2\'i><\'col-sm-4\'B><\'col-sm-4\'p>tr',
+            buttons: ['copy', 'csv', 'excel', 'pdf','print', { extend: 'print', exportOptions: { modifier: { selected: true }}}],
+            scrollY: this.ebSettings.scrollY,
+            scrollX: true,
+            fixedColumns: { leftColumns: this.ebSettings.leftFixedColumns, rightColumns:this.ebSettings.rightFixedColumns },
+            //keys: true,
+            lengthMenu: this.ebSettings.lengthMenu,
+            serverSide: true,
+            processing:true,
+            language: { processing: '<div class=\'fa fa-spinner fa-pulse  fa-3x fa-fw\'></div>', info:'_START_ - _END_ / _TOTAL_'},
+            //pagingType:'@pagingType',
+            columns: this.ebSettings.columns, 
+            order: [],
+            deferRender: true,
+            filter: true,
+            select:true,
+            //@selectOption,$.fn.dataTable.pipeline(        pages: 5,)
+            retrieve: true,
+            ajax: {
+                url: this.ssurl + '/ds/data/' + this.dsid,
+                type: 'POST',
+                timeout: 180000,
+                data: this.ajaxData.bind(this),
+                dataSrc: function(dd) { return dd.data; }
+            },
+        
+            //fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+            //    colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull, @data.columns);
+            //},
+
+            fnFooterCallback: this.footerCallback.bind(this),
+            drawCallback: this.drawCallBackFunc.bind(this),
+            initComplete: this.initCompleteFunc.bind(this),
+        });
+
+        //$.fn.dataTable.ext.errMode = 'throw';
+
+        jQuery.fn.dataTable.Api.register('sum()', function () {
+            return this.flatten().reduce( function ( a, b ) {
+                if ( typeof a === 'string' ) {
+                    a = a.replace(/[^\d.-]/g, '') * 1;
+                }
+                if ( typeof b === 'string' ) {
+                    b = b.replace(/[^\d.-]/g, '') * 1;
+                }
+ 
+                return a + b;
+            }, 0 );
+        } );
+
+        jQuery.fn.dataTable.Api.register( 'average()', function () {
+            var data = this.flatten();
+            var sum = data.reduce( function ( a, b ) {
+                return (a*1) + (b*1); // cast values in-case they are strings
+            }, 0 );
+  
+            return sum / data.length;
+        });
+
+        $('#'+ this.tableId + '_fileBtns [name=filebtn]').css('display', 'inline-block');
+        $('#' + this.tableId + '_filterdiv [name=filterbtn]').css('display', 'inline-block');
+        $('#' + this.tableId + '_btnSettings').css('display', 'inline-block');
+
+        if(!this.ebSettings.hideSerial)
+            this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+
+        //new ResizeSensor(jQuery('#@tableId_container'), function() {
+        //    if ( $.fn.dataTable.isDataTable( '#@tableId' ) )
+        //        @tableId.columns.adjust();
+        //});
+    };
+
+    this.ajaxData = function(dq) { 
+        delete dq.columns; delete dq.order; delete dq.search;
+        dq.Id = this.dsid;
+        dq.Token = getToken();
+        dq.TFilters = JSON.stringify(this.repopulate_filter_arr());
+        dq.Params = JSON.stringify(getFilterValues());
+        dq.OrderByCol = this.order_info.col; 
+        dq.OrderByDir = this.order_info.dir;
+    };
+
+    this.btnGoClick = function (e) {
+        if (!this.isSecondTime) {
+            this.isSecondTime = true;
+            this.Init();
+            this.filterBox.collapse('hide');
+        }
+        else
+            this.Api.ajax.reload();
+    };
+
+    this.getAgginfo = function () {
+        var _ls = [];
+        $.each(this.ebSettings.columns, function (i, col) {
+            if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64"))
+                _ls.push(new Agginfo(col.name));
+        });
+
+        return _ls;
+    };
+
+    this.getFooterFromSettingsTbl = function () {
+        var ftr_part = "";
+        $.each(this.ebSettings.columns, function (i, col) {
+            if (col.visible)
+                ftr_part += "<th style=\"padding: 0px; margin: 0px\"></th>";
+            else
+                ftr_part += "<th style=\"display:none;\"></th>";
+        });
+        return "<tfoot>" + ftr_part + "<tr>" + ftr_part + "</tr></tfoot>";
+    };
+
+    this.repopulate_filter_arr = function () {
+        var table = this.tableId;
+        var filter_obj_arr = [];
+        var api = this.Api;
+        if (api !== null) {
+            $.each(this.Api.columns().header().toArray(), function (i, obj) {
+                var colum = $(obj).children(0).text(); 
+                if (colum !== '') {
+                    var oper;
+                    var val1, val2;
+                    var textid = '#' + table + '_' + colum + '_hdr_txt1';
+                    var type = $(textid).attr('data-coltyp');
+                    if (type == 'boolean') {
+                        val1 = ($(textid).is(':checked')) ? "true" : "false";
+                        if (!($(textid).is(':indeterminate')))
+                            filter_obj_arr.push(new filter_obj("INV." + colum, "=", val1));
+                    }
+                    else {
+                        oper = $('#' + table + '_' + colum + '_hdr_sel').text(); 
+                        if (api.columns(i).visible()[0]) {
+                            if (oper !== '' && $(textid).val() !== '') {
+                                if (oper === 'B') {
+                                    val1 = $(textid).val();
+                                    val2 = $(textid).siblings('input').val();
+                                }
+
+                                if (oper === 'B' && val1 !== '' && val2 !== '') {
+                                    if (type === 'numeric') {
+                                        filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
+                                        filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
+                                    }
+                                    else if (type === 'date') {
+                                        if (val2 > val1) {
+                                            filter_obj_arr.push(new filter_obj(colum, ">=", val1));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                                        }
+                                        else {
+                                            filter_obj_arr.push(new filter_obj(colum, ">=", val2));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                                        }
+                                    }
+                                }
+                                else
+                                    filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        return filter_obj_arr;
+    };
+
+    this.initCompleteFunc = function (settings, json) { this.createFilterRowHeader(); this.addFilterEventListeners(); }
+
+    this.footerCallback = function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
+        if(this.eb_agginfo.length > 0 ) {
+            this.createFooter(0);
+            this.createFooter(1);
+        }
+    };
+
+    this.drawCallBackFunc = function ( settings ) {
+        $('tbody [data-toggle=toggle]').bootstrapToggle();
+        if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
+        this.summarize2()
+    };
+
+    this.doRowgrouping = function () {
+        var rows = this.Api.rows({ page: 'current' }).nodes();
+        var last = null;
+
+        this.Api.column(this.Api.columns(this.ebSettings.rowGrouping + ':name').indexes()[0], { page: 'current' }).data().each(function (group, i) {
+            if (last !== group) {
+                $(rows).eq(i).before('<tr class=\'group\'><td colspan=\'15\'>' + group + '</td></tr>');
+                last = group;
+            }
+        });
+    };
+
+    this.doSerial = function () {
+        this.Api.column(0).nodes().each( function (cell, i) { cell.innerHTML = i+1; } );
+    };
+
+    this.createFooter = function(pos) {
+        var tx = this.ebSettings;
+        var lfoot = $('#' + this.tableId + '_container .DTFC_LeftFootWrapper table');
+        var rfoot = $('#' + this.tableId + '_container .DTFC_RightFootWrapper table');
+        var scrollfoot = $('#' + this.tableId + '_container .dataTables_scrollFootInner table');
+
+        if (lfoot !== null || rfoot !== null)
+            var eb_footer_controls_lfoot = this.GetAggregateControls(pos, 50);
+        if (scrollfoot !== null)
+            var eb_footer_controls_scrollfoot = this.GetAggregateControls(pos, 1);
+        $('#' + this.tableId + '_btntotalpage').show();
+        if (pos === 1)
+            $('#' + this.tableId + '_container tfoot tr:eq(' + pos + ')').hide();
+        var j = 0;
+        $('#' + this.tableId + '_container tfoot tr:eq(' + pos + ') th').each(function (idx) {
+            if (lfoot !== null) {
+                if (j < tx.leftFixedColumns)
+                    $(this).html(eb_footer_controls_lfoot[idx]);
+            }
+
+            if (rfoot !== null) {
+                if (j == eb_footer_controls_lfoot.length - tx.rightFixedColumns) {
+                    if (j < eb_footer_controls_lfoot.length)
+                        $(this).html(eb_footer_controls_lfoot[idx]);
+                }
+            }
+
+            if (scrollfoot !== null) {
+                if (tx.leftFixedColumns + tx.rightFixedColumns > 0) {
+                    if (j < eb_footer_controls_scrollfoot.length - tx.rightFixedColumns)
+                        $(this).html(eb_footer_controls_scrollfoot[idx]);
+                }
+
+                else {
+                    if (j < eb_footer_controls_scrollfoot.length)
+                        $(this).html(eb_footer_controls_scrollfoot[idx]);
+                }
+            }
+
+            j++;
+        });
+
+        this.summarize2();
+    };
+
+    this.GetAggregateControls = function(footer_id, zidx) {
+        var ScrollY = this.ebSettings.scrollY;
+        var ResArray = [];
+        var _ls;
+        var tableId = this.tableId;
+        $.each(this.ebSettings.columns, function (i, col) {
+            if (col.visible) {
+                if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
+                    var footer_select_id = tableId + "_" + col.name + "_ftr_sel" + footer_id;
+                    var fselect_class = tableId + "_fselect";
+                    var data_colum = "data-column=" + col.name;
+                    var data_table = "data-table=" + tableId;
+                    var footer_txt = tableId + "_" + col.name + "_ftr_txt" + footer_id;
+                    var data_decip = "data-decip=2";
+
+                    _ls = "<div class='input-group'>" +
+                    "<div class='input-group-btn'>" +
+                    "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
+                   " <ul class='dropdown-menu'>" +
+                    "  <li><a href ='#' class='eb_ftsel' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + ">&sum;</a></li>" +
+                    "  <li><a href ='#' class='eb_ftsel' " + data_table + " " + data_colum + " " + data_decip + " {4}>x&#772;</a></li>" +
+                   " </ul>" +
+                   " </div>" +
+                   " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;' style='z-index:" + zidx.toString() + "'>" +
+                   " </div>";
+                }
+                else
+                    _ls = "&nbsp;";
+
+                ResArray.push(_ls);
+            }
+        });
+        return ResArray;
+    };
+
+    this.summarize2 = function() {
+        var api = this.Api;
+        var tableId = this.tableId;
+        var scrollY = this.ebSettings.scrollY;
+        var p;
+        var ftrtxt;
+        $.each(this.eb_agginfo, function (index, agginfo) {
+            if (scrollY > 0) {
+                p = $('table:eq(2) tfoot #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                ftrtxt = '.dataTables_scrollFoot #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+            }
+            else {
+                p = $('#' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                ftrtxt = '#' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+            }
+            var col = api.column(agginfo.colname + ':name');
+
+            var summary_val = 0;
+            if (p === '∑')
+                summary_val = col.data().sum();
+            if (p === 'x̄') {
+                summary_val = col.data().average();
+            }
+            // IF decimal places SET, round using toFixed
+            $(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val.toFixed(2));
+        });
+    };
+
+    this.createFilterRowHeader = function () {
+        var tableid = this.tableId;
+        var order_info_ref = this.order_info;
+
+        var fc_lh_tbl = $('#' + tableid + '_container .DTFC_LeftHeadWrapper table');
+        var fc_rh_tbl = $('#' + tableid + '_container .DTFC_RightHeadWrapper table');
+
+        if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
+            this.GetFiltersFromSettingsTbl(50);
+            if (fc_lh_tbl !== null) {
+                fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+                for (var j = 0; j < this.ebSettings.leftFixedColumns; j++)
+                    $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
+            }
+            if (fc_rh_tbl !== null) {
+                fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+                for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.rightFixedColumns; j < this.eb_filter_controls_4fc.length; j++)
+                    $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
+            }
+        }
+
+        var sc_h_tbl = $('#' + tableid + '_container .dataTables_scrollHeadInner table');
+        if (sc_h_tbl !== null) {
+            this.GetFiltersFromSettingsTbl(1);
+            sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+            if (this.ebSettings.leftFixedColumns + this.ebSettings.rightFixedColumns > 0) {
+                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++) {
+                    if (j < this.ebSettings.leftFixedColumns)
+                        $(sc_h_tbl.find("tr[class=addedbyeb]")).append("<th>&nbsp;</th>");
+                    else {
+                        if (j < this.eb_filter_controls_4sb.length - this.ebSettings.rightFixedColumns)
+                            $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
+                        else
+                            $(sc_h_tbl.find("tr[class=addedbyeb]")).append("<th>&nbsp;</th>");
+                    }
+                }
+            }
+            else {
+                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++)
+                    $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
+            }
+        }
+
+        $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
+
+        $('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
+    };
+
+    this.addFilterEventListeners = function () {
+        $('#' + this.tableId + '_container thead tr:eq(0)').off('click').on('click', 'th', this.orderingEvent.bind(this));
+        $(".eb_fsel").click(this.setLiValue);
+        $(".eb_ftsel").click(this.fselect_func.bind(this));
+        $(".eb_finput").keypress(this.call_filter);
+        $(".eb_fbool").change(this.toggleInFilter.bind(this));
+        $(".eb_selall").click(this.clickAlSlct.bind(this));
+        $("." + this.tableId + "_select").click(this.updateAlSlct.bind(this));
+
+        this.filterbtn.click(this.showOrHideFilter.bind(this));
+        this.clearfilterbtn.click(this.clearFilter.bind(this));
+        this.totalpagebtn.click(this.showOrHideAggrControl.bind(this));
+        this.copybtn.click(this.CopyToClipboard.bind(this));
+        this.printbtn.click(this.ExportToPrint.bind(this));
+        this.printAllbtn.click(this.printAll.bind(this));
+        this.printSelectedbtn.click(this.printSelected.bind(this));
+        this.excelbtn.click(this.ExportToExcel.bind(this));
+        this.csvbtn.click(this.ExportToCsv.bind(this));
+        this.pdfbtn.click(this.ExportToPdf.bind(this));
+        this.settingsbtn.click(this.GetSettingsModal.bind(this));
+    };
+
+    this.orderingEvent = function (e) {
+        var col = $(e.target).children('span').text();
+        var cls = $(e.target).attr('class');
+        if (col !== '') {
+            this.order_info.col = col;
+            this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
+        }
+    };
+
+    this.GetFiltersFromSettingsTbl = function (zidx) {
+        this.zindex = zidx;
+        if (this.zindex === 50)
+            this.eb_filter_controls_4fc = [];
+        else if (this.zindex === 1)
+            this.eb_filter_controls_4sb = [];
+
+        $.each(this.ebSettings.columns, this.GetFiltersFromSettingsTbl_inner.bind(this));
+    };
+
+    this.GetFiltersFromSettingsTbl_inner = function (i, col) {
+        var _ls = "";
+        if (col.visible == true) {
+            var span = "<span hidden>" + col.name + "</span>";
+
+            var htext_class = this.tableId + "_htext";
+
+            var data_colum = "data-colum='" + col.name + "'";
+            var data_table = "data-table='" + this.tableId + "'";
+
+            var header_select = this.tableId + "_" + col.name + "_hdr_sel";
+            var header_text1 = this.tableId + "_" + col.name + "_hdr_txt1";
+            var header_text2 = this.tableId + "_" + col.name + "_hdr_txt2";
+
+            _ls += "<th style='padding: 0px; margin: 0px; height: 40px;'>";
+
+            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
+                _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+            else if (col.type === "System.String")
+                _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+            else if (col.type === "System.DateTime")
+                _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+            else if (col.type === "System.Boolean")
+                _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
+            else
+                _ls += (span);
+
+            _ls += ("</th>");
+        }
+        ((this.zindex === 50) ? this.eb_filter_controls_4fc : this.eb_filter_controls_4sb).push(_ls);
+    };
+
+    this.getFilterForNumeric = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
+        var coltype = "data-coltyp='numeric'";
+        var drptext = "";
+
+        drptext = "<div class='input-group'>" +
+        "<div class='input-group-btn'>" +
+            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+            " <ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
+            "   <li ><a href ='#' class='eb_fsel' " + data_table + data_colum + ">=</a></li>" +
+              " <li><a href ='#' class='eb_fsel' " + data_table + data_colum + "><</a></li>" +
+              " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">></a></li>" +
+              " <li><a href='#' class='eb_fsel' " + data_table + data_colum + "><=</a></li>" +
+              " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">>=</a></li>" +
+              "<li ><a href='#' class='eb_fsel' " + data_table + data_colum + ">B</a></li>" +
+            " </ul>" +
+        " </div>" +
+        " <input type='number' class='form-control eb_finput" + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        " <span class='input-group-btn'></span>" +
+        " <input type='number' class='form-control eb_finput" + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
+        " </div> ";
+        return drptext;
+    };
+
+    this.getFilterForDateTime = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
+        var coltype = "data-coltyp='date'";
+        var filter = "<div class='input-group'>" +
+        "<div class='input-group-btn'>" +
+           " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+            "<ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
+             " <li ><a href ='#' class='eb_fsel' " + data_table + data_colum + ">=</a></li>" +
+             " <li><a href ='#' class='eb_fsel' " + data_table + data_colum + "><</a></li>" +
+             " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">></a></li>" +
+             " <li><a href='#' class='eb_fsel' " + data_table + data_colum + "><=</a></li>" +
+             " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">>=</a></li>" +
+             " <li ><a href='#' class='eb_fsel' " + data_table + data_colum + ">B</a></li>" +
+           " </ul>" +
+        " </div>" +
+        " <input type='date' class='form-control eb_finput" + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        " <span class='input-group-btn'></span>" +
+        " <input type='date' class='form-control eb_finput" + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
+        " </div> ";
+        return filter;
+    };
+
+    this.getFilterForString = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
+        var drptext = "";
+        drptext = "<div class='input-group'>" +
+        "<div class='input-group-btn' style='z-index:" + zidx.toString() + "'>" +
+           " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
+           " <ul class='dropdown-menu'>" +
+           "   <li ><a href ='#' class='eb_fsel' " + data_table + data_colum + ">x*</a></li>" +
+            "  <li><a href ='#' class='eb_fsel' " + data_table + data_colum + ">*x</a></li>" +
+            "  <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">*x*</a></li>" +
+             " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">=</a></li>" +
+           " </ul>" +
+        " </div>" +
+        " <input type='text' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + ">" +
+        " </div> ";
+        return drptext;
+    };
+
+    this.getFilterForBoolean = function (colum, tableId, zidx) {
+        var filter = "";
+        var id = tableId + "_" + colum + "_hdr_txt1";
+        var cls = tableId + "_hchk";
+        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext eb_fbool'></center>";
+        return filter;
+    };
+
+    this.showOrHideFilter = function (e) {
+        if ($('#' + this.tableId + '_container table thead tr[class=addedbyeb]').is(':visible'))
+            $('#' + this.tableId + '_container table thead tr[class=addedbyeb]').hide();
+        else {
+            $('#' + this.tableId + '_container table thead tr[class=addedbyeb]').show();
+        }
+
+        this.clearFilter();
+    };
+
+    this.clearFilter = function () {
+        var flag = false;
+        var tableid = this.tableId;
+        $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) {
+            if ($(this).hasClass(tableid + '_hchk')) {
+                if (!($(this).is(':indeterminate'))) {
+                    flag = true;
+                    $(this).prop("indeterminate", true);
+                }
+            }
+            else {
+                if ($(this).val() !== '') {
+                    flag = true;
+                    $(this).val('');
+                }
+            }
+        });
+        if (flag)
+            this.Api.ajax.reload();
+    };
+
+    this.setLiValue = function (e) {
+        var selText = $(e.target).text();
+        var table = $(e.target).attr('data-table');
+        var colum = $(e.target).attr('data-colum');
+        $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
+        $(e.target).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
+    };
+
+    this.call_filter = function (e) {
+        if (e.keyCode === 13)
+            $('#' + $(e.target).attr('data-table')).DataTable().ajax.reload();
+    };
+
+    this.toggleInFilter = function (e) {
+        var table = $(e.target).attr('data-table');
+        this.Api.ajax.reload();
+    };
+
+    this.fselect_func = function (e) {
+        var selValue = $(e.target).text().trim();
+        $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
+        var table = $(e.target).attr('data-table');
+        var colum = $(e.target).attr('data-column');
+        var decip = $(e.target).attr('data-decip');
+        var col = this.Api.column(colum + ':name');
+        var ftrtxt;
+        if (this.ebSettings.scrollY > 0)
+            ftrtxt = '.dataTables_scrollFoot #' + table + '_' + colum + '_ftr_txt0';
+        else
+            ftrtxt = '#' + table + '_' + colum + '_ftr_txt0';
+        if (selValue === '∑')
+            pageTotal = col.data().sum();
+        else if (selValue === 'x̄')
+            pageTotal = col.data().average();
+        // IF decimal places SET, round using toFixed
+        $(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal.toFixed(2));
+    };
+
+    this.clickAlSlct = function (e) {
+        var tableid = $(e.target).attr('data-table');
+        if (e.target.checked)
+            $('#' + this.tableId + '_container tbody [type=checkbox]:not(:checked)').trigger('click');
+        else
+            $('#' + this.tableId + '_container tbody [type=checkbox]:checked').trigger('click');
+
+        e.stopPropagation();
+    };
+
+    this.renderCheckBoxCol = function (data2, type, row, meta)
+    {
+        var idpos = $.grep(this.ebSettings.columns, function (e) { return e.name === "id"; })[0].data;
+        this.rowId = meta.row; //do not remove - for updateAlSlct
+        return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+    };
+
+    this.updateAlSlct = function (e) {
+        if (e.target.checked) {
+            this.Api.rows(this.rowId).select();
+            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
+        }
+        else {
+            this.Api.rows(this.rowId).deselect();
+            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
+        }
+        var CheckedCount = $('.' + this.tableId + '_select:checked').length;
+        var UncheckedCount = this.Api.rows().count() - CheckedCount;
+        if (CheckedCount === this.Api.rows().count()) {
+            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
+            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', true);
+        }
+        else if (UncheckedCount === this.Api.rows().count()) {
+            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
+            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
+        }
+    };
+
+    this.showOrHideAggrControl = function (e) {
+        if (this.ebSettings.scrollY !== 0)
+            $('#' + this.tableId + '_container table:eq(2) tfoot tr:eq(1)').toggle();
+        else 
+            $('#' + this.tableId + '_container table:eq(0) tfoot tr:eq(1)').toggle();
+    };
+
+    this.CopyToClipboard = function (e) {
+        $('#' + this.tableId + '_container').find('.buttons-copy').click();
+    };
+
+    this.ExportToPrint = function (e) {
+        $('#' + this.tableId + '_container').find('.buttons-print')[0].click();
+    };
+
+    this.ExportToExcel = function (e) {
+        $('#' + this.tableId + '_container').find('.buttons-excel').click();
+    };
+
+    this.ExportToCsv = function (e) {
+        $('#' + this.tableId + '_container').find('.buttons-csv').click();
+    };
+
+    this.ExportToPdf = function (e) {
+        $('#' + this.tableId + '_container').find('.buttons-pdf').click();
+    };
+
+    this.printSelected = function (e) {
+        $('#' + this.tableId + '_container').find('.buttons-print')[1].click();
+    };
+
+    this.printAll = function (e) {
+        $('#' + this.tableId + '_container').find('.buttons-print')[0].click();
+    };
+
+    this.GetSettingsModal=function (e) {
+        this.OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
+        var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
+        var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
+        var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
+        var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
+        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.title + ": SettingsTable");
+        var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
+        var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
+        var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
+        var ModalBodyAnchorCol = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#2a").text("Columns");
+        var ModalBodyliGen = $(document.createElement("li")).attr("class", "nav-item");
+        var ModalBodyAnchorGen = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#1a").text("General");
+        var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
+        var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
+        var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
+        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "1a");
+        var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
+        var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
+
+        ModalFooterDiv.append(FooterButton);
+        ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox");
+        ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>");
+        ModalBodyTabPaneGenDiv.append("<br>Row Grouping<input type='numeric' id='rowGrouping_text'>");
+        ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
+        ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
+        ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
+        ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
+     "                                        <div id='propHead'></div><div id='propGrid'></div>" +
+                                             "<div>" +
+                                                 "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
+                                                 "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
+                                             "</div>" +
+     "</div>");
+
+        ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
+        ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
+        ModalBodyliGen.append(ModalBodyAnchorGen);
+        ModalBodyliCol.append(ModalBodyAnchorCol);
+        ModalBodyUl.append(ModalBodyliGen);
+        ModalBodyUl.append(ModalBodyliCol);
+        ModalBodyDiv.append(ModalBodyUl);
+        ModalBodyDiv.append(ModalBodyTabDiv);
+        ModalHeaderDiv.append(headerButton);
+        ModalHeaderDiv.append(title);
+        ModalContentDiv.append(ModalHeaderDiv);
+        ModalContentDiv.append(ModalBodyDiv);
+        ModalContentDiv.append(ModalFooterDiv);
+        ModalSizeDiv.append(ModalContentDiv);
+        this.OuterModalDiv.append(ModalSizeDiv);
+
+        $(FooterButton).click(this.saveSettings.bind(this));
+        $(this.OuterModalDiv).on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
+        $(this.OuterModalDiv).on('hidden.bs.modal', this.hideModalFunc.bind(this));
+
+        $(this.OuterModalDiv).modal('show');
+    };
+
+    this.hideModalFunc = function (e) {
+        $('#Table_Settings').DataTable().destroy();
+        $(this).data('bs.modal', null);
+        $(this.OuterModalDiv).remove();
+
+        this.Api.destroy();
+        $('#' + this.tableId + '_divcont').children()[1].remove();
+        var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
+        $('#' + this.tableId + '_divcont').append(table);
+        this.ebSettings = $.extend(true, {}, this.ebSettingsCopy);
+        this.Init();
+    };
+
+    this.getColobj = function (col_name) {
+        var selcol = null;
+        $.each(this.ebSettings.columns, function (i, col) {
+            if (col.name.trim() === col_name.trim()) {
+                selcol = col;
+                return false;
+            }
+        });
+
+        return selcol;
+        //return new coldef(selcol.data, selcol.title, selcol.visible, selcol.width, selcol.name, selcol.type, selcol.className);
+    };
+
+    this.saveSettings = function () {
+        var ct = 0; var objcols = [];
+        var api = $('#Table_Settings').DataTable();
+        var n, d, t, v, w, ty, cls;
+        objcols.push(this.getColobj("id"));
+        $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
+            ct++;
+            if (obj.type == 'text' && obj.name == 'name')
+                n = obj.value;
+            else if (obj.type == 'text' && obj.name == 'index')
+                d = obj.value;
+            else if (obj.type == 'hidden' && obj.name == 'title')
+                t = obj.value + '<span hidden>' + n + '</span>';
+            else if (obj.type == 'checkbox')
+                v = obj.checked;
+            else if (obj.type == 'text' && obj.name == 'width')
+                w = obj.value;
+            else if (obj.type == 'text' && obj.name == 'type')
+                ty = obj.value;
+            else if (obj.className == 'font-select') {
+                if (!($(this).children('a').children('span').attr('style') == undefined)) {
+                    var style = document.createElement('style');
+                    style.type = 'text/css';
+                    var fontName = $(this).children('a').children('span').css('font-family');
+                    var replacedName = fontName.replace(/ /g, "_");
+                    style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
+                    document.getElementsByTagName('head')[0].appendChild(style);
+                    cls = 'font_' + replacedName + ' tdheight';
+                }
+                else
+                    cls = 'tdheight';
+            }
+            if (ct === api.columns().count()) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
+        });
+
+        this.ebSettingsCopy.hideSerial = $("#serial_check").prop("checked");
+        this.ebSettingsCopy.hideCheckbox = $("#select_check").prop("checked");
+        this.ebSettingsCopy.lengthMenu = this.GetLengthOption($("#pageLength_text").val());
+        this.ebSettingsCopy.scrollY = $("#scrollY_text").val();
+        this.ebSettingsCopy.rowGrouping = $("#rowGrouping_text").val();
+        this.ebSettingsCopy.leftFixedColumns = $("#leftFixedColumns_text").val();
+        this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
+        this.ebSettingsCopy.columns = objcols;
+        this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
+        this.updateRenderFunc();
+        if (this.ebSettingsCopy.rowGrouping.length > 0) {
+            var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
+            groupcols[0].visible = false;
+        }
+        $.post('TVPref4User', { tvid: this.ebSettingsCopy.dvid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
+    };
+
+    this.reinitDataTable = function () {
+        $(this.OuterModalDiv).modal('hide');
+    };
+
+    this.callPost4SettingsTable = function () {
+        var data2Obj = this.ebSettings; //JSON.parse(data2);
+        //__tvPrefUser = data2Obj;
+        $("#serial_check").prop("checked", data2Obj.hideSerial);
+        $("#select_check").prop("checked", data2Obj.hideCheckbox);
+        $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
+        $("#scrollY_text").val(data2Obj.scrollY);
+        $("#rowGrouping_text").val(data2Obj.rowGrouping);
+        $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
+        $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
+        var settings_tbl = $('#Table_Settings').DataTable(
+        {
+            columns: this.column4SettingsTbl(),
+            data: this.getData4SettingsTbl(),
+            paging: false,
+            ordering: false,
+            searching: false,
+            info: false,
+            scrollY: '300',
+            select: true,
+            initComplete: function (settings, json) {
+                $('.font').fontselect();
+                $('#Table_Settings').DataTable().columns.adjust();
+            },
+        });
+        CreatePropGrid(settings_tbl.row(0).data(), data2Obj.columnsext);
+        $('#Table_Settings tbody').on('click', 'tr', function () {
+            var idx = settings_tbl.row(this).index();
+            alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
+            CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
+            settings_tbl.columns.adjust();
+        });
+        $(".modal-content").on("click", function (e) {
+            if ($(e.target).closest(".font-select").length === 0) {
+                $(".font-select").removeClass('font-select-active');
+                $(".fs-drop").hide();
+            }
+        });
+    };
+
+    this.column4SettingsTbl = function () {
+        var colArr = [];
+        colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));
+        colArr.push(new coldef4Setting('name', 'Name', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
+        colArr.push(new coldef4Setting('type', ' Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
+        colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='hidden' value=" + data + " name='title' style='width: 100px;'>" + data : data; }, ""));
+        colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
+        colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
+        colArr.push(new coldef4Setting('className', 'Font', "", this.renderFontSelect, "30"));
+        return colArr;
+    };
+
+    this.getData4SettingsTbl = function() {
+        var colarr = [];
+        var n, d, t, v, w, ty, cls;
+        $.each(this.ebSettings.columns, function (i, col) {
+            if (col.name !== "serial" && col.name !== "id" && col.name !== "checkbox") {
+                n = col.name;
+                d = col.data;
+                t = col.title.substr(0, col.title.indexOf('<'));
+                v = (col.visible).toString().toLowerCase();
+                w = col.width.toString();
+                if (col.type) ty = col.type.toString();
+                cls = col.className;
+                if (cls == undefined)
+                    cls = "";
+                colarr.push(new coldef(d, t, v, w, n, ty, cls));
+            }
+        });
+        return colarr;
+    };
+
+    this.renderFontSelect = function (data, type, row, meta) {
+        if (data.length > 0 && data !== undefined) {
+            var fontName = data.replace("tdheight", " ");
+            fontName = fontName.substring(5).replace(/_/g, " ");
+            index = fontName.lastIndexOf(" ");
+            fontName = fontName.substring(0, index);
+            return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
+        }
+        else
+            return "<input type='text' class='font' style='width: 100px;' name='font'>";
+    };
+
+    this.GetLengthOption = function(len) {
+        var ia = [];
+        for (var i = 0; i < 10; i++)
+            ia[i] = (len * (i + 1));
+        return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
+    };
+
+    this.AddSerialAndOrCheckBoxColumns = function (tx) {
+        if (!tx.hideCheckbox) {
+            var chkObj = new Object();
+            chkObj.data = null;
+            chkObj.title = "<input id='{0}_select-all' type='checkbox' onclick='clickAlSlct(event, this);' data-table='{0}'/>".replace("{0}", tableid);
+            chkObj.width = 10;
+            chkObj.orderable = false;
+            chkObj.visible = true;
+            chkObj.name = "checkbox";
+            var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
+            // chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
+            chkObj.render = this.renderCheckBoxCol.bind(this);
+            tx.unshift(chkObj);
+        }
+
+        if (!tx.hideSerial)
+            tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
+    };
+
+    this.updateRenderFunc = function () {
+        $.each(this.ebSettingsCopy.columns, this.updateRenderFunc_Inner.bind(this));
+    };
+
+    this.updateRenderFunc_Inner = function (i, col) {
+        if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
+            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Progressbar") {
+                this.ebSettingsCopy.columns[i].render = this.renderProgressCol;
+            }
+        }
+    };
+
+    this.renderProgressCol = function (data, type, row, meta) { 
+        return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>"; 
+    };
+    
+
+    this.btnGo.click(this.btnGoClick.bind(this));
+};

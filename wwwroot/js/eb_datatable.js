@@ -719,7 +719,7 @@ function getData4SettingsTbl(tvPref4User) {
     var colarr = [];
     var n, d, t, v, w, ty, cls;
     $.each(tvPref4User, function (i, col) {
-        if (col.name !== "serial" && col.name !== "id") {
+        if (col.name !== "serial" && col.name !== "id" && col.name !== "checkbox") {
             n = col.name;
             d = col.data;
             t = col.title.substr(0, col.title.indexOf('<'));
@@ -824,7 +824,7 @@ function GetSettingsModal(tableid, tvId, tvName) {
                 n = obj.value;
             else if (obj.type == 'text' && obj.name == 'index')
                 d = obj.value;
-            else if (obj.type == 'text' && obj.name == 'title')
+            else if (obj.type == 'hidden' && obj.name == 'title')
                 t = obj.value + '<span hidden>' + n + '</span>';
             else if (obj.type == 'checkbox')
                 v = obj.checked;
@@ -856,7 +856,9 @@ function GetSettingsModal(tableid, tvId, tvName) {
         objconf.leftFixedColumns = $("#leftFixedColumns_text").val();
         objconf.rightFixedColumns = $("#rightFixedColumns_text").val();
         objconf.columns = objcols;
+        AddSerialAndOrCheckBoxColumns(objconf.columns, tableid);
         objconf.columnsext = __tvPrefUser.columnsext;
+        updateRenderFunc(objconf.columns, objconf.columnsext);
         if (objconf.rowGrouping.length > 0) {
             var groupcols = $.grep(objconf.columns, function (e) { return e.name === objconf.rowGrouping });
             groupcols[0].visible = false;
@@ -867,12 +869,25 @@ function GetSettingsModal(tableid, tvId, tvName) {
         $('#' + tableid + '_divcont').children()[1].remove();
         var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', tableid);
         $('#' + tableid + '_divcont').append(table);
-        eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.stringify(objconf)));
+        //eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.stringify(objconf)));
+        initTable_EbDataGridViewControl1(objconf);
     });
 }
 
-function getData4Id() {
-
+function updateRenderFunc(rcolumns, rcolumnsext) {
+    $.each(rcolumns, function (i, col) {
+        var col = rcolumns[i];
+        //alert("rcolumns.Length" + rcolumns.length + "," + "rcolumnsext.Length" + rcolumnsext.length);
+        alert("col.Name :" + col.name + "," + "col.type :" + col.type);
+        if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
+        {
+            alert("rcolumnsext[i].Name: " + rcolumnsext[i].name + ", " + rcolumnsext[i].RenderAs);
+            if (rcolumnsext[i].RenderAs === "Progressbar") {
+                alert("rcolumnsext[i].Name: " + rcolumnsext[i].name + ", " + rcolumnsext[i].RenderAs);
+                rcolumns[i].render = function( data, type, row, meta ) { return renderProgressCol(data); };
+            }
+        }
+    });
 }
 
 var __tvPrefUser = null;
@@ -899,7 +914,7 @@ function callPost4SettingsTable() {
                 info: false,
                 scrollY: '300',
                 scrollX: true,
-                //select:true,
+                select:true,
                 initComplete: function (settings, json) {
                     $('.font').fontselect();
                     $('#Table_Settings').DataTable().columns.adjust();
@@ -909,9 +924,15 @@ function callPost4SettingsTable() {
             CreatePropGrid(settings_tbl.row(0).data(), data2Obj.columnsext);
             $('#Table_Settings tbody').on('click', 'tr', function () {
                 var idx = settings_tbl.row(this).index();
-                //alert(settings_tbl.row(idx).data().name.toString());
                 alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
                 CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
+                settings_tbl.columns.adjust();
+            });
+            $(".modal-content").on("click", function (e) {
+                if ($(e.target).closest(".font-select").length === 0) {
+                    $(".font-select").removeClass('font-select-active');
+                    $(".fs-drop").hide();
+                }
             });
         });
 }
@@ -933,9 +954,9 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 function column4SettingsTbl() {
     var colArr = [];
     colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));
-    colArr.push(new coldef4Setting('name', 'Name', '', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
+    colArr.push(new coldef4Setting('name', 'Name', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
     colArr.push(new coldef4Setting('type', ' Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
-    colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='title' style='width: 100px;'>" : data; }, ""));
+    colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='hidden' value=" + data + " name='title' style='width: 100px;'>"+data : data; }, ""));
     colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
     colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
     colArr.push(new coldef4Setting('className', 'Font', "", function (data, type, row, meta) {
@@ -953,7 +974,7 @@ function column4SettingsTbl() {
     return colArr;
 }
 
-function AddSerialAndOrCheckBoxColumns(tx, tableId, data_cols) {
+function AddSerialAndOrCheckBoxColumns(tx, tableId) {
     if (!tx.hideCheckbox) {
         var chkObj = new Object();
         chkObj.data = null;
@@ -961,13 +982,15 @@ function AddSerialAndOrCheckBoxColumns(tx, tableId, data_cols) {
         chkObj.width = 10;
         chkObj.orderable = false;
         chkObj.visible = true;
-        var idpos = $.grep(data_cols, function (e) { return e.ColumnName === "id"; })[0].ColumnIndex;
+        chkObj.name = "checkbox";
+        //var idpos = $.grep(data_cols, function (e) { return e.ColumnName === "id"; })[0].ColumnIndex;
+        var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
         chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
-        tx.columns.unshift(chkObj);
+        tx.unshift(chkObj);
     }
 
     if (!tx.hideSerial)
-        tx.columns.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
+        tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
 }
 
 function doRowgrouping(api, tx) {

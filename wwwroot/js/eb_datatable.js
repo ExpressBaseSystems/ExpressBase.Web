@@ -951,6 +951,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.render = rnd;
     this.width = wid;
 };
+
 function column4SettingsTbl() {
     var colArr = [];
     colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));

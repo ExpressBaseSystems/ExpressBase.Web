@@ -42,4 +42,4 @@ Array.prototype.contains = function (element) {
     return false;
 };
 
-Array.prototype.splice.apply(arr, [0, anotherArr.length].concat(anotherArr))
+//Array.prototype.splice.apply(arr, [0, anotherArr.length].concat(anotherArr))

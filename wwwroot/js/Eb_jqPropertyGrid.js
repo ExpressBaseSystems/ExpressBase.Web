@@ -23,7 +23,7 @@
                 };
                 metaObj = {
                     IsEditable: { group: 'Behavior ', name: 'IsEditable', type: 'boolean' },
-                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', 'Text', "Icon"] },
+                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', "Icon"] },
                 };
             } else if (RowObj.type.toString().trim() === "System.DateTime") {
                 NumProps = {

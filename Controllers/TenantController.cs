@@ -12,6 +12,7 @@ using ExpressBase.Web.Filters;
 using ExpressBase.Common;
 using ExpressBase.Objects;
 using System.Net;
+using ServiceStack.Text;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -224,29 +225,37 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult code_editor(int i)
+
+        public JsonResult SaveEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
+            var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
+       
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var f = new EbObjectWrapper
+            var ds = new EbObjectWrapper
             {
                 Token= ViewBag.token,
-                TenantAccountId= req["cid"],
+                TenantAccountId= _dict["tcid"],
                 EbObjectType = Objects.EbObjectType.DataSource,
-                Name ="dhdhsgd",
+                Name =_dict["Name"],
                 Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
                 { 
-                    Name = "dhdhsgd",
-                    Sql = req["code"]
+                    Name = _dict["Name"],
+                    Description = _dict["Description"],
+                    Sql = _dict["Sql"]
                 })
             };
 
-            using (client.Post<HttpWebResponse>(f)) { }
+            using (client.Post<HttpWebResponse>(ds)) { }
 
+            return Json("Success");
+        }
+
+        public IActionResult objects()
+        {
             return View();
         }
-        public IActionResult objects()
+        public IActionResult ds_save()
         {
             return View();
         }

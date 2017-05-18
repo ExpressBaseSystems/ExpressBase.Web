@@ -1,12 +1,3 @@
-//$.fn.dataTable.Api.register('column().data().sum()', function () {
-//    return this.reduce(function (a, b) { return a + b; });
-//});
-
-//$.fn.dataTable.Api.register('column().data().average()', function () {
-//    var sum = this.reduce(function (a, b) { return a + b; });
-//    return sum / this.length;
-//});
-
 if (!String.prototype.splice) {
     String.prototype.splice = function (start, delCount, newSubStr) {
         return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
@@ -31,7 +22,7 @@ function filter_obj(colu, oper, valu) {
 
 function call_filter(e, objin) {
     if (e.keyCode === 13)
-        $('#' + $(objin).attr('data-table') ).DataTable().ajax.reload();
+        $('#' + $(objin).attr('data-table')).DataTable().ajax.reload();
 }
 
 function repopulate_filter_arr(table) {
@@ -85,13 +76,13 @@ function repopulate_filter_arr(table) {
     return filter_obj_arr;
 }
 
-function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref,tx) {
+function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref, tx) {
     setTimeout(function () {
         var fc_lh_tbl = $('#' + tableid + '_container .DTFC_LeftHeadWrapper table');
         var fc_rh_tbl = $('#' + tableid + '_container .DTFC_RightHeadWrapper table');
 
         if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
-            var eb_filter_controls_4fc = GetFiltersFromSettingsTbl(tvprefuser, tableid, 0);
+            var eb_filter_controls_4fc = GetFiltersFromSettingsTbl(tvprefuser, tableid, 50);
             if (fc_lh_tbl !== null) {
                 fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
                 for (var j = 0; j < tx.leftFixedColumns; j++)
@@ -106,12 +97,26 @@ function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref,tx) 
 
         var sc_h_tbl = $('#' + tableid + '_container .dataTables_scrollHeadInner table');
         if (sc_h_tbl !== null) {
-            var eb_filter_controls_4sb = GetFiltersFromSettingsTbl(tvprefuser, tableid, -1000);
+            var eb_filter_controls_4sb = GetFiltersFromSettingsTbl(tvprefuser, tableid, 1);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-            for (var j = 0; j < eb_filter_controls_4sb.length; j++)
-                $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4sb[j]));
+            if (tx.leftFixedColumns + tx.rightFixedColumns > 0) {
+                for (var j = 0; j < eb_filter_controls_4sb.length; j++) {
+                    if (j < tx.leftFixedColumns)
+                        $(sc_h_tbl.find("tr[class=addedbyeb]")).append("<th>&nbsp;</th>");
+                    else {
+                        if (j < eb_filter_controls_4sb.length - tx.rightFixedColumns)
+                            $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4sb[j]));
+                        else
+                            $(sc_h_tbl.find("tr[class=addedbyeb]")).append("<th>&nbsp;</th>");
+                    }
+                }
+            }
+            else {
+                for (var j = 0; j < eb_filter_controls_4sb.length; j++)
+                    $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(eb_filter_controls_4sb[j]));
+            }
         }
-           // $(this).find('thead').append($("<tr role='row' class='addedbyeb'/>"));
+        // $(this).find('thead').append($("<tr role='row' class='addedbyeb'/>"));
 
         //var trs = $('#' + tableid + '_container table thead tr[class=addedbyeb]');
         //for(var i=0; i < trs.length; i++)
@@ -122,43 +127,78 @@ function createFilterRowHeader(tableid, tvprefuser, scrolly, order_info_ref,tx) 
         //}
 
         $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
-        
+
         $('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
 
         $('#' + tableid + '_container thead').off('click').on('click', 'th', function () {
             var col = $(this).children('span').text();
-            var dir = $(this).attr('class');
-            if(col !== '') {
+            var cls = $(this).attr('class');
+            if (col !== '') {
                 order_info_ref.col = col;
-                order_info_ref.dir = (dir === 'sorting') ? 1 : ((dir === 'sorting_asc') ? 2 : 1);
+                order_info_ref.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
             }
         });
-       // $('#' + tableid).DataTable().columns.adjust();
-
+        // $('#' + tableid).DataTable().columns.adjust();
     }, 1000);
 
 
 
 
 
-        //var __tr = $("<tr role='row'>");
+    //var __tr = $("<tr role='row'>");
 
-        //for (var i = 0; i < eb_filter_controls.length; i++)
-        //    __tr.append($(eb_filter_controls[i]));
-        //__tr.append("</tr>");
-        //var __thead = $('#' + tableid + '_container table:eq(0) thead');
-        //__thead.append(__tr);
+    //for (var i = 0; i < eb_filter_controls.length; i++)
+    //    __tr.append($(eb_filter_controls[i]));
+    //__tr.append("</tr>");
+    //var __thead = $('#' + tableid + '_container table:eq(0) thead');
+    //__thead.append(__tr);
 
-        //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
+    //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();
 }
 
-function createFooter(tableid, eb_footer_controls, scrolly, pos) {
+function createFooter(tableid, tvPref4User, scrolly, pos, tx) {
+    var lfoot = $('#' + tableid + '_container .DTFC_LeftFootWrapper table');
+    var rfoot = $('#' + tableid + '_container .DTFC_RightFootWrapper table');
+    var scrollfoot = $('#' + tableid + '_container .dataTables_scrollFootInner table');
+    if (lfoot !== null || rfoot !== null)
+        var eb_footer_controls_lfoot = GetAggregateControls(tvPref4User, tableid, pos, scrolly, 50);
+    if (scrollfoot !== null)
+        var eb_footer_controls_scrollfoot = GetAggregateControls(tvPref4User, tableid, pos, scrolly, 1);
     $('#' + tableid + '_btntotalpage').show();
     if (pos === 1)
         $('#' + tableid + '_container tfoot tr:eq(' + pos + ')').hide();
+    var j = 0;
     $('#' + tableid + '_container tfoot tr:eq(' + pos + ') th').each(function (idx) {
-        $(this).html(eb_footer_controls[idx]);
+        if (lfoot !== null) {
+            if (j < tx.leftFixedColumns)
+                $(this).html(eb_footer_controls_lfoot[idx]);
+        }
+
+        if (rfoot !== null) {
+            if (j == eb_footer_controls_lfoot.length - tx.rightFixedColumns) {
+                if (j < eb_footer_controls_lfoot.length)
+                    $(this).html(eb_footer_controls_lfoot[idx]);
+            }
+        }
+
+        if (scrollfoot !== null) {
+            if (tx.leftFixedColumns + tx.rightFixedColumns > 0) {
+                if (j < eb_footer_controls_scrollfoot.length - tx.rightFixedColumns)
+                    $(this).html(eb_footer_controls_scrollfoot[idx]);
+            }
+
+            else {
+                if (j < eb_footer_controls_scrollfoot.length)
+                    $(this).html(eb_footer_controls_scrollfoot[idx]);
+            }
+        }
+
+        //$(this).html(eb_footer_controls[idx]);
+        j++;
     });
+    var eb_agginfo = getAgginfo(tvPref4User);
+    summarize2(tableid, eb_agginfo, scrolly);
+
 }
 
 function showOrHideAggrControl(objbtn, scrolly) {
@@ -178,10 +218,11 @@ function showOrHideFilter(objbtn, scrolly) {
         $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').hide();:not(.Class)
     else {
-        $.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
-            if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
-                $(obj).show();
-        });
+        $('#' + tableid + '_container table thead tr[class=addedbyeb]').show();
+        //$.each($('#' + tableid + '_container table thead tr[class=addedbyeb]'), function (i, obj) {
+        //    if (!$(obj).parent().parent().parent().hasClass("DTFC_LeftBodyLiner"))
+        //        $(obj).show();
+        //});
         //$('#' + tableid + '_container table:eq(0) thead tr:eq(1)').show();
     }
 
@@ -192,16 +233,14 @@ function showOrHideFilter(objbtn, scrolly) {
 function clearFilter(tableid) {
     var flag = false;
     var tableObj = $("#" + tableid).DataTable();
-    $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) 
-    {
+    $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) {
         if ($(this).hasClass(tableid + '_hchk')) {
             if (!($(this).is(':indeterminate'))) {
                 flag = true;
                 $(this).prop("indeterminate", true);
             }
         }
-        else 
-        {
+        else {
             if ($(this).val() !== '') {
                 flag = true;
                 $(this).val('');
@@ -212,7 +251,7 @@ function clearFilter(tableid) {
         tableObj.ajax.reload();
 }
 
-function updateAlSlct( objchk, rowId) {    
+function updateAlSlct(objchk, rowId) {
     var tableid = $(objchk).attr('data-table');
     var tableObj = $("#" + tableid).DataTable();
     if (objchk.checked) {
@@ -236,7 +275,7 @@ function updateAlSlct( objchk, rowId) {
 }
 
 function clickAlSlct(e, objchk) {
-    var tableid = $(objchk).attr('data-table'); 
+    var tableid = $(objchk).attr('data-table');
     if (objchk.checked)
         $('#' + tableid + '_container tbody [type=checkbox]:not(:checked)').trigger('click');
     else
@@ -245,17 +284,18 @@ function clickAlSlct(e, objchk) {
     e.stopPropagation();
 }
 
-function summarize2(api, tableId, eb_agginfo, scrollY) {
+function summarize2(tableId, eb_agginfo, scrollY) {
+    var api = $("#" + tableId).DataTable();
     var p;
     var ftrtxt;
     $.each(eb_agginfo, function (index, agginfo) {
         if (scrollY > 0) {
-            p = $('table:eq(2) tfoot #' + tableId + '_' + agginfo.colname + '_ftr_sel1').text().trim();
-            ftrtxt = '.dataTables_scrollFoot #' + tableId + '_' + agginfo.colname + '_ftr_txt1';
+            p = $('table:eq(2) tfoot #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+            ftrtxt = '.dataTables_scrollFoot #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
         }
         else {
-            p = $('#' + tableId + '_' + agginfo.colname + '_ftr_sel1').text().trim();
-            ftrtxt = '#' + tableId + '_' + agginfo.colname + '_ftr_txt1';
+            p = $('#' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+            ftrtxt = '#' + tableId + '_' + agginfo.colname + '_ftr_txt0';
         }
         var col = api.column(agginfo.colname + ':name');
 
@@ -272,7 +312,7 @@ function summarize2(api, tableId, eb_agginfo, scrollY) {
 
 function fselect_func(tableid, objsel, scrollY) {
     var api = $("#" + tableid).DataTable();
-    var selValue = $(objsel).text().trim(); 
+    var selValue = $(objsel).text().trim();
     $(objsel).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
     var table = $(objsel).attr('data-table');
     var colum = $(objsel).attr('data-column');
@@ -280,9 +320,9 @@ function fselect_func(tableid, objsel, scrollY) {
     var col = api.column(colum + ':name');
     var ftrtxt;
     if (scrollY > 0)
-        ftrtxt = '.dataTables_scrollFoot #' + table + '_' + colum + '_ftr_txt1';
+        ftrtxt = '.dataTables_scrollFoot #' + table + '_' + colum + '_ftr_txt0';
     else
-        ftrtxt = '#' + table + '_' + colum + '_ftr_txt1';
+        ftrtxt = '#' + table + '_' + colum + '_ftr_txt0';
     if (selValue === '∑')
         pageTotal = col.data().sum();
     else if (selValue === '∓')
@@ -341,10 +381,9 @@ function setLiValue(objli) {
 }
 
 
-function toggleInFilter(objChk)
-{
+function toggleInFilter(objChk) {
     var table = $(objChk).attr('data-table');
-    $("#"+ table).DataTable().ajax.reload();
+    $("#" + table).DataTable().ajax.reload();
 }
 
 function renderProgressCol(data) {
@@ -474,7 +513,7 @@ function GPointPopup(e) {
 
 }
 
-function printSelected(tableid){
+function printSelected(tableid) {
     $('#' + tableid + '_container').find('.buttons-print')[1].click();
 }
 
@@ -503,27 +542,26 @@ function ExportToExcel(tableid) {
 }
 
 
-function GetFiltersFromSettingsTbl(tvPref4User,tableId, zindex) {
+function GetFiltersFromSettingsTbl(tvPref4User, tableId, zindex) {
     var ResArray = [];
     $.each(tvPref4User, function (i, col) {
         var _ls = "";
-        if (col.visible == true)
-        {
+        if (col.visible == true) {
             var span = "<span hidden>" + col.name + "</span>";
 
-            var htext_class =  tableId + "_htext";
+            var htext_class = tableId + "_htext";
 
             var data_colum = "data-colum='" + col.name + "'";
             var data_table = "data-table='" + tableId + "'";
 
-            var header_select = tableId+"_"+col.name+"_hdr_sel";
-            var header_text1 = tableId+"_"+col.name+"_hdr_txt1";
-            var header_text2 = tableId+"_"+col.name+"_hdr_txt2";
+            var header_select = tableId + "_" + col.name + "_hdr_sel";
+            var header_text1 = tableId + "_" + col.name + "_hdr_txt1";
+            var header_text2 = tableId + "_" + col.name + "_hdr_txt2";
 
-            _ls += "<th style='padding: 0px; margin: 0px'>";
+            _ls += "<th style='padding: 0px; margin: 0px; height: 40px;'>";
 
-            if (col.type === "System.Int32" || col.type === "System.Decimal")
-                _ls +=  (span + getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
+            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
+                _ls += (span + getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
             else if (col.type === "System.String")
                 _ls += (span + getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex));
             else if (col.type === "System.DateTime")
@@ -540,81 +578,76 @@ function GetFiltersFromSettingsTbl(tvPref4User,tableId, zindex) {
     return ResArray;
 }
 
-function getFilterForNumeric(header_text1, header_select,  data_table, htext_class, data_colum, header_text2, zindex)
-{
-   var coltype = "data-coltyp='numeric'";
-   var drptext = "";
+function getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex) {
+    var coltype = "data-coltyp='numeric'";
+    var drptext = "";
 
-drptext = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
-"<div class='input-group-btn'>" +
-    " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='"+ header_select +"'> = </button>" +
-    " <ul class='dropdown-menu'>" +
-    "   <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
-      " <li><a href ='#' onclick='setLiValue(this);' " + data_table +   data_colum + "><</a></li>" +
-      " <li><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">></a></li>" +
-      " <li><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + "><=</a></li>" +
-      " <li><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">>=</a></li>" +
-      "<li ><a href='#' onclick='setLiValue(this);' " + data_table +  data_colum + ">B</a></li>" +
-    " </ul>" +
-" </div>" +
-" <input type='number' class='form-control "+ htext_class +"' id='" +header_text1+ "' onkeypress='call_filter(event, this); '" +data_table + data_colum +coltype +  ">" +
-" <span class='input-group-btn'></span>" +
-" <input type='number' class='form-control " +htext_class+ "' id='"+ header_text2 +"' style='visibility: hidden' onkeypress='call_filter(event, this);' " +data_table+  data_colum + coltype + ">" +
-" </div> ";
-        return drptext;
+    drptext = "<div class='input-group'>" +
+    "<div class='input-group-btn'>" +
+        " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+        " <ul class='dropdown-menu'  style='z-index:" + zindex.toString() + "'>" +
+        "   <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
+          " <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + "><</a></li>" +
+          " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">></a></li>" +
+          " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + "><=</a></li>" +
+          " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">>=</a></li>" +
+          "<li ><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">B</a></li>" +
+        " </ul>" +
+    " </div>" +
+    " <input type='number' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this); '" + data_table + data_colum + coltype + ">" +
+    " <span class='input-group-btn'></span>" +
+    " <input type='number' class='form-control " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
+    " </div> ";
+    return drptext;
 }
 
-function getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex)
-{
-var coltype = "data-coltyp='date'";
-var filter = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
-"<div class='input-group-btn'>" +
-   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-    "<ul class='dropdown-menu'>" +
-     " <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
-     " <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + "><</a></li>" +
-     " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">></a></li>" +
-     " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + "><=</a></li>" +
-     " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">>=</a></li>" +
-     " <li ><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">B</a></li>" +
-   " </ul>" +
-" </div>" +
-" <input type='date' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
-" <span class='input-group-btn'></span>" +
-" <input type='date' class='form-control " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
-" </div> ";
-        return filter;
+function getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex) {
+    var coltype = "data-coltyp='date'";
+    var filter = "<div class='input-group'>" +
+    "<div class='input-group-btn'>" +
+       " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+        "<ul class='dropdown-menu'  style='z-index:" + zindex.toString() + "'>" +
+         " <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
+         " <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + "><</a></li>" +
+         " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">></a></li>" +
+         " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + "><=</a></li>" +
+         " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">>=</a></li>" +
+         " <li ><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">B</a></li>" +
+       " </ul>" +
+    " </div>" +
+    " <input type='date' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
+    " <span class='input-group-btn'></span>" +
+    " <input type='date' class='form-control " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' onkeypress='call_filter(event, this);' " + data_table + data_colum + coltype + ">" +
+    " </div> ";
+    return filter;
 }
 
-function getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex)
-{
-var drptext = "";
-drptext = "<div class='input-group' style='z-index:" + zindex.toString() + "'>" +
-"<div class='input-group-btn'>"+
-   " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='"+ header_select +"'>x*</button>"+
-   " <ul class='dropdown-menu'>"+
-   "   <li ><a href ='#' onclick='setLiValue(this);' "+ data_table + data_colum +">x*</a></li>"+
-    "  <li><a href ='#' onclick='setLiValue(this);' "+ data_table + data_colum +">*x</a></li>"+
-    "  <li><a href='#' onclick='setLiValue(this);' "+ data_table + data_colum +">*x*</a></li>"+
-     " <li><a href='#' onclick='setLiValue(this);' "+ data_table + data_colum +">=</a></li>"+
-   " </ul>"+
-" </div>"+
-" <input type='text' class='form-control "+ htext_class +"' id='"+ header_text1 +"' onkeypress='call_filter(event, this);' "+ data_table + data_colum +">"+
-" </div> " ;
-        return drptext;
+function getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, zindex) {
+    var drptext = "";
+    drptext = "<div class='input-group'>" +
+    "<div class='input-group-btn' style='z-index:" + zindex.toString() + "'>" +
+       " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
+       " <ul class='dropdown-menu'>" +
+       "   <li ><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">x*</a></li>" +
+        "  <li><a href ='#' onclick='setLiValue(this);' " + data_table + data_colum + ">*x</a></li>" +
+        "  <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">*x*</a></li>" +
+         " <li><a href='#' onclick='setLiValue(this);' " + data_table + data_colum + ">=</a></li>" +
+       " </ul>" +
+    " </div>" +
+    " <input type='text' class='form-control " + htext_class + "' id='" + header_text1 + "' onkeypress='call_filter(event, this);' " + data_table + data_colum + ">" +
+    " </div> ";
+    return drptext;
 }
 
-function getFilterForBoolean(colum, tableId, zindex)
-{
-var filter = "";
-var id = tableId+"_"+ colum + "_hdr_txt1";
-var cls = tableId + "_hchk";
-filter = "<input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext' style='z-index:" + zindex.toString() + "'>";
-return filter;
+function getFilterForBoolean(colum, tableId, zindex) {
+    var filter = "";
+    var id = tableId + "_" + colum + "_hdr_txt1";
+    var cls = tableId + "_hchk";
+    filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' onchange='toggleInFilter(this);' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + tableId + "_htext'></center>";
+    return filter;
 }
 
-function getFooterFromSettingsTbl(tvPref4User)
-{
+function getFooterFromSettingsTbl(tvPref4User) {
     var ftr_part = "";
     $.each(tvPref4User, function (i, col) {
         if (col.visible)
@@ -629,24 +662,22 @@ function Agginfo(col) {
     this.colname = col;
 }
 
-function getAgginfo(tvPref4User)
-{
+function getAgginfo(tvPref4User) {
     var _ls = [];
     $.each(tvPref4User, function (i, col) {
-        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal"))
+        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64"))
             _ls.push(new Agginfo(col.name));
     });
 
     return _ls;
 }
 
-function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api)
-{
+function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, zindex) {
     var ResArray = [];
     var _ls;
     $.each(tvPref4User, function (i, col) {
         if (col.visible) {
-            if (col.type === "System.Int32" || col.type === "System.Decimal") {
+            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
                 var footer_select_id = tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
@@ -662,7 +693,7 @@ function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api)
                 "  <li><a href ='#' onclick=\"fselect_func('" + tableId + "', this, " + ScrollY + ");\"" + data_table + " " + data_colum + " " + data_decip + " {4}>&mnplus;</a></li>" +
                " </ul>" +
                " </div>" +
-               " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;'>" +
+               " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;' style='z-index:" + zindex.toString() + "'>" +
                " </div>";
             }
             else
@@ -674,7 +705,7 @@ function GetAggregateControls(tvPref4User, tableId, footer_id, ScrollY, api)
     return ResArray;
 }
 
-var coldef = function ( d, t, v, w, n, ty, cls) {
+var coldef = function (d, t, v, w, n, ty, cls) {
     this.data = d;
     this.title = t;
     this.visible = v;
@@ -684,12 +715,11 @@ var coldef = function ( d, t, v, w, n, ty, cls) {
     this.className = cls;
 };
 
-function getData4SettingsTbl(tvPref4User)
-{
+function getData4SettingsTbl(tvPref4User) {
     var colarr = [];
-    var n, d, t, v, w, ty,cls;
+    var n, d, t, v, w, ty, cls;
     $.each(tvPref4User, function (i, col) {
-        if (col.name !== "serial" && col.name !== "id") {
+        if (col.name !== "serial" && col.name !== "id" && col.name !== "checkbox") {
             n = col.name;
             d = col.data;
             t = col.title.substr(0, col.title.indexOf('<'));
@@ -705,13 +735,11 @@ function getData4SettingsTbl(tvPref4User)
     return colarr;
 }
 
-function getIndex(ds_columns, col_name)
-{
+function getIndex(tvPref4User, col_name) {
     var colindex = -1;
-    $.each(ds_columns, function (i, col) {
-        if (col.ColumnName.trim() === col_name.trim()) {
-            colindex = col.ColumnIndex;
-            return false;
+    $.each(tvPref4User, function (i, col) {
+        if (col.name.trim() === col_name.trim()) {
+            colindex = col.data;
         }
     });
 
@@ -720,11 +748,11 @@ function getIndex(ds_columns, col_name)
 
 function GetSettingsModal(tableid, tvId, tvName) {
     var OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
-    var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg");
-    var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content");
+    var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
+    var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
     var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
     var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
-    var title = $(document.createElement('h4')).attr("class", "modal-title").text(tvName+": SettingsTable");
+    var title = $(document.createElement('h4')).attr("class", "modal-title").text(tvName + ": SettingsTable");
     var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
     var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
     var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
@@ -739,16 +767,27 @@ function GetSettingsModal(tableid, tvId, tvName) {
     var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
     ModalFooterDiv.append(FooterButton);
-    ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox");
-    ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>");
-    ModalBodyTabPaneGenDiv.append("<br>Row Grouping<input type='numeric' id='rowGrouping_text'>");
-    ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
-    ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
+    ModalBodyTabPaneGenDiv.append("<div class='table-responsive'>"+          
+    "<table class='table table-bordered table-hover'>"+
+        "<tbody>"+
+	        "<tr> <td>Hide Serial</td>           <td><input type='checkbox' id='serial_check'></td> </tr>"+
+	        "<tr> <td>Hide Chechbox</td>         <td><input type='checkbox' id='select_check'></td> </tr>"+
+	        "<tr> <td>Page Length</td>           <td><input type='numeric' id='pageLength_text' value='100'></td> </tr>"+
+	        "<tr> <td>Table Height</td>          <td><input type='numeric' id='scrollY_text' value='300'></td> </tr>"+
+	        "<tr> <td>Row Grouping</td>          <td><input type='numeric' id='rowGrouping_text'></td> </tr>"+
+	        "<tr> <td>Left Fixed Columns         </td><td><input type='numeric' id='leftFixedColumns_text' value='0'></td> </tr>"+
+	        "<tr> <td>Right Fixed Columns</td>   <td><input type='numeric' id='rightFixedColumns_text' value='0'></td> </tr>"+
+        "</tbody>"+
+    "</table>"+
+"</div>");
     ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
-    ModalBodyTabPaneColDiv.append(" <div style='display:inline-block' id='propGrid' style='float:left'></div>" +
-                                    "<div>" +
-                                        
-                                    "</div>");
+    ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
+ "                                        <div id='propHead'></div><div id='propGrid'></div>" +
+                                         "<div>" +
+                                             "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
+                                             "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
+                                         "</div>" +
+ "</div>");
 
     ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
     ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
@@ -778,13 +817,14 @@ function GetSettingsModal(tableid, tvId, tvName) {
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
         var n, d, t, v, w, ty, cls;
+        objcols.push(new coldef(getIndex(__tvPrefUser.columns, "id"), "", false, "", "id", "", ""));
         $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
             ct++;
             if (obj.type == 'text' && obj.name == 'name')
                 n = obj.value;
             else if (obj.type == 'text' && obj.name == 'index')
                 d = obj.value;
-            else if (obj.type == 'text' && obj.name == 'title')
+            else if (obj.type == 'hidden' && obj.name == 'title')
                 t = obj.value + '<span hidden>' + n + '</span>';
             else if (obj.type == 'checkbox')
                 v = obj.checked;
@@ -800,7 +840,7 @@ function GetSettingsModal(tableid, tvId, tvName) {
                     var replacedName = fontName.replace(/ /g, "_");
                     style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
                     document.getElementsByTagName('head')[0].appendChild(style);
-                    cls = 'font_' + replacedName+' tdheight';
+                    cls = 'font_' + replacedName + ' tdheight';
                 }
                 else
                     cls = 'tdheight';
@@ -816,25 +856,47 @@ function GetSettingsModal(tableid, tvId, tvName) {
         objconf.leftFixedColumns = $("#leftFixedColumns_text").val();
         objconf.rightFixedColumns = $("#rightFixedColumns_text").val();
         objconf.columns = objcols;
-        if (objconf.rowGrouping.length > 0)
-        {
+        AddSerialAndOrCheckBoxColumns(objconf.columns, tableid);
+        objconf.columnsext = __tvPrefUser.columnsext;
+        updateRenderFunc(objconf.columns, objconf.columnsext);
+        if (objconf.rowGrouping.length > 0) {
             var groupcols = $.grep(objconf.columns, function (e) { return e.name === objconf.rowGrouping });
             groupcols[0].visible = false;
         }
         $.post('TVPref4User', { tvid: '0', json: JSON.stringify(objconf) });
         $(OuterModalDiv).modal('hide');
         $('#' + tableid).DataTable().destroy();
-        $('#'+tableid+'_divcont').children()[1].remove();
+        $('#' + tableid + '_divcont').children()[1].remove();
         var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', tableid);
         $('#' + tableid + '_divcont').append(table);
-        eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.stringify(objconf)));
+        //eval("initTable_@tableId(@objarr);".replace("@tableId", tableid).replace("@objarr", JSON.stringify(objconf)));
+        initTable_EbDataGridViewControl1(objconf);
     });
 }
+
+function updateRenderFunc(rcolumns, rcolumnsext) {
+    $.each(rcolumns, function (i, col) {
+        var col = rcolumns[i];
+        //alert("rcolumns.Length" + rcolumns.length + "," + "rcolumnsext.Length" + rcolumnsext.length);
+        alert("col.Name :" + col.name + "," + "col.type :" + col.type);
+        if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
+        {
+            alert("rcolumnsext[i].Name: " + rcolumnsext[i].name + ", " + rcolumnsext[i].RenderAs);
+            if (rcolumnsext[i].RenderAs === "Progressbar") {
+                alert("rcolumnsext[i].Name: " + rcolumnsext[i].name + ", " + rcolumnsext[i].RenderAs);
+                rcolumns[i].render = function( data, type, row, meta ) { return renderProgressCol(data); };
+            }
+        }
+    });
+}
+
+var __tvPrefUser = null;
 
 function callPost4SettingsTable() {
     $.post('GetTVPref4User', { tvid: '0' },
         function (data2) {
             var data2Obj = JSON.parse(data2);
+            __tvPrefUser = data2Obj;
             $("#serial_check").prop("checked", data2Obj.hideSerial);
             $("#select_check").prop("checked", data2Obj.hideCheckbox);
             $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
@@ -851,24 +913,32 @@ function callPost4SettingsTable() {
                 searching: false,
                 info: false,
                 scrollY: '300',
-                //select:true,
+                scrollX: true,
+                select:true,
                 initComplete: function (settings, json) {
                     $('.font').fontselect();
-                    //this.api().columns.adjust();
+                    $('#Table_Settings').DataTable().columns.adjust();
+                    //settings_tbl.columns.adjust();
                 },
             });
+            CreatePropGrid(settings_tbl.row(0).data(), data2Obj.columnsext);
             $('#Table_Settings tbody').on('click', 'tr', function () {
                 var idx = settings_tbl.row(this).index();
-                //alert(settings_tbl.row(idx).data().name.toString());
-                //alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
+                alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
+                CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
+                settings_tbl.columns.adjust();
             });
-            CreatePropGrid(data2Obj.columnsext);
+            $(".modal-content").on("click", function (e) {
+                if ($(e.target).closest(".font-select").length === 0) {
+                    $(".font-select").removeClass('font-select-active');
+                    $(".fs-drop").hide();
+                }
+            });
         });
 }
 
-function GetLengthOption(len)
-{
-    var ia=[];
+function GetLengthOption(len) {
+    var ia = [];
     for (var i = 0; i < 10; i++)
         ia[i] = (len * (i + 1));
     return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
@@ -881,32 +951,30 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.render = rnd;
     this.width = wid;
 };
-function column4SettingsTbl()
-{
+function column4SettingsTbl() {
     var colArr = [];
     colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));
-    colArr.push(new coldef4Setting('name', 'Name', '', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
+    colArr.push(new coldef4Setting('name', 'Name', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
     colArr.push(new coldef4Setting('type', ' Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
-    colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='title' style='width: 100px;'>" : data; }, ""));
+    colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='hidden' value=" + data + " name='title' style='width: 100px;'>"+data : data; }, ""));
     colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
     colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
-    colArr.push(new coldef4Setting('className', 'Font', "", function (data, type, row, meta)
-    {
+    colArr.push(new coldef4Setting('className', 'Font', "", function (data, type, row, meta) {
         if (data.length > 0 && data !== undefined) {
-            var fontName = data.substring(5).replace(/_/g, " ");
+            var fontName = data.replace("tdheight", " ");
+            fontName = fontName.substring(5).replace(/_/g, " ");
             index = fontName.lastIndexOf(" ");
             fontName = fontName.substring(0, index);
             return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
-    }
-    else 
-        return "<input type='text' class='font' style='width: 100px;' name='font'>";
+        }
+        else
+            return "<input type='text' class='font' style='width: 100px;' name='font'>";
     }
         , "30"));
     return colArr;
 }
 
-function AddSerialAndOrCheckBoxColumns(tx, tableId, data_cols)
-{
+function AddSerialAndOrCheckBoxColumns(tx, tableId) {
     if (!tx.hideCheckbox) {
         var chkObj = new Object();
         chkObj.data = null;
@@ -914,19 +982,21 @@ function AddSerialAndOrCheckBoxColumns(tx, tableId, data_cols)
         chkObj.width = 10;
         chkObj.orderable = false;
         chkObj.visible = true;
-        var idpos = $.grep(data_cols, function (e) { return e.ColumnName === "id"; })[0].ColumnIndex; 
-        chkObj.render = function( data2, type, row, meta ) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
-        tx.columns.unshift(chkObj);
+        chkObj.name = "checkbox";
+        //var idpos = $.grep(data_cols, function (e) { return e.ColumnName === "id"; })[0].ColumnIndex;
+        var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
+        chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
+        tx.unshift(chkObj);
     }
 
     if (!tx.hideSerial)
-        tx.columns.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
+        tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
 }
 
-function doRowgrouping(api,tx) {
+function doRowgrouping(api, tx) {
     var rows = api.rows({ page: 'current' }).nodes();
     var last = null;
-    
+
     api.column(api.columns(tx.rowGrouping + ':name').indexes()[0], { page: 'current' }).data().each(function (group, i) {
         if (last !== group) {
             $(rows).eq(i).before(

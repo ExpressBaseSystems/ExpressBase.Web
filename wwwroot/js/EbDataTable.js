@@ -71,6 +71,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     this.eb_filter_controls_4sb = [];
     this.zindex = 0;
     this.rowId = -1;
+    this.isSettingsSaved = false;
 
     this.Init = function () {
         this.table_jQO = $('#' + this.tableId);
@@ -124,7 +125,6 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             },
         
             fnRowCallback: this.rowCallBackFunc.bind(this),
-
             fnFooterCallback: this.footerCallback.bind(this),
             drawCallback: this.drawCallBackFunc.bind(this),
             initComplete: this.initCompleteFunc.bind(this),
@@ -463,9 +463,9 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         $("." + this.tableId + "_select").click(this.updateAlSlct.bind(this));
         $(".eb_canvas").click(this.renderMainGraph);
 
-        this.filterbtn.click(this.showOrHideFilter.bind(this));
-        this.clearfilterbtn.click(this.clearFilter.bind(this));
-        this.totalpagebtn.click(this.showOrHideAggrControl.bind(this));
+        this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
+        this.clearfilterbtn.off("click").on("click", this.clearFilter.bind(this));
+        this.totalpagebtn.off("click").on("click", this.showOrHideAggrControl.bind(this));
         this.copybtn.click(this.CopyToClipboard.bind(this));
         this.printbtn.click(this.ExportToPrint.bind(this));
         this.printAllbtn.click(this.printAll.bind(this));
@@ -606,7 +606,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.clearFilter();
     };
 
-    this.clearFilter = function () {
+    this.clearFilter = function (e) {
         var flag = false;
         var tableid = this.tableId;
         $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) {
@@ -806,12 +806,15 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             $("#settingsmodal").remove();
         },500);
         
-        this.Api.destroy();
-        $('#' + this.tableId + '_divcont').children()[1].remove();
-        var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
-        $('#' + this.tableId + '_divcont').append(table);
-        this.ebSettings = $.extend(true, {}, this.ebSettingsCopy);
-        this.Init();
+        if (this.isSettingsSaved) {
+            this.isSettingsSaved = false;
+            this.Api.destroy();
+            $('#' + this.tableId + '_divcont').children()[1].remove();
+            var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
+            $('#' + this.tableId + '_divcont').append(table);
+            this.ebSettings = $.extend(true, {}, this.ebSettingsCopy);
+            this.Init();
+        }
     };
 
     this.getColobj = function (col_name) {
@@ -824,10 +827,10 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         });
 
         return selcol;
-        //return new coldef(selcol.data, selcol.title, selcol.visible, selcol.width, selcol.name, selcol.type, selcol.className);
     };
 
     this.saveSettings = function () {
+        this.isSettingsSaved = true;
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
         var n, d, t, v, w, ty, cls;
@@ -877,7 +880,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
             groupcols[0].visible = false;
         }
-        $.post('TVPref4User', { tvid: this.ebSettingsCopy.dsid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
+        $.post('TVPref4User', { tvid: this.dsid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
     };
 
     this.reinitDataTable = function () {
@@ -978,7 +981,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         if (!tx.hideCheckbox) {
             var chkObj = new Object();
             chkObj.data = null;
-            chkObj.title = "<input id='{0}_select-all' type='checkbox' onclick='clickAlSlct(event, this);' data-table='{0}'/>".replace("{0}", this.tableId);
+            chkObj.title = "<input id='{0}_select-all' type='checkbox' class='eb_selall' data-table='{0}'/>".replace("{0}", this.tableId);
             chkObj.width = 10;
             chkObj.orderable = false;
             chkObj.visible = true;

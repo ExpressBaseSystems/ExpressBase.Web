@@ -19,10 +19,11 @@
     EbDataGridView dgv = new EbDataGridView
     {
         DataSourceId = dsid,
-        FilterDialogId = 38,
+        FilterDialogId = 47,
         Name = "dv" + dsid.ToString()
     };
 
+    dgv.Token = ViewBag.token;
     dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient());
 
     head += dgv.GetHead();

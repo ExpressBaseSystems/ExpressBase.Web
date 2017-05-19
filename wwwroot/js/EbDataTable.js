@@ -14,6 +14,7 @@ Array.prototype.min = function () {
 
 var Agginfo = function (col) {
     this.colname = col;
+    //this.deci_val = 2;
 };
 
 var filter_obj = function (colu, oper, valu) {
@@ -87,6 +88,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.csvbtn = $("#btnCsv");
         this.pdfbtn = $("#btnPdf");
         this.settingsbtn = $("#"+ this.tableId+ "_btnSettings");
+        $("#dvName_lbl").text(this.ebSettings.dvName);
 
         this.eb_agginfo = this.getAgginfo();
 
@@ -191,7 +193,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     this.getAgginfo = function () {
         var _ls = [];
         $.each(this.ebSettings.columns, function (i, col) {
-            if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64"))
+            if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int64"))
                 _ls.push(new Agginfo(col.name));
         });
 
@@ -401,6 +403,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
                 summary_val = col.data().average();
             }
             // IF decimal places SET, round using toFixed
+            //alert(summary_val + "," + agginfo.colname);
             $(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val.toFixed(2));
         });
     };
@@ -543,9 +546,9 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
               "<li ><a href='#' class='eb_fsel' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
         " </div>" +
-        " <input type='number' class='form-control eb_finput" + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        " <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
         " <span class='input-group-btn'></span>" +
-        " <input type='number' class='form-control eb_finput" + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
+        " <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
         " </div> ";
         return drptext;
     };
@@ -564,9 +567,9 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
              " <li ><a href='#' class='eb_fsel' " + data_table + data_colum + ">B</a></li>" +
            " </ul>" +
         " </div>" +
-        " <input type='date' class='form-control eb_finput" + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        " <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
         " <span class='input-group-btn'></span>" +
-        " <input type='date' class='form-control eb_finput" + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
+        " <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
         " </div> ";
         return filter;
     };
@@ -603,7 +606,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             $('#' + this.tableId + '_container table thead tr[class=addedbyeb]').show();
         }
 
-        this.clearFilter();
+        this.clearFilter(e);
     };
 
     this.clearFilter = function (e) {
@@ -744,7 +747,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
         var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
         var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
-        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.title + ": SettingsTable");
+        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.dvName + ": SettingsTable");
         var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
         var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
         var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
@@ -754,16 +757,25 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
         var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
         var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
-        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "1a");
+        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane active").attr("id", "1a");
         var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
         var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
         ModalFooterDiv.append(FooterButton);
-        ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox");
-        ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>");
-        ModalBodyTabPaneGenDiv.append("<br>Row Grouping<input type='numeric' id='rowGrouping_text'>");
-        ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
-        ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
+        ModalBodyTabPaneGenDiv.append("<div class='table-responsive'>" +
+    "<table class='table table-bordered table-hover'>" +
+        "<tbody>" +
+	        "<tr> <td>Hide Serial</td>           <td><input type='checkbox' id='serial_check'></td> </tr>" +
+	        "<tr> <td>Hide Chechbox</td>         <td><input type='checkbox' id='select_check'></td> </tr>" +
+	        "<tr> <td>Page Length</td>           <td><input type='numeric' id='pageLength_text' value='100'></td> </tr>" +
+	        "<tr> <td>Table Height</td>          <td><input type='numeric' id='scrollY_text' value='300'></td> </tr>" +
+	        "<tr> <td>Row Grouping</td>          <td><input type='numeric' id='rowGrouping_text'></td> </tr>" +
+	        "<tr> <td>Left Fixed Columns         </td><td><input type='numeric' id='leftFixedColumns_text' value='0'></td> </tr>" +
+	        "<tr> <td>Right Fixed Columns</td>   <td><input type='numeric' id='rightFixedColumns_text' value='0'></td> </tr>" +
+            "<tr> <td>Data Visualization Name</td>   <td><input type='text' id='dvName_text'></td> </tr>" +
+        "</tbody>" +
+    "</table>" +
+"</div>");
         ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
         ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
      "                                        <div id='propHead'></div><div id='propGrid'></div>" +
@@ -872,6 +884,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.ebSettingsCopy.rowGrouping = $("#rowGrouping_text").val();
         this.ebSettingsCopy.leftFixedColumns = $("#leftFixedColumns_text").val();
         this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
+        this.ebSettingsCopy.dvName = $("#dvName_text").val();
         this.ebSettingsCopy.columns = objcols;
         this.ebSettingsCopy.columnsext = this.ebSettings.columnsext;
         this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
@@ -897,6 +910,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         $("#rowGrouping_text").val(data2Obj.rowGrouping);
         $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
         $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
+        $("#dvName_txt").val(data2Obj.dvName);
         var settings_tbl = $('#Table_Settings').DataTable(
         {
             columns: this.column4SettingsTbl(),

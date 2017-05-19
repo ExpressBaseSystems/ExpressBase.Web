@@ -2,7 +2,8 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <html lang="en">
-<head><title>CodeMirror</title>
+<head>
+    <title>Code editor</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css">
@@ -19,11 +20,26 @@
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            //var hint_type;
+            //var mode_type;
+            //if (obj_type === Objects.EbObjectType.DataSource || obj_type === Objects.EbObjectType.SqlFunctions)
+            //{
+            //    hint_type = CodeMirror.hint.sql;
+            //    mode_type="text/x-sql"
+            //    alert(hint_type,mode_type);
+            //}
+            //else if (obj_type === Objects.EbObjectType.JavascriptValidators || obj_type === Objects.EbObjectType.JavascriptFunctions)
+            //{
+            //    hint_type=CodeMirror.hint.javascript;
+            //    mode_type = "javascript";
+            //}
             CodeMirror.commands.autocomplete = function (cm) {
-                CodeMirror.showHint(cm, CodeMirror.hint.sql);
+                //(obj_type === Objects.EbObjectType.DataSource || obj_type === Objects.EbObjectType.SqlFunctions) ? CodeMirror.showHint(cm, CodeMirror.hint.sql) :  
+                CodeMirror.showHint(cm, CodeMirror.hint.javascript);
             };
             window.editor = CodeMirror.fromTextArea(code, {
-                mode: "text/x-sql",
+                mode:
+                    "text/x-sql",
                 lineNumbers: true,
                 lineWrapping: true,
                 extraKeys: { "Ctrl-Space": "autocomplete" },
@@ -34,9 +50,10 @@
             });
             var cid = sessionStorage.getItem("cid");
             $('#cid').val(cid);
+            window.editor.setValue(sessionStorage.getItem("obj_code"));
+            document.title = sessionStorage.getItem("obj_name")
         });
-        function func()
-        {
+        function func() {
             sql = window.editor.getValue();
             var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database");
             Dswzd.CustomWizFunc = (new CustomWizFuncs).DataSource;
@@ -44,24 +61,30 @@
     </script>
 </head>
 <body>
-
-        <textarea id="code" name="code" class="code"> enter code</textarea>
-        <p>Hit Ctrl+Space to trigger autocomplete</p>
-        <input type="hidden" id="cid" name="cid" />
-        <div class="btn btn-lg btn-primary save_ds" id="save" onclick="func();">Save</div>
-
-
+    <span>
+        <a href="#" class="save" data-toggle="tooltip" title="Save" onclick="func();"><i class="btn btn-xs btn-default fa fa-save fa-2x" aria-hidden="true"></i></a>
+        <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-xs btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
+        <a href="#" class="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-xs btn-default fa fa-history fa-2x" aria-hidden="true"></i></a>
+        <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-default btn-xs fa fa-exchange fa-2x" aria-hidden="true"></i></a>
+        <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-xs btn-default fa fa-line-chart fa-2x" aria-hidden="true"></i></a>
+        <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-xs btn-default fa fa-file-code-o fa-2x" aria-hidden="true"></i></a>
+        <a href="#" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-xs btn-default fa fa-play fa-2x" aria-hidden="true"></i></a>
+    </span>
+    <textarea id="code" name="code" class="code"></textarea>
+    <p>Hit Ctrl+Space to trigger autocomplete</p>
+    <input type="hidden" id="cid" name="cid" />
 </body>
 
 </html>
 <style>
-      .align_singleLine {
+    .align_singleLine {
         display: inline-block;
         margin-right: 10px;
         align-content: center;
     }
-      .CodeMirror{
-          height:500px;
-          background-color:azure;
-      }
+
+    .CodeMirror {
+        height: 500px;
+        background-color: azure;
+    }
 </style>

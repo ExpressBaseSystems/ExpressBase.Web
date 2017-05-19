@@ -14,6 +14,7 @@ using ExpressBase.Objects;
 using System.Net;
 using ServiceStack.Text;
 
+
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web2.Controllers
@@ -242,7 +243,8 @@ namespace ExpressBase.Web2.Controllers
                 { 
                     Name = _dict["Name"],
                     Description = _dict["Description"],
-                    Sql = _dict["Sql"]
+                    Sql = _dict["Sql"],
+                    EbObjectType= Objects.EbObjectType.DataSource
                 })
             };
 
@@ -251,8 +253,28 @@ namespace ExpressBase.Web2.Controllers
             return Json("Success");
         }
 
-        public IActionResult objects()
+        public JsonResult GetEbObjects_json()
         {
+            var req = this.HttpContext.Request.Form;
+            var TenantId = req["TenantAccountId"];
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = TenantId, Token = ViewBag.token });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+             var rlist = resultlist.Data;
+            Dictionary<int, EbDataSource> ObjList = new Dictionary<int, EbDataSource>();
+            foreach(var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+                {
+                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                    dsobj.EbObjectType = EbObjectType.DataSource;
+                    ObjList[element.Id] = dsobj;
+                }  
+            }
+            return Json(ObjList);
+        }
+        public IActionResult objects(string cid)
+        {            
             return View();
         }
         public IActionResult ds_save()

@@ -6,7 +6,7 @@
         $(document).ready(function () {
             $('.eb_acc_dbcon_btn').click(function () {
                 var accid = $(this).attr("data-accid");
-                $.get('https://expressbaseservicestack.azurewebsites.net/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
+                $.get('https://localhost:44377/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
                     if (result.data.conf_dbtype === 1) {
                         var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", accid, result.data);
                         DBwizard_sim.CustomWizFunc = (new CustomWizFuncs).DbCheck;
@@ -24,10 +24,11 @@
             });
             $('.obj').click(function () {
                 var ele = $(this).attr("data-cid");
-                openInNewTab('objects',ele);
+                openInNewTab('objects', ele);
             });
             $('.new').click(function () {
-                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 800, "Add Account", "fa-database");             
+                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 800, 800, "Add Account", "fa-database");
+
             });
             $('.edit').click(function () {
                 var accId = $(this).attr("data-accid");
@@ -56,38 +57,77 @@
                 var win = window.open(url, '_blank');
                 win.focus();
             }
+
         })
+
+        function myFunction() {
+
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[3];
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
     </script>
 </head>
 <div class="container">
+
     @{
         List<List<object>> list = new List<List<object>>();
         list = ViewBag.dict;
-        <form>
-            <div class="row">
-                    <div class="input-group input-group-lg col-md-3" style="width: 600px;margin-left: 190px;">
-                        <input type="text" class="form-control" placeholder="Search">
-                        <div class="input-group-btn">
-                                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                        </div>
-                    </div>
-                <div class="input-group-btn col-md-4">
-                    <input type="button" class="new btn btn-success" value="New Account" />
-                </div>
-            </div>
-        </form>
-        foreach (var sublist in list)
-        {
+        <div class="row">
+            <section class="content">
+               
+                <div class="col-md-12 col-md-offset-1">
+                    <div class="panel panel-default" style="width: 100%;">
+                        <div class="panel-body" style="margin-top: 50px;">
+                            <h1>My Accounts</h1>
+                            <div class="input-group input-group-lg col-md-3" style="width:600px;margin-left: 70px;">
+                                <div class="icon-addon addon-lg input-group-btn">
+                                    <input type="text" class="form-control" placeholder="Search" id="myInput" onkeyup="myFunction()" style="width:500px">
+                                    <label for="myInput" class="glyphicon glyphicon-search" rel="tooltip" title="myInput"></label>
+                                </div>                             
+                                <div class="pull-right" style="margin-left: 55px;">
+                                    <input type="button" class="new btn btn-success" value="New Account" style="height: 45px; margin-left: 50px;" />
+                                </div>
+                            </div>                          
+                            <div class="table-container">
+                                <table class="table table-filter" id="myTable">
+                                    <tbody>
+                                        @foreach (var sublist in list)
+                                        {
 
-            <div class="tenant_account z-depth-2">
-                <div class="bs-example">
-                    <div class="col-xs-12 col-md-12">
-                        <div style="margin-left: 300px;">
-                            <div><label>@sublist[1]</label></div> <br />
-                            @{
-                                if (string.IsNullOrEmpty(sublist[2].ToString()))
-                                {
-                                    <img src="~/images/your-logo.png" class="prologo" />
+
+                                            <tr data-status="pagado" style="height: 100px;">
+                                                <td style="width: 15px;">
+                                                    <div class="ckbox">
+                                                        <input type="checkbox" id="checkbox1">
+                                                        <label for="checkbox1"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:;" class="star">
+                                                        <i class="glyphicon glyphicon-star"></i>
+                                                    </a>
+                                                </td>
+
+                                                <td style="width: 200px;">
+                                                    <a href="#" class="pull-left">
+                                                        @{
+                                                            if (string.IsNullOrEmpty(sublist[2].ToString()))
+                                                            {
+                                                                <img src="~/images/your-logo.png" class="prologo" />
 
                                 }
                                 else
@@ -96,7 +136,7 @@
                                 }
                             }
                         </div>
-                        <div style="margin-left: 50px;">
+                        <div style="margin-left: 80px;">
                             <span>
                                 <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
                                 <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
@@ -116,26 +156,58 @@
                             </div>
                         </div>
 
-                    <!-- Database Modal -->
+                                                </td>
 
-                    @if (ViewBag.Message != null)
-                    {
-                        <script type="text/javascript">
-                            window.onload = function () {
-                                alert("@ViewBag.Message");
-                            };
-                        </script>
-                    }
+                                            </tr>
+                                                            }
 
-                    <!-- UserModal HTML Invite User -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
+                    </div>
+                    <div class="content-footer">
 
+                    </div>
                 </div>
-            </div>
-        }
+            </section>
+
+        </div>
+
     }
 </div>
+
 <style>
+    .icon-addon.addon-lg .form-control {
+    line-height: 1.33;
+    height: 46px;
+    font-size: 18px;
+    padding: 10px 16px 10px 40px;
+}
+    .icon-addon.addon-md .glyphicon,
+.icon-addon .glyphicon, 
+.icon-addon.addon-md .fa,
+.icon-addon .fa {
+    position: absolute;
+    z-index: 2;
+    left: 10px;
+    font-size: 14px;
+    width: 20px;
+    margin-left: -2.5px;
+    text-align: center;
+    padding: 10px 0;
+    top: 1px
+}
+
+    .drpbtn {
+        margin-top: 15px;
+    }
+
+    .drpbtn-body {
+        zoom: 1;
+    }
+
     .new {
         float: right;
         margin-right: 50%;
@@ -188,5 +260,3 @@
         border: solid 2px blue;
     }
 </style>
-
-

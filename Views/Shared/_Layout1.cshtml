@@ -78,7 +78,7 @@
     <script src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script src="~/js/eb_validations.js"></script>
     
-    <style>
+    @*<style>
         .nopadding {
             padding: 0 !important;
         }
@@ -196,19 +196,175 @@
                         background: none;
                         color: #fff;
                     }
-    </style>
-    <script>
+    </style>*@
+    @*<script>
         $(document).ready(function () {
             $("#menu-toggle").click(function (e) {
                 e.preventDefault();
                 $("#wrapper").toggleClass("toggled");
             });
         });
+    </script>*@
+    <style>
+            #wrapper {
+                padding-left: 0;
+                -webkit-transition: all 0.5s ease;
+                -moz-transition: all 0.5s ease;
+                -o-transition: all 0.5s ease;
+                transition: all 0.5s ease;
+            }
+
+                #wrapper.toggled {
+                    padding-left: 250px;
+                }
+
+            #sidebar-wrapper {
+                position: fixed;
+                left: 250px;
+                z-index: 1000;
+                overflow-y: auto;
+                margin-left: -250px;
+                width: 0;
+                height: 100%;
+                background: #6c6d72;
+                -webkit-transition: all 0.5s ease;
+                -moz-transition: all 0.5s ease;
+                -o-transition: all 0.5s ease;
+                transition: all 0.5s ease;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                width: 250px;
+            }
+
+            #page-content-wrapper {
+                padding: 15px;
+                width: 100%;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                position: absolute;
+                margin-right: -250px;
+            }
+
+            /* Sidebar Styles */
+
+            .sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+   
+}
+
+.sidebar-nav li {
+    position: relative; 
+    line-height: 20px;
+    display: inline-block;
+    width: 100%;
+}
+
+.sidebar-nav li:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    height: 100%;
+    width: 3px;
+    background-color: #1c1c1c;
+    -webkit-transition: width .2s ease-in;
+      -moz-transition:  width .2s ease-in;
+       -ms-transition:  width .2s ease-in;
+            transition: width .2s ease-in;
+
+}
+
+.sidebar-nav li:hover:before,
+.sidebar-nav li.open:hover:before {
+    background-color: #35acdf;   
+    width: 100%;
+    -webkit-transition: width .2s ease-in;
+      -moz-transition:  width .2s ease-in;
+       -ms-transition:  width .2s ease-in;
+            transition: width .2s ease-in;
+
+}
+
+.sidebar-nav li a {
+    display: block;
+    color: #ddd;
+    text-decoration: none;
+    padding: 10px 15px 10px 30px;    
+}
+
+/*.sidebar-nav li a:hover,
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus,
+.sidebar-nav li.open a:hover,
+.sidebar-nav li.open a:active,
+.sidebar-nav li.open a:focus{
+    color: #fff;
+    text-decoration: none;
+    background-color: transparent;
+}*/
+
+.sidebar-nav > .sidebar-brand {
+    height: 55px;
+    font-size: 15px;
+    line-height: 44px;
+}
+.sidebar-nav .dropdown-menu {
+    position: relative;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    background-color: #222;
+    box-shadow: none;
+}
+
+
+            #wrapper.toggled {
+                padding-left: 0;
+            }
+
+            #sidebar-wrapper {
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                width: 0;
+            }
+
+            #page-content-wrapper {
+                padding: 20px;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                position: relative;
+                margin-right: 0;
+            }
+
+            }
+    </style>
+    <script>
+        $(document).ready(function () {
+
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+
+        });
     </script>
 </head>
 <body>
-    <div class="page-header nomargin navbar-fixed-top" style="background-color:aliceblue">
-       
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="height:10px" role="navigation">
+
         @{if (string.IsNullOrEmpty(ViewBag.cid))
             {
                 Html.RenderPartial("_PageHeader");
@@ -219,14 +375,10 @@
 
             }
         }
-    </div>
-    <div id="wrapper">
-        <div class="container-fluid content_custom">
-            @*<ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Library</a></li>
-                    <li class="breadcrumb-item active">Data</li>
-                </ol>*@
+       
+        </nav>
+    <div id="wrapper" class="toggled">
+        <div class="container-fluid"> 
             @if (ViewBag.Fname != null)
             {
                 <div id="sidebar-wrapper">
@@ -241,7 +393,20 @@
                     @*</div>*@
                 </div>
             }
-            <div id="page-content-wrapper">
+            <div id="page-content-wrapper" style="margin-top: 40px;">
+                
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @RenderBody()
+                            @RenderSection("EbHead", false)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            @*<div id="page-content-wrapper">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12 col-xs-12">
@@ -249,13 +414,11 @@
                             @RenderSection("EbHead", false)
                         </div>
                     </div>
-                    @*<div class="col-sm-10 nopadding nomargin">*@
-                    @*@RenderBody()
-                        @RenderSection("EbHead", false)*@
-                    @*</div>*@
+                   
                 </div>
-            </div>
+            </div>*@
         </div>
     </div>
+
 </body>
 </html>

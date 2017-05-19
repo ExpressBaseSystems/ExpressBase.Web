@@ -2,23 +2,76 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <head>
+    <title>Objects</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.22.5/skin-lion/ui.fancytree.min.css" />@*Dona*@
+    <script src="https://cdn.jsdelivr.net/jquery.fancytree/2.22.4/jquery.fancytree-all.min.js"></script>@*Dona*@
+
     <script type="text/javascript">
         $(document).ready(function () {
-            function openInNewTab(url,ele) {
+            $(function () {
+                var obj = [];
+                var folder = [];
+                var sourc = [];
+                $.post('https://live.expressbase.com/Tenant/GetEbObjects_json/', { "TenantAccountId": sessionStorage.getItem("cid") }, function (result) {
+                   alert(JSON.stringify(result))
+                    $.each(result, function (i) {
+                        sourc.push({ "title": result[i].name, "key": i });
+                    });
+
+                    folder.push({ "title": "DataSources", "key": 2, "folder": true, "children": sourc });
+                    folder.push({ "title": "Sql Functions", "key": 3, "folder": true });
+                    folder.push({ "title": "Javascript Functions", "key": 4, "folder": true });
+                    folder.push({ "title": "Javascript Validators", "key": 5, "folder": true });
+                    obj.push({ "title": "Objects", "key": 1, "folder": true, "children": folder });
+                    $("#tree").fancytree({
+                        source: obj,
+                        extensions: ["childcounter"],//, "glyph"],
+                        childcounter: {
+                            deep: false,
+                            hideZeros: true,
+                            hideExpanded: false
+                        },
+                        activate: function (event, data) {
+                            var cid = sessionStorage.getItem("cid");
+                            var obj_code = sessionStorage.setItem("obj_code", result[data.node.key].sql);
+                            var obj_name = sessionStorage.setItem("obj_name", result[data.node.key].name);
+                            var obj_type = sessionStorage.setItem("obj_type", result[data.node.key].EbObjectType);
+                            alert(result[data.node.key].EbObjectType);
+                            openInNewTab('code_editor', cid);
+                        },
+                        //glyph: {
+                        //    map: {
+                        //        doc: "glyphicon glyphicon-file",
+                        //        docOpen: "glyphicon glyphicon-file",
+                        //        checkbox: "glyphicon glyphicon-unchecked",
+                        //        checkboxSelected: "glyphicon glyphicon-check",
+                        //        checkboxUnknown: "glyphicon glyphicon-share",
+                        //        dragHelper: "glyphicon glyphicon-play",
+                        //        dropMarker: "glyphicon glyphicon-arrow-right",
+                        //        error: "glyphicon glyphicon-warning-sign",
+                        //        expanderClosed: "glyphicon glyphicon-menu-right",
+                        //        expanderLazy: "glyphicon glyphicon-menu-right",  // glyphicon-plus-sign
+                        //        expanderOpen: "glyphicon glyphicon-menu-down",  // glyphicon-collapse-down
+                        //        folder: "glyphicon glyphicon-folder-close",
+                        //        folderOpen: "glyphicon glyphicon-folder-open",
+                        //        loading: "glyphicon glyphicon-refresh glyphicon-spin"
+
+                        //    }
+                        //}
+
+                    })
+                });
+            });
+            function openInNewTab(url, ele) {
                 sessionStorage.setItem("cid", ele);
-                var win = window.open(url,'_blank');
+                var win = window.open(url, '_blank');
                 win.focus();
             }
-            $('#code_edit').click(function () {
-                
-                var cid = sessionStorage.getItem("cid");
-                openInNewTab('code_editor',cid);
-            });
         });
     </script>
 </head>
 <body>
-    <div class="container">
-        <button id="code_edit" class="btn"> code editor</button>
+    <div class="container col-md-2">
+        <div id="tree"></div>
     </div>
 </body>

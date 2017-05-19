@@ -1,27 +1,78 @@
-﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
-@using ServiceStack;
+﻿<div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+       
+                <li class="sidebar-brand">
+                    <br>
+                </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-comments" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Chat<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">     
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Forms</a></li>
+                <li class="dropdown-header"><a href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Data visualizations</a></li>
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Reports</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-usd" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;  Financial Accounts<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Forms</a></li>
+                <li class="dropdown-header"><a href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Data visualizations</a></li>
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Reports</a></li>
+            </ul>
+        </li>
 
-@{
-    EbObjectResponse fr = null;
-    var EbConfig = ViewBag.EbConfig;
-    if (EbConfig != null && (!string.IsNullOrEmpty(ViewBag.cid)))
-    {
-        IServiceClient client = EbConfig.GetServiceStackClient();
-        fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
-    }
-}
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; General<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Forms</a></li>
+                <li class="dropdown-header"><a href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Data visualizations</a></li>
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Reports</a></li>
+            </ul>
+        </li>
 
-<ul class="sidebar-nav list-group" style="list-style-type: none;">
-    @{  if (fr != null)
-        {
-            foreach (var f in fr.Data)
-            {
-                string fname = f.Name;
-                string formid = string.Format("f?fid={0}", f.Id);
-                <li class="list-group-item"><a href="@formid"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; @fname</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-truck" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Operations-Van Sales<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Forms</a></li>
+                <li class="dropdown-header"><a href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Data visualizations</a></li>
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Reports</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-money" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Payroll Management<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Forms</a></li>
+                <li class="dropdown-header"><a href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Data visualizations</a></li>
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Reports</a></li>
+            </ul>
+        </li>
+     
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-shopping-cart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Procurement Management<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Forms</a></li>
+                <li class="dropdown-header"><a href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Data visualizations</a></li>
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Reports</a></li>
+            </ul>
+        </li>
 
-            }
-        }
-    }
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-product-hunt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Production<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Forms</a></li>
+                <li class="dropdown-header"><a href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Data visualizations</a></li>
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Reports</a></li>
+            </ul>
+        </li>
 
-</ul>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;  Vehicle Fleet Management<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Forms</a></li>
+                <li class="dropdown-header"><a href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Data visualizations</a></li>
+                <li class="dropdown-header"><a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp; Reports</a></li>
+            </ul>
+        </li>
+ 
+    </ul>
+</div>

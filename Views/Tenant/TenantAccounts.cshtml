@@ -6,7 +6,7 @@
         $(document).ready(function () {
             $('.eb_acc_dbcon_btn').click(function () {
                 var accid = $(this).attr("data-accid");
-                $.get('https://localhost:44377/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
+                $.get('https://expressbaseservicestack.azurewebsites.net/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
                     if (result.data.conf_dbtype === 1) {
                         var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", accid, result.data);
                         DBwizard_sim.CustomWizFunc = (new CustomWizFuncs).DbCheck;
@@ -27,7 +27,7 @@
                 openInNewTab('objects', ele);
             });
             $('.new').click(function () {
-                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://localhost:44377/infra/", 800, 800, "Add Account", "fa-database");
+                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Add Account", "fa-database");
 
             });
             $('.edit').click(function () {
@@ -35,7 +35,7 @@
                 $('#acid').val(accId);
                 $.get('https://localhost:44377/infra/', { "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": accId }), "Token": getToken() }, function (result) {
 
-                    var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 600, 600, "600, 600", "fa-database", result.data);                  
+                    var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 600, 600, "600, 600", "fa-database", result.data);
                 })
             });
             $('.users').click(function () {
@@ -81,15 +81,15 @@
         }
     </script>
 </head>
-<div class="container">
+<div>
 
     @{
         List<List<object>> list = new List<List<object>>();
         list = ViewBag.dict;
-        <div class="row">
+        <div>
             <section class="content">
-               
-                <div class="col-md-12 col-md-offset-1">
+
+                <div>
                     <div class="panel panel-default" style="width: 100%;">
                         <div class="panel-body" style="margin-top: 50px;">
                             <h1>My Accounts</h1>
@@ -97,11 +97,11 @@
                                 <div class="icon-addon addon-lg input-group-btn">
                                     <input type="text" class="form-control" placeholder="Search" id="myInput" onkeyup="myFunction()" style="width:500px">
                                     <label for="myInput" class="glyphicon glyphicon-search" rel="tooltip" title="myInput"></label>
-                                </div>                             
+                                </div>
                                 <div class="pull-right" style="margin-left: 55px;">
                                     <input type="button" class="new btn btn-success" value="New Account" style="height: 45px; margin-left: 50px;" />
                                 </div>
-                            </div>                          
+                            </div>
                             <div class="table-container">
                                 <table class="table table-filter" id="myTable">
                                     <tbody>
@@ -129,134 +129,157 @@
                                                             {
                                                                 <img src="~/images/your-logo.png" class="prologo" />
 
-                                }
-                                else
-                                {
-                                    @Html.Raw(sublist[2])
-                                }
-                            }
-                        </div>
-                        <div style="margin-left: 80px;">
-                            <span>
-                                <a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Configure DB"><i class="btn btn-default fa fa-database fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Settings"><i class="btn btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="eng" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Engineering"><i class="btn btn-default fa fa-wrench fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="obj" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Objects"><i class="btn btn-default fa fa-file-text fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="On - Off Maintainance Mode"><i class="btn btn-default fa fa-bed fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Organizational Structure"><i class="btn btn-default fa fa-sitemap fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Applications"><i class="btn btn-default fa fa-align-right fa-flip-hoizontal fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Users"><i class="btn btn-default fa fa-users fa-2x users" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Roles"><i class="btn btn-default fa fa-graduation-cap fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Billing"><i class="btn btn-default fa fa-credit-card fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Launch Site"><i class="btn btn-default fa fa-external-link fa-2x" aria-hidden="true"></i></a>
-                                <a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Monitoring"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
-                                <a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Market Place"><i class="btn btn-default fa fa-shopping-cart fa-2x marketPlace" aria-hidden="true"></i></a>
-                                <a href="#" class="edit" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Edit Data"><i class="btn btn-default fa fa-desktop fa-2x" aria-hidden="true"></i></a>
-                            </span>
-                            </div>
-                        </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.Raw(sublist[2])
+                                                            }
+                                                        }
+                                                        </a>
+                                                    </td>
+                                                <td>
+                                                    <h4 class="title">
+                                                        @sublist[1]
+                                                    </h4>
+                                                    <span class="media-meta">Created At:@sublist[4]</span>
+                                                </td>
+                                                <td>
+                                                    <div class="drpbtn">
+                                                        <div class="drpbtn-body">
+                                                            <div class="btn-group">
+                                                                <button type="button" class="btn btn-primary">Actions</button>
+                                                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                                                    <span class="caret"></span>
+                                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                                </button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li class="dropdown-plus-title">
+                                                                        Dropdown
+                                                                        <b class="pull-right glyphicon glyphicon-chevron-up"></b>
+                                                                    </li>
+                                                                    <li><a href="#" class="eb_acc_dbcon_btn" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Configure DB">Configure Database</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Settings">Settings</a></li>
+                                                                    <li><a href="#" class="eng" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Engineering">Engineering</a></li>
+                                                                    <li><a href="#" class="obj" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Objects">Objects</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="On - Off Maintainance Mode">On - Off Maintainance Mode</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Organizational Structure">Organizational Structure</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Applications">Applications</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Users">Users</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Roles">Roles</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Billing">Billing</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Launch Site">Launch Site</a></li>
+                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Monitoring">Monitoring</a></li>
+                                                                    <li><a href="@Url.Action("marketPlace", "Tenant")" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Market Place">Market Place</a></li>
+                                                                    <li><a href="#" class="edit" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Edit Data">Edit Data</a></li>
+
+                                                                </ul>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
 
                                                 </td>
 
                                             </tr>
                                                             }
 
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                         </div>
+                        <div class="content-footer">
+
+                        </div>
+                    </div>
+                    </section>
 
                     </div>
-                    <div class="content-footer">
-
-                    </div>
-                </div>
-            </section>
-
-        </div>
 
     }
-</div>
+    </div>
 
-<style>
-    .icon-addon.addon-lg .form-control {
-    line-height: 1.33;
-    height: 46px;
-    font-size: 18px;
-    padding: 10px 16px 10px 40px;
-}
-    .icon-addon.addon-md .glyphicon,
-.icon-addon .glyphicon, 
-.icon-addon.addon-md .fa,
-.icon-addon .fa {
-    position: absolute;
-    z-index: 2;
-    left: 10px;
-    font-size: 14px;
-    width: 20px;
-    margin-left: -2.5px;
-    text-align: center;
-    padding: 10px 0;
-    top: 1px
-}
-
-    .drpbtn {
-        margin-top: 15px;
-    }
-
-    .drpbtn-body {
-        zoom: 1;
-    }
-
-    .new {
-        float: right;
-        margin-right: 50%;
-    }
-
-    .prologo {
-        width: 25%;
-        height: 15%;
-    }
-
-    .tdd {
-        margin: 10px;
-        width: 100px;
-    }
-
-    .tds {
-        margin-top: 50px;
-    }
-
-    .tenant_account {
-        width: 65%;
-        background: #fff;
-        border-radius: 2px;
-        display: inline-block;
-        height: 200px;
-        margin: 1rem;
-        position: relative;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-        border-radius: 10px;
-    }
-
-        .tenant_account:hover {
-            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    <style>
+        .icon-addon.addon-lg .form-control {
+            line-height: 1.33;
+            height: 46px;
+            font-size: 18px;
+            padding: 10px 16px 10px 40px;
         }
 
+        .icon-addon.addon-md .glyphicon,
+        .icon-addon .glyphicon,
+        .icon-addon.addon-md .fa,
+        .icon-addon .fa {
+            position: absolute;
+            z-index: 2;
+            left: 10px;
+            font-size: 14px;
+            width: 20px;
+            margin-left: -2.5px;
+            text-align: center;
+            padding: 10px 0;
+            top: 1px;
+        }
 
-    img {
-        border: solid 0px yellow;
-        margin: 10px;
-        width: 20%;
-        height: 20%;
-    }
+        .drpbtn {
+            margin-top: 15px;
+        }
 
-    .hov:hover {
-        border: solid 2px blue;
-    }
+        .drpbtn-body {
+            zoom: 1;
+        }
 
-    .border_blue {
-        border: solid 2px blue;
-    }
-</style>
+        .new {
+            float: right;
+            margin-right: 50%;
+        }
+
+        .prologo {
+            width: 25%;
+            height: 15%;
+        }
+
+        .tdd {
+            margin: 10px;
+            width: 100px;
+        }
+
+        .tds {
+            margin-top: 50px;
+        }
+
+        .tenant_account {
+            width: 65%;
+            background: #fff;
+            border-radius: 2px;
+            display: inline-block;
+            height: 200px;
+            margin: 1rem;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            border-radius: 10px;
+        }
+
+            .tenant_account:hover {
+                box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            }
+
+
+        img {
+            border: solid 0px yellow;
+            margin: 10px;
+            width: 20%;
+            height: 20%;
+        }
+
+        .hov:hover {
+            border: solid 2px blue;
+        }
+
+        .border_blue {
+            border: solid 2px blue;
+        }
+    </style>

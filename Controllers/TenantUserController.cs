@@ -31,7 +31,24 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-  
+
+
+        public IActionResult DataVisualizations()
+        {
+            List<EbObjectWrapper> dslist = new List<EbObjectWrapper>();
+            EbObjectResponse fr = null;
+            var EbConfig = ViewBag.EbConfig;
+            IServiceClient client = EbConfig.GetServiceStackClient();
+            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
+            foreach(var element in fr.Data)
+            if (element.EbObjectType==EbObjectType.DataSource)
+                {
+                    dslist.Add(element);
+                }
+            ViewBag.dvlist = dslist;
+            return View();
+        }
+        
 
         public IActionResult UserDashboard()
         {

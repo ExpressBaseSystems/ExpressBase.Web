@@ -5,89 +5,77 @@
     var EbConfig = ViewBag.EbConfig;
     var redisClient = EbConfig.GetRedisClient();
     string imgpro = "";
-   // var __tmpStr = "";
+    // var __tmpStr = "";
     WebPageLoginStateTypes __state = WebPageLoginStateTypes.TenantExt;
 
     //__tmpStr = "<ul class='list-group' style='list-style-type: none;'> <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li> <li class='list-group-item'><a href='#'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> <li class='list-group-item'><a href='TenantLogout'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>  </ul>";
-    if (ViewBag.UId!= null)
+    if (ViewBag.UId != null)
     {
         string profileimg = string.Format("uid_{0}_pimg", ViewBag.UId);
         imgpro = redisClient.Get<string>(profileimg);
     }
 
     __state = string.IsNullOrEmpty(ViewBag.Fname)
-? WebPageLoginStateTypes.TenantExt : WebPageLoginStateTypes.TenantInt;
+    ? WebPageLoginStateTypes.TenantExt : WebPageLoginStateTypes.TenantInt;
 
 }
-<div class="container-fluid">
-    <div id="navbar" class="navbar-collapse collapse">
-        @{ if (ViewBag.Fname != null)
-            {
-                <a class="navbar-brand" href="#menu-toggle" id="menu-toggle"><span class="glyphicon glyphicon-list" aria-hidden="true"></span></a>
-            }
+<div >
+    <div class="navbar-header">
+        @if (ViewBag.Fname != null)
+        {
+            <a class="navbar-brand" href="#menu-toggle" id="menu-toggle"><span class="glyphicon glyphicon-list" aria-hidden="true"></span></a>
+
         }
         <a class="navbar-brand" href="~/TenantExt/Signin"><img class="img-responsive" src="/images/EB_Logo11.png" width="175" height="50" /></a>
-        @if (__state == WebPageLoginStateTypes.TenantInt)
-            {
-            @*@if (!string.IsNullOrEmpty(imgpro))
-                {
-                <a href="#" data-toggle="popover" data-placement="bottom" data-content="@__tmpStr" style="margin-right:30px;" class="navbar-right">@Html.Raw(imgpro)</a>
+ 
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" style="background-color:#3b5998;height:60px !important">
+@if (__state == WebPageLoginStateTypes.TenantInt)
+{
+    if (ViewBag.Fname != null)
+    {
+        <ul class="nav navbar-nav navbar-right" style="list-style-type:none;">
+            <li class="dropdown navbar-right">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    @if (string.IsNullOrEmpty(imgpro))
+                    {
+                        <img src="~/images/proimg.jpg" class="img-circle img-cir">
+                    }
+                    else
+                    {
+                        @Html.Raw(imgpro)
 
-            }
-            else
-            {
-                <a href="#" data-toggle="popover" data-placement="bottom" data-content="@__tmpStr" style="margin-right:30px;" class="navbar-right"><img src="~/images/proimg.jpg" class="img-circle navbar-right" /></a>
-            }*@
-        if (ViewBag.Fname != null)
-        {
-            <ul style="list-style-type:none;">
-                <li class="dropdown navbar-right">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        @if (string.IsNullOrEmpty(imgpro))
-                        {
-                            <img src="~/images/proimg.jpg" class="img-circle img-cir">
-                        }
-                        else
-                        {
-                            @Html.Raw(imgpro)
-
-                        }
-                    </a>
-                    @*<ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-cog"></i> Account</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-sign-out"></i> Sign-out</a></li>
-                    </ul>*@
-                    <ul class='dropdown-menu' style='list-style-type: none;'>
-                     <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li>
-                     <li class='list-group-item'><a href='#'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> 
-                     <li class='list-group-item'><a href='TenantLogout'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li> 
-                    </ul>
-                </li>
-            </ul>
-
-            }
-
-        }
-
+                    }
+                </a>
+                <ul class='dropdown-menu' style='list-style-type: none;'>
+                    <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li>
+                    <li class='list-group-item'><a href='#'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li>
+                    <li class='list-group-item'><a href='TenantLogout'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>
+                </ul>
+            </li>
+        </ul>
+    }
+}
         @if (__state == WebPageLoginStateTypes.TenantExt) //external
-            {
+        {
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="#">Platform</a></li>
+                <li><a href="#">Platform</a></li>
                 <li><a href="#">Pricing</a></li>
                 <li><a href="#">FAQs</a></li>
                 <li><a href="#">Resources</a></li>
                 <li><a href="~/TenantExt/Signin">Login</a></li>
             </ul>
         }
+  
     </div>
 </div>
 
 <style>
     .img-cir {
         /*padding: 20px;*/
-        height: 50px;
-        width: 50px;
+        height: 40px;
+        width: 40px;
+        margin-right:40px
     }
 </style>
 <script>

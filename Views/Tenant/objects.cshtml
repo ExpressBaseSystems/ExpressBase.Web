@@ -12,7 +12,7 @@
                 var obj = [];
                 var folder = [];
                 var sourc = [];
-                $.post('http://localhost:53431/Tenant/GetEbObjects_json/', { "TenantAccountId": sessionStorage.getItem("cid") }, function (result) {
+                $.post('https://live.expressbase.com/Tenant/GetEbObjects_json/', { "TenantAccountId": sessionStorage.getItem("cid") }, function (result) {
                    alert(JSON.stringify(result))
                     $.each(result, function (i) {
                         sourc.push({ "title": result[i].name, "key": i });

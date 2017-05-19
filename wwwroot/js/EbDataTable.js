@@ -1,4 +1,18 @@
-﻿var Agginfo = function (col) {
+﻿if (!String.prototype.splice) {
+    String.prototype.splice = function (start, delCount, newSubStr) {
+        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+    };
+};
+
+Array.prototype.max = function () {
+    return Math.max.apply(null, this);
+};
+
+Array.prototype.min = function () {
+    return Math.min.apply(null, this);
+};
+
+var Agginfo = function (col) {
     this.colname = col;
 };
 
@@ -57,6 +71,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     this.eb_filter_controls_4sb = [];
     this.zindex = 0;
     this.rowId = -1;
+    this.isSettingsSaved = false;
 
     this.Init = function () {
         this.table_jQO = $('#' + this.tableId);
@@ -109,10 +124,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
                 dataSrc: function(dd) { return dd.data; }
             },
         
-            //fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-            //    colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull, @data.columns);
-            //},
-
+            fnRowCallback: this.rowCallBackFunc.bind(this),
             fnFooterCallback: this.footerCallback.bind(this),
             drawCallback: this.drawCallBackFunc.bind(this),
             initComplete: this.initCompleteFunc.bind(this),
@@ -160,7 +172,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         dq.Id = this.dsid;
         dq.Token = getToken();
         dq.TFilters = JSON.stringify(this.repopulate_filter_arr());
-        dq.Params = JSON.stringify(getFilterValues());
+        dq.Params = JSON.stringify(this.getFilterValues());
         dq.OrderByCol = this.order_info.col; 
         dq.OrderByDir = this.order_info.dir;
     };
@@ -168,6 +180,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     this.btnGoClick = function (e) {
         if (!this.isSecondTime) {
             this.isSecondTime = true;
+            this.RenderGraphModal();
             this.Init();
             this.filterBox.collapse('hide');
         }
@@ -247,6 +260,10 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             });
         }
         return filter_obj_arr;
+    };
+
+    this.rowCallBackFunc = function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+        this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
     };
 
     this.initCompleteFunc = function (settings, json) { this.createFilterRowHeader(); this.addFilterEventListeners(); }
@@ -444,10 +461,11 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         $(".eb_fbool").change(this.toggleInFilter.bind(this));
         $(".eb_selall").click(this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").click(this.updateAlSlct.bind(this));
+        $(".eb_canvas").click(this.renderMainGraph);
 
-        this.filterbtn.click(this.showOrHideFilter.bind(this));
-        this.clearfilterbtn.click(this.clearFilter.bind(this));
-        this.totalpagebtn.click(this.showOrHideAggrControl.bind(this));
+        this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
+        this.clearfilterbtn.off("click").on("click", this.clearFilter.bind(this));
+        this.totalpagebtn.off("click").on("click", this.showOrHideAggrControl.bind(this));
         this.copybtn.click(this.CopyToClipboard.bind(this));
         this.printbtn.click(this.ExportToPrint.bind(this));
         this.printAllbtn.click(this.printAll.bind(this));
@@ -455,7 +473,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.excelbtn.click(this.ExportToExcel.bind(this));
         this.csvbtn.click(this.ExportToCsv.bind(this));
         this.pdfbtn.click(this.ExportToPdf.bind(this));
-        this.settingsbtn.click(this.GetSettingsModal.bind(this));
+        this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
     };
 
     this.orderingEvent = function (e) {
@@ -588,7 +606,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.clearFilter();
     };
 
-    this.clearFilter = function () {
+    this.clearFilter = function (e) {
         var flag = false;
         var tableid = this.tableId;
         $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) {
@@ -720,7 +738,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         $('#' + this.tableId + '_container').find('.buttons-print')[0].click();
     };
 
-    this.GetSettingsModal=function (e) {
+    this.GetSettingsModal = function (e) {
         this.OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
         var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
         var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
@@ -774,21 +792,29 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         $(FooterButton).click(this.saveSettings.bind(this));
         $(this.OuterModalDiv).on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
         $(this.OuterModalDiv).on('hidden.bs.modal', this.hideModalFunc.bind(this));
+        $("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
 
         $(this.OuterModalDiv).modal('show');
     };
 
     this.hideModalFunc = function (e) {
         $('#Table_Settings').DataTable().destroy();
-        $(this).data('bs.modal', null);
-        $(this.OuterModalDiv).remove();
-
-        this.Api.destroy();
-        $('#' + this.tableId + '_divcont').children()[1].remove();
-        var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
-        $('#' + this.tableId + '_divcont').append(table);
-        this.ebSettings = $.extend(true, {}, this.ebSettingsCopy);
-        this.Init();
+        //$(this).data('bs.modal', null);
+        //$(this.OuterModalDiv).remove();
+        setTimeout(function () {
+            console.log("romoved");
+            $("#settingsmodal").remove();
+        },500);
+        
+        if (this.isSettingsSaved) {
+            this.isSettingsSaved = false;
+            this.Api.destroy();
+            $('#' + this.tableId + '_divcont').children()[1].remove();
+            var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
+            $('#' + this.tableId + '_divcont').append(table);
+            this.ebSettings = $.extend(true, {}, this.ebSettingsCopy);
+            this.Init();
+        }
     };
 
     this.getColobj = function (col_name) {
@@ -801,10 +827,10 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         });
 
         return selcol;
-        //return new coldef(selcol.data, selcol.title, selcol.visible, selcol.width, selcol.name, selcol.type, selcol.className);
     };
 
     this.saveSettings = function () {
+        this.isSettingsSaved = true;
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
         var n, d, t, v, w, ty, cls;
@@ -847,13 +873,14 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.ebSettingsCopy.leftFixedColumns = $("#leftFixedColumns_text").val();
         this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
         this.ebSettingsCopy.columns = objcols;
+        this.ebSettingsCopy.columnsext = this.ebSettings.columnsext;
         this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
         this.updateRenderFunc();
         if (this.ebSettingsCopy.rowGrouping.length > 0) {
             var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
             groupcols[0].visible = false;
         }
-        $.post('TVPref4User', { tvid: this.ebSettingsCopy.dvid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
+        $.post('TVPref4User', { tvid: this.dsid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
     };
 
     this.reinitDataTable = function () {
@@ -888,7 +915,6 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         CreatePropGrid(settings_tbl.row(0).data(), data2Obj.columnsext);
         $('#Table_Settings tbody').on('click', 'tr', function () {
             var idx = settings_tbl.row(this).index();
-            alert('data2Obj.columnsext:' + JSON.stringify(data2Obj.columnsext));
             CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
             settings_tbl.columns.adjust();
         });
@@ -955,7 +981,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         if (!tx.hideCheckbox) {
             var chkObj = new Object();
             chkObj.data = null;
-            chkObj.title = "<input id='{0}_select-all' type='checkbox' onclick='clickAlSlct(event, this);' data-table='{0}'/>".replace("{0}", tableid);
+            chkObj.title = "<input id='{0}_select-all' type='checkbox' class='eb_selall' data-table='{0}'/>".replace("{0}", this.tableId);
             chkObj.width = 10;
             chkObj.orderable = false;
             chkObj.visible = true;
@@ -980,12 +1006,195 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
                 this.ebSettingsCopy.columns[i].render = this.renderProgressCol;
             }
         }
+        if (col.type === "System.Boolean") {
+            if (this.ebSettingsCopy.columnsext[i].name === "sys_locked" || this.ebSettingsCopy.columnsext[i].name === "sys_cancelled") {
+                this.ebSettingsCopy.columns[i].render = (this.ebSettingsCopy.columnsext[i].name === "sys_locked") ? this.renderLockCol : this.renderEbVoidCol;
+            }
+            else {
+                if (this.ebSettingsCopy.columnsext[i].IsEditable) {
+                    this.ebSettingsCopy.columns[i].render = this.renderEditableCol;
+                }
+                if (this.ebSettingsCopy.columnsext[i].RenderAs === "Icon") {
+                    this.ebSettingsCopy.columns[i].render = this.renderIconCol;
+                }
+            }
+        }
+        if (col.type === "System.String") {
+            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Graph") {
+                this.ebSettingsCopy.columns[i].render = this.lineGraphDiv;
+            }
+        }
     };
 
     this.renderProgressCol = function (data, type, row, meta) { 
         return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>"; 
     };
+
+    this.renderEditableCol = function (data) {
+            return (data === true) ? "<input type='checkbox' data-toggle='toggle' data-size='mini'  checked>" : "<input type='checkbox' data-toggle='toggle' data-size='mini'>";
+    };
+
+    this.renderIconCol = function (data) {
+        return (data === true) ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
+    };
+
+    this.renderEbVoidCol = function (data) {
+        return (data === true) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+    };
+
+    this.renderLockCol = function (data) {
+        return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
+    };
     
+    this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+        $.each(this.ebSettings.columns, function (i, value) {
+            var rgb = '';
+            var fl = '';
+            if (value.name === 'sys_row_color') {
+                HEX = Number(aData[value.data]).toString(16);
+                var t = (HEX.toString().length < 6) ? ("0" + HEX.toString()) : HEX;
+                $(nRow).css('background-color', '#' + t);
+            }
+
+            if (value.name === 'sys_cancelled') {
+                var tr = aData[value.data];
+                if (tr === true)
+                    $(nRow).css('color', '#f00');
+            }
+        });
+    };
+
+    this.getFilterValues = function () {
+        var fltr_collection = [];
+        var paramstxt = $('#hiddenparams').val().trim();
+        if (paramstxt.length > 0) {
+            var params = paramstxt.split(',');
+            $.each(params, function (i, id) {
+                var v = null;
+                var dtype = $('#' + id).attr('data-ebtype');
+                if (dtype === '6')
+                    v = $('#' + id).val().substring(0, 10);
+                else
+                    v = $('#' + id).val();
+                fltr_collection.push(new fltr_obj(dtype, id, v));
+            });
+        }
+
+        return fltr_collection;
+    };
+
+    this.lineGraphDiv = function (data, type, row, meta) {
+        if (!data)
+            return "";
+        else
+            return "<canvas id='eb_cvs" + meta.row + "' class='eb_canvas' style='width:120px; height:40px; cursor:pointer;' data-graph='" + data + "' data-toggle='modal'></canvas><script>renderLineGraphs(" + meta.row + "); $('#eb_cvs" + meta.row + "').mousemove(function(e){ GPointPopup(e); });</script>";
+    };
+
+    this.RenderGraphModal = function () {
+        $(document.body).append("<div class='modal fade' id='graphmodal' role='dialog'>"
+    + "<div class='modal-dialog modal-lg'>"
+     + " <div class='modal-content'>"
+        + "<div class='modal-header'>"
+          + "<button type = 'button' class='close' data-dismiss='modal'>&times;</button>"
+          + "<h4 class='modal-title'><center>Graph</center></h4>"
+        + "</div>"
+        + "<div class='modal-body'>"
+            + "<div class='dygraph-Wrapper'>"
+                + "<div id='graphdiv' style='width:100%;height:500px;'></div>"
+            + "</div>  "
+        + "</div>"
+     + "</div>"
+    + "</div>"
+ + "</div>");
+    };
+
+    this.renderMainGraph = function (e) {
+        $("#graphmodal").modal('show');
+
+        setTimeout(function () {
+            var gcsv = csv($(e.target).attr("data-graph").toString());
+            new Dygraph(
+                document.getElementById('graphdiv'),
+                gcsv,
+                {
+                    showRangeSelector: true,
+                    interactionModel: Dygraph.defaultInteractionModel,
+                    includeZero: true,
+                    stackedGraph: true,
+                    axes: {
+                        y: {
+                            valueFormatter: function (y) {
+                                return y;
+                            },
+                            axisLabelFormatter: function (y) {
+                                y = y.toString();
+                                if (y.slice(-3) === '000')
+                                    return y.slice(0, -3) + 'K';
+                                else
+                                    return y;
+                            },
+                        },
+                        logscale: true
+                    }
+                }
+            );
+        }, 500);
+    };
 
     this.btnGo.click(this.btnGoClick.bind(this));
+};
+
+function csv(gdata) {
+    //gdata = ["201607:58179.28","201608:66329.35","201609:67591.27","201610:61900.93","201611:38628.72","201612:48536.31","201701:25256.74","201702:0"];
+    var pairs = gdata.split(',');
+
+    var r = 'date, Value\n';
+    var ft;
+    for (var i = 0; i < pairs.length; i++) {
+        ft = pairs[i].split(':')[0].replace("\"", "").replace("[", "");
+
+        ft = ft.slice(0, 4) + '/' + ft.slice(4);
+
+        r += ft.replace("\"", "");
+        r += '-01,' + pairs[i].split(':')[1].replace("\"", "");
+        r += '\n';
+    }
+    return r.replace("]", "");
+};
+
+function renderLineGraphs (id) {
+    var canvas = document.getElementById('eb_cvs' + id);
+    var gdata = $(canvas).attr("data-graph").toString();
+    var context = canvas.getContext('2d');
+    if (gdata) {
+        //gdata = '["201607:4529218.75","201608:4643253.00","201609:4886894.55","201610:5272744.25","201611:5253090.25","201612:5541506.00","201701:2964522.00"]';
+        context.fillStyle = "rgba(255, 255, 255, 1)";
+        context.beginPath();
+        context.fillRect(0, 0, 1000, 1000);
+        context.fillStyle = "rgba(51, 122, 183, 0.7)";
+        var Gpoints = [];
+        var Ypoints = [];
+        Gpoints = gdata.split(",");
+        var xInterval = (parseInt(canvas.style.width) * 2.5) / (Gpoints.length);
+        context.moveTo(xInterval, 1000);
+        var xPoint = 0;
+        var yPoint;
+        for (var i = 0; i < Gpoints.length; i++) {
+            yPoint = parseInt(Gpoints[i].split(":")[1]);
+            Ypoints.push(yPoint);
+        }
+        var Ymax = Ypoints.max();
+        for (i = 0; i < Gpoints.length; i++) {
+            xPoint += xInterval;
+            context.lineTo(xPoint, 3.76 * (40 - ((Ypoints[i] / Ymax) * 40)));//
+        }
+        context.lineTo(xPoint, 1000);
+        canvas.strokeStyle = "black";
+        context.fill();
+        context.stroke();
+    }
+};
+
+function GPointPopup(e) {
+    //alert(e.pageX);
 };

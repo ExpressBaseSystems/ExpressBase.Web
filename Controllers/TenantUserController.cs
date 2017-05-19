@@ -135,6 +135,17 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        public IActionResult dv(int dsid)
+        {
+            ViewBag.dsid = dsid;
+            ViewBag.EbConfig = this.EbConfig;
+
+            var redisClient = this.EbConfig.GetRedisClient();
+            ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 38));
+
+            return View();
+        }
+
         [HttpGet]
         public IActionResult UserPreferences()
         {

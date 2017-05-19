@@ -3,6 +3,7 @@
     this.VMindex = null;
     this.DMindex = null;
     this.DMindexes = [];
+    this.displayMember1 = [];
     this.DtFlag = false;
     this.cellTr = null;
     this.Msearch_colName = '';
@@ -22,8 +23,9 @@
     this.servicestack_url = servicestack_url;
     this.Vobj = null;
 
+    this.datatable = null;
     this.InitDT = function () {
-
+        alert("hiiihi");
         $('#' + this.name + '_loading-image').show();
         $.post(this.servicestack_url + '/ds/columns/' + this.dataSourceId + '', { format: 'json', Token: getToken() }, this.initDTpost.bind(this));
     };
@@ -34,84 +36,60 @@
         var order_colname = '';
         var cols = [];
         if (data != null) {
-            $.each(data.columns,
-                function (i, value) {
-                    _v = true;
-                    _c = 'dt-left';
-                    if (value.columnName == 'id')
-                        _v = false;
-                    if (value.columnName == this.valueMember)
-                        this.VMindex = value.columnIndex;
-                    $.each(DMembers, function (j, v) {
-                        if (value.columnName == v)
-                            this.DMindexes.push(value.columnIndex);
-                    });
-                    if (value.columnName == this.displayMember)
-                        this.DMindex = value.columnIndex;
-                    if (value.columnIndex == 0 && this.multiSelect)
-                        cols.push({ 'data': null, 'render': function (data, type, row) { return '<input type=\'checkbox\'>' } });
-                    switch (value.type) {
-                        case 'System.Int32, System.Private.CoreLib': _c = 'dt-right'; break;
-                        case 'System.Decimal, System.Private.CoreLib': _c = 'dt-right'; break;
-                        case 'System.Int16, System.Private.CoreLib': _c = 'dt-right'; break;
-                        case 'System.DateTime, System.Private.CoreLib': _c = 'dt-center'; break;
-                        case 'System.Boolean, System.Private.CoreLib': _c = 'dt-center'; break;
-                    }
-                    cols.push({ data: value.columnIndex, className: _c, title: value.columnName, visible: _v });
-                }
-            );
+            $.each(data.columns, this.dataColumIterFn.bind(this));
         }
 
-        $('#' + this.name + 'tbl').dataTable(
-         {
-             keys: true,
-             dom: 'rti',
-             autoWidth: true,
-             scrollX: true,
-             scrollY: this.dropdownHeight,
-             serverSide: true,
-             columns: cols,
-             deferRender: true,
-             order: [],
-             paging: false,
-             select: true,
-             drawCallback: function (settings) {
-                 //setTimeout(function(){ $('#' + this.name + 'tbl').DataTable().columns.adjust(); },500);
-                 $('#' + this.name + 'container table:eq(0) thead th:eq(0)').removeClass('sorting');
-             },
-             ajax: {
-                 url: this.servicestack_url + '/ds/data/' + this.dataSourceId,
-                 type: 'POST',
-                 data: function (dq) {
-                     delete dq.columns;
-                     dq.Id = this.dataSourceId;
-                     dq.Token = getToken();
-                     if (search_colnameCollection.length !== 0) {
-                         dq.search_col = '';
-                         $.each(search_colnameCollection, function (i, value) {
-                             if (dq.search_col == '')
-                                 dq.search_col = value;
-                             else
-                                 dq.search_col = dq.search_col + ',' + value;
-                         });
-                     }
-                     if (order_colname !== '')
-                         dq.order_col = order_colname;
-                     if (searchTextCollection.length != 0) {
-                         dq.searchtext = '';
-                         $.each(searchTextCollection, function (i, value) {
-                             if (dq.searchtext == '')
-                                 dq.searchtext = value;
-                             else
-                                 dq.searchtext = dq.searchtext + ',' + value;
-                         });
-                     }
-                     if (this.Msearch_colName !== '')
-                         dq.Msearch_colName = this.Msearch_colName;
-                 },
-                 dataSrc: this.ajaxDataSrcfn.bind(this)
-             }
-         });
+        this.datatable = $('#' + this.name + 'tbl').DataTable(
+        {
+            keys: true,
+            dom: 'rti',
+            autoWidth: true,
+            scrollX: true,
+            scrollY: this.dropdownHeight,
+            serverSide: true,
+            columns: cols,
+            deferRender: true,
+            order: [],
+            paging: false,
+            select: true,
+            keys: true,
+            drawCallback: function (settings) {
+                //setTimeout(function(){ $('#' + this.name + 'tbl').DataTable().columns.adjust(); },500);
+                $('#' + this.name + 'container table:eq(0) thead th:eq(0)').removeClass('sorting');
+            },
+            ajax: {
+                url: this.servicestack_url + '/ds/data/' + this.dataSourceId,
+                type: 'POST',
+                data: function (dq) {
+                    delete dq.columns;
+                    dq.Id = this.dataSourceId;
+                    dq.Token = getToken();
+                    if (search_colnameCollection.length !== 0) {
+                        dq.search_col = '';
+                        $.each(search_colnameCollection, function (i, value) {
+                            if (dq.search_col == '')
+                                dq.search_col = value;
+                            else
+                                dq.search_col = dq.search_col + ',' + value;
+                        });
+                    }
+                    if (order_colname !== '')
+                        dq.order_col = order_colname;
+                    if (searchTextCollection.length != 0) {
+                        dq.searchtext = '';
+                        $.each(searchTextCollection, function (i, value) {
+                            if (dq.searchtext == '')
+                                dq.searchtext = value;
+                            else
+                                dq.searchtext = dq.searchtext + ',' + value;
+                        });
+                    }
+                    if (this.Msearch_colName !== '')
+                        dq.Msearch_colName = this.Msearch_colName;
+                },
+                dataSrc: this.ajaxDataSrcfn.bind(this)
+            }
+        });
         //delayed search on combo searchbox
         $('#' + this.name + 'container [type=search]').keyup($.debounce(500, this.delayedSearchEventHand.bind(this)));
 
@@ -128,12 +106,12 @@
         $('#' + this.name + 'tbl').keydown(function (e) { if (e.which == 27) this.Vobj.hideDD(); });
 
         //selection highlighting css on arrow keys
-        $('#' + this.name + 'tbl').DataTable().on('key-focus', this.arrowSelectionStylingFcs);// no need to bind 'this'
+        this.datatable.on('key-focus', this.arrowSelectionStylingFcs);// no need to bind 'this'
 
-        $('#' + this.name + 'tbl').DataTable().on('key-blur', this.arrowSelectionStylingBlr);// no need to bind 'this'
+        this.datatable.on('key-blur', this.arrowSelectionStylingBlr);// no need to bind 'this'
 
         //space & enter on option in DD
-        $('#' + this.name + 'tbl').DataTable().on('keyup', this.spaceEnterOnOpt);
+        this.datatable.on('key', this.spaceEnterOnOpt.bind(this));
 
         //filter textbox adding
         $('#' + this.name + 'container table:eq(0) thead').append($('#' + this.name + 'container table:eq(0) thead tr').clone());
@@ -167,6 +145,37 @@
 
         //sorting when click on columnheader
         $('#' + this.name + 'container table:eq(0) thead tr:eq(0)').on('click', 'th', this.sortClickColHdr.bind(this));
+    };
+
+    this.dataColumIterFn = function (i, value) {
+        _v = true;
+        _c = 'dt-left';
+        if (value.columnName == 'id')
+            _v = false;
+        if (value.columnName == this.valueMember)
+            this.VMindex = value.columnIndex;
+
+        $.each(DMembers, this.DMemberIterfn.bind(this));
+
+        if (value.columnName == this.displayMember)
+            this.DMindex = value.columnIndex;
+        if (value.columnIndex == 0 && this.multiSelect)
+            cols.push({ 'data': null, 'render': function (data, type, row) { return '<input type=\'checkbox\'>' } });
+        switch (value.type) {
+            case 'System.Int32, System.Private.CoreLib': _c = 'dt-right'; break;
+            case 'System.Decimal, System.Private.CoreLib': _c = 'dt-right'; break;
+            case 'System.Int16, System.Private.CoreLib': _c = 'dt-right'; break;
+            case 'System.DateTime, System.Private.CoreLib': _c = 'dt-center'; break;
+            case 'System.Boolean, System.Private.CoreLib': _c = 'dt-center'; break;
+        }
+        cols.push({ data: value.columnIndex, className: _c, title: value.columnName, visible: _v });
+    };
+
+    this.DMemberIterfn = function (j, v) {
+        if (value.columnName == v) {
+            alert("this.DMindexes:" + this.DMindexes);
+            this.DMindexes.push(value.columnIndex);
+        }
     }
 
     this.ajaxDataSrcfn = function (dd) {
@@ -246,17 +255,21 @@
 
     this.spaceEnterOnOpt = function (e, datatable, cell, originalEvent) {
         if (e.which === 13 || e.which === 32) {
-            alert("\\");
-            alert($(this.cellTr).html());
-            var Vmember = $('#' + this.name + 'tbl').DataTable().row($(this.cellTr)).data()[this.VMindex];
-            var Dmember = $('#' + this.name + 'tbl').DataTable().row($(this.cellTr)).data()[this.DMindex];
+            alert("spaceEnterOnOpt : ");
+            //alert("originalEvent.cellTr: " + originalEvent.cellTr);
+            //var Vmember = $('#' + this.name + 'tbl').DataTable().row($(this.cellTr)).data()[this.VMindex];
+            //var Dmember = $('#' + this.name + 'tbl').DataTable().row($(this.cellTr)).data()[this.DMindex];
+            var _row = this.datatable.row(cell.index().row);
+            alert(_row.data());
+            var Vmember = _row.data()[this.VMindex];
+            var Dmember = _row.data()[this.DMindex];
             if (!(this.Vobj.valueMember.contains(Vmember))) {
                 this.Vobj.displayMember.push(Dmember);
                 this.Vobj.valueMember.push(Vmember);
-                $(this.cellTr).find('[type=checkbox]').prop('checked', true);
+                $(_row).find('[type=checkbox]').prop('checked', true);
                 $.each(this.DMindexes, function (i, v) {
-                    eval('this.Vobj.displayMember' + (i + 1) + '.push( $(\'#' + this.name + 'tbl\').DataTable().row($(this.cellTr)).data()[v] );');
-                });
+                    eval('this.Vobj.displayMember' + (i + 1) + '.push( $(\'#' + this.name + 'tbl\').DataTable().row(self).data()[v] );');
+                }.bind(this));
             }
         }
     }
@@ -269,8 +282,10 @@
     }
 
     this.arrowSelectionStylingFcs = function (e, datatable, cell, originalEvent) {
+
+        alert("arrowSelectionStylingFcs");
         var row = datatable.row(cell.index().row);
-        this.cellTr = row.nodes();
+        //this.cellTr = row.nodes();
         $(row.nodes()).css('color', '#000');
         $(row.nodes()).css('font-weight', 'bold');
         $(row.nodes()).find('.focus').removeClass('focus');
@@ -281,7 +296,7 @@
         this.Vobj.valueMember.splice(delid(), 1);
         $.each(this.DMindexes, function (i, v) {
             eval('this.Vobj.displayMember' + (i + 1) + '.splice( delid(), 1);');
-        });
+        }.bind(this));
     };
 
     this.dblClickOnOptDDEventHand = function (e) {
@@ -291,12 +306,11 @@
             this.Vobj.displayMember.push(Dmember);
             this.Vobj.valueMember.push(Vmember);
             $(e.target).find('[type=checkbox]').prop('checked', true);
-            var name = this.name;
-            $.each(this.DMindexes, function (i, v) {
-                eval('this.Vobj.displayMember' + (i + 1) + '.push( $(\'#' + name + 'tbl\').DataTable().row(self).data()[v] );');
-            });
+            $.each(this.DMindexes, this.dblClickOnOptIterfn.bind(this));
         }
     };
+
+    this.dblClickOnOptIterfn = function (i, v) { console.log("this.Vobj.displayMember:" + this.Vobj.displayMember); eval('this.Vobj.displayMember' + (i + 1) + '.push( $(\'#' + this.name + 'tbl\').DataTable().row(self).data()[v] );'); }
 
     this.checkBxClickEventHand = function (e) {
         var indx;
@@ -312,14 +326,14 @@
 
             $.each(this.DMindexes, function (i, v) {
                 eval('this.Vobj.displayMember' + (i + 1) + '.push(datas[v]);');
-            });
+            }.bind(this));
         }
         else {
             this.Vobj.displayMember.splice(this.Vobj.displayMember.indexOf(datas[this.DMindex]), 1);
             this.Vobj.valueMember.splice(this.Vobj.valueMember.indexOf(datas[this.VMindex]), 1);
             $.each(this.DMindexes, function (i, v) {
                 eval('this.Vobj.displayMember' + (i + 1) + '.splice(this.Vobj.displayMember' + (i + 1) + '.indexOf(datas[v]),1);');
-            });
+            }.bind(this));
         }
     };
 
@@ -347,7 +361,6 @@
                 displayMember: [],
                 displayMember1: [],
                 displayMember2: [],
-                displayMember3: [],
                 //this.vueDMcode
                 valueMember: [],
                 id: _this.name,
@@ -453,6 +466,6 @@
         $(document).mouseup(this.hideDDclickOutside.bind(this));
     };
 
-    this.InitDT.bind(this);
+    this.InitDT();
     this.selectRdr();
 }  

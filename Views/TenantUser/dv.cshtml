@@ -1,0 +1,43 @@
+﻿@using ServiceStack;
+@using ExpressBase.Objects;
+@using ExpressBase.Common;
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+@{
+    string head = string.Empty;
+    string html = string.Empty;
+
+    var dsid = Convert.ToInt32(ViewBag.dsid);
+    var id = Convert.ToInt32(ViewBag.DataId);
+
+    var cnames = (ViewBag.EbForm38 != null) ? (ViewBag.EbForm38 as EbForm).GetControlNames() : string.Empty;
+
+    html += string.Format("<input type='hidden' value='{0}' id='hiddenparams'/>", cnames);
+
+    EbDataGridView dgv = new EbDataGridView
+    {
+        DataSourceId = dsid,
+        FilterDialogId = 38,
+        Name = "dv" + dsid.ToString()
+    };
+
+    dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient());
+
+    head += dgv.GetHead();
+    head += (ViewBag.EbForm38 as EbForm).GetHead();
+    dgv.SetFilterForm(ViewBag.EbForm38);
+    html += dgv.GetHtml();
+}
+
+@section EbHead {
+    <script>
+        $(document).ready(function () {
+            @Html.Raw(head)
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}
+
+@Html.Raw(html)

@@ -41,13 +41,15 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.width = wid;
 };
 
-var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
-    this.dsid = ds_id;
-    this.dvid = dv_id;
-    this.ssurl = ss_url;
-    this.ebSettings = setting;
-    this.ebSettingsCopy = $.extend(true, {}, setting);
-    this.tableId = tid;
+//ds_id, dv_id, ss_url, tid, setting
+var EbDataTable = function (settings) {
+    this.dtsettings = settings;
+    this.dsid = this.dtsettings.ds_id;
+    this.dvid = this.dtsettings.dv_id;
+    this.ssurl = this.dtsettings.ss_url;
+    this.ebSettings = this.dtsettings.settings;
+    this.ebSettingsCopy = $.extend(true, {}, this.ebSettings);
+    this.tableId = this.dtsettings.tid;
     this.eb_agginfo = null;
     this.isSecondTime = false;
     this.Api = null;
@@ -96,6 +98,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         if (this.ebSettings.hideSerial) {
             this.ebSettings.columns[0].visible = false;
         }
+
         if (!this.ebSettings.hideCheckbox) {
             this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
             this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
@@ -104,6 +107,25 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             this.ebSettings.columns[1].visible = false;
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
+
+        this.Api.off('key-focus').on('key-focus', function (e, datatable, cell, originalEvent) {
+            var row = datatable.row( cell.index().row );
+            cellTr = row.nodes();
+            $( row.nodes() ).css('color', '#000');
+            $(row.nodes()).css('font-weight', 'bold');
+            $(row.nodes()).find('.focus').removeClass('focus');
+            $( row.nodes() ).addClass('selected');
+        });
+
+        this.Api.off('key-blur').on('key-blur', function (e, datatable, cell) {
+            var row = datatable.row(cell.index().row);
+            $(row.nodes()).css('color', '#333');
+            $(row.nodes()).css('font-weight', 'normal');
+            $(row.nodes()).removeClass('selected');
+        });
+
+        this.Api.off('keyup').on('keyup', this.keyupCallbackFunc);
+
         //this.Api = this.table_jQO.DataTable({
         //    dom:'<\'col-sm-2\'l><\'col-sm-2\'i><\'col-sm-4\'B><\'col-sm-4\'p>tr',
         //    buttons: ['copy', 'csv', 'excel', 'pdf','print', { extend: 'print', exportOptions: { modifier: { selected: true }}}],
@@ -191,6 +213,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         o.filter = true;
         o.select =  {style:'multi'};
         o.retrieve = true;
+        o.keys = true,
         o.ajax = {
             url: this.ssurl + '/ds/data/' + this.dsid,
             type: 'POST',
@@ -318,6 +341,10 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
         this.summarize2();
+    };
+
+    this.keyupCallbackFunc = function (e, datatable, cell, originalEvent) {
+        this.dtsettings.fnKeyUpCallback(e, datatable, cell, originalEvent);
     };
 
     this.doRowgrouping = function () {

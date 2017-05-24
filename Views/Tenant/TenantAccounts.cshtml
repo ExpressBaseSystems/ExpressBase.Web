@@ -8,15 +8,15 @@
                 var accid = $(this).attr("data-accid");
                 $.get('https://expressbaseservicestack.azurewebsites.net/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
                     if (result.data.conf_dbtype === 1) {
-                        var DBwizard_sim = new EbWizard("https://expressbase.azurewebsites.net/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", accid, result.data);
+                        var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", accid, result.data);
                         DBwizard_sim.CustomWizFunc = (new CustomWizFuncs).DbCheck;
                     }
                     else if (result.data.conf_dbtype === 2) {
-                        var DBwizard_adv = new EbWizard("https://expressbase.azurewebsites.net/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", accid, result.data);
+                        var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", accid, result.data);
                         DBwizard_adv.CustomWizFunc = (new CustomWizFuncs).DbCheck;
                     }
                     else {
-                        var DBwizard = new EbWizard("https://expressbase.azurewebsites.net/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity", "fa-database", accid);
+                        var DBwizard = new EbWizard("http://localhost:53431/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity", "fa-database", accid);
                         DBwizard.CustomWizFunc = (new CustomWizFuncs).DbCheck;
                     }
                 })
@@ -27,7 +27,7 @@
                 openInNewTab('objects', ele);
             });
             $('.new').click(function () {
-                var addaccountwzd = new EbWizard("https://expressbase.azurewebsites.net/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Add Account", "fa-database");
+                var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Add Account", "fa-database");
 
             });
             $('.edit').click(function () {
@@ -35,7 +35,7 @@
                 $('#acid').val(accId);
                 $.get('https://expressbaseservicestack.azurewebsites.net/infra/', { "Colvalues": JSON.stringify({ "edit": "edit", "op": " ", "id": accId }), "Token": getToken() }, function (result) {
 
-                    var editaccountwzd = new EbWizard("https://expressbase.azurewebsites.net/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 600, 600, "600, 600", "fa-database", result.data);
+                    var editaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 600, 600, "600, 600", "fa-database", result.data);
                 })
             });
             $('.users').click(function () {

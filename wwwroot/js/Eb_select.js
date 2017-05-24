@@ -80,7 +80,7 @@
             $.each(data.columns, this.dataColumIterFn.bind(this));
         }
 
-        this.datatable = $('#' + this.name + 'tbl').DataTable({
+        this.datatable =  $('#' + this.name + 'tbl').DataTable({
             keys: true,
             dom: 'rti',
             autoWidth: true,
@@ -130,6 +130,16 @@
                 dataSrc: this.ajaxDataSrcfn.bind(this)
             }
         });
+
+        //this.datatable = new EbDataTable({
+        //    ds_id: this.dataSourceId,
+        //    tid: this.name,
+        //    settings: {
+        //        hideCheckbox: false,
+        //        scrollY: this.dropdownHeight,
+        //        columns: this.cols
+        //    }
+        //});
 
         //selection highlighting css on arrow keys
         this.datatable.on('key-focus', this.arrowSelectionStylingFcs);// no need to bind 'this'

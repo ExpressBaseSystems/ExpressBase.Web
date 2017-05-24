@@ -157,7 +157,7 @@
 }
 
 
-.Eb-control > input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
+ input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
     height: auto !important;
     min-height: 28px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
@@ -171,7 +171,7 @@
 }
 
 
-.Eb-control > input[type="color"] {
+ input[type="color"] {
     height: auto;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;

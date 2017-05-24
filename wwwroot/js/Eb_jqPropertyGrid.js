@@ -65,7 +65,7 @@
                     _html += "<li><a href='#'>" + val + "</a></li>"
                 })
                 _html += "</ul></div>";
-                return _html
+                return _html.toString().replace("×××", "");
     
             },
             valueFn: function () { return $('.dropdown button').text().trim() }
@@ -102,6 +102,5 @@
 
     $('#btnGetValues').click(function () {
         saveObj();
-        alert("colExt.AggInfo=" + JSON.stringify(colExt));
     });
 }

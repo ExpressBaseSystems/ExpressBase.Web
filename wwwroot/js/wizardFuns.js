@@ -452,10 +452,12 @@ var CustomWizFuncs = function () {
             setTimeout(function () {
                 if (simp_adv === 'simple') {
                     var DBwizard_sim = new EbWizard("https://expressbase.azurewebsites.net/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", AcntId);
+                    DBwizard_sim.CustomWizFunc = (new CustomWizFuncs).DbCheck;
 
                 }
                 if (simp_adv === 'advanced') {
                     var DBwizard_adv = new EbWizard("https://expressbase.azurewebsites.net/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", AcntId);
+                    DBwizard_adv.CustomWizFunc = (new CustomWizFuncs).DbCheck;
 
                 }
             }, 401);

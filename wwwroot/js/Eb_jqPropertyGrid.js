@@ -102,6 +102,5 @@
 
     $('#btnGetValues').click(function () {
         saveObj();
-        alert("colExt.AggInfo=" + JSON.stringify(colExt));
     });
 }

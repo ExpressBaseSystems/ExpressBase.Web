@@ -256,3 +256,4 @@ paket-files/
 *.sln.iml
 /Properties/PublishProfiles/ExpressBase - Web Deploy-publish.ps1
 *.psm1
+*.ps1

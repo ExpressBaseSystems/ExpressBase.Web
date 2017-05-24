@@ -13,7 +13,6 @@
                 var folder = [];
                 var sourc = [];
                 $.post('https://expressbase.azurewebsites.net/Tenant/GetEbObjects_json/', { "TenantAccountId": sessionStorage.getItem("cid") }, function (result) {
-                   alert(JSON.stringify(result))
                     $.each(result, function (i) {
                         sourc.push({ "title": result[i].name, "key": i });
                     });
@@ -36,7 +35,7 @@
                             var obj_code = sessionStorage.setItem("obj_code", result[data.node.key].sql);
                             var obj_name = sessionStorage.setItem("obj_name", result[data.node.key].name);
                             var obj_type = sessionStorage.setItem("obj_type", result[data.node.key].EbObjectType);
-                            alert(result[data.node.key].EbObjectType);
+                            //alert(result[data.node.key].EbObjectType);
                             openInNewTab('code_editor', cid);
                         },
                         //glyph: {

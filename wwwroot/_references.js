@@ -9,6 +9,7 @@
 /// <reference path="js/eb_objlist_tbl.js" />
 /// <reference path="js/Eb_PropertyGrid.js" />
 /// <reference path="js/eb_select.js" />
+/// <reference path="js/eb_selectreff.js" />
 /// <reference path="js/eb_validations.js" />
 /// <reference path="js/ebdatatable.js" />
 /// <reference path="js/elementqueries.js" />

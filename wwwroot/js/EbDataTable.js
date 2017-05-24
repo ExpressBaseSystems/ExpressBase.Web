@@ -14,6 +14,7 @@ Array.prototype.min = function () {
 
 var Agginfo = function (col) {
     this.colname = col;
+    //this.deci_val = 2;
 };
 
 var filter_obj = function (colu, oper, valu) {
@@ -87,48 +88,53 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.csvbtn = $("#btnCsv");
         this.pdfbtn = $("#btnPdf");
         this.settingsbtn = $("#"+ this.tableId+ "_btnSettings");
+        $("#dvName_lbl").text(this.ebSettings.dvName);
 
         this.eb_agginfo = this.getAgginfo();
 
         this.table_jQO.append($(this.getFooterFromSettingsTbl()));
-
+        if (this.ebSettings.hideSerial) {
+            this.ebSettings.columns[0].visible = false;
+        }
         if (!this.ebSettings.hideCheckbox) {
             this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
             this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
         }
+        else
+            this.ebSettings.columns[1].visible = false;
 
-        this.Api = this.table_jQO.DataTable({
-            dom:'<\'col-sm-2\'l><\'col-sm-2\'i><\'col-sm-4\'B><\'col-sm-4\'p>tr',
-            buttons: ['copy', 'csv', 'excel', 'pdf','print', { extend: 'print', exportOptions: { modifier: { selected: true }}}],
-            scrollY: this.ebSettings.scrollY,
-            scrollX: true,
-            fixedColumns: { leftColumns: this.ebSettings.leftFixedColumns, rightColumns:this.ebSettings.rightFixedColumns },
-            //keys: true,
-            lengthMenu: this.ebSettings.lengthMenu,
-            serverSide: true,
-            processing:true,
-            language: { processing: '<div class=\'fa fa-spinner fa-pulse  fa-3x fa-fw\'></div>', info:'_START_ - _END_ / _TOTAL_'},
-            //pagingType:'@pagingType',
-            columns: this.ebSettings.columns, 
-            order: [],
-            deferRender: true,
-            filter: true,
-            select:true,
-            //@selectOption,$.fn.dataTable.pipeline(        pages: 5,)
-            retrieve: true,
-            ajax: {
-                url: this.ssurl + '/ds/data/' + this.dsid,
-                type: 'POST',
-                timeout: 180000,
-                data: this.ajaxData.bind(this),
-                dataSrc: function(dd) { return dd.data; }
-            },
+        this.Api = this.table_jQO.DataTable(this.createTblObject());
+        //this.Api = this.table_jQO.DataTable({
+        //    dom:'<\'col-sm-2\'l><\'col-sm-2\'i><\'col-sm-4\'B><\'col-sm-4\'p>tr',
+        //    buttons: ['copy', 'csv', 'excel', 'pdf','print', { extend: 'print', exportOptions: { modifier: { selected: true }}}],
+        //    scrollY: this.ebSettings.scrollY,
+        //    scrollX: true,
+        //    fixedColumns: { leftColumns: this.ebSettings.leftFixedColumns, rightColumns:this.ebSettings.rightFixedColumns },
+        //    //keys: true,
+        //    lengthMenu: this.ebSettings.lengthMenu,
+        //    serverSide: true,
+        //    processing:true,
+        //    language: { processing: '<div class=\'fa fa-spinner fa-pulse  fa-3x fa-fw\'></div>', info:'_START_ - _END_ / _TOTAL_'},
+        //    //pagingType:'@pagingType',
+        //    columns: this.ebSettings.columns, 
+        //    order: [],
+        //    deferRender: true,
+        //    filter: true,
+        //    select: {style:'multi'},
+        //    //@selectOption,$.fn.dataTable.pipeline(        pages: 5,)
+        //    retrieve: true,
+        //    ajax: {
+        //        url: this.ssurl + '/ds/data/' + this.dsid,
+        //        type: 'POST',
+        //        timeout: 180000,
+        //        data: this.ajaxData.bind(this),
+        //        dataSrc: function(dd) { return dd.data; }
+        //    },
         
-            fnRowCallback: this.rowCallBackFunc.bind(this),
-            fnFooterCallback: this.footerCallback.bind(this),
-            drawCallback: this.drawCallBackFunc.bind(this),
-            initComplete: this.initCompleteFunc.bind(this),
-        });
+        //    fnRowCallback: this.rowCallBackFunc.bind(this),
+        //    drawCallback: this.drawCallBackFunc.bind(this),
+        //    initComplete: this.initCompleteFunc.bind(this),
+        //});
 
         //$.fn.dataTable.ext.errMode = 'throw';
 
@@ -167,6 +173,37 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         //});
     };
 
+    this.createTblObject = function () {
+        var o = new Object();
+        o.dom = "<'col-sm-2'l><'col-sm-1'i><'col-sm-4'B><'col-sm-5'p>tr";
+        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
+        o.scrollY = this.ebSettings.scrollY;
+        o.scrollX = "100%";
+        if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
+            o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
+        o.lengthMenu = this.ebSettings.lengthMenu;
+        o.serverSide = true;
+        o.processing = true;
+        o.language  = { processing: "<div class='fa fa-spinner fa-pulse  fa-3x fa-fw'></div>", info:"_START_ - _END_ / _TOTAL_"};
+        o.columns =  this.ebSettings.columns;
+        o.order = [];
+        o.deferRender = true;
+        o.filter = true;
+        o.select =  {style:'multi'};
+        o.retrieve = true;
+        o.ajax = {
+            url: this.ssurl + '/ds/data/' + this.dsid,
+            type: 'POST',
+            timeout: 180000,
+            data: this.ajaxData.bind(this),
+            dataSrc: function(dd) { return dd.data; }
+        };
+        o.fnRowCallback = this.rowCallBackFunc.bind(this);
+        o.drawCallback = this.drawCallBackFunc.bind(this);
+        o.initComplete = this.initCompleteFunc.bind(this);
+        return o;
+    };
+
     this.ajaxData = function(dq) { 
         delete dq.columns; delete dq.order; delete dq.search;
         dq.Id = this.dsid;
@@ -191,7 +228,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     this.getAgginfo = function () {
         var _ls = [];
         $.each(this.ebSettings.columns, function (i, col) {
-            if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64"))
+            if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int64"))
                 _ls.push(new Agginfo(col.name));
         });
 
@@ -215,7 +252,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         var api = this.Api;
         if (api !== null) {
             $.each(this.Api.columns().header().toArray(), function (i, obj) {
-                var colum = $(obj).children(0).text(); 
+                var colum = $(obj).children(0).text();
                 if (colum !== '') {
                     var oper;
                     var val1, val2;
@@ -224,35 +261,36 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
                     if (type == 'boolean') {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
                         if (!($(textid).is(':indeterminate')))
-                            filter_obj_arr.push(new filter_obj("INV." + colum, "=", val1));
+                            filter_obj_arr.push(new filter_obj(((table === "dv13") ? "INV." : "") + colum, "=", val1));
                     }
                     else {
-                        oper = $('#' + table + '_' + colum + '_hdr_sel').text(); 
+                        oper = $('#' + table + '_' + colum + '_hdr_sel').text();
                         if (api.columns(i).visible()[0]) {
                             if (oper !== '' && $(textid).val() !== '') {
+                                //alert(colum + "," + oper + "," + $(textid).val());
                                 if (oper === 'B') {
                                     val1 = $(textid).val();
                                     val2 = $(textid).siblings('input').val();
-                                }
-
-                                if (oper === 'B' && val1 !== '' && val2 !== '') {
-                                    if (type === 'numeric') {
-                                        filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                        filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
-                                    }
-                                    else if (type === 'date') {
-                                        if (val2 > val1) {
-                                            filter_obj_arr.push(new filter_obj(colum, ">=", val1));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                                    if (oper === 'B' && val1 !== '' && val2 !== '') {
+                                        if (type === 'numeric') {
+                                            filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
                                         }
-                                        else {
-                                            filter_obj_arr.push(new filter_obj(colum, ">=", val2));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                                        else if (type === 'date') {
+                                            if (val2 > val1) {
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                                            }
+                                            else {
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                                            }
                                         }
                                     }
                                 }
-                                else
+                                else {
                                     filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
+                                }
                             }
                         }
                     }
@@ -266,19 +304,20 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
     };
 
-    this.initCompleteFunc = function (settings, json) { this.createFilterRowHeader(); this.addFilterEventListeners(); }
-
-    this.footerCallback = function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
+    this.initCompleteFunc = function (settings, json)
+    {
+        this.createFilterRowHeader();
         if(this.eb_agginfo.length > 0 ) {
             this.createFooter(0);
             this.createFooter(1);
         }
-    };
+        this.addFilterEventListeners();
+    }
 
     this.drawCallBackFunc = function ( settings ) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
-        this.summarize2()
+        this.summarize2();
     };
 
     this.doRowgrouping = function () {
@@ -297,11 +336,11 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.Api.column(0).nodes().each( function (cell, i) { cell.innerHTML = i+1; } );
     };
 
-    this.createFooter = function(pos) {
+    this.createFooter = function (pos) {
         var tx = this.ebSettings;
-        var lfoot = $('#' + this.tableId + '_container .DTFC_LeftFootWrapper table');
-        var rfoot = $('#' + this.tableId + '_container .DTFC_RightFootWrapper table');
-        var scrollfoot = $('#' + this.tableId + '_container .dataTables_scrollFootInner table');
+        var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');
+        var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
+        var scrollfoot = $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner table');
 
         if (lfoot !== null || rfoot !== null)
             var eb_footer_controls_lfoot = this.GetAggregateControls(pos, 50);
@@ -309,9 +348,9 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             var eb_footer_controls_scrollfoot = this.GetAggregateControls(pos, 1);
         $('#' + this.tableId + '_btntotalpage').show();
         if (pos === 1)
-            $('#' + this.tableId + '_container tfoot tr:eq(' + pos + ')').hide();
+            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
         var j = 0;
-        $('#' + this.tableId + '_container tfoot tr:eq(' + pos + ') th').each(function (idx) {
+        $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ') th').each(function (idx) {
             if (lfoot !== null) {
                 if (j < tx.leftFixedColumns)
                     $(this).html(eb_footer_controls_lfoot[idx]);
@@ -385,8 +424,9 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         var ftrtxt;
         $.each(this.eb_agginfo, function (index, agginfo) {
             if (scrollY > 0) {
-                p = $('table:eq(2) tfoot #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxt = '.dataTables_scrollFoot #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                p = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                ftrtxt = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                //alert(p); alert(ftrtxt);
             }
             else {
                 p = $('#' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
@@ -401,6 +441,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
                 summary_val = col.data().average();
             }
             // IF decimal places SET, round using toFixed
+          //  alert(summary_val + "," + summary_val);
             $(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val.toFixed(2));
         });
     };
@@ -409,8 +450,8 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         var tableid = this.tableId;
         var order_info_ref = this.order_info;
 
-        var fc_lh_tbl = $('#' + tableid + '_container .DTFC_LeftHeadWrapper table');
-        var fc_rh_tbl = $('#' + tableid + '_container .DTFC_RightHeadWrapper table');
+        var fc_lh_tbl = $('#' + tableid + '_wrapper .DTFC_LeftHeadWrapper table');
+        var fc_rh_tbl = $('#' + tableid + '_wrapper .DTFC_RightHeadWrapper table');
 
         if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
             this.GetFiltersFromSettingsTbl(50);
@@ -426,7 +467,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             }
         }
 
-        var sc_h_tbl = $('#' + tableid + '_container .dataTables_scrollHeadInner table');
+        var sc_h_tbl = $('#' + tableid + '_wrapper .dataTables_scrollHeadInner table');
         if (sc_h_tbl !== null) {
             this.GetFiltersFromSettingsTbl(1);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
@@ -448,31 +489,32 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             }
         }
 
-        $('#' + tableid + '_container table thead tr[class=addedbyeb]').hide();
+        $('#' + tableid + '_wrapper table thead tr[class=addedbyeb]').hide();
 
-        $('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
+        //$('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
+        $(".addedbyeb [type=checkbox]").prop('indeterminate', true);
     };
 
     this.addFilterEventListeners = function () {
-        $('#' + this.tableId + '_container thead tr:eq(0)').off('click').on('click', 'th', this.orderingEvent.bind(this));
-        $(".eb_fsel").click(this.setLiValue);
-        $(".eb_ftsel").click(this.fselect_func.bind(this));
-        $(".eb_finput").keypress(this.call_filter);
-        $(".eb_fbool").change(this.toggleInFilter.bind(this));
-        $(".eb_selall").click(this.clickAlSlct.bind(this));
-        $("." + this.tableId + "_select").click(this.updateAlSlct.bind(this));
-        $(".eb_canvas").click(this.renderMainGraph);
+        $('#' + this.tableId + '_wrapper thead tr:eq(0)').off('click').on('click', 'th', this.orderingEvent.bind(this));
+        $(".eb_fsel").off("click").on("click", this.setLiValue);
+        $(".eb_ftsel").off("click").on("click", this.fselect_func.bind(this));
+        $(".eb_finput").off("keypress").on("keypress", this.call_filter);
+        $(".eb_fbool").off("change").on("change", this.toggleInFilter.bind(this));
+        $(".eb_selall").off("click").on("click", this.clickAlSlct.bind(this));
+        $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
+        $(".eb_canvas").off("click").on("click", this.renderMainGraph);
 
         this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
         this.clearfilterbtn.off("click").on("click", this.clearFilter.bind(this));
         this.totalpagebtn.off("click").on("click", this.showOrHideAggrControl.bind(this));
-        this.copybtn.click(this.CopyToClipboard.bind(this));
-        this.printbtn.click(this.ExportToPrint.bind(this));
-        this.printAllbtn.click(this.printAll.bind(this));
-        this.printSelectedbtn.click(this.printSelected.bind(this));
-        this.excelbtn.click(this.ExportToExcel.bind(this));
-        this.csvbtn.click(this.ExportToCsv.bind(this));
-        this.pdfbtn.click(this.ExportToPdf.bind(this));
+        this.copybtn.off("click").on("click", this.CopyToClipboard.bind(this));
+        this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
+        this.printAllbtn.off("click").on("click", this.printAll.bind(this));
+        this.printSelectedbtn.off("click").on("click", this.printSelected.bind(this));
+        this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
+        this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
+        this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
     };
 
@@ -543,9 +585,9 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
               "<li ><a href='#' class='eb_fsel' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
         " </div>" +
-        " <input type='number' class='form-control eb_finput" + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        " <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
         " <span class='input-group-btn'></span>" +
-        " <input type='number' class='form-control eb_finput" + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
+        " <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
         " </div> ";
         return drptext;
     };
@@ -564,14 +606,15 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
              " <li ><a href='#' class='eb_fsel' " + data_table + data_colum + ">B</a></li>" +
            " </ul>" +
         " </div>" +
-        " <input type='date' class='form-control eb_finput" + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        " <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
         " <span class='input-group-btn'></span>" +
-        " <input type='date' class='form-control eb_finput" + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
+        " <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
         " </div> ";
         return filter;
     };
 
     this.getFilterForString = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
+        var coltype = " data-coltyp='string'";
         var drptext = "";
         drptext = "<div class='input-group'>" +
         "<div class='input-group-btn' style='z-index:" + zidx.toString() + "'>" +
@@ -583,7 +626,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
              " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">=</a></li>" +
            " </ul>" +
         " </div>" +
-        " <input type='text' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + ">" +
+        " <input type='text' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype +">" +
         " </div> ";
         return drptext;
     };
@@ -597,19 +640,19 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     };
 
     this.showOrHideFilter = function (e) {
-        if ($('#' + this.tableId + '_container table thead tr[class=addedbyeb]').is(':visible'))
-            $('#' + this.tableId + '_container table thead tr[class=addedbyeb]').hide();
+        if ($('#' + this.tableId + '_wrapper table thead tr[class=addedbyeb]').is(':visible'))
+            $('#' + this.tableId + '_wrapper table thead tr[class=addedbyeb]').hide();
         else {
-            $('#' + this.tableId + '_container table thead tr[class=addedbyeb]').show();
+            $('#' + this.tableId + '_wrapper table thead tr[class=addedbyeb]').show();
         }
 
-        this.clearFilter();
+        this.clearFilter(e);
     };
 
     this.clearFilter = function (e) {
         var flag = false;
         var tableid = this.tableId;
-        $('#' + tableid + '_container table:eq(0) .' + tableid + '_htext').each(function (i) {
+        $('#' + tableid + '_wrapper table:eq(0) .' + tableid + '_htext').each(function (i) {
             if ($(this).hasClass(tableid + '_hchk')) {
                 if (!($(this).is(':indeterminate'))) {
                     flag = true;
@@ -653,24 +696,26 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         var decip = $(e.target).attr('data-decip');
         var col = this.Api.column(colum + ':name');
         var ftrtxt;
+
         if (this.ebSettings.scrollY > 0)
-            ftrtxt = '.dataTables_scrollFoot #' + table + '_' + colum + '_ftr_txt0';
+            ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
         else
-            ftrtxt = '#' + table + '_' + colum + '_ftr_txt0';
+            ftrtxt = '#' + this.tableId + '_' + colum + '_ftr_txt0';
+
         if (selValue === '∑')
             pageTotal = col.data().sum();
         else if (selValue === 'x̄')
             pageTotal = col.data().average();
-        // IF decimal places SET, round using toFixed
+        // IF decimal places SET, round using toFixed  
         $(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal.toFixed(2));
     };
 
     this.clickAlSlct = function (e) {
         var tableid = $(e.target).attr('data-table');
         if (e.target.checked)
-            $('#' + this.tableId + '_container tbody [type=checkbox]:not(:checked)').trigger('click');
+            $('#' + this.tableId + '_wrapper tbody [type=checkbox]:not(:checked)').trigger('click');
         else
-            $('#' + this.tableId + '_container tbody [type=checkbox]:checked').trigger('click');
+            $('#' + this.tableId + '_wrapper tbody [type=checkbox]:checked').trigger('click');
 
         e.stopPropagation();
     };
@@ -683,59 +728,60 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     };
 
     this.updateAlSlct = function (e) {
+        var idx = this.Api.row($(e.target).parent().parent()).index();
         if (e.target.checked) {
-            this.Api.rows(this.rowId).select();
-            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
+            this.Api.rows(idx).select();
+            $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
         }
         else {
-            this.Api.rows(this.rowId).deselect();
-            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
+            this.Api.rows(idx).deselect();
+            $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
         }
         var CheckedCount = $('.' + this.tableId + '_select:checked').length;
         var UncheckedCount = this.Api.rows().count() - CheckedCount;
         if (CheckedCount === this.Api.rows().count()) {
-            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
-            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', true);
+            $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
+            $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', true);
         }
         else if (UncheckedCount === this.Api.rows().count()) {
-            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
-            $('#' + this.tableId + '_container table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
+            $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
+            $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
         }
     };
 
     this.showOrHideAggrControl = function (e) {
         if (this.ebSettings.scrollY !== 0)
-            $('#' + this.tableId + '_container table:eq(2) tfoot tr:eq(1)').toggle();
+            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
         else 
-            $('#' + this.tableId + '_container table:eq(0) tfoot tr:eq(1)').toggle();
+            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
     };
 
     this.CopyToClipboard = function (e) {
-        $('#' + this.tableId + '_container').find('.buttons-copy').click();
+        $('#' + this.tableId + '_wrapper').find('.buttons-copy').click();
     };
 
     this.ExportToPrint = function (e) {
-        $('#' + this.tableId + '_container').find('.buttons-print')[0].click();
+        $('#' + this.tableId + '_wrapper').find('.buttons-print')[0].click();
     };
 
     this.ExportToExcel = function (e) {
-        $('#' + this.tableId + '_container').find('.buttons-excel').click();
+        $('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
     };
 
     this.ExportToCsv = function (e) {
-        $('#' + this.tableId + '_container').find('.buttons-csv').click();
+        $('#' + this.tableId + '_wrapper').find('.buttons-csv').click();
     };
 
     this.ExportToPdf = function (e) {
-        $('#' + this.tableId + '_container').find('.buttons-pdf').click();
+        $('#' + this.tableId + '_wrapper').find('.buttons-pdf').click();
     };
 
     this.printSelected = function (e) {
-        $('#' + this.tableId + '_container').find('.buttons-print')[1].click();
+        $('#' + this.tableId + '_wrapper').find('.buttons-print')[1].click();
     };
 
     this.printAll = function (e) {
-        $('#' + this.tableId + '_container').find('.buttons-print')[0].click();
+        $('#' + this.tableId + '_wrapper').find('.buttons-print')[0].click();
     };
 
     this.GetSettingsModal = function (e) {
@@ -744,7 +790,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
         var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
         var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
-        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.title + ": SettingsTable");
+        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.dvName + ": SettingsTable");
         var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
         var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
         var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
@@ -754,16 +800,25 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
         var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
         var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
-        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "1a");
+        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane active").attr("id", "1a");
         var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
         var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
         ModalFooterDiv.append(FooterButton);
-        ModalBodyTabPaneGenDiv.append("<input type='checkbox' id='serial_check'>Hide Serial<br><input type='checkbox' id='select_check'>Hide Checkbox");
-        ModalBodyTabPaneGenDiv.append("<br>Page Length:<input type='numeric' id='pageLength_text' value='100'><br>Table Height:<input type='numeric' id='scrollY_text' value='300'>");
-        ModalBodyTabPaneGenDiv.append("<br>Row Grouping<input type='numeric' id='rowGrouping_text'>");
-        ModalBodyTabPaneGenDiv.append("<br>Left Fixed Columns<input type='numeric' id='leftFixedColumns_text' value='0'>");
-        ModalBodyTabPaneGenDiv.append("<br>Right Fixed Columns<input type='numeric' id='rightFixedColumns_text' value='0'>");
+        ModalBodyTabPaneGenDiv.append("<div class='table-responsive'>" +
+    "<table class='table table-bordered table-hover'>" +
+        "<tbody>" +
+	        "<tr> <td>Hide Serial</td>           <td><input type='checkbox' id='serial_check'></td> </tr>" +
+	        "<tr> <td>Hide Chechbox</td>         <td><input type='checkbox' id='select_check'></td> </tr>" +
+	        "<tr> <td>Page Length</td>           <td><input type='numeric' id='pageLength_text' value='100'></td> </tr>" +
+	        "<tr> <td>Table Height</td>          <td><input type='numeric' id='scrollY_text' value='300'></td> </tr>" +
+	        "<tr> <td>Row Grouping</td>          <td><input type='numeric' id='rowGrouping_text'></td> </tr>" +
+	        "<tr> <td>Left Fixed Columns         </td><td><input type='numeric' id='leftFixedColumns_text' value='0'></td> </tr>" +
+	        "<tr> <td>Right Fixed Columns</td>   <td><input type='numeric' id='rightFixedColumns_text' value='0'></td> </tr>" +
+            "<tr> <td>Data Visualization Name</td>   <td><input type='text' id='dvName_txt'></td> </tr>" +
+        "</tbody>" +
+    "</table>" +
+"</div>");
         ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
         ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
      "                                        <div id='propHead'></div><div id='propGrid'></div>" +
@@ -872,6 +927,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.ebSettingsCopy.rowGrouping = $("#rowGrouping_text").val();
         this.ebSettingsCopy.leftFixedColumns = $("#leftFixedColumns_text").val();
         this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
+        this.ebSettingsCopy.dvName = $("#dvName_txt").val();
         this.ebSettingsCopy.columns = objcols;
         this.ebSettingsCopy.columnsext = this.ebSettings.columnsext;
         this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
@@ -897,6 +953,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         $("#rowGrouping_text").val(data2Obj.rowGrouping);
         $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
         $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
+        $("#dvName_txt").val(data2Obj.dvName);
         var settings_tbl = $('#Table_Settings').DataTable(
         {
             columns: this.column4SettingsTbl(),
@@ -993,7 +1050,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         }
 
         if (!tx.hideSerial)
-            tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"Serial"}'));
+            tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#"}'));
     };
 
     this.updateRenderFunc = function () {
@@ -1002,7 +1059,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
-            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Progressbar") {
+            if (this.ebSettingsCopy.columnsext[i].RenderAs.toString().replace("×××", "") === "Progressbar") {
                 this.ebSettingsCopy.columns[i].render = this.renderProgressCol;
             }
         }
@@ -1014,13 +1071,13 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
                 if (this.ebSettingsCopy.columnsext[i].IsEditable) {
                     this.ebSettingsCopy.columns[i].render = this.renderEditableCol;
                 }
-                if (this.ebSettingsCopy.columnsext[i].RenderAs === "Icon") {
+                if (this.ebSettingsCopy.columnsext[i].RenderAs.toString().replace("×××", "") === "Icon") {
                     this.ebSettingsCopy.columns[i].render = this.renderIconCol;
                 }
             }
         }
         if (col.type === "System.String") {
-            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Graph") {
+            if (this.ebSettingsCopy.columnsext[i].RenderAs.toString().replace("×××", "") === "Graph") {
                 this.ebSettingsCopy.columns[i].render = this.lineGraphDiv;
             }
         }
@@ -1031,7 +1088,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     };
 
     this.renderEditableCol = function (data) {
-            return (data === true) ? "<input type='checkbox' data-toggle='toggle' data-size='mini'  checked>" : "<input type='checkbox' data-toggle='toggle' data-size='mini'>";
+            return (data === true) ? "<input type='checkbox' data-toggle='toggle' data-size='mini' checked>" : "<input type='checkbox' data-toggle='toggle' data-size='mini'>";
     };
 
     this.renderIconCol = function (data) {

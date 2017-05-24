@@ -23,8 +23,10 @@ function getFilterValues() {
             var dtype = $('#' + id).attr('data-ebtype');
             if (dtype === '6')
                 v = $('#' + id).val().substring(0, 10);
+            else if (dtype === '11')
+                v = $('#' + id + 'Tmp').val();
             else
-                v = $('#' + id).val();
+                v = $('#' + id ).val();
             fltr_collection.push(new fltr_obj(dtype, id, v));
         });
     }

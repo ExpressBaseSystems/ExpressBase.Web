@@ -137,11 +137,13 @@ namespace ExpressBase.Web2.Controllers
 
         public IActionResult dv(int dsid)
         {
+            var token = Request.Cookies["Token"];
             ViewBag.dsid = dsid;
+            ViewBag.token = token;
             ViewBag.EbConfig = this.EbConfig;
 
             var redisClient = this.EbConfig.GetRedisClient();
-            ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 38));
+            ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
 
             return View();
         }

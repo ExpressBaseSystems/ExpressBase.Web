@@ -462,7 +462,10 @@ var CustomWizFuncs = function () {
         });
     };
     this.DataSource = function () {
-        $('#Sql').val(sql);
+        $('#sql').val(sql);
         $('#tcid').val($('#cid').val());
+        $('#id').val(sessionStorage.getItem("id"));
+        $('#name').val(sessionStorage.getItem("obj_name"));
+        $('#description').val(sessionStorage.getItem("obj_desc"));
     };
 };

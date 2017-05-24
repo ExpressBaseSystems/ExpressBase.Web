@@ -239,7 +239,7 @@ namespace ExpressBase.Web2.Controllers
                 TenantAccountId = _dict["tcid"],
                 EbObjectType = Objects.EbObjectType.DataSource,
                 Name = _dict["name"],
-                Status = Objects.Status.Live,
+                Status = ObjectLifeCycleStatus.Live,
                 ChangeLog = _dict["changeLog"],
                 Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
                 {

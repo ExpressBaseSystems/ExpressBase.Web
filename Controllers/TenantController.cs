@@ -231,28 +231,28 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
-       
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var ds = new EbObjectWrapper
             {
-                Token= ViewBag.token,
-                TenantAccountId= _dict["tcid"],
+                Id = Convert.ToInt32(_dict["id"]),
+                Token = ViewBag.token,
+                TenantAccountId = _dict["tcid"],
                 EbObjectType = Objects.EbObjectType.DataSource,
-                Name =_dict["Name"],
+                Name = _dict["name"],
+                Status = ObjectLifeCycleStatus.Live,
+                ChangeLog = _dict["changeLog"],
                 Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
-                { 
-                    Name = _dict["Name"],
-                    Description = _dict["Description"],
-                    Sql = _dict["Sql"],
-                    EbObjectType= Objects.EbObjectType.DataSource
+                {
+                    Name = _dict["name"],
+                    Description = _dict["description"],
+                    Sql = _dict["sql"],
+                    ChangeLog = _dict["changeLog"],
+                    EbObjectType = Objects.EbObjectType.DataSource
                 })
             };
-
             using (client.Post<HttpWebResponse>(ds)) { }
-
             return Json("Success");
         }
-
         public JsonResult GetEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
@@ -260,16 +260,34 @@ namespace ExpressBase.Web2.Controllers
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = TenantId, Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
-             var rlist = resultlist.Data;
+            var rlist = resultlist.Data;
+            Dictionary<int, string> ObjList = new Dictionary<int, string>();
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+                {
+                    ObjList[element.Id] = element.Name;
+                }
+            }
+            return Json(ObjList);
+        }
+        public JsonResult GetByteaEbObjects_json()
+        {
+            var req = this.HttpContext.Request.Form;
+            var TenantId = req["TenantAccountId"];
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["id"]), TenantAccountId = TenantId, Token = ViewBag.token });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var rlist = resultlist.Data;
             Dictionary<int, EbDataSource> ObjList = new Dictionary<int, EbDataSource>();
-            foreach(var element in rlist)
+            foreach (var element in rlist)
             {
                 if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
                 {
                     var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
-                    dsobj.EbObjectType = EbObjectType.DataSource;
+                    dsobj.EbObjectType = element.EbObjectType;
                     ObjList[element.Id] = dsobj;
-                }  
+                }
             }
             return Json(ObjList);
         }

@@ -12,9 +12,10 @@
                 var obj = [];
                 var folder = [];
                 var sourc = [];
-                $.post('https://expressbase.azurewebsites.net/Tenant/GetEbObjects_json/', { "TenantAccountId": sessionStorage.getItem("cid") }, function (result) {
+                $.post('http://localhost:53431/Tenant/GetEbObjects_json/', { "TenantAccountId": sessionStorage.getItem("cid") }, function (result) {
+                   alert(JSON.stringify(result))
                     $.each(result, function (i) {
-                        sourc.push({ "title": result[i].name, "key": i });
+                        sourc.push({ "title": result[i], "key": i });
                     });
 
                     folder.push({ "title": "DataSources", "key": 2, "folder": true, "children": sourc });
@@ -31,12 +32,16 @@
                             hideExpanded: false
                         },
                         activate: function (event, data) {
+                            $.post('http://localhost:53431/Tenant/GetByteaEbObjects_json/', { "TenantAccountId": sessionStorage.getItem("cid"), "id":data.node.key }, function (result) {
+
                             var cid = sessionStorage.getItem("cid");
-                            var obj_code = sessionStorage.setItem("obj_code", result[data.node.key].sql);
-                            var obj_name = sessionStorage.setItem("obj_name", result[data.node.key].name);
-                            var obj_type = sessionStorage.setItem("obj_type", result[data.node.key].EbObjectType);
-                            //alert(result[data.node.key].EbObjectType);
+                            sessionStorage.setItem("obj_code", result[data.node.key].sql);
+                            sessionStorage.setItem("obj_name", result[data.node.key].name);
+                            sessionStorage.setItem("obj_type", result[data.node.key].ebObjectType);
+                            sessionStorage.setItem("obj_desc", result[data.node.key].description);
+                            sessionStorage.setItem("id", data.node.key);
                             openInNewTab('code_editor', cid);
+                            });
                         },
                         //glyph: {
                         //    map: {

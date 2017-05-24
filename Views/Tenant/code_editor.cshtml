@@ -55,7 +55,7 @@
         });
         function func() {
             sql = window.editor.getValue();
-            var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database");
+            var Dswzd = new EbWizard("https://expressbase.azurewebsites.net/Tenant/ds_save", "https://expressbase.azurewebsites.net/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database");
             Dswzd.CustomWizFunc = (new CustomWizFuncs).DataSource;
         }
     </script>

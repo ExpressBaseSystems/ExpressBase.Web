@@ -17,9 +17,17 @@ namespace ExpressBase.Web2
 
         public string RedisPassword { get; set; }
 
+        public string Token { get; set; }
+
         public IServiceClient GetServiceStackClient()
         {
             return new JsonServiceClient(this.ServiceStackUrl).WithCache();
+        }
+
+        public IServiceClient GetServiceStackClient(string token)
+        {
+            this.Token = token;
+            return new JsonServiceClient(this.ServiceStackUrl) { BearerToken = token };
         }
 
         public RedisClient GetRedisClient()

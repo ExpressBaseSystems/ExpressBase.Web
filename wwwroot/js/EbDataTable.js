@@ -95,10 +95,11 @@ var EbDataTable = function (settings) {
         this.eb_agginfo = this.getAgginfo();
 
         this.table_jQO.append($(this.getFooterFromSettingsTbl()));
+
         if (this.ebSettings.hideSerial) {
             this.ebSettings.columns[0].visible = false;
         }
-
+        
         if (!this.ebSettings.hideCheckbox) {
             this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
             this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
@@ -108,23 +109,9 @@ var EbDataTable = function (settings) {
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
-        this.Api.off('key-focus').on('key-focus', function (e, datatable, cell, originalEvent) {
-            var row = datatable.row( cell.index().row );
-            cellTr = row.nodes();
-            $( row.nodes() ).css('color', '#000');
-            $(row.nodes()).css('font-weight', 'bold');
-            $(row.nodes()).find('.focus').removeClass('focus');
-            $( row.nodes() ).addClass('selected');
-        });
-
-        this.Api.off('key-blur').on('key-blur', function (e, datatable, cell) {
-            var row = datatable.row(cell.index().row);
-            $(row.nodes()).css('color', '#333');
-            $(row.nodes()).css('font-weight', 'normal');
-            $(row.nodes()).removeClass('selected');
-        });
-
-        this.Api.off('keyup').on('keyup', this.keyupCallbackFunc);
+        this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
+        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.clickCallbackFunc.bind(this));
+        $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
 
         //this.Api = this.table_jQO.DataTable({
         //    dom:'<\'col-sm-2\'l><\'col-sm-2\'i><\'col-sm-4\'B><\'col-sm-4\'p>tr',
@@ -197,13 +184,21 @@ var EbDataTable = function (settings) {
 
     this.createTblObject = function () {
         var o = new Object();
-        o.dom = "<'col-sm-2'l><'col-sm-1'i><'col-sm-4'B><'col-sm-5'p>tr";
-        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         o.scrollY = this.ebSettings.scrollY;
         o.scrollX = "100%";
-        if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
-            o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
-        o.lengthMenu = this.ebSettings.lengthMenu;
+        if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
+            if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
+                o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
+            o.lengthMenu = this.ebSettings.lengthMenu;
+
+            o.dom = "<'col-sm-2'l><'col-sm-1'i><'col-sm-4'B><'col-sm-5'p>tr";
+            o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
+        }
+        else if (this.dtsettings.directLoad) {
+            o.paging = false;
+            //o.lengthMenu = [[-1], ["All"]];
+            o.dom = "rti";
+        }
         o.serverSide = true;
         o.processing = true;
         o.language  = { processing: "<div class='fa fa-spinner fa-pulse  fa-3x fa-fw'></div>", info:"_START_ - _END_ / _TOTAL_"};
@@ -211,7 +206,7 @@ var EbDataTable = function (settings) {
         o.order = [];
         o.deferRender = true;
         o.filter = true;
-        o.select =  {style:'multi'};
+        o.select = true;
         o.retrieve = true;
         o.keys = true,
         o.ajax = {
@@ -224,6 +219,7 @@ var EbDataTable = function (settings) {
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
+        //alert(JSON.stringify(o));
         return o;
     };
 
@@ -339,12 +335,28 @@ var EbDataTable = function (settings) {
 
     this.drawCallBackFunc = function ( settings ) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
-        if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
+        //if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
         this.summarize2();
     };
 
-    this.keyupCallbackFunc = function (e, datatable, cell, originalEvent) {
-        this.dtsettings.fnKeyUpCallback(e, datatable, cell, originalEvent);
+    this.selectCallbackFunc = function (e, dt, type, indexes) {
+        //alert("selectCallbackFunc");
+        //if (this.dtsettings.fnKeyUpCallback)
+        //    this.dtsettings.fnKeyUpCallback(e, datatable, cell, originalEvent);
+    };
+
+    this.clickCallbackFunc = function (e) {
+        //alert($($(e.target).parent()).html());
+        //this.Api.row(e.currentTarget).select();
+        if (this.dtsettings.fnClickCallbackFunc)
+            this.dtsettings.fnClickCallbackFunc(e, this.Api);
+    };
+
+    this.dblclickCallbackFunc = function (e) {
+        //alert("fnDblclickCallbackFunc");
+        //this.Api.rows(e.target).select();
+        if (this.dtsettings.fnDblclickCallbackFunc)
+            this.dtsettings.fnDblclickCallbackFunc(e, this.Api);
     };
 
     this.doRowgrouping = function () {
@@ -516,7 +528,7 @@ var EbDataTable = function (settings) {
             }
         }
 
-        $('#' + tableid + '_wrapper table thead tr[class=addedbyeb]').hide();
+       // $('#' + tableid + '_wrapper table thead tr[class=addedbyeb]').hide();
 
         //$('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
         $(".addedbyeb [type=checkbox]").prop('indeterminate', true);
@@ -531,6 +543,12 @@ var EbDataTable = function (settings) {
         $(".eb_selall").off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas").off("click").on("click", this.renderMainGraph);
+
+        this.Api.on('key-focus', function (e, datatable, cell) {
+            alert("key-focus");
+            datatable.rows().deselect();
+            datatable.row(cell.index().row).select();
+        });
 
         this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
         this.clearfilterbtn.off("click").on("click", this.clearFilter.bind(this));
@@ -1226,6 +1244,9 @@ var EbDataTable = function (settings) {
     };
 
     this.btnGo.click(this.btnGoClick.bind(this));
+
+    if (this.dtsettings.directLoad)
+        this.Init();
 };
 
 function csv(gdata) {

@@ -12,6 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects;
 using ExpressBase.Web.Filters;
+using ExpressBase.Data;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -175,9 +176,72 @@ namespace ExpressBase.Web2.Controllers
             this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, tvid, ViewBag.UId), json);
         }
 
-        public string GetTVPref4User(int tvid)
+        public string GetTVPref4User( int dsid)
         {
-            return this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, tvid, ViewBag.UId));
+            var redis = this.EbConfig.GetRedisClient();
+            var sscli = this.EbConfig.GetServiceStackClient();
+            var token = Request.Cookies["Token"];
+
+            //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
+            //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
+
+            var tvpref = redis.Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dsid, ViewBag.UId));
+            if (tvpref == null)
+            {
+                var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
+                if (columnColletion == null)
+                {
+                    var resp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Token = token, TenantAccountId = "eb_roby_dev" });
+                    columnColletion = resp.Columns;
+                }
+
+                tvpref = this.GetColumn4DataTable(columnColletion);
+                redis.Set(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1), tvpref);
+            }
+
+            return tvpref;
+        }
+
+        private string GetColumn4DataTable(ColumnColletion __columnCollection)
+        {
+            string colDef = string.Empty;
+            colDef = "{\"dvName\": \"<Untitled>\",\"hideSerial\": false, \"hideCheckbox\": false, \"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
+            colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\"},";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\"},";
+            foreach (EbDataColumn column in __columnCollection)
+            {
+                colDef += "{";
+                colDef += "\"data\": " + __columnCollection[column.ColumnName].ColumnIndex.ToString();
+                colDef += string.Format(",\"title\": \"{0}<span hidden>{0}</span>\"", column.ColumnName);
+                var vis = (column.ColumnName == "id") ? false.ToString().ToLower() : true.ToString().ToLower();
+                colDef += ",\"visible\": " + vis;
+                colDef += ",\"width\": " + 100;
+                colDef += ",\"name\": \"" + column.ColumnName + "\"";
+                colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
+                //var cls = (column.Type.ToString() == "System.Boolean") ? "dt-center tdheight" : "tdheight";
+                colDef += ",\"className\": \"tdheight\"";
+                colDef += "},";
+            }
+            colDef = colDef.Substring(0, colDef.Length - 1) + "],";
+            string colext = "\"columnsext\":[";
+            colext += "{\"name\":\"serial\"},";
+            colext += "{\"name\":\"checkbox\"},";
+            foreach (EbDataColumn column in __columnCollection)
+            {
+                colext += "{";
+                if (column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"AggInfo\":true,\"DecimalPlace\":2,\"RenderAs\":\"Default\"";
+                else if (column.Type.ToString() == "System.Boolean")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"IsEditable\":false,\"RenderAs\":\"Default\"";
+                else if (column.Type.ToString() == "System.DateTime")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"Format\":\"Date\"";
+                else if (column.Type.ToString() == "System.String")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"RenderAs\":\"Default\"";
+                colext += "},";
+            }
+            colext = colext.Substring(0, colext.Length - 1) + "]";
+            return colDef + colext + "}";
         }
     }
 }

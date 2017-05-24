@@ -15,6 +15,7 @@
     this.DMembers = ['acmaster1_name', 'tdebit', 'tcredit'];//DMembers;
     this.vueDMcode = vueDMcode;
     this.servicestack_url = servicestack_url;
+    this.extSettings = null;
 
     //local variables
     this.container = this.name + "Container";
@@ -30,8 +31,6 @@
     this.Msearch_colName = '';
     this.cols = [];
 
-    this.datatable = null;
-
     // functions
 
     //init() for event binding....
@@ -45,14 +44,11 @@
     this.InitDT = function () {
         $('#' + this.name + '_loading-image').show();
         $('#' + this.name + '_loadingdiv').show();
-        $.post(this.servicestack_url + '/ds/columns/' + this.dataSourceId + '', { format: 'json', Token: getToken() }, this.initDTpost.bind(this));
+       // $.post(this.servicestack_url + '/ds/columns/' + this.dataSourceId + '', { format: 'json', Token: getToken() }, this.initDTpost.bind(this));
+        $.post('GetTVPref4User', { dsid: this.dsid }, this.initDTpost.bind(this));
     };
 
     this.dataColumIterFn = function (i, value) {
-        _v = true;
-        _c = 'dt-left';
-        if (value.columnName == 'id')
-            _v = false;
         if (value.columnName == this.valueMember)
             this.VMindex = value.columnIndex;
 
@@ -60,93 +56,97 @@
 
         if (value.columnName == this.displayMember)
             this.DMindex = value.columnIndex;
-        if (value.columnIndex == 0 && this.multiSelect)
-            this.cols.push({ 'data': null, 'render': function (data, type, row) { return '<input type=\'checkbox\'>' } });
-        switch (value.type) {
-            case 'System.Int32, System.Private.CoreLib': _c = 'dt-right'; break;
-            case 'System.Decimal, System.Private.CoreLib': _c = 'dt-right'; break;
-            case 'System.Int16, System.Private.CoreLib': _c = 'dt-right'; break;
-            case 'System.DateTime, System.Private.CoreLib': _c = 'dt-center'; break;
-            case 'System.Boolean, System.Private.CoreLib': _c = 'dt-center'; break;
-        }
-        this.cols.push({ data: value.columnIndex, className: _c, title: value.columnName, visible: _v });
+        //this.cols.push({ data: value.columnIndex, title: value.columnName, visible: true, name: value.columnName, type: value.Type });
+    };
+
+    this.init44 = function () {
+        alert(this.extSettings.columns);
+        this.cols = this.extSettings.columns;
+        this.datatable = new EbDataTable({
+            ds_id: this.dataSourceId,
+            tid: this.name + 'tbl',
+            ss_url: "https://expressbaseservicestack.azurewebsites.net",
+            directLoad: true,
+            settings: {
+                hideCheckbox: false,
+                scrollY: 456, //this.dropdownHeight,
+                columns: this.cols
+            },
+            //fnKeyUpCallback:
+            //fnClickCallbackFunc:
+            //fnDblclickCallbackFunc:
+        });
+
+        //double click  option in DD
+        $('#' + this.name + 'tbl tbody').on('dblclick', 'tr', this.dblClickOnOptDDEventHand.bind(this));
     };
 
     this.initDTpost = function (data) {
+        //alert(data);
+        this.extSettings = JSON.parse(data);
         var searchTextCollection = [];
         var search_colnameCollection = [];
         var order_colname = '';
         if (data != null) {
-            $.each(data.columns, this.dataColumIterFn.bind(this));
+            $.each(this.extSettings.columns, this.dataColumIterFn.bind(this));
+            setTimeout(this.init44.bind(this), 100);
         }
 
-        this.datatable =  $('#' + this.name + 'tbl').DataTable({
-            keys: true,
-            dom: 'rti',
-            autoWidth: true,
-            scrollX: true,
-            scrollY: this.dropdownHeight,
-            serverSide: true,
-            columns: this.cols,
-            deferRender: true,
-            order: [],
-            paging: false,
-            select: true,
-            keys: true,
-            drawCallback: function (settings) {
-                //setTimeout(function(){ $('#' + this.name + 'tbl').DataTable().columns.adjust(); },500);
-                $('#' + this.name + 'container table:eq(0) thead th:eq(0)').removeClass('sorting');
-            },
-            ajax: {
-                url: this.servicestack_url + '/ds/data/' + this.dataSourceId,
-                type: 'POST',
-                data: function (dq) {
-                    delete dq.columns;
-                    dq.Id = this.dataSourceId;
-                    dq.Token = getToken();
-                    if (search_colnameCollection.length !== 0) {
-                        dq.search_col = '';
-                        $.each(search_colnameCollection, function (i, value) {
-                            if (dq.search_col == '')
-                                dq.search_col = value;
-                            else
-                                dq.search_col = dq.search_col + ',' + value;
-                        });
-                    }
-                    if (order_colname !== '')
-                        dq.order_col = order_colname;
-                    if (searchTextCollection.length != 0) {
-                        dq.searchtext = '';
-                        $.each(searchTextCollection, function (i, value) {
-                            if (dq.searchtext == '')
-                                dq.searchtext = value;
-                            else
-                                dq.searchtext = dq.searchtext + ',' + value;
-                        });
-                    }
-                    if (this.Msearch_colName !== '')
-                        dq.Msearch_colName = this.Msearch_colName;
-                },
-                dataSrc: this.ajaxDataSrcfn.bind(this)
-            }
-        });
-
-        //this.datatable = new EbDataTable({
-        //    ds_id: this.dataSourceId,
-        //    tid: this.name,
-        //    settings: {
-        //        hideCheckbox: false,
-        //        scrollY: this.dropdownHeight,
-        //        columns: this.cols
+        //this.datatable =  $('#' + this.name + 'tbl').DataTable({
+        //    keys: true,
+        //    dom: 'rti',
+        //    autoWidth: true,
+        //    scrollX: true,
+        //    scrollY: this.dropdownHeight,
+        //    serverSide: true,
+        //    columns: this.cols,
+        //    deferRender: true,
+        //    order: [],
+        //    paging: false,
+        //    select: true,
+        //    keys: true,
+        //    drawCallback: function (settings) {
+        //        //setTimeout(function(){ $('#' + this.name + 'tbl').DataTable().columns.adjust(); },500);
+        //        $('#' + this.name + 'container table:eq(0) thead th:eq(0)').removeClass('sorting');
+        //    },
+        //    ajax: {
+        //        url: this.servicestack_url + '/ds/data/' + this.dataSourceId,
+        //        type: 'POST',
+        //        data: function (dq) {
+        //            delete dq.columns;
+        //            dq.Id = this.dataSourceId;
+        //            dq.Token = getToken();
+        //            if (search_colnameCollection.length !== 0) {
+        //                dq.search_col = '';
+        //                $.each(search_colnameCollection, function (i, value) {
+        //                    if (dq.search_col == '')
+        //                        dq.search_col = value;
+        //                    else
+        //                        dq.search_col = dq.search_col + ',' + value;
+        //                });
+        //            }
+        //            if (order_colname !== '')
+        //                dq.order_col = order_colname;
+        //            if (searchTextCollection.length != 0) {
+        //                dq.searchtext = '';
+        //                $.each(searchTextCollection, function (i, value) {
+        //                    if (dq.searchtext == '')
+        //                        dq.searchtext = value;
+        //                    else
+        //                        dq.searchtext = dq.searchtext + ',' + value;
+        //                });
+        //            }
+        //            if (this.Msearch_colName !== '')
+        //                dq.Msearch_colName = this.Msearch_colName;
+        //        },
+        //        dataSrc: this.ajaxDataSrcfn.bind(this)
         //    }
         //});
 
-        //selection highlighting css on arrow keys
-        this.datatable.on('key-focus', this.arrowSelectionStylingFcs);// no need to bind 'this'
-        this.datatable.on('key-blur', this.arrowSelectionStylingBlr);// no need to bind 'this'
 
-        //double click  option in DD
-        $('#' + this.name + 'tbl tbody').on('dblclick', 'tr', this.dblClickOnOptDDEventHand.bind(this));
+        //selection highlighting css on arrow keys
+        //this.datatable.on('key-focus', this.arrowSelectionStylingFcs);// no need to bind 'this'
+        //this.datatable.on('key-blur', this.arrowSelectionStylingBlr);// no need to bind 'this'
     };
 
     this.dblClickOnOptDDEventHand = function (e) {
@@ -244,6 +244,10 @@
     };
 
     this.V_toggleDD = function (e) {
+        if (!this.DtFlag) {
+            this.InitDT();
+            this.DtFlag = true;
+        }
         this.Vobj.DDstate = !this.Vobj.DDstate;
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },500);
     };
@@ -316,5 +320,4 @@
 
     this.init();
 
-    this.InitDT()
 }

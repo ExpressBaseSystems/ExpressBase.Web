@@ -81,7 +81,7 @@
 .tbl-loadingdiv {
     vertical-align: middle;
     margin: 5% 50%;
-    display: none;
+    /*display: none;*/
 }
 
 /*======*/
@@ -296,30 +296,73 @@
     border-bottom: solid 1px #dddddd;
 }
 
-.dataTables_scrollBody::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-.dataTables_scrollBody::-webkit-scrollbar-button {
-    background: #444;
-}
-.dataTables_scrollBody::-webkit-scrollbar-track-piece {
-    border: solid 1px #d0d0d0;
+    .dataTables_scrollBody::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-button {
+        background: #444;
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-track-piece {
+        border: solid 1px #d0d0d0;
         background-color: #aaa;
         border-radius: 1px;
-}
-.dataTables_scrollBody::-webkit-scrollbar-thumb {
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-thumb {
         border-radius: 8px;
         border: 2px solid transparent;
         background-color: #ffffff;
         background-clip: content-box;
-}
+    }
 
 .tdheight {
     vertical-align: bottom;
 }
 
-.DDdiv {
+/*.DDdiv {
     border: solid 1px buttonface;
     border-top-color: none;
+}*/
+
+/*.DDdiv {
+    border: solid 1px #666;
+    padding: 6px;
+    border-top-color: none;
+    position: absolute;
+    z-index: 2147483647;
+    background: white;
+    padding-right: 0px;
+}*/
+
+.DDdiv {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.ebCombo-loader {
+    /*display:none;*/
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    z-index: 10000000000;
 }

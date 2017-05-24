@@ -451,11 +451,11 @@ var CustomWizFuncs = function () {
             $('#dbModal').modal('hide');
             setTimeout(function () {
                 if (simp_adv === 'simple') {
-                    var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", AcntId);
+                    var DBwizard_sim = new EbWizard("https://expressbase.azurewebsites.net/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", AcntId);
 
                 }
                 if (simp_adv === 'advanced') {
-                    var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", AcntId);
+                    var DBwizard_adv = new EbWizard("https://expressbase.azurewebsites.net/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", AcntId);
 
                 }
             }, 401);

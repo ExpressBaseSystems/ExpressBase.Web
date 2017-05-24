@@ -65,7 +65,7 @@
                     _html += "<li><a href='#'>" + val + "</a></li>"
                 })
                 _html += "</ul></div>";
-                return _html
+                return _html.toString().replace("xxx", "");
     
             },
             valueFn: function () { return $('.dropdown button').text().trim() }

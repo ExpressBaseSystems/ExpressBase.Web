@@ -13,6 +13,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects;
 using ExpressBase.Web.Filters;
 using ExpressBase.Data;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -176,7 +177,7 @@ namespace ExpressBase.Web2.Controllers
             this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, tvid, ViewBag.UId), json);
         }
 
-        public string GetTVPref4User( int dsid)
+        public string GetTVPref4User(int dsid, string parameters)
         {
             var redis = this.EbConfig.GetRedisClient();
             var sscli = this.EbConfig.GetServiceStackClient();
@@ -191,7 +192,16 @@ namespace ExpressBase.Web2.Controllers
                 var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
                 if (columnColletion == null)
                 {
-                    var resp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Token = token, TenantAccountId = "eb_roby_dev" });
+                    var paramsList = new List<Dictionary<string, string>>();
+                    Newtonsoft.Json.Linq.JArray ja = JsonConvert.DeserializeObject<dynamic>(parameters);
+                    foreach (Newtonsoft.Json.Linq.JToken jt in ja)
+                    {
+                        var _dict = new Dictionary<string, string>();
+                        foreach (Newtonsoft.Json.Linq.JProperty jp in jt.Children())
+                            _dict.Add(jp.Name, jp.Value.ToString());
+                        paramsList.Add(_dict);
+                    }
+                    var resp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Params = paramsList, Token = token, TenantAccountId = "eb_roby_dev" });
                     columnColletion = resp.Columns;
                 }
 

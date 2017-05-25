@@ -1,32 +1,26 @@
-﻿var EbSelect = function (name, dataSourceId, dropdownHeight, valueMember, displayMember, maxLimit, minLimit,
-                        multiSelect, required, defaultSearchFor, DMembers, vueDMcode, servicestack_url, values) {
+﻿var EbSelect = function (name, ds_id, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, dropdownHeight) {
     //parameters   
     this.name = name;
-    this.dataSourceId = dataSourceId;
-    this.dropdownHeight = dropdownHeight;
-    this.values = values;
-    this.valueMember = valueMember;
-    this.displayMember = displayMember;
+    this.dsid = ds_id;
+    this.vmName = 'id'; //vmName;
+    this.dmNames = ['acmaster1_xid', 'acmaster1_name']; //dmNames;
     this.maxLimit = maxLimit;
     this.minLimit = minLimit;
-    this.multiSelect = multiSelect;
     this.required = required;
-    this.defaultSearchFor = defaultSearchFor;
-    this.DMembers = ['acmaster1_name', 'tdebit', 'tcredit'];//DMembers;
-    this.vueDMcode = vueDMcode;
     this.servicestack_url = servicestack_url;
-    this.extSettings = null;
+    this.vmValues = vmValues;
+    this.dropdownHeight = dropdownHeight;
 
     //local variables
     this.container = this.name + "Container";
     this.DTSelector = '#' + this.name + 'tbl';
+    this.NoOfFields = this.dmNames.length;
     this.Vobj = null;
     this.datatable = null;
     this.clmAdjst = 0;
     this.VMindex = null;
     this.DMindex = null;
     this.DMindexes = [];
-    this.DtFlag = false;
     this.cellTr = null;
     this.Msearch_colName = '';
     this.cols = [];
@@ -44,114 +38,44 @@
     this.InitDT = function () {
         $('#' + this.name + '_loading-image').show();
         $('#' + this.name + '_loadingdiv').show();
-       // $.post(this.servicestack_url + '/ds/columns/' + this.dataSourceId + '', { format: 'json', Token: getToken() }, this.initDTpost.bind(this));
-        $.post('GetTVPref4User', { dsid: this.dsid }, this.initDTpost.bind(this));
-    };
-
-    this.dataColumIterFn = function (i, value) {
-        if (value.columnName == this.valueMember)
-            this.VMindex = value.columnIndex;
-
-        $.each(this.DMembers, function (j, v) { if (value.columnName == v) { this.DMindexes.push(value.columnIndex); } }.bind(this));
-
-        if (value.columnName == this.displayMember)
-            this.DMindex = value.columnIndex;
-        //this.cols.push({ data: value.columnIndex, title: value.columnName, visible: true, name: value.columnName, type: value.Type });
-    };
-
-    this.init44 = function () {
-        alert(this.extSettings.columns);
-        this.cols = this.extSettings.columns;
         this.datatable = new EbDataTable({
-            ds_id: this.dataSourceId,
+            ds_id: this.dsid,
             tid: this.name + 'tbl',
             ss_url: "https://expressbaseservicestack.azurewebsites.net",
             directLoad: true,
             settings: {
                 hideCheckbox: false,
-                scrollY: 456, //this.dropdownHeight,
-                columns: this.cols
+                scrollY: this.dropdownHeight,
             },
+            initComplete: this.initDTpost.bind(this),
+            //fnDblclickCallbackFunc:            
             //fnKeyUpCallback:
             //fnClickCallbackFunc:
-            //fnDblclickCallbackFunc:
         });
-
         //double click  option in DD
         $('#' + this.name + 'tbl tbody').on('dblclick', 'tr', this.dblClickOnOptDDEventHand.bind(this));
     };
 
     this.initDTpost = function (data) {
-        //alert(data);
-        this.extSettings = JSON.parse(data);
-        var searchTextCollection = [];
-        var search_colnameCollection = [];
-        var order_colname = '';
-        if (data != null) {
-            $.each(this.extSettings.columns, this.dataColumIterFn.bind(this));
-            setTimeout(this.init44.bind(this), 100);
-        }
-
-        //this.datatable =  $('#' + this.name + 'tbl').DataTable({
-        //    keys: true,
-        //    dom: 'rti',
-        //    autoWidth: true,
-        //    scrollX: true,
-        //    scrollY: this.dropdownHeight,
-        //    serverSide: true,
-        //    columns: this.cols,
-        //    deferRender: true,
-        //    order: [],
-        //    paging: false,
-        //    select: true,
-        //    keys: true,
-        //    drawCallback: function (settings) {
-        //        //setTimeout(function(){ $('#' + this.name + 'tbl').DataTable().columns.adjust(); },500);
-        //        $('#' + this.name + 'container table:eq(0) thead th:eq(0)').removeClass('sorting');
-        //    },
-        //    ajax: {
-        //        url: this.servicestack_url + '/ds/data/' + this.dataSourceId,
-        //        type: 'POST',
-        //        data: function (dq) {
-        //            delete dq.columns;
-        //            dq.Id = this.dataSourceId;
-        //            dq.Token = getToken();
-        //            if (search_colnameCollection.length !== 0) {
-        //                dq.search_col = '';
-        //                $.each(search_colnameCollection, function (i, value) {
-        //                    if (dq.search_col == '')
-        //                        dq.search_col = value;
-        //                    else
-        //                        dq.search_col = dq.search_col + ',' + value;
-        //                });
-        //            }
-        //            if (order_colname !== '')
-        //                dq.order_col = order_colname;
-        //            if (searchTextCollection.length != 0) {
-        //                dq.searchtext = '';
-        //                $.each(searchTextCollection, function (i, value) {
-        //                    if (dq.searchtext == '')
-        //                        dq.searchtext = value;
-        //                    else
-        //                        dq.searchtext = dq.searchtext + ',' + value;
-        //                });
-        //            }
-        //            if (this.Msearch_colName !== '')
-        //                dq.Msearch_colName = this.Msearch_colName;
-        //        },
-        //        dataSrc: this.ajaxDataSrcfn.bind(this)
-        //    }
-        //});
-
+        $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
 
         //selection highlighting css on arrow keys
         //this.datatable.on('key-focus', this.arrowSelectionStylingFcs);// no need to bind 'this'
         //this.datatable.on('key-blur', this.arrowSelectionStylingBlr);// no need to bind 'this'
     };
 
+    this.dataColumIterFn = function (i, value) {
+        if (value.name === this.valueMember)
+            this.VMindex = value.data;
+        else if (value.name === this.displayMember)
+            this.DMindex = value.data;
+
+        $.each(this.DMembers, function (j, v) { if (value.name == v) { this.DMindexes.push(value.data); } }.bind(this));
+    };
+
     this.dblClickOnOptDDEventHand = function (e) {
-        var Vmember = $('#' + this.name + 'tbl').DataTable().row($(e.target)).data()[this.VMindex];
-        var Dmember = $('#' + this.name + 'tbl').DataTable().row($(e.target)).data()[this.DMindex];
+        var Vmember = this.datatable.row($(e.target)).data()[this.VMindex];
+        var Dmember = this.datatable.row($(e.target)).data()[this.DMindex];
         if (!(this.Vobj.valueMembers.contains(Vmember))) {
             this.Vobj.displayMembers.push(Dmember);
             this.Vobj.valueMembers.push(Vmember);
@@ -184,10 +108,6 @@
     };
 
     this.toggleIndicatorBtn = function (e) {
-        //if (!this.DtFlag) {
-        //    this.DtFlag = true;
-        //    this.InitDT();
-        //}
         this.Vobj.toggleDD();
     };
 
@@ -301,7 +221,7 @@
 
     this.Test = function () {
         alert("this.name:" + this.name);
-        alert("this.dataSourceId: " + this.dataSourceId);
+        alert("this.dataSourceId: " + this.dsid);
         alert("this.dropdownHeight: " + this.dropdownHeight);
         alert("this.valueMember: " + this.valueMember);
         alert("this.displayMember: " + this.displayMember);

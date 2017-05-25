@@ -81,7 +81,10 @@ var EbDataTable = function (settings) {
     };
 
     this.getColumnsSuccess = function (data) {
-        this.ebSettings = JSON.parse(data);
+        if (this.dtsettings.directLoad !== true)
+            this.ebSettings = JSON.parse(data);
+        else
+            this.ebSettings.columns = JSON.parse(data).columns;
         this.Init();
 
         if (this.filterBox !== null && this.dtsettings.directLoad !== true)
@@ -111,7 +114,6 @@ var EbDataTable = function (settings) {
         if (this.ebSettings.hideSerial) {
             this.ebSettings.columns[0].visible = false;
         }
-        
         if (!this.ebSettings.hideCheckbox) {
             this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
             this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
@@ -199,6 +201,7 @@ var EbDataTable = function (settings) {
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
+        o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
         //alert(JSON.stringify(o));
         return o;
     };
@@ -338,7 +341,7 @@ var EbDataTable = function (settings) {
         //alert("fnDblclickCallbackFunc");
         //this.Api.rows(e.target).select();
         if (this.dtsettings.fnDblclickCallbackFunc)
-            this.dtsettings.fnDblclickCallbackFunc(e, this.Api);
+            this.dtsettings.fnDblclickCallbackFunc(e);
     };
 
     this.doRowgrouping = function () {

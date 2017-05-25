@@ -1,4 +1,9 @@
-﻿var EbSelect = function (name, ds_id, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, dropdownHeight) {
+﻿var selectedEntity = function (vmValue, dmValues) {
+    this.vmValue = vmValue;
+    this.dmValues = dmValues;
+};
+
+var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues) {
     //parameters   
     this.name = name;
     this.dsid = ds_id;
@@ -6,9 +11,10 @@
     this.dmNames = ['acmaster1_xid', 'acmaster1_name']; //dmNames;
     this.maxLimit = maxLimit;
     this.minLimit = minLimit;
+    this.multiSelect = (this.maxLimit > 1);
     this.required = required;
     this.servicestack_url = servicestack_url;
-    this.vmValues = vmValues;
+    this.vmValues = (vmValues !== null) ? vmValues : [];
     this.dropdownHeight = dropdownHeight;
 
     //local variables
@@ -18,9 +24,13 @@
     this.Vobj = null;
     this.datatable = null;
     this.clmAdjst = 0;
+
+    // TEMP
+    this.currentEvent = null;
+
     this.VMindex = null;
-    this.DMindex = null;
     this.DMindexes = [];
+
     this.cellTr = null;
     this.Msearch_colName = '';
     this.cols = [];
@@ -44,16 +54,16 @@
             ss_url: "https://expressbaseservicestack.azurewebsites.net",
             directLoad: true,
             settings: {
-                hideCheckbox: false,
+                hideCheckbox: (this.multiSelect === false),
                 scrollY: this.dropdownHeight,
             },
             initComplete: this.initDTpost.bind(this),
-            //fnDblclickCallbackFunc:            
+            fnDblclickCallbackFunc: this.dblClickOnOptDDEventHand.bind(this),
             //fnKeyUpCallback:
             //fnClickCallbackFunc:
         });
         //double click  option in DD
-        $('#' + this.name + 'tbl tbody').on('dblclick', 'tr', this.dblClickOnOptDDEventHand.bind(this));
+        //$('#' + this.name + 'tbl tbody').on('dblclick', 'tr', this.dblClickOnOptDDEventHand.bind(this));
     };
 
     this.initDTpost = function (data) {
@@ -65,36 +75,29 @@
     };
 
     this.dataColumIterFn = function (i, value) {
-        if (value.name === this.valueMember)
+        if (value.name === this.vmName)
             this.VMindex = value.data;
-        else if (value.name === this.displayMember)
-            this.DMindex = value.data;
 
-        $.each(this.DMembers, function (j, v) { if (value.name == v) { this.DMindexes.push(value.data); } }.bind(this));
+        $.each(this.dmNames, function (j, dmName) { if (value.name === dmName) { this.DMindexes.push(value.data); } }.bind(this));
     };
 
     this.dblClickOnOptDDEventHand = function (e) {
-        var Vmember = this.datatable.row($(e.target)).data()[this.VMindex];
-        var Dmember = this.datatable.row($(e.target)).data()[this.DMindex];
-        if (!(this.Vobj.valueMembers.contains(Vmember))) {
-            this.Vobj.displayMembers.push(Dmember);
-            this.Vobj.valueMembers.push(Vmember);
+        this.currentEvent = e;
+        var idx = this.datatable.Api.columns(this.vmName + ':name').indexes()[0] - 2;
+        var vmValue = this.datatable.Api.row($(e.target)).data()[idx];
+        if (!(this.Vobj.valueMembers.contains(vmValue))) {
+            this.Vobj.valueMembers.push(vmValue);
+            $.each(this.dmNames, this.getDmValues.bind(this));
             $(e.target).find('[type=checkbox]').prop('checked', true);
-            this.dblClickOnOptIterfn.bind(this, e);
         }
     };
 
-    this.dblClickOnOptIterfn = function (e) {/// now working
-        $.each(this.DMindexes, function (i, v) {
-            alert("i:" + i);
-            alert("v:" + v);
-            alert("e.target:" + e.target);
-            alert("this.DMindexes:" + this.DMindexes);
-            console.log("this.Vobj.displayMembers1:" + this.Vobj.displayMembers1);
-            eval('this.Vobj.displayMembers' + (i + 1) + '.push( $(\'#' + this.name + 'tbl\').DataTable().row($(e.target)).data()[v] );');
-        }.bind(this))
+    this.getDmValues = function (i, dmName) {
+        var idx = this.datatable.Api.columns(dmName + ':name').indexes()[0] - 2;
+        this.Vobj.displayMembers.push(this.datatable.Api.row($(this.currentEvent.target)).data()[idx]);
     };
 
+   
     this.ajaxDataSrcfn = function (dd) {
         $('#' + this.name + '_loadingdiv').hide();
         this.clmAdjst = this.clmAdjst + 1;

@@ -110,13 +110,13 @@ namespace ExpressBase.Web2.Controllers
             var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = Convert.ToInt32(ViewBag.UId), Token = ViewBag.token });
             ViewBag.dict = fr.returnlist;
             return View();
-           
+
         }
 
         [HttpPost]
         public IActionResult TenantAccounts(int i)
         {
-          
+
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insertaccount", Token = ViewBag.token });
@@ -139,7 +139,7 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.Fname = null;
             return RedirectToAction("TenantSignup","TenantExt");
-             
+
         }
 
         public IActionResult ResetPassword()
@@ -184,15 +184,15 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult TenantProfile(int i)
         {
-            var req = this.HttpContext.Request.Form;      
+            var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),Token= ViewBag.token });
             if (res.id >= 0)
             {
-              return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
-             }
+                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
+            }
             return View();
-           
+
         }
 
         public IActionResult marketPlace()
@@ -222,7 +222,8 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult code_editor()
         {
-            
+            ViewBag.TenantId = HttpContext.Request.Query["tacid"];
+            ViewBag.Objid = HttpContext.Request.Query["objid"];
             return View();
         }
 
@@ -232,24 +233,26 @@ namespace ExpressBase.Web2.Controllers
             var req = this.HttpContext.Request.Form;
             var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var ds = new EbObjectWrapper
+            var ds = new EbObjectWrapper();
+            if (string.IsNullOrEmpty(_dict["id"]))
+                ds.Id = 0;
+            else
+                ds.Id = Convert.ToInt32(_dict["id"]);
+            ds.Token = ViewBag.token;
+            ds.TenantAccountId = _dict["tcid"];
+            ds.EbObjectType = Objects.EbObjectType.DataSource;
+            ds.Name = _dict["name"];
+            ds.Status = Objects.ObjectLifeCycleStatus.Live;
+            ds.ChangeLog = _dict["changeLog"];
+            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
             {
-                Id = Convert.ToInt32(_dict["id"]),
-                Token = ViewBag.token,
-                TenantAccountId = _dict["tcid"],
-                EbObjectType = Objects.EbObjectType.DataSource,
                 Name = _dict["name"],
-                Status = ObjectLifeCycleStatus.Live,
+                Description = _dict["description"],
+                Sql = _dict["sql"],
                 ChangeLog = _dict["changeLog"],
-                Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
-                {
-                    Name = _dict["name"],
-                    Description = _dict["description"],
-                    Sql = _dict["sql"],
-                    ChangeLog = _dict["changeLog"],
-                    EbObjectType = Objects.EbObjectType.DataSource
-                })
-            };
+                EbObjectType = EbObjectType.DataSource
+            });
+
             using (client.Post<HttpWebResponse>(ds)) { }
             return Json("Success");
         }
@@ -274,9 +277,8 @@ namespace ExpressBase.Web2.Controllers
         public JsonResult GetByteaEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
-            var TenantId = req["TenantAccountId"];
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["id"]), TenantAccountId = TenantId, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), TenantAccountId = req["TenantAccountId"], Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
             Dictionary<int, EbDataSource> ObjList = new Dictionary<int, EbDataSource>();
@@ -291,8 +293,9 @@ namespace ExpressBase.Web2.Controllers
             }
             return Json(ObjList);
         }
-        public IActionResult objects(string cid)
-        {            
+        public IActionResult objects()
+        {
+            ViewBag.TenantId = HttpContext.Request.Query["tacid"];
             return View();
         }
         public IActionResult ds_save()
@@ -300,5 +303,25 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+
+        public IActionResult DSList()
+        {
+
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            ViewBag.TenantId = HttpContext.Request.Query["tacid"];
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.TenantId, Token = ViewBag.token });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var rlist = resultlist.Data;
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+                {
+                    ObjList[element.Id] = element;
+                }
+            }
+            ViewBag.DSList = ObjList;
+            return View();
+        }
     }
 }

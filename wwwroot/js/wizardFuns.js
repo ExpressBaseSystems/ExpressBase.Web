@@ -463,10 +463,11 @@ var CustomWizFuncs = function () {
     };
 
     this.DataSource = function (acid) {
+        alert("obname  " + obname);
         $('#sql').val(sql);
-        $('#tcid').val($('#cid').val());
-        $('#id').val(sessionStorage.getItem("id"));
-        $('#name').val(sessionStorage.getItem("obj_name"));
-        $('#description').val(sessionStorage.getItem("obj_desc"));
+        $('#tcid').val(acid);
+        $('#id').val(objid);
+        $('#name').val(obname);
+        $('#description').val(obdesc);
     };
 };

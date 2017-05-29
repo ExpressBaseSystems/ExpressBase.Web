@@ -19,6 +19,9 @@
     <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
     <script type="text/javascript">
+        var obname;
+        var obdesc;
+        var objid;
         $(document).ready(function () {
             //var hint_type;
             //var mode_type;
@@ -34,7 +37,7 @@
             //    mode_type = "javascript";
             //}
             CodeMirror.commands.autocomplete = function (cm) {
-                //(obj_type === Objects.EbObjectType.DataSource || obj_type === Objects.EbObjectType.SqlFunctions) ? CodeMirror.showHint(cm, CodeMirror.hint.sql) :  
+                //(obj_type === Objects.EbObjectType.DataSource || obj_type === Objects.EbObjectType.SqlFunctions) ? CodeMirror.showHint(cm, CodeMirror.hint.sql) :
                 CodeMirror.showHint(cm, CodeMirror.hint.javascript);
             };
             window.editor = CodeMirror.fromTextArea(code, {
@@ -48,15 +51,30 @@
                 },
                 gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
             });
-            var cid = sessionStorage.getItem("cid");
-            $('#cid').val(cid);
-            window.editor.setValue(sessionStorage.getItem("obj_code"));
-            document.title = sessionStorage.getItem("obj_name")
+           
+            if ($("#objid").val() !== "") {
+                $.post("http://localhost:53431/Tenant/GetByteaEbObjects_json", { "TenantAccountId": $("#tacid").val(), "objid": $("#objid").val() }, function (result) {
+                    $.each(result, function (i) {
+                        window.editor.setValue(result[i].sql);
+                        obdesc = result[i].description;
+                        obname = result[i].name;
+                        objid = i;
+                        document.title = obname;
+                    })
+                })
+                  }
+                  });
+        $(document).keydown(function (e) {
+            if (e.keyCode == 83 && e.ctrlKey) {
+                e.preventDefault();
+                $(".save").trigger("click");
+            }
         });
         function func() {
             sql = window.editor.getValue();
-            var Dswzd = new EbWizard("https://expressbase.azurewebsites.net/Tenant/ds_save", "https://expressbase.azurewebsites.net/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database");
-            Dswzd.CustomWizFunc = (new CustomWizFuncs).DataSource;
+            var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database");
+            alert('tacid ::'+$("#tcid").val());
+            Dswzd.CustomWizFunc = (new CustomWizFuncs).DataSource($("#tcid").val());
         }
     </script>
 </head>
@@ -70,11 +88,11 @@
         <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-xs btn-default fa fa-file-code-o fa-2x" aria-hidden="true"></i></a>
         <a href="#" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-xs btn-default fa fa-play fa-2x" aria-hidden="true"></i></a>
     </span>
+    <input type="hidden" id="tcid" value="@ViewBag.TenantId" />
+    <input type="hidden" id="objid" value="@ViewBag.Objid" />
     <textarea id="code" name="code" class="code"></textarea>
     <p>Hit Ctrl+Space to trigger autocomplete</p>
-    <input type="hidden" id="cid" name="cid" />
 </body>
-
 </html>
 <style>
     .align_singleLine {

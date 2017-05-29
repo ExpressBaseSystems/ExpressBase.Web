@@ -41,13 +41,15 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.width = wid;
 };
 
-var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
-    this.dsid = ds_id;
-    this.dvid = dv_id;
-    this.ssurl = ss_url;
-    this.ebSettings = setting;
-    this.ebSettingsCopy = $.extend(true, {}, setting);
-    this.tableId = tid;
+//ds_id, dv_id, ss_url, tid, setting
+var EbDataTable = function (settings) {
+    this.dtsettings = settings;
+    this.dsid = this.dtsettings.ds_id;
+    this.dvid = this.dtsettings.dv_id;
+    this.ssurl = this.dtsettings.ss_url;
+    this.ebSettings = this.dtsettings.settings;
+    this.ebSettingsCopy = $.extend(true, {}, this.ebSettings);
+    this.tableId = this.dtsettings.tid;
     this.eb_agginfo = null;
     this.isSecondTime = false;
     this.Api = null;
@@ -74,6 +76,21 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     this.rowId = -1;
     this.isSettingsSaved = false;
 
+    this.getColumns = function () {
+        $.post('GetTVPref4User', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+    };
+
+    this.getColumnsSuccess = function (data) {
+        if (this.dtsettings.directLoad !== true)
+            this.ebSettings = JSON.parse(data);
+        else
+            this.ebSettings.columns = JSON.parse(data).columns;
+        this.Init();
+
+        if (this.filterBox !== null && this.dtsettings.directLoad !== true)
+            this.filterBox.collapse('hide');
+    };
+
     this.Init = function () {
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
@@ -88,11 +105,12 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         this.csvbtn = $("#btnCsv");
         this.pdfbtn = $("#btnPdf");
         this.settingsbtn = $("#"+ this.tableId+ "_btnSettings");
-        $("#dvName_lbl").text(this.ebSettings.dvName);
+        //$("#dvName_lbl").text(this.ebSettings.dvName);
 
         this.eb_agginfo = this.getAgginfo();
+        if(this.dtsettings.directLoad !== true)
+            this.table_jQO.append($(this.getFooterFromSettingsTbl()));
 
-        this.table_jQO.append($(this.getFooterFromSettingsTbl()));
         if (this.ebSettings.hideSerial) {
             this.ebSettings.columns[0].visible = false;
         }
@@ -104,37 +122,10 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             this.ebSettings.columns[1].visible = false;
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
-        //this.Api = this.table_jQO.DataTable({
-        //    dom:'<\'col-sm-2\'l><\'col-sm-2\'i><\'col-sm-4\'B><\'col-sm-4\'p>tr',
-        //    buttons: ['copy', 'csv', 'excel', 'pdf','print', { extend: 'print', exportOptions: { modifier: { selected: true }}}],
-        //    scrollY: this.ebSettings.scrollY,
-        //    scrollX: true,
-        //    fixedColumns: { leftColumns: this.ebSettings.leftFixedColumns, rightColumns:this.ebSettings.rightFixedColumns },
-        //    //keys: true,
-        //    lengthMenu: this.ebSettings.lengthMenu,
-        //    serverSide: true,
-        //    processing:true,
-        //    language: { processing: '<div class=\'fa fa-spinner fa-pulse  fa-3x fa-fw\'></div>', info:'_START_ - _END_ / _TOTAL_'},
-        //    //pagingType:'@pagingType',
-        //    columns: this.ebSettings.columns, 
-        //    order: [],
-        //    deferRender: true,
-        //    filter: true,
-        //    select: {style:'multi'},
-        //    //@selectOption,$.fn.dataTable.pipeline(        pages: 5,)
-        //    retrieve: true,
-        //    ajax: {
-        //        url: this.ssurl + '/ds/data/' + this.dsid,
-        //        type: 'POST',
-        //        timeout: 180000,
-        //        data: this.ajaxData.bind(this),
-        //        dataSrc: function(dd) { return dd.data; }
-        //    },
-        
-        //    fnRowCallback: this.rowCallBackFunc.bind(this),
-        //    drawCallback: this.drawCallBackFunc.bind(this),
-        //    initComplete: this.initCompleteFunc.bind(this),
-        //});
+
+        this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
+        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.clickCallbackFunc.bind(this));
+        $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
 
         //$.fn.dataTable.ext.errMode = 'throw';
 
@@ -175,13 +166,21 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
 
     this.createTblObject = function () {
         var o = new Object();
-        o.dom = "<'col-sm-2'l><'col-sm-1'i><'col-sm-4'B><'col-sm-5'p>tr";
-        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         o.scrollY = this.ebSettings.scrollY;
         o.scrollX = "100%";
-        if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
-            o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
-        o.lengthMenu = this.ebSettings.lengthMenu;
+        if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
+            if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
+                o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
+            o.lengthMenu = this.ebSettings.lengthMenu;
+
+            o.dom = "<'col-sm-2'l><'col-sm-1'i><'col-sm-4'B><'col-sm-5'p>tr";
+            o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
+        }
+        else if (this.dtsettings.directLoad) {
+            o.paging = false;
+            //o.lengthMenu = [[-1], ["All"]];
+            o.dom = "rti";
+        }
         o.serverSide = true;
         o.processing = true;
         o.language  = { processing: "<div class='fa fa-spinner fa-pulse  fa-3x fa-fw'></div>", info:"_START_ - _END_ / _TOTAL_"};
@@ -189,8 +188,9 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         o.order = [];
         o.deferRender = true;
         o.filter = true;
-        o.select =  {style:'multi'};
+        o.select = true;
         o.retrieve = true;
+        o.keys = true,
         o.ajax = {
             url: this.ssurl + '/ds/data/' + this.dsid,
             type: 'POST',
@@ -201,6 +201,8 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
+        o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
+        //alert(JSON.stringify(o));
         return o;
     };
 
@@ -218,8 +220,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         if (!this.isSecondTime) {
             this.isSecondTime = true;
             this.RenderGraphModal();
-            this.Init();
-            this.filterBox.collapse('hide');
+            this.getColumns();
         }
         else
             this.Api.ajax.reload();
@@ -258,7 +259,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
                     var val1, val2;
                     var textid = '#' + table + '_' + colum + '_hdr_txt1';
                     var type = $(textid).attr('data-coltyp');
-                    if (type == 'boolean') {
+                    if (type === 'boolean') {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
                         if (!($(textid).is(':indeterminate')))
                             filter_obj_arr.push(new filter_obj(((table === "dv13") ? "INV." : "") + colum, "=", val1));
@@ -312,12 +313,35 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             this.createFooter(1);
         }
         this.addFilterEventListeners();
+
+        if (this.dtsettings.initComplete)
+            this.dtsettings.initComplete();
     }
 
     this.drawCallBackFunc = function ( settings ) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
-        if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
+        //if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
         this.summarize2();
+    };
+
+    this.selectCallbackFunc = function (e, dt, type, indexes) {
+        //alert("selectCallbackFunc");
+        //if (this.dtsettings.fnKeyUpCallback)
+        //    this.dtsettings.fnKeyUpCallback(e, datatable, cell, originalEvent);
+    };
+
+    this.clickCallbackFunc = function (e) {
+        //alert($($(e.target).parent()).html());
+        //this.Api.row(e.currentTarget).select();
+        if (this.dtsettings.fnClickCallbackFunc)
+            this.dtsettings.fnClickCallbackFunc(e, this.Api);
+    };
+
+    this.dblclickCallbackFunc = function (e) {
+        //alert("fnDblclickCallbackFunc");
+        //this.Api.rows(e.target).select();
+        if (this.dtsettings.fnDblclickCallbackFunc)
+            this.dtsettings.fnDblclickCallbackFunc(e);
     };
 
     this.doRowgrouping = function () {
@@ -357,7 +381,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             }
 
             if (rfoot !== null) {
-                if (j == eb_footer_controls_lfoot.length - tx.rightFixedColumns) {
+                if (j === eb_footer_controls_lfoot.length - tx.rightFixedColumns) {
                     if (j < eb_footer_controls_lfoot.length)
                         $(this).html(eb_footer_controls_lfoot[idx]);
                 }
@@ -489,7 +513,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
             }
         }
 
-        $('#' + tableid + '_wrapper table thead tr[class=addedbyeb]').hide();
+       // $('#' + tableid + '_wrapper table thead tr[class=addedbyeb]').hide();
 
         //$('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
         $(".addedbyeb [type=checkbox]").prop('indeterminate', true);
@@ -504,6 +528,12 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         $(".eb_selall").off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas").off("click").on("click", this.renderMainGraph);
+
+        this.Api.on('key-focus', function (e, datatable, cell) {
+            alert("key-focus");
+            datatable.rows().deselect();
+            datatable.row(cell.index().row).select();
+        });
 
         this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
         this.clearfilterbtn.off("click").on("click", this.clearFilter.bind(this));
@@ -892,20 +922,20 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         objcols.push(this.getColobj("id"));
         $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
             ct++;
-            if (obj.type == 'text' && obj.name == 'name')
+            if (obj.type === 'text' && obj.name === 'name')
                 n = obj.value;
-            else if (obj.type == 'text' && obj.name == 'index')
+            else if (obj.type === 'text' && obj.name === 'index')
                 d = obj.value;
-            else if (obj.type == 'hidden' && obj.name == 'title')
+            else if (obj.type === 'hidden' && obj.name === 'title')
                 t = obj.value + '<span hidden>' + n + '</span>';
-            else if (obj.type == 'checkbox')
+            else if (obj.type === 'checkbox')
                 v = obj.checked;
-            else if (obj.type == 'text' && obj.name == 'width')
+            else if (obj.type === 'text' && obj.name === 'width')
                 w = obj.value;
-            else if (obj.type == 'text' && obj.name == 'type')
+            else if (obj.type === 'text' && obj.name === 'type')
                 ty = obj.value;
-            else if (obj.className == 'font-select') {
-                if (!($(this).children('a').children('span').attr('style') == undefined)) {
+            else if (obj.className === 'font-select') {
+                if (!($(this).children('a').children('span').attr('style') === undefined)) {
                     var style = document.createElement('style');
                     style.type = 'text/css';
                     var fontName = $(this).children('a').children('span').css('font-family');
@@ -989,7 +1019,7 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
         colArr.push(new coldef4Setting('name', 'Name', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
         colArr.push(new coldef4Setting('type', ' Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
         colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='hidden' value=" + data + " name='title' style='width: 100px;'>" + data : data; }, ""));
-        colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data == 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
+        colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data === 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
         colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
         colArr.push(new coldef4Setting('className', 'Font', "", this.renderFontSelect, "30"));
         return colArr;
@@ -1199,6 +1229,9 @@ var EbDataTable = function (ds_id, dv_id, ss_url, tid, setting) {
     };
 
     this.btnGo.click(this.btnGoClick.bind(this));
+
+    if (this.dtsettings.directLoad)
+        this.getColumns();
 };
 
 function csv(gdata) {

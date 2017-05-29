@@ -1,0 +1,38 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        window.onload = function () {
+          
+            var DSList = new ObjListTbl("dslist", "Data Sources","New DS");
+        };
+    })
+
+</script>
+@{
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    Dictionary<int, EbObjectWrapper> DsList = new Dictionary<int, EbObjectWrapper>();
+    DsList = ViewBag.DSList;
+}
+    <div id="dslist" style="visibility:hidden;height:0px">
+        @{
+            foreach (var element in DsList)
+            {
+                <div class="tr">
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <label>@element.Value.Name</label>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="button" class="btn btn-success" value="Open" />
+                        </div>
+                    </div>
+                    </div>
+               
+
+            }
+        }
+     </div>
+

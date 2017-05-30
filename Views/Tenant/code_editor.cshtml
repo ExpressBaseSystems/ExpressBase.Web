@@ -53,7 +53,7 @@
             });
            
             if ($("#objid").val() !== "") {
-                $.post("http://localhost:53431/Tenant/GetByteaEbObjects_json", { "TenantAccountId": $("#tacid").val(), "objid": $("#objid").val() }, function (result) {
+                $.post("http://localhost:53431/Tenant/GetByteaEbObjects_json", { "TenantAccountId": $("#tcid").val(), "objid": $("#objid").val() }, function (result) {
                     $.each(result, function (i) {
                         window.editor.setValue(result[i].sql);
                         obdesc = result[i].description;
@@ -73,7 +73,6 @@
         function func() {
             sql = window.editor.getValue();
             var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database");
-            alert('tacid ::'+$("#tcid").val());
             Dswzd.CustomWizFunc = (new CustomWizFuncs).DataSource($("#tcid").val());
         }
     </script>

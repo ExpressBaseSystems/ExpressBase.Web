@@ -463,11 +463,16 @@ var CustomWizFuncs = function () {
     };
 
     this.DataSource = function (acid) {
-        alert("obname  " + obname);
+        alert('sql ' + sql + '\nacid ' + acid +'\n objid ' + objid + '\n obname ' + obname);
         $('#sql').val(sql);
         $('#tcid').val(acid);
         $('#id').val(objid);
         $('#name').val(obname);
         $('#description').val(obdesc);
+        alert('objid'+objid);
+        if ($('#id').val() === "" || $('#id').val()=== null) {
+            $('#changeLog').val("");
+            $('#changeLogDiv').remove();
+        }
     };
 };

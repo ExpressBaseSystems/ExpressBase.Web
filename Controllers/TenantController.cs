@@ -235,21 +235,26 @@ namespace ExpressBase.Web2.Controllers
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var ds = new EbObjectWrapper();
             if (string.IsNullOrEmpty(_dict["id"]))
+            {
                 ds.Id = 0;
+                ds.ChangeLog = "";
+            }
             else
+            {
                 ds.Id = Convert.ToInt32(_dict["id"]);
+                ds.ChangeLog = _dict["changeLog"];
+            }
             ds.Token = ViewBag.token;
             ds.TenantAccountId = _dict["tcid"];
             ds.EbObjectType = Objects.EbObjectType.DataSource;
             ds.Name = _dict["name"];
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
-            ds.ChangeLog = _dict["changeLog"];
             ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
             {
                 Name = _dict["name"],
                 Description = _dict["description"],
                 Sql = _dict["sql"],
-                ChangeLog = _dict["changeLog"],
+                ChangeLog = ds.ChangeLog,
                 EbObjectType = EbObjectType.DataSource
             });
 

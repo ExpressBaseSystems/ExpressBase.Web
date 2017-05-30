@@ -1,36 +1,42 @@
-﻿var EbSelect = function (name, dataSourceId, dropdownHeight, valueMember, displayMember, maxLimit, minLimit,
-                        multiSelect, required, defaultSearchFor, DMembers, vueDMcode, servicestack_url, values) {
+﻿var selectedEntity = function (vmValue, dmValues) {
+    this.vmValue = vmValue;
+    this.dmValues = dmValues;
+};
+
+var z = 100;
+
+var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues) {
     //parameters   
     this.name = name;
-    this.dataSourceId = dataSourceId;
-    this.dropdownHeight = dropdownHeight;
-    this.values = values;
-    this.valueMember = valueMember;
-    this.displayMember = displayMember;
-    this.maxLimit = maxLimit;
+    this.dsid = ds_id;
+    this.vmName = 'id'; //vmName;
+    this.dmNames = ['acmaster1_xid', 'acmaster1_name', 'tdebit']; //dmNames;
+    this.maxLimit = 3;//maxLimit;
     this.minLimit = minLimit;
-    this.multiSelect = multiSelect;
+    this.multiSelect = (this.maxLimit > 1);
     this.required = required;
-    this.defaultSearchFor = defaultSearchFor;
-    this.DMembers = ['acmaster1_name', 'tdebit', 'tcredit'];//DMembers;
-    this.vueDMcode = vueDMcode;
     this.servicestack_url = servicestack_url;
+    this.vmValues = (vmValues !== null) ? vmValues : [];
+    this.dropdownHeight = dropdownHeight;
 
     //local variables
     this.container = this.name + "Container";
     this.DTSelector = '#' + this.name + 'tbl';
+    this.NoOfFields = this.dmNames.length;
     this.Vobj = null;
     this.datatable = null;
     this.clmAdjst = 0;
+
+    // TEMP
+    this.currentEvent = null;
+
+    this.localDMS = [];
+    for (i = 0; i < this.NoOfFields; i++) { this.localDMS.push([]) }
     this.VMindex = null;
-    this.DMindex = null;
     this.DMindexes = [];
-    this.DtFlag = false;
     this.cellTr = null;
     this.Msearch_colName = '';
     this.cols = [];
-
-    this.datatable = null;
 
     // functions
 
@@ -39,126 +45,67 @@
         //$('#' + this.container + ' [class=open-indicator]').hide();
         $('#' + this.container + ' [class=open-indicator]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //toggle indicator button
         $('#' + this.name + 'tbl').keydown(function (e) { if (e.which == 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
+        $('#' + this.container).on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
     };
 
     // init datatable
     this.InitDT = function () {
-        $('#' + this.name + '_loading-image').show();
-        $('#' + this.name + '_loadingdiv').show();
-        $.post(this.servicestack_url + '/ds/columns/' + this.dataSourceId + '', { format: 'json', Token: getToken() }, this.initDTpost.bind(this));
-    };
-
-    this.dataColumIterFn = function (i, value) {
-        _v = true;
-        _c = 'dt-left';
-        if (value.columnName == 'id')
-            _v = false;
-        if (value.columnName == this.valueMember)
-            this.VMindex = value.columnIndex;
-
-        $.each(this.DMembers, function (j, v) { if (value.columnName == v) { this.DMindexes.push(value.columnIndex); } }.bind(this));
-
-        if (value.columnName == this.displayMember)
-            this.DMindex = value.columnIndex;
-        if (value.columnIndex == 0 && this.multiSelect)
-            this.cols.push({ 'data': null, 'render': function (data, type, row) { return '<input type=\'checkbox\'>' } });
-        switch (value.type) {
-            case 'System.Int32, System.Private.CoreLib': _c = 'dt-right'; break;
-            case 'System.Decimal, System.Private.CoreLib': _c = 'dt-right'; break;
-            case 'System.Int16, System.Private.CoreLib': _c = 'dt-right'; break;
-            case 'System.DateTime, System.Private.CoreLib': _c = 'dt-center'; break;
-            case 'System.Boolean, System.Private.CoreLib': _c = 'dt-center'; break;
-        }
-        this.cols.push({ data: value.columnIndex, className: _c, title: value.columnName, visible: _v });
+        //$('#' + this.name + '_loading-image').show();
+        //$('#' + this.name + '_loadingdiv').show();
+        this.datatable = new EbDataTable({
+            ds_id: this.dsid,
+            tid: this.name + 'tbl',
+            ss_url: "https://expressbaseservicestack.azurewebsites.net",
+            directLoad: true,
+            settings: {
+                hideCheckbox: (this.multiSelect === false),
+                scrollY: this.dropdownHeight,
+            },
+            initComplete: this.initDTpost.bind(this),
+            fnDblclickCallbackFunc: this.dblClickOnOptDDEventHand.bind(this),
+            //fnKeyUpCallback:
+            //fnClickCallbackFunc:
+        });
     };
 
     this.initDTpost = function (data) {
-        var searchTextCollection = [];
-        var search_colnameCollection = [];
-        var order_colname = '';
-        if (data != null) {
-            $.each(data.columns, this.dataColumIterFn.bind(this));
-        }
-
-        this.datatable = $('#' + this.name + 'tbl').DataTable({
-            keys: true,
-            dom: 'rti',
-            autoWidth: true,
-            scrollX: true,
-            scrollY: this.dropdownHeight,
-            serverSide: true,
-            columns: this.cols,
-            deferRender: true,
-            order: [],
-            paging: false,
-            select: true,
-            keys: true,
-            drawCallback: function (settings) {
-                //setTimeout(function(){ $('#' + this.name + 'tbl').DataTable().columns.adjust(); },500);
-                $('#' + this.name + 'container table:eq(0) thead th:eq(0)').removeClass('sorting');
-            },
-            ajax: {
-                url: this.servicestack_url + '/ds/data/' + this.dataSourceId,
-                type: 'POST',
-                data: function (dq) {
-                    delete dq.columns;
-                    dq.Id = this.dataSourceId;
-                    dq.Token = getToken();
-                    if (search_colnameCollection.length !== 0) {
-                        dq.search_col = '';
-                        $.each(search_colnameCollection, function (i, value) {
-                            if (dq.search_col == '')
-                                dq.search_col = value;
-                            else
-                                dq.search_col = dq.search_col + ',' + value;
-                        });
-                    }
-                    if (order_colname !== '')
-                        dq.order_col = order_colname;
-                    if (searchTextCollection.length != 0) {
-                        dq.searchtext = '';
-                        $.each(searchTextCollection, function (i, value) {
-                            if (dq.searchtext == '')
-                                dq.searchtext = value;
-                            else
-                                dq.searchtext = dq.searchtext + ',' + value;
-                        });
-                    }
-                    if (this.Msearch_colName !== '')
-                        dq.Msearch_colName = this.Msearch_colName;
-                },
-                dataSrc: this.ajaxDataSrcfn.bind(this)
-            }
-        });
-
-        //selection highlighting css on arrow keys
-        this.datatable.on('key-focus', this.arrowSelectionStylingFcs);// no need to bind 'this'
-        this.datatable.on('key-blur', this.arrowSelectionStylingBlr);// no need to bind 'this'
-
-        //double click  option in DD
-        $('#' + this.name + 'tbl tbody').on('dblclick', 'tr', this.dblClickOnOptDDEventHand.bind(this));
+        $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
+        $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
+        //$('#' + this.name + '_loading-image').hide();
     };
 
+    this.dataColumIterFn = function (i, value) {
+        if (value.name === this.vmName)
+            this.VMindex = value.data;
+
+        $.each(this.dmNames, function (j, dmName) { if (value.name === dmName) { this.DMindexes.push(value.data); } }.bind(this));
+    };
+
+    //double click on option in DD
     this.dblClickOnOptDDEventHand = function (e) {
-        var Vmember = $('#' + this.name + 'tbl').DataTable().row($(e.target)).data()[this.VMindex];
-        var Dmember = $('#' + this.name + 'tbl').DataTable().row($(e.target)).data()[this.DMindex];
-        if (!(this.Vobj.valueMembers.contains(Vmember))) {
-            this.Vobj.displayMembers.push(Dmember);
-            this.Vobj.valueMembers.push(Vmember);
-            $(e.target).find('[type=checkbox]').prop('checked', true);
-            this.dblClickOnOptIterfn.bind(this, e);
+        this.currentEvent = e;
+        var idx = this.datatable.Api.columns(this.vmName + ':name').indexes()[0] - 2;
+        var vmValue = this.datatable.Api.row($(e.target).parent()).data()[idx];
+        if (!(this.Vobj.valueMembers.contains(vmValue))) {
+            if (this.maxLimit === 1) {
+                this.Vobj.valueMembers = [vmValue];
+                $.each(this.dmNames, this.setDmValues.bind(this));
+            }
+            else if (this.Vobj.valueMembers.length !== this.maxLimit) {
+                this.Vobj.valueMembers.push(vmValue);
+                $.each(this.dmNames, this.setDmValues.bind(this));
+                $($(e.target).parent()).find('[type=checkbox]').prop('checked', true);
+            }
         }
     };
 
-    this.dblClickOnOptIterfn = function (e) {/// now working
-        $.each(this.DMindexes, function (i, v) {
-            alert("i:" + i);
-            alert("v:" + v);
-            alert("e.target:" + e.target);
-            alert("this.DMindexes:" + this.DMindexes);
-            console.log("this.Vobj.displayMembers1:" + this.Vobj.displayMembers1);
-            eval('this.Vobj.displayMembers' + (i + 1) + '.push( $(\'#' + this.name + 'tbl\').DataTable().row($(e.target)).data()[v] );');
-        }.bind(this))
+    this.setDmValues = function (i, dmName) {
+        var idx = this.datatable.Api.columns(dmName + ':name').indexes()[0] - 2;
+        if (this.maxLimit === 1)
+            this.localDMS[i] = [];
+        //console.log("DISPLAY MEMBER 0 b =" + this.Vobj.displayMembers[0]);
+        this.localDMS[i].push(this.datatable.Api.row($(this.currentEvent.target).parent()).data()[idx]);
+        //console.log("DISPLAY MEMBER 0 a=" + this.Vobj.displayMembers[0]);
     };
 
     this.ajaxDataSrcfn = function (dd) {
@@ -174,10 +121,6 @@
     };
 
     this.toggleIndicatorBtn = function (e) {
-        //if (!this.DtFlag) {
-        //    this.DtFlag = true;
-        //    this.InitDT();
-        //}
         this.Vobj.toggleDD();
     };
 
@@ -186,17 +129,13 @@
             el: '#' + this.name + 'Container',
             data: {
                 options: [],
-                displayMembers: [],
+                displayMembers: this.localDMS,
                 valueMembers: [],
-                //this.vueDMcode
-                displayMembers1: [],
-                displayMembers2: [],
-                displayMembers3: [],
                 id: this.name,
                 DDstate: false
             },
             watch: {
-                valueMembers: this.V_watchVMembers,
+                valueMembers: this.V_watchVMembers.bind(this),
             },
             methods: {
                 toggleDD: this.V_toggleDD.bind(this),
@@ -205,35 +144,50 @@
                 updateCk: this.V_updateCk
             }
         });
+        this.init();
     };
 
     //init Vselect
     this.initVselect = function () {
-        this.Vobj.valueMembers = this.values;
-        this.Vobj.displayMembers;//= find...
         //hiding v-select native DD
         $('#' + this.container + ' [class=expand]').css('display', 'none');
+        this.Vobj.valueMembers = this.values;
+        this.Vobj.displayMembers;
     };
 
     //single select & max limit
-    this.V_watchVMembers = function (val) {
-        //single select
-        if (this.maxLimit === 1 && !this.multiSelect && val.length > 1) {
-            this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////
-            $.each(this.DMindexes, function (i, v) {
-                eval('this.Vobj.displayMembers' + (i + 1) + '= this.Vobj.displayMembers' + (i + 1) + '.splice( 1, 1);');
-            });
-        }
-            //max limit
-        else if (val.length > this.maxLimit) {
-            this.Vobj.valueMembers = this.Vobj.valueMembers.splice(0, this.maxLimit);
-            $.each(this.DMindexes, function (i, v) {
-                eval('this.Vobj.displayMembers' + (i + 1) + '= this.Vobj.displayMembers' + (i + 1) + '.splice( 0, this.maxLimit);');
-            });
-        }
+    this.V_watchVMembers = function (VMs) {
+        $("#" + this.name).val(this.Vobj.valueMembers);
+        ////single select
+        //if (this.maxLimit === 1 && VMs.length > 1) {
+        //    this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////
+        //    $.each(this.dmNames, this.trimDmValues.bind(this));
+        //}
+        ////max limit
+        //else if (VMs.length > this.maxLimit) {
+        //    this.Vobj.valueMembers = this.Vobj.valueMembers.splice(0, this.maxLimit);
+        //    $.each(this.dmNames, this.trimDmValues.bind(this));
+        //}
+        console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
+        console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[0]);
+        console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[1]);
+        console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[2]);
     };
 
+    //this.trimDmValues = function (i) {
+    //    if (this.maxLimit === 1) {   //single select
+    //        this.Vobj.displayMembers[i].shift(); //= this.Vobj.displayMembers[i].splice(1, 1);
+    //    }
+    //    else {                        //max limit
+    //        this.Vobj.displayMembers[i].pop(); //= this.Vobj.displayMembers[i].splice(0, this.maxLimit);
+    //    }
+    //};
+
     this.V_toggleDD = function (e) {
+        if (!this.DtFlag) {
+            this.InitDT();
+            this.DtFlag = true;
+        }
         this.Vobj.DDstate = !this.Vobj.DDstate;
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },500);
     };
@@ -247,22 +201,22 @@
 
     this.colAdjust = function () { $('#' + this.name + 'tbl').DataTable().columns.adjust().draw(); }
 
-    this.V_updateCk = function () {
+    this.V_updateCk = function () {// API..............
         var self = this;
-        $('#' + this.name + 'container table:eq(1) tbody [type=checkbox]').each(function (i) {
+        $(this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i) {
             var row = $(this).closest('tr');
-            var datas = $('#' + this.name + 'tbl').DataTable().row(row).data();
+            var datas = $(this.DTselector).DataTable().row(row).data();
             if (self.Vobj.valueMembers.contains(datas[self.VMindex]))
                 $(this).prop('checked', true);
             else
                 $(this).prop('checked', false);
         });
         // raise error msg
-        setTimeout(this.RaiseErr, 30);
+        setTimeout(this.RaiseErrIf, 30);
     };
 
-    this.RaiseErr = function () {
-        if (this.Vobj.valueMember.length !== this.Vobj.displayMembers1.length) {
+    this.RaiseErrIf = function () {
+        if (this.Vobj.valueMember.length !== this.Vobj.displayMembers[0].length) {
             alert('valueMember and displayMembers length miss match found !!!!');
             console.log('valueMembers=' + this.Vobj.valueMember);
             console.log('displayMembers1=' + this.Vobj.displayMembers1);
@@ -285,26 +239,34 @@
         $(row.nodes()).addClass('selected');
     };
 
-    this.Test = function () {
-        alert("this.name:" + this.name);
-        alert("this.dataSourceId: " + this.dataSourceId);
-        alert("this.dropdownHeight: " + this.dropdownHeight);
-        alert("this.valueMember: " + this.valueMember);
-        alert("this.displayMember: " + this.displayMember);
-        alert("this.maxLimit: " + this.maxLimit);
-        alert("this.minLimit: " + this.minLimit);
-        alert("this.required: " + this.required);
-        alert("this.defaultSearchFor:" + this.defaultSearchFor);
-        alert("this.DMembers: " + this.DMembers);
-        alert("this.vueDMcode: " + this.vueDMcode);
-        alert("this.servicestack_url: " + this.servicestack_url);
+    this.tagCloseBtnHand = function (e) {
+        this.Vobj.valueMembers.splice(delid(), 1);
+        $.each(this.dmNames, function (i) {
+            this.Vobj.displayMembers[i].splice(delid(), 1);
+        }.bind(this));
     };
 
-    //this.Test();
+    this.checkBxClickEventHand = function (e) {
+        var indx; this.currentEvent = e; var $row = $(e.target).closest('tr');
+        $.each(this.datatable.Api.settings().init().columns, function (j, value) { if (value.columnName === 'id') { indx = value.columnIndex; return false; } });
+        var datas = $(this.DTSelector).DataTable().row($row).data();
+        if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
+            if (!(this.Vobj.valueMembers.length === this.maxLimit)) {
+                this.Vobj.valueMembers.push(datas[this.VMindex]);
+                $.each(this.dmNames, this.setDmValues.bind(this));
+                $(this.currentEvent.target).prop('checked', true);
+            }
+            else
+                $(this.currentEvent.target).prop('checked', false);
+        }
+        else {
+            var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
+            this.Vobj.valueMembers.splice(vmIdx2del, 1);
+            $.each(this.dmNames, function (i) { this.Vobj.displayMembers[i].splice(vmIdx2del, 1); }.bind(this));
+            $(this.currentEvent.target).prop('checked', false);
+        }
+    };
 
     this.Renderselect();
 
-    this.init();
-
-    this.InitDT()
 }

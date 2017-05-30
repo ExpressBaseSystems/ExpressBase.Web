@@ -15,17 +15,17 @@
                         var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", accid, result.data);
                         DBwizard_adv.CustomWizFunc = (new CustomWizFuncs).DbCheck;
                     }
-                    else {
+                    else {                        
                         var DBwizard = new EbWizard("http://localhost:53431/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity", "fa-database", accid);
                         DBwizard.CustomWizFunc = (new CustomWizFuncs).DbCheck;
                     }
                 })
-
             });
-            $('.obj').click(function () {
-                var ele = $(this).attr("data-cid");
-                openInNewTab('objects', ele);
-            });
+            $('.obj').on("click", function () {
+                var accid = $(this).attr("data-cid");    
+                window.open('objects?tacid=' + accid, '_blank');              
+              });          
+           
             $('.new').click(function () {
                 var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Add Account", "fa-database");
 
@@ -52,12 +52,7 @@
                     $(this).addClass("border_blue");
                 });
             });
-            function openInNewTab(url, ele) {
-                sessionStorage.setItem("cid", ele);
-                var win = window.open(url, '_blank');
-                win.focus();
-            }
-
+  
         })
 
         function myFunction() {

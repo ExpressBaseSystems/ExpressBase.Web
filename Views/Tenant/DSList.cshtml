@@ -1,0 +1,43 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var DSList = new ObjListTbl("dslist", "Data Sources", "New DS", "code_editor?tacid=" + $('#tacid').val(), (new CustomTabFuns).dstable);
+    })
+    function openeditor(obj)
+    {
+    
+        window.open('code_editor?objid=' + $(obj).attr("data-objid") + '&tacid=' + $('#tacid').val())
+
+    }
+</script>
+@{
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    Dictionary<int, EbObjectWrapper> DsList = new Dictionary<int, EbObjectWrapper>();
+    DsList = ViewBag.DSList;
+}
+<body>
+    <div id="dslist" style="visibility:hidden;height:0px">
+        @{
+            foreach (var element in DsList)
+            {
+                <div class="tr">
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <label>@element.Value.Name</label>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="button" data-objid="@element.Key"  class="btn btn-success" value="open" onclick="openeditor(this)" />
+                        </div>
+                    </div>
+                </div>
+
+
+            }
+        }
+    </div>
+ <input type="hidden" id="tacid" value="@ViewBag.TenantId" />"
+</body>
+

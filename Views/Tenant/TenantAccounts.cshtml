@@ -30,6 +30,11 @@
                 var addaccountwzd = new EbWizard("http://localhost:53431/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Add Account", "fa-database");
 
             });
+
+            $('.apps').click(function () {
+                var appwizard = new EbWizard("http://localhost:53431/Tenant/CreateApplications", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Create Application", "fa-database");
+
+            });
             $('.edit').click(function () {
                 var accId = $(this).attr("data-accid");
                 $('#acid').val(accId);
@@ -56,7 +61,6 @@
         })
 
         function myFunction() {
-
             var input, filter, table, tr, td, i;
             input = document.getElementById("myInput");
             filter = input.value.toUpperCase();
@@ -158,7 +162,7 @@
                                                                     <li><a href="#" class="obj" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Objects">Objects</a></li>
                                                                     <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="On - Off Maintainance Mode">On - Off Maintainance Mode</a></li>
                                                                     <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Organizational Structure">Organizational Structure</a></li>
-                                                                    <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Applications">Applications</a></li>
+                                                                    <li><a href="#" class="apps" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Applications">Applications</a></li>
                                                                     <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Users">Users</a></li>
                                                                     <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Roles">Roles</a></li>
                                                                     <li><a href="#" class="" data-accid="@sublist[0]" data-cid="@sublist[3]" data-toggle="tooltip" title="Billing">Billing</a></li>

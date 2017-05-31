@@ -9,15 +9,15 @@
                 $.get('https://expressbaseservicestack.azurewebsites.net/infra/', { "Colvalues": JSON.stringify({ "dbedit": "dbedit", "op": " ", "id": accid }), "Token": getToken() }, function (result) {
                     if (result.data.conf_dbtype === 1) {
                         var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", accid, result.data);
-                        DBwizard_sim.CustomWizFunc = (new CustomWizFuncs).DbCheck;
+                        DBwizard_sim.CustomWizFunc = (new CustomWizFuncs(accid)).DbCheck;
                     }
                     else if (result.data.conf_dbtype === 2) {
                         var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", accid, result.data);
-                        DBwizard_adv.CustomWizFunc = (new CustomWizFuncs).DbCheck;
+                        DBwizard_adv.CustomWizFunc = (new CustomWizFuncs(accid)).DbCheck;
                     }
                     else {                        
                         var DBwizard = new EbWizard("http://localhost:53431/Tenant/SimpleAdvanced", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity", "fa-database", accid);
-                        DBwizard.CustomWizFunc = (new CustomWizFuncs).DbCheck;
+                        DBwizard.CustomWizFunc = (new CustomWizFuncs(accid)).DbCheck;
                     }
                 })
             });

@@ -2,6 +2,7 @@
 /// <reference path="js/bootstrap-checkbox.js" />
 /// <reference path="js/colreorderwithresize.js" />
 /// <reference path="js/datatables.colresize.js" />
+/// <reference path="js/datatables.min.js" />
 /// <reference path="js/dygraphplotters.js" />
 /// <reference path="js/eb_common.js" />
 /// <reference path="js/eb_datatable.js" />

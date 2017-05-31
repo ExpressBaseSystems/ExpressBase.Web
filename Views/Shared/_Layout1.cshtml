@@ -263,7 +263,17 @@
                 <div id="sidebar-wrapper">
                     @if (string.IsNullOrEmpty(ViewBag.cid))
                     {
-                        Html.RenderPartial("_SidebarMenu");
+
+                        if(@Context.Request.Path== "/Tenant/objects")
+                        {
+                            Html.RenderPartial("_SideBarObjects");
+                        }
+                        else
+                        {
+                            Html.RenderPartial("_SidebarMenu");
+
+                        }
+
                     }
                     else
                     {
@@ -276,7 +286,7 @@
                 
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-12" style="height: 0px;" >
                             @RenderBody()
                             @RenderSection("EbHead", false)
                         </div>

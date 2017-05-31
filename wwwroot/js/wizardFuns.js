@@ -81,7 +81,7 @@
         this.PrevBtn.hide();
         $(".modal-body").css("height", this.height - 163 + "px");
         this.SyncProgress();
-        this.CustomWizFunc();
+        this.CustomWizFunc(this.Acid);
         setTimeout(this.TimeOutFunc.bind(this), 10);
         if (this.EditObj) this.EditWiz();
     };
@@ -280,7 +280,7 @@
 
 var CustomWizFuncs = function () {
 
-    this.DbCheck = function () {
+    this.DbCheck = function (acid) {
         UseSame();
         drop_portnum();
         usesame_change();
@@ -443,31 +443,36 @@ var CustomWizFuncs = function () {
             });
         }
 
-
         $('.small_inputBox').on('keydown', function (e) { -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) || /65|67|86|88/.test(e.keyCode) && (!0 === e.ctrlKey || !0 === e.metaKey) || 35 <= e.keyCode && 40 >= e.keyCode || (e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) && (96 > e.keyCode || 105 < e.keyCode) && e.preventDefault() });
         $('#dtb td').on("click", function () {
             var simp_adv = $(this).children('button').attr("value");
             var AcntId = this.Acid;
+           
             $('#dbModal').modal('hide');
             setTimeout(function () {
                 if (simp_adv === 'simple') {
-                    var DBwizard_sim = new EbWizard("https://expressbase.azurewebsites.net/Tenant/SimpleDbConf", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", AcntId);
+                    var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://localhost:44377/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", acid);
                     DBwizard_sim.CustomWizFunc = (new CustomWizFuncs).DbCheck;
-
                 }
                 if (simp_adv === 'advanced') {
-                    var DBwizard_adv = new EbWizard("https://expressbase.azurewebsites.net/Tenant/dbConfig", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", AcntId);
+                    var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", acid);
                     DBwizard_adv.CustomWizFunc = (new CustomWizFuncs).DbCheck;
-
                 }
             }, 401);
         });
     };
-    this.DataSource = function () {
+
+    this.DataSource = function (acid) {
+        alert('sql ' + sql + '\nacid ' + acid +'\n objid ' + objid + '\n obname ' + obname);
         $('#sql').val(sql);
-        $('#tcid').val($('#cid').val());
-        $('#id').val(sessionStorage.getItem("id"));
-        $('#name').val(sessionStorage.getItem("obj_name"));
-        $('#description').val(sessionStorage.getItem("obj_desc"));
+        $('#tcid').val(acid);
+        $('#id').val(objid);
+        $('#name').val(obname);
+        $('#description').val(obdesc);
+        alert('objid'+objid);
+        if ($('#id').val() === "" || $('#id').val()=== null) {
+            $('#changeLog').val("");
+            $('#changeLogDiv').remove();
+        }
     };
 };

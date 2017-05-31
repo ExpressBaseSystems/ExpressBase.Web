@@ -11,7 +11,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     this.dsid = ds_id;
     this.vmName = 'id'; //vmName;
     this.dmNames = ['acmaster1_xid', 'acmaster1_name', 'tdebit']; //dmNames;
-    this.maxLimit = 3;//maxLimit;
+    this.maxLimit = 1;//maxLimit;
     this.minLimit = minLimit;
     this.multiSelect = (this.maxLimit > 1);
     this.required = required;
@@ -42,10 +42,13 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
 
     //init() for event binding....
     this.init = function () {
-        //$('#' + this.container + ' [class=open-indicator]').hide();
-        $('#' + this.container + ' [class=open-indicator]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //toggle indicator button
-        $('#' + this.name + 'tbl').keydown(function (e) { if (e.which == 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
+        $('#' + this.container + ' [class=open-indicator]').hide();
+        $('#' + this.container + ' [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //toggle indicator button
+        $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
         $('#' + this.container).on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+        //styles
+        $('#' + this.name + 0).children().css("border-top-left-radius","5px");
+        $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
     };
 
     // init datatable
@@ -102,10 +105,9 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     this.setDmValues = function (i, dmName) {
         var idx = this.datatable.Api.columns(dmName + ':name').indexes()[0] - 2;
         if (this.maxLimit === 1)
-            this.localDMS[i] = [];
-        //console.log("DISPLAY MEMBER 0 b =" + this.Vobj.displayMembers[0]);
+            this.localDMS[i].shift();
         this.localDMS[i].push(this.datatable.Api.row($(this.currentEvent.target).parent()).data()[idx]);
-        //console.log("DISPLAY MEMBER 0 a=" + this.Vobj.displayMembers[0]);
+        console.log("DISPLAY MEMBER 0 a=" + this.Vobj.displayMembers[0]);
     };
 
     this.ajaxDataSrcfn = function (dd) {
@@ -131,7 +133,6 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
                 options: [],
                 displayMembers: this.localDMS,
                 valueMembers: [],
-                id: this.name,
                 DDstate: false
             },
             watch: {
@@ -141,7 +142,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
                 toggleDD: this.V_toggleDD.bind(this),
                 showDD: this.V_showDD,
                 hideDD: function () { this.DDstate = false; },
-                updateCk: this.V_updateCk
+                updateCk: this.V_updateCk.bind(this)
             }
         });
         this.init();
@@ -202,22 +203,23 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     this.colAdjust = function () { $('#' + this.name + 'tbl').DataTable().columns.adjust().draw(); }
 
     this.V_updateCk = function () {// API..............
-        var self = this;
-        $(this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i) {
-            var row = $(this).closest('tr');
-            var datas = $(this.DTselector).DataTable().row(row).data();
-            if (self.Vobj.valueMembers.contains(datas[self.VMindex]))
-                $(this).prop('checked', true);
-            else
-                $(this).prop('checked', false);
-        });
+        console.log("colAdjust---------- ");
+        //$(this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i) {
+        //    var row = $(this).closest('tr');
+        //    var datas = $(this.DTselector).DataTable().row(row).data();
+        //    if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
+        //        $(this).prop('checked', true);
+        //    else
+        //        $(this).prop('checked', false);
+        //});
         // raise error msg
-        setTimeout(this.RaiseErrIf, 30);
+        setTimeout(this.RaiseErrIf.bind(this), 30);
     };
 
     this.RaiseErrIf = function () {
-        if (this.Vobj.valueMember.length !== this.Vobj.displayMembers[0].length) {
+        if (this.Vobj.valueMembers.length !== this.Vobj.displayMembers[0].length) {
             alert('valueMember and displayMembers length miss match found !!!!');
+            console.error('valueMember and displayMembers length miss match found !!!!');
             console.log('valueMembers=' + this.Vobj.valueMember);
             console.log('displayMembers1=' + this.Vobj.displayMembers1);
         }

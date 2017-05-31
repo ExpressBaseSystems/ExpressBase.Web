@@ -56,6 +56,8 @@ var EbDataTable = function (settings) {
     this.order_info = new Object();
     this.order_info.col = '';
     this.order_info.dir = 0;
+    this.columnsdel = [];
+    this.columnsextdel = [];
 
     //Controls & Buttons
     this.table_jQO = null;
@@ -68,6 +70,7 @@ var EbDataTable = function (settings) {
     this.printbtn = null;
     this.settingsbtn = null;
     this.OuterModalDiv = null;
+    this.settings_tbl = null;
 
     //temp
     this.eb_filter_controls_4fc = [];
@@ -75,16 +78,20 @@ var EbDataTable = function (settings) {
     this.zindex = 0;
     this.rowId = -1;
     this.isSettingsSaved = false;
+    this.dropdown_colname = null;
+    this.deleted_colname = null;
+    this.tempcolext = [];
 
     this.getColumns = function () {
         $.post('GetTVPref4User', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
-        if (this.dtsettings.directLoad !== true)
-            this.ebSettings = JSON.parse(data);
-        else
-            this.ebSettings.columns = JSON.parse(data).columns;
+        //if (this.dtsettings.directLoad !== true)
+        //    this.ebSettings = JSON.parse(data);
+        //else
+        // this.ebSettings.columns = JSON.parse(data).columns;
+        this.ebSettings = JSON.parse(data);
         this.Init();
 
         if (this.filterBox !== null && this.dtsettings.directLoad !== true)
@@ -105,7 +112,7 @@ var EbDataTable = function (settings) {
         this.csvbtn = $("#btnCsv");
         this.pdfbtn = $("#btnPdf");
         this.settingsbtn = $("#"+ this.tableId+ "_btnSettings");
-        //$("#dvName_lbl").text(this.ebSettings.dvName);
+        $("#dvName_lbl").text(this.ebSettings.dvName);
 
         this.eb_agginfo = this.getAgginfo();
         if(this.dtsettings.directLoad !== true)
@@ -528,9 +535,10 @@ var EbDataTable = function (settings) {
         $(".eb_selall").off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas").off("click").on("click", this.renderMainGraph);
+        $(".tablelink").off("click").on("click", this.link2NewTable.bind(this));
+        
 
         this.Api.on('key-focus', function (e, datatable, cell) {
-            alert("key-focus");
             datatable.rows().deselect();
             datatable.row(cell.index().row).select();
         });
@@ -786,6 +794,43 @@ var EbDataTable = function (settings) {
             $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
     };
 
+    this.link2NewTable = function (e) {
+        var idx = this.Api.row($(e.target).parent().parent()).index();
+        var Rowobj = $.extend(true, {}, this.Api.row(idx).data());
+        this.NewTableModal();
+    };
+
+    this.NewTableModal = function () {
+        $(document.body).append("<div class='modal fade' id='newmodal' role='dialog'>"
+    + "<div class='modal-dialog modal-lg'>"
+     + " <div class='modal-content'>"
+        + "<div class='modal-header'>"
+          + "<button type = 'button' class='close' data-dismiss='modal'>&times;</button>"
+          + "<h4 class='modal-title'></h4>"
+        + "</div>"
+        + "<div class='modal-body'>"
+         +    "<table class='table table-striped table-bordered' id='Newtable'></table>" 
+        + "</div>"
+     + "</div>"
+    + "</div>"
+ + "</div>");
+        $("#newmodal").on('shown.bs.modal', this.call2newTable.bind(this));
+        $("#newmodal").modal('show');
+    };
+
+    this.call2newTable = function () {
+        alert("huuuuuuuu");
+        var EbDataTable_Newtable = new EbDataTable({
+            ds_id: 32, 
+            //dv_id: @dvId, 
+            ss_url: "https://expressbaseservicestack.azurewebsites.net",
+            tid: 'Newtable',
+            directLoad: true
+            //settings: JSON.parse(data),
+            //fnKeyUpCallback: 
+        });
+    };
+
     this.CopyToClipboard = function (e) {
         $('#' + this.tableId + '_wrapper').find('.buttons-copy').click();
     };
@@ -814,72 +859,162 @@ var EbDataTable = function (settings) {
         $('#' + this.tableId + '_wrapper').find('.buttons-print')[0].click();
     };
 
-    this.GetSettingsModal = function (e) {
-        this.OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
-        var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
-        var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
-        var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
-        var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
-        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.dvName + ": SettingsTable");
-        var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
-        var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
-        var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
-        var ModalBodyAnchorCol = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#2a").text("Columns");
-        var ModalBodyliGen = $(document.createElement("li")).attr("class", "nav-item");
-        var ModalBodyAnchorGen = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#1a").text("General");
-        var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
-        var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
-        var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
-        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane active").attr("id", "1a");
-        var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
-        var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
+//    this.GetSettingsModal = function (e) {
+//        this.OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
+//        var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
+//        var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
+//        var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
+//        var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
+//        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.dvName + ": SettingsTable");
+//        var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
+//        var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
+//        var ModalBodyDropDown = $(document.createElement("select")).attr("id", "columnDropdown");
+//        var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
+//        var ModalBodyAnchorCol = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#2a").text("Columns");
+//        var ModalBodyliGen = $(document.createElement("li")).attr("class", "nav-item");
+//        var ModalBodyAnchorGen = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#1a").text("General");
+//        var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
+//        var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
+//        var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
+//        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane active").attr("id", "1a");
+//        var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
+//        var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
-        ModalFooterDiv.append(FooterButton);
-        ModalBodyTabPaneGenDiv.append("<div class='table-responsive'>" +
-    "<table class='table table-bordered table-hover'>" +
-        "<tbody>" +
-	        "<tr> <td>Hide Serial</td>           <td><input type='checkbox' id='serial_check'></td> </tr>" +
-	        "<tr> <td>Hide Chechbox</td>         <td><input type='checkbox' id='select_check'></td> </tr>" +
-	        "<tr> <td>Page Length</td>           <td><input type='numeric' id='pageLength_text' value='100'></td> </tr>" +
-	        "<tr> <td>Table Height</td>          <td><input type='numeric' id='scrollY_text' value='300'></td> </tr>" +
-	        "<tr> <td>Row Grouping</td>          <td><input type='numeric' id='rowGrouping_text'></td> </tr>" +
-	        "<tr> <td>Left Fixed Columns         </td><td><input type='numeric' id='leftFixedColumns_text' value='0'></td> </tr>" +
-	        "<tr> <td>Right Fixed Columns</td>   <td><input type='numeric' id='rightFixedColumns_text' value='0'></td> </tr>" +
-            "<tr> <td>Data Visualization Name</td>   <td><input type='text' id='dvName_txt'></td> </tr>" +
-        "</tbody>" +
-    "</table>" +
-"</div>");
-        ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
-        ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
+//        ModalFooterDiv.append(FooterButton);
+//        ModalBodyTabPaneGenDiv.append("<div class='table-responsive'>" +
+//    "<table class='table table-bordered table-hover'>" +
+//        "<tbody>" +
+//	        "<tr> <td>Hide Serial</td>           <td><input type='checkbox' id='serial_check'></td> </tr>" +
+//	        "<tr> <td>Hide Chechbox</td>         <td><input type='checkbox' id='select_check'></td> </tr>" +
+//	        "<tr> <td>Page Length</td>           <td><input type='numeric' id='pageLength_text' value='100'></td> </tr>" +
+//	        "<tr> <td>Table Height</td>          <td><input type='numeric' id='scrollY_text' value='300'></td> </tr>" +
+//	        "<tr> <td>Row Grouping</td>          <td><input type='numeric' id='rowGrouping_text'></td> </tr>" +
+//	        "<tr> <td>Left Fixed Columns         </td><td><input type='numeric' id='leftFixedColumns_text' value='0'></td> </tr>" +
+//	        "<tr> <td>Right Fixed Columns</td>   <td><input type='numeric' id='rightFixedColumns_text' value='0'></td> </tr>" +
+//            "<tr> <td>Data Visualization Name</td>   <td><input type='text' id='dvName_txt'></td> </tr>" +
+//        "</tbody>" +
+//    "</table>" +
+//"</div>");
+//        ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
+//        ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
+//     "                                        <div id='propHead'></div><div id='propGrid'></div>" +
+//                                             "<div>" +
+//                                                 "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
+//                                                 "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
+//                                             "</div>" +
+//     "</div>");
+
+//        ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
+//        ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
+//        ModalBodyliGen.append(ModalBodyAnchorGen);
+//        ModalBodyliCol.append(ModalBodyAnchorCol);
+//        ModalBodyUl.append(ModalBodyliGen);
+//        ModalBodyUl.append(ModalBodyliCol);
+//        ModalBodyDiv.append(ModalBodyUl);
+//        ModalBodyDiv.append(ModalBodyDropDown);
+//        ModalBodyDiv.append(ModalBodyTabDiv);
+//        ModalHeaderDiv.append(headerButton);
+//        ModalHeaderDiv.append(title);
+//        ModalContentDiv.append(ModalHeaderDiv);
+//        ModalContentDiv.append(ModalBodyDiv);
+//        ModalContentDiv.append(ModalFooterDiv);
+//        ModalSizeDiv.append(ModalContentDiv);
+//        this.OuterModalDiv.append(ModalSizeDiv);
+
+//        $(FooterButton).click(this.saveSettings.bind(this));
+//        $(this.OuterModalDiv).on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
+//        $(this.OuterModalDiv).on('hidden.bs.modal', this.hideModalFunc.bind(this));
+//        $("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
+
+//        $(this.OuterModalDiv).modal('show');
+    //    };
+    this.GetSettingsModal = function (e) {
+        $(document.body).append("<div id='settingsmodal' class='modal fade in' style='display: block;'>" +
+           " <div class='modal-dialog modal-lg' style='width: 1100px;'>" +
+                "<div class='modal-content' style='width: 1100px;'>" +
+                    "<div class='modal-header'>" +
+                      "  <button class='close' data-dismiss='modal'>x</button>" +
+                     "   <h4 class='modal-title'>" + this.ebSettings.dvName + ": SettingsTable</h4>" +
+                    "</div>" +
+                    "<div class='modal-body'>" +
+                        "<ul class='nav nav-tabs'>" +
+                          "  <li class='nav-item'><a class='nav-link' href='#1a' data-toggle='tab'>General</a></li>" +
+                         "   <li class='nav-item'><a class='nav-link' href='#2a' data-toggle='tab'>Columns</a></li>" +
+                         //"  <li>" +
+                                
+                        // "   </li>" +
+                        "</ul>" +
+                        "<div class='tab-content'>" +
+                            "<div id='1a' class='tab-pane active'>" +
+                                "<div class='table-responsive'>" +
+                                    "<table class='table table-bordered table-hover'>" +
+                                        "<tbody>" +
+                                            "<tr>" +
+                                              "  <td>Hide Serial</td>" +
+                                             "   <td><input id='serial_check' type='checkbox' /></td>" +
+                                            "</tr>" +
+                                            "<tr>" +
+                                              "  <td>Hide Chechbox</td>" +
+                                             "   <td><input id='select_check' type='checkbox' /></td>" +
+                                            "</tr>" +
+                                            "<tr>" +
+                                              "  <td>Page Length</td>" +
+                                             "   <td><input id='pageLength_text' type='numeric' value='100' /></td>" +
+                                            "</tr>" +
+                                            "<tr>" +
+                                            "    <td>Table Height</td>" +
+                                           "     <td><input id='scrollY_text' type='numeric' value='300' /></td>" +
+                                          "  </tr>" +
+                                         "   <tr>" +
+                                        "        <td>Row Grouping</td>" +
+                                       "         <td><input id='rowGrouping_text' type='numeric' /></td>" +
+                                      "      </tr>" +
+                                     "       <tr>" +
+                                    "            <td>Left Fixed Columns</td>" +
+                                   "             <td><input id='leftFixedColumns_text' type='numeric' value='0' /></td>" +
+                                  "          </tr>" +
+                                 "           <tr>" +
+                                "                <td>Right Fixed Columns</td>" +
+                               "                 <td><input id='rightFixedColumns_text' type='numeric' value='0' /></td>" +
+                              "              </tr>" +
+                             "               <tr>" +
+                            "                    <td>Data Visualization Name</td>" +
+                           "                     <td><input id='dvName_txt' type='text' /></td>" +
+                          "                  </tr>" +
+                         "               </tbody>" +
+                        "            </table>" +
+                       "         </div>" +
+                      "      </div>" +
+                     "       <div id='2a' class='tab-pane '>" +
+                                "<div class='dropdown' id='columnDropdown'>" +
+                                      "   <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Add Column" +
+                                        "    <span class='caret'></span></button>" +
+                                        "     <ul class='dropdown-menu'>" +
+                                    "         </ul>" +
+                          "      </div>" +
+                    "            <table class='table table-striped table-bordered' id='Table_Settings'></table>" +
+                    "<div id='propCont' class='prop-grid-cont'>" +
      "                                        <div id='propHead'></div><div id='propGrid'></div>" +
                                              "<div>" +
                                                  "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
                                                  "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
                                              "</div>" +
-     "</div>");
-
-        ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
-        ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
-        ModalBodyliGen.append(ModalBodyAnchorGen);
-        ModalBodyliCol.append(ModalBodyAnchorCol);
-        ModalBodyUl.append(ModalBodyliGen);
-        ModalBodyUl.append(ModalBodyliCol);
-        ModalBodyDiv.append(ModalBodyUl);
-        ModalBodyDiv.append(ModalBodyTabDiv);
-        ModalHeaderDiv.append(headerButton);
-        ModalHeaderDiv.append(title);
-        ModalContentDiv.append(ModalHeaderDiv);
-        ModalContentDiv.append(ModalBodyDiv);
-        ModalContentDiv.append(ModalFooterDiv);
-        ModalSizeDiv.append(ModalContentDiv);
-        this.OuterModalDiv.append(ModalSizeDiv);
-
-        $(FooterButton).click(this.saveSettings.bind(this));
-        $(this.OuterModalDiv).on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
-        $(this.OuterModalDiv).on('hidden.bs.modal', this.hideModalFunc.bind(this));
+     "</div>" +
+                   "         </div>" +
+                   
+                 "       </div>" +
+                "    </div>" +
+                  "  <div class='modal-footer'>" +
+                   "     <button id='Save_btn' class='btn btn-primary'>Save Changes</button>" +
+                "    </div>" +
+             "   </div>" +
+           " </div>" +
+        "</div>");
+        $("#Save_btn").click(this.saveSettings.bind(this));
+        $("#settingsmodal").on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
+        $("#settingsmodal").on('hidden.bs.modal', this.hideModalFunc.bind(this));
         $("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
-
-        $(this.OuterModalDiv).modal('show');
+        //$("#settingsmodal").modal('show');
     };
 
     this.hideModalFunc = function (e) {
@@ -890,7 +1025,6 @@ var EbDataTable = function (settings) {
             console.log("romoved");
             $("#settingsmodal").remove();
         },500);
-        
         if (this.isSettingsSaved) {
             this.isSettingsSaved = false;
             this.Api.destroy();
@@ -910,7 +1044,6 @@ var EbDataTable = function (settings) {
                 return false;
             }
         });
-
         return selcol;
     };
 
@@ -947,9 +1080,10 @@ var EbDataTable = function (settings) {
                 else
                     cls = 'tdheight';
             }
-            if (ct === api.columns().count()) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
-        });
 
+            if (ct === api.columns().count()-1) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
+        });
+        //alert(console.log(objcols));
         this.ebSettingsCopy.hideSerial = $("#serial_check").prop("checked");
         this.ebSettingsCopy.hideCheckbox = $("#select_check").prop("checked");
         this.ebSettingsCopy.lengthMenu = this.GetLengthOption($("#pageLength_text").val());
@@ -959,21 +1093,29 @@ var EbDataTable = function (settings) {
         this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
         this.ebSettingsCopy.dvName = $("#dvName_txt").val();
         this.ebSettingsCopy.columns = objcols;
+        //this.ebSettings.columnsext = (this.tempcolext !== null) ? this.tempcolext : this.ebSettings.columnsext;
         this.ebSettingsCopy.columnsext = this.ebSettings.columnsext;
+        this.ebSettingsCopy.columnsdel = this.columnsdel;
+        this.ebSettingsCopy.columnsextdel = this.columnsextdel;
         this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
         this.updateRenderFunc();
         if (this.ebSettingsCopy.rowGrouping.length > 0) {
             var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
             groupcols[0].visible = false;
         }
+        console.log(JSON.stringify(this.ebSettingsCopy.columnsdel));
+        console.log(JSON.stringify(this.ebSettingsCopy.columnsextdel));
         $.post('TVPref4User', { tvid: this.dsid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
     };
 
     this.reinitDataTable = function () {
-        $(this.OuterModalDiv).modal('hide');
+        $("#settingsmodal").modal('hide');
     };
 
+   
+
     this.callPost4SettingsTable = function () {
+        //alert(JSON.stringify(this.ebSettings.columns));
         var data2Obj = this.ebSettings; //JSON.parse(data2);
         //__tvPrefUser = data2Obj;
         $("#serial_check").prop("checked", data2Obj.hideSerial);
@@ -984,7 +1126,8 @@ var EbDataTable = function (settings) {
         $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
         $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
         $("#dvName_txt").val(data2Obj.dvName);
-        var settings_tbl = $('#Table_Settings').DataTable(
+        this.getcolumn4dropdown();
+        this.settings_tbl = $('#Table_Settings').DataTable(
         {
             columns: this.column4SettingsTbl(),
             data: this.getData4SettingsTbl(),
@@ -994,23 +1137,40 @@ var EbDataTable = function (settings) {
             info: false,
             scrollY: '300',
             select: true,
-            initComplete: function (settings, json) {
-                $('.font').fontselect();
-                $('#Table_Settings').DataTable().columns.adjust();
-            },
+            initComplete: this.initComplete4Settingstbl.bind(this),
         });
-        CreatePropGrid(settings_tbl.row(0).data(), data2Obj.columnsext);
-        $('#Table_Settings tbody').on('click', 'tr', function () {
-            var idx = settings_tbl.row(this).index();
-            CreatePropGrid(settings_tbl.row(idx).data(), data2Obj.columnsext);
-            settings_tbl.columns.adjust();
-        });
+        CreatePropGrid(this.settings_tbl.row(0).data(), data2Obj.columnsext);
+        $('#Table_Settings tbody').on('click', 'tr', this.showPropertyGrid.bind(this));
         $(".modal-content").on("click", function (e) {
             if ($(e.target).closest(".font-select").length === 0) {
                 $(".font-select").removeClass('font-select-active');
                 $(".fs-drop").hide();
             }
         });
+    };
+
+    this.getcolumn4dropdown = function () {
+        if (this.ebSettings.columnsdel !== undefined && this.ebSettings.columnsdel !== null) {
+            this.ebSettings.columnsdel = this.ebSettings.columnsdel.sort(function (a, b) {
+                return a.name.localeCompare(b.name);
+            });
+            this.ebSettings.columnsextdel = this.ebSettings.columnsextdel.sort(function (a, b) {
+                return a.name.localeCompare(b.name);
+            });
+            $.each(this.ebSettings.columnsdel, this.adddelColsandColsext2dropdown.bind(this));
+        }
+        
+    };
+
+    this.adddelColsandColsext2dropdown = function (i, obj) {
+        var liId = "li_" + obj.name;
+        $("#columnDropdown ul").append("<li id=" + liId + "><a data-data=\"" + JSON.stringify(obj).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.ebSettings.columnsextdel[i]).replace(/\"/g, "'") + "\" href='#'>" + obj.name + "</a></li>");
+    };
+
+    this.showPropertyGrid = function (e) {
+        var idx = this.settings_tbl.row(e.target).index();
+        CreatePropGrid(this.settings_tbl.row(idx).data(), this.ebSettings.columnsext);
+        this.settings_tbl.columns.adjust();
     };
 
     this.column4SettingsTbl = function () {
@@ -1022,6 +1182,7 @@ var EbDataTable = function (settings) {
         colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data === 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
         colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
         colArr.push(new coldef4Setting('className', 'Font', "", this.renderFontSelect, "30"));
+        colArr.push(new coldef4Setting('', '', "", function (data, type, row, meta) { return "<a href='#' class ='eb_delete_btn'><i class='fa fa-times' aria-hidden='true' style='color:red' ></i></a>" }, "30"));
         return colArr;
     };
 
@@ -1043,6 +1204,18 @@ var EbDataTable = function (settings) {
             }
         });
         return colarr;
+    };
+
+    this.initComplete4Settingstbl = function (settings, json) {
+        $('.font').fontselect();
+        $('#Table_Settings').DataTable().columns.adjust();
+        this.addEventListner4Settingstbl();
+    };
+
+    this.addEventListner4Settingstbl = function () {
+        $(".eb_delete_btn").off("click").on("click", this.deleteRow.bind(this));
+        $('#columnDropdown .dropdown-menu a').off("click").on("click", this.clickDropdownfunc.bind(this));
+        
     };
 
     this.renderFontSelect = function (data, type, row, meta) {
@@ -1089,7 +1262,7 @@ var EbDataTable = function (settings) {
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
-            if (this.ebSettingsCopy.columnsext[i].RenderAs.toString().replace("×××", "") === "Progressbar") {
+            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Progressbar") {
                 this.ebSettingsCopy.columns[i].render = this.renderProgressCol;
             }
         }
@@ -1101,13 +1274,15 @@ var EbDataTable = function (settings) {
                 if (this.ebSettingsCopy.columnsext[i].IsEditable) {
                     this.ebSettingsCopy.columns[i].render = this.renderEditableCol;
                 }
-                if (this.ebSettingsCopy.columnsext[i].RenderAs.toString().replace("×××", "") === "Icon") {
+                if (this.ebSettingsCopy.columnsext[i].RenderAs === "Icon") {
                     this.ebSettingsCopy.columns[i].render = this.renderIconCol;
                 }
             }
         }
         if (col.type === "System.String") {
-            if (this.ebSettingsCopy.columnsext[i].RenderAs.toString().replace("×××", "") === "Graph") {
+            if (this.ebSettingsCopy.columnsext[i].name === "dispname")
+                this.ebSettingsCopy.columns[i].render = this.renderlink4NewTable;
+            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Graph") {
                 this.ebSettingsCopy.columns[i].render = this.lineGraphDiv;
             }
         }
@@ -1131,6 +1306,10 @@ var EbDataTable = function (settings) {
 
     this.renderLockCol = function (data) {
         return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
+    };
+
+    this.renderlink4NewTable = function (data) {
+        return  "<a href='#' class ='tablelink'>"+ data+"</a>";
     };
     
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -1228,6 +1407,53 @@ var EbDataTable = function (settings) {
         }, 500);
     };
 
+    this.deleteRow = function (e) {
+        var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
+        var deletedRow = $.extend(true, {}, this.settings_tbl.row(idx).data());
+        this.deleted_colname = deletedRow.name;
+        this.columnsdel.push(deletedRow);
+        this.settings_tbl.rows(idx).remove().draw();
+        this.ebSettingsCopy.columnsdel = this.columnsdel;
+        var del_obj = $.grep(this.ebSettings.columnsext, function (obj) { return obj.name === this.deleted_colname;}.bind(this));
+        this.columnsextdel.push(del_obj[0]);
+        //alert(JSON.stringify(this.columnsextdel));
+        this.ebSettingsCopy.columnsextdel = this.columnsextdel;
+        this.ebSettings.columnsdel = this.columnsdel;
+        this.ebSettings.columnsextdel = this.columnsextdel;
+        this.ebSettings.columnsext = $.grep(this.ebSettings.columnsext, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
+        var liId = "li_" + deletedRow.name;
+        $("#columnDropdown ul").append($("<li id=" + liId + "><a data-data=\"" + JSON.stringify(deletedRow).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.columnsextdel[this.columnsextdel.length - 1]).replace(/\"/g, "'") + "\" href='#'>" + deletedRow.name + "</a></li>"));
+        this.ebSettings.columns = $.grep(this.ebSettings.columns, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
+        //alert(JSON.stringify(this.columnsextdel));
+    };
+
+    //this.add2columnsextdel = function (e,obj) {
+    //    if (obj.name === this.deleted_colname)
+    //        this.columnsextdel.push(obj);
+    //    else
+    //        this.tempcolext.push(obj);
+    //    //this.ebSettingsCopy.columnsextdel = this.columnsextdel;
+    //    //return e.name !== this.deleted_colname;
+    //};
+
+    this.clickDropdownfunc = function (e) {
+        alert("eeeeeeee");
+        this.dropdown_colname = $(e.target).text();
+        var col = JSON.parse($(e.target).attr("data-data").replace(/\'/g, "\""));
+        this.settings_tbl.row.add(col).draw();
+        var colext = JSON.parse($(e.target).attr("data-colext").replace(/\'/g, "\""));
+        this.ebSettings.columnsext.push(colext);
+        this.columnsdel = $.grep(this.columnsdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
+        this.columnsextdel = $.grep(this.columnsextdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
+        $.each(this.settings_tbl.$('input[name=font]'), function (i, obj) {
+            if ($(obj).siblings().size() == 0) {
+                $(obj).fontselect();
+            }
+        });
+        $("#columnDropdown ul #" + $(e.target).parent().attr("id")).remove();
+    };
+    
+
     this.btnGo.click(this.btnGoClick.bind(this));
 
     if (this.dtsettings.directLoad)
@@ -1288,3 +1514,4 @@ function renderLineGraphs (id) {
 function GPointPopup(e) {
     //alert(e.pageX);
 };
+

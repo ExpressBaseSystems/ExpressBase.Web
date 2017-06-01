@@ -87,7 +87,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
             directLoad: true,
             settings: {
                 hideCheckbox: (this.multiSelect === false),
-                scrollY: this.dropdownHeight,
+                scrollY: "200px",//this.dropdownHeight,
             },
             initComplete: this.initDTpost.bind(this),
             fnDblclickCallbackFunc: this.dblClickOnOptDDEventHand.bind(this),
@@ -185,8 +185,6 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
         $("#" + this.name).val(this.Vobj.valueMembers);
-        if (this.maxLimit === 1) {
-        }
         ////single select
         //if (this.maxLimit === 1 && VMs.length > 1) {
         //    this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////

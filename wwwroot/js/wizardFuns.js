@@ -470,16 +470,14 @@ var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code) {
     this.ObjectName = obj_name;
     this.ObjectDesc = obj_desc;
     this.Code = code;
-    alert('this.ObjectId: ' + this.ObjectId);
 
     this.DataSource = function () {
-        alert('ds');
-        $('#tcid').val(this.AcId);
-        $('#code').val(this.Code);
-        $('#id').val(this.ObjectId);
-        $('#name').val(this.ObjectName);
-        $('#description').val(this.ObjectDesc);
-        if (this.ObjectId <= 0) {
+        $('#tcid').val(acid);
+        $('#code').val(code);
+        $('#id').val(obj_id);
+        $('#name').val(obj_name);
+        $('#description').val(obj_desc);
+        if (obj_id <= 0) {
             $('#changeLog').val("");
             $('#changeLogDiv').remove();
         }

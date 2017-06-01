@@ -219,15 +219,41 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-        [HttpGet]
+
+        [HttpPost]
         public IActionResult code_editor()
         {
-            ViewBag.TenantId = HttpContext.Request.Query["tacid"];
-            ViewBag.Objid = HttpContext.Request.Query["objid"];
+            ViewBag.TenantId = HttpContext.Request.Form["tacid"];
+            ViewBag.Obj_id = HttpContext.Request.Form["objid"];
+
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.TenantId, Token = ViewBag.token });
+            var rlist = resultlist.Data;
+
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+                {
+                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                    ViewBag.ObjectName = dsobj.Name;
+                    ViewBag.ObjectDesc = dsobj.Description;
+                    ViewBag.Code = dsobj.Sql;
+                    ViewBag.EditorHint = "CodeMirror.hint.sql";
+                    ViewBag.EditorMode = "text/x-sql";
+                    ViewBag.Icon = "fa fa-database";
+                    ViewBag.ObjType = (int)EbObjectType.DataSource;
+
+                }
+
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.JavascriptFunctions)
+                {
+
+                }
+            }
+
             return View();
         }
-
-
+        
         public JsonResult SaveEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
@@ -253,7 +279,7 @@ namespace ExpressBase.Web2.Controllers
             {
                 Name = _dict["name"],
                 Description = _dict["description"],
-                Sql = _dict["sql"],
+                Sql = _dict["code"],
                 ChangeLog = ds.ChangeLog,
                 EbObjectType = EbObjectType.DataSource
             });
@@ -283,7 +309,7 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), TenantAccountId = req["TenantAccountId"], Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["obj_id"]), TenantAccountId = req["TenantAccountId"], Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
             Dictionary<int, EbDataSource> ObjList = new Dictionary<int, EbDataSource>();
@@ -332,5 +358,17 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+    }
+
+    public class ObjectCaller
+    {
+        public int obj_id { get; set; }
+        public int TenantId { get; set; }
+
+        public ObjectCaller(int id, int cid)
+        {
+            this.obj_id = id;
+            this.TenantId = cid;
+        }
     }
 }

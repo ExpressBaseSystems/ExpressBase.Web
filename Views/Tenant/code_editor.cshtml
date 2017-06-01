@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
     <script src="~/lib/codemirror/lib/codemirror.js"></script>
     <script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
+    <script src="~/lib/codemirror/addon/hint/javascript-hint.js"></script>
+    <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
     <script src="~/lib/codemirror/addon/hint/sql-hint.js"></script>
     <script src="~/lib/codemirror/mode/sql/sql.js"></script>
     <script src="~/lib/codemirror/addon/fold/foldcode.js"></script>
@@ -19,78 +21,73 @@
     <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
     <script type="text/javascript">
-        var obname;
-        var obdesc;
-        var objid;
-        $(document).ready(function () {
-            //var hint_type;
-            //var mode_type;
-            //if (obj_type === Objects.EbObjectType.DataSource || obj_type === Objects.EbObjectType.SqlFunctions)
-            //{
-            //    hint_type = CodeMirror.hint.sql;
-            //    mode_type="text/x-sql"
-            //    alert(hint_type,mode_type);
-            //}
-            //else if (obj_type === Objects.EbObjectType.JavascriptValidators || obj_type === Objects.EbObjectType.JavascriptFunctions)
-            //{
-            //    hint_type=CodeMirror.hint.javascript;
-            //    mode_type = "javascript";
-            //}
-            CodeMirror.commands.autocomplete = function (cm) {
-                //(obj_type === Objects.EbObjectType.DataSource || obj_type === Objects.EbObjectType.SqlFunctions) ? CodeMirror.showHint(cm, CodeMirror.hint.sql) :
-                CodeMirror.showHint(cm, CodeMirror.hint.javascript);
-            };
-            window.editor = CodeMirror.fromTextArea(code, {
-                mode:
-                    "text/x-sql",
-                lineNumbers: true,
-                lineWrapping: true,
-                extraKeys: { "Ctrl-Space": "autocomplete" },
-                foldGutter: {
-                    rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
-                },
-                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-            });
-           
-            if ($("#objid").val() !== "") {
-                $.post("http://localhost:53431/Tenant/GetByteaEbObjects_json", { "TenantAccountId": $("#tcid").val(), "objid": $("#objid").val() }, function (result) {
-                    $.each(result, function (i) {
-                        window.editor.setValue(result[i].sql);
-                        obdesc = result[i].description;
-                        obname = result[i].name;
-                        objid = i;
-                        document.title = obname;
-                    })
-                })
-                  }
-                  });
         $(document).keydown(function (e) {
             if (e.keyCode == 83 && e.ctrlKey) {
                 e.preventDefault();
                 $(".save").trigger("click");
             }
         });
-        function func() {
-            sql = window.editor.getValue();
-            var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database");
-            Dswzd.CustomWizFunc = (new CustomWizFuncs).DataSource($("#tcid").val());
+        function Save() {
+            alert("save");
+        }
+        function Commit() {
+            var objname= $('#obj_name').val();
+            var objdesc= $('#obj_desc').val();
+            var ccode= $('#code').val();
+            var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database",'@ViewBag.TenantId');
+            Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.TenantId', @ViewBag.Obj_id,objname,objdesc, ccode).DataSource;
         }
     </script>
 </head>
 <body>
+    <button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#objCollapse">collapse</button>
     <span>
-        <a href="#" class="save" data-toggle="tooltip" title="Save" onclick="func();"><i class="btn btn-xs btn-default fa fa-save fa-2x" aria-hidden="true"></i></a>
-        <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-xs btn-default fa fa-cogs fa-2x" aria-hidden="true"></i></a>
-        <a href="#" class="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-xs btn-default fa fa-history fa-2x" aria-hidden="true"></i></a>
-        <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-default btn-xs fa fa-exchange fa-2x" aria-hidden="true"></i></a>
-        <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-xs btn-default fa fa-line-chart fa-2x" aria-hidden="true"></i></a>
-        <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-xs btn-default fa fa-file-code-o fa-2x" aria-hidden="true"></i></a>
-        <a href="#" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-xs btn-default fa fa-play fa-2x" aria-hidden="true"></i></a>
-    </span>
-    <input type="hidden" id="tcid" value="@ViewBag.TenantId" />
-    <input type="hidden" id="objid" value="@ViewBag.Objid" />
-    <textarea id="code" name="code" class="code"></textarea>
+    <a class="commit" data-toggle="tooltip" title="Commit" onclick="Commit()"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="save" data-toggle="tooltip" title="Save" onclick="Save()"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-sm btn-info fa fa-history fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
+</span>
+   <div id="objCollapse" class="collapse">
+        <div class="form-group align_singleLine">
+            <label class="control-label">DataSource Name</label>
+            <input maxlength="100" type="text" required="required"  id="obj_name" value="@ViewBag.ObjectName" class="form-control " />
+        </div>
+        <div class="form-group" >
+            <label class="control-label">Description</label>
+            <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
+        </div>       
+    </div>
+    <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
+
+    <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
+    @*<input type="hidden" id="obj_name" value="@ViewBag.ObjectName" />*@
+    @*<input type="hidden" id="obj_desc" value="@ViewBag.ObjectDesc" />*@
+    <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
     <p>Hit Ctrl+Space to trigger autocomplete</p>
+    <script type="text/javascript">
+        window.onload = function () {
+            CodeMirror.commands.autocomplete = function (cm) {
+                CodeMirror.showHint(cm, @ViewBag.EditorHint);
+            };
+
+            window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+                mode: "@ViewBag.EditorMode",
+                lineNumbers: true,
+                lineWrapping: true,
+                extraKeys: { "Ctrl-Space": "autocomplete" },
+                foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+            });
+
+            //  window.editor.setValue(@ViewBag.Code);
+        };
+
+    </script>
 </body>
 </html>
 <style>

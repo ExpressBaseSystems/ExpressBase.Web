@@ -333,8 +333,6 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-
-
         public IActionResult DSList()
         {
 
@@ -354,6 +352,12 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.DSList = ObjList;
             return View();
         }
+
+        public IActionResult CreateApplications()
+        {
+            return View();
+        }
+
     }
 
     public class ObjectCaller

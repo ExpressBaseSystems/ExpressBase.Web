@@ -30,6 +30,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     // TEMP
     this.currentEvent = null;
 
+    this.IsDatatableInit = false;
     this.localDMS = [];
     for (i = 0; i < this.NoOfFields; i++) { this.localDMS.push([]) }
     this.VMindex = null;
@@ -42,19 +43,43 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
 
     //init() for event binding....
     this.init = function () {
-        $('#' + this.container + ' [class=open-indicator]').hide();
-        $('#' + this.container + ' [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //toggle indicator button
+        $('#' + this.name + 'Wraper [class=open-indicator]').hide();
+        $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
+        $('#' + this.name + 'Wraper  [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
         $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
-        $('#' + this.container).on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+        $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+        $('#' + this.name + 'Wraper [type=search]').keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
         //styles
-        $('#' + this.name + 0).children().css("border-top-left-radius","5px");
+        $('#' + this.name + 0).children().css("border-top-left-radius", "5px");
         $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
+    };
+
+    //enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
+    this.SearchBoxEveHandler = function (e) {
+        var search = $(e.target).val().toString();
+        if (e.which === 13)
+            this.Vobj.showDD();
+        if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {
+            this.Vobj.valueMembers.pop();
+            $.each(this.dmNames, this.popDmValues.bind(this));
+        }
+        if (e.which === 40)
+            this.Vobj.showDD();
+        if (e.which === 32)
+            this.Vobj.showDD();
+        if (e.which === 27)
+            this.Vobj.hideDD();
+    };
+
+    this.popDmValues = function (i) {
+        this.Vobj.displayMembers[i].pop(); //= this.Vobj.displayMembers[i].splice(0, this.maxLimit);
     };
 
     // init datatable
     this.InitDT = function () {
         //$('#' + this.name + '_loading-image').show();
         //$('#' + this.name + '_loadingdiv').show();
+        this.IsDatatableInit = true;
         this.datatable = new EbDataTable({
             ds_id: this.dsid,
             tid: this.name + 'tbl',
@@ -62,7 +87,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
             directLoad: true,
             settings: {
                 hideCheckbox: (this.multiSelect === false),
-                scrollY: this.dropdownHeight,
+                scrollY: "200px",//this.dropdownHeight,
             },
             filterParams:{column:'id',key:'ss'},
             initComplete: this.initDTpost.bind(this),
@@ -93,6 +118,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             if (this.maxLimit === 1) {
                 this.Vobj.valueMembers = [vmValue];
+                this.Vobj.hideDD();
                 $.each(this.dmNames, this.setDmValues.bind(this));
             }
             else if (this.Vobj.valueMembers.length !== this.maxLimit) {
@@ -141,7 +167,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
             },
             methods: {
                 toggleDD: this.V_toggleDD.bind(this),
-                showDD: this.V_showDD,
+                showDD: this.V_showDD.bind(this),
                 hideDD: function () { this.DDstate = false; },
                 updateCk: this.V_updateCk.bind(this)
             }
@@ -186,22 +212,21 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     //};
 
     this.V_toggleDD = function (e) {
-        if (!this.DtFlag) {
+        if (!this.IsDatatableInit)
             this.InitDT();
-            this.DtFlag = true;
-        }
         this.Vobj.DDstate = !this.Vobj.DDstate;
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },500);
     };
 
     this.V_showDD = function () {
-        if (this.DtFlag) { this.DtFlag = true; InitDT(); }
+        if (!this.IsDatatableInit)
+            this.InitDT();
         this.Vobj.DDstate = true;
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
-        setTimeout(this.colAdjust, 520);
+        //setTimeout(this.colAdjust, 520);
     };
 
-    this.colAdjust = function () { $('#' + this.name + 'tbl').DataTable().columns.adjust().draw(); }
+    //this.colAdjust = function () { $('#' + this.name + 'tbl').DataTable().columns.adjust().draw(); }
 
     this.V_updateCk = function () {// API..............
         console.log("colAdjust---------- ");
@@ -243,7 +268,8 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     };
 
     this.tagCloseBtnHand = function (e) {
-        this.Vobj.valueMembers.splice(delid(), 1);
+
+        $(this.DTSelector + ' [type=checkbox][value=' + this.Vobj.valueMembers.splice(delid(), 1) + ']').prop("checked", false);
         $.each(this.dmNames, function (i) {
             this.Vobj.displayMembers[i].splice(delid(), 1);
         }.bind(this));
@@ -270,6 +296,21 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
         }
     };
 
+    this.hideDDclickOutside = function (e) {
+        var container = $('#' + this.name + 'DDdiv');
+        var container1 = $('#' + this.name);
+        if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
+            this.Vobj.hideDD();
+            //if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0)
+            //    document.getElementById(this.name + 'srch0').setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
+            //else
+            //    if (this.required && this.Vobj.valueMember.length === 0)
+            //        document.getElementById('' + this.name + 'srch0').setCustomValidity('This field  is required');
+            //    else
+            //        document.getElementById('' + this.name + 'srch0').setCustomValidity('');
+        }
+    };
+
     this.Renderselect();
 
-}
+};

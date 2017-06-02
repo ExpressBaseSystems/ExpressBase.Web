@@ -81,7 +81,7 @@
         this.PrevBtn.hide();
         $(".modal-body").css("height", this.height - 163 + "px");
         this.SyncProgress();
-        this.CustomWizFunc(this.Acid);
+        this.CustomWizFunc();
         setTimeout(this.TimeOutFunc.bind(this), 10);
         if (this.EditObj) this.EditWiz();
     };
@@ -163,7 +163,7 @@
                 this.NextB.bind(this)();
         }
         else if (clickedStepNo < this.currentStepNo) {
-            for (var i = this.currentStepNo; i > (clickedStepNo) ; i--)
+            for (i = this.currentStepNo; i > (clickedStepNo) ; i--)
                 this.PrevB.bind(this)();
         }
     };
@@ -278,9 +278,10 @@
     this.Init();
 };
 
-var CustomWizFuncs = function () {
+var CustomWizFuncs = function (acid) {
+    this.AcId = acid;
 
-    this.DbCheck = function (acid) {
+    this.DbCheck = function () {
         UseSame();
         drop_portnum();
         usesame_change();
@@ -423,7 +424,7 @@ var CustomWizFuncs = function () {
                     $(this).prev('[name=result]').removeClass()
                     $(this).prev('[name=result]').addClass('weak')
                     res = 'Weak'
-                } else if (strength == 2) {
+                } else if (strength === 2) {
                     $(this).prev('[name=result]').removeClass()
                     $(this).prev('[name=result]').addClass('good')
                     res = 'Good'
@@ -452,27 +453,34 @@ var CustomWizFuncs = function () {
             setTimeout(function () {
                 if (simp_adv === 'simple') {
                     var DBwizard_sim = new EbWizard("http://localhost:53431/Tenant/SimpleDbConf", "https://localhost:44377/infra/", 800, 600, "Configure DB Connectivity - Simple", "fa-database", acid);
-                    DBwizard_sim.CustomWizFunc = (new CustomWizFuncs).DbCheck;
+                    DBwizard_sim.CustomWizFunc = (new CustomWizFuncs(AcntId)).DbCheck;
                 }
                 if (simp_adv === 'advanced') {
                     var DBwizard_adv = new EbWizard("http://localhost:53431/Tenant/dbConfig", "https://localhost:44377/infra/", 800, 635, "Configure DB Connectivity - Advanced", "fa-database", acid);
-                    DBwizard_adv.CustomWizFunc = (new CustomWizFuncs).DbCheck;
+                    DBwizard_adv.CustomWizFunc = (new CustomWizFuncs(AcntId)).DbCheck;
                 }
             }, 401);
         });
     };
+};
 
-    this.DataSource = function (acid) {
-        alert('sql ' + sql + '\nacid ' + acid +'\n objid ' + objid + '\n obname ' + obname);
-        $('#sql').val(sql);
+var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code) {
+    this.AcId = acid;
+    this.ObjectId = obj_id;
+    this.ObjectName = obj_name;
+    this.ObjectDesc = obj_desc;
+    this.Code = code;
+
+    this.DataSource = function () {
         $('#tcid').val(acid);
-        $('#id').val(objid);
-        $('#name').val(obname);
-        $('#description').val(obdesc);
-        alert('objid'+objid);
-        if ($('#id').val() === "" || $('#id').val()=== null) {
+        $('#code').val(code);
+        $('#id').val(obj_id);
+        $('#name').val(obj_name);
+        $('#description').val(obj_desc);
+        if (obj_id <= 0) {
             $('#changeLog').val("");
             $('#changeLogDiv').remove();
         }
     };
 };
+

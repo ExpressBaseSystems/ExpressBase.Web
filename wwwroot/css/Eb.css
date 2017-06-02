@@ -157,7 +157,7 @@
 }
 
 
- input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
+input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
     height: auto !important;
     min-height: 28px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
@@ -171,7 +171,7 @@
 }
 
 
- input[type="color"] {
+input[type="color"] {
     height: auto;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
@@ -366,3 +366,17 @@
     left: 50%;
     z-index: 10000000000;
 }
+
+.v-select .selected-tag {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: calc(100% - 15px);
+}
+
+.v-select .selected-tag .close {
+    color: red;
+    position: absolute;
+    top: 8px;
+    left: calc(100% - 32px);
+}
+

@@ -464,23 +464,23 @@ var CustomWizFuncs = function (acid) {
     };
 };
 
-var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code) {
+var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,versionNumber) {
     this.AcId = acid;
     this.ObjectId = obj_id;
     this.ObjectName = obj_name;
     this.ObjectDesc = obj_desc;
     this.Code = code;
+    this.VersionNumber = versionNumber;
 
     this.DataSource = function () {
+         alert(versionNumber);
+         alert(code);
         $('#tcid').val(acid);
         $('#code').val(code);
         $('#id').val(obj_id);
         $('#name').val(obj_name);
         $('#description').val(obj_desc);
-        if (obj_id <= 0) {
-            $('#changeLog').val("");
-            $('#changeLogDiv').remove();
-        }
+        $('#versionNumber').val(versionNumber);
     };
 };
 

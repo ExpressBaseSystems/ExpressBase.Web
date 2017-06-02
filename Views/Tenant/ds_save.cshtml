@@ -1,25 +1,31 @@
 ﻿<div class="col-md-offset-1 col-md-11 ebWizStep">
     <h3>Save datasource</h3>
     <div class="controls-group">
-        <div class="form-group align_singleLine">
+        @*<div class="form-group align_singleLine">
             <label class="control-label">DataSource Name</label>
             <input maxlength="100" type="text" required="required" id="name" class="form-control " />
         </div>
         <div class="form-group">
             <label class="control-label">Description</label>
             <textarea maxlength="100" type="text" required="required" id="description" class="form-control"></textarea>
-        </div>
+        </div>*@
         <div class="form-group" id="changeLogDiv">
             <label class="control-label">Change Log</label>
             <textarea maxlength="100" type="text" required="required" id="changeLog" class="form-control"></textarea>
         </div>
+            <input type="hidden" id="name" name="name" />
+            <input type="hidden" id="description" name="description" />
             <input type="hidden" id="code" name="code"/>
             <input type="hidden" id="tcid" name="tcid" />
             <input type="hidden" id="id" name="id" />
+            <input type="hidden" id="versionNumber" name="versionNumber" />
     </div>
 </div>
 <style>
     .form-control {
         width: 280px;
+    }
+    .h3{
+        display:none;
     }
 </style>

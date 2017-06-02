@@ -10,10 +10,6 @@
 
         var DSList = new ObjListTbl("dslist", "Data Sources", "New DS", "code_editor?tacid=" + $('#tacid').val(), (new CustomTabFuns).dstable);
     })
-    function openeditor(obj)
-    {
-        window.open('code_editor?objid=' + $(obj).attr("data-objid") + '&tacid=' + $('#tacid').val())
-   }
 </script>
 @{
     @using ExpressBase.Objects.ServiceStack_Artifacts;

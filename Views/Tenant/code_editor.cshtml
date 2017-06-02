@@ -28,39 +28,54 @@
             }
         });
         function Save() {
-            alert("save");
+            $.post("http://localhost:53431/Tenant/SaveEbDataSource", {"tcid":@ViewBag.TenantId,"Id":@ViewBag.Obj_id,"Code": $('#code').val(),"Name":$('#obj_name').val(),"Description":$('#obj_desc').text(), "Token": getToken(), "isSave":"true","VersionNumber": @ViewBag.VersionNumber},
+                function (result) {
+                });
         }
         function Commit() {
             var objname= $('#obj_name').val();
-            var objdesc= $('#obj_desc').val();
-            var ccode= $('#code').val();
-            var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/SaveEbDataSource", 800, 600, "Save DataSource", "fa-database",'@ViewBag.TenantId');
-            Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.TenantId', @ViewBag.Obj_id,objname,objdesc, ccode).DataSource;
+            var objdesc= $('#obj_desc').text();
+            var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/CommitEbDataSource", 400, 400, "Commit", "fa-database",'@ViewBag.TenantId');
+            Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.TenantId', @ViewBag.Obj_id, objname, objdesc, window.editor.getValue(), @ViewBag.VersionNumber).DataSource;
         }
     </script>
 </head>
 <body>
-    <button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#objCollapse">collapse</button>
     <span>
-    <a class="commit" data-toggle="tooltip" title="Commit" onclick="Commit()"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
-    <a href="#" class="save" data-toggle="tooltip" title="Save" onclick="Save()"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
-    <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-    <a href="#" class="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-sm btn-info fa fa-history fa-1x" aria-hidden="true"></i></a>
-    <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
-    <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
-    <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-    <a href="#" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
-    <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
-</span>
-   <div id="objCollapse" class="collapse">
+        <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn btn-sm btn-info fa fa-plus-square  fa-1x" aria-hidden="true"></i></a>
+        <a class="commit" data-toggle="tooltip" title="Commit" onclick="Commit()"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
+        <a href="#" class="save" data-toggle="tooltip" title="Save" onclick="Save()"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
+        <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+        <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
+        <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
+        <a href="#" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
+        <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
+        <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
+        @ViewBag.Status
+        <a href="#" class="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-sm btn-info fa fa-history fa-1x" aria-hidden="true"></i></a>
+        Version v.@ViewBag.VersionNumber
+    </span>
+    <div id="objCollapse" class="collapse">
         <div class="form-group align_singleLine">
             <label class="control-label">DataSource Name</label>
-            <input maxlength="100" type="text" required="required"  id="obj_name" value="@ViewBag.ObjectName" class="form-control " />
+            <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control " />
         </div>
-        <div class="form-group" >
+        <div class="form-group align_singleLine">
             <label class="control-label">Description</label>
             <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
-        </div>       
+        </div>
+        <div class="dropdown">Status
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                @*@{ 
+                    ViewBag.LifeCycle
+                }*@
+                <li><a href="#">HTML</a></li>
+              
+            </ul>
+        </div>
     </div>
     <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
 
@@ -84,7 +99,6 @@
                 gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
             });
 
-            //  window.editor.setValue(@ViewBag.Code);
         };
 
     </script>

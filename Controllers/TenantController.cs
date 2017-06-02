@@ -358,6 +358,12 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        public IActionResult DevConsole()
+        {
+
+            return View();
+        }
+
     }
 
     public class ObjectCaller

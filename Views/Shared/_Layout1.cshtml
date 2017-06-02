@@ -257,10 +257,10 @@
         </nav>
     <div id="wrapper" class="toggled">
         <div class="container-fluid"> 
-            @if (ViewBag.Fname != null)
+            @if (ViewBag.Fname != null || ViewBag.TUFname !=null)
             {
                 <div id="sidebar-wrapper">
-                    @if (string.IsNullOrEmpty(ViewBag.cid))
+                    @if (string.IsNullOrEmpty(ViewBag.cid) && ViewBag.TUFname == null)
                     {
 
                         if(@Context.Request.Path== "/Tenant/objects")

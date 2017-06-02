@@ -64,6 +64,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
                 hideCheckbox: (this.multiSelect === false),
                 scrollY: this.dropdownHeight,
             },
+            filterParams:{column:'id',key:'ss'},
             initComplete: this.initDTpost.bind(this),
             fnDblclickCallbackFunc: this.dblClickOnOptDDEventHand.bind(this),
             //fnKeyUpCallback:

@@ -328,5 +328,10 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.DSList = ObjList;
             return View();
         }
+
+        public IActionResult DVEditor()
+        {
+            return View();
+        }
     }
 }

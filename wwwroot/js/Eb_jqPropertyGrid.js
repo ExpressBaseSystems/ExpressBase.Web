@@ -57,7 +57,7 @@
         },
         BootstrapDD: {
             html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                var _html = "<div class='dropdown'>" +
+                var _html = "<div class='dropdown ss'>" +
     "<button class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" + value +
     " <span class='caret'></span></button>" +
                 "<ul class='dropdown-menu'>"
@@ -65,10 +65,10 @@
                     _html += "<li><a href='#'>" + val + "</a></li>"
                 })
                 _html += "</ul></div>";
-                return _html.toString().replace("xxx", "");
+                return _html.toString();
     
             },
-            valueFn: function () { return $('.dropdown button').text().trim() }
+            valueFn: function () { return $('.ss button').text().trim() }
         }
     };
 

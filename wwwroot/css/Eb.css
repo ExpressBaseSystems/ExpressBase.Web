@@ -370,9 +370,13 @@ input[type="color"] {
 .v-select .selected-tag {
     text-overflow: ellipsis;
     overflow: hidden;
-    width: calc(100% -60px);
+    width: calc(100% - 15px);
 }
 
-.v-select input[type="search"], .v-select input[type="search"]:focus {
-    width: 40px !important;
+.v-select .selected-tag .close {
+    color: red;
+    position: absolute;
+    top: 8px;
+    left: calc(100% - 32px);
 }
+

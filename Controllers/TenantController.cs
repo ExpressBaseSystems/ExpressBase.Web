@@ -381,6 +381,17 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        public IActionResult CreateApplications()
+        {
+            return View();
+        }
+
+        public IActionResult DevConsole()
+        {
+
+            return View();
+        }
+
     }
 
     public class ObjectCaller
@@ -392,6 +403,11 @@ namespace ExpressBase.Web2.Controllers
         {
             this.obj_id = id;
             this.TenantId = cid;
+        }
+
+        public IActionResult DVEditor()
+        {
+            return View();
         }
     }
 }

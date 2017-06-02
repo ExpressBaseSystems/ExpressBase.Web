@@ -215,7 +215,7 @@ function delid() {
                             [n("span", { attrs: { "aria-hidden": "true" } }, [t._v("×")])]) : t._e()])
                     }),
                     t._v(" "), n("input", {
-                        directives: [{ name: "model", rawName: "v-model", value: t.search, expression: "search" }], ref: "search", staticClass: "form-control", style: { width: t.isValueEmpty ? "100%" : "auto" }, attrs: { debounce: t.debounce, type: "search", placeholder: t.searchPlaceholder, readonly: !t.searchable }, domProps: { value: t._s(t.search) }, on: {
+                        directives: [{ name: "model", rawName: "v-model", value: t.search, expression: "search" }], ref: "search", staticClass: "form-control", style: { width: t.isValueEmpty ? "100%" : "10px", padding: t.isValueEmpty ? "" : "1px" }, attrs: { debounce: t.debounce, type: "search", placeholder: t.searchPlaceholder, readonly: !t.searchable }, domProps: { value: t._s(t.search) }, on: {//edited
                             keydown: [function (e) { t._k(e.keyCode, "delete", [8, 46]) || t.maybeDeleteValue(e) },
                                 function (e) { t._k(e.keyCode, "up", 38) || (e.preventDefault(), t.typeAheadUp(e)) }, function (e) { t._k(e.keyCode, "down", 40) || (e.preventDefault(), t.typeAheadDown(e)) }], keyup: [function (e) { t._k(e.keyCode, "esc", 27) || t.onEscape(e) }, function (e) { t._k(e.keyCode, "enter", 13) || (e.preventDefault(), t.typeAheadSelect(e)) }], blur: t.onSearchBlur, focus: t.onSearchFocus, input: function (e) { e.target.composing || (t.search = e.target.value) }
                         }

@@ -370,5 +370,10 @@ namespace ExpressBase.Web2.Controllers
             this.obj_id = id;
             this.TenantId = cid;
         }
+
+        public IActionResult DVEditor()
+        {
+            return View();
+        }
     }
 }

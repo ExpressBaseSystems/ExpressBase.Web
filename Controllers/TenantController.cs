@@ -286,6 +286,7 @@ namespace ExpressBase.Web2.Controllers
                 Name = _dict["name"],
                 Description = _dict["description"],
                 Sql = _dict["code"],
+                ChangeLog = ds.ChangeLog,
                 EbObjectType = EbObjectType.DataSource
             });
 
@@ -359,8 +360,6 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-
-
         public IActionResult DSList()
         {
 

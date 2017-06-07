@@ -263,20 +263,20 @@
                     @if (string.IsNullOrEmpty(ViewBag.cid) && ViewBag.TUFname == null)
                     {
 
-                        if(@Context.Request.Path== "/Tenant/objects")
-                        {
-                            Html.RenderPartial("_SideBarObjects");
-                        }
-                        else
-                        {
+                        
                             Html.RenderPartial("_SidebarMenu");
-
-                        }
 
                     }
                     else
                     {
+                    if(@Context.Request.Path== "/Tenant/objects")
+                    {
+                    Html.RenderPartial("_SideBarObjects");
+                    }
+                    else
+                    {
                         Html.RenderPartial("_SidebarmenuTUser");
+                    }
                     }
                     @*</div>*@
                 </div>

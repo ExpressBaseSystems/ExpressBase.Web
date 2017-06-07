@@ -229,6 +229,7 @@ namespace ExpressBase.Web2.Controllers
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.TenantId, Token = ViewBag.token });
             var rlist = resultlist.Data;
+            List<string> filterDialogs = new List<string>();
 
             foreach (var element in rlist)
             {
@@ -254,8 +255,12 @@ namespace ExpressBase.Web2.Controllers
                 {
 
                 }
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.FilterDialog)
+                {
+                    filterDialogs.Add(element.Name);
+                }
             }
-
+            ViewBag.FilterDialogs = filterDialogs;
             return View();
         }
 
@@ -390,6 +395,15 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
+        public IActionResult DVEditor()
+        {
+            return View();
+        }
+        public IActionResult filterDialog(/*string execCode*/)
+        {
+            //ViewBag.ExecCode = execCode;
+            return View();
+        }
 
     }
 
@@ -403,10 +417,7 @@ namespace ExpressBase.Web2.Controllers
             this.obj_id = id;
             this.TenantId = cid;
         }
-
-        public IActionResult DVEditor()
-        {
-            return View();
-        }
+        
     }
+  
 }

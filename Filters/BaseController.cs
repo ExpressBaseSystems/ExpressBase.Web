@@ -32,20 +32,20 @@ namespace ExpressBase.Web.Filters
             controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
             controller.ViewBag.token = token;
             controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
-            // controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+            controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             controller.ViewBag.EbConfig = this.EbConfig;
            
 
             if (!string.IsNullOrEmpty(TAccountId))
             {
                 var TUtoken = context.HttpContext.Request.Cookies[string.Format("T_{0}", TAccountId)];
-                var TUtokenS = handler.ReadToken(token) as JwtSecurityToken;
-                controller.ViewBag.TUFname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
+                var TUtokenS = handler.ReadToken(TUtoken) as JwtSecurityToken;
+                controller.ViewBag.TUFname = TUtokenS.Claims.First(claim => claim.Type == "Fname").Value;
                 //controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 //controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
-                controller.ViewBag.TUtoken = token;
-                controller.ViewBag.TUId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
-                controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+                controller.ViewBag.TUtoken = TUtoken;
+                controller.ViewBag.TUId = Convert.ToInt32(TUtokenS.Claims.First(claim => claim.Type == "uid").Value);
+                controller.ViewBag.cid = TUtokenS.Claims.First(claim => claim.Type == "cid").Value;
             }
             base.OnActionExecuting(context);
 

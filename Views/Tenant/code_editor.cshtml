@@ -21,6 +21,13 @@
     <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
     <script type="text/javascript">
+        $(document).ready(function () {
+            $('.exec').on("click",function(){
+                var execCode= window.editor.getValue();
+                var Dswzd = new EbWizard("http://localhost:53431/Tenant/filterDialog(execCode)", "http://localhost:53431/Tenant/CommitEbDataSource", 400, 400, "Commit", "fa-database",'@ViewBag.TenantId');
+            
+            });
+        });
         $(document).keydown(function (e) {
             if (e.keyCode == 83 && e.ctrlKey) {
                 e.preventDefault();
@@ -64,17 +71,23 @@
             <label class="control-label">Description</label>
             <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
         </div>
-        <div class="dropdown">Status
+        <div class="dropdown">
+            Filter Dialogues
             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                 <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu">
-                @*@{ 
-                    ViewBag.LifeCycle
-                }*@
-                <li><a href="#">HTML</a></li>
-              
-            </ul>
+            @{
+                @using ExpressBase.Objects.ServiceStack_Artifacts;
+                List<string> filterDialogs = new List<string>();
+                filterDialogs = ViewBag.FilterDialogs;
+                foreach (var filter in filterDialogs)
+                {
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> @filter</a></li>
+                    </ul>
+
+                }
+            }
         </div>
     </div>
     <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>

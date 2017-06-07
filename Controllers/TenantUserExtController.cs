@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Routing;
 using ExpressBase.Web2.Models;
 using System.Net;
 using System.IO;
+using ExpressBase.Security;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,7 +31,15 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-
+      
+        public IActionResult TenantUserLogin(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            ViewBag.cid = req["cid"];
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+       
         [HttpGet]
         [Microsoft.AspNetCore.Mvc.Route("{cid}")]
         public IActionResult TenantUserLogin(string cid)
@@ -48,16 +57,17 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+
+        //[Microsoft.AspNetCore.Mvc.Route("{cid}")]
         [HttpPost]
-        [Microsoft.AspNetCore.Mvc.Route("{cid}")]
         public async Task<IActionResult> TenantUserLogin()
         {
             ViewBag.EbConfig = this.EbConfig;
            
             var req = this.HttpContext.Request.Form;
             ViewBag.cid = req["cid"];
-            AuthenticateResponse authResponse = null;
-
+            MyAuthenticateResponse authResponse = null;
+            
             string token = req["g-recaptcha-response"];
             Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
             if (!data.Success)
@@ -94,7 +104,7 @@ namespace ExpressBase.Web2.Controllers
                 try
                 {
                     var authClient = this.EbConfig.GetServiceStackClient();
-                    authResponse = authClient.Send(new Authenticate
+                    authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = MyJwtAuthProvider.Name,
                         UserName = req["uname"],
@@ -121,20 +131,35 @@ namespace ExpressBase.Web2.Controllers
                     ViewBag.errormsg = "Please enter a valid Username/Password";
                     return View("TenantUserLogin");
                 }
-                   
 
+                RoleCollection RoleCollection = authResponse.User.RoleCollection;
                 CookieOptions options = new CookieOptions();
 
-                Response.Cookies.Append("Token", authResponse.BearerToken, options);
-
-                if (req.ContainsKey("remember"))
+                if (RoleCollection.HasSystemRole())
                 {
-                    Response.Cookies.Append("UserName", req["uname"], options);
-                    Response.Cookies.Append("UId", authResponse.UserId, options);
-                }
-                   
-                return RedirectToAction("UserDashboard", new RouteValueDictionary(new { controller = "TenantUser", action = "UserDashboard", id = authResponse.UserId }));
+                    Response.Cookies.Append(string.Format("T_{0}", ViewBag.cid), authResponse.BearerToken, options);
+                    Response.Cookies.Append("cid", ViewBag.cid);
 
+                    if (req.ContainsKey("remember"))
+                    {
+                        Response.Cookies.Append("UserName", req["uname"], options);
+                        Response.Cookies.Append("UId", authResponse.UserId, options);
+                    }
+                    return RedirectToAction("DevConsole", new RouteValueDictionary(new { controller = "Tenant", action = "DevConsole", id = authResponse.UserId }));
+                }
+                else
+                {
+
+                    Response.Cookies.Append(string.Format("T_{0}", ViewBag.cid), authResponse.BearerToken, options);
+
+                    if (req.ContainsKey("remember"))
+                    {
+                        Response.Cookies.Append("UserName", req["uname"], options);
+                        Response.Cookies.Append("UId", authResponse.UserId, options);
+                    }
+
+                    return RedirectToAction("UserDashboard", new RouteValueDictionary(new { controller = "TenantUser", action = "UserDashboard", id = authResponse.UserId }));
+                }
             }
         }
 

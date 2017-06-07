@@ -138,7 +138,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantLogout()
         {
             ViewBag.Fname = null;
-            return RedirectToAction("TenantSignup","TenantExt");
+            return RedirectToAction("TenantSignup", "TenantExt");
 
         }
 
@@ -186,7 +186,7 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),Token= ViewBag.token });
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
                 return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
@@ -229,15 +229,21 @@ namespace ExpressBase.Web2.Controllers
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.TenantId, Token = ViewBag.token });
             var rlist = resultlist.Data;
+            List<string> filterDialogs = new List<string>();
 
             foreach (var element in rlist)
             {
+                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                ViewBag.LifeCycle = lifeCycle;
                 if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
                 {
                     var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
                     ViewBag.ObjectName = dsobj.Name;
                     ViewBag.ObjectDesc = dsobj.Description;
                     ViewBag.Code = dsobj.Sql;
+                    ViewBag.Status = element.Status;
+                    ViewBag.VersionNumber = element.VersionNumber;
                     ViewBag.EditorHint = "CodeMirror.hint.sql";
                     ViewBag.EditorMode = "text/x-sql";
                     ViewBag.Icon = "fa fa-database";
@@ -249,12 +255,16 @@ namespace ExpressBase.Web2.Controllers
                 {
 
                 }
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.FilterDialog)
+                {
+                    filterDialogs.Add(element.Name);
+                }
             }
-
+            ViewBag.FilterDialogs = filterDialogs;
             return View();
         }
-        
-        public JsonResult SaveEbDataSource()
+
+        public JsonResult CommitEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
             var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
@@ -274,6 +284,7 @@ namespace ExpressBase.Web2.Controllers
             ds.TenantAccountId = _dict["tcid"];
             ds.EbObjectType = Objects.EbObjectType.DataSource;
             ds.Name = _dict["name"];
+            ds.Description = _dict["description"];
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
             {
@@ -284,6 +295,27 @@ namespace ExpressBase.Web2.Controllers
                 EbObjectType = EbObjectType.DataSource
             });
 
+            using (client.Post<HttpWebResponse>(ds)) { }
+            return Json("Success");
+        }
+        public JsonResult SaveEbDataSource()
+        {
+            var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var ds = new EbObjectWrapper();
+            ds.IsSave = req["isSave"];
+            ds.Token = ViewBag.token;
+            ds.TenantAccountId = req["tcid"];
+            ds.Id = Convert.ToInt32(req["Id"]);
+            ds.VersionNumber = Convert.ToInt32( req["VersionNumber"]);
+            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
+            {
+                Name = req["Name"],
+                Description = req["Description"],
+                Sql = req["Code"],
+                EbObjectType = EbObjectType.DataSource
+            });
+            ds.Token = ViewBag.token;
             using (client.Post<HttpWebResponse>(ds)) { }
             return Json("Success");
         }
@@ -358,6 +390,21 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        public IActionResult DevConsole()
+        {
+
+            return View();
+        }
+        public IActionResult DVEditor()
+        {
+            return View();
+        }
+        public IActionResult filterDialog(/*string execCode*/)
+        {
+            //ViewBag.ExecCode = execCode;
+            return View();
+        }
+
     }
 
     public class ObjectCaller
@@ -370,10 +417,7 @@ namespace ExpressBase.Web2.Controllers
             this.obj_id = id;
             this.TenantId = cid;
         }
-
-        public IActionResult DVEditor()
-        {
-            return View();
-        }
+        
     }
+  
 }

@@ -43,11 +43,10 @@
             else
                 alert("No matching case found for " + obj.name + "!! \n type : '" + RowObj.type.toString().trim() + "'");
         }
-
-
     });
 
     // This is the metadata object that describes the target object properties (optional)
+    var DDid = null;
     var theCustomTypes = {
         icon: {
             html: function (elemId, name, value, meta) { // custom renderer for type (required)
@@ -57,18 +56,18 @@
         },
         BootstrapDD: {
             html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                var _html = "<div class='dropdown ss'>" +
-    "<button class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" + value +
+                var _html = "<div class='dropdown'>" +
+    "<button id=" + elemId + " name=" + name + " class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" + value +
     " <span class='caret'></span></button>" +
                 "<ul class='dropdown-menu'>"
-                $.each(meta.options, function (i, val) {
-                    _html += "<li><a href='#'>" + val + "</a></li>"
-                })
+                $.each(meta.options, function (i, val) { _html += "<li><a href='#'>" + val + "</a></li>" })
                 _html += "</ul></div>";
+                DDid = elemId;
                 return _html.toString();
-    
             },
-            valueFn: function () { return $('.ss button').text().trim() }
+            valueFn: function () {
+                return $('#' + DDid).text().trim();
+            }
         }
     };
 

@@ -1,0 +1,28 @@
+﻿<div class="col-md-offset-1 col-md-11 ebWizStep">
+    <h3>Save datasource</h3>
+    <div class="controls-group">
+        @{
+            @using System.Text.RegularExpressions
+            MatchCollection mc = Regex.Matches(/*ViewBag.ExecCode*/" @nhbv b @jkb @b jkb", @"\@\w+");
+            foreach (Match m in mc)
+            {
+                <div class="align">
+                    <label>@m</label>
+                    <div class="dropdown">
+                        <div class="dropdown-toggle dropdownBtn " type="button" data-toggle="dropdown">
+                            Datatype
+                            <span class="caret"></span>
+                        </div>                                             
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">text</a></li>
+                                    <li><a href="#">integer</a></li>
+                                    <li><a href="#">datetime</a></li>
+                                    <li><a href="#">boolean</a></li>
+                                </ul>                       
+                    </div>
+                    <input type="text" name="filter" />
+                </div>
+            }
+        }
+    </div>
+</div>

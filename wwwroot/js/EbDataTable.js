@@ -92,6 +92,8 @@ var EbDataTable = function (settings) {
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
+        this.ebSettingsCopy = this.ebSettings;
+        this.updateRenderFunc();
         this.Init();
 
         if (this.filterBox !== null && this.dtsettings.directLoad !== true)
@@ -102,7 +104,7 @@ var EbDataTable = function (settings) {
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         //this.filterbtn = $('#4filterbtn');
-        //this.clearfilterbtn = $("#clearfilterbtn");
+        //this.clearfilterbtn = $("#clearfilterbtn_"+this.tableId);
         this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
         this.copybtn = $("#btnCopy");
         this.printbtn = $("#btnPrint");
@@ -197,7 +199,7 @@ var EbDataTable = function (settings) {
         o.order = [];
         o.deferRender = true;
         o.filter = true;
-        o.select = true;
+        //o.select = true;
         o.retrieve = true;
         o.keys = true,
         o.ajax = {
@@ -552,7 +554,7 @@ var EbDataTable = function (settings) {
         });
 
         //this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
-        $("#clearfilterbtn").off("click").on("click", this.clearFilter.bind(this));
+        $("#clearfilterbtn_"+this.tableId).off("click").on("click", this.clearFilter.bind(this));
         this.totalpagebtn.off("click").on("click", this.showOrHideAggrControl.bind(this));
         this.copybtn.off("click").on("click", this.CopyToClipboard.bind(this));
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
@@ -597,7 +599,7 @@ var EbDataTable = function (settings) {
 
     this.GetFiltersFromSettingsTbl_inner = function (i, col) {
         var _ls = "";
-        if (col.visible == true) {
+        if (col.visible === true) {
             var span = "<span hidden>" + col.name + "</span>";
 
             var htext_class = this.tableId + "_htext";
@@ -624,7 +626,7 @@ var EbDataTable = function (settings) {
             else if (col.type === "System.Boolean")
                 _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
             else if (col.name === "serial")
-                _ls += (span + "<a class='btn btn-default center-block'  id='clearfilterbtn' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='width:35px'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
+                _ls += (span + "<a class='btn btn-default center-block'  id='clearfilterbtn_"+this.tableId+"' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='width:35px'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
             else
                 _ls += (span);
 
@@ -827,8 +829,8 @@ var EbDataTable = function (settings) {
 
     this.NewTableModal = function () {
         $(document.body).append("<div class='modal fade' id='newmodal' role='dialog'>"
-    + "<div class='modal-dialog modal-lg'>"
-     + " <div class='modal-content'>"
+    + "<div class='modal-dialog modal-lg' style='width: 100%;height: 100%;margin: 0;padding: 0;'>"
+     + " <div class='modal-content' style=' height: auto;min-height: 100%;border-radius: 0;'>"
         + "<div class='modal-header'>"
           + "<button type = 'button' class='close' data-dismiss='modal'>&times;</button>"
           + "<h4 class='modal-title'></h4>"
@@ -1232,7 +1234,7 @@ var EbDataTable = function (settings) {
                 w = col.width.toString();
                 if (col.type) ty = col.type.toString();
                 cls = col.className;
-                if (cls == undefined)
+                if (cls === undefined)
                     cls = "";
                 colarr.push(new coldef(d, t, v, w, n, ty, cls));
             }
@@ -1317,7 +1319,7 @@ var EbDataTable = function (settings) {
             }
         }
         if (col.type === "System.String") {
-            if (this.ebSettingsCopy.columnsext[i].name === "dispname")
+            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Link")
                 this.ebSettingsCopy.columns[i].render = this.renderlink4NewTable;
             if (this.ebSettingsCopy.columnsext[i].RenderAs === "Graph") {
                 this.ebSettingsCopy.columns[i].render = this.lineGraphDiv;
@@ -1409,6 +1411,13 @@ var EbDataTable = function (settings) {
      + "</div>"
     + "</div>"
  + "</div>");
+        $(document).on('show.bs.modal', '.modal', function (event) {
+            var zIndex = 1040 + (10 * $('.modal:visible').length);
+            $(this).css('z-index', zIndex);
+            setTimeout(function () {
+                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+            }, 0);
+        });
     };
 
     this.renderMainGraph = function (e) {
@@ -1483,7 +1492,7 @@ var EbDataTable = function (settings) {
         this.columnsdel = $.grep(this.columnsdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
         this.columnsextdel = $.grep(this.columnsextdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
         $.each(this.settings_tbl.$('input[name=font]'), function (i, obj) {
-            if ($(obj).siblings().size() == 0) {
+            if ($(obj).siblings().size() === 0) {
                 $(obj).fontselect();
             }
         });

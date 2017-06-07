@@ -37,7 +37,7 @@
                     RenderAs: obj.RenderAs
                 };
                 metaObj = {
-                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', 'Graph'] },
+                    RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', 'Graph', 'Link'] },
                 };
             }
             else

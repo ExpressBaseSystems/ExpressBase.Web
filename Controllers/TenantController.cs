@@ -304,9 +304,11 @@ namespace ExpressBase.Web2.Controllers
             var ds = new EbObjectWrapper();
             ds.IsSave = req["isSave"];
             ds.Token = ViewBag.token;
-            ds.TenantAccountId = req["tcid"];
+            ds.TenantAccountId = ViewBag.cid;
             ds.Id = Convert.ToInt32(req["Id"]);
-            ds.VersionNumber = Convert.ToInt32( req["VersionNumber"]);
+            ds.VersionNumber = Convert.ToInt32(req["VersionNumber"]);
+            ds.Name = req["Name"];
+            ds.Description = req["Description"];
             ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
             {
                 Name = req["Name"],
@@ -357,7 +359,6 @@ namespace ExpressBase.Web2.Controllers
         }
         public IActionResult objects()
         {
-            ViewBag.TenantId = HttpContext.Request.Query["tacid"];
             return View();
         }
         public IActionResult ds_save()

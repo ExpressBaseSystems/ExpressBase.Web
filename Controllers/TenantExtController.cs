@@ -39,7 +39,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.EbConfig = this.EbConfig;
             ViewBag.cookie = Request.Cookies["UserName"];
             ViewBag.Userid = Request.Cookies["UId"];
-          
+                   
             if (!string.IsNullOrEmpty(ViewBag.cookie))
             {
                 var redisClient = EbConfig.GetRedisClient();

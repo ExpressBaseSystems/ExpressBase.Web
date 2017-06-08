@@ -35,18 +35,13 @@
                 $(".save").trigger("click");
             }
         });
-        @*function Save() {
-            $.post("http://localhost:53431/Tenant/SaveEbDataSource", {"tcid":@ViewBag.TenantId,"Id":@ViewBag.Obj_id,"Code": $('#code').val(),"Name":$('#obj_name').val(),"Description":$('#obj_desc').text(), "Token": getToken(), "isSave":"true","VersionNumber": @ViewBag.VersionNumber},function (result) {
+        function Save() {
+            $.post("http://localhost:53431/Tenant/SaveEbDataSource", {"Id":@ViewBag.Obj_id,"Code": window.editor.getValue(),"Name":$('#obj_name').val(),"Description":$('#obj_desc').val(), "Token": getToken(), "isSave":"true","VersionNumber": @ViewBag.VersionNumber},function (result) {
                 });
-        }*@
+        }
         function Commit() {
-            
-            alert('sd');
-            var objname= $('#obj_name').val();
-            var objdesc= $('#obj_desc').val();
-            alert('obj_desc :'+ objdesc);
             var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/CommitEbDataSource", 400, 400, "Commit", "fa-database",'@ViewBag.cid');
-            Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.cid', @ViewBag.Obj_id, objname, objdesc, window.editor.getValue(), @ViewBag.VersionNumber).DataSource;
+            Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.cid', @ViewBag.Obj_id, $('#obj_name').val(), $('#obj_desc').val(), window.editor.getValue(), @ViewBag.VersionNumber).DataSource;
         }
     </script>
 </head>

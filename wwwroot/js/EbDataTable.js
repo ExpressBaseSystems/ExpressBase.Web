@@ -113,7 +113,7 @@ var EbDataTable = function (settings) {
         this.excelbtn = $("#btnExcel");
         this.csvbtn = $("#btnCsv");
         this.pdfbtn = $("#btnPdf");
-        this.settingsbtn = $("#" + this.tableId + "_btnSettings");
+        //this.settingsbtn = $("#" + this.tableId + "_btnSettings");
         $("#dvName_lbl").text(this.ebSettings.dvName);
 
         this.eb_agginfo = this.getAgginfo();
@@ -160,9 +160,9 @@ var EbDataTable = function (settings) {
             return sum / data.length;
         });
 
-        $('#' + this.tableId + '_fileBtns [name=filebtn]').css('display', 'inline-block');
+        //$('#' + this.tableId + '_fileBtns [name=filebtn]').css('display', 'inline-block');
         // $('#' + this.tableId + '_filterdiv [name=filterbtn]').css('display', 'inline-block');
-        $('#' + this.tableId + '_btnSettings').css('display', 'inline-block');
+        //$('#' + this.tableId + '_btnSettings').css('display', 'inline-block');
 
         if (!this.ebSettings.hideSerial)
             this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
@@ -323,6 +323,8 @@ var EbDataTable = function (settings) {
     };
 
     this.initCompleteFunc = function (settings, json) {
+
+        this.GenerateButtons();
         this.createFilterRowHeader();
         if (this.eb_agginfo.length > 0) {
             this.createFooter(0);
@@ -563,8 +565,36 @@ var EbDataTable = function (settings) {
         this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
-        this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
+        //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
+        $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsModal.bind(this));
     };
+
+    this.GenerateButtons = function () {
+        $("#TableControls").prepend("<div style='display: inline;float: right;'>" +
+            "<button type='button' id='"+this.tableId+"_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
+            "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
+             "<div class='btn-group'>" +
+                "<div class='btn-group'>" +
+                   " <div id='btnPrint' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></div>" +
+                       " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
+                         "   <span class='caret'></span>  <!-- caret --></div>" +
+                         "   <ul class='dropdown-menu' role='menu'>" +
+                          "      <li><a href = '#' id='btnprintAll'> Print All</a></li>" +
+                           "     <li><a href = '#' id='btnprintSelected'> Print Selected</a></li>" +
+                            "</ul>" +
+                "</div>" +
+                "<div id='btnExcel' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></div>" +
+                "<div id='btnPdf' class='btn btn-default'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></div>" +
+                "<div id='btnCsv' class='btn btn-default'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></div>  " +
+                "<div id='btnCopy' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></div>" +
+            "</div>" +
+            "</div>" +
+            "<div id='" + this.tableId + "_btnSettings' class='btn btn-default' data-toggle='modal' data-target='#settingsmodal'><i class='fa fa-cog' aria-hidden='true'></i></div>" +
+
+         "</div>");
+    };
+
+    
        
     this.setFilterboxValue = function (i, obj) {
         if (this.dtsettings.filterParams !== null && this.dtsettings.filterParams !== undefined) {

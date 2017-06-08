@@ -369,8 +369,8 @@ namespace ExpressBase.Web2.Controllers
         {
 
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            ViewBag.TenantId = HttpContext.Request.Query["tacid"];
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.TenantId, Token = ViewBag.token });
+           // ViewBag.TenantId = HttpContext.Request.Query["tacid"];
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.TUtoken });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
@@ -395,13 +395,33 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
-        public IActionResult DVEditor()
+        public IActionResult DVList()
         {
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            // ViewBag.TenantId = HttpContext.Request.Query["tacid"];
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.TUtoken });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var rlist = resultlist.Data;
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.Table)
+                {
+                    ObjList[element.Id] = element;
+                }
+            }
+            ViewBag.DVList = ObjList;
             return View();
         }
         public IActionResult filterDialog(/*string execCode*/)
         {
             //ViewBag.ExecCode = execCode;
+            return View();
+        }
+
+        public IActionResult DVEditor()
+        {
+
             return View();
         }
 

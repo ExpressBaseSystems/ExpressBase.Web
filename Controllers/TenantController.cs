@@ -222,12 +222,11 @@ namespace ExpressBase.Web2.Controllers
 
         [HttpPost]
         public IActionResult code_editor()
-        {
-            ViewBag.TenantId = HttpContext.Request.Form["tacid"];
+        {           
             ViewBag.Obj_id = HttpContext.Request.Form["objid"];
 
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.TenantId, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
             List<string> filterDialogs = new List<string>();
 
@@ -239,8 +238,8 @@ namespace ExpressBase.Web2.Controllers
                 if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
                 {
                     var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
-                    ViewBag.ObjectName = dsobj.Name;
-                    ViewBag.ObjectDesc = dsobj.Description;
+                    ViewBag.ObjectName = element.Name;
+                    ViewBag.ObjectDesc = element.Description;
                     ViewBag.Code = dsobj.Sql;
                     ViewBag.Status = element.Status;
                     ViewBag.VersionNumber = element.VersionNumber;

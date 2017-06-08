@@ -26,15 +26,18 @@ namespace ExpressBase.Web.Filters
             var controller = context.Controller as Controller;
             var handler = new JwtSecurityTokenHandler();
             var token = context.HttpContext.Request.Cookies["Token"];
-            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
-            controller.ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
-            controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
-            controller.ViewBag.token = token;
-            controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
-            controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             controller.ViewBag.EbConfig = this.EbConfig;
-           
+            if (!string.IsNullOrEmpty(token))
+            {
+                var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+                controller.ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
+                controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
+                controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
+                controller.ViewBag.token = token;
+                controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
+                controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+               
+            }
 
             if (!string.IsNullOrEmpty(TAccountId))
             {

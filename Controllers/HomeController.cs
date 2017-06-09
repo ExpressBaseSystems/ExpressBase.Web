@@ -9,7 +9,6 @@ using System.IO;
 using ExpressBase.Common;
 using ExpressBase.Data;
 using ServiceStack;
-using ExpressBase.ServiceStack.Services;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Threading;

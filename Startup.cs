@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServiceStack;
 using Microsoft.AspNetCore.Routing.Constraints;
+using ExpressBase.Web.Filters;
 
 namespace ExpressBase.Web2
 {
@@ -41,6 +42,9 @@ namespace ExpressBase.Web2
 
             services.AddMvc();
 
+
+            services.AddSingleton<AreaRouter>();
+
             // Added - uses IOptions<T> for your settings.
             services.AddOptions();
 
@@ -49,7 +53,7 @@ namespace ExpressBase.Web2
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AreaRouter areaRouter)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -70,20 +74,31 @@ namespace ExpressBase.Web2
 
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
+    //        app.UseMvc(routes =>
+    //        {
+    //            // routes.MapRoute("login", "{*clientid}", defaults: new { controller = "TenantUser", action = "TenantUserLogin" });
+
+    //            routes.MapRoute(
+    //             name: "tenantuser",
+    //             template: "{clientid}",
+    //             defaults: new { controller = "TenantUser", action = "TenantUserLogin" }
+    //            );
+
+    //            routes.MapRoute(
+    //name: "default",
+    //template: "{controller=TenantExt}/{action=tenantsignup}");
+    //        });
+
+             app.UseMvc(routes =>
             {
-                // routes.MapRoute("login", "{*clientid}", defaults: new { controller = "TenantUser", action = "TenantUserLogin" });
-
+                routes.DefaultHandler = areaRouter;
+                routes.MapRoute("areaRoute", "{area:exists}/{controller=TenantUserExt}/{action=TenantUserLogin}");
                 routes.MapRoute(
-                 name: "tenantuser",
-                 template: "{clientid}",
-                 defaults: new { controller = "TenantUser", action = "TenantUserLogin" }
-                );
-
-                routes.MapRoute(
-    name: "default",
-    template: "{controller=TenantExt}/{action=tenantsignup}");
+                    name: "default",
+                    template: "{controller=TenantExt}/{action=TenantSignup}/{id?}");
             });
+
+
         }
     }
 }

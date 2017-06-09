@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.ServiceStack;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -1,28 +1,46 @@
 ﻿<div class="col-md-offset-1 col-md-11 ebWizStep">
-    <h3>Save datasource</h3>
+    <h3>Filter Dialog</h3>
     <div class="controls-group">
         @{
+            List<string> filtervariables = new List<string>();
             @using System.Text.RegularExpressions
-            MatchCollection mc = Regex.Matches(/*ViewBag.ExecCode*/" @nhbv b @jkb @b jkb", @"\@\w+");
+            MatchCollection mc = Regex.Matches(ViewBag.ExecCode, @"\@\w+");
             foreach (Match m in mc)
             {
-                <div class="align">
-                    <label>@m</label>
-                    <div class="dropdown">
-                        <div class="dropdown-toggle dropdownBtn " type="button" data-toggle="dropdown">
-                            Datatype
-                            <span class="caret"></span>
-                        </div>                                             
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">text</a></li>
-                                    <li><a href="#">integer</a></li>
-                                    <li><a href="#">datetime</a></li>
-                                    <li><a href="#">boolean</a></li>
-                                </ul>                       
-                    </div>
-                    <input type="text" name="filter" />
-                </div>
+                string filtervar = m.ToString().Substring(1, m.ToString().Length - 1);
+                if (filtervar == "search" || filtervar == "and_search" || filtervar == "search_and" || filtervar == "where_search" || filtervar == "limit" || filtervar == "offset" || filtervar == "orderby")
+                {
+
+                }
+                else
+                {
+                    if (!filtervariables.Contains(filtervar))
+                    {
+                        filtervariables.Add(filtervar);
+                    }
+                }
             }
+            foreach (string f in filtervariables)
+            {
+                <div class="col-md-10">
+                    <label class="align_singleLine col-md-3">@f</label>
+        <select class="dropdown align_singleLine col-md-1">
+            <option value="text">text</option>
+            <option value="integer">integer</option>
+            <option value="datetime">datetime</option>
+            <option value="boolean">boolean</option>
+        </select>
+        <input type="text" name=@f class="align_singleLine col-md-2" />
+    </div>
+            }
+
         }
     </div>
 </div>
+<style>
+    .align_singleLine {
+        display: inline-block;
+        margin-right: 10px;
+        align-content: center;
+    }
+</style>

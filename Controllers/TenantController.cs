@@ -247,7 +247,6 @@ namespace ExpressBase.Web2.Controllers
                     ViewBag.EditorMode = "text/x-sql";
                     ViewBag.Icon = "fa fa-database";
                     ViewBag.ObjType = (int)EbObjectType.DataSource;
-
                 }
 
                 if (element.EbObjectType == ExpressBase.Objects.EbObjectType.JavascriptFunctions)
@@ -413,9 +412,10 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.DVList = ObjList;
             return View();
         }
-        public IActionResult filterDialog(/*string execCode*/)
+        public IActionResult filterDialog()
         {
-            //ViewBag.ExecCode = execCode;
+            var req = this.HttpContext.Request.Form;
+            ViewBag.ExecCode = req["execcode"];
             return View();
         }
 

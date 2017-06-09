@@ -1,8 +1,11 @@
 ﻿<script>
     $(document).ready(function () {
-        $('#ds').on("click", function () {
-            var acid = $('#tacid').val();    
-            window.open('DSList?tacid=' + acid, '_blank');
+        $('#ds').on("click", function () {  
+            window.open('DSList', '_blank');
+        });
+
+        $('#dv').on("click", function () {
+            window.open('DVList', '_blank');
         });
     });
 </script>
@@ -40,7 +43,7 @@
             <a href="#"><i class="fa fa-pencil-square" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Sql Validators</a>
         </li>
         <li>
-            <a href="#"><i class="fa fa-table" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Tables</a>
+            <a href="#" id="dv"><i class="fa fa-table" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Data Visualizations</a>
         </li>
         <li>
             <a href="#"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Views</a>

@@ -40,7 +40,7 @@ namespace ExpressBase.Web2.Controllers
             EbObjectResponse fr = null;
             var EbConfig = ViewBag.EbConfig;
             IServiceClient client = EbConfig.GetServiceStackClient();
-            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
+            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.TUtoken });
             foreach(var element in fr.Data)
             if (element.EbObjectType==EbObjectType.DataSource)
                 {
@@ -56,7 +56,7 @@ namespace ExpressBase.Web2.Controllers
            
             var token = Request.Cookies["Token"];     
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img" ,Token=token});
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.TUId, restype = "img" ,Token=ViewBag.TUtoken });
             //if (string.IsNullOrEmpty(ViewBag.cid))
             //{
             //    foreach (int element in fr.dict.Keys)

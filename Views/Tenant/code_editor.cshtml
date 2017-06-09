@@ -21,32 +21,25 @@
     <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
     <script type="text/javascript">
-        @*$(document).ready(function () {
-            alert('exec');
-            $('.exec').on("click",function(){
-                var execCode= window.editor.getValue();
-                var Dswzd = new EbWizard("http://localhost:53431/Tenant/filterDialog(execCode)", "http://localhost:53431/Tenant/CommitEbDataSource", 400, 400, "Commit", "fa-database",'@ViewBag.TenantId');
-            
+        $(document).ready(function(){
+            $('#execute').on("click",function(){
+                alert(window.editor.getValue());
+                $('#execcode').val(window.editor.getValue());
             });
-        });*@
+        });
         $(document).keydown(function (e) {
             if (e.keyCode == 83 && e.ctrlKey) {
                 e.preventDefault();
                 $(".save").trigger("click");
             }
         });
-        @*function Save() {
-            $.post("http://localhost:53431/Tenant/SaveEbDataSource", {"tcid":@ViewBag.TenantId,"Id":@ViewBag.Obj_id,"Code": $('#code').val(),"Name":$('#obj_name').val(),"Description":$('#obj_desc').text(), "Token": getToken(), "isSave":"true","VersionNumber": @ViewBag.VersionNumber},function (result) {
-                });
-        }*@
+        function Save() {
+            $.post("http://localhost:53431/Tenant/SaveEbDataSource", {"Id":@ViewBag.Obj_id,"Code": window.editor.getValue(),"Name":$('#obj_name').val(),"Description":$('#obj_desc').val(), "Token": getToken(), "isSave":"true","VersionNumber": @ViewBag.VersionNumber},function (result) {
+            });
+        }
         function Commit() {
-            
-            alert('sd');
-            var objname= $('#obj_name').val();
-            var objdesc= $('#obj_desc').val();
-            alert('obj_desc :'+ objdesc);
             var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/CommitEbDataSource", 400, 400, "Commit", "fa-database",'@ViewBag.cid');
-            Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.cid', @ViewBag.Obj_id, objname, objdesc, window.editor.getValue(), @ViewBag.VersionNumber).DataSource;
+            Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.cid', @ViewBag.Obj_id, $('#obj_name').val(), $('#obj_desc').val(), window.editor.getValue(), @ViewBag.VersionNumber).DataSource;
         }
     </script>
 </head>
@@ -58,7 +51,13 @@
         <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-        <a href="#" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
+        
+        @using (Html.BeginForm("filterDialog", "Tenant", FormMethod.Post, new { target = "_blank" }))
+        {
+            @*<a href="#" type="submit" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>*@
+            <input type="submit" id="execute" class="btn btn-info" value="Execute" />
+            <input type="hidden" id="execcode" name="execcode"/>
+        }
         <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
         @ViewBag.Status

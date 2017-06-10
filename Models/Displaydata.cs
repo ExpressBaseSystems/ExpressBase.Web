@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Data;
-using ExpressBase.ServiceStack.Services;
 using Microsoft.AspNetCore.Http;
 using ServiceStack;
 using System;

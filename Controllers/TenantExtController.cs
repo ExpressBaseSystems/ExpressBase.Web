@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.ServiceStack;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,13 +32,18 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        public IActionResult home()
+        {
+            return View();
+        }
+
         [HttpGet]
         public IActionResult Signin()
         {
             ViewBag.EbConfig = this.EbConfig;
             ViewBag.cookie = Request.Cookies["UserName"];
             ViewBag.Userid = Request.Cookies["UId"];
-          
+                   
             if (!string.IsNullOrEmpty(ViewBag.cookie))
             {
                 var redisClient = EbConfig.GetRedisClient();

@@ -22,10 +22,29 @@
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
+
+            $('#saveFilter').on("click", function () {
+            alert('save');
+            $.post("http://localhost:53431/Tenant/CommitEbDataSource", {"Id":@ViewBag.Obj_id,
+                "Code": window.editor.getValue(),
+                "Name":$('#fdname').val(),
+                "Description":$('#fddesc').val(),
+                "Token": getToken(),
+                "isSave":"false",
+                "VersionNumber": @ViewBag.VersionNumber},
+                        function (result) {
+                            $('.alert').show()
+                        });
+
+                });
             $('#execute').on("click",function(){
-                alert(window.editor.getValue());
-                $('#execcode').val(window.editor.getValue());
+                $('#filterDialog').modal('show');
             });
+
+            @*$('#execute').on("click",function(){
+                var filterDialogWiz = new EbWizard("http://localhost:53431/Tenant/filterDialog", "http://localhost:53431/Tenant/CommitEbDataSource", 800, 635, "filterDialog", "fa-database", '@ViewBag.cid',window.editor.getValue());
+                filterDialogWiz.CustomWizFunc= (new CustomFilterDialogFuncs('@ViewBag.cid', @ViewBag.Obj_id, $('#obj_name').val(), $('#obj_desc').val(), window.editor.getValue(), @ViewBag.VersionNumber)).FilterD;
+            });*@
         });
         $(document).keydown(function (e) {
             if (e.keyCode == 83 && e.ctrlKey) {
@@ -34,10 +53,38 @@
             }
         });
         function Save() {
-            $.post("http://localhost:53431/Tenant/SaveEbDataSource", {"Id":@ViewBag.Obj_id,"Code": window.editor.getValue(),"Name":$('#obj_name').val(),"Description":$('#obj_desc').val(), "Token": getToken(), "isSave":"true","VersionNumber": @ViewBag.VersionNumber},function (result) {
-            });
+            if(@ViewBag.IsNew===true){
+                $(".commit").trigger("click");
+            }
+            else{
+                alert('old');
+                $.post("http://localhost:53431/Tenant/SaveEbDataSource",
+                    {"Id":@ViewBag.Obj_id,
+                        "Code": window.editor.getValue(),
+                        "Name":$('#obj_name').val(),
+                        "Description":$('#obj_desc').val(),
+                        "Token": getToken(),
+                        "isSave":"true",
+                        "VersionNumber": @ViewBag.VersionNumber},
+                        function (result) {
+                            $('.alert').show()
+                        });
+            };
         }
         function Commit() {
+            if(@ViewBag.Obj_id===0){
+                $.post("http://localhost:53431/Tenant/CommitEbDataSource",
+                       {"Id":@ViewBag.Obj_id,
+                           "Code": window.editor.getValue(),
+                           "Name":$('#obj_name').val(),
+                           "Description":$('#obj_desc').val(),
+                           "Token": getToken(),
+                           "isSave":"true",
+                           "VersionNumber": @ViewBag.VersionNumber},
+                           function (result) {
+                               $('.alert').show()
+                           });
+            }
             var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/CommitEbDataSource", 400, 400, "Commit", "fa-database",'@ViewBag.cid');
             Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.cid', @ViewBag.Obj_id, $('#obj_name').val(), $('#obj_desc').val(), window.editor.getValue(), @ViewBag.VersionNumber).DataSource;
         }
@@ -51,13 +98,7 @@
         <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-        
-        @using (Html.BeginForm("filterDialog", "Tenant", FormMethod.Post, new { target = "_blank" }))
-        {
-            @*<a href="#" type="submit" class="exec" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>*@
-            <input type="submit" id="execute" class="btn btn-info" value="Execute" />
-            <input type="hidden" id="execcode" name="execcode"/>
-        }
+        <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
         @ViewBag.Status
@@ -78,19 +119,23 @@
             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                 <span class="caret"></span>
             </button>
-            @{
-                @using ExpressBase.Objects.ServiceStack_Artifacts;
-                List<string> filterDialogs = new List<string>();
-                filterDialogs = ViewBag.FilterDialogs;
-                foreach (var filter in filterDialogs)
-                {
-                    <ul class="dropdown-menu">
-                        <li><a href="#"> @filter</a></li>
-                    </ul>
+            @*@{
+                    @using ExpressBase.Objects.ServiceStack_Artifacts;
+                    List<string> filterDialogs = new List<string>();
+                    filterDialogs = ViewBag.FilterDialogs;
+                    foreach (var filter in filterDialogs)
+                    {
+                        <ul class="dropdown-menu">
+                            <li><a href="#"> @filter</a></li>
+                        </ul>
 
-                }
-            }
+                    }
+                }*@
         </div>
+    </div>
+    <div class="alert alert-success alert-dismissable" style="display:none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Success!</strong> Indicates a successful or positive action.
     </div>
     <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
     <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
@@ -98,6 +143,72 @@
     @*<input type="hidden" id="obj_desc" value="@ViewBag.ObjectDesc" />*@
     <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
     <p>Hit Ctrl+Space to trigger autocomplete</p>
+
+    <div id="filterDialog" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Filter Dialog</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fd_top_content">
+                        <span class="align_singleLine">
+                            <label class="">Filter Dialog Name</label>
+                            <input type="text" id="fdname"  name="fdname" class="form-control inputBox" />
+                        </span>
+                        <span class="align_singleLine">
+                            <label class="">Description</label>
+                            <input type="text" id="fddesc" name="fddesc" class="form-control inputBox " />
+                        </span>
+                    </div>
+                    <div class="table-responsive table-bordered table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter Name</th>
+                                    <th>Parameter Type</th>
+                                    <th>Parameter Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{  List<string> filtervariables = new List<string>();
+                                    filtervariables = ViewBag.ExecCode;
+                                    foreach (string f in filtervariables)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <label class="align_singleLine">@f</label>
+                                            </td>
+                                            <td>
+                                                <select class="selectpicker show-tick align_singleLine" data-live-search="true">
+                                                    <option value="text" data-tokens="text">text</option>
+                                                    <option value="integer" data-tokens="integer">integer</option>
+                                                    <option value="datetime" data-tokens="datetime">datetime</option>
+                                                    <option value="boolean" data-tokens="boolean">boolean</option>
+                                                </select>
+                                            </td>
+                                            <td> <input type="text" name=@f class="align_singleLine form-control" /> </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @*</div>*@
+                </div>
+                <div class="modal-footer">
+                    <input type="button" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
     <script type="text/javascript">
         window.onload = function () {
             CodeMirror.commands.autocomplete = function (cm) {
@@ -128,5 +239,21 @@
     .CodeMirror {
         height: 500px;
         background-color: azure;
+    }
+
+    .table-responsive {
+        overflow-x: inherit;
+    }
+
+    .inputBox {
+        width: 216px;
+    }
+
+    .controls-group {
+        overflow-y: inherit;
+    }
+
+    .fd_top_content{
+        margin-bottom:10px;
     }
 </style>

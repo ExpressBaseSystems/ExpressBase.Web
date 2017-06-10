@@ -1,46 +1,39 @@
-﻿<div class="col-md-offset-1 col-md-11 ebWizStep">
-    <h3>Filter Dialog</h3>
-    <div class="controls-group">
-        @{
-            List<string> filtervariables = new List<string>();
-            @using System.Text.RegularExpressions
-            MatchCollection mc = Regex.Matches(ViewBag.ExecCode, @"\@\w+");
-            foreach (Match m in mc)
-            {
-                string filtervar = m.ToString().Substring(1, m.ToString().Length - 1);
-                if (filtervar == "search" || filtervar == "and_search" || filtervar == "search_and" || filtervar == "where_search" || filtervar == "limit" || filtervar == "offset" || filtervar == "orderby")
-                {
+﻿<head>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css " />@*Dona*@
+<script>
+    $(document).ready(function () {
+       
+    });
+</script>
+</head>
 
-                }
-                else
-                {
-                    if (!filtervariables.Contains(filtervar))
-                    {
-                        filtervariables.Add(filtervar);
-                    }
-                }
-            }
-            foreach (string f in filtervariables)
-            {
-                <div class="col-md-10">
-                    <label class="align_singleLine col-md-3">@f</label>
-        <select class="dropdown align_singleLine col-md-1">
-            <option value="text">text</option>
-            <option value="integer">integer</option>
-            <option value="datetime">datetime</option>
-            <option value="boolean">boolean</option>
-        </select>
-        <input type="text" name=@f class="align_singleLine col-md-2" />
-    </div>
-            }
+@{
+    List<string> filtervariables = new List<string>();
+    filtervariables = ViewBag.ExecCode;
+}
+<body>
+  
+    @*</div>*@
+</body>
 
-        }
-    </div>
-</div>
+
+
 <style>
     .align_singleLine {
         display: inline-block;
         margin-right: 10px;
         align-content: center;
+    }
+
+    /*.small_inputBox {
+        width: 35%;
+    }*/
+    .table-responsive {
+        overflow-x: inherit;
+    }
+
+    .controls-group {
+        overflow-y: inherit;
     }
 </style>

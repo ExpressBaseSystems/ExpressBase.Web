@@ -74,29 +74,29 @@ namespace ExpressBase.Web2
 
             app.UseStaticFiles();
 
-    //        app.UseMvc(routes =>
-    //        {
-    //            // routes.MapRoute("login", "{*clientid}", defaults: new { controller = "TenantUser", action = "TenantUserLogin" });
-
-    //            routes.MapRoute(
-    //             name: "tenantuser",
-    //             template: "{clientid}",
-    //             defaults: new { controller = "TenantUser", action = "TenantUserLogin" }
-    //            );
-
-    //            routes.MapRoute(
-    //name: "default",
-    //template: "{controller=TenantExt}/{action=tenantsignup}");
-    //        });
-
-             app.UseMvc(routes =>
+            app.UseMvc(routes =>
             {
-                routes.DefaultHandler = areaRouter;
-                routes.MapRoute("areaRoute", "{area:exists}/{controller=TenantUserExt}/{action=TenantUserLogin}");
+                // routes.MapRoute("login", "{*clientid}", defaults: new { controller = "TenantUser", action = "TenantUserLogin" });
+
                 routes.MapRoute(
-                    name: "default",
-                    template: "{controller=TenantExt}/{action=TenantSignup}/{id?}");
+                 name: "tenantuser",
+                 template: "{clientid}",
+                 defaults: new { controller = "TenantUser", action = "TenantUserLogin" }
+                );
+
+                routes.MapRoute(
+    name: "default",
+    template: "{controller=TenantExt}/{action=home}");
             });
+
+            // app.UseMvc(routes =>
+            //{
+            //    routes.DefaultHandler = areaRouter;
+            //    routes.MapRoute("areaRoute", "{area:exists}/{controller=TenantUserExt}/{action=TenantUserLogin}");
+            //    routes.MapRoute(
+            //        name: "default",
+            //        template: "{controller=TenantExt}/{action=TenantSignup}/{id?}");
+            //});
 
 
         }

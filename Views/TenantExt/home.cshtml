@@ -1,0 +1,165 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<!--Modal box-->
+<div class="modal fade" id="login" role="dialog">
+    <div class="modal-dialog modal-sm">
+
+        <!-- Modal content no 1-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title text-center form-title">Login</h4>
+            </div>
+            <div class="modal-body padtrbl">
+                <div class="login-box-body">
+                    <div class="login-box-msg"><img id="profile-img" class="img-cir" src="~/images/proimg.jpg" />
+                    <p id="profile-name" class="profile-name-card"></p></div>
+                    <div class="form-group">
+                        <form class="form-signin">
+                            <span id="reauth-email" class="reauth-email"></span>                     
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                                    <input type="text" id="uname" name="uname"  class="form-control" placeholder="Username/Email" required autofocus><br />
+                                </div><br />
+                           
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="checkbox icheck">
+                                        <label>
+                                            <input type="checkbox" id="loginrem"> Remember Me
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <button type="button" class="btn btn-block btn-flat" style="background-color:#3b5998;color:white;">Sign In</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div> 
+<div class="carousel fade-carousel slide" data-ride="carousel" data-interval="2000" id="bs-carousel">
+    <!-- Overlay -->
+    <div class="overlay"></div>
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#bs-carousel" data-slide-to="0" class="active"></li>
+        <li data-target="#bs-carousel" data-slide-to="1"></li>
+        <li data-target="#bs-carousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+        <div class="item slides active">
+            <div class="slide-1"></div>
+        </div>
+        <div class="item slides">
+            <div class="slide-2"></div>
+            
+        </div>
+        <div class="item slides">
+            <div class="slide-3"></div>
+
+        </div>
+    </div>
+</div>
+ <!--work-shop-->
+<section id="work-shop" class="section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="header-section text-center">
+                <h2>Express Build Enterprise Applications</h2>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="service-box">
+                    <div class="icon-box">
+                        <i class="fa fa-cloud"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">Apps on cloud</h4>
+                         <h6 class="content">Forget about the infrastructure, leave it to us. Focus on your applications and business.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="service-box">
+                    <div class="icon-box">
+                        <i class="fa fa-mobile"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">Develop Once, Deploy Anywhere</h4>
+                        <h6 class="content">Use our state-of-the-art developer Studio to develop business apps that can run anywhere.</h6>
+</div>
+                </div>
+            </div>
+            
+                <div class="service-box">
+                    <div class="icon-box">
+                        <i class="fa fa-lock"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">Secure</h4>
+                        <h6 class="content">Role Based Access Control (RBAC) standard implemented which will help you authorize your team members on varying Roles & permissions. All connections via https.</h6>
+                    </div>
+                </div>
+            </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="service-box">
+                <div class="icon-box">
+                    <i class="fa fa-database"></i>
+                </div>
+                <div class="icon-text">
+                    <h4 class="ser-text">Own your data</h4>
+                    <h6 class="content">Bring in your database (cloud hosted or in-premise) and hook it into our cloud infrastructure via a secure link.</h6>
+                </div>
+            </div>
+        </div>
+                       <div class="col-md-4 col-sm-6">
+                            <div class="service-box">
+                                <div class="icon-box">
+                                    <i class="fa fa-code"></i>
+                                </div>
+                                <div class="icon-text">
+                                    <h4 class="ser-text">Low Code</h4>
+                                    <h6 class="content">Put your existing skills to use. Code in JavaScript & SQL.</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="service-box">
+                                <div class="icon-box">
+                                    <i class="fa fa-clock-o"></i>
+                                </div>
+                                <div class="icon-text">
+                                    <h4 class="ser-text">Faster Time to Market</h4>
+                                    <h6 class="content">Express build enterprise applications. Manage change efficiently.</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+</section>
+            <!--/ work-shop-->
+            <section id="cta-2">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h2 class="text-center">Get Started for FREE</h2>
+                            <p class="cta-2-txt">fdsgdfhg sdfsfs fs estes sgtse</p>
+                            <div class="cta-2-form text-center">
+                                <form action="#" method="post" id="workshop-newsletter-form">
+                                    <input name="" placeholder="Enter Your Email Address" type="email">
+                                    <input class="cta-2-form-submit-btn" value="Subscribe" type="submit">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>

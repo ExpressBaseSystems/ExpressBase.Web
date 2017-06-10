@@ -999,79 +999,16 @@ var EbDataTable = function (settings) {
                      "   <h4 class='modal-title'>" + this.ebSettings.dvName + ": SettingsTable</h4>" +
                     "</div>" +
                     "<div class='modal-body'>" +
-                        "<ul class='nav nav-tabs'>" +
-                          "  <li class='nav-item'><a class='nav-link' href='#1a' data-toggle='tab'>General</a></li>" +
-                         "   <li class='nav-item'><a class='nav-link' href='#2a' data-toggle='tab'>Columns</a></li>" +
-                         //"  <li>" +
+                        
 
-                        // "   </li>" +
-                        "</ul>" +
-                        "<div class='tab-content'>" +
-                            "<div id='1a' class='tab-pane active'>" +
-                                "<div class='table-responsive'>" +
-                                    "<table class='table table-bordered table-hover'>" +
-                                        "<tbody>" +
-                                            "<tr>" +
-                                              "  <td>Hide Serial</td>" +
-                                             "   <td><input id='serial_check' type='checkbox' /></td>" +
-                                            "</tr>" +
-                                            "<tr>" +
-                                              "  <td>Hide Chechbox</td>" +
-                                             "   <td><input id='select_check' type='checkbox' /></td>" +
-                                            "</tr>" +
-                                            "<tr>" +
-                                              "  <td>Page Length</td>" +
-                                             "   <td><input id='pageLength_text' type='numeric' value='100' /></td>" +
-                                            "</tr>" +
-                                            "<tr>" +
-                                            "    <td>Table Height</td>" +
-                                           "     <td><input id='scrollY_text' type='numeric' value='300' /></td>" +
-                                          "  </tr>" +
-                                         "   <tr>" +
-                                        "        <td>Row Grouping</td>" +
-                                       "         <td><input id='rowGrouping_text' type='numeric' /></td>" +
-                                      "      </tr>" +
-                                     "       <tr>" +
-                                    "            <td>Left Fixed Columns</td>" +
-                                   "             <td><input id='leftFixedColumns_text' type='numeric' value='0' /></td>" +
-                                  "          </tr>" +
-                                 "           <tr>" +
-                                "                <td>Right Fixed Columns</td>" +
-                               "                 <td><input id='rightFixedColumns_text' type='numeric' value='0' /></td>" +
-                              "              </tr>" +
-                             "               <tr>" +
-                            "                    <td>Data Visualization Name</td>" +
-                           "                     <td><input id='dvName_txt' type='text' /></td>" +
-                          "                  </tr>" +
-                         "               </tbody>" +
-                        "            </table>" +
-                       "         </div>" +
-                      "      </div>" +
-                     "       <div id='2a' class='tab-pane '>" +
-                                "<div class='dropdown' id='columnDropdown'>" +
-                                      "   <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Add Column" +
-                                        "    <span class='caret'></span></button>" +
-                                        "     <ul class='dropdown-menu'>" +
-                                    "         </ul>" +
-                          "      </div>" +
-                    "            <table class='table table-striped table-bordered' id='Table_Settings'></table>" +
-                    "<div id='propCont' class='prop-grid-cont'>" +
-     "                                        <div id='propHead'></div><div id='propGrid'></div>" +
-                                             "<div>" +
-                                                 "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
-                                                 "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
-                                             "</div>" +
-     "</div>" +
-                   "         </div>" +
-
-                 "       </div>" +
                 "    </div>" +
                   "  <div class='modal-footer'>" +
-                   "     <button id='Save_btn' class='btn btn-primary'>Save Changes</button>" +
+               //    "     <button id='Save_btn' class='btn btn-primary'>Save Changes</button>" +
                 "    </div>" +
              "   </div>" +
            " </div>" +
         "</div>");
+        $.get("http://localhost:53431/Tenant/DVEditor",  function (datah) { console.log(datah); $("#settingsmodal .modal-body").append($.parseHTML(datah)) });
         $("#Save_btn").click(this.saveSettings.bind(this));
         $("#settingsmodal").on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
         $("#settingsmodal").on('hidden.bs.modal', this.hideModalFunc.bind(this));
@@ -1080,6 +1017,7 @@ var EbDataTable = function (settings) {
     };
 
     this.hideModalFunc = function (e) {
+        alert(this.isSettingsSaved);
         $('#Table_Settings').DataTable().destroy();
         //$(this).data('bs.modal', null);
         //$(this.OuterModalDiv).remove();
@@ -1176,41 +1114,41 @@ var EbDataTable = function (settings) {
 
 
 
-    this.callPost4SettingsTable = function () {
-        //alert(JSON.stringify(this.ebSettings.columns));
-        var data2Obj = this.ebSettings; //JSON.parse(data2);
-        //__tvPrefUser = data2Obj;
-        $("#serial_check").prop("checked", data2Obj.hideSerial);
-        $("#select_check").prop("checked", data2Obj.hideCheckbox);
-        $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
-        $("#scrollY_text").val(data2Obj.scrollY);
-        $("#rowGrouping_text").val(data2Obj.rowGrouping);
-        $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
-        $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
-        $("#dvName_txt").val(data2Obj.dvName);
-        this.getcolumn4dropdown();
-        this.settings_tbl = $('#Table_Settings').DataTable(
-        {
-            columns: this.column4SettingsTbl(),
-            data: this.getData4SettingsTbl(),
-            paging: false,
-            ordering: false,
-            searching: false,
-            info: false,
-            scrollY: '300',
-            select: true,
-            //rowReorder: { selector: 'tr' },
-            initComplete: this.initComplete4Settingstbl.bind(this),
-        });
-        CreatePropGrid(this.settings_tbl.row(0).data(), data2Obj.columnsext);
-        $('#Table_Settings tbody').on('click', 'tr', this.showPropertyGrid.bind(this));
-        $(".modal-content").on("click", function (e) {
-            if ($(e.target).closest(".font-select").length === 0) {
-                $(".font-select").removeClass('font-select-active');
-                $(".fs-drop").hide();
-            }
-        });
-    };
+    //this.callPost4SettingsTable = function () {
+    //    //alert(JSON.stringify(this.ebSettings.columns));
+    //    var data2Obj = this.ebSettings; //JSON.parse(data2);
+    //    //__tvPrefUser = data2Obj;
+    //    $("#serial_check").prop("checked", data2Obj.hideSerial);
+    //    $("#select_check").prop("checked", data2Obj.hideCheckbox);
+    //    $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
+    //    $("#scrollY_text").val(data2Obj.scrollY);
+    //    $("#rowGrouping_text").val(data2Obj.rowGrouping);
+    //    $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
+    //    $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
+    //    $("#dvName_txt").val(data2Obj.dvName);
+    //    this.getcolumn4dropdown();
+    //    this.settings_tbl = $('#Table_Settings').DataTable(
+    //    {
+    //        columns: this.column4SettingsTbl(),
+    //        data: this.getData4SettingsTbl(),
+    //        paging: false,
+    //        ordering: false,
+    //        searching: false,
+    //        info: false,
+    //        scrollY: '300',
+    //        select: true,
+    //        //rowReorder: { selector: 'tr' },
+    //        initComplete: this.initComplete4Settingstbl.bind(this),
+    //    });
+    //   // CreatePropGrid(this.settings_tbl.row(0).data(), data2Obj.columnsext);
+    //   // $('#Table_Settings tbody').on('click', 'tr', this.showPropertyGrid.bind(this));
+    //    $(".modal-content").on("click", function (e) {
+    //        if ($(e.target).closest(".font-select").length === 0) {
+    //            $(".font-select").removeClass('font-select-active');
+    //            $(".fs-drop").hide();
+    //        }
+    //    });
+    //};
 
     this.getcolumn4dropdown = function () {
         if (this.ebSettings.columnsdel !== undefined && this.ebSettings.columnsdel !== null) {

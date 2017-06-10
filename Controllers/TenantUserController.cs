@@ -5,15 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using ServiceStack;
-using ExpressBase.ServiceStack;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects;
 using ExpressBase.Web.Filters;
 using ExpressBase.Data;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -181,33 +180,34 @@ namespace ExpressBase.Web2.Controllers
         {
             var redis = this.EbConfig.GetRedisClient();
             var sscli = this.EbConfig.GetServiceStackClient();
-            var token = Request.Cookies["Token"];
+            var token = Request.Cookies[string.Format("T_{0}",ViewBag.cid)];
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
 
-            var tvpref = redis.Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dsid, ViewBag.UId));
-            if (tvpref == null)
-            {
-                var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
-                if (columnColletion == null)
-                {
-                    var paramsList = new List<Dictionary<string, string>>();
-                    Newtonsoft.Json.Linq.JArray ja = JsonConvert.DeserializeObject<dynamic>(parameters);
-                    foreach (Newtonsoft.Json.Linq.JToken jt in ja)
-                    {
-                        var _dict = new Dictionary<string, string>();
-                        foreach (Newtonsoft.Json.Linq.JProperty jp in jt.Children())
-                            _dict.Add(jp.Name, jp.Value.ToString());
-                        paramsList.Add(_dict);
-                    }
-                    var resp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Params = paramsList, Token = token, TenantAccountId = "eb_roby_dev" });
-                    columnColletion = resp.Columns;
-                }
+            var tvpref = redis.Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dsid, ViewBag.TUId));
 
-                tvpref = this.GetColumn4DataTable(columnColletion);
-                redis.Set(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1), tvpref);
-            }
+            //if (tvpref == null)
+            //{
+            //    var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
+            //    if (columnColletion == null)
+            //    {
+            //        var paramsList = new List<Dictionary<string, string>>();
+            //        Newtonsoft.Json.Linq.JArray ja = JsonConvert.DeserializeObject<dynamic>(parameters);
+            //        foreach (Newtonsoft.Json.Linq.JToken jt in ja)
+            //        {
+            //            var _dict = new Dictionary<string, string>();
+            //            foreach (Newtonsoft.Json.Linq.JProperty jp in jt.Children())
+            //                _dict.Add(jp.Name, jp.Value.ToString());
+            //            paramsList.Add(_dict);
+            //        }
+            //        var resp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Params = paramsList, Token = token, TenantAccountId = "eb_roby_dev" });
+            //        columnColletion = resp.Columns;
+            //    }
+
+            //    tvpref = this.GetColumn4DataTable(columnColletion);
+            //    redis.Set(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1), tvpref);
+            //}
 
             return tvpref;
         }
@@ -253,6 +253,8 @@ namespace ExpressBase.Web2.Controllers
             colext = colext.Substring(0, colext.Length - 1) + "]";
             return colDef + colext + "}";
         }
+
+       
     }
 }
         

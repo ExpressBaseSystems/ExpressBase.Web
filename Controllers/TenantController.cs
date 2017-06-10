@@ -13,6 +13,7 @@ using ExpressBase.Common;
 using ExpressBase.Objects;
 using System.Net;
 using ServiceStack.Text;
+using ExpressBase.Data;
 using System.Text.RegularExpressions;
 
 
@@ -346,6 +347,7 @@ namespace ExpressBase.Web2.Controllers
             using (client.Post<HttpWebResponse>(ds)) { }
             return Json("Success");
         }
+
         public JsonResult SaveEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
@@ -369,6 +371,7 @@ namespace ExpressBase.Web2.Controllers
             using (client.Post<HttpWebResponse>(ds)) { }
             return Json("Success");
         }
+
         public JsonResult GetEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
@@ -387,6 +390,7 @@ namespace ExpressBase.Web2.Controllers
             }
             return Json(ObjList);
         }
+
         public JsonResult GetByteaEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
@@ -446,10 +450,12 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
+
         public IActionResult ds_save()
         {
             return View();
         }
+
         public IActionResult DSList()
         {
 
@@ -480,6 +486,7 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
+
         public IActionResult DVList()
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient();
@@ -490,7 +497,7 @@ namespace ExpressBase.Web2.Controllers
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
             {
-                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.Table)
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataVisualization)
                 {
                     ObjList[element.Id] = element;
                 }
@@ -500,9 +507,115 @@ namespace ExpressBase.Web2.Controllers
         }
         public IActionResult DVEditor()
         {
-
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            // ViewBag.TenantId = HttpContext.Request.Query["tacid"];
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.TUtoken });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var rlist = resultlist.Data;
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+                {
+                    ObjList[element.Id] = element;
+                }
+            }
+            ViewBag.DVList = ObjList;
             return View();
         }
+
+        public string GetColumns(int dsid)
+        {
+            var redis = this.EbConfig.GetRedisClient();
+            var sscli = this.EbConfig.GetServiceStackClient();
+            var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
+
+            //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
+            //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
+            
+            var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
+            var tvpref = this.GetColumn4DataTable(columnColletion);
+            return tvpref;
+        }
+
+        private string GetColumn4DataTable(ColumnColletion __columnCollection)
+        {
+            string colDef = string.Empty;
+            colDef = "{\"dvName\": \"<Untitled>\",\"hideSerial\": false, \"hideCheckbox\": false, \"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
+            colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\"},";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\"},";
+            foreach (EbDataColumn column in __columnCollection)
+            {
+                colDef += "{";
+                colDef += "\"data\": " + __columnCollection[column.ColumnName].ColumnIndex.ToString();
+                colDef += string.Format(",\"title\": \"{0}<span hidden>{0}</span>\"", column.ColumnName);
+                var vis = (column.ColumnName == "id") ? false.ToString().ToLower() : true.ToString().ToLower();
+                colDef += ",\"visible\": " + vis;
+                colDef += ",\"width\": " + 100;
+                colDef += ",\"name\": \"" + column.ColumnName + "\"";
+                colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
+                //var cls = (column.Type.ToString() == "System.Boolean") ? "dt-center tdheight" : "tdheight";
+                colDef += ",\"className\": \"tdheight\"";
+                colDef += "},";
+            }
+            colDef = colDef.Substring(0, colDef.Length - 1) + "],";
+            string colext = "\"columnsext\":[";
+            colext += "{\"name\":\"serial\"},";
+            colext += "{\"name\":\"checkbox\"},";
+            foreach (EbDataColumn column in __columnCollection)
+            {
+                colext += "{";
+                if (column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"AggInfo\":true,\"DecimalPlace\":2,\"RenderAs\":\"Default\"";
+                else if (column.Type.ToString() == "System.Boolean")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"IsEditable\":false,\"RenderAs\":\"Default\"";
+                else if (column.Type.ToString() == "System.DateTime")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"Format\":\"Date\"";
+                else if (column.Type.ToString() == "System.String")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"RenderAs\":\"Default\"";
+                colext += "},";
+            }
+            colext = colext.Substring(0, colext.Length - 1) + "]";
+            return colDef + colext + "}";
+        }
+
+        public JsonResult SaveSettings(int tvid, string json)
+        {
+           
+            var req = this.HttpContext.Request.Form;
+            Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var ds = new EbObjectWrapper();
+            //if (string.IsNullOrEmpty(_dict["id"]))
+            //{
+            //    ds.Id = 0;
+            //    ds.ChangeLog = "";
+            //}
+            //else
+            //{
+            //    ds.Id = Convert.ToInt32(_dict["id"]);
+            //    ds.ChangeLog = _dict["changeLog"];
+            //}
+            ds.Id = 0;
+            ds.Token = ViewBag.token;
+            ds.TenantAccountId = ViewBag.cid;
+            ds.EbObjectType = Objects.EbObjectType.DataVisualization;
+            ds.Name = _dict["dvName"].ToString();
+            ds.Description = "abcd";
+            ds.Status = Objects.ObjectLifeCycleStatus.Live;
+            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataVisualization
+            {
+                Name = _dict["dvName"].ToString(),
+                settingsJson = _dict.ToString(),
+                EbObjectType = EbObjectType.DataVisualization
+            });
+
+            using (client.Post<HttpWebResponse>(ds)) { }
+            this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, tvid), json);
+            return Json("Success");
+        }
+
 
     }
 

@@ -23,6 +23,10 @@
     <link rel="stylesheet" type="text/css" href="~/css/fontselect.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/ValYouW/jqPropertyGrid/9218bbd5df05bf7efe58591f434ea27ece11a045/jqPropertyGrid.css">@*jith*@
     <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
+    
+    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/imagehover.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" />
     @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/cr-1.3.3/fc-3.2.2/fh-3.1.2/kt-2.2.1/r-2.1.1/rg-1.0.0/rr-1.2.0/sc-1.4.2/se-1.2.2/datatables.min.css" />*@
     @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-colvis-1.3.1/b-flash-1.3.1/b-html5-1.3.1/b-print-1.3.1/cr-1.3.3/fc-3.2.2/fh-3.1.2/kt-2.2.1/r-2.1.1/rg-1.0.0/rr-1.2.0/sc-1.4.2/se-1.2.2/datatables.min.css" />*@
     @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/af-2.1.3/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/cr-1.3.2/fc-3.2.2/fh-3.1.2/kt-2.2.0/r-2.1.1/rr-1.2.0/sc-1.4.2/se-1.2.0/datatables.min.css"/>*@
@@ -78,157 +82,7 @@
     <script type="text/javascript" src="~/js/thirdpartysignup.js"></script>
     <script type="text/javascript" src="~/js/Infra.js"></script>
     <script type="text/javascript" src="~/js/eb_objlist_tbl.js"></script>
-
-    <style>
-        #wrapper {
-            padding-left: 0;
-            -webkit-transition: all 0.5s ease;
-            -moz-transition: all 0.5s ease;
-            -o-transition: all 0.5s ease;
-            transition: all 0.5s ease;
-        }
-
-            #wrapper.toggled {
-                padding-left: 250px;
-            }
-
-        #sidebar-wrapper {
-            position: fixed;
-            left: 250px;
-            z-index: 1000;
-            overflow-y: auto;
-            margin-left: -250px;
-            width: 0;
-            height: 100%;
-            background: #6c6d72;
-            -webkit-transition: all 0.5s ease;
-            -moz-transition: all 0.5s ease;
-            -o-transition: all 0.5s ease;
-            transition: all 0.5s ease;
-        }
-
-        #wrapper.toggled #sidebar-wrapper {
-            width: 250px;
-        }
-
-        #page-content-wrapper {
-            padding: 15px;
-            width: 100%;
-        }
-
-        #wrapper.toggled #page-content-wrapper {
-            position: absolute;
-            margin-right: -250px;
-        }
-
-/* Sidebar Styles */
-
-.sidebar-nav {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-}
-
-.sidebar-nav li {
-    position: relative;
-    line-height: 20px;
-    display: inline-block;
-    width: 100%;
-}
-
-.sidebar-nav li:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    height: 100%;
-    width: 3px;
-    background-color: #1c1c1c;
-    -webkit-transition: width .2s ease-in;
-      -moz-transition:  width .2s ease-in;
-       -ms-transition:  width .2s ease-in;
-            transition: width .2s ease-in;
-
-}
-
-.sidebar-nav li:hover:before,
-.sidebar-nav li.open:hover:before {
-    background-color: #35acdf;
-    width: 100%;
-    -webkit-transition: width .2s ease-in;
-      -moz-transition:  width .2s ease-in;
-       -ms-transition:  width .2s ease-in;
-            transition: width .2s ease-in;
-
-}
-
-.sidebar-nav li a {
-    display: block;
-    color: #ddd;
-    text-decoration: none;
-    padding: 10px 15px 10px 30px;
-}
-
-.sidebar-nav li a:hover,
-.sidebar-nav li a:active,
-.sidebar-nav li a:focus,
-.sidebar-nav li.open a:hover,
-.sidebar-nav li.open a:active,
-.sidebar-nav li.open a:focus{
-    color: #fff;
-    text-decoration: none;
-    background-color: transparent;
-}
-
-.sidebar-nav > .sidebar-brand {
-    height: 55px;
-    font-size: 15px;
-    line-height: 44px;
-}
-.sidebar-nav .dropdown-menu {
-    position: relative;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-    border: none;
-    background-color: #222;
-    box-shadow: none;
-}
-// temporary
-.sidebar-nav li a:hover, .sidebar-nav li a:active, .sidebar-nav li a:focus, .sidebar-nav li.open a:hover, .sidebar-nav li.open a:active, .sidebar-nav li.open a:focus {
-    color: #fff;
-    text-decoration: none;
-    background-color: transparent;
-}
-
-
-            #wrapper.toggled {
-                padding-left: 0;
-            }
-
-            #sidebar-wrapper {
-                width: 250px;
-            }
-
-            #wrapper.toggled #sidebar-wrapper {
-                width: 0;
-            }
-
-            #page-content-wrapper {
-                padding: 20px;
-            }
-
-            #wrapper.toggled #page-content-wrapper {
-                position: relative;
-                margin-right: 0;
-            }
-    </style>
+    <script type="text/javascript" src="~/js/DVSettings.js"></script>
     <script>
         $(document).ready(function () {
 
@@ -241,72 +95,77 @@
     </script>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top" style="height:10px" role="navigation">
+    <div class="container-fluid bg ">
 
-        @{if (string.IsNullOrEmpty(ViewBag.cid))
-            {
-                Html.RenderPartial("_PageHeader");
-            }
-            else
-            {
-                Html.RenderPartial("_PageheaderTUser");
+        @{
+            Html.RenderPartial("PageHeaderAmal");
+            //if (string.IsNullOrEmpty(ViewBag.cid))
+            //{
+            //    Html.RenderPartial("_PageHeader");
+            //}
+            //else
+            //{
+            //    Html.RenderPartial("_PageheaderTUser");
 
-            }
+            //}
         }
-       
-        </nav>
-    <div id="wrapper" class="toggled">
-        <div class="container-fluid"> 
-            @if (ViewBag.Fname != null || ViewBag.TUFname !=null)
-            {
-                <div id="sidebar-wrapper">
-                    @if (string.IsNullOrEmpty(ViewBag.cid) && ViewBag.TUFname == null)
-                    {
 
-                        
+        </nav>
+        <div id="wrapper" class="toggled">
+            <div class="container-fluid">
+                @if (ViewBag.Fname != null || ViewBag.TUFname != null)
+            {
+                    <div id="sidebar-wrapper">
+                        @if (string.IsNullOrEmpty(ViewBag.cid) && ViewBag.TUFname == null)
+                        {
+
+
                             Html.RenderPartial("_SidebarMenu");
 
-                    }
-                    else
-                    {
-                    if(@Context.Request.Path== "/Tenant/objects")
-                    {
-                    Html.RenderPartial("_SideBarObjects");
-                    }
-                    else
-                    {
-                        Html.RenderPartial("_SidebarmenuTUser");
-                    }
-                    }
-                    @*</div>*@
-                </div>
-            }
-            <div id="page-content-wrapper" style="margin-top: 40px;">
-                
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-12" style="height: 0px;" >
-                            @RenderBody()
-                            @RenderSection("EbHead", false)
+                        }
+                        else
+                        {
+                            if (@Context.Request.Path == "/Tenant/objects")
+                            {
+                                Html.RenderPartial("_SideBarObjects");
+                            }
+                            else
+                            {
+                                Html.RenderPartial("_SidebarmenuTUser");
+                            }
+                        }
+                        @*</div>*@
+                    </div>
+                }
+                <div id="page-content-wrapper" style="margin-top: 40px;">
+
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12" style="height: 0px;">
+                                @RenderBody()
+                                @RenderSection("EbHead", false)
+                            </div>
                         </div>
                     </div>
                 </div>
+
+
+                @*<div id="page-content-wrapper">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-lg-12 col-xs-12">
+                                    @RenderBody()
+                                    @RenderSection("EbHead", false)
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>*@
             </div>
-
-
-            @*<div id="page-content-wrapper">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-12 col-xs-12">
-                            @RenderBody()
-                            @RenderSection("EbHead", false)
-                        </div>
-                    </div>
-                   
-                </div>
-            </div>*@
         </div>
-    </div>
-
+</div>
 </body>
+
+
+
 </html>

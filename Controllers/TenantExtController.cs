@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.ServiceStack;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +28,11 @@ namespace ExpressBase.Web2.Controllers
 
         // GET: /<controller>/
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult home()
         {
             return View();
         }

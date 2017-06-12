@@ -46,7 +46,8 @@
     <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
     <script type="text/javascript" src="~/js/jquery.fontselect.min.js"></script>
     <script type="text/javascript" src="~/js/jquery.cookie.js"></script>
-
+    <script type="text/javascript" src="~/js/jquery.easing.min.js"></script>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
     @* BOOTSTRAP JS *@
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" src="~/js/bootstrap-checkbox.js"></script>
@@ -95,7 +96,7 @@
     </script>
 </head>
 <body>
-    <div class="container-fluid bg ">
+    <div class="container-fluid">
 
         @{if (ViewBag.cid == "expressbase" || string.IsNullOrEmpty(ViewBag.cid))
             {

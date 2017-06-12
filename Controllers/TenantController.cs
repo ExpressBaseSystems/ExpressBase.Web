@@ -221,7 +221,7 @@ namespace ExpressBase.Web2.Controllers
                     filterDialogs.Add(element.Name);
                 }
             }
-            ViewBag.FilterDialogs = filterDialogs;                      
+            ViewBag.FilterDialogs = filterDialogs;
             ViewBag.EditorHint = "CodeMirror.hint.sql";
             ViewBag.EditorMode = "text/x-sql";
             ViewBag.Icon = "fa fa-database";
@@ -427,6 +427,7 @@ namespace ExpressBase.Web2.Controllers
             using (client.Post<HttpWebResponse>(ds)) { }
             return Json("Success");
         }
+
         public IActionResult objects()
         {
             return View();
@@ -482,6 +483,8 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.DVList = ObjList;
             return View();
         }
+
+        [HttpGet]
         public IActionResult DVEditor()
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient();
@@ -497,7 +500,30 @@ namespace ExpressBase.Web2.Controllers
                     ObjList[element.Id] = element;
                 }
             }
-            ViewBag.DVList = ObjList;
+            ViewBag.DSList = ObjList;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DVEditor(int i)
+        {
+            ViewBag.Obj_id = HttpContext.Request.Form["objid"];
+            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var rlist = resultlist.Data;
+            foreach (var element in rlist)
+            {
+                //ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                //List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                //ViewBag.LifeCycle = lifeCycle;
+                //ViewBag.IsNew = "false";
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataVisualization)
+                {
+                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataVisualization>(element.Bytea);
+                    ViewBag.ObjectName = element.Name;
+                    
+                }
+            }
             return View();
         }
 
@@ -509,7 +535,7 @@ namespace ExpressBase.Web2.Controllers
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
-            
+
             var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             var tvpref = this.GetColumn4DataTable(columnColletion);
             return tvpref;
@@ -559,21 +585,11 @@ namespace ExpressBase.Web2.Controllers
 
         public JsonResult SaveSettings(int tvid, string json)
         {
-           
+
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var ds = new EbObjectWrapper();
-            //if (string.IsNullOrEmpty(_dict["id"]))
-            //{
-            //    ds.Id = 0;
-            //    ds.ChangeLog = "";
-            //}
-            //else
-            //{
-            //    ds.Id = Convert.ToInt32(_dict["id"]);
-            //    ds.ChangeLog = _dict["changeLog"];
-            //}
             ds.Id = 0;
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
@@ -585,6 +601,7 @@ namespace ExpressBase.Web2.Controllers
             {
                 Name = _dict["dvName"].ToString(),
                 settingsJson = _dict.ToString(),
+                dsid = tvid,
                 EbObjectType = EbObjectType.DataVisualization
             });
 
@@ -594,19 +611,19 @@ namespace ExpressBase.Web2.Controllers
         }
 
 
-    }
 
-    public class ObjectCaller
-    {
-        public int obj_id { get; set; }
-        public int TenantId { get; set; }
-
-        public ObjectCaller(int id, int cid)
+        public class ObjectCaller
         {
-            this.obj_id = id;
-            this.TenantId = cid;
+            public int obj_id { get; set; }
+            public int TenantId { get; set; }
+
+            public ObjectCaller(int id, int cid)
+            {
+                this.obj_id = id;
+                this.TenantId = cid;
+            }
+
         }
 
     }
-
 }

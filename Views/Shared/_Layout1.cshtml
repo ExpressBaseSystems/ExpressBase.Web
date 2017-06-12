@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/bootstrap-checkbox.css" />
-
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
     @* OTHER CSS *@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.0.0/dygraph.min.css" />
@@ -46,12 +46,13 @@
     <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
     <script type="text/javascript" src="~/js/jquery.fontselect.min.js"></script>
     <script type="text/javascript" src="~/js/jquery.cookie.js"></script>
-
+    <script type="text/javascript" src="~/js/jquery.easing.min.js"></script>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
     @* BOOTSTRAP JS *@
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" src="~/js/bootstrap-checkbox.js"></script>
     <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-
+    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
     @* OTHER JS *@
     <script type="text/javascript" src="~/js/datatables.min.js"></script>
     @*<script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/cr-1.3.3/fc-3.2.2/fh-3.1.2/kt-2.2.1/r-2.1.1/rg-1.0.0/rr-1.2.0/sc-1.4.2/se-1.2.2/datatables.min.js"></script>*@
@@ -94,7 +95,7 @@
     </script>
 </head>
 <body>
-    <div class="container-fluid bg ">
+    <div class="container-fluid">
 
         @{
             Html.RenderPartial("PageHeaderAmal");
@@ -108,8 +109,7 @@
 
             //}
         }
-
-        </nav>
+        </div>
         <div id="wrapper" class="toggled">
             <div class="container-fluid">
                 @if (ViewBag.Fname != null || ViewBag.TUFname != null)
@@ -136,17 +136,7 @@
                         @*</div>*@
                     </div>
                 }
-                <div id="page-content-wrapper" style="margin-top: 40px;">
-
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-lg-12" style="height: 0px;">
-                                @RenderBody()
-                                @RenderSection("EbHead", false)
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        
 
 
                 @*<div id="page-content-wrapper">
@@ -162,7 +152,16 @@
                     </div>*@
             </div>
         </div>
-</div>
+    <div id="page-content-wrapper" style="margin-top: 40px;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12" style="height: 0px;">
+                    @RenderBody()
+                    @RenderSection("EbHead", false)
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 

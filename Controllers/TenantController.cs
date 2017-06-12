@@ -38,16 +38,6 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult TenantDashboard()
         {
-            //IServiceClient client = this.EbConfig.GetServiceStackClient();
-            //var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img", Token = ViewBag.token });
-            //if (string.IsNullOrEmpty(ViewBag.cid))
-            //{
-            //    foreach (int element in fr.dict.Keys)
-            //    {
-            //        redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
-            //    }
-            //}
-
             return View();
         }
 
@@ -156,16 +146,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult EmailConfirmation(int i)
         {
-            //var req = this.HttpContext.Request.Form;
-
-            //JsonServiceClient client = new JsonServiceClient("http://localhost:53125/");
-            //var res = client.Post<bool>(new Services.SendMail { Emailvals= req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-            //if (res.id >= 0)
-            //{
-            //    return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id }));
-
-            //}
-            //else
+          
             {
                 return View();
             }
@@ -368,9 +349,7 @@ namespace ExpressBase.Web2.Controllers
         {
 
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-           // ViewBag.TenantId = HttpContext.Request.Query["tacid"];
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.TUtoken });
-            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
@@ -397,9 +376,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult DVList()
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            // ViewBag.TenantId = HttpContext.Request.Query["tacid"];
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.TUtoken });
-            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });           
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
@@ -421,7 +398,6 @@ namespace ExpressBase.Web2.Controllers
 
         public IActionResult DVEditor()
         {
-
             return View();
         }
 

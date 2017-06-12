@@ -40,7 +40,7 @@ namespace ExpressBase.Web2.Controllers
             EbObjectResponse fr = null;
             var EbConfig = ViewBag.EbConfig;
             IServiceClient client = EbConfig.GetServiceStackClient();
-            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.TUtoken });
+            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.token });
             foreach(var element in fr.Data)
             if (element.EbObjectType==EbObjectType.DataSource)
                 {
@@ -53,18 +53,9 @@ namespace ExpressBase.Web2.Controllers
 
         public IActionResult UserDashboard()
         {
-           
-            var token = Request.Cookies["Token"];     
+             
             IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.TUId, restype = "img" ,Token=ViewBag.TUtoken });
-            //if (string.IsNullOrEmpty(ViewBag.cid))
-            //{
-            //    foreach (int element in fr.dict.Keys)
-            //    {
-            //        redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
-            //    }
-            //}
-           
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img" ,Token=ViewBag.token });         
             return View();
         }
 

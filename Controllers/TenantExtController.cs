@@ -43,7 +43,6 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.EbConfig = this.EbConfig;
             ViewBag.cookie = Request.Cookies["UserName"];
             ViewBag.Userid = Request.Cookies["UId"];
-                   
             if (!string.IsNullOrEmpty(ViewBag.cookie))
             {
                 var redisClient = EbConfig.GetRedisClient();
@@ -52,21 +51,10 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
-
-        [HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("/login/{cid}")]
-        public IActionResult Signin(string cid)
-        {
-            ViewBag.EbConfig = this.EbConfig;
-            ViewBag.cookie = Request.Cookies["UserName"];
-            ViewBag.cid = cid;
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> Signin(int i)
         {
-            ViewBag.EbConfig = this.EbConfig;
+            ViewBag.EbConfig = this.EbConfig;         
             var req = this.HttpContext.Request.Form;
             AuthenticateResponse authResponse = null;
 
@@ -111,21 +99,10 @@ namespace ExpressBase.Web2.Controllers
                         provider = MyJwtAuthProvider.Name,
                         UserName = req["uname"],
                         Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "cid", req["cid"] }, { "Login", "Client" } },
+                        Meta = new Dictionary<string, string> { { "cid","expressbase" }, { "Login", "Client" } },
                         UseTokenCookie = true
                     });
-
-                    //var authreq = new Authenticate
-                    //{
-                    //    provider = MyJwtAuthProvider.Name,
-                    //    UserName = req["uname"],
-                    //    Password = req["pass"],
-                    //    UseTokenCookie = true
-                    //};
-                    //authreq.Meta = new Dictionary<string, string>();
-                    //authreq.Meta.Add("cid", req["cid"]);
-
-                    //authResponse = authClient.Send(authreq);
+                    
                 }
                 catch (WebServiceException wse)
                 {
@@ -152,10 +129,9 @@ namespace ExpressBase.Web2.Controllers
                 if (req.ContainsKey("remember"))
                 {
                     Response.Cookies.Append("UserName", req["uname"], options);
-                    Response.Cookies.Append("UId", authResponse.UserId, options);
                 }
                    
-                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", id = authResponse.UserId }));
+                return RedirectToAction("TenantDashboard","Tenant" );
 
             }
         }

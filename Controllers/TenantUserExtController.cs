@@ -91,7 +91,7 @@ namespace ExpressBase.Web2.Controllers
             {
                 try
                 {
-                    var authClient = this.EbConfig.GetServiceStackClient();
+                    var authClient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = MyJwtAuthProvider.Name,

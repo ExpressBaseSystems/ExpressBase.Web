@@ -169,7 +169,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantProfile(int i)
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
@@ -234,7 +234,7 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.Obj_id = HttpContext.Request.Form["objid"];
 
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
             List<string> filterDialogs = new List<string>();
@@ -298,7 +298,7 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectWrapper();
             if (_dict["id"]=="0")
             {
@@ -332,7 +332,7 @@ namespace ExpressBase.Web2.Controllers
         public JsonResult SaveEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectWrapper();
             ds.IsSave = req["isSave"];
             ds.Token = ViewBag.token;
@@ -357,7 +357,7 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             var TenantId = req["TenantAccountId"];
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = TenantId, Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
@@ -375,7 +375,7 @@ namespace ExpressBase.Web2.Controllers
         public JsonResult GetByteaEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["obj_id"]), TenantAccountId = req["TenantAccountId"], Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
@@ -397,7 +397,7 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectWrapper();
             if (_dict["id"] == "0")
             {
@@ -441,7 +441,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult DSList()
         {
 
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
@@ -469,7 +469,7 @@ namespace ExpressBase.Web2.Controllers
 
         public IActionResult DVList()
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });           
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
@@ -487,7 +487,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult DVEditor()
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             // ViewBag.TenantId = HttpContext.Request.Query["tacid"];
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
@@ -513,7 +513,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult DVEditor(int i)
         {
             ViewBag.Obj_id = HttpContext.Request.Form["objid"];
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
@@ -558,7 +558,7 @@ namespace ExpressBase.Web2.Controllers
         public string GetColumns(int dsid)
         {
             var redis = this.EbConfig.GetRedisClient();
-            var sscli = this.EbConfig.GetServiceStackClient();
+            var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
@@ -616,7 +616,7 @@ namespace ExpressBase.Web2.Controllers
 
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectWrapper();
             ds.Id = objId;
             if (ds.Id > 0)

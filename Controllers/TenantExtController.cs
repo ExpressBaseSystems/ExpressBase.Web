@@ -93,7 +93,7 @@ namespace ExpressBase.Web2.Controllers
             {
                 try
                 {
-                    var authClient = this.EbConfig.GetServiceStackClient();
+                    var authClient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = MyJwtAuthProvider.Name,
@@ -182,7 +182,7 @@ namespace ExpressBase.Web2.Controllers
             }
             else
             {
-                IServiceClient client = this.EbConfig.GetServiceStackClient();
+                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
                 var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
@@ -214,7 +214,7 @@ namespace ExpressBase.Web2.Controllers
             FacebookUser data = await GetFacebookUserJSON(HttpContext.Request.Query["access_token"]);
 
             Dictionary<string, Object> Dict = (from x in data.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(data, null) == null ? "" : x.GetGetMethod().Invoke(data, null)));
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "fb" });
             if (res.id >= 0)
             {
@@ -241,7 +241,7 @@ namespace ExpressBase.Web2.Controllers
             if (string.IsNullOrEmpty(HttpContext.Request.Query["accessToken"])) return View();
             GoogleUser oUser = await GetGoogleUserJSON(HttpContext.Request.Query["accessToken"]);
             Dictionary<string, Object> Dict = (from x in oUser.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(oUser, null) == null ? "" : x.GetGetMethod().Invoke(oUser, null)));
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "G+" });
             if (res.id >= 0)
             {

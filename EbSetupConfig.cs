@@ -19,15 +19,15 @@ namespace ExpressBase.Web2
 
         public string Token { get; set; }
 
-        public IServiceClient GetServiceStackClient()
-        {
-            return new JsonServiceClient(this.ServiceStackUrl).WithCache();
-        }
+        //public IServiceClient GetServiceStackClient()
+        //{
+        //    return new JsonServiceClient(this.ServiceStackUrl).WithCache();
+        //}
 
-        public IServiceClient GetServiceStackClient(string token)
+        public IServiceClient GetServiceStackClient(string bearerToken, string refreshToken)
         {
-            this.Token = token;
-            return new JsonServiceClient(this.ServiceStackUrl) { BearerToken = token };
+            this.Token = bearerToken;
+            return new JsonServiceClient(this.ServiceStackUrl) { BearerToken = bearerToken, RefreshToken = refreshToken };
         }
 
         public RedisClient GetRedisClient()

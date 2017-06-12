@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using ServiceStack;
 using Microsoft.AspNetCore.Routing.Constraints;
 using ExpressBase.Web.Filters;
+using Microsoft.AspNetCore.Routing;
 
 namespace ExpressBase.Web2
 {
@@ -76,29 +77,11 @@ namespace ExpressBase.Web2
 
             app.UseMvc(routes =>
             {
-                // routes.MapRoute("login", "{*clientid}", defaults: new { controller = "TenantUser", action = "TenantUserLogin" });
-
+                routes.DefaultHandler = areaRouter;
                 routes.MapRoute(
-                 name: "tenantuser",
-                 template: "{clientid}",
-                 defaults: new { controller = "TenantUser", action = "TenantUserLogin" }
-                );
-
-                routes.MapRoute(
-    name: "default",
-    template: "{controller=TenantExt}/{action=home}");
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            // app.UseMvc(routes =>
-            //{
-            //    routes.DefaultHandler = areaRouter;
-            //    routes.MapRoute("areaRoute", "{area:exists}/{controller=TenantUserExt}/{action=TenantUserLogin}");
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller=TenantExt}/{action=TenantSignup}/{id?}");
-            //});
-
-
         }
     }
 }

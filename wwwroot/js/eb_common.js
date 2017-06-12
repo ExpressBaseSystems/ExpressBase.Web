@@ -1,5 +1,5 @@
 ﻿function getToken() {
-    var b = document.cookie.match('(^|;)\\s*T_eb_roby_dev\\s*=\\s*([^;]+)');
+    var b = document.cookie.match('(^|;)\\s*Token\\s*=\\s*([^;]+)');
     return b ? b.pop() : '';
 }
 function getCookieVal(a) {

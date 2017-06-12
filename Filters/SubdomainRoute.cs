@@ -15,7 +15,7 @@ namespace ExpressBase.Web.Filters
 {
     public class AreaRouter : MvcRouteHandler, IRouter
     {
-        private string[] _allowedSubdomains = { "Vpn", "Password" };
+       // private string[] _allowedSubdomains = { "Vpn", "Password" };
         //These are actualy copies of same values from base class. Some of them are used later.
         private IActionContextAccessor _actionContextAccessor;
         private IActionInvokerFactory _actionInvokerFactory;
@@ -45,54 +45,55 @@ namespace ExpressBase.Web.Filters
             _logger = loggerFactory.CreateLogger<MvcRouteHandler>();
         }
 
-        public new Task RouteAsync(RouteContext context)
+        public new async Task RouteAsync(RouteContext context)
         {
             if (context == null)
-            {
                 throw new ArgumentNullException(nameof(context));
-            }
-            string url = context.HttpContext.Request.Headers["HOST"];
-            string firstDomain = url.Split('.')[0];
-            //Areas usually start from upper-case letter.
-            string subDomain = char.ToUpper(firstDomain[0]) + firstDomain.Substring(1);
-            //check if our app knows subdomain
-            if (_allowedSubdomains.Contains(subDomain))
-                context.RouteData.Values.Add("area", subDomain);
 
-            //All the next code is copied from base class
-            var candidates = _actionSelector.SelectCandidates(context);
-            if (candidates == null || candidates.Count == 0)
+            string area = null;
+            var host = context.HttpContext.Request.Host;
+            var path = context.HttpContext.Request.Path;
+
+            string[] subdomain = host.ToString().Split('.');
+            string[] subpaths = path.ToString().Split('/');
+
+            if (subpaths.Length <= 2)
             {
-                return TaskCache.CompletedTask;
-            }
-
-            var actionDescriptor = _actionSelector.SelectBestCandidate(context, candidates);
-            if (actionDescriptor == null)
-            {
-                return TaskCache.CompletedTask;
-            }
-
-            context.Handler = (c) =>
-            {
-                var routeData = c.GetRouteData();
-
-                var actionContext = new ActionContext(context.HttpContext, routeData, actionDescriptor);
-                if (_actionContextAccessor != null)
+                if (subdomain.Length == 3) // DEV CONSOLE
                 {
-                    _actionContextAccessor.ActionContext = actionContext;
+                    area = subdomain[1];
+                    context.RouteData.Values["controller"] = "TenantUserExt"; //Goes to the relevant Controller  class
+                    context.RouteData.Values["action"] = "TenantUserLogin";
+                    // context.RouteData.Values["area"]= area;
                 }
-
-                var invoker = _actionInvokerFactory.CreateInvoker(actionContext);
-                if (invoker == null)
+                else if (subdomain.Length == 2) // USER CONSOLE
                 {
-                    throw new InvalidOperationException();
+                    area = subdomain[0];
+                    context.RouteData.Values["controller"] = "TenantUserExt"; //Goes to the relevant Controller  class
+                    context.RouteData.Values["action"] = "TenantUserLogin";
+                    // context.RouteData.Values.Add("area", area);
                 }
+                else if (subdomain.Length == 1) // TENANT CONSOLE
+                {
+                    context.RouteData.Values["controller"] = "TenantExt"; //Goes to the relevant Controller  class
+                    context.RouteData.Values["action"] = "TenantSignup";
+                }
+            }
+            else
+            {
+                if (subdomain.Length == 3) // DEV CONSOLE
+                    area = subdomain[1];
+                else if (subdomain.Length == 2) // USER CONSOLE
+                    area = subdomain[0];
+                else if (subdomain.Length == 1) // TENANT CONSOLE
+                    area = null;
 
-                return invoker.InvokeAsync();
-            };
+                context.RouteData.Values["controller"] = subpaths[1]; //Goes to the relevant Controller  class
+                context.RouteData.Values["action"]= subpaths[2];
+                //context.RouteData.Values.Add("area", area);
+            }
 
-            return TaskCache.CompletedTask;
+            await base.RouteAsync(context);
         }
-
     }
 }

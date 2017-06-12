@@ -30,140 +30,32 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-      
-        public async Task<IActionResult> TenantUserLogin(int i)
-        {
-            ViewBag.EbConfig = this.EbConfig;
 
-            var req = this.HttpContext.Request.Form;
-            ViewBag.cid = req["cid"];
-            MyAuthenticateResponse authResponse = null;
-
-            string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
-            if (!data.Success)
-            {
-                if (data.ErrorCodes.Count <= 0)
-                {
-                    return View();
-                }
-                var error = data.ErrorCodes[0].ToLower();
-                switch (error)
-                {
-                    case ("missing-input-secret"):
-                        ViewBag.CaptchaMessage = "The secret parameter is missing.";
-                        break;
-                    case ("invalid-input-secret"):
-                        ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
-                        break;
-
-                    case ("missing-input-response"):
-                        ViewBag.CaptchaMessage = "The captcha input is missing.";
-                        break;
-                    case ("invalid-input-response"):
-                        ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
-                        break;
-
-                    default:
-                        ViewBag.CaptchaMessage = "Error occured. Please try again";
-                        break;
-                }
-                return View();
-            }
-            else
-            {
-                try
-                {
-                    var authClient = this.EbConfig.GetServiceStackClient();
-                    authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
-                    {
-                        provider = MyJwtAuthProvider.Name,
-                        UserName = req["uname"],
-                        Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "cid", req["cid"] }, { "Login", "Client" } },
-                        UseTokenCookie = true
-                    });
-
-                }
-                catch (WebServiceException wse)
-                {
-                    ViewBag.errormsg = wse.Message;
-                    return View();
-                }
-                catch (Exception wse)
-                {
-                    ViewBag.errormsg = wse.Message;
-                    return View();
-                }
-
-                if (authResponse != null && authResponse.ResponseStatus != null
-                    && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
-                {
-                    ViewBag.errormsg = "Please enter a valid Username/Password";
-                    return View("TenantUserLogin");
-                }
-
-                RoleCollection RoleCollection = authResponse.User.RoleCollection;
-                CookieOptions options = new CookieOptions();
-
-                if (RoleCollection.HasSystemRole())
-                {
-                    Response.Cookies.Append(string.Format("T_{0}", ViewBag.cid), authResponse.BearerToken, options);
-                    Response.Cookies.Append("cid", ViewBag.cid);
-
-                    if (req.ContainsKey("remember"))
-                    {
-                        Response.Cookies.Append("UserName", req["uname"], options);
-                        Response.Cookies.Append("UId", authResponse.UserId, options);
-                    }
-                    return RedirectToAction("DevConsole", new RouteValueDictionary(new { controller = "Tenant", action = "DevConsole", id = authResponse.UserId }));
-                }
-                else
-                {
-
-                    Response.Cookies.Append(string.Format("T_{0}", ViewBag.cid), authResponse.BearerToken, options);
-
-                    if (req.ContainsKey("remember"))
-                    {
-                        Response.Cookies.Append("UserName", req["uname"], options);
-                        Response.Cookies.Append("UId", authResponse.UserId, options);
-                    }
-
-                    return RedirectToAction("UserDashboard", new RouteValueDictionary(new { controller = "TenantUser", action = "UserDashboard", id = authResponse.UserId }));
-                }
-            }
-        }
-       
         [HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("{cid}")]
-        public IActionResult TenantUserLogin(string cid)
+        public IActionResult TenantUserLogin(int i)
         {
             ViewBag.EbConfig = this.EbConfig;
-            ViewBag.cookie = Request.Cookies["UserName"];
-            ViewBag.Userid = Request.Cookies["UId"];
-            ViewBag.cid = cid;
-            CookieOptions options = new CookieOptions();
-            Response.Cookies.Append("cid", cid, options);
-            if (!string.IsNullOrEmpty(ViewBag.cookie))
-            {
-                var redisClient = EbConfig.GetRedisClient();
-                ViewBag.ProfileImage = redisClient.Get<string>(string.Format("cid_{0}_uid_{1}_pimg",cid,ViewBag.Userid));
-            }
             
+
             return View();
         }
-
-
-        [Microsoft.AspNetCore.Mvc.Route("{cid}")]
+       
         [HttpPost]
         public async Task<IActionResult> TenantUserLogin()
         {
             ViewBag.EbConfig = this.EbConfig;
-           
+            string url = this.HttpContext.Request.Headers["HOST"];
+            string[] firstDomain = url.Split('.');
+
+            if (firstDomain.Length == 2)
+                ViewBag.cid = firstDomain[0];
+            else if (firstDomain.Length == 3)
+                ViewBag.cid = firstDomain[1];
+            else
+                ViewBag.cid = "expressbase";
             var req = this.HttpContext.Request.Form;
-            ViewBag.cid = req["cid"];
             MyAuthenticateResponse authResponse = null;
-            
+
             string token = req["g-recaptcha-response"];
             Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
             if (!data.Success)
@@ -205,10 +97,10 @@ namespace ExpressBase.Web2.Controllers
                         provider = MyJwtAuthProvider.Name,
                         UserName = req["uname"],
                         Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "cid", req["cid"] }, { "Login", "Client" } },
+                        Meta = new Dictionary<string, string> { { "cid", ViewBag.cid }, { "Login", "Client" } },
                         UseTokenCookie = true
                     });
-                    
+
                 }
                 catch (WebServiceException wse)
                 {
@@ -227,24 +119,26 @@ namespace ExpressBase.Web2.Controllers
                     ViewBag.errormsg = "Please enter a valid Username/Password";
                     return View("TenantUserLogin");
                 }
+                else
+                {
+                    RoleCollection RoleCollection = authResponse.User.RoleCollection;
+                    CookieOptions options = new CookieOptions();
 
-                RoleCollection RoleCollection = authResponse.User.RoleCollection;
-                CookieOptions options = new CookieOptions();
-
+                    Response.Cookies.Append(string.Format("Token", ViewBag.cid), authResponse.BearerToken, options);
                
-                    Response.Cookies.Append(string.Format("T_{0}", ViewBag.cid), authResponse.BearerToken, options);
-
                     if (req.ContainsKey("remember"))
                     {
                         Response.Cookies.Append("UserName", req["uname"], options);
                         Response.Cookies.Append("UId", authResponse.UserId, options);
                     }
-
-                    return RedirectToAction("UserDashboard", new RouteValueDictionary(new { controller = "TenantUser", action = "UserDashboard", id = authResponse.UserId }));
-                
+                    if(firstDomain.Length==3 && RoleCollection.HasSystemRole())
+                        return RedirectToAction("DevConsole","Tenant");
+                    else
+                        return RedirectToAction("UserDashboard", "TenantUser");
+                }
+               
             }
         }
-
         private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
         {
             string url = string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token);

@@ -32,7 +32,7 @@
                         @using (Html.BeginForm("code_editor", "Tenant", FormMethod.Post, new { target = "_blank" }))
                         {
                             <input type="hidden" name="objid" value="@element.Value.Id" />
-                            <input type="hidden" name="tacid" value="@ViewBag.TenantId" />
+                            <input type="hidden" name="tacid" value="@ViewBag.cid" />
                             <input type="submit" class="btn btn-success" value="Open" />
                         }
                         </div>
@@ -43,6 +43,6 @@
             }
         }
     </div>
- <input type="hidden" id="tacid" value="@ViewBag.TenantId" />"
+ <input type="hidden" id="tacid" value="@ViewBag.cid" />"
 </body>
 

@@ -13,7 +13,10 @@ var DVObj = function () {
     this.TVPrefObjCopy = null;
     this.settings_tbl = null;
 
-    
+    this.init = function () {
+        $(".dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
+        $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
+    };
     this.setDropdownDatasource = function(e){
         this.dsid = $(e.target).parent().attr("data-dsid");
         alert("dsid" +this.dsid);
@@ -222,9 +225,9 @@ var DVObj = function () {
         return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
     };
 
-    $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
+    this.init();
 
-    $(".dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
+    
 };
 
 

@@ -7,13 +7,17 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.width = wid;
 };
 
-var DVObj = function () {
+var DVObj = function (dsid, settings) {
+        this.TVPrefObj = settings;
     this.dsid = null;
-    this.TVPrefObj = null;
     this.TVPrefObjCopy = null;
     this.settings_tbl = null;
 
     this.init = function () {
+        if (this.TVPrefObj.length > 0) {
+            $("#dvName_txt").val(this.TVPrefObj.dvName);
+            this.callPost4SettingsTable();
+        }
         $(".dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
         $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
     };
@@ -117,8 +121,8 @@ var DVObj = function () {
         this.settings_tbl.columns.adjust();
     };
 
-    this.saveSettings = function () {
-        alert("for save");
+    this.saveSettings = function (e) {
+        var objId= $(e.target).attr("data-objId");
         this.isSettingsSaved = true;
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
@@ -174,7 +178,7 @@ var DVObj = function () {
         }
         //console.log(JSON.stringify(this.TVPrefObj));
         //this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, tvid), json);
-        $.post('http://localhost:53431/Tenant/SaveSettings', { tvid: this.dsid, json: JSON.stringify(this.TVPrefObj) }, this.saveSuccess.bind(this));
+        $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/SaveSettings', { tvid: this.dsid, json: JSON.stringify(this.TVPrefObj), objId: objId }, this.saveSuccess.bind(this));
         
     };
 

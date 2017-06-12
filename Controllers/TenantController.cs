@@ -489,18 +489,23 @@ namespace ExpressBase.Web2.Controllers
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             // ViewBag.TenantId = HttpContext.Request.Query["tacid"];
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.TUtoken });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<int, EbObjectWrapper> ObjListAll = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
             {
                 if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
                 {
-                    ObjList[element.Id] = element;
+                    ObjListAll[element.Id] = element;
                 }
             }
+            ViewBag.DSListAll = ObjListAll;
             ViewBag.DSList = ObjList;
+            ViewBag.Obj_id = 0;
+            ViewBag.dsid = 0;
+            ViewBag.tvpref = "{ }";
             return View();
         }
 
@@ -513,17 +518,40 @@ namespace ExpressBase.Web2.Controllers
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
-                //ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-                //List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-                //ViewBag.LifeCycle = lifeCycle;
-                //ViewBag.IsNew = "false";
                 if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataVisualization)
                 {
                     var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataVisualization>(element.Bytea);
                     ViewBag.ObjectName = element.Name;
-                    
+                    ViewBag.dsid = dsobj.dsid;
+                    ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, dsobj.dsid));
                 }
             }
+            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.dsid), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            rlist = resultlist.Data;
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+                {
+                    ObjList[element.Id] = element;
+                }
+            }
+            ViewBag.DSList = ObjList;
+            
+           resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+           rlist = resultlist.Data;
+            Dictionary<int, EbObjectWrapper> ObjListAll = new Dictionary<int, EbObjectWrapper>();
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+                {
+                    ObjListAll[element.Id] = element;
+                }
+            }
+            ObjListAll.Remove(ObjList.Keys.First<int>());
+            ViewBag.DSListAll = ObjListAll;
             return View();
         }
 
@@ -583,14 +611,16 @@ namespace ExpressBase.Web2.Controllers
             return colDef + colext + "}";
         }
 
-        public JsonResult SaveSettings(int tvid, string json)
+        public JsonResult SaveSettings(int tvid, string json, int objId)
         {
 
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var ds = new EbObjectWrapper();
-            ds.Id = 0;
+            ds.Id = objId;
+            if (ds.Id > 0)
+                ds.IsSave = "true";
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
             ds.EbObjectType = Objects.EbObjectType.DataVisualization;

@@ -263,8 +263,8 @@ namespace ExpressBase.Web2.Controllers
                 }
             }
             // list filter dialogs
-            IServiceClient fdclient = this.EbConfig.GetServiceStackClient();
-            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.TUtoken });
+            IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var fdrlist = fdresultlist.Data;
             List<string> filterDialogs = new List<string>();
             foreach (var element in fdrlist)
@@ -379,7 +379,7 @@ namespace ExpressBase.Web2.Controllers
         public JsonResult SaveFilterDialog()
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectWrapper();
             if (req["id"] == "0")
             {
@@ -408,36 +408,6 @@ namespace ExpressBase.Web2.Controllers
             using (client.Post<HttpWebResponse>(ds)) { }
             return Json("Success");
         }
-
-        public void CheckFilterParameters()
-        {
-            //check for parameters in the 
-            var req = HttpContext.Request.Form;
-            List<string> filterparams = new List<string>();
-            MatchCollection mc = Regex.Matches(req["code"], @"\@\w+");
-            if (mc.Count != 0)
-            {
-                foreach (Match m in mc)
-                {
-                    string filtervar = m.ToString().Substring(1, m.ToString().Length - 1);
-                    if (filtervar == "search" || filtervar == "and_search" || filtervar == "search_and" || filtervar == "where_search" || filtervar == "limit" || filtervar == "offset" || filtervar == "orderby")
-                    {
-
-                    }
-                    else
-                    {
-                        if (!filterparams.Contains(filtervar))
-                        {
-                            filterparams.Add(filtervar);
-                        }
-                    }
-                }
-                filterparams.Sort();
-                ViewBag.filterparams = filterparams;
-               
-            }
-        }
-
         public IActionResult objects()
         {
             return View();
@@ -452,6 +422,7 @@ namespace ExpressBase.Web2.Controllers
         {
 
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();

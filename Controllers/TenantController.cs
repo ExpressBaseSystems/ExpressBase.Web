@@ -15,6 +15,7 @@ using System.Net;
 using ServiceStack.Text;
 using ExpressBase.Data;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 
 
@@ -240,7 +241,7 @@ namespace ExpressBase.Web2.Controllers
                     filterDialogs.Add(element.Name);
                 }
             }
-            ViewBag.FilterDialogs = filterDialogs;                      
+            ViewBag.FilterDialogs = filterDialogs;
             ViewBag.EditorHint = "CodeMirror.hint.sql";
             ViewBag.EditorMode = "text/x-sql";
             ViewBag.Icon = "fa fa-database";
@@ -256,8 +257,6 @@ namespace ExpressBase.Web2.Controllers
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
-            List<string> filterDialogs = new List<string>();
-
             foreach (var element in rlist)
             {
                 ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
@@ -277,39 +276,24 @@ namespace ExpressBase.Web2.Controllers
                     ViewBag.Icon = "fa fa-database";
                     ViewBag.ObjType = (int)EbObjectType.DataSource;
                 }
-
                 if (element.EbObjectType == ExpressBase.Objects.EbObjectType.JavascriptFunction)
                 {
 
                 }
+            }
+            // list filter dialogs
+            IServiceClient fdclient = this.EbConfig.GetServiceStackClient();
+            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.TUtoken });
+            var fdrlist = fdresultlist.Data;
+            List<string> filterDialogs = new List<string>();
+            foreach (var element in fdrlist)
+            {
                 if (element.EbObjectType == ExpressBase.Objects.EbObjectType.FilterDialog)
                 {
                     filterDialogs.Add(element.Name);
                 }
             }
-            ViewBag.FilterDialogs = filterDialogs;
-
-            List<string> filtervariables = new List<string>();
-            MatchCollection mc = Regex.Matches(ViewBag.Code, @"\@\w+");
-            if (mc.Count != 0)
-            {
-                foreach (Match m in mc)
-                {
-                    string filtervar = m.ToString().Substring(1, m.ToString().Length - 1);
-                    if (filtervar == "search" || filtervar == "and_search" || filtervar == "search_and" || filtervar == "where_search" || filtervar == "limit" || filtervar == "offset" || filtervar == "orderby")
-                    {
-
-                    }
-                    else
-                    {
-                        if (!filtervariables.Contains(filtervar))
-                        {
-                            filtervariables.Add(filtervar);
-                        }
-                    }
-                }
-                ViewBag.ExecCode = filtervariables;
-            }
+            ViewBag.FilterDialogs = filterDialogs;       
             return View();
         }
 
@@ -319,7 +303,7 @@ namespace ExpressBase.Web2.Controllers
             var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var ds = new EbObjectWrapper();
-            if (_dict["id"]=="0")
+            if (_dict["id"] == "0")
             {
                 ds.Id = 0;
                 ds.ChangeLog = "";
@@ -411,41 +395,68 @@ namespace ExpressBase.Web2.Controllers
             return Json(ObjList);
         }
 
-        [HttpGet]
         public JsonResult SaveFilterDialog()
         {
             var req = this.HttpContext.Request.Form;
-            var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
             IServiceClient client = this.EbConfig.GetServiceStackClient();
             var ds = new EbObjectWrapper();
-            if (_dict["id"] == "0")
+            if (req["id"] == "0")
             {
                 ds.Id = 0;
-                ds.ChangeLog = "";
             }
             else
             {
-                ds.Id = Convert.ToInt32(_dict["id"]);
-                ds.ChangeLog = _dict["changeLog"];
+                ds.Id = Convert.ToInt32(req["id"]);
             }
             ds.Token = ViewBag.token;
-            ds.TenantAccountId = _dict["tcid"];
-            ds.EbObjectType = Objects.EbObjectType.DataSource;
-            ds.Name = _dict["name"];
-            ds.Description = _dict["description"];
+            ds.TenantAccountId = ViewBag.cid;
+            ds.EbObjectType = Objects.EbObjectType.FilterDialog;
+            ds.Name = req["name"];
+            ds.Description = req["description"];
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
-            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
+            ds.ChangeLog = "";
+            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbFilterDialog
             {
-                Name = _dict["name"],
-                Description = _dict["description"],
-                Sql = _dict["code"],
-                ChangeLog = ds.ChangeLog,
-                EbObjectType = EbObjectType.DataSource
+                Name = req["name"],
+                Description = req["description"],
+                DsId = req["dsid"],
+                FilterDialogJson = req["FilterDialogJson"],
+                EbObjectType = EbObjectType.FilterDialog
             });
 
             using (client.Post<HttpWebResponse>(ds)) { }
             return Json("Success");
         }
+
+        public void CheckFilterParameters()
+        {
+            //check for parameters in the 
+            var req = HttpContext.Request.Form;
+            List<string> filterparams = new List<string>();
+            MatchCollection mc = Regex.Matches(req["code"], @"\@\w+");
+            if (mc.Count != 0)
+            {
+                foreach (Match m in mc)
+                {
+                    string filtervar = m.ToString().Substring(1, m.ToString().Length - 1);
+                    if (filtervar == "search" || filtervar == "and_search" || filtervar == "search_and" || filtervar == "where_search" || filtervar == "limit" || filtervar == "offset" || filtervar == "orderby")
+                    {
+
+                    }
+                    else
+                    {
+                        if (!filterparams.Contains(filtervar))
+                        {
+                            filterparams.Add(filtervar);
+                        }
+                    }
+                }
+                filterparams.Sort();
+                ViewBag.filterparams = filterparams;
+               
+            }
+        }
+
         public IActionResult objects()
         {
             return View();
@@ -532,7 +543,7 @@ namespace ExpressBase.Web2.Controllers
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
-            
+
             var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             var tvpref = this.GetColumn4DataTable(columnColletion);
             return tvpref;
@@ -582,7 +593,7 @@ namespace ExpressBase.Web2.Controllers
 
         public JsonResult SaveSettings(int tvid, string json)
         {
-           
+
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             IServiceClient client = this.EbConfig.GetServiceStackClient();

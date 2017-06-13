@@ -25,18 +25,20 @@
         @{ 
             @using ExpressBase.Objects.ServiceStack_Artifacts;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            ObjList = ViewBag.DVList;
+            Dictionary<int, EbObjectWrapper> ObjListAll = new Dictionary<int, EbObjectWrapper>();
+            ObjList = ViewBag.DSList;
+            ObjListAll = ViewBag.DSListAll;
+            var xx = (ObjList.Count > 0) ? (ObjList.Values.First<EbObjectWrapper>().Name) : "Data Source";
         }
         <div id="settingsdiv">
             <div>
                 <div class='dropdown' id='datatSourceDropdown'>
-                    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
-                        Data Source
+                    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'> @xx
                         <span class='caret'></span>
                     </button>
                     <ul class='dropdown-menu scrollable-menu'>
                         @{
-                            foreach (var element in ObjList)
+                            foreach (var element in ObjListAll)
                             {
                                 <li data-dsid="@element.Key">
                                     <a href="#">
@@ -137,14 +139,20 @@
                 </div>
             </div>
             <div style="float:right;">
-                <button id='Save_btn' class='btn btn-primary'>Save Changes</button>
+                <button id='Save_btn' class='btn btn-primary' data-objId="@ViewBag.Obj_id">Save Changes</button>
             </div>
             <div class="alert alert-success" style="display:none">
                 <strong>Success!</strong> Indicates a successful or positive action.
             </div>
         </div>
         <script>
-         var dvo= new DVObj();
+            var ds= @ViewBag.dsid;
+            @*var sett;
+            if("@ViewBag.tvpref" === "abc")
+                sett= "@ViewBag.tvpref";
+            else*@
+             var sett= @Html.Raw(ViewBag.tvpref);
+            var dvo= new DVObj(ds, sett);
         </script>
     </body>
 </html>

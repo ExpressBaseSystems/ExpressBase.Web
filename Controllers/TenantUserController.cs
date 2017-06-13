@@ -40,7 +40,7 @@ namespace ExpressBase.Web2.Controllers
             EbObjectResponse fr = null;
             var EbConfig = ViewBag.EbConfig;
             IServiceClient client = EbConfig.GetServiceStackClient();
-            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.TUtoken });
+            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.token });
             foreach(var element in fr.Data)
             if (element.EbObjectType==EbObjectType.DataSource)
                 {
@@ -53,18 +53,9 @@ namespace ExpressBase.Web2.Controllers
 
         public IActionResult UserDashboard()
         {
-           
-            var token = Request.Cookies["Token"];     
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
-            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.TUId, restype = "img" ,Token=ViewBag.TUtoken });
-            //if (string.IsNullOrEmpty(ViewBag.cid))
-            //{
-            //    foreach (int element in fr.dict.Keys)
-            //    {
-            //        redisClient.Set<string>(string.Format("uid_{0}_profileimage", ViewBag.UId), fr.dict[element]);
-            //    }
-            //}
-           
+             
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img" ,Token=ViewBag.token });         
             return View();
         }
 
@@ -82,14 +73,14 @@ namespace ExpressBase.Web2.Controllers
             var redisClient = this.EbConfig.GetRedisClient();
             redisClient.Set<string>("token", token);
             Objects.EbForm _form = null;
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fid, Token = token });
             if (id > 0)
             {
                 if (fr.Data.Count > 0)
                 {
                     _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient());
+                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
                     _form.IsUpdate = true;
                     redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
                 }
@@ -106,7 +97,7 @@ namespace ExpressBase.Web2.Controllers
                 if (fr.Data.Count > 0)
                 {
                     _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient());
+                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
                     _form.IsUpdate = false;
                     redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
                 }
@@ -160,7 +151,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult UserPreferences(int i)
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
 
             return View();
@@ -179,13 +170,13 @@ namespace ExpressBase.Web2.Controllers
         public string GetTVPref4User(int dsid, string parameters)
         {
             var redis = this.EbConfig.GetRedisClient();
-            var sscli = this.EbConfig.GetServiceStackClient();
+            var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var token = Request.Cookies[string.Format("T_{0}",ViewBag.cid)];
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
 
-            var tvpref = redis.Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dsid, ViewBag.TUId));
+            var tvpref = redis.Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dsid, ViewBag.UId));
 
             //if (tvpref == null)
             //{

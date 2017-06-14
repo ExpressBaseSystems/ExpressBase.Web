@@ -574,15 +574,15 @@ namespace ExpressBase.Web2.Controllers
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
 
-            var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
-            var tvpref = this.GetColumn4DataTable(columnColletion);
+            var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
+            var tvpref = this.GetColumn4DataTable(columnColletion, dsid);
             return tvpref;
         }
 
-        private string GetColumn4DataTable(ColumnColletion __columnCollection)
+        private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid)
         {
             string colDef = string.Empty;
-            colDef = "{\"dvName\": \"<Untitled>\",\"hideSerial\": false, \"hideCheckbox\": false, \"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
+            colDef = "{\"dsId\":"+ dsid + ",\"dvName\": \"<Untitled>\",\"hideSerial\": false, \"hideCheckbox\": false, \"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
             colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\"},";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\"},";
@@ -621,14 +621,14 @@ namespace ExpressBase.Web2.Controllers
             return colDef + colext + "}";
         }
 
-        public JsonResult SaveSettings(int tvid, string json, int objId)
+        public JsonResult SaveSettings(int dsid, string json, int dvid)
         {
 
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectWrapper();
-            ds.Id = objId;
+            ds.Id = dvid;
             if (ds.Id > 0)
                 ds.IsSave = "true";
             ds.Token = ViewBag.token;
@@ -641,12 +641,14 @@ namespace ExpressBase.Web2.Controllers
             {
                 Name = _dict["dvName"].ToString(),
                 settingsJson = _dict.ToString(),
-                dsid = tvid,
+                dsid = dsid,
                 EbObjectType = EbObjectType.DataVisualization
             });
 
-            using (client.Post<HttpWebResponse>(ds)) { }
-            this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, tvid), json);
+            var result = client.Post<EbObjectWrapperResponse>(ds);
+            if(result.id > 0)
+                dvid = result.id;
+            this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, dvid), json);
             return Json("Success");
         }
 

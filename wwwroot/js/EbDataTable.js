@@ -83,7 +83,7 @@ var EbDataTable = function (settings) {
     this.tempcolext = [];
 
     this.getColumns = function () {
-        $.post('GetTVPref4User', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+        $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
@@ -93,7 +93,7 @@ var EbDataTable = function (settings) {
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
         this.ebSettingsCopy = this.ebSettings;
-        this.updateRenderFunc();
+        //this.updateRenderFunc();
         this.Init();
 
         if (this.filterBox !== null && this.dtsettings.directLoad !== true)
@@ -221,13 +221,14 @@ var EbDataTable = function (settings) {
         delete dq.columns; delete dq.order; delete dq.search;
         dq.Id = this.dsid;
         dq.Token = getToken();
-        if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
+        dq.rToken = getrToken();
+        //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
             dq.TFilters = JSON.stringify(this.repopulate_filter_arr());
-        else {
-            var arr = [];
-            arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
-            dq.TFilters = JSON.stringify(arr);
-        }
+        //else {
+        //    var arr = [];
+        //    arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
+        //    dq.TFilters = JSON.stringify(arr);
+        //}
         dq.Params = JSON.stringify(this.getFilterValues());
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;

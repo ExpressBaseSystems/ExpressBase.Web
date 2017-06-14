@@ -30,7 +30,7 @@
             ObjListAll = ViewBag.DSListAll;
             var xx = (ObjList.Count > 0) ? (ObjList.Values.First<EbObjectWrapper>().Name) : "Data Source";
         }
-        <div id="settingsdiv">
+        <div id="settingsdiv" style="background-color:rgb(260,260,260)">
             <div>
                 <div class='dropdown' id='datatSourceDropdown'>
                     <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'> @xx

@@ -340,15 +340,13 @@ namespace ExpressBase.Web2.Controllers
         public JsonResult GetEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
-            var TenantId = req["TenantAccountId"];
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = TenantId, Token = ViewBag.token });
-            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
             Dictionary<int, string> ObjList = new Dictionary<int, string>();
             foreach (var element in rlist)
-            {
-                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+            {              
+                if (element.EbObjectType.ToString() == req["ebobjtype"])
                 {
                     ObjList[element.Id] = element.Name;
                 }
@@ -405,7 +403,7 @@ namespace ExpressBase.Web2.Controllers
                 EbObjectType = EbObjectType.FilterDialog
             });
 
-            using (client.Post<HttpWebResponse>(ds)) { }
+           ViewBag.CurrSaveId =client.Post<EbObjectWrapperResponse>(ds);
             return Json("Success");
         }
         public IActionResult objects()

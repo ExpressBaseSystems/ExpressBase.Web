@@ -27,6 +27,7 @@
 
             $(".eb-loader").hide();
             $('#saveFilter').on("click", function () {
+                $(".eb-loader").show();
                 var AllInputs = $('.filter_modal_body').find("input, select");
                 var  ObjString = "{";
                 $.each(AllInputs, function (i, inp) {
@@ -35,6 +36,7 @@
                     }
                 })
                 ObjString = ObjString.slice(0, -1) + '}';
+
                 $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/SaveFilterDialog", {"Id":"0",
                     "DsId":@ViewBag.Obj_id,
                     "FilterDialogJson": ObjString,
@@ -45,10 +47,9 @@
                     "VersionNumber":"1"},
                             function (result) {
                                 success_alert();
+                                $('.fdlist select option:last-child').append("<option value="+ViewBag.CurrSaveId+" data-tokens="+ViewBag.CurrSaveId+">"+ViewBag.CurrSaveId+"</option>");
                             });
-
             });
-
             $('#fd').on('change', function () {
                 var selectVal = $('#fd option:selected').text();
                 if(selectVal==="Auto Generate Filter Dialog"){
@@ -66,38 +67,53 @@
                                 filterparams.push(result[i]);
                             }
                         }
-                        filterparams.sort();
+                        if(filterparams.length!=0){
+                            filterparams.sort();
+                            alert(filterparams);
+                            $('tbody').children().remove();
+                            $.each(filterparams,function(i,obj){
+                                $('tbody ').append("<tr><td><label class='align_singleLine'>"+obj+"</label>" +
+                                                      "  </td>" +
+                                                       " <td>" +
+                                                        "    <select id="+obj+" name='fdtype' class='param_val selectpicker show-tick align_singleLine' data-live-search='true' style='display:inline-block !important'>" +
+                                                         "       <option value='text' data-tokens='text'>text</option>' " +
+                                                         "       <option value='integer' data-tokens='integer'>integer</option>" +
+                                                           "     <option value='datetime' data-tokens='datetime'>datetime</option>" +
+                                                             "   <option value='boolean' data-tokens='boolean'>boolean</option>" +
+                                                            "</select>" +
+                                                       " </td>" +
+                                                       //" <td> <input type='text' name="+obj+" class='align_singleLine form-control' required/> </td>" +
+                                                   " </tr>");
+                            });
+                            $('#filterDialog').modal('show');
+                        }
+                        else{
+
+
+                        }
                     }
-                    alert(filterparams);
-                    $('tbody').children().remove();
-                    $.each(filterparams,function(i,obj){
-                        $('tbody ').append("<tr><td><label class='align_singleLine'>"+obj+"</label>" +
-                                              "  </td>" +
-                                               " <td>" +
-                                                "    <select id="+obj+" name='fdtype' class='param_val selectpicker show-tick align_singleLine' data-live-search='true' style='display:inline-block !important'>" +
-                                                 "       <option value='text' data-tokens='text'>text</option>' " +
-                                                 "       <option value='integer' data-tokens='integer'>integer</option>" +
-                                                   "     <option value='datetime' data-tokens='datetime'>datetime</option>" +
-                                                     "   <option value='boolean' data-tokens='boolean'>boolean</option>" +
-                                                    "</select>" +
-                                               " </td>" +
-                                               " <td> <input type='text' name="+obj+" class='align_singleLine form-control' required/> </td>" +
-                                           " </tr>");
-                    });
-                    success_alert();
-                    $('#filterDialog').modal('show');
+                    else{
+
+
+                    }}
+            });
+            $('#execute').on('click',function(){
+                if( $('#fd option:selected').text()==="Select Filter Dialog"){
+                    alert("Please select a filter dialog");                
                 }
                 else{
+                    if( $('#fd option:selected').text()!=="Auto Generate Filter Dialog"){
 
-
+                        alert("open selected filter dialog");        
+                    }                
                 }
             });
-        });
-        $(document).keydown(function (e) {
-            if (e.keyCode == 83 && e.ctrlKey) {
-                e.preventDefault();
-                $(".save").trigger("click");
-            }
+            $(document).keydown(function (e) {
+                if (e.keyCode == 83 && e.ctrlKey) {
+                    e.preventDefault();
+                    $(".save").trigger("click");
+                }
+            });
         });
         function Save() {
             if(@ViewBag.IsNew===true){
@@ -171,13 +187,14 @@
             <label class="control-label">Description</label>
             <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
         </div>
-        <div class="dropdown">
+        <div class="dropdown fdlist">
             Filter Dialogues
             <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true">
                 @{
                     @using ExpressBase.Objects.ServiceStack_Artifacts;
                     List<string> filterDialogs = new List<string>();
-                    filterDialogs = ViewBag.FilterDialogs;
+                    filterDialogs = ViewBag.FilterDialogs;                   
+                    <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
                     <option value="Auto Generate Filter Dialog" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
                     foreach (var filter in filterDialogs)
                     {
@@ -217,7 +234,7 @@
                                 <tr>
                                     <th>Parameter Name</th>
                                     <th>Parameter Type</th>
-                                    <th>Parameter Value</th>
+                                    @*<th>Parameter Value</th>*@
                                 </tr>
                             </thead>
                             <tbody class="fdtbody"></tbody>
@@ -225,10 +242,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="alert alert-success alert-dismissable alert_fd_save" style="display:none">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        <strong>Success!</strong> Successfully Saved.
-                    </div>
+                    <div class="help"></div>
                     <input type="button" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
                 </div>
             </div>

@@ -50,7 +50,7 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.EbConfig = this.EbConfig;         
             var req = this.HttpContext.Request.Form;
-            AuthenticateResponse authResponse = null;
+            MyAuthenticateResponse authResponse = null;
 
             string token = req["g-recaptcha-response"];
             Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
@@ -87,8 +87,8 @@ namespace ExpressBase.Web2.Controllers
             {
                 try
                 {
-                    var authClient = this.EbConfig.GetServiceStackClient();
-                    authResponse = authClient.Send(new Authenticate
+                    var authClient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+                    authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = MyJwtAuthProvider.Name,
                         UserName = req["uname"],
@@ -119,6 +119,7 @@ namespace ExpressBase.Web2.Controllers
                 CookieOptions options = new CookieOptions();
 
                 Response.Cookies.Append("Token", authResponse.BearerToken, options);
+                Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
 
                 if (req.ContainsKey("remember"))
                 {
@@ -142,7 +143,6 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             ViewBag.EbConfig = this.EbConfig;
-            ViewBag.cid = "";
             string token = req["g-recaptcha-response"];
             Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
             if (!data.Success)
@@ -176,7 +176,7 @@ namespace ExpressBase.Web2.Controllers
             }
             else
             {
-                IServiceClient client = this.EbConfig.GetServiceStackClient();
+                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
                 var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
@@ -208,7 +208,7 @@ namespace ExpressBase.Web2.Controllers
             FacebookUser data = await GetFacebookUserJSON(HttpContext.Request.Query["access_token"]);
 
             Dictionary<string, Object> Dict = (from x in data.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(data, null) == null ? "" : x.GetGetMethod().Invoke(data, null)));
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "fb" });
             if (res.id >= 0)
             {
@@ -235,7 +235,7 @@ namespace ExpressBase.Web2.Controllers
             if (string.IsNullOrEmpty(HttpContext.Request.Query["accessToken"])) return View();
             GoogleUser oUser = await GetGoogleUserJSON(HttpContext.Request.Query["accessToken"]);
             Dictionary<string, Object> Dict = (from x in oUser.GetType().GetProperties() select x).ToDictionary(x => x.Name, x => (x.GetGetMethod().Invoke(oUser, null) == null ? "" : x.GetGetMethod().Invoke(oUser, null)));
-            IServiceClient client = this.EbConfig.GetServiceStackClient();
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = Dict, ltype = "G+" });
             if (res.id >= 0)
             {

@@ -91,7 +91,7 @@ namespace ExpressBase.Web2.Controllers
             {
                 try
                 {
-                    var authClient = this.EbConfig.GetServiceStackClient();
+                    var authClient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = MyJwtAuthProvider.Name,
@@ -124,8 +124,9 @@ namespace ExpressBase.Web2.Controllers
                     RoleCollection RoleCollection = authResponse.User.RoleCollection;
                     CookieOptions options = new CookieOptions();
 
-                    Response.Cookies.Append(string.Format("Token", ViewBag.cid), authResponse.BearerToken, options);
-               
+                    Response.Cookies.Append("Token", authResponse.BearerToken, options);
+                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+
                     if (req.ContainsKey("remember"))
                     {
                         Response.Cookies.Append("UserName", req["uname"], options);

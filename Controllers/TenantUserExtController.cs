@@ -12,6 +12,7 @@ using System.Net;
 using System.IO;
 using ExpressBase.Security;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ServiceStack.Auth;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -94,7 +95,7 @@ namespace ExpressBase.Web2.Controllers
                     var authClient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
-                        provider = MyJwtAuthProvider.Name,
+                        provider = JwtAuthProvider.Name,
                         UserName = req["uname"],
                         Password = req["pass"],
                         Meta = new Dictionary<string, string> { { "cid", ViewBag.cid }, { "Login", "Client" } },

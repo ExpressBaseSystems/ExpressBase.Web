@@ -19,10 +19,10 @@ namespace ExpressBase.Web2
 
         public string Token { get; set; }
 
-        //public IServiceClient GetServiceStackClient()
-        //{
-        //    return new JsonServiceClient(this.ServiceStackUrl).WithCache();
-        //}
+        public IServiceClient GetServiceStackClient()
+        {
+            return new JsonServiceClient(this.ServiceStackUrl).WithCache();
+        }
 
         public IServiceClient GetServiceStackClient(string bearerToken, string refreshToken)
         {

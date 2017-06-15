@@ -132,6 +132,10 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantLogout()
         {
             ViewBag.Fname = null;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var abc= client.Post(new Authenticate { provider = "logout" });
+            HttpContext.Response.Cookies.Delete("Token");
+            HttpContext.Response.Cookies.Delete("rToken");
             return RedirectToAction("TenantSignup", "TenantExt");
 
         }

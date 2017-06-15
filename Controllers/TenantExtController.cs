@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using ServiceStack;
+using ServiceStack.Auth;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,7 +57,7 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.EbConfig = this.EbConfig;         
             var req = this.HttpContext.Request.Form;
-            MyAuthenticateResponse authResponse = null;
+            AuthenticateResponse authResponse = null;
 
             string token = req["g-recaptcha-response"];
             Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
@@ -93,14 +94,14 @@ namespace ExpressBase.Web2.Controllers
             {
                 try
                 {
-                    var authClient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-                    authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+                    var authClient = this.EbConfig.GetServiceStackClient();
+                    authResponse = authClient.Send<AuthenticateResponse>(new Authenticate
                     {
-                        provider = MyJwtAuthProvider.Name,
-                        UserName = req["uname"],
+                        provider = CredentialsAuthProvider.Name,
+                        UserName = "expressbase/" + req["uname"],
                         Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "cid","expressbase" }, { "Login", "Client" } },
-                        UseTokenCookie = true
+                        //Meta = new Dictionary<string, string> { { "cid","expressbase" }, { "Login", "Client" } },
+                        //UseTokenCookie = true
                     });
                     
                 }

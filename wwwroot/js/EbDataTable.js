@@ -83,6 +83,7 @@ var EbDataTable = function (settings) {
     this.tempcolext = [];
 
     this.getColumns = function () {
+        alert("getcolumns");
         $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
@@ -91,6 +92,7 @@ var EbDataTable = function (settings) {
         //    this.ebSettings = JSON.parse(data);
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
+        console.log(data);
         this.ebSettings = JSON.parse(data);
         this.ebSettingsCopy = this.ebSettings;
         //this.updateRenderFunc();
@@ -1009,7 +1011,7 @@ var EbDataTable = function (settings) {
              "   </div>" +
            " </div>" +
         "</div>");
-        $.get("http://localhost:53431/Tenant/DVEditor",  function (datah) { console.log(datah); $("#settingsmodal .modal-body").append($.parseHTML(datah)) });
+        $.get("~Tenant/DVEditor",  function (datah) { console.log(datah); $("#settingsmodal .modal-body").append($.parseHTML(datah)) });
         $("#Save_btn").click(this.saveSettings.bind(this));
         $("#settingsmodal").on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
         $("#settingsmodal").on('hidden.bs.modal', this.hideModalFunc.bind(this));
@@ -1055,6 +1057,7 @@ var EbDataTable = function (settings) {
         objcols.push(this.getColobj("id"));
         $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
             ct++;
+            
             if (obj.type === 'text' && obj.name === 'name')
                 n = obj.value;
             else if (obj.type === 'text' && obj.name === 'index')
@@ -1080,7 +1083,7 @@ var EbDataTable = function (settings) {
                 else
                     cls = 'tdheight';
             }
-
+            alert(ct);
             if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
         //alert(console.log(objcols));

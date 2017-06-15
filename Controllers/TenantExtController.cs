@@ -32,12 +32,6 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-
-        public IActionResult home()
-        {
-            return View();
-        }
-
         [HttpGet]
         public IActionResult Signin()
         {

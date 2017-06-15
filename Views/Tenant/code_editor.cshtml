@@ -3,6 +3,8 @@
 }
 <html lang="en">
 <head>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css " />@*Dona*@
     <title>Code editor</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
@@ -23,7 +25,9 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
+            $(".eb-loader").hide();
             $('#saveFilter').on("click", function () {
+                $(".eb-loader").show();
                 var AllInputs = $('.filter_modal_body').find("input, select");
                 var  ObjString = "{";
                 $.each(AllInputs, function (i, inp) {
@@ -32,7 +36,8 @@
                     }
                 })
                 ObjString = ObjString.slice(0, -1) + '}';
-                $.post("http://localhost:53431/Tenant/SaveFilterDialog", {"Id":"0",
+
+                $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/SaveFilterDialog", {"Id":"0",
                     "DsId":@ViewBag.Obj_id,
                     "FilterDialogJson": ObjString,
                     "Name":$('#fdname').val(),
@@ -41,54 +46,82 @@
                     "isSave":"false",
                     "VersionNumber":"1"},
                             function (result) {
-                                $('.alert_fd_save').show()
+                                success_alert();
+                                $('.fdlist select option:last-child').append("<option value="+ViewBag.CurrSaveId+" data-tokens="+ViewBag.CurrSaveId+">"+ViewBag.CurrSaveId+"</option>");
                             });
-
             });
             $('#fd').on('change', function () {
                 var selectVal = $('#fd option:selected').text();
                 if(selectVal==="Auto Generate Filter Dialog"){
-                    $.post("http://localhost:53431/Tenant/CheckFilterParameters", {"Code":window.editor.getValue()},
-                            function (result) {
-                                $("#filterdiv").append("@@{"+ "List<string> filtervariables = new List<string>();" +
-                                "filtervariables = ViewBag.filterparams;"+
-                                         "   foreach (string f in filtervariables) " +
-                                            "    {" +
-                                              "      " +
-                                              "  < tr> " +
-                                                 "                           < td>" +
-                                                   "                             <label class='align_singleLine'>@@f</label>" +
-                                               "  </td>" +
-                                                " <td>" +
-                                                 "    <select id=**f" + " name='fdtype' class='param_val selectpicker show-tick align_singleLine' data-live-search='true'>" +
-                                                  "       <option value='text' data-tokens='text'>text</option>' " +
-                                                  "       <option value='integer' data-tokens='integer'>integer</option>" +
-                                                    "     <option value='datetime' data-tokens='datetime'>datetime</option>" +
-                                                      "   <option value='boolean' data-tokens='boolean'>boolean</option>" +
-                                                     "</select>" +
-                                                " </td>" +
-                                                " <td> <input type='text' name=@@f class='align_singleLine form-control' /> </td>" +
-                                            " </tr>" +
-                                                    " };");
-                                $('.alert_fd_save').show()
+                    var filterCode = window.editor.getValue();
+                    var result=filterCode.match(/\@@\w+/g);
+                    var filterparams=[];
+                    if(result.length>0){
+                        for(var i=0; i< result.length; i++) {
+                            result[i] =  result[i].substr(1);
+                            if(result[i]=="search" || result[i] == "and_search" || result[i] == "search_and" || result[i] == "where_search" || result[i] == "limit" || result[i] == "offset" || result[i] == "orderby")
+                            {
+
+                            }
+                            else{if($.inArray(result[i], filterparams)===-1)
+                                filterparams.push(result[i]);
+                            }
+                        }
+                        if(filterparams.length!=0){
+                            filterparams.sort();
+                            alert(filterparams);
+                            $('tbody').children().remove();
+                            $.each(filterparams,function(i,obj){
+                                $('tbody ').append("<tr><td><label class='align_singleLine'>"+obj+"</label>" +
+                                                      "  </td>" +
+                                                       " <td>" +
+                                                        "    <select id="+obj+" name='fdtype' class='param_val selectpicker show-tick align_singleLine' data-live-search='true' style='display:inline-block !important'>" +
+                                                         "       <option value='text' data-tokens='text'>text</option>' " +
+                                                         "       <option value='integer' data-tokens='integer'>integer</option>" +
+                                                           "     <option value='datetime' data-tokens='datetime'>datetime</option>" +
+                                                             "   <option value='boolean' data-tokens='boolean'>boolean</option>" +
+                                                            "</select>" +
+                                                       " </td>" +
+                                                       //" <td> <input type='text' name="+obj+" class='align_singleLine form-control' required/> </td>" +
+                                                   " </tr>");
                             });
-                    $('#filterDialog').modal('show');
+                            $('#filterDialog').modal('show');
+                        }
+                        else{
+
+
+                        }
+                    }
+                    else{
+
+
+                    }}
+            });
+            $('#execute').on('click',function(){
+                if( $('#fd option:selected').text()==="Select Filter Dialog"){
+                    alert("Please select a filter dialog");                
+                }
+                else{
+                    if( $('#fd option:selected').text()!=="Auto Generate Filter Dialog"){
+
+                        alert("open selected filter dialog");        
+                    }                
                 }
             });
-        });
-        $(document).keydown(function (e) {
-            if (e.keyCode == 83 && e.ctrlKey) {
-                e.preventDefault();
-                $(".save").trigger("click");
-            }
+            $(document).keydown(function (e) {
+                if (e.keyCode == 83 && e.ctrlKey) {
+                    e.preventDefault();
+                    $(".save").trigger("click");
+                }
+            });
         });
         function Save() {
             if(@ViewBag.IsNew===true){
                 $(".commit").trigger("click");
             }
             else{
-                alert('old');
-                $.post("http://localhost:53431/Tenant/SaveEbDataSource",
+                $(".eb-loader").show();
+                $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/SaveEbDataSource",
                     {"Id":@ViewBag.Obj_id,
                         "Code": window.editor.getValue(),
                         "Name":$('#obj_name').val(),
@@ -97,13 +130,14 @@
                         "isSave":"true",
                         "VersionNumber": @ViewBag.VersionNumber},
                         function (result) {
-                            $('.alert_code_save').show()
+                            success_alert();
                         });
             };
         }
         function Commit() {
+            $(".eb-loader").show();
             if(@ViewBag.Obj_id===0){
-                $.post("http://localhost:53431/Tenant/CommitEbDataSource",
+                $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/CommitEbDataSource",
                        {"Id":@ViewBag.Obj_id,
                            "Code": window.editor.getValue(),
                            "Name":$('#obj_name').val(),
@@ -112,23 +146,32 @@
                            "isSave":"true",
                            "VersionNumber": @ViewBag.VersionNumber},
                            function (result) {
-                               $('.alert_code_save').show()
+                               success_alert();
                            });
             }
-            var Dswzd = new EbWizard("http://localhost:53431/Tenant/ds_save", "http://localhost:53431/Tenant/CommitEbDataSource", 400, 400, "Commit", "fa-database",'@ViewBag.cid');
+            var Dswzd = new EbWizard("http://dev.eb_roby_dev.localhost:53431/Tenant/ds_save", "http://dev.eb_roby_dev.localhost:53431/Tenant/CommitEbDataSource", 400, 400, "Commit", "fa-database",'@ViewBag.cid');
             Dswzd.CustomWizFunc = new CustomCodeEditorFuncs('@ViewBag.cid', @ViewBag.Obj_id, $('#obj_name').val(), $('#obj_desc').val(), window.editor.getValue(), @ViewBag.VersionNumber).DataSource;
+        }
+        function success_alert(){
+            $(".eb-loader").hide();
+            $('.alert').remove();
+            $('.help').append("<div class='alert alert-success alert-dismissable'>"+
+     "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+
+     "<strong>Success!</strong>"+
+     "</div>");
         }
     </script>
 </head>
 <body>
+    <div class='eb-loader'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>
     <span>
         <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn btn-sm btn-info fa fa-plus-square  fa-1x" aria-hidden="true"></i></a>
         <a class="commit" data-toggle="tooltip" title="Commit" onclick="Commit()"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
-        <a href="#" class="save" data-toggle="tooltip" title="Save" onclick="Save()"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
+        <a class="save" data-toggle="tooltip" title="Save" onclick="Save()"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-        @*<a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>*@
+        <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
         @ViewBag.Status
@@ -136,21 +179,22 @@
         Version v.@ViewBag.VersionNumber
     </span>
     <div id="objCollapse" class="collapse">
-        <div class="form-group align_singleLine">
+        <div class="form-group ">
             <label class="control-label">DataSource Name</label>
             <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control " />
         </div>
-        <div class="form-group align_singleLine">
+        <div class="form-group ">
             <label class="control-label">Description</label>
             <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
         </div>
-        <div class="dropdown">
+        <div class="dropdown fdlist">
             Filter Dialogues
             <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true">
                 @{
                     @using ExpressBase.Objects.ServiceStack_Artifacts;
                     List<string> filterDialogs = new List<string>();
-                    filterDialogs = ViewBag.FilterDialogs;
+                    filterDialogs = ViewBag.FilterDialogs;                   
+                    <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
                     <option value="Auto Generate Filter Dialog" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
                     foreach (var filter in filterDialogs)
                     {
@@ -160,18 +204,13 @@
             </select>
         </div>
     </div>
-    <div class="alert alert-success alert-dismissable alert_code_save" style="display:none">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <strong>Success!</strong> Successfully Saved.
-    </div>
     <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
     <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
     <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-    <p>Hit Ctrl+Space to trigger autocomplete</p>
+    <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
 
     <div id="filterDialog" class="modal fade" role="dialog">
         <div class="modal-dialog">
-
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
@@ -182,11 +221,11 @@
                     <div class="fd_top_content">
                         <span class="align_singleLine">
                             <label class="">Filter Dialog Name</label>
-                            <input type="text" id="fdname" name="fdname" class="form-control inputBox" />
+                            <input type="text" id="fdname" name="fdname" class="form-control inputBox" required />
                         </span>
                         <span class="align_singleLine">
                             <label class="">Description</label>
-                            <input type="text" id="fddesc" name="fddesc" class="form-control inputBox " />
+                            <input type="text" id="fddesc" name="fddesc" class="form-control inputBox " required />
                         </span>
                     </div>
                     <div class="table-responsive table-bordered table-responsive">
@@ -195,51 +234,44 @@
                                 <tr>
                                     <th>Parameter Name</th>
                                     <th>Parameter Type</th>
-                                    <th>Parameter Value</th>
+                                    @*<th>Parameter Value</th>*@
                                 </tr>
                             </thead>
-                            <tbody>
-                                <div id="filterdiv"></div>
-
-                            </tbody>
-
-                            </table >
-                            </div >
-                            </div >
-                            <div class="modal-footer">
-                            <div class="alert alert-success alert-dismissable alert_fd_save" style="display:none">
-                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>Success!</strong> Successfully Saved.
-                            </div>
-                            <input type="button" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
+                            <tbody class="fdtbody"></tbody>
+                        </table>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <div class="help"></div>
+                    <input type="button" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
+                </div>
             </div>
-
         </div>
 
+    </div>
 
 
-        <script type="text/javascript">
-                window.onload = function() {
-                    CodeMirror.commands.autocomplete = function(cm)
-                    {
-                        CodeMirror.showHint(cm, @ViewBag.EditorHint);
-                    };
 
-                    window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-                        mode: "@ViewBag.EditorMode",
-                        lineNumbers: true,
-                        lineWrapping: true,
-                        extraKeys: { "Ctrl-Space": "autocomplete" },
-                        foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-                        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-                    });
+    <script type="text/javascript">
+        window.onload = function() {
+            CodeMirror.commands.autocomplete = function(cm)
+            {
+                CodeMirror.showHint(cm, @ViewBag.EditorHint);
+            };
 
-                };
+            window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+                mode: "@ViewBag.EditorMode",
+                lineNumbers: true,
+                lineWrapping: true,
+                extraKeys: { "Ctrl-Space": "autocomplete" },
+                foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+            });
+
+        };
 
 
-        </script>
+    </script>
 </body>
 </html>
 <style>
@@ -268,5 +300,9 @@
 
     .fd_top_content {
         margin-bottom: 10px;
+    }
+
+    .eb-loader {
+        margin-top: 20%;
     }
 </style>

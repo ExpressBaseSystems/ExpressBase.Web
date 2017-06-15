@@ -8,14 +8,23 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 var DVObj = function (dsid, settings) {
-        this.TVPrefObj = settings;
-    this.dsid = null;
+    this.TVPrefObj = settings;
+    this.dsid = dsid;
     this.TVPrefObjCopy = null;
     this.settings_tbl = null;
 
     this.init = function () {
-        if (this.TVPrefObj.length > 0) {
+        alert(JSON.stringify(this.TVPrefObj));
+        //alert(Object.keys(this.TVPrefObj).length);
+        if (Object.keys(this.TVPrefObj).length > 0) {
             $("#dvName_txt").val(this.TVPrefObj.dvName);
+            $("#serial_check").prop("checked", this.TVPrefObj.hideSerial);
+            $("#select_check").prop("checked", this.TVPrefObj.hideCheckbox);
+            $("#pageLength_text").val(this.TVPrefObj.lengthMenu[0][0]);
+            $("#scrollY_text").val(this.TVPrefObj.scrollY);
+            $("#rowGrouping_text").val(this.TVPrefObj.rowGrouping);
+            $("#leftFixedColumns_text").val(this.TVPrefObj.leftFixedColumns);
+            $("#rightFixedColumns_text").val(this.TVPrefObj.rightFixedColumns);
             this.callPost4SettingsTable();
         }
         $(".dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
@@ -33,6 +42,7 @@ var DVObj = function (dsid, settings) {
     this.getColumnsSuccess = function (data) {
         alert("hhhh----");
         this.TVPrefObj = JSON.parse(data);
+        alert(JSON.stringify(this.TVPrefObj));
         //this.TVPrefObjCopy = JSON.parse(data);
         this.callPost4SettingsTable();
     };
@@ -103,15 +113,15 @@ var DVObj = function (dsid, settings) {
             fontName = fontName.substring(5).replace(/_/g, " ");
             index = fontName.lastIndexOf(" ");
             fontName = fontName.substring(0, index);
-            return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
+            return "<input type='text' class='font' style='width: 100px;' >";
         }
         else
-            return "<input type='text' class='font' style='width: 100px;' name='font'>";
+            return "<input type='text' class='font' style='width: 100px;'>";
     };
 
     this.initComplete4Settingstbl = function (settings, json) {
-        $('.font').fontselect();
         $('#Table_Settings').DataTable().columns.adjust();
+        $('.font').fontselect();
         //this.addEventListner4Settingstbl();
     };
 
@@ -166,6 +176,7 @@ var DVObj = function (dsid, settings) {
         this.TVPrefObj.leftFixedColumns = $("#leftFixedColumns_text").val();
         this.TVPrefObj.rightFixedColumns = $("#rightFixedColumns_text").val();
         this.TVPrefObj.dvName = $("#dvName_txt").val();
+        this.TVPrefObj.dsId = this.dsid;
         this.TVPrefObj.columns = objcols;
         //this.TVPrefObj.columnsext = this.TVPrefObj.columnsext;
         //this.ebSettingsCopy.columnsdel = this.columnsdel;
@@ -178,7 +189,7 @@ var DVObj = function (dsid, settings) {
         }
         //console.log(JSON.stringify(this.TVPrefObj));
         //this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, tvid), json);
-        $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/SaveSettings', { tvid: this.dsid, json: JSON.stringify(this.TVPrefObj), objId: objId }, this.saveSuccess.bind(this));
+        $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
         
     };
 

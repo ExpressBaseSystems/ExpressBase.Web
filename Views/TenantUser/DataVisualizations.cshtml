@@ -3,8 +3,8 @@
 }
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 @{ 
-    List<EbObjectWrapper> dslist = new List<EbObjectWrapper>();
-    dslist = ViewBag.dvlist;
+    List<EbObjectWrapper> dvlist = new List<EbObjectWrapper>();
+    dvlist = ViewBag.dvlist;
 
 }
 <div>
@@ -25,7 +25,7 @@
                     <div class="table-container">
                         <table class="table table-filter" id="myTable">
                             <tbody>
-                                @foreach (var element in dslist)
+                                @foreach (var element in dvlist)
                                 {
                                     <tr data-status="pagado" style="height: 100px;">
                                         <td style="width: 15px;">
@@ -72,12 +72,12 @@
 </div>
 <script>
      function opendv(id) {
-         window.location = 'dv?dsid=' + id;
+         window.location = 'dv?dvid=' + id;
      };
 
      function opendvnew(id)
      {
-         window.open('dv?dsid=' + id, '_blank');
+         window.open('dv?dvid=' + id, '_blank');
      };
      function myFunction() {
 

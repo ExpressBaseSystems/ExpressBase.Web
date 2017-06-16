@@ -35,7 +35,7 @@ var DVObj = function (dsid, settings) {
         alert("dsid" +this.dsid);
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
         $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
-        $.post('GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
+        $.post('../Tenant/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
         
     };
 

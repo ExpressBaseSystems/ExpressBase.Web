@@ -489,13 +489,19 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.Obj_id = 0;
             ViewBag.dsid = 0;
             ViewBag.tvpref = "{ }";
-            return View();
+            ViewBag.isFromuser = 0;
+            
+                return View();
         }
 
         [HttpPost]
-        public IActionResult DVEditor(int i)
+        public IActionResult DVEditor(int objid)
         {
-            ViewBag.Obj_id = HttpContext.Request.Form["objid"];
+            //if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            //    ViewBag.Obj_id = i;
+            //else
+                ViewBag.Obj_id = objid;
+
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
@@ -535,7 +541,7 @@ namespace ExpressBase.Web2.Controllers
             }
             ObjListAll.Remove(ObjList.Keys.First<int>());
             ViewBag.DSListAll = ObjListAll;
-            return View();
+                return View();
         }
 
         public string GetColumns(int dsid)

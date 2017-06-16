@@ -2,7 +2,15 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    bool isAjaxCall = (this.Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
+    if (isAjaxCall)
+    {
+        Layout = null;
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+    }
 }
 <style>
     .scrollable-menu {
@@ -23,17 +31,20 @@
     </head>
     <body>
         @{ 
+            
             @using ExpressBase.Objects.ServiceStack_Artifacts;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             Dictionary<int, EbObjectWrapper> ObjListAll = new Dictionary<int, EbObjectWrapper>();
             ObjList = ViewBag.DSList;
             ObjListAll = ViewBag.DSListAll;
             var xx = (ObjList.Count > 0) ? (ObjList.Values.First<EbObjectWrapper>().Name) : "Data Source";
+            var cls = "show";
         }
         <div id="settingsdiv" style="background-color:rgb(260,260,260)">
-            <div>
+            @if (isAjaxCall) { cls = "hidden"; }
+            <div class=@cls>
                 <div class='dropdown' id='datatSourceDropdown'>
-                    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'> @xx
+                    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>@xx
                         <span class='caret'></span>
                     </button>
                     <ul class='dropdown-menu scrollable-menu'>
@@ -54,7 +65,7 @@
                 </div>
                 <div>
                     <label> Visualization Name</label>
-                    <input id='dvName_txt' type='text' />
+                    <input id='dvName_txt' type='text'/>
                 </div>
             </div>
 
@@ -138,21 +149,24 @@
                     </div>
                 </div>
             </div>
+            @if (!isAjaxCall)
+            {
             <div style="float:right;">
                 <button id='Save_btn' class='btn btn-primary' data-objId="@ViewBag.Obj_id">Save Changes</button>
             </div>
             <div class="alert alert-success" style="display:none">
                 <strong>Success!</strong> Indicates a successful or positive action.
             </div>
-        </div>
-        <script>
+            }
+            <script>
             var ds= @ViewBag.dsid;
             @*var sett;
             if("@ViewBag.tvpref" === "abc")
                 sett= "@ViewBag.tvpref";
             else*@
              var sett= @Html.Raw(ViewBag.tvpref);
-            var dvo= new DVObj(ds, sett);
-        </script>
+             var dvo= new DVObj(ds, sett);
+            </script>
+        </div>
     </body>
 </html>

@@ -51,7 +51,7 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.EbConfig = this.EbConfig;         
             var req = this.HttpContext.Request.Form;
-            AuthenticateResponse authResponse = null;
+            MyAuthenticateResponse authResponse = null;
 
             string token = req["g-recaptcha-response"];
             Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
@@ -89,7 +89,7 @@ namespace ExpressBase.Web2.Controllers
                 try
                 {
                     var authClient = this.EbConfig.GetServiceStackClient();
-                    authResponse = authClient.Send<AuthenticateResponse>(new Authenticate
+                    authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = "expressbase/" + req["uname"],

@@ -92,16 +92,16 @@ namespace ExpressBase.Web2.Controllers
             {
                 try
                 {
-                    var authClient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+                    var authClient = this.EbConfig.GetServiceStackClient();
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
-                        provider = JwtAuthProvider.Name,
-                        UserName = req["uname"],
+                        provider = CredentialsAuthProvider.Name,
+                        UserName = ViewBag.cid+"/" + req["uname"],
                         Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "cid", ViewBag.cid }, { "Login", "Client" } },
-                        UseTokenCookie = true
+                        //Meta = new Dictionary<string, string> { { "cid", ViewBag.cid }, { "Login", "Client" } },
+                        //UseTokenCookie = true
                     });
-
+                    
                 }
                 catch (WebServiceException wse)
                 {

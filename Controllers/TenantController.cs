@@ -132,6 +132,10 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult TenantLogout()
         {
             ViewBag.Fname = null;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var abc= client.Post(new Authenticate { provider = "logout" });
+            HttpContext.Response.Cookies.Delete("Token");
+            HttpContext.Response.Cookies.Delete("rToken");
             return RedirectToAction("TenantSignup", "TenantExt");
 
         }
@@ -510,13 +514,19 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.Obj_id = 0;
             ViewBag.dsid = 0;
             ViewBag.tvpref = "{ }";
-            return View();
+            ViewBag.isFromuser = 0;
+            
+                return View();
         }
 
         [HttpPost]
-        public IActionResult DVEditor(int i)
+        public IActionResult DVEditor(int objid)
         {
-            ViewBag.Obj_id = HttpContext.Request.Form["objid"];
+            //if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            //    ViewBag.Obj_id = i;
+            //else
+                ViewBag.Obj_id = objid;
+
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
@@ -527,7 +537,7 @@ namespace ExpressBase.Web2.Controllers
                     var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataVisualization>(element.Bytea);
                     ViewBag.ObjectName = element.Name;
                     ViewBag.dsid = dsobj.dsid;
-                    ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, dsobj.dsid));
+                    ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
                 }
             }
             resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.dsid), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
@@ -556,7 +566,7 @@ namespace ExpressBase.Web2.Controllers
             }
             ObjListAll.Remove(ObjList.Keys.First<int>());
             ViewBag.DSListAll = ObjListAll;
-            return View();
+                return View();
         }
 
         public string GetColumns4Trial(int dsid, string parameter)
@@ -601,8 +611,13 @@ namespace ExpressBase.Web2.Controllers
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
-
+            DataSourceColumnsResponse result ;
             var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
+            if (columnColletion == null || columnColletion.Count == 0)
+            {
+                result = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+                columnColletion = result.Columns;
+            }
             var tvpref = this.GetColumn4DataTable(columnColletion, dsid);
             return tvpref;
         }

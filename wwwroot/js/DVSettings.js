@@ -35,7 +35,7 @@ var DVObj = function (dsid, settings) {
         alert("dsid" +this.dsid);
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
         $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
-        $.post('GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
+        $.post('../Tenant/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
         
     };
 
@@ -113,10 +113,10 @@ var DVObj = function (dsid, settings) {
             fontName = fontName.substring(5).replace(/_/g, " ");
             index = fontName.lastIndexOf(" ");
             fontName = fontName.substring(0, index);
-            return "<input type='text' class='font' style='width: 100px;' >";
+            return "<input type='text' class='font' style='width: 100px;' name='font' >";
         }
         else
-            return "<input type='text' class='font' style='width: 100px;'>";
+            return "<input type='text' class='font' style='width: 100px;' name='font'>";
     };
 
     this.initComplete4Settingstbl = function (settings, json) {
@@ -165,7 +165,7 @@ var DVObj = function (dsid, settings) {
                 else
                     cls = 'tdheight';
             }
-
+            
             if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
         this.TVPrefObj.hideSerial = $("#serial_check").prop("checked");
@@ -187,7 +187,7 @@ var DVObj = function (dsid, settings) {
             var groupcols = $.grep(this.TVPrefObj.columns, function (e) { return e.name === this.TVPrefObj.rowGrouping });
             groupcols[0].visible = false;
         }
-        //console.log(JSON.stringify(this.TVPrefObj));
+        console.log(JSON.stringify(this.TVPrefObj));
         //this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, tvid), json);
         $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
         

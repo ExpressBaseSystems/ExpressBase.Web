@@ -21,21 +21,38 @@ namespace ExpressBase.Web.Filters
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var controller = context.Controller as Controller;
-            var handler = new JwtSecurityTokenHandler();
-            var token = context.HttpContext.Request.Cookies["Token"];
-            var rToken = context.HttpContext.Request.Cookies["rToken"];
-            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+            try
+            {
+                var token = context.HttpContext.Request.Cookies["Token"];
+                var rToken = context.HttpContext.Request.Cookies["rToken"];
 
-            controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
-            controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
-            controller.ViewBag.token = token;
-            controller.ViewBag.rToken = rToken;
-            controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
-            controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+                var tokenS = (new JwtSecurityTokenHandler()).ReadToken(token) as JwtSecurityToken;
 
-            controller.ViewBag.EbConfig = this.EbConfig;
-            base.OnActionExecuting(context);
+                var controller = context.Controller as Controller;
+                controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
+                controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
+                controller.ViewBag.token = token;
+                controller.ViewBag.rToken = rToken;
+                controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
+                controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+
+                controller.ViewBag.EbConfig = this.EbConfig;
+                base.OnActionExecuting(context);
+            }
+            catch (System.ArgumentNullException ane)
+            {
+                if (ane.ParamName == "token" || ane.ParamName == "rToken")
+                {
+                    context.Result = new RedirectResult("~/TenantExt/Signin");
+                    return;
+                }
+            }
         }
+
+        //public override void OnActionExecuted(ActionExecutedContext context)
+        //{
+        //    context.HttpContext.Response.Cookies.Append("Token", (context.HttpContext.Request.Headers["Authorization"]).ToString().Replace("Bearer", string.Empty));
+        //    base.OnActionExecuted(context);
+        //}
     }
 }

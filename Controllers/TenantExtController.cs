@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using ServiceStack;
+using ServiceStack.Auth;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,12 +32,6 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-
-        public IActionResult home()
-        {
-            return View();
-        }
-
         [HttpGet]
         public IActionResult Signin()
         {
@@ -93,14 +88,14 @@ namespace ExpressBase.Web2.Controllers
             {
                 try
                 {
-                    var authClient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+                    var authClient = this.EbConfig.GetServiceStackClient();
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
-                        provider = MyJwtAuthProvider.Name,
-                        UserName = req["uname"],
+                        provider = CredentialsAuthProvider.Name,
+                        UserName = "expressbase/" + req["uname"],
                         Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "cid","expressbase" }, { "Login", "Client" } },
-                        UseTokenCookie = true
+                        //Meta = new Dictionary<string, string> { { "cid","expressbase" }, { "Login", "Client" } },
+                        //UseTokenCookie = true
                     });
                     
                 }

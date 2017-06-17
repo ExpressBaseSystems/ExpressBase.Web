@@ -23,12 +23,14 @@ namespace ExpressBase.Web.Filters
         {
             try
             {
+                var controller = context.Controller as Controller;
+                controller.ViewBag.EbConfig = this.EbConfig;
                 var token = context.HttpContext.Request.Cookies["Token"];
                 var rToken = context.HttpContext.Request.Cookies["rToken"];
 
                 var tokenS = (new JwtSecurityTokenHandler()).ReadToken(token) as JwtSecurityToken;
 
-                var controller = context.Controller as Controller;
+                
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
                 controller.ViewBag.token = token;
@@ -36,7 +38,7 @@ namespace ExpressBase.Web.Filters
                 controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
                 controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
 
-                controller.ViewBag.EbConfig = this.EbConfig;
+                
                 base.OnActionExecuting(context);
             }
             catch (System.ArgumentNullException ane)

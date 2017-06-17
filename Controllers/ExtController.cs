@@ -41,5 +41,13 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EbConfig = this.EbConfig;
             return View();
         }
+        [HttpPost]
+        public IActionResult TenantExtSignup()
+        {
+            var req = this.HttpContext.Request.Form;
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
     }
+
 }

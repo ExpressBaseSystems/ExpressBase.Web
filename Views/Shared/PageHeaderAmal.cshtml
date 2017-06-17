@@ -1,4 +1,12 @@
-﻿<nav class="navbar navbar-default navbar-fixed-top">
+﻿<script>
+
+        function onSubmit(token) {
+            document.getElementById("signup_form").submit();
+        }
+</script>
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -48,7 +56,6 @@
                                 <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
                                 <input type="text" id="uname" name="uname" class="form-control" placeholder="Username/Email" required autofocus><br />
                             </div><br />
-
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
                                 <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
@@ -62,7 +69,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xs-12">
-                                    <button type="button" class="btn btn-block btn-flat" style="background-color:#3b5998;color:white;">Sign In</button>
+                                    <button type="submit" class="btn btn-block btn-flat" style="background-color:#3b5998;color:white;">Sign In</button>
                                 </div>
                             </div>
                         </form>
@@ -107,6 +114,7 @@
     </div>
 </div>
 <!--Modal box sign in/-->
+<!--Modal box sign up/-->
 <div class="modal fade" id="modalsignup" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
      aria-hidden="true">
         <div class="modal-dialog modal-sm">
@@ -122,13 +130,13 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                                    <form role="form" class="form-horizontal">
+                                    <form id="signup_form" role="form" class="form-horizontal" action="~/Ext/TenantExtSignup" method="post">
                                         <div class="form-group">
                                             <label for="email" class="col-sm-2 control-label">
                                                 Email
                                             </label>
                                             <div class="col-sm-12">
-                                                <input type="email" class="form-control" id="email" placeholder="Email" />
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" />
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -136,24 +144,23 @@
                                                 Password
                                             </label>
                                             <div class="col-sm-12">
-                                                <input type="text" class="form-control" id="password" placeholder="Password" />
+                                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" />
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-12">
-                                                <button type="button" class="btn btn-primary btn-sm">
+                                            <div class="col-xs-12">
+                                                <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSubmit' style="background-color:#3b5998;color:white;" >
                                                     submit
                                                 </button>
-                                                <button type="button" class="btn btn-default btn-sm">
-                                                    Cancel
-                                                </button>
+                                                
                                             </div>
                                         </div>
                                     <div class="form-group text-center">
                                         <div class="col-sm-12">
-                                            <h4>
-                                                Or Sign in with
-                                            </h4>
+                                            <hr class="bottom-line">
+                                            <p>
+                                                Or Sign up with
+                                            </p>
                                             </div>
                                     </div>
                                         <div class="form-group text-center">

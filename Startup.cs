@@ -80,7 +80,7 @@ namespace ExpressBase.Web2
                 routes.DefaultHandler = areaRouter;
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Ext}/{action=Index}/{id?}");
             });
         }
     }

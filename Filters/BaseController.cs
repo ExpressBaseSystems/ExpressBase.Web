@@ -41,10 +41,13 @@ namespace ExpressBase.Web.Filters
             }
             catch (System.ArgumentNullException ane)
             {
-                if (ane.ParamName == "token" || ane.ParamName == "rToken")
+                if (!(context.Controller is ExpressBase.Web.Controllers.ExtController))
                 {
-                    context.Result = new RedirectResult("~/TenantExt/Signin");
-                    return;
+                    if (ane.ParamName == "token" || ane.ParamName == "rToken")
+                    {
+                        context.Result = new RedirectResult("~/Ext/Index");
+                        return;
+                    }
                 }
             }
         }

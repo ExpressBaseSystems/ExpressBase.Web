@@ -1,16 +1,8 @@
 ﻿<script>
-
         function onSubmit(token) {
             document.getElementById("signup_form").submit();
         }
-
-        function onSignin(token) {
-            alert("MMMM" + token);
-            document.getElementById("log_form").submit();
-        }
 </script>
-
-
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -32,7 +24,7 @@
                 <li><a href="#">Store</a></li>
                 <li><a href="#">FAQ's</a></li>
                 <li><a href="#">Blog</a></li>
-                <li><a href="~/Ext/SignInExternal">Sign in</a></li>
+                <li><a href="~/Ext/SignIn">Sign in</a></li>
                 <li class="btn-trial" data-toggle="modal" data-target="#modalsignup"><a href="#">Get Started for FREE</a></li>
             </ul>
         </div>
@@ -61,7 +53,7 @@
                                                 Email
                                             </label>
                                             <div class="col-sm-12">
-                                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" />
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="Email"/>
                                             </div>
                                         </div>
                                         <div class="form-group">

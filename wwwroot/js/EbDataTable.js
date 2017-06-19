@@ -86,7 +86,7 @@ var EbDataTable = function (settings) {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
             $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
         else
-            $.post('../Tenenat/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('../Tenant/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
@@ -329,8 +329,8 @@ var EbDataTable = function (settings) {
     };
 
     this.initCompleteFunc = function (settings, json) {
-
-        this.GenerateButtons();
+        if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false)
+            this.GenerateButtons();
         this.createFilterRowHeader();
         if (this.eb_agginfo.length > 0) {
             this.createFooter(0);

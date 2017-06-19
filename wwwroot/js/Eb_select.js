@@ -51,7 +51,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
 
         //set id for searchBox
         $('#' + this.name + 'Wraper  [type=search]').each(function (i) {
-            $(this).attr('id',  _this.name + 'srch' + i);
+            $(this).attr('id',  this.name + 'srch' + i);
         });
 
 
@@ -83,8 +83,6 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
 
     // init datatable
     this.InitDT = function () {
-        //$('#' + this.name + '_loading-image').show();
-        //$('#' + this.name + '_loadingdiv').show();
         this.IsDatatableInit = true;
         this.datatable = new EbDataTable({
             ds_id: this.dsid,
@@ -304,13 +302,13 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
         var container1 = $('#' + this.name);
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
-            if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0)
-                document.getElementById(this.name + 'srch0').setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
-            else
-                if (this.required && this.Vobj.valueMember.length === 0)
-                    document.getElementById('' + this.name + 'srch0').setCustomValidity('This field  is required');
-                else
-                    document.getElementById('' + this.name + 'srch0').setCustomValidity('');
+            //if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0)
+            //    document.getElementById(this.name + 'srch0').setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
+            //else
+            //    if (this.required && this.Vobj.valueMember.length === 0)
+            //        document.getElementById('' + this.name + 'srch0').setCustomValidity('This field  is required');
+            //    else
+            //        document.getElementById('' + this.name + 'srch0').setCustomValidity('');
         }
     };
 

@@ -1,3 +1,4 @@
+
 body{
     background-color:white; 
     background-size: cover;     
@@ -13,7 +14,7 @@ body{
 /*       Slider       */
 /* Declare heights because of positioning of img element */
 .carousel .item {
-height:500px;
+height:70vh;
 }
 .carousel img {
   position: absolute;
@@ -225,7 +226,6 @@ h6.description{
 border:solid rgba(0, 0, 0,0.1);
 border-width:1px;
 margin-right:30px;
-}
 .profile h1{
 	font-weight: normal;
 	font-size: 20px;

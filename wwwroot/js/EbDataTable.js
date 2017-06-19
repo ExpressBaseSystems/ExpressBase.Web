@@ -1100,18 +1100,20 @@ var EbDataTable = function (settings) {
         this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
         this.ebSettingsCopy.dvName = $("#dvName_txt").val();
         this.ebSettingsCopy.columns = objcols;
-        //this.ebSettings.columnsext = (this.tempcolext !== null) ? this.tempcolext : this.ebSettings.columnsext;
 
-        console.log(JSON.stringify(this.ebSettingsCopy.columnsext));
+        //console.log(JSON.stringify(this.ebSettings.columnsext));
+        console.log(JSON.stringify(this.ebSettings.columnsdel));
+        console.log(JSON.stringify(this.ebSettings.columnsextdel));
         this.ebSettingsCopy.columnsext = this.ebSettings.columnsext;
-        this.ebSettingsCopy.columnsdel = this.columnsdel;
-        this.ebSettingsCopy.columnsextdel = this.columnsextdel;
+        this.ebSettingsCopy.columnsdel = this.ebSettings.columnsdel;
+        this.ebSettingsCopy.columnsextdel = this.ebSettings.columnsextdel;
         this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
         this.updateRenderFunc();
         if (this.ebSettingsCopy.rowGrouping.length > 0) {
             var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
             groupcols[0].visible = false;
         }
+        console.log(JSON.stringify(this.ebSettingsCopy));
         $.post('TVPref4User', { tvid: this.dvid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
     };
 
@@ -1157,80 +1159,80 @@ var EbDataTable = function (settings) {
     //    });
     //};
 
-    this.getcolumn4dropdown = function () {
-        if (this.ebSettings.columnsdel !== undefined && this.ebSettings.columnsdel !== null) {
-            this.ebSettings.columnsdel = this.ebSettings.columnsdel.sort(function (a, b) {
-                return a.name.localeCompare(b.name);
-            });
-            this.ebSettings.columnsextdel = this.ebSettings.columnsextdel.sort(function (a, b) {
-                return a.name.localeCompare(b.name);
-            });
-            $.each(this.ebSettings.columnsdel, this.adddelColsandColsext2dropdown.bind(this));
-        }
+    //this.getcolumn4dropdown = function () {
+    //    if (this.ebSettings.columnsdel !== undefined && this.ebSettings.columnsdel !== null) {
+    //        this.ebSettings.columnsdel = this.ebSettings.columnsdel.sort(function (a, b) {
+    //            return a.name.localeCompare(b.name);
+    //        });
+    //        this.ebSettings.columnsextdel = this.ebSettings.columnsextdel.sort(function (a, b) {
+    //            return a.name.localeCompare(b.name);
+    //        });
+    //        $.each(this.ebSettings.columnsdel, this.adddelColsandColsext2dropdown.bind(this));
+    //    }
 
-    };
+    //};
 
-    this.adddelColsandColsext2dropdown = function (i, obj) {
-        var liId = "li_" + obj.name;
-        $("#columnDropdown ul").append("<li id=" + liId + "><a data-data=\"" + JSON.stringify(obj).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.ebSettings.columnsextdel[i]).replace(/\"/g, "'") + "\" href='#'>" + obj.name + "</a></li>");
-    };
+    //this.adddelColsandColsext2dropdown = function (i, obj) {
+    //    var liId = "li_" + obj.name;
+    //    $("#columnDropdown ul").append("<li id=" + liId + "><a data-data=\"" + JSON.stringify(obj).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.ebSettings.columnsextdel[i]).replace(/\"/g, "'") + "\" href='#'>" + obj.name + "</a></li>");
+    //};
 
-    this.showPropertyGrid = function (e) {
-        var idx = this.settings_tbl.row(e.target).index();
-        CreatePropGrid(this.settings_tbl.row(idx).data(), this.ebSettings.columnsext);
-        this.settings_tbl.columns.adjust();
-    };
+    //this.showPropertyGrid = function (e) {
+    //    var idx = this.settings_tbl.row(e.target).index();
+    //    CreatePropGrid(this.settings_tbl.row(idx).data(), this.ebSettings.columnsext);
+    //    this.settings_tbl.columns.adjust();
+    //};
 
-    this.column4SettingsTbl = function () {
-        var colArr = [];
-        colArr.push(new coldef4Setting('', '#', "", function (data, type, row, meta) { return (meta.row) + 1 }));
-        colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));
-        colArr.push(new coldef4Setting('name', 'Name', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
-        colArr.push(new coldef4Setting('type', ' Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
-        colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='hidden' value=" + data + " name='title' style='width: 100px;'>" + data : data; }, ""));
-        colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data === 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
-        colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
-        colArr.push(new coldef4Setting('className', 'Font', "", this.renderFontSelect, "30"));
-        colArr.push(new coldef4Setting('', '', "", function (data, type, row, meta) { return "<a href='#' class ='eb_delete_btn'><i class='fa fa-times' aria-hidden='true' style='color:red' ></i></a>" }, "30"));
-        return colArr;
-    };
+    //this.column4SettingsTbl = function () {
+    //    var colArr = [];
+    //    colArr.push(new coldef4Setting('', '#', "", function (data, type, row, meta) { return (meta.row) + 1 }));
+    //    colArr.push(new coldef4Setting('data', 'Column Index', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='index'>" : data; }));
+    //    colArr.push(new coldef4Setting('name', 'Name', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='name' style='border: 0;width: 100px;' readonly>" : data; }, ""));
+    //    colArr.push(new coldef4Setting('type', ' Column Type', 'hideme', function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='type'>" : data; }));
+    //    colArr.push(new coldef4Setting('title', 'Title', "", function (data, type, row, meta) { return (data !== "") ? "<input type='hidden' value=" + data + " name='title' style='width: 100px;'>" + data : data; }, ""));
+    //    colArr.push(new coldef4Setting('visible', 'Visible?', "", function (data, type, row, meta) { return (data === 'true') ? "<input type='checkbox'  name='visibile' checked>" : "<input type='checkbox'  name='visibile'>"; }, ""));
+    //    colArr.push(new coldef4Setting('width', 'Width', "", function (data, type, row, meta) { return (data !== "") ? "<input type='text' value=" + data + " name='width' style='width: 40px;'>" : data; }, ""));
+    //    colArr.push(new coldef4Setting('className', 'Font', "", this.renderFontSelect, "30"));
+    //    colArr.push(new coldef4Setting('', '', "", function (data, type, row, meta) { return "<a href='#' class ='eb_delete_btn'><i class='fa fa-times' aria-hidden='true' style='color:red' ></i></a>" }, "30"));
+    //    return colArr;
+    //};
 
 
 
-    this.getData4SettingsTbl = function () {
-        var colarr = [];
-        var n, d, t, v, w, ty, cls;
-        $.each(this.ebSettings.columns, function (i, col) {
-            if (col.name !== "serial" && col.name !== "id" && col.name !== "checkbox") {
-                n = col.name;
-                d = col.data;
-                t = col.title.substr(0, col.title.indexOf('<'));
-                v = (col.visible).toString().toLowerCase();
-                w = col.width.toString();
-                if (col.type) ty = col.type.toString();
-                cls = col.className;
-                if (cls === undefined)
-                    cls = "";
-                colarr.push(new coldef(d, t, v, w, n, ty, cls));
-            }
-        });
-        return colarr;
-    };
+    //this.getData4SettingsTbl = function () {
+    //    var colarr = [];
+    //    var n, d, t, v, w, ty, cls;
+    //    $.each(this.ebSettings.columns, function (i, col) {
+    //        if (col.name !== "serial" && col.name !== "id" && col.name !== "checkbox") {
+    //            n = col.name;
+    //            d = col.data;
+    //            t = col.title.substr(0, col.title.indexOf('<'));
+    //            v = (col.visible).toString().toLowerCase();
+    //            w = col.width.toString();
+    //            if (col.type) ty = col.type.toString();
+    //            cls = col.className;
+    //            if (cls === undefined)
+    //                cls = "";
+    //            colarr.push(new coldef(d, t, v, w, n, ty, cls));
+    //        }
+    //    });
+    //    return colarr;
+    //};
 
-    this.initComplete4Settingstbl = function (settings, json) {
-        $('.font').fontselect();
-        $('#Table_Settings').DataTable().columns.adjust();
-        this.addEventListner4Settingstbl();
+    //this.initComplete4Settingstbl = function (settings, json) {
+    //    $('.font').fontselect();
+    //    $('#Table_Settings').DataTable().columns.adjust();
+    //    this.addEventListner4Settingstbl();
 
-        //$('#Table_Settings').on('draw.dt', function () {
-        //    $('#Table_Settings').DataTable().column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
-        //});
-    };
+    //    //$('#Table_Settings').on('draw.dt', function () {
+    //    //    $('#Table_Settings').DataTable().column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
+    //    //});
+    //};
 
-    this.addEventListner4Settingstbl = function () {
-        $(".eb_delete_btn").off("click").on("click", this.deleteRow.bind(this));
-        $('#columnDropdown .dropdown-menu a').off("click").on("click", this.clickDropdownfunc.bind(this));
-    };
+    //this.addEventListner4Settingstbl = function () {
+    //    $(".eb_delete_btn").off("click").on("click", this.deleteRow.bind(this));
+    //    $('#columnDropdown .dropdown-menu a').off("click").on("click", this.clickDropdownfunc.bind(this));
+    //};
 
     this.renderFontSelect = function (data, type, row, meta) {
         if (data.length > 0 && data !== undefined) {
@@ -1428,25 +1430,25 @@ var EbDataTable = function (settings) {
         }, 500);
     };
 
-    this.deleteRow = function (e) {
-        var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
-        var deletedRow = $.extend(true, {}, this.settings_tbl.row(idx).data());
-        this.deleted_colname = deletedRow.name;
-        this.columnsdel.push(deletedRow);
-        this.settings_tbl.rows(idx).remove().draw();
-        this.ebSettingsCopy.columnsdel = this.columnsdel;
-        var del_obj = $.grep(this.ebSettings.columnsext, function (obj) { return obj.name === this.deleted_colname; }.bind(this));
-        this.columnsextdel.push(del_obj[0]);
-        //alert(JSON.stringify(this.columnsextdel));
-        this.ebSettingsCopy.columnsextdel = this.columnsextdel;
-        this.ebSettings.columnsdel = this.columnsdel;
-        this.ebSettings.columnsextdel = this.columnsextdel;
-        this.ebSettings.columnsext = $.grep(this.ebSettings.columnsext, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
-        var liId = "li_" + deletedRow.name;
-        $("#columnDropdown ul").append($("<li id=" + liId + "><a data-data=\"" + JSON.stringify(deletedRow).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.columnsextdel[this.columnsextdel.length - 1]).replace(/\"/g, "'") + "\" href='#'>" + deletedRow.name + "</a></li>"));
-        this.ebSettings.columns = $.grep(this.ebSettings.columns, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
-        //alert(JSON.stringify(this.columnsextdel));
-    };
+    //this.deleteRow = function (e) {
+    //    var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
+    //    var deletedRow = $.extend(true, {}, this.settings_tbl.row(idx).data());
+    //    this.deleted_colname = deletedRow.name;
+    //    this.columnsdel.push(deletedRow);
+    //    this.settings_tbl.rows(idx).remove().draw();
+    //    this.ebSettingsCopy.columnsdel = this.columnsdel;
+    //    var del_obj = $.grep(this.ebSettings.columnsext, function (obj) { return obj.name === this.deleted_colname; }.bind(this));
+    //    this.columnsextdel.push(del_obj[0]);
+    //    //alert(JSON.stringify(this.columnsextdel));
+    //    this.ebSettingsCopy.columnsextdel = this.columnsextdel;
+    //    this.ebSettings.columnsdel = this.columnsdel;
+    //    this.ebSettings.columnsextdel = this.columnsextdel;
+    //    this.ebSettings.columnsext = $.grep(this.ebSettings.columnsext, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
+    //    var liId = "li_" + deletedRow.name;
+    //    $("#columnDropdown ul").append($("<li id=" + liId + "><a data-data=\"" + JSON.stringify(deletedRow).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.columnsextdel[this.columnsextdel.length - 1]).replace(/\"/g, "'") + "\" href='#'>" + deletedRow.name + "</a></li>"));
+    //    this.ebSettings.columns = $.grep(this.ebSettings.columns, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
+    //    //alert(JSON.stringify(this.columnsextdel));
+    //};
 
     //this.add2columnsextdel = function (e,obj) {
     //    if (obj.name === this.deleted_colname)
@@ -1457,21 +1459,21 @@ var EbDataTable = function (settings) {
     //    //return e.name !== this.deleted_colname;
     //};
 
-    this.clickDropdownfunc = function (e) {
-        this.dropdown_colname = $(e.target).text();
-        var col = JSON.parse($(e.target).attr("data-data").replace(/\'/g, "\""));
-        this.settings_tbl.row.add(col).draw();
-        var colext = JSON.parse($(e.target).attr("data-colext").replace(/\'/g, "\""));
-        this.ebSettings.columnsext.push(colext);
-        this.columnsdel = $.grep(this.columnsdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
-        this.columnsextdel = $.grep(this.columnsextdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
-        $.each(this.settings_tbl.$('input[name=font]'), function (i, obj) {
-            if ($(obj).siblings().size() === 0) {
-                $(obj).fontselect();
-            }
-        });
-        $("#columnDropdown ul #" + $(e.target).parent().attr("id")).remove();
-    };
+    //this.clickDropdownfunc = function (e) {
+    //    this.dropdown_colname = $(e.target).text();
+    //    var col = JSON.parse($(e.target).attr("data-data").replace(/\'/g, "\""));
+    //    this.settings_tbl.row.add(col).draw();
+    //    var colext = JSON.parse($(e.target).attr("data-colext").replace(/\'/g, "\""));
+    //    this.ebSettings.columnsext.push(colext);
+    //    this.columnsdel = $.grep(this.columnsdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
+    //    this.columnsextdel = $.grep(this.columnsextdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
+    //    $.each(this.settings_tbl.$('input[name=font]'), function (i, obj) {
+    //        if ($(obj).siblings().size() === 0) {
+    //            $(obj).fontselect();
+    //        }
+    //    });
+    //    $("#columnDropdown ul #" + $(e.target).parent().attr("id")).remove();
+    //};
 
 
     this.btnGo.click(this.btnGoClick.bind(this));

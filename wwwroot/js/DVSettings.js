@@ -10,11 +10,12 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 var DVObj = function (dsid, settings) {
     this.TVPrefObj = settings;
     this.dsid = dsid;
-    this.TVPrefObjCopy = null;
     this.settings_tbl = null;
+    this.columnsdel = [];
+    this.columnsextdel = [];
 
     this.init = function () {
-        alert(JSON.stringify(this.TVPrefObj));
+        console.log(JSON.stringify(this.TVPrefObj));
         //alert(Object.keys(this.TVPrefObj).length);
         if (Object.keys(this.TVPrefObj).length > 0) {
             $("#dvName_txt").val(this.TVPrefObj.dvName);
@@ -26,10 +27,14 @@ var DVObj = function (dsid, settings) {
             $("#leftFixedColumns_text").val(this.TVPrefObj.leftFixedColumns);
             $("#rightFixedColumns_text").val(this.TVPrefObj.rightFixedColumns);
             this.callPost4SettingsTable();
+            this.getcolumn4dropdown();
         }
         $(".dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
         $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
+        $(".eb_delete_btn").off("click").on("click", this.deleteRow.bind(this));
+        $('#columnDropdown .dropdown-menu a').off("click").on("click", this.clickDropdownfunc.bind(this));
     };
+
     this.setDropdownDatasource = function(e){
         this.dsid = $(e.target).parent().attr("data-dsid");
         alert("dsid" +this.dsid);
@@ -238,6 +243,68 @@ var DVObj = function (dsid, settings) {
         var idpos = $.grep(this.TVPrefObj.columns, function (e) { return e.name === "id"; })[0].data;
         this.rowId = meta.row; //do not remove - for updateAlSlct
         return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+    };
+
+    this.deleteRow = function (e) {
+        alert(JSON.stringify(this.TVPrefObj.columnsdel));
+        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
+        var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
+        var deletedRow = $.extend(true, {}, this.settings_tbl.row(idx).data());
+        this.deleted_colname = deletedRow.name;
+        this.TVPrefObj.columnsdel.push(deletedRow);
+        //this.TVPrefObj.columnsdel = this.columnsdel;
+        this.settings_tbl.rows(idx).remove().draw();
+        this.TVPrefObj.columns = $.grep(this.TVPrefObj.columns, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
+        var del_obj = $.grep(this.TVPrefObj.columnsext, function (obj) { return obj.name === this.deleted_colname; }.bind(this));
+        this.TVPrefObj.columnsextdel.push(del_obj[0]);
+        //this.TVPrefObj.columnsextdel = this.columnsextdel;
+        this.TVPrefObj.columnsext = $.grep(this.TVPrefObj.columnsext, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
+        
+        var liId = "li_" + deletedRow.name;
+        $("#columnDropdown ul").append($("<li id=" + liId + "><a data-data=\"" + JSON.stringify(deletedRow).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.TVPrefObj.columnsextdel[this.TVPrefObj.columnsextdel.length - 1]).replace(/\"/g, "'") + "\" href='#'>" + deletedRow.name + "</a></li>"));
+        
+        alert(JSON.stringify(this.TVPrefObj.columnsdel));
+        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
+    };
+
+    this.clickDropdownfunc = function (e) {
+        alert(JSON.stringify(this.TVPrefObj.columnsdel));
+        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
+        this.dropdown_colname = $(e.target).text();
+        var col = JSON.parse($(e.target).attr("data-data").replace(/\'/g, "\""));
+        this.settings_tbl.row.add(col).draw();
+        var colext = JSON.parse($(e.target).attr("data-colext").replace(/\'/g, "\""));
+        this.TVPrefObj.columnsext.push(colext);
+        this.TVPrefObj.columnsdel = $.grep(this.TVPrefObj.columnsdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
+        this.TVPrefObj.columnsextdel = $.grep(this.TVPrefObj.columnsextdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
+        $.each(this.settings_tbl.$('input[name=font]'), function (i, obj) {
+            if ($(obj).siblings().size() === 0) {
+                $(obj).fontselect();
+            }
+        });
+        $("#columnDropdown ul #" + $(e.target).parent().attr("id")).remove();
+        alert(JSON.stringify(this.TVPrefObj.columnsdel));
+        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
+    };
+
+    this.getcolumn4dropdown = function () {
+        alert(JSON.stringify(this.TVPrefObj.columnsdel));
+        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
+        if (this.TVPrefObj.columnsdel !== undefined && this.TVPrefObj.columnsdel !== null) {
+            this.TVPrefObj.columnsdel = this.TVPrefObj.columnsdel.sort(function (a, b) {
+                return a.name.localeCompare(b.name);
+            });
+            this.TVPrefObj.columnsextdel = this.TVPrefObj.columnsextdel.sort(function (a, b) {
+                return a.name.localeCompare(b.name);
+            });
+            $.each(this.TVPrefObj.columnsdel, this.adddelColsandColsext2dropdown.bind(this));
+        }
+
+    };
+
+    this.adddelColsandColsext2dropdown = function (i, obj) {
+        var liId = "li_" + obj.name;
+        $("#columnDropdown ul").append("<li id=" + liId + "><a data-data=\"" + JSON.stringify(obj).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.TVPrefObj.columnsextdel[i]).replace(/\"/g, "'") + "\" href='#'>" + obj.name + "</a></li>");
     };
 
     this.init();

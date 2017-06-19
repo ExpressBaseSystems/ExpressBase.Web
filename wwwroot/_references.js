@@ -7,6 +7,7 @@
 /// <reference path="js/datatables.min.js" />
 /// <reference path="js/dvsettings.js" />
 /// <reference path="js/dygraphplotters.js" />
+/// <reference path="js/eb_basic_datatable.js" />
 /// <reference path="js/eb_common.js" />
 /// <reference path="js/eb_datatable.js" />
 /// <reference path="js/eb_jqpropertygrid.js" />

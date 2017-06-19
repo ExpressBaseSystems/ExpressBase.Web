@@ -34,9 +34,13 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpGet]
-        public IActionResult DBCheck()
+        public IActionResult AfterSignInSocial()
         {
-            return View();
+            CookieOptions options = new CookieOptions();
+
+            Response.Cookies.Append("Token", ViewBag.token, options);
+            Response.Cookies.Append("rToken", ViewBag.rToken, options);
+            return View("TenantDashboard");
         }
 
         [HttpGet]

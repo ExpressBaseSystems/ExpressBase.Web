@@ -94,7 +94,7 @@ namespace ExpressBase.Web2.Controllers
                         provider = CredentialsAuthProvider.Name,
                         UserName = "expressbase/" + req["uname"],
                         Password = req["pass"],
-                        //Meta = new Dictionary<string, string> { { "cid","expressbase" }, { "Login", "Client" } },
+                        Meta = new Dictionary<string, string> { { "wc", "tc" } },
                         //UseTokenCookie = true
                     });
                     

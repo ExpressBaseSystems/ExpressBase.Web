@@ -29,13 +29,14 @@
             $('#saveFilter').on("click", function () {
                 $(".eb-loader").show();
                 var AllInputs = $('.filter_modal_body').find("input, select");
-                var  ObjString = "{";
+                var  ObjString = "[";
                 $.each(AllInputs, function (i, inp) {
                     if( $(inp).hasClass("param_val") ){
-                        ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
+                        //ObjString += '{"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '"},';
+                        ObjString += '{\"name\":\"'+ $(inp).attr("id") + '\",\"type\":\"'+ $("#" + $(inp).attr("id")).val() +'\"},';
                     }
                 })
-                ObjString = ObjString.slice(0, -1) + '}';
+                ObjString = ObjString.slice(0, -1) + ']';
 
                 $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/SaveFilterDialog", {"Id":"0",
                     "DsId":@ViewBag.Obj_id,
@@ -46,9 +47,61 @@
                     "isSave":"false",
                     "VersionNumber":"1"},
                             function (result) {
+                                $(".eb-loader").hide();
                                 success_alert();
-                                $('.fdlist select option:last-child').append("<option value="+ViewBag.CurrSaveId+" data-tokens="+ViewBag.CurrSaveId+">"+ViewBag.CurrSaveId+"</option>");
+                                @*$('.fdlist select option:last-child').append("<option value="+@ViewBag.CurrSaveId+" data-tokens="+@ViewBag.CurrSaveId+">"+@ViewBag.CurrSaveId+"</option>");*@
                             });
+            });
+            $('#run').on("click", function () {
+                var  ObjString = "[";
+
+                var name;var value; var type;
+                $('.filter_modal_body tbody tr').each(function() {
+                    $(this).find("td label, select, input").each(function() {
+                        if( $(this).hasClass("param_val") ){
+                            if($(this).hasClass("param_type")){
+                                //ObjString +='\"type\":\"'+  $(this).text()+'\",';
+                                ObjString +='\"type\":\"5\",';
+                            }
+                            if($(this).hasClass("param_name")){
+                                ObjString += '{\"name\":\"'+$(this).text()+ '\",';
+                            }
+                            if($(this).hasClass("param_value")){
+                                ObjString +='\"value\":\"'+$(this).val()+'\"},';
+                            }
+                        }
+                    });
+                });
+                ObjString = ObjString.slice(0, -1) + ']';
+                alert(ObjString);
+                $.post('GetColumns4Trial', { dsid: @ViewBag.Obj_id ,parameter: ObjString},function(result){
+                    var cols = result;
+                    console.log(cols);
+                    console.log(JSON.stringify(cols));
+                    console.log(JSON.parse(cols));
+                    $("#sample").dataTable({
+                        columns:JSON.parse(cols),
+                        serverSide:true,
+                        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+                        scrollX:"100%",
+                        scrollY:"300px",
+                        ajax:{
+                            url:"https://expressbaseservicestack.azurewebsites.net/ds/data/@ViewBag.Obj_id",
+                            type:"POST",
+                            data:function(dq){
+                                delete dq.columns; delete dq.order; delete dq.search;
+                                dq.Id = @ViewBag.Obj_id;
+                                dq.Token = getToken();
+                                //dq.rToken = getrToken();
+                                dq.TFilters = [];
+                                dq.Params =ObjString;
+                            },
+                            dataSrc:function(dd){return dd.data;},
+                        }
+                    });
+                    $('#filterDialog').modal('hide');
+                    $('#filterRun').modal('show');
+                });
             });
             $('#fd').on('change', function () {
                 var selectVal = $('#fd option:selected').text();
@@ -70,9 +123,15 @@
                         if(filterparams.length!=0){
                             filterparams.sort();
                             alert(filterparams);
-                            $('tbody').children().remove();
+                            $('.fdthead').children().remove();
+                            $('.fdthead').append(" <tr>"+
+                                    "<th>Parameter Name</th>"+
+                                    "<th>Parameter Type</th>"+
+                                    @*<th>Parameter Value</th>*@
+                              " </tr>");
+                            $('#fdtbody').children().remove();
                             $.each(filterparams,function(i,obj){
-                                $('tbody ').append("<tr><td><label class='align_singleLine'>"+obj+"</label>" +
+                                $('#fdtbody').append("<tr><td><label class='align_singleLine'>"+obj+"</label>" +
                                                       "  </td>" +
                                                        " <td>" +
                                                         "    <select id="+obj+" name='fdtype' class='param_val selectpicker show-tick align_singleLine' data-live-search='true' style='display:inline-block !important'>" +
@@ -82,30 +141,55 @@
                                                              "   <option value='boolean' data-tokens='boolean'>boolean</option>" +
                                                             "</select>" +
                                                        " </td>" +
-                                                       //" <td> <input type='text' name="+obj+" class='align_singleLine form-control' required/> </td>" +
                                                    " </tr>");
                             });
                             $('#filterDialog').modal('show');
                         }
                         else{
-
-
+                            alert("not filters ");
                         }
                     }
                     else{
 
 
-                    }}
+                    }
+                }
             });
             $('#execute').on('click',function(){
                 if( $('#fd option:selected').text()==="Select Filter Dialog"){
-                    alert("Please select a filter dialog");                
+                    alert("Please select a filter dialog");
                 }
                 else{
                     if( $('#fd option:selected').text()!=="Auto Generate Filter Dialog"){
+                        var objid= $('#fd option:selected').val();
+                        alert("open selected fd:"+objid);
+                        $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/GetByteaEbObjects_json",{"ObjId":$('#fd option:selected').val(),"Ebobjtype":"FilterDialog"},
+                        function (result) {
 
-                        alert("open selected filter dialog");        
-                    }                
+                            $('#fdtbody').children().remove();
+                            $('.fdthead').children().remove();
+                            $('.fdthead').append(" <tr>"+
+                                                           "<th>Parameter Name</th>"+
+                                                           "<th>Parameter Type</th>"+
+                                                          "<th>Parameter Value</th>"+
+                                   " </tr>");
+
+                            for (var key in result) {
+                                $('#fdname').val(result[key].name);
+                                $('#fddesc').val(result[key].description);
+                                var fdjson=result[key].filterDialogJson;
+                                $.each(JSON.parse(fdjson),function(i,fdj){
+                                    $('#fdtbody').append("<tr><td><label class='param_val align_singleLine param_name'>"+fdj.name+"</label>" +
+                                                          "  </td>" +
+                                                          "<td><label class='param_val align_singleLine param_type'>"+fdj.type+"</label>" +
+                                                        " </td>" +
+                                                           " <td> <input type='text' name="+fdj.name+" class='param_val param_value align_singleLine form-control' required/> </td>" +
+                                                       " </tr>");
+                                });
+                            }
+                            $('#filterDialog').modal('show');
+                        });
+                    };
                 }
             });
             $(document).keydown(function (e) {
@@ -164,7 +248,8 @@
 </head>
 <body>
     <div class='eb-loader'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>
-    <span>
+    @*<span>*@
+    <div class="btn-group">
         <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn btn-sm btn-info fa fa-plus-square  fa-1x" aria-hidden="true"></i></a>
         <a class="commit" data-toggle="tooltip" title="Commit" onclick="Commit()"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
         <a class="save" data-toggle="tooltip" title="Save" onclick="Save()"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
@@ -173,11 +258,12 @@
         <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
         <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
-        <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
-        @ViewBag.Status
-        <a href="#" class="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-sm btn-info fa fa-history fa-1x" aria-hidden="true"></i></a>
-        Version v.@ViewBag.VersionNumber
-    </span>
+    </div>
+    <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
+    @ViewBag.Status
+    <a href="#" class="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-sm btn-info fa fa-history fa-1x" aria-hidden="true"></i></a>
+    Version v.@ViewBag.VersionNumber
+    @*</span>*@
     <div id="objCollapse" class="collapse">
         <div class="form-group ">
             <label class="control-label">DataSource Name</label>
@@ -192,13 +278,13 @@
             <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true">
                 @{
                     @using ExpressBase.Objects.ServiceStack_Artifacts;
-                    List<string> filterDialogs = new List<string>();
-                    filterDialogs = ViewBag.FilterDialogs;                   
+                    Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
+                    filterDialogs = ViewBag.FilterDialogs;
                     <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
                     <option value="Auto Generate Filter Dialog" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
                     foreach (var filter in filterDialogs)
                     {
-                        <option value=@filter data-tokens=@filter>@filter</option>
+                        <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
                     }
                 }
             </select>
@@ -230,27 +316,39 @@
                     </div>
                     <div class="table-responsive table-bordered table-responsive">
                         <table class="table fd_table">
-                            <thead>
-                                <tr>
-                                    <th>Parameter Name</th>
-                                    <th>Parameter Type</th>
-                                    @*<th>Parameter Value</th>*@
-                                </tr>
+                            <thead  class="fdthead">
                             </thead>
-                            <tbody class="fdtbody"></tbody>
+                            <tbody id="fdtbody" class="fdtbody"></tbody>
                         </table>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <div class="help"></div>
                     <input type="button" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
+                    <input type="button" name="run" value="Run" class="btn-primary" id="run" />
                 </div>
             </div>
         </div>
-
     </div>
 
 
+    <div id="filterRun" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="height:100%;width:100%">
+            <!-- Modal content-->
+            <div class="modal-content" style="height:auto;min-height:100%">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Run Query </h4>
+                </div>
+                <div class="modal-body filter_modal_body">
+                        <table class="table table-striped table-bordered" id="sample"></table>
+                </div>
+                <div class="modal-footer">                   
+                  
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="text/javascript">
         window.onload = function() {

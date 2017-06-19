@@ -75,8 +75,8 @@ namespace ExpressBase.Web.Filters
                 }
                 else if (subdomain.Length == 1) // TENANT CONSOLE
                 {
-                    context.RouteData.Values["controller"] = "TenantExt"; //Goes to the relevant Controller  class
-                    context.RouteData.Values["action"] = "TenantSignup";
+                    context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                    context.RouteData.Values["action"] = "Index";
                 }
             }
             else

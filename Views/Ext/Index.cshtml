@@ -4,80 +4,31 @@
     Html.RenderPartial("PageHeaderAmal");
 }
 <!--Navigation bar/-->
-<!--Modal box-->
-<div class="modal fade" id="login" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <!-- Modal content no 1-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title text-center form-title">Login</h4>
-            </div>
-            <div class="modal-body padtrbl">
-                <div class="login-box-body">
-                    <div class="login-box-msg">
-                        <img id="profile-img" class="img-cir" src="~/images/proimg.jpg" />
-                        <p id="profile-name" class="profile-name-card"></p>
-                    </div>
-                    <div class="form-group">
-                        <form class="form-signin">
-                            <span id="reauth-email" class="reauth-email"></span>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                                <input type="text" id="uname" name="uname" class="form-control" placeholder="Username/Email" required autofocus><br />
-                            </div><br />
 
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                                <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="checkbox icheck">
-                                        <label>
-                                            <input type="checkbox" id="loginrem"> Remember Me
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12">
-                                    <button type="button" class="btn btn-block btn-flat" style="background-color:#3b5998;color:white;">Sign In</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--Modal box/-->
 <!--Slider-->
 <section class="slider">
-<div class="carousel fade-carousel slide" data-ride="carousel" data-interval="3000" id="bs-carousel">
-    <!-- Overlay -->
-    <div class="overlay"></div>
-    <!-- Indicators -->
+<div class="container-fluid nopadding">
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
     <ol class="carousel-indicators">
-        <li data-target="#bs-carousel" data-slide-to="0" class="active"></li>
-        <li data-target="#bs-carousel" data-slide-to="1"></li>
-        <li data-target="#bs-carousel" data-slide-to="2"></li>
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
     </ol>
-    <!-- Wrapper for slides -->
     <div class="carousel-inner">
-        <div class="item slides active">
-            <div class="slide-1"></div>
+        <div class="item active">
+            <img src="~/images/aboutus.jpg">
         </div>
-        <div class="item slides">
-            <div class="slide-2"></div>
-
+        <div class="item">
+            <img src="~/images/aboutus.jpg">
         </div>
-        <div class="item slides">
-            <div class="slide-3"></div>
-
+        <div class="item">
+            <img src="~/images/aboutus.jpg">
         </div>
     </div>
 </div>
+</div>
 </section>
+<!-- /.carousel -->
 <!--Slider/-->
 <!--work-shop-->
 <section id="work-shop">
@@ -160,9 +111,11 @@
     <div class="container">
         <div class="row">
             <div class="header-section text-center">
-                <h2 class="white">Sell,Market and Service</h2>
-                <p class="white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Exercitationem nesciunt vitae,<br> maiores, magni dolorum aliquam.</p>
-                <button class="btn" id="overlay2-btn">TRY NOW</button>
+                <form>
+                    <h2 class="white">Sell,Market and Service</h2>
+                    <p class="white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Exercitationem nesciunt vitae,<br> maiores, magni dolorum aliquam.</p>
+                    <input type="email" id="quicksignup" placeholder="Enter your email address" /><button class="btn" id="overlay2-btn">Sign Up</button>
+                </form>
             </div>
         </div>
     </div>

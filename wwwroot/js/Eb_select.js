@@ -29,7 +29,6 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
 
     // TEMP
     this.currentEvent = null;
-
     this.IsDatatableInit = false;
     this.localDMS = [];
     for (i = 0; i < this.NoOfFields; i++) { this.localDMS.push([]) }
@@ -49,6 +48,13 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
         $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
         $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
         $('#' + this.name + 'Wraper [type=search]').keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
+
+        //set id for searchBox
+        $('#' + this.name + 'Wraper  [type=search]').each(function (i) {
+            $(this).attr('id',  _this.name + 'srch' + i);
+        });
+
+
         //styles
         $('#' + this.name + 0).children().css("border-top-left-radius", "5px");
         $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
@@ -268,11 +274,8 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     };
 
     this.tagCloseBtnHand = function (e) {
-
         $(this.DTSelector + ' [type=checkbox][value=' + this.Vobj.valueMembers.splice(delid(), 1) + ']').prop("checked", false);
-        $.each(this.dmNames, function (i) {
-            this.Vobj.displayMembers[i].splice(delid(), 1);
-        }.bind(this));
+        $.each(this.dmNames, function (i) { this.Vobj.displayMembers[i].splice(delid(), 1); }.bind(this));
     };
 
     this.checkBxClickEventHand = function (e) {
@@ -300,14 +303,14 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
         var container = $('#' + this.name + 'DDdiv');
         var container1 = $('#' + this.name);
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
-            this.Vobj.hideDD();
-            //if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0)
-            //    document.getElementById(this.name + 'srch0').setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
-            //else
-            //    if (this.required && this.Vobj.valueMember.length === 0)
-            //        document.getElementById('' + this.name + 'srch0').setCustomValidity('This field  is required');
-            //    else
-            //        document.getElementById('' + this.name + 'srch0').setCustomValidity('');
+            this.Vobj.hideDD();/////
+            if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0)
+                document.getElementById(this.name + 'srch0').setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
+            else
+                if (this.required && this.Vobj.valueMember.length === 0)
+                    document.getElementById('' + this.name + 'srch0').setCustomValidity('This field  is required');
+                else
+                    document.getElementById('' + this.name + 'srch0').setCustomValidity('');
         }
     };
 

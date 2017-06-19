@@ -123,6 +123,9 @@ Navigation bar
 }
 .login-box-body {
     padding: 15px 30px;
+    margin-top:60px;
+border:solid 1px rgba(0, 0, 0,0.1);
+border-radius:4px;
 }
 .login-box-msg, .register-box-msg {
     margin: 0px;
@@ -352,7 +355,8 @@ footer { background-color:rgb(247, 247, 247); min-height:239px; font-family: 'Op
     }
     .login-box-body {
         padding: 15px 20px;
-    }
+  
+        }
     .navbar-default .navbar-brand {
         margin-left: 10px;
     }
@@ -504,3 +508,6 @@ font-size:12px;
     margin-bottom:20px;
 height:150px;
 }
+
+
+

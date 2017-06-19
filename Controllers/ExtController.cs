@@ -43,6 +43,16 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public IActionResult SignupSuccess()
+        {            
+            return View();
+        }
+
+        public IActionResult SignInExternal()
+        {
+            return View();
+        }
+
         public IActionResult Pricing()
         {
             ViewBag.EbConfig = this.EbConfig;
@@ -54,7 +64,7 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             ViewBag.EbConfig = this.EbConfig;
             string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
+            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
             if (!data.Success)
             {
                 if (data.ErrorCodes.Count <= 0)
@@ -90,7 +100,7 @@ namespace ExpressBase.Web.Controllers
                 var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
-                    return RedirectToAction("TenantProfile", new RouteValueDictionary(new { controller = "Tenant", action = "TenantProfile", Id = res.id }));
+                    return RedirectToAction("SignupSuccess","Ext");
                 }
                 else
                 {

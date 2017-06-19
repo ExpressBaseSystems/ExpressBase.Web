@@ -5,6 +5,7 @@
         }
 
         function onSignin(token) {
+            alert("MMMM" + token);
             document.getElementById("log_form").submit();
         }
 </script>
@@ -31,95 +32,13 @@
                 <li><a href="#">Store</a></li>
                 <li><a href="#">FAQ's</a></li>
                 <li><a href="#">Blog</a></li>
-                <li><a href="#" data-target="#login" data-toggle="modal">Sign in</a></li>
+                <li><a href="~/Ext/SignInExternal">Sign in</a></li>
                 <li class="btn-trial" data-toggle="modal" data-target="#modalsignup"><a href="#">Get Started for FREE</a></li>
             </ul>
         </div>
     </div>
 </nav>
 <!--/ Navigation bar-->
-<!--Modal box sign in-->
-<div class="modal fade" id="login" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <!-- Modal content no 1-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title text-center form-title">Sign In</h4>
-            </div>
-            <div class="modal-body padtrbl">
-                <div class="login-box-body">
-                    <div class="login-box-msg">
-                        <img id="profile-img" class="img-cir" src="~/images/proimg.jpg" />
-                        <p id="profile-name" class="profile-name-card"></p>
-                    </div>
-                    <div class="form-group">
-                        <form id = "log_form" class="form-signin" action="~/Ext/TenantSignin" method="post">
-                            <span id="reauth-email" class="reauth-email"></span>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                                <input type="text" id="uname" name="uname" class="form-control" placeholder="Username/Email" required autofocus><br />
-                            </div><br />
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                                <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="checkbox icheck">
-                                        <label>
-                                            <input type="checkbox" id="loginrem"> Remember Me
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12">
-                                    <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSignin' style="background-color:#3b5998;color:white;">Sign In</button>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="row">
-                            <hr class="bottom-line">
-                            <div class="text-center">Or Sign In by</div>
-                            <div class="col-xs-2 col-sm-2">
-                            <a href="@ViewBag.EbConfig.ServiceStackUrl/auth/facebook" class="btn btn-lg btn-block">
-                                <i class="fa fa-facebook fa-2x"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="#" class="btn btn-lg btn-block">
-                                <i class="fa fa-twitter fa-2x text-info"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="#" class="btn btn-lg btn-block">
-                                <i class="fa fa-google-plus fa-2x text-danger"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="#" class="btn btn-lg btn-block">
-                                <i class="fa fa-linkedin fa-2x"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="#" class="btn btn-lg btn-block">
-                                <i class="fa fa-github fa-2x text-muted"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--Modal box sign in/-->
-
-
 <!--Modal box sign up/-->
 <div class="modal fade" id="modalsignup" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
      aria-hidden="true">
@@ -155,7 +74,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-12">
-                                                <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSubmit' style="background-color:#3b5998;color:white;" >
+                                                <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' style="background-color:#3b5998;color:white;" >
                                                     submit
                                                 </button>
                                                 

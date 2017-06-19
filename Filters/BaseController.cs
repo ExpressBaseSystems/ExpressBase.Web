@@ -37,8 +37,8 @@ namespace ExpressBase.Web.Filters
                 controller.ViewBag.rToken = rToken;
                 controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
                 controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+                controller.ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
 
-                
                 base.OnActionExecuting(context);
             }
             catch (System.ArgumentNullException ane)

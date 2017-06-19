@@ -83,7 +83,7 @@ var EbDataTable = function (settings) {
     this.tempcolext = [];
 
     this.getColumns = function () {
-        $.post('GetTVPref4User', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+        $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
@@ -91,7 +91,10 @@ var EbDataTable = function (settings) {
         //    this.ebSettings = JSON.parse(data);
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
+        console.log(data);
         this.ebSettings = JSON.parse(data);
+        this.ebSettingsCopy = this.ebSettings;
+        //this.updateRenderFunc();
         this.Init();
 
         if (this.filterBox !== null && this.dtsettings.directLoad !== true)
@@ -102,7 +105,7 @@ var EbDataTable = function (settings) {
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         //this.filterbtn = $('#4filterbtn');
-        //this.clearfilterbtn = $("#clearfilterbtn");
+        //this.clearfilterbtn = $("#clearfilterbtn_"+this.tableId);
         this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
         this.copybtn = $("#btnCopy");
         this.printbtn = $("#btnPrint");
@@ -111,7 +114,7 @@ var EbDataTable = function (settings) {
         this.excelbtn = $("#btnExcel");
         this.csvbtn = $("#btnCsv");
         this.pdfbtn = $("#btnPdf");
-        this.settingsbtn = $("#" + this.tableId + "_btnSettings");
+        //this.settingsbtn = $("#" + this.tableId + "_btnSettings");
         $("#dvName_lbl").text(this.ebSettings.dvName);
 
         this.eb_agginfo = this.getAgginfo();
@@ -158,9 +161,9 @@ var EbDataTable = function (settings) {
             return sum / data.length;
         });
 
-        $('#' + this.tableId + '_fileBtns [name=filebtn]').css('display', 'inline-block');
+        //$('#' + this.tableId + '_fileBtns [name=filebtn]').css('display', 'inline-block');
         // $('#' + this.tableId + '_filterdiv [name=filterbtn]').css('display', 'inline-block');
-        $('#' + this.tableId + '_btnSettings').css('display', 'inline-block');
+        //$('#' + this.tableId + '_btnSettings').css('display', 'inline-block');
 
         if (!this.ebSettings.hideSerial)
             this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
@@ -197,9 +200,9 @@ var EbDataTable = function (settings) {
         o.order = [];
         o.deferRender = true;
         o.filter = true;
-        o.select = true;
+        //o.select = true;
         o.retrieve = true;
-        o.keys = true,
+        o.keys = true;
         o.ajax = {
             url: this.ssurl + '/ds/data/' + this.dsid,
             type: 'POST',
@@ -219,16 +222,18 @@ var EbDataTable = function (settings) {
         delete dq.columns; delete dq.order; delete dq.search;
         dq.Id = this.dsid;
         dq.Token = getToken();
-        if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
+        dq.rToken = getrToken();
+        //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
             dq.TFilters = JSON.stringify(this.repopulate_filter_arr());
-        else {
-            var arr = [];
-            arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
-            dq.TFilters = JSON.stringify(arr);
-        }
+        //else {
+        //    var arr = [];
+        //    arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
+        //    dq.TFilters = JSON.stringify(arr);
+        //}
         dq.Params = JSON.stringify(this.getFilterValues());
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
+        return dq;
     };
 
     this.btnGoClick = function (e) {
@@ -321,6 +326,8 @@ var EbDataTable = function (settings) {
     };
 
     this.initCompleteFunc = function (settings, json) {
+
+        this.GenerateButtons();
         this.createFilterRowHeader();
         if (this.eb_agginfo.length > 0) {
             this.createFooter(0);
@@ -552,7 +559,7 @@ var EbDataTable = function (settings) {
         });
 
         //this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
-        $("#clearfilterbtn").off("click").on("click", this.clearFilter.bind(this));
+        $("#clearfilterbtn_"+this.tableId).off("click").on("click", this.clearFilter.bind(this));
         this.totalpagebtn.off("click").on("click", this.showOrHideAggrControl.bind(this));
         this.copybtn.off("click").on("click", this.CopyToClipboard.bind(this));
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
@@ -561,8 +568,36 @@ var EbDataTable = function (settings) {
         this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
-        this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
+        //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
+        $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsModal.bind(this));
     };
+
+    this.GenerateButtons = function () {
+        $("#TableControls").prepend("<div style='display: inline;float: right;'>" +
+            "<button type='button' id='"+this.tableId+"_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
+            "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
+             "<div class='btn-group'>" +
+                "<div class='btn-group'>" +
+                   " <div id='btnPrint' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></div>" +
+                       " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
+                         "   <span class='caret'></span>  <!-- caret --></div>" +
+                         "   <ul class='dropdown-menu' role='menu'>" +
+                          "      <li><a href = '#' id='btnprintAll'> Print All</a></li>" +
+                           "     <li><a href = '#' id='btnprintSelected'> Print Selected</a></li>" +
+                            "</ul>" +
+                "</div>" +
+                "<div id='btnExcel' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></div>" +
+                "<div id='btnPdf' class='btn btn-default'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></div>" +
+                "<div id='btnCsv' class='btn btn-default'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></div>  " +
+                "<div id='btnCopy' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></div>" +
+            "</div>" +
+            "</div>" +
+            "<a id='" + this.tableId + "_btnSettings' class='btn btn-default' data-toggle='modal'  data-target='#settingsmodal'><i class='fa fa-cog' aria-hidden='true'></i></a>" +
+
+         "</div>");
+    };
+    //href='http://dev.eb_roby_dev.localhost:53431/Tenant/DVEditor #'
+    
        
     this.setFilterboxValue = function (i, obj) {
         if (this.dtsettings.filterParams !== null && this.dtsettings.filterParams !== undefined) {
@@ -597,7 +632,7 @@ var EbDataTable = function (settings) {
 
     this.GetFiltersFromSettingsTbl_inner = function (i, col) {
         var _ls = "";
-        if (col.visible == true) {
+        if (col.visible === true) {
             var span = "<span hidden>" + col.name + "</span>";
 
             var htext_class = this.tableId + "_htext";
@@ -624,7 +659,7 @@ var EbDataTable = function (settings) {
             else if (col.type === "System.Boolean")
                 _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
             else if (col.name === "serial")
-                _ls += (span + "<a class='btn btn-default center-block'  id='clearfilterbtn' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='width:35px'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
+                _ls += (span + "<a class='btn btn-default center-block'  id='clearfilterbtn_"+this.tableId+"' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='width:35px'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
             else
                 _ls += (span);
 
@@ -826,9 +861,9 @@ var EbDataTable = function (settings) {
     };
 
     this.NewTableModal = function () {
-        $(document.body).append("<div class='modal fade' id='newmodal' role='dialog'>"
-    + "<div class='modal-dialog modal-lg'>"
-     + " <div class='modal-content'>"
+        $(document.body).append("<div class='modal fade' id='newmodal' role='dialog' style='display:none'>"
+    + "<div class='modal-dialog modal-lg' style='width: 100%;height: 100%;margin: 0;padding: 0;'>"
+     + " <div class='modal-content' style=' height: auto;min-height: 100%;border-radius: 0;'>"
         + "<div class='modal-header'>"
           + "<button type = 'button' class='close' data-dismiss='modal'>&times;</button>"
           + "<h4 class='modal-title'></h4>"
@@ -967,81 +1002,24 @@ var EbDataTable = function (settings) {
                      "   <h4 class='modal-title'>" + this.ebSettings.dvName + ": SettingsTable</h4>" +
                     "</div>" +
                     "<div class='modal-body'>" +
-                        "<ul class='nav nav-tabs'>" +
-                          "  <li class='nav-item'><a class='nav-link' href='#1a' data-toggle='tab'>General</a></li>" +
-                         "   <li class='nav-item'><a class='nav-link' href='#2a' data-toggle='tab'>Columns</a></li>" +
-                         //"  <li>" +
+                        
 
-                        // "   </li>" +
-                        "</ul>" +
-                        "<div class='tab-content'>" +
-                            "<div id='1a' class='tab-pane active'>" +
-                                "<div class='table-responsive'>" +
-                                    "<table class='table table-bordered table-hover'>" +
-                                        "<tbody>" +
-                                            "<tr>" +
-                                              "  <td>Hide Serial</td>" +
-                                             "   <td><input id='serial_check' type='checkbox' /></td>" +
-                                            "</tr>" +
-                                            "<tr>" +
-                                              "  <td>Hide Chechbox</td>" +
-                                             "   <td><input id='select_check' type='checkbox' /></td>" +
-                                            "</tr>" +
-                                            "<tr>" +
-                                              "  <td>Page Length</td>" +
-                                             "   <td><input id='pageLength_text' type='numeric' value='100' /></td>" +
-                                            "</tr>" +
-                                            "<tr>" +
-                                            "    <td>Table Height</td>" +
-                                           "     <td><input id='scrollY_text' type='numeric' value='300' /></td>" +
-                                          "  </tr>" +
-                                         "   <tr>" +
-                                        "        <td>Row Grouping</td>" +
-                                       "         <td><input id='rowGrouping_text' type='numeric' /></td>" +
-                                      "      </tr>" +
-                                     "       <tr>" +
-                                    "            <td>Left Fixed Columns</td>" +
-                                   "             <td><input id='leftFixedColumns_text' type='numeric' value='0' /></td>" +
-                                  "          </tr>" +
-                                 "           <tr>" +
-                                "                <td>Right Fixed Columns</td>" +
-                               "                 <td><input id='rightFixedColumns_text' type='numeric' value='0' /></td>" +
-                              "              </tr>" +
-                             "               <tr>" +
-                            "                    <td>Data Visualization Name</td>" +
-                           "                     <td><input id='dvName_txt' type='text' /></td>" +
-                          "                  </tr>" +
-                         "               </tbody>" +
-                        "            </table>" +
-                       "         </div>" +
-                      "      </div>" +
-                     "       <div id='2a' class='tab-pane '>" +
-                                "<div class='dropdown' id='columnDropdown'>" +
-                                      "   <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Add Column" +
-                                        "    <span class='caret'></span></button>" +
-                                        "     <ul class='dropdown-menu'>" +
-                                    "         </ul>" +
-                          "      </div>" +
-                    "            <table class='table table-striped table-bordered' id='Table_Settings'></table>" +
-                    "<div id='propCont' class='prop-grid-cont'>" +
-     "                                        <div id='propHead'></div><div id='propGrid'></div>" +
-                                             "<div>" +
-                                                 "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
-                                                 "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
-                                             "</div>" +
-     "</div>" +
-                   "         </div>" +
-
-                 "       </div>" +
                 "    </div>" +
                   "  <div class='modal-footer'>" +
-                   "     <button id='Save_btn' class='btn btn-primary'>Save Changes</button>" +
+                   "     <button id='Save_User_settings' class='btn btn-primary'>Save Changes</button>" +
                 "    </div>" +
              "   </div>" +
            " </div>" +
         "</div>");
-        $("#Save_btn").click(this.saveSettings.bind(this));
-        $("#settingsmodal").on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
+        $.ajax({
+            url: "http://eb_roby_dev.localhost:53431/Tenant/DVEditor",
+            type: "POST",
+            data:{objid:this.dvid},
+            success: function (data) {
+                $("#settingsmodal .modal-body").html(data);
+            }
+        });
+        $("#Save_User_settings").click(this.saveSettings.bind(this));
         $("#settingsmodal").on('hidden.bs.modal', this.hideModalFunc.bind(this));
         $("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
         //$("#settingsmodal").modal('show');
@@ -1049,8 +1027,6 @@ var EbDataTable = function (settings) {
 
     this.hideModalFunc = function (e) {
         $('#Table_Settings').DataTable().destroy();
-        //$(this).data('bs.modal', null);
-        //$(this.OuterModalDiv).remove();
         setTimeout(function () {
             $("#settingsmodal").remove();
         }, 500);
@@ -1058,6 +1034,7 @@ var EbDataTable = function (settings) {
             this.isSettingsSaved = false;
             this.Api.destroy();
             $('#' + this.tableId + '_divcont').children()[1].remove();
+            $("#TableControls div:eq(0)").remove();
             var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
             $('#' + this.tableId + '_divcont').append(table);
             this.ebSettings = $.extend(true, {}, this.ebSettingsCopy);
@@ -1077,6 +1054,7 @@ var EbDataTable = function (settings) {
     };
 
     this.saveSettings = function () {
+        alert("user");
         this.isSettingsSaved = true;
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
@@ -1084,6 +1062,7 @@ var EbDataTable = function (settings) {
         objcols.push(this.getColobj("id"));
         $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
             ct++;
+            
             if (obj.type === 'text' && obj.name === 'name')
                 n = obj.value;
             else if (obj.type === 'text' && obj.name === 'index')
@@ -1109,7 +1088,6 @@ var EbDataTable = function (settings) {
                 else
                     cls = 'tdheight';
             }
-
             if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
         //alert(console.log(objcols));
@@ -1134,8 +1112,7 @@ var EbDataTable = function (settings) {
             var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
             groupcols[0].visible = false;
         }
-        console.log(JSON.stringify(this.ebSettingsCopy.columns));
-        $.post('TVPref4User', { tvid: this.dsid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
+        $.post('TVPref4User', { tvid: this.dvid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
     };
 
     this.reinitDataTable = function () {
@@ -1144,41 +1121,41 @@ var EbDataTable = function (settings) {
 
 
 
-    this.callPost4SettingsTable = function () {
-        //alert(JSON.stringify(this.ebSettings.columns));
-        var data2Obj = this.ebSettings; //JSON.parse(data2);
-        //__tvPrefUser = data2Obj;
-        $("#serial_check").prop("checked", data2Obj.hideSerial);
-        $("#select_check").prop("checked", data2Obj.hideCheckbox);
-        $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
-        $("#scrollY_text").val(data2Obj.scrollY);
-        $("#rowGrouping_text").val(data2Obj.rowGrouping);
-        $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
-        $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
-        $("#dvName_txt").val(data2Obj.dvName);
-        this.getcolumn4dropdown();
-        this.settings_tbl = $('#Table_Settings').DataTable(
-        {
-            columns: this.column4SettingsTbl(),
-            data: this.getData4SettingsTbl(),
-            paging: false,
-            ordering: false,
-            searching: false,
-            info: false,
-            scrollY: '300',
-            select: true,
-            //rowReorder: { selector: 'tr' },
-            initComplete: this.initComplete4Settingstbl.bind(this),
-        });
-        CreatePropGrid(this.settings_tbl.row(0).data(), data2Obj.columnsext);
-        $('#Table_Settings tbody').on('click', 'tr', this.showPropertyGrid.bind(this));
-        $(".modal-content").on("click", function (e) {
-            if ($(e.target).closest(".font-select").length === 0) {
-                $(".font-select").removeClass('font-select-active');
-                $(".fs-drop").hide();
-            }
-        });
-    };
+    //this.callPost4SettingsTable = function () {
+    //    //alert(JSON.stringify(this.ebSettings.columns));
+    //    var data2Obj = this.ebSettings; //JSON.parse(data2);
+    //    //__tvPrefUser = data2Obj;
+    //    $("#serial_check").prop("checked", data2Obj.hideSerial);
+    //    $("#select_check").prop("checked", data2Obj.hideCheckbox);
+    //    $("#pageLength_text").val(data2Obj.lengthMenu[0][0]);
+    //    $("#scrollY_text").val(data2Obj.scrollY);
+    //    $("#rowGrouping_text").val(data2Obj.rowGrouping);
+    //    $("#leftFixedColumns_text").val(data2Obj.leftFixedColumns);
+    //    $("#rightFixedColumns_text").val(data2Obj.rightFixedColumns);
+    //    $("#dvName_txt").val(data2Obj.dvName);
+    //    this.getcolumn4dropdown();
+    //    this.settings_tbl = $('#Table_Settings').DataTable(
+    //    {
+    //        columns: this.column4SettingsTbl(),
+    //        data: this.getData4SettingsTbl(),
+    //        paging: false,
+    //        ordering: false,
+    //        searching: false,
+    //        info: false,
+    //        scrollY: '300',
+    //        select: true,
+    //        //rowReorder: { selector: 'tr' },
+    //        initComplete: this.initComplete4Settingstbl.bind(this),
+    //    });
+    //   // CreatePropGrid(this.settings_tbl.row(0).data(), data2Obj.columnsext);
+    //   // $('#Table_Settings tbody').on('click', 'tr', this.showPropertyGrid.bind(this));
+    //    $(".modal-content").on("click", function (e) {
+    //        if ($(e.target).closest(".font-select").length === 0) {
+    //            $(".font-select").removeClass('font-select-active');
+    //            $(".fs-drop").hide();
+    //        }
+    //    });
+    //};
 
     this.getcolumn4dropdown = function () {
         if (this.ebSettings.columnsdel !== undefined && this.ebSettings.columnsdel !== null) {
@@ -1232,7 +1209,7 @@ var EbDataTable = function (settings) {
                 w = col.width.toString();
                 if (col.type) ty = col.type.toString();
                 cls = col.className;
-                if (cls == undefined)
+                if (cls === undefined)
                     cls = "";
                 colarr.push(new coldef(d, t, v, w, n, ty, cls));
             }
@@ -1317,7 +1294,7 @@ var EbDataTable = function (settings) {
             }
         }
         if (col.type === "System.String") {
-            if (this.ebSettingsCopy.columnsext[i].name === "dispname")
+            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Link")
                 this.ebSettingsCopy.columns[i].render = this.renderlink4NewTable;
             if (this.ebSettingsCopy.columnsext[i].RenderAs === "Graph") {
                 this.ebSettingsCopy.columns[i].render = this.lineGraphDiv;
@@ -1409,6 +1386,13 @@ var EbDataTable = function (settings) {
      + "</div>"
     + "</div>"
  + "</div>");
+        $(document).on('show.bs.modal', '.modal', function (event) {
+            var zIndex = 1040 + (10 * $('.modal:visible').length);
+            $(this).css('z-index', zIndex);
+            setTimeout(function () {
+                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+            }, 0);
+        });
     };
 
     this.renderMainGraph = function (e) {
@@ -1446,7 +1430,6 @@ var EbDataTable = function (settings) {
 
     this.deleteRow = function (e) {
         var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
-        alert(idx);
         var deletedRow = $.extend(true, {}, this.settings_tbl.row(idx).data());
         this.deleted_colname = deletedRow.name;
         this.columnsdel.push(deletedRow);
@@ -1483,7 +1466,7 @@ var EbDataTable = function (settings) {
         this.columnsdel = $.grep(this.columnsdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
         this.columnsextdel = $.grep(this.columnsextdel, function (obj) { return obj.name !== this.dropdown_colname; }.bind(this));
         $.each(this.settings_tbl.$('input[name=font]'), function (i, obj) {
-            if ($(obj).siblings().size() == 0) {
+            if ($(obj).siblings().size() === 0) {
                 $(obj).fontselect();
             }
         });

@@ -5,19 +5,17 @@
     var EbConfig = ViewBag.EbConfig;
     var redisClient = EbConfig.GetRedisClient();
     string imgpro = "";
-    //  var __tmpStr = "";
     WebPageLoginStateTypes __state = WebPageLoginStateTypes.TenantUserInt;
-    //  __tmpStr = "<ul class='list-group' style='list-style-type: none;'> <li class='list-group-item'><a href='#'><i class='fa fa-user fa-fw' aria-hidden='true'></i>&nbsp; My Profile</a></li> <li class='list-group-item'><a href='UserPreferences'><i class='fa fa-cog fa-fw' aria-hidden='true'></i>&nbsp;My preferences</a></li> <li class='list-group-item'><a href='TenantLogout'><i class='fa fa-sign-out fa-fw' aria-hidden='true'></i>&nbsp; Log out</a></li>  </ul>";
     string profileimg = string.Format("uid_{0}_cid_{1}_profileimage", ViewBag.UId, ViewBag.cid);
     imgpro = redisClient.Get<string>(profileimg);
 
-    __state = string.IsNullOrEmpty(ViewBag.Fname)
+    __state = string.IsNullOrEmpty(ViewBag.cid)
         ? WebPageLoginStateTypes.TenantUserExt : WebPageLoginStateTypes.TenantUserInt;
 
 }
 <div>
     <div class="navbar-header">
-        @{ if (ViewBag.Fname != null)
+        @{ if (!string.IsNullOrEmpty(ViewBag.cid))
             {
                 <a class="navbar-brand" href="#menu-toggle" id="menu-toggle"><span class="glyphicon glyphicon-list" aria-hidden="true"></span></a>
             }
@@ -27,8 +25,6 @@
     <div id="navbar" class="navbar-collapse collapse" style="background-color:#3b5998;height:60px !important ">
         @if (__state == WebPageLoginStateTypes.TenantUserInt)
         {
-            if (ViewBag.Fname != null)
-            {
                 <ul style="list-style-type:none;">
                     <li class="dropdown navbar-right">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -49,8 +45,6 @@
                         </ul>
                     </li>
                 </ul>
-
-            }
         }
     </div>
 </div>

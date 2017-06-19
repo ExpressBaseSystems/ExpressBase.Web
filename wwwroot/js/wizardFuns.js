@@ -48,11 +48,11 @@
             else
                 $('.db_dropdown [data-toggle=dropdown]').html("Select Database Vendor<span class=" + '"caret"></span>');
         });
-        $('#dbModal').modal({ backdrop: 'static' });
+        $('#dbModal').modal({ backdrop: 'static' });     
         $.get(this.SrcUrl, this.Drawsteps.bind(this));
     };
 
-    this.Drawsteps = function (data) {
+    this.Drawsteps = function (data) {       
         $("#wiz").empty().append($.parseHTML(data));
         $(".eb-loader").hide();
         $('#acid').val(this.Acid);
@@ -464,23 +464,42 @@ var CustomWizFuncs = function (acid) {
     };
 };
 
-var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code) {
+var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,versionNumber) {
     this.AcId = acid;
     this.ObjectId = obj_id;
     this.ObjectName = obj_name;
     this.ObjectDesc = obj_desc;
     this.Code = code;
-
+    this.VersionNumber = versionNumber;
+  
     this.DataSource = function () {
+        if (obj_id === 0) {
+            $('#changeLog').remove();
+            $('#name').val(obj_name);
+            $('#description').val(obj_desc);
+        }
+        else {
+            $('#name').remove();
+            $('#description').remove();
+        }
         $('#tcid').val(acid);
         $('#code').val(code);
-        $('#id').val(obj_id);
-        $('#name').val(obj_name);
-        $('#description').val(obj_desc);
-        if (obj_id <= 0) {
-            $('#changeLog').val("");
-            $('#changeLogDiv').remove();
-        }
+        $('#id').val(obj_id);       
+        $('#versionNumber').val(versionNumber);
     };
+};
+
+var CustomFilterDialogFuncs = function (acid, obj_id, obj_name, obj_desc, code, versionNumber) {
+    this.FilterD = function () {
+       
+            $('#saveFilter').on("click", function () {
+                $.post("http://localhost:53431/Tenant/SaveEbDataSource", { "Id": obj_id, "Code": code, "Name": obj_name, "Description": obj_desc, "Token": getToken(), "isSave": "true", "VersionNumber": versionNumber }, function (result) {
+                });
+            });
+        
+            //alert(code);
+            //$('#execode').val(code);
+    };
+
 };
 

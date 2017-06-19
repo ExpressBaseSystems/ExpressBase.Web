@@ -1,0 +1,148 @@
+﻿<!--Navigation bar-->
+@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Html.RenderPartial("PageHeaderAmal");
+}
+<!--Navigation bar/-->
+
+<!--Slider-->
+<section class="slider">
+<div class="container-fluid nopadding">
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="item active">
+            <img src="~/images/aboutus.jpg">
+        </div>
+        <div class="item">
+            <img src="~/images/aboutus.jpg">
+        </div>
+        <div class="item">
+            <img src="~/images/aboutus.jpg">
+        </div>
+    </div>
+</div>
+</div>
+</section>
+<!-- /.carousel -->
+<!--Slider/-->
+<!--work-shop-->
+<section id="work-shop">
+    <div class="container">
+        <div class="row">
+            <div class="header-section text-center">
+                <h2>Express Build Enterprise Applications</h2>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="service-box">
+                    <div class="col-md-3 icon-box">
+                        <i class="fa fa-cloud faa-cloud animated"></i>
+                    </div>
+                    <div class="col-md-9 icon-text">
+                        <h4 class="ser-text">Apps on cloud</h4>
+                        <h6 class="content">Forget about the infrastructure, leave it to us. Focus on your applications and business.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="service-box">
+                    <div class="col-md-3 icon-box">
+                        <i class="fa fa-mobile"></i>
+                    </div>
+                    <div class="col-md-9 icon-text">
+                        <h4 class="ser-text">Develop Once, Deploy Anywhere</h4>
+                        <h6 class="content">Use our state-of-the-art developer Studio to develop business apps that can run anywhere.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="service-box">
+                    <div class="col-md-3 icon-box">
+                        <i class="fa fa-lock"></i>
+                    </div>
+                    <div class="col-md-9 icon-text">
+                        <h4 class="ser-text">Secure</h4>
+                        <h6 class="content">Role Based Access Control (RBAC) standard implemented which will help you authorize your team members on varying Roles & permissions. All connections via https.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="service-box">
+                    <div class="col-md-3 icon-box">
+                        <i class="fa fa-database"></i>
+                    </div>
+                    <div class="col-md-9 icon-text">
+                        <h4 class="ser-text">Own your data</h4>
+                        <h6 class="content">Bring in your database (cloud hosted or in-premise) and hook it into our cloud infrastructure via a secure link.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="service-box">
+                    <div class="col-md-3 icon-box">
+                        <i class="fa fa-code"></i>
+                    </div>
+                    <div class="col-md-9 icon-text">
+                        <h4 class="ser-text">Low Code</h4>
+                        <h6 class="content">Put your existing skills to use. Code in JavaScript & SQL.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="service-box">
+                    <div class="col-md-3 icon-box">
+                        <i class="fa fa-clock-o"></i>
+                    </div>
+                    <div class="col-md-9 icon-text">
+                        <h4 class="ser-text">Faster Time to Market</h4>
+                        <h6 class="content">Express build enterprise applications. Manage change efficiently.</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--/ work-shop-->
+<section id="overlay2" class="section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="header-section text-center">
+                <form>
+                    <h2 class="white">Sell,Market and Service</h2>
+                    <p class="white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Exercitationem nesciunt vitae,<br> maiores, magni dolorum aliquam.</p>
+                    <input type="email" id="quicksignup" placeholder="Enter your email address" /><button class="btn" id="overlay2-btn">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!--partners-->
+<section id="partners" class="section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="header-section text-center">
+                <h2>We are Supported by</h2>
+                <hr class="bottom-line">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 .col-md-5 .col-lg-6">
+                <img src="~/images/perk-bizspark.jpg" class="img-responsive">
+            </div>
+            <div class="col-sm-5 .col-sm-offset-2 .col-md-6 .col-md-offset-2">
+                <img src="~/images/10000-startups.png" class="img-responsive">
+            </div>
+        </div>
+    </div>
+</section>
+<!--partners/-->
+
+@{
+    Html.RenderPartial("PageFooterAmal");
+}

@@ -9,6 +9,7 @@
     string head = string.Empty;
     string html = string.Empty;
 
+    var dvid = Convert.ToInt32(ViewBag.dvid);
     var dsid = Convert.ToInt32(ViewBag.dsid);
     var id = Convert.ToInt32(ViewBag.DataId);
 
@@ -19,12 +20,13 @@
     EbDataGridView dgv = new EbDataGridView
     {
         DataSourceId = dsid,
+        dvId = dvid,
         FilterDialogId = 47,
-        Name = "dv" + dsid.ToString()
+        Name = "dv" + dvid.ToString()
     };
 
     dgv.Token = ViewBag.token;
-    dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient());
+    dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
 
     head += dgv.GetHead();
     head += (ViewBag.EbForm38 as EbForm).GetHead();

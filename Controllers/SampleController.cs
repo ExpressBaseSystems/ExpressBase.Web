@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
 using ExpressBase.Objects;
-using ExpressBase.ServiceStack.Services;
 using Microsoft.AspNetCore.Http;
 using ExpressBase.Data;
 

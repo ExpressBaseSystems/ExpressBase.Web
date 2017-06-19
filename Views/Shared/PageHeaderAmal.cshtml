@@ -1,0 +1,205 @@
+﻿<script>
+
+        function onSubmit(token) {
+            document.getElementById("signup_form").submit();
+        }
+
+        function onSignin(token) {
+            document.getElementById("log_form").submit();
+        }
+</script>
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"></a>
+            <a href="index">
+                <img class="img-responsive" src="~/images/EB_Logo.png">
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="~/Ext/AboutUs">About Us</a></li>
+                <li><a href="~/Ext/Platform">Platform</a></li>
+                <li><a href="~/Ext/Pricing">Pricing</a></li>
+                <li><a href="#">Store</a></li>
+                <li><a href="#">FAQ's</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#" data-target="#login" data-toggle="modal">Sign in</a></li>
+                <li class="btn-trial" data-toggle="modal" data-target="#modalsignup"><a href="#">Get Started for FREE</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!--/ Navigation bar-->
+<!--Modal box sign in-->
+<div class="modal fade" id="login" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content no 1-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title text-center form-title">Sign In</h4>
+            </div>
+            <div class="modal-body padtrbl">
+                <div class="login-box-body">
+                    <div class="login-box-msg">
+                        <img id="profile-img" class="img-cir" src="~/images/proimg.jpg" />
+                        <p id="profile-name" class="profile-name-card"></p>
+                    </div>
+                    <div class="form-group">
+                        <form id = "log_form" class="form-signin" action="~/Ext/TenantSignin" method="post">
+                            <span id="reauth-email" class="reauth-email"></span>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                                <input type="text" id="uname" name="uname" class="form-control" placeholder="Username/Email" required autofocus><br />
+                            </div><br />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="checkbox icheck">
+                                        <label>
+                                            <input type="checkbox" id="loginrem"> Remember Me
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSignin' style="background-color:#3b5998;color:white;">Sign In</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <hr class="bottom-line">
+                            <div class="text-center">Or Sign In by</div>
+                            <div class="col-xs-2 col-sm-2">
+                            <a href="@ViewBag.EbConfig.ServiceStackUrl/auth/facebook" class="btn btn-lg btn-block">
+                                <i class="fa fa-facebook fa-2x"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="#" class="btn btn-lg btn-block">
+                                <i class="fa fa-twitter fa-2x text-info"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="#" class="btn btn-lg btn-block">
+                                <i class="fa fa-google-plus fa-2x text-danger"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="#" class="btn btn-lg btn-block">
+                                <i class="fa fa-linkedin fa-2x"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="#" class="btn btn-lg btn-block">
+                                <i class="fa fa-github fa-2x text-muted"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal box sign in/-->
+
+
+<!--Modal box sign up/-->
+<div class="modal fade" id="modalsignup" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+     aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        ×
+                    </button>
+                    <h4 class="modal-title text-center" id="myModalLabel">
+                       Start your FREE trial now
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                                    <form id="signup_form" role="form" class="form-horizontal" action="~/Ext/TenantExtSignup" method="post">
+                                        <div class="form-group">
+                                            <label for="email" class="col-sm-2 control-label">
+                                                Email
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password" class="col-sm-2 control-label">
+                                                Password
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSubmit' style="background-color:#3b5998;color:white;" >
+                                                    submit
+                                                </button>
+                                                
+                                            </div>
+                                        </div>
+                                    <div class="form-group text-center">
+                                        <div class="col-sm-12">
+                                            <hr class="bottom-line">
+                                            <p>
+                                                Or Sign up with
+                                            </p>
+                                            </div>
+                                    </div>
+                                        <div class="form-group text-center">
+                                            <div class="col-sm-12">
+                                                <div class="btn-group btn-group-justified">
+                                                    <a href="@ViewBag.EbConfig.ServiceStackUrl/auth/facebook" class="btn btn-lg btn-block">
+                                                        <i class="fa fa-facebook fa-2x"></i>
+                                                        <span class="hidden-xs"></span>
+                                                    </a>
+                                                    <a href="#" class="btn btn-lg btn-block">
+                                                        <i class="fa fa-twitter fa-2x text-info"></i>
+                                                        <span class="hidden-xs"></span>
+                                                    </a>
+                                                    <a href="#" class="btn btn-lg btn-block">
+                                                        <i class="fa fa-linkedin fa-2x"></i>
+                                                        <span class="hidden-xs"></span>
+                                                    </a>
+                                                    <a href="#" class="btn btn-lg btn-block">
+                                                        <i class="fa fa-google-plus fa-2x text-danger"></i>
+                                                        <span class="hidden-xs"></span>
+                                                    </a>
+                                                    <a href="#" class="btn btn-lg btn-block">
+                                                        <i class="fa fa-github fa-2x text-muted"></i>
+                                                        <span class="hidden-xs"></span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>                         
+                            </div>                     
+                        </div>
+                    </div>
+                </div>
+            </div>
+      

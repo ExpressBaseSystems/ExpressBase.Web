@@ -47,11 +47,17 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.EbConfig = this.EbConfig;
             string url = this.HttpContext.Request.Headers["HOST"];
             string[] firstDomain = url.Split('.');
-
+            string whichconsole = null;
             if (firstDomain.Length == 2)
+            {
                 ViewBag.cid = firstDomain[0];
+                whichconsole = "uc";
+            }           
             else if (firstDomain.Length == 3)
+            {
                 ViewBag.cid = firstDomain[1];
+                whichconsole = "dc";
+            }              
             else
                 ViewBag.cid = "expressbase";
             var req = this.HttpContext.Request.Form;
@@ -98,7 +104,7 @@ namespace ExpressBase.Web2.Controllers
                         provider = CredentialsAuthProvider.Name,
                         UserName = ViewBag.cid+"/" + req["uname"],
                         Password = req["pass"],
-                        //Meta = new Dictionary<string, string> { { "cid", ViewBag.cid }, { "Login", "Client" } },
+                        Meta = new Dictionary<string, string> { { "wc", whichconsole } },
                         //UseTokenCookie = true
                     });
                     

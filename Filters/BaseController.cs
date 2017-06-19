@@ -23,28 +23,33 @@ namespace ExpressBase.Web.Filters
         {
             try
             {
+                var controller = context.Controller as Controller;
+                controller.ViewBag.EbConfig = this.EbConfig;
                 var token = context.HttpContext.Request.Cookies["Token"];
                 var rToken = context.HttpContext.Request.Cookies["rToken"];
 
                 var tokenS = (new JwtSecurityTokenHandler()).ReadToken(token) as JwtSecurityToken;
 
-                var controller = context.Controller as Controller;
+                
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
                 controller.ViewBag.token = token;
                 controller.ViewBag.rToken = rToken;
                 controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
                 controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+                controller.ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
 
-                controller.ViewBag.EbConfig = this.EbConfig;
                 base.OnActionExecuting(context);
             }
             catch (System.ArgumentNullException ane)
             {
-                if (ane.ParamName == "token" || ane.ParamName == "rToken")
+                if (!(context.Controller is ExpressBase.Web.Controllers.ExtController))
                 {
-                    context.Result = new RedirectResult("~/TenantExt/Signin");
-                    return;
+                    if (ane.ParamName == "token" || ane.ParamName == "rToken")
+                    {
+                        context.Result = new RedirectResult("~/Ext/Index");
+                        return;
+                    }
                 }
             }
         }

@@ -540,7 +540,10 @@ namespace ExpressBase.Web2.Controllers
                     var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataVisualization>(element.Bytea);
                     ViewBag.ObjectName = element.Name;
                     ViewBag.dsid = dsobj.dsid;
-                    ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
+                    if(ViewBag.wc == "dc")
+                        ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
+                    else
+                        ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, objid, ViewBag.UId));
                 }
             }
             resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.dsid), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
@@ -707,7 +710,10 @@ namespace ExpressBase.Web2.Controllers
             var result = client.Post<EbObjectWrapperResponse>(ds);
             if (result.id > 0)
                 dvid = result.id;
-            this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, dvid), json);
+            if (ViewBag.wc == "dc")
+                this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, dvid), json);
+            else
+                this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dvid, ViewBag.UId), json);
             return Json("Success");
         }
 

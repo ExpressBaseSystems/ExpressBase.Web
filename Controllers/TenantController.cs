@@ -41,22 +41,6 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult TenantDashboard(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var res = client.Post<bool>(new DbCheckRequest { CId = Convert.ToInt32(req["id"]), DBColvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-            if (res)
-            {
-                return View();
-            }
-            else
-            {
-                ViewBag.Message = "Error in Connection";
-                return View();
-            }
-        }
 
         [HttpGet]
         public IActionResult PricingSelect()

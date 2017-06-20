@@ -1,7 +1,13 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
 }
-<h1>I am Devoloper</h1>
+<script>
+
+    function onSubmit(token) {
+            document.getElementById("log_form").submit();
+        }
+</script>
+<h1>I am Developer</h1>
 <section id="login">
     <div class="container">
         <div class="row">
@@ -27,7 +33,7 @@
                                     <input type="checkbox" id="loginrem"> Remember Me
                                 </label>
                             </div>
-                            <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSignin' style="background-color:#3b5998;color:white;">Sign In</button>
+                            <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' style="background-color:#3b5998;color:white;">Sign In</button>
                         </form>
                         <div class="row">
                             <hr class="bottom-line">

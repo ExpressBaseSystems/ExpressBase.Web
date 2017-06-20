@@ -7,7 +7,6 @@ body {
     font-family: 'Open Sans', sans-serif;
     font-weight: 400;
 }
-
 .nopadding {
     padding: 0;
 }
@@ -141,29 +140,17 @@ Navigation bar
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
-
-.modal-content h4 {
-    font-size: 1.5em;
-    font-weight: 700;
-}
-
 .login-box-body {
     padding: 15px 30px;
     margin-top: 60px;
     border: solid 1px rgba(0, 0, 0,0.1);
     border-radius: 4px;
 }
-
 .login-box-msg, .register-box-msg {
     margin: 0px;
     text-align: center;
     padding: 0px 20px 20px;
 }
-
-.modal-sm {
-    width: 400px;
-}
-
 .padleft-right {
     padding-left: 5px;
     padding-right: 0px;

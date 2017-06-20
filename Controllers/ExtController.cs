@@ -205,6 +205,46 @@ namespace ExpressBase.Web.Controllers
 
             }
         }
+
+
+        [HttpGet]
+        public IActionResult AfterSignInSocial(string provider, string providerToken, 
+            string email, string socialId)
+        {
+
+            try
+            {
+                var authClient = this.EbConfig.GetServiceStackClient();
+                MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = "expressbase/" + email + "/" + socialId,
+                    Password = "NIL",
+                    Meta =  new Dictionary<string, string> { { "wc", "dc" } },
+                   // UseTokenCookie = true
+                });
+
+                if(authResponse.User != null)
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append("Token", authResponse.BearerToken, options);
+                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+                    return RedirectToAction("TenantDashboard", "Tenant");
+                }
+                else
+                {
+                    return RedirectToAction("Error", "Ext");
+                }
+
+            }
+            catch (WebServiceException wse)
+            {
+                ViewBag.errormsg = wse.Message;
+                return View();
+            }
+
+            
+        }
     }
 
 }

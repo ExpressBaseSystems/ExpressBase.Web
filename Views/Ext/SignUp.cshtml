@@ -1,0 +1,77 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+}
+<section id="signup" style="margin-top:80px;">
+    <div class="container">
+        <div class="row">
+            <h4 class="modal-title text-center" id="myModalLabel">
+                Start your FREE trial now
+            </h4>
+            <hr />          
+            <div class="col-md-4 col-md-offset-1">
+                <form id="signup_form" role="form" class="form-horizontal" action="~/Ext/TenantExtSignup" method="post" data-toggle="validator">
+                    <div class="form-group">
+                        <label for="email" class="col-sm-2 control-label">
+                            Email
+                        </label>
+                        <div class="col-sm-12">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required />
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="col-sm-2 control-label">
+                            Password
+                        </label>
+                        <div class="col-sm-12">
+                            <input type="password" class="form-control" data-minlength="6" id="password" name="password" placeholder="Password" data-error="Minimum of 6 characters" />
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' style="background-color:#3b5998;color:white;">
+                                submit
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <div class="col-sm-12">
+                            <hr class="bottom-line">
+                            <p>
+                                Or Sign up with
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <div class="col-sm-12">
+                            <div class="btn-group btn-group-justified">
+                                <a href="@ViewBag.EbConfig.ServiceStackUrl/auth/facebook" class="btn btn-lg btn-block">
+                                    <i class="fa fa-facebook"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-twitter text-info"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-linkedin"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-google-plus text-danger"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-github text-muted"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

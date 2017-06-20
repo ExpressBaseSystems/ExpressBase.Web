@@ -12,9 +12,9 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     this.vmName = 'id'; //vmName;
     this.dmNames = ['acmaster1_xid', 'acmaster1_name', 'tdebit']; //dmNames;
     this.maxLimit = 1;//maxLimit;
-    this.minLimit = minLimit;
+    this.minLimit = 3;//minLimit;
     this.multiSelect = (this.maxLimit > 1);
-    this.required = required;
+    this.required = true;//required;
     this.servicestack_url = servicestack_url;
     this.vmValues = (vmValues !== null) ? vmValues : [];
     this.dropdownHeight = dropdownHeight;
@@ -305,14 +305,11 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
                 document.getElementById(this.dmNames[0]).setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
-                alert('This field  require minimum ' + this.minLimit + ' values');
 
             }
             else {
-                alert(this.required)
-                if (this.required && this.Vobj.valueMember.length === 0) {
+                if (this.required && this.Vobj.valueMembers.length === 0) {
                     document.getElementById(this.dmNames[0]).setCustomValidity('This field  is required');
-                    alert(00);
                 }
                 else
                     document.getElementById(this.dmNames[0]).setCustomValidity('');

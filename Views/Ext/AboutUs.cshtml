@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    Html.RenderPartial("PageHeaderAmal");
+    Html.RenderPartial("ExtPageHeader");
 }
     <header class="aboutus-header">
         <div class="container-fluid">
@@ -41,9 +41,10 @@
     <section class="team">
         <div class="container">
             <div class="row">
-                <div class="col-md-10 col-md-offset-1">
+                <h6 class="description text-center">Our Team</h6>
+                <div class="col-md-10 col-md-offset-2">
                     <div class="col-lg-12">
-                        <h6 class="description text-center">Our Team</h6>
+                        
                         <div class="row pt-md">
                             <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
                                 <div class="img-box">
@@ -132,5 +133,5 @@
         </div>
     </div><!-- End of Modal -->    
 @{
-        Html.RenderPartial("PageFooterAmal");
+        Html.RenderPartial("PageFooter");
     }

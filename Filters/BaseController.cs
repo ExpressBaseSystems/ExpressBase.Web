@@ -25,7 +25,7 @@ namespace ExpressBase.Web.Filters
             {
                 var controller = context.Controller as Controller;
                 controller.ViewBag.EbConfig = this.EbConfig;
-                var token = context.HttpContext.Request.Cookies["Token"];
+                var token =  context.HttpContext.Request.Cookies["Token"] ;
                 var rToken = context.HttpContext.Request.Cookies["rToken"];
 
                 var tokenS = (new JwtSecurityTokenHandler()).ReadToken(token) as JwtSecurityToken;

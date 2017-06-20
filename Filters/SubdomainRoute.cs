@@ -62,15 +62,15 @@ namespace ExpressBase.Web.Filters
                 if (subdomain.Length == 3) // DEV CONSOLE
                 {
                     area = subdomain[1];
-                    context.RouteData.Values["controller"] = "TenantUserExt"; //Goes to the relevant Controller  class
-                    context.RouteData.Values["action"] = "TenantUserLogin";
+                    context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                    context.RouteData.Values["action"] = "DevSignIn";
                     // context.RouteData.Values["area"]= area;
                 }
                 else if (subdomain.Length == 2) // USER CONSOLE
                 {
                     area = subdomain[0];
-                    context.RouteData.Values["controller"] = "TenantUserExt"; //Goes to the relevant Controller  class
-                    context.RouteData.Values["action"] = "TenantUserLogin";
+                    context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                    context.RouteData.Values["action"] = "UsrSignIn";
                     // context.RouteData.Values.Add("area", area);
                 }
                 else if (subdomain.Length == 1) // TENANT CONSOLE

@@ -474,14 +474,14 @@ var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,ver
   
     this.DataSource = function () {
         if (obj_id === 0) {
-            $('#changeLog').remove();
-            $('#name').val(obj_name);
-            $('#description').val(obj_desc);
+            $('#changeLogDiv').remove();            
         }
-        else {
-            $('#name').remove();
-            $('#description').remove();
-        }
+        //else {
+        //    $('#nameDiv').hide();
+        //    $('#descDiv').hide();
+        //}
+        $('#name').val(obj_name);
+        $('#description').val(obj_desc);
         $('#tcid').val(acid);
         $('#code').val(code);
         $('#id').val(obj_id);       

@@ -43,13 +43,15 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult SignupSuccess()
-        {            
+        public IActionResult SignupSuccess(string email)
+        {
+            ViewBag.SignupEmail = email;
             return View();
         }
 
-        public IActionResult SignInExternal()
+        public IActionResult SignIn()
         {
+            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -58,6 +60,25 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EbConfig = this.EbConfig;
             return View();
         }
+
+        public IActionResult DevSignIn()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+
+        public IActionResult UsrSignIn()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+
+        public IActionResult SignUp()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()
         {
@@ -100,7 +121,9 @@ namespace ExpressBase.Web.Controllers
                 var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
-                    return RedirectToAction("SignupSuccess","Ext");
+                   
+                    return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
+                  
                 }
                 else
                 {
@@ -124,16 +147,35 @@ namespace ExpressBase.Web.Controllers
         public async Task<IActionResult> TenantSignin(int i)
         {
             ViewBag.EbConfig = this.EbConfig;
+            string url = this.HttpContext.Request.Headers["HOST"];
+            string[] firstDomain = url.Split('.');
+            string whichconsole = null;
+
+            if (firstDomain.Length == 2)
+            {
+                ViewBag.cid = firstDomain[0];
+                whichconsole = "uc";
+            }
+            else if (firstDomain.Length == 3)
+            {
+                ViewBag.cid = firstDomain[1];
+                whichconsole = "dc";
+            }
+            else
+            {
+                ViewBag.cid = "expressbase";
+                whichconsole = "tc";
+            }        
             var req = this.HttpContext.Request.Form;
             MyAuthenticateResponse authResponse = null;
 
             string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse("6Lf3UxwUAAAAACIoZP76iHFxb-LVNEtj71FU2Vne", token);
+            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
             if (!data.Success)
             {
                 if (data.ErrorCodes.Count <= 0)
                 {
-                    return View();
+                    return RedirectToAction("Error", "Ext");
                 }
                 var error = data.ErrorCodes[0].ToLower();
                 switch (error)
@@ -156,7 +198,7 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.CaptchaMessage = "Error occured. Please try again";
                         break;
                 }
-                return View();
+                return RedirectToAction("Error", "Ext");
             }
             else
             {
@@ -166,9 +208,9 @@ namespace ExpressBase.Web.Controllers
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
-                        UserName = "expressbase/" + req["uname"],
+                        UserName = ViewBag.cid + "/" + req["uname"],
                         Password = req["pass"],
-                        //Meta = new Dictionary<string, string> { { "cid","expressbase" }, { "Login", "Client" } },
+                        Meta = new Dictionary<string, string> { { "wc",whichconsole } },
                         //UseTokenCookie = true
                     });
 
@@ -181,29 +223,77 @@ namespace ExpressBase.Web.Controllers
                 catch (Exception wse)
                 {
                     ViewBag.errormsg = wse.Message;
-                    return View();
+                    return RedirectToAction("Error", "Ext");
                 }
 
                 if (authResponse != null && authResponse.ResponseStatus != null
                     && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
                 {
                     ViewBag.errormsg = "Please enter a valid Username/Password";
-                    return View();
+                    return RedirectToAction("Error", "Ext");
                 }
-
-                CookieOptions options = new CookieOptions();
-
-                Response.Cookies.Append("Token", authResponse.BearerToken, options);
-                Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
-
-                if (req.ContainsKey("remember"))
+                else
                 {
-                    Response.Cookies.Append("UserName", req["uname"], options);
-                }
+                    CookieOptions options = new CookieOptions();
 
-                return RedirectToAction("TenantDashboard", "Tenant");
+                    Response.Cookies.Append("Token", authResponse.BearerToken, options);
+                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+
+                    if (req.ContainsKey("remember"))
+                    {
+                        Response.Cookies.Append("UserName", req["uname"], options);
+                    }
+
+
+                    if(firstDomain.Length == 1)
+                        return RedirectToAction("TenantDashboard", "Tenant");
+                    else if (firstDomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
+                        return RedirectToAction("DevConsole", "Tenant");
+                    else
+                        return RedirectToAction("UserDashboard", "TenantUser");
+                    
+                }
+            }
+        }
+
+
+        [HttpGet]
+        public IActionResult AfterSignInSocial(string provider, string providerToken, 
+            string email, string socialId)
+        {
+
+            try
+            {
+                var authClient = this.EbConfig.GetServiceStackClient();
+                MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = "expressbase/" + email + "/" + socialId,
+                    Password = "NIL",
+                    Meta =  new Dictionary<string, string> { { "wc", "dc" } },
+                   // UseTokenCookie = true
+                });
+
+                if(authResponse.User != null)
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append("Token", authResponse.BearerToken, options);
+                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+                    return RedirectToAction("TenantDashboard", "Tenant");
+                }
+                else
+                {
+                    return RedirectToAction("Error", "Ext");
+                }
 
             }
+            catch (WebServiceException wse)
+            {
+                ViewBag.errormsg = wse.Message;
+                return RedirectToAction("Error", "Ext");
+            }
+
+            
         }
     }
 

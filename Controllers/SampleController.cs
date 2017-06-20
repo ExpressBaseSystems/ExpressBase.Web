@@ -8,15 +8,23 @@ using ServiceStack.Redis;
 using ExpressBase.Objects;
 using Microsoft.AspNetCore.Http;
 using ExpressBase.Data;
+using ExpressBase.Web.Filters;
+using Microsoft.Extensions.Options;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web2.Models
 {
-    public class SampleController : Controller
+    public class SampleController : EbBaseController
     {
+        public SampleController(IOptionsSnapshot<EbSetupConfig> ss_settings) : base(ss_settings) { }
+
         // GET: /<controller>/
         public IActionResult Index()
+        {
+            return View();
+        }
+        public IActionResult dragNdrop()
         {
             return View();
         }

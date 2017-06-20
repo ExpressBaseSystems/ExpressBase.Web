@@ -1,33 +1,40 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
 }
+<script>
+
+    function onSubmit(token) {
+            document.getElementById("log_form").submit();
+        }
+</script>
+<h1>I am Developer</h1>
 <section id="login">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 col-md-offset-4">
+            <div class="col-md-4 col-md-offset-8">
                 <div class="login-box-body">
                     <div class="login-box-msg">
                         <img id="profile-img" class="img-cir" src="~/images/proimg.jpg" />
                         <p id="profile-name" class="profile-name-card"></p>
                     </div>
-                        <div class="form-group">
-                            <form id="log_form" class="form-signin" action="~/Ext/TenantSignin" method="post">
-                                <span id="reauth-email" class="reauth-email"></span>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                                        <input type="text" id="uname" name="uname" class="form-control" placeholder="Username/Email" required autofocus><br />
-                                    </div><br />
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                                        <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
-                                    </div>
-                                    <div class="checkbox icheck">
-                                        <label>
-                                            <input type="checkbox" id="loginrem"> Remember Me
-                                        </label>
-                                    </div>                           
-                                    <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6Lf3UxwUAAAAAB0HCyxQ73nfpKc7xIET8Ww1nb8x" data-callback='onSignin' style="background-color:#3b5998;color:white;">Sign In</button>                             
-                            </form>
+                    <div class="form-group ">
+                        <form id="log_form" class="form-signin" action="~/Ext/TenantSignin" method="post">
+                            <span id="reauth-email" class="reauth-email"></span>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                                <input type="text" id="uname" name="uname" class="form-control" placeholder="Username/Email" required autofocus><br />
+                            </div><br />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                            </div>
+                            <div class="checkbox icheck">
+                                <label>
+                                    <input type="checkbox" id="loginrem"> Remember Me
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' style="background-color:#3b5998;color:white;">Sign In</button>
+                        </form>
                         <div class="row">
                             <hr class="bottom-line">
                             <div class="text-center">Or Sign In by</div>
@@ -64,8 +71,7 @@
                         </div>
                     </div>
                 </div>
-             </div>
+            </div>
         </div>
     </div>
 </section>
-       

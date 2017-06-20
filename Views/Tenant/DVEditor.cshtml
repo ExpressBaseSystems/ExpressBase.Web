@@ -40,6 +40,7 @@
             var xx = (ObjList.Count > 0) ? (ObjList.Values.First<EbObjectWrapper>().Name) : "Data Source";
             var cls = "show";
         }
+        <div id="loader" class="loadingdiv"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
         <div id="settingsdiv" style="background-color:rgb(260,260,260)">
             @if (isAjaxCall) { cls = "hidden"; }
             <div class=@cls>
@@ -149,24 +150,31 @@
                     </div>
                 </div>
             </div>
-            @if (!isAjaxCall)
-            {
             <div style="float:right;">
                 <button id='Save_btn' class='btn btn-primary' data-objId="@ViewBag.Obj_id">Save Changes</button>
             </div>
             <div class="alert alert-success" style="display:none">
                 <strong>Success!</strong> Indicates a successful or positive action.
             </div>
-            }
+
             <script>
+                
             var ds= @ViewBag.dsid;
             @*var sett;
             if("@ViewBag.tvpref" === "abc")
                 sett= "@ViewBag.tvpref";
             else*@
              var sett= @Html.Raw(ViewBag.tvpref);
-             var dvo= new DVObj(ds, sett);
+                var dvo= new DVObj(ds, sett, "@ViewBag.wc");
             </script>
         </div>
     </body>
 </html>
+<style>
+    .loadingdiv {
+    vertical-align:middle;
+    margin: 5% 50%;
+    z-index:1;
+    display:none;
+}
+</style>

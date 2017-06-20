@@ -537,10 +537,14 @@ namespace ExpressBase.Web2.Controllers
                     var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataVisualization>(element.Bytea);
                     ViewBag.ObjectName = element.Name;
                     ViewBag.dsid = dsobj.dsid;
-                    if(ViewBag.wc == "dc")
+                    if (ViewBag.wc == "dc")
                         ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
                     else
+                    {
                         ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, objid, ViewBag.UId));
+                        if(ViewBag.tvpref == null)
+                            ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
+                    }
                 }
             }
             resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.dsid), TenantAccountId = ViewBag.cid, Token = ViewBag.token });

@@ -27,7 +27,6 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     this.datatable = null;
     this.clmAdjst = 0;
 
-    // TEMP
     this.currentEvent = null;
     this.IsDatatableInit = false;
     this.localDMS = [];
@@ -50,14 +49,16 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
         $('#' + this.name + 'Wraper [type=search]').keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
 
         //set id for searchBox
-        $('#' + this.name + 'Wraper  [type=search]').each(function (i) {
-            $(this).attr('id',  this.name + 'srch' + i);
-        });
+        $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
 
 
         //styles
         $('#' + this.name + 0).children().css("border-top-left-radius", "5px");
         $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
+    };
+
+    this.srchBoxIdSetter = function (i) {
+        $('#' + this.name + 'Wraper  [type=search]:eq(' + i + ')').attr('id', this.dmNames[i]);
     };
 
     //enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
@@ -90,10 +91,10 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
             ss_url: "https://expressbaseservicestack.azurewebsites.net",
             directLoad: true,
             settings: {
-                hideCheckbox: (this.multiSelect === false),
+                hideCheckbox: (this.multiSelect === false) ? true : false,
                 scrollY: "200px",//this.dropdownHeight,
             },
-            filterParams:{colName:"id", FilterValue :"ac"}, //{ id : "ac", }
+            filterParams: { colName: "id", FilterValue: "ac" }, //{ id : "ac", }
             initComplete: this.initDTpost.bind(this),
             fnDblclickCallbackFunc: this.dblClickOnOptDDEventHand.bind(this),
             //fnKeyUpCallback:
@@ -302,16 +303,23 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
         var container1 = $('#' + this.name);
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
-            //if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0)
-            //    document.getElementById(this.name + 'srch0').setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
-            //else
-            //    if (this.required && this.Vobj.valueMember.length === 0)
-            //        document.getElementById('' + this.name + 'srch0').setCustomValidity('This field  is required');
-            //    else
-            //        document.getElementById('' + this.name + 'srch0').setCustomValidity('');
+            if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
+                document.getElementById(this.dmNames[0]).setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
+                alert('This field  require minimum ' + this.minLimit + ' values');
+
+            }
+            else {
+                alert(this.required)
+                if (this.required && this.Vobj.valueMember.length === 0) {
+                    document.getElementById(this.dmNames[0]).setCustomValidity('This field  is required');
+                    alert(00);
+                }
+                else
+                    document.getElementById(this.dmNames[0]).setCustomValidity('');
+
+            }
         }
     };
 
     this.Renderselect();
-
 };

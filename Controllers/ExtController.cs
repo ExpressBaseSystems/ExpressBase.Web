@@ -48,8 +48,9 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult SignInExternal()
+        public IActionResult SignIn()
         {
+            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -58,6 +59,19 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EbConfig = this.EbConfig;
             return View();
         }
+
+        public IActionResult DevSignIn()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+
+        public IActionResult UsrSignIn()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()
         {

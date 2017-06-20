@@ -1,0 +1,85 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
+<div id="con">
+    <div id="left" class="prop-grid-cont">
+        <div class="alert alert-success">
+            MOVE ME 1
+        </div>
+        <div class="alert alert-success">
+            MOVE ME 2
+        </div>
+        <div class="alert alert-success">
+            MOVE ME 3
+        </div>
+    </div>
+    <div id="right" class="prop-grid-cont">
+
+    </div>
+
+</div>
+<script>
+    $(function () {
+        dragula([document.getElementById("left"), document.getElementById("right")], {
+            removeOnSpill: false
+        });
+    });
+</script>
+<style>
+    #sortable {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        width: 60%;
+    }
+
+        #sortable li {
+            margin: 0 3px 3px 3px;
+            padding: 0.4em;
+            padding-left: 1.5em;
+            font-size: 1.4em;
+            height: 18px;
+        }
+
+            #sortable li span {
+                position: absolute;
+                margin-left: -1.3em;
+            }
+
+    #sortable {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        width: 60%;
+    }
+
+    #sortable1 li {
+        margin: 0 3px 3px 3px;
+        padding: 0.4em;
+        padding-left: 1.5em;
+        font-size: 1.4em;
+        height: 18px;
+    }
+
+        #sortable1 li span {
+            position: absolute;
+            margin-left: -1.3em;
+        }
+
+    .f {
+        background: yellow;
+        color: red;
+        width: 100%;
+        height: 100%;
+    }
+
+    table {
+        width: 100%;
+        height: inherit;
+    }
+</style>

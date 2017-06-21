@@ -1,0 +1,25 @@
+﻿body {
+}
+
+.form-buider-toolBox {
+    width: 207px;
+    padding: 3px;
+    display: inline-block;
+    vertical-align: top;
+    height: 590px;
+    overflow-y: auto;
+    border: solid 1px #dddddd;
+    margin-left: 8px;
+    margin-top: 7px;
+}
+.form-buider-form {
+    width: 850px;
+    padding: 3px;
+    display: inline-block;
+    vertical-align: top;
+    height: 590px;
+    overflow-y: auto;
+    border: solid 1px #dddddd;
+    margin-left: 8px;
+    margin-top: 7px;
+}

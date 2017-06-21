@@ -24,7 +24,7 @@
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
-            var paramsCount;
+            var MyDs=new DataSource(@ViewBag.Obj_id,@ViewBag.IsNew, @ViewBag.VersionNumber,'@ViewBag.cid');
             $(".eb-loader").hide();
             $('#filterRun').on('hidden.bs.modal', function () {
                 $("#sample").DataTable().destroy();
@@ -33,10 +33,10 @@
             $(document).keydown(function (e) {
                 if (e.keyCode == 83 && e.ctrlKey) {
                     e.preventDefault();
-                    $(".save").trigger("click");
+                    $("#save").trigger("click");
                 }
             });
-        }); 
+        });
     </script>
 </head>
 <body>
@@ -44,13 +44,13 @@
     @*<span>*@
     <div class="btn-group">
         <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn btn-sm btn-info fa fa-plus-square  fa-1x" aria-hidden="true"></i></a>
-        <a class="commit" data-toggle="tooltip" title="Commit" onclick="Commit(@ViewBag.Obj_id,@ViewBag.VersionNumber,'@ViewBag.cid')"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
-        <a class="save" data-toggle="tooltip" title="Save" onclick="Save(@ViewBag.IsNew,@ViewBag.Obj_id,@ViewBag.VersionNumber)"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
+        <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
+        <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-        <a href="#" id="execute" data-toggle="tooltip" title="Execute" onclick="Execute()"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
-        <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
+        <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
+        <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-code-fork fa-1x" aria-hidden="true"></i></a>
     </div>
     <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
     @ViewBag.Status
@@ -58,26 +58,25 @@
     Version v.@ViewBag.VersionNumber
     @*</span>*@
     <div id="objCollapse" class="collapse">
-        <div class="form-group ">
+        <div class="form-group inputBox ">
             <label class="control-label">DataSource Name</label>
             <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control " />
         </div>
-        <div class="form-group ">
+        <div class="form-group inputBox ">
             <label class="control-label">Description</label>
             <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
         </div>
         <div class="dropdown fdlist">
-            Filter Dialogues
-            <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true" onchange="SelectFD(window.editor.getValue())">
+            <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
                 @{
                     @using ExpressBase.Objects.ServiceStack_Artifacts;
                     Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
                     filterDialogs = ViewBag.FilterDialogs;
-                    <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
-                    <option value="Auto Generate Filter Dialog" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
+                <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
+                <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
                     foreach (var filter in filterDialogs)
                     {
-                        <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
+                <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
                     }
                 }
             </select>
@@ -117,8 +116,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="help"></div>
-                    <input type="submit" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" onclick="SaveFilter(@ViewBag.obj_id)" />
-                    <input type="submit" name="run" value="Run" class="btn-primary" id="run" onclick="RunDs(@ViewBag.obj_id)" />
+                    <input type="submit" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
+                    <input type="submit" name="run" value="Run" class="btn-primary" id="run"/>
                 </div>
             </div>
         </div>

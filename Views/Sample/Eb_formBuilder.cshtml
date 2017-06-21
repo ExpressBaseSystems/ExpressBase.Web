@@ -1,0 +1,132 @@
+﻿
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />
+<link rel="stylesheet" type="text/css" href="~/css/Eb.css" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
+<div id="con">
+    <div id="form-buider-toolBox" class="form-buider-toolBox">
+        <div class="well well-sm"><strong>ToolBox</strong></div>
+        <div class="well well-sm">
+            TextBox
+        </div>
+        <div class="well well-sm">
+            Label
+        </div>
+        <div class="well well-sm">
+            ComboBox
+        </div><div class="well well-sm">
+            Button
+        </div>
+        <div class="well well-sm">
+            CheckBox
+        </div>
+        <div class="well well-sm">
+            NumericBox
+        </div>
+        <div class="well well-sm">
+            Date
+        </div>
+        <div class="well well-sm">
+            GridView
+        </div>
+    </div>
+
+    <div id="form-buider-form" class="form-buider-form">
+
+    </div>
+
+    <div id="form-buider-propGrid" class="form-buider-toolBox">
+        <div class="well well-sm"><strong>Properties</strong></div>
+
+    </div>
+    <script>
+        $(function () {
+            var drake = dragula([document.getElementById("form-buider-toolBox"), document.getElementById("form-buider-form")], {
+                removeOnSpill: false,
+                copy: true,
+                copySortSource: true,
+                mirrorContainer: document.body,
+                accepts: function (el, target, source, sibling) {
+                    return ($(target).attr("id") === "form-buider-toolBox") ? false : true;
+                },
+            });
+            drake.on("drop", function (el, target, source, sibling) {
+                if ($(source).attr("id") !== "form-buider-form")
+                    if ($(el).text().trim() === "TextBox")
+                        $(el).html("<input type='text' />");
+                    else if ($(el).text().trim() === "ComboBox")
+                        $(el).html("<div id='acmasteridContainer' role='form' data-toggle='validator' style=' width: 900px;'><input type='hidden' name='acmasteridHidden4val' data-ebtype='16' id='acmasterid'> <div id='acmasteridLbl' style='display: inline-block;'></div> <div id='acmasteridWraper' data-toggle='tooltip' title='' data-original-title=''><div style='display: inline-block; width: 300px; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid0'><div type='button' class='dropdown-toggle clearfix' style='border-top-left-radius: 5px; border-bottom-left-radius: 5px;'> <input debounce='0' type='search' placeholder='label0' class='form-control' id='acmaster1_xid' style='width: 100%;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 300px; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid1'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' placeholder='label1' class='form-control' id='acmaster1_name' style='width: 100%;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 300px; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid2'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' placeholder='label2' class='form-control' id='tdebit' style='width: 100%;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div></div> <div id='acmasterid_loadingdiv' class='ebCombo-loader'><i id='acmasterid_loading-image' class='fa fa-spinner fa-pulse fa-2x fa-fw' style='display: none;'></i><span class='sr-only'>Loading...</span></div> <center><div id='acmasteridDDdiv' class='DDdiv expand-transition' style='width: 600px; display: none;'><table id='acmasteridtbl' tabindex='1000' class='table table-striped table-bordered' style='width: 100%;'></table></div></center></div>");
+                    else if ($(el).text().trim() === "NumericBox")
+                        $(el).html("<div class='Eb-ctrlContainer' style='min-height: 12px;'><span id='nameLbl' >Amount</span><div  class='input-group'><span class='input-group-addon'>$</span><input type='text'  class='numinput' name='name'  data-toggle='tooltip' title='toolTipText' id='name' style='width:300px; display:inline-block; /></div><span class='helpText'> helpText </span></div>");
+                    else if ($(el).text().trim() === "Date")
+                        $(el).html("<div id='datefromContainer' class='Eb-ctrlContainer'><span id='datefromLbl' style='background-color:#000000; color:#000000;'></span><div class='input-group' style='width:1px;'><input id='datefrom' data-ebtype='5' data-toggle='tooltip' title='' class='date' type='text' name='datefrom' autocomplete='on' value='01-01-0001 05:30:00 AM' tabindex='0' style='width:200px; height:21px; background-color:#FFFFFF; color:#000000; display:inline-block;  ' placeholder='' maxlength='10' data-original-title=''><span class='input-group-addon'> <i id='datefromTglBtn' class='fa  fa-calendar' aria-hidden='true'></i> </span></div><span class='helpText'>  </span></div>");
+                    else if ($(el).text().trim() === "Button")
+                        $(el).html("<button class='btn btn-default'>Button</button>");
+                    else if ($(el).text().trim() === "GridView") {
+                        el.className = 'gu-transit';
+                        $(el).html("<table style='width:100%'><tr><td>John</td><td>Doe</td></tr></table>");
+                    }
+            });
+
+        });
+    </script>
+    <style>
+        table td {
+            border: 1px dashed #cccccc;
+        }
+
+        #sortable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 60%;
+        }
+
+            #sortable li {
+                margin: 0 3px 3px 3px;
+                padding: 0.4em;
+                padding-left: 1.5em;
+                font-size: 1.4em;
+                height: 18px;
+            }
+
+                #sortable li span {
+                    position: absolute;
+                    margin-left: -1.3em;
+                }
+
+        #sortable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 60%;
+        }
+
+        #sortable1 li {
+            margin: 0 3px 3px 3px;
+            padding: 0.4em;
+            padding-left: 1.5em;
+            font-size: 1.4em;
+            height: 18px;
+        }
+
+            #sortable1 li span {
+                position: absolute;
+                margin-left: -1.3em;
+            }
+
+        .f {
+            background: yellow;
+            color: red;
+            width: 100%;
+            height: 100%;
+        }
+
+        table {
+            width: 100%;
+            height: inherit;
+        }
+    </style>

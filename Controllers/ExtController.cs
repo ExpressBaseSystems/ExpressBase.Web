@@ -43,8 +43,9 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult SignupSuccess()
-        {            
+        public IActionResult SignupSuccess(string email)
+        {
+            ViewBag.SignupEmail = email;
             return View();
         }
 
@@ -126,7 +127,9 @@ namespace ExpressBase.Web.Controllers
                 var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
                 if (res.id >= 0)
                 {
-                    return RedirectToAction("SignupSuccess","Ext");
+                   
+                    return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
+                  
                 }
                 else
                 {

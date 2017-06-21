@@ -385,7 +385,7 @@ namespace ExpressBase.Web2.Controllers
             // return Json("Success");
         }
 
-        public JsonResult SaveFilterDialog()
+        public int SaveFilterDialog()
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -414,9 +414,8 @@ namespace ExpressBase.Web2.Controllers
                 FilterDialogJson = req["filterdialogjson"],
                 EbObjectType = EbObjectType.FilterDialog
             });
-
-            ViewBag.CurrSaveId = client.Post<EbObjectWrapperResponse>(ds);
-            return Json("Success");
+            var CurrSaveId = client.Post<EbObjectWrapperResponse>(ds);
+            return CurrSaveId.id;
         }
         public IActionResult objects()
         {
@@ -520,10 +519,14 @@ namespace ExpressBase.Web2.Controllers
                     var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataVisualization>(element.Bytea);
                     ViewBag.ObjectName = element.Name;
                     ViewBag.dsid = dsobj.dsid;
-                    if(ViewBag.wc == "dc")
+                    if (ViewBag.wc == "dc")
                         ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
                     else
+                    {
                         ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, objid, ViewBag.UId));
+                        if(ViewBag.tvpref == null)
+                            ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
+                    }
                 }
             }
             resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.dsid), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
@@ -561,7 +564,7 @@ namespace ExpressBase.Web2.Controllers
             var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
             var paramsList = new List<Dictionary<string, string>>();
-            if (parameter == "") {
+            if (parameter == null) {
                 paramsList = null;
             }
             else

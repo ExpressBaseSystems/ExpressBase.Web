@@ -385,7 +385,7 @@ namespace ExpressBase.Web2.Controllers
             // return Json("Success");
         }
 
-        public JsonResult SaveFilterDialog()
+        public int SaveFilterDialog()
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -414,9 +414,8 @@ namespace ExpressBase.Web2.Controllers
                 FilterDialogJson = req["filterdialogjson"],
                 EbObjectType = EbObjectType.FilterDialog
             });
-
-            ViewBag.CurrSaveId = client.Post<EbObjectWrapperResponse>(ds);
-            return Json("Success");
+            var CurrSaveId = client.Post<EbObjectWrapperResponse>(ds);
+            return CurrSaveId.id;
         }
         public IActionResult objects()
         {
@@ -571,7 +570,7 @@ namespace ExpressBase.Web2.Controllers
             var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
             var paramsList = new List<Dictionary<string, string>>();
-            if (parameter == "") {
+            if (parameter == null) {
                 paramsList = null;
             }
             else

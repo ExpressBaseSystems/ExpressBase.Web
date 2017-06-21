@@ -81,6 +81,7 @@ var EbDataTable = function (settings) {
     this.dropdown_colname = null;
     this.deleted_colname = null;
     this.tempcolext = [];
+    this.linkDV = null;
 
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
@@ -95,6 +96,7 @@ var EbDataTable = function (settings) {
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
+        this.dsid = this.ebSettings.dsId;//not sure..
         this.ebSettingsCopy = this.ebSettings;
         this.Init();
 
@@ -814,7 +816,8 @@ var EbDataTable = function (settings) {
     };
 
     this.clickAlSlct = function (e) {
-        var tableid = $(e.target).attr('data-table');
+        //var tableid = $(e.target).attr('data-table');
+        alert(e.target.checked);
         if (e.target.checked)
             $('#' + this.tableId + '_wrapper tbody [type=checkbox]:not(:checked)').trigger('click');
         else
@@ -890,13 +893,12 @@ var EbDataTable = function (settings) {
 
     this.call2newTable = function () {
         var EbDataTable_Newtable = new EbDataTable({
-            ds_id: 32,
-            //dv_id: @dvId, 
+            //ds_id: 32,
+            dv_id: this.linkDV, 
             ss_url: "https://expressbaseservicestack.azurewebsites.net",
             tid: 'Newtable',
-            directLoad: true
-            //settings: JSON.parse(data),
-            //fnKeyUpCallback: 
+            linktable: true
+            //directLoad: true
         });
     };
 
@@ -1311,8 +1313,10 @@ var EbDataTable = function (settings) {
             }
         }
         if (col.type === "System.String") {
-            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Link")
-                this.ebSettingsCopy.columns[i].render = this.renderlink4NewTable;
+            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Link") {
+                this.linkDV = this.ebSettingsCopy.columnsext[i].linkDv;
+                this.ebSettingsCopy.columns[i].render = this.renderlink4NewTable.bind(this);
+            }
             if (this.ebSettingsCopy.columnsext[i].RenderAs === "Graph") {
                 this.ebSettingsCopy.columns[i].render = this.lineGraphDiv;
             }
@@ -1494,6 +1498,8 @@ var EbDataTable = function (settings) {
     this.btnGo.click(this.btnGoClick.bind(this));
 
     if (this.dtsettings.directLoad)
+        this.getColumns();
+    if (this.dtsettings.linktable)
         this.getColumns();
 };
 

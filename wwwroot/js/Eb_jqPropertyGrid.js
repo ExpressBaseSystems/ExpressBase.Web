@@ -34,10 +34,12 @@
                 };
             } else if (RowObj.type.toString().trim() === "System.String") {
                 NumProps = {
-                    RenderAs: obj.RenderAs
+                    RenderAs: obj.RenderAs,
+                    linkDv: obj.linkDv
                 };
                 metaObj = {
                     RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', 'Graph', 'Link'] },
+                    linkDv: { group: 'Behavior ', name: 'linkDv', type: 'linkDD', options: [{ text: 'dv_invtrans', value: 173 }, { text: 'wwwwww', value: 206 }] },
                 };
             }
             else
@@ -47,6 +49,7 @@
 
     // This is the metadata object that describes the target object properties (optional)
     var DDid = null;
+    var LDDid = null;
     var theCustomTypes = {
         icon: {
             html: function (elemId, name, value, meta) { // custom renderer for type (required)
@@ -60,13 +63,36 @@
     "<button id=" + elemId + " name=" + name + " class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" + value +
     " <span class='caret'></span></button>" +
                 "<ul class='dropdown-menu'>"
-                $.each(meta.options, function (i, val) { _html += "<li><a href='#'>" + val + "</a></li>" })
+                $.each(meta.options, function (i, val) { _html += "<li><a href='#'>" + val + "</a></li>"; })
                 _html += "</ul></div>";
                 DDid = elemId;
                 return _html.toString();
             },
             valueFn: function () {
                 return $('#' + DDid).text().trim();
+            }
+        },
+        linkDD: {
+            html: function (elemId, name, value, meta) { // custom renderer for type (required)
+                var txt = "";
+                var _html = "<div class='dropdown'>" +
+    "<button id=" + elemId + " name='Select dv' class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" +
+    "$$text" +
+    " <span class='caret'></span></button>" +
+                "<ul class='dropdown-menu'>"
+                $.each(meta.options, function (i, val) {
+                    _html += "<li><a  id=" + elemId + i + "  href='#' data-dvid='" + val.value + "'>" + val.text + "</a></li>"
+                    if (value !== null) {
+                        if (val.value.toString() === value.toString())
+                            txt = val.text;
+                    }
+                })
+                _html += "</ul></div>";
+                LDDid = elemId;
+                return _html.toString().replace("$$text", txt);
+            },
+            valueFn: function () {
+                return parseInt($('#' + LDDid ).attr("data-dvid"));
             }
         }
     };
@@ -79,6 +105,7 @@
         $('#propGrid table').removeClass("pgTable").addClass("table-bordered table-hover");
         $('.dropdown ul li').click(function () {
             $(this).parent().siblings('[data-toggle=dropdown]').text($(this).text());
+            $(this).parent().siblings('[data-toggle=dropdown]').attr("data-dvid", $(this).children().attr("data-dvid"));
             saveObj();
         });
         $('#propGrid table td').find("input").change(function () { saveObj(); });

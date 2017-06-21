@@ -482,17 +482,23 @@ namespace ExpressBase.Web2.Controllers
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            Dictionary<int, EbObjectWrapper> ObjListAll = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<int, EbObjectWrapper> ObjDVListAll = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
             {
                 if (element.EbObjectType == EbObjectType.DataSource)
                 {
-                    ObjListAll[element.Id] = element;
+                    ObjDSListAll[element.Id] = element;
+                }
+                if (element.EbObjectType == EbObjectType.DataVisualization)
+                {
+                    ObjDVListAll[element.Id] = element;
                 }
             }
-            ViewBag.DSListAll = ObjListAll;
-            ViewBag.DSList = ObjList;
+            ViewBag.DSListAll = ObjDSListAll;
+            ViewBag.DSList = ObjDSList;
+            ViewBag.DVListAll = ObjDVListAll;
             ViewBag.Obj_id = 0;
             ViewBag.dsid = 0;
             ViewBag.tvpref = "{ }";
@@ -592,13 +598,7 @@ namespace ExpressBase.Web2.Controllers
                     colDef += "{";
                     colDef += "\"data\": " + columnColletion.Columns[column.ColumnName].ColumnIndex.ToString();
                     colDef += ",\"title\": \"" + column.ColumnName + "\"";
-                    //var vis = (column.ColumnName == "id") ? false.ToString().ToLower() : true.ToString().ToLower();
                     colDef += ",\"visible\": " + true.ToString().ToLower();
-                    //colDef += ",\"width\": " + 100;
-                    //colDef += ",\"name\": \"" + column.ColumnName + "\"";
-                    //colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
-                    //var cls = (column.Type.ToString() == "System.Boolean") ? "dt-center tdheight" : "tdheight";
-                    //colDef += ",\"className\": \"tdheight\"";
                     colDef += "},";
                 }
                 return colDef.Substring(0, colDef.Length - 1) + "]";
@@ -630,7 +630,7 @@ namespace ExpressBase.Web2.Controllers
             colDef = "{\"dsId\":" + dsid + ",\"dvName\": \"<Untitled>\",\"hideSerial\": false, \"hideCheckbox\": false, \"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
             colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\"},";
-            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\"},";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\", \"class\":\"eb_selall\"},";
             foreach (EbDataColumn column in __columnCollection)
             {
                 colDef += "{";
@@ -659,7 +659,7 @@ namespace ExpressBase.Web2.Controllers
                 else if (column.Type.ToString() == "System.DateTime")
                     colext += "\"name\":\"" + column.ColumnName + "\",\"Format\":\"Date\"";
                 else if (column.Type.ToString() == "System.String")
-                    colext += "\"name\":\"" + column.ColumnName + "\",\"RenderAs\":\"Default\"";
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"RenderAs\":\"Default\",\"linkDv\":";
                 colext += "},";
             }
             colext = colext.Substring(0, colext.Length - 1) + "]";

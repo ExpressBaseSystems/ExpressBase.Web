@@ -28,6 +28,10 @@ namespace ExpressBase.Web2.Models
         {
             return View();
         }
+        public IActionResult Eb_formBuilder()
+        {
+            return View();
+        }
 
 
         public IActionResult GetData()

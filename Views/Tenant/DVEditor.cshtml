@@ -33,11 +33,13 @@
         @{ 
             
             @using ExpressBase.Objects.ServiceStack_Artifacts;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            Dictionary<int, EbObjectWrapper> ObjListAll = new Dictionary<int, EbObjectWrapper>();
-            ObjList = ViewBag.DSList;
-            ObjListAll = ViewBag.DSListAll;
-            var xx = (ObjList.Count > 0) ? (ObjList.Values.First<EbObjectWrapper>().Name) : "Data Source";
+            Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<int, EbObjectWrapper> ObjDVListAll = new Dictionary<int, EbObjectWrapper>();
+            ObjDSList = ViewBag.DSList;
+            ObjDSListAll = ViewBag.DSListAll;
+            ObjDVListAll = ViewBag.ObjDVListAll;
+            var xx = (ObjDSList.Count > 0) ? (ObjDSList.Values.First<EbObjectWrapper>().Name) : "Data Source";
             var cls = "show";
         }
         <div id="loader" class="loadingdiv"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
@@ -50,7 +52,7 @@
                     </button>
                     <ul class='dropdown-menu scrollable-menu'>
                         @{
-                            foreach (var element in ObjListAll)
+                            foreach (var element in ObjDSListAll)
                             {
                                 <li data-dsid="@element.Key">
                                     <a href="#">

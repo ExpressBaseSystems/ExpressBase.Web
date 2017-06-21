@@ -94,10 +94,8 @@ var EbDataTable = function (settings) {
         //    this.ebSettings = JSON.parse(data);
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
-        console.log(data);
         this.ebSettings = JSON.parse(data);
         this.ebSettingsCopy = this.ebSettings;
-        //this.updateRenderFunc();
         this.Init();
 
         if (this.filterBox !== null && this.dtsettings.directLoad !== true)
@@ -105,6 +103,8 @@ var EbDataTable = function (settings) {
     };
 
     this.Init = function () {
+
+        this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         //this.filterbtn = $('#4filterbtn');
@@ -140,7 +140,7 @@ var EbDataTable = function (settings) {
         $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.clickCallbackFunc.bind(this));
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
 
-        //$.fn.dataTable.ext.errMode = 'throw';
+        $.fn.dataTable.ext.errMode = 'throw';
 
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
@@ -249,6 +249,7 @@ var EbDataTable = function (settings) {
             this.Api.ajax.reload();
     };
 
+   
     this.getAgginfo = function () {
         var _ls = [];
         $.each(this.ebSettings.columns, function (i, col) {
@@ -1006,21 +1007,23 @@ var EbDataTable = function (settings) {
                      "   <h4 class='modal-title'>" + this.ebSettings.dvName + ": SettingsTable</h4>" +
                     "</div>" +
                     "<div class='modal-body'>" +
-                        
+                      "  <div id='loader' class='loadingdiv'><i class='fa fa-spinner fa-pulse fa-3x fa-fw'></i></div>" +
 
                 "    </div>" +
                   "  <div class='modal-footer'>" +
-                   "     <button id='Save_User_settings' class='btn btn-primary'>Save Changes</button>" +
+                  // "     <button id='Save_User_settings' class='btn btn-primary'>Save Changes</button>" +
                 "    </div>" +
              "   </div>" +
            " </div>" +
         "</div>");
+        $("#loader").show();
         $.ajax({
             url: "http://eb_roby_dev.localhost:53431/Tenant/DVEditor",
             type: "POST",
             data:{objid:this.dvid},
             success: function (data) {
                 $("#settingsmodal .modal-body").html(data);
+                $("#loader").hide();
             }
         });
         //$("#Save_User_settings").click(this.saveSettings.bind(this));
@@ -1031,20 +1034,27 @@ var EbDataTable = function (settings) {
 
     this.hideModalFunc = function (e) {
         alert("hide");
+        //var abc = new DVObj(0, { });
+        //alert("typeof DVObj:" + typeof DVObj);
         $('#Table_Settings').DataTable().destroy();
         setTimeout(function () {
             $("#settingsmodal").remove();
         }, 500);
-        if (this.isSettingsSaved) {
-            this.isSettingsSaved = false;
             this.Api.destroy();
             $('#' + this.tableId + '_divcont').children()[1].remove();
             $("#TableControls div:eq(0)").remove();
             var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
             $('#' + this.tableId + '_divcont').append(table);
-            this.ebSettings = $.extend(true, {}, this.ebSettingsCopy);
-            this.Init();
-        }
+            $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getSavedColumnsSuccess.bind(this));
+            //this.ebSettings = redis.Get < string > (string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dvid, ViewBag.UId));
+            //this.Init();
+    };
+
+    this.getSavedColumnsSuccess = function (data) {
+        this.ebSettings = JSON.parse(data);
+        this.ebSettingsCopy = this.ebSettings;
+        console.log(JSON.stringify(this.ebSettings));
+        this.Init();
     };
 
     this.getColobj = function (col_name) {
@@ -1059,67 +1069,67 @@ var EbDataTable = function (settings) {
     };
 
     //this.saveSettings = function () {
-    //    alert("user");
-    //    this.isSettingsSaved = true;
-    //    var ct = 0; var objcols = [];
-    //    var api = $('#Table_Settings').DataTable();
-    //    var n, d, t, v, w, ty, cls;
-    //    objcols.push(this.getColobj("id"));
-    //    $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
-    //        ct++;
-            
-    //        if (obj.type === 'text' && obj.name === 'name')
-    //            n = obj.value;
-    //        else if (obj.type === 'text' && obj.name === 'index')
-    //            d = obj.value;
-    //        else if (obj.type === 'hidden' && obj.name === 'title')
-    //            t = obj.value + '<span hidden>' + n + '</span>';
-    //        else if (obj.type === 'checkbox')
-    //            v = obj.checked;
-    //        else if (obj.type === 'text' && obj.name === 'width')
-    //            w = obj.value;
-    //        else if (obj.type === 'text' && obj.name === 'type')
-    //            ty = obj.value;
-    //        else if (obj.className === 'font-select') {
-    //            if (!($(this).children('a').children('span').attr('style') === undefined)) {
-    //                var style = document.createElement('style');
-    //                style.type = 'text/css';
-    //                var fontName = $(this).children('a').children('span').css('font-family');
-    //                var replacedName = fontName.replace(/ /g, "_");
-    //                style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
-    //                document.getElementsByTagName('head')[0].appendChild(style);
-    //                cls = 'font_' + replacedName + ' tdheight';
-    //            }
-    //            else
-    //                cls = 'tdheight';
-    //        }
-    //        if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
-    //    });
-    //    //alert(console.log(objcols));
-    //    this.ebSettingsCopy.hideSerial = $("#serial_check").prop("checked");
-    //    this.ebSettingsCopy.hideCheckbox = $("#select_check").prop("checked");
-    //    this.ebSettingsCopy.lengthMenu = this.GetLengthOption($("#pageLength_text").val());
-    //    this.ebSettingsCopy.scrollY = $("#scrollY_text").val();
-    //    this.ebSettingsCopy.rowGrouping = $("#rowGrouping_text").val();
-    //    this.ebSettingsCopy.leftFixedColumns = $("#leftFixedColumns_text").val();
-    //    this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
-    //    this.ebSettingsCopy.dvName = $("#dvName_txt").val();
-    //    this.ebSettingsCopy.columns = objcols;
 
-    //    //console.log(JSON.stringify(this.ebSettings.columnsext));
-    //    console.log(JSON.stringify(this.ebSettings.columnsdel));
-    //    console.log(JSON.stringify(this.ebSettings.columnsextdel));
-    //    this.ebSettingsCopy.columnsext = this.ebSettings.columnsext;
-    //    this.ebSettingsCopy.columnsdel = this.ebSettings.columnsdel;
-    //    this.ebSettingsCopy.columnsextdel = this.ebSettings.columnsextdel;
-    //    this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
-    //    this.updateRenderFunc();
-    //    if (this.ebSettingsCopy.rowGrouping.length > 0) {
-    //        var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
-    //        groupcols[0].visible = false;
-    //    }
-    //    console.log(JSON.stringify(this.ebSettingsCopy));
-    //    $.post('TVPref4User', { tvid: this.dvid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
+    //    //this.isSettingsSaved = true;
+    //    //var ct = 0; var objcols = [];
+    //    //var api = $('#Table_Settings').DataTable();
+    //    //var n, d, t, v, w, ty, cls;
+    //    //objcols.push(this.getColobj("id"));
+    //    //$.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
+    //    //    ct++;
+            
+    //    //    if (obj.type === 'text' && obj.name === 'name')
+    //    //        n = obj.value;
+    //    //    else if (obj.type === 'text' && obj.name === 'index')
+    //    //        d = obj.value;
+    //    //    else if (obj.type === 'hidden' && obj.name === 'title')
+    //    //        t = obj.value + '<span hidden>' + n + '</span>';
+    //    //    else if (obj.type === 'checkbox')
+    //    //        v = obj.checked;
+    //    //    else if (obj.type === 'text' && obj.name === 'width')
+    //    //        w = obj.value;
+    //    //    else if (obj.type === 'text' && obj.name === 'type')
+    //    //        ty = obj.value;
+    //    //    else if (obj.className === 'font-select') {
+    //    //        if (!($(this).children('a').children('span').attr('style') === undefined)) {
+    //    //            var style = document.createElement('style');
+    //    //            style.type = 'text/css';
+    //    //            var fontName = $(this).children('a').children('span').css('font-family');
+    //    //            var replacedName = fontName.replace(/ /g, "_");
+    //    //            style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
+    //    //            document.getElementsByTagName('head')[0].appendChild(style);
+    //    //            cls = 'font_' + replacedName + ' tdheight';
+    //    //        }
+    //    //        else
+    //    //            cls = 'tdheight';
+    //    //    }
+    //    //    if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
+    //    //});
+    //    ////alert(console.log(objcols));
+    //    //this.ebSettingsCopy.hideSerial = $("#serial_check").prop("checked");
+    //    //this.ebSettingsCopy.hideCheckbox = $("#select_check").prop("checked");
+    //    //this.ebSettingsCopy.lengthMenu = this.GetLengthOption($("#pageLength_text").val());
+    //    //this.ebSettingsCopy.scrollY = $("#scrollY_text").val();
+    //    //this.ebSettingsCopy.rowGrouping = $("#rowGrouping_text").val();
+    //    //this.ebSettingsCopy.leftFixedColumns = $("#leftFixedColumns_text").val();
+    //    //this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
+    //    //this.ebSettingsCopy.dvName = $("#dvName_txt").val();
+    //    //this.ebSettingsCopy.columns = objcols;
+
+    //    ////console.log(JSON.stringify(this.ebSettings.columnsext));
+    //    //console.log(JSON.stringify(this.ebSettings.columnsdel));
+    //    //console.log(JSON.stringify(this.ebSettings.columnsextdel));
+    //    //this.ebSettingsCopy.columnsext = this.ebSettings.columnsext;
+    //    //this.ebSettingsCopy.columnsdel = this.ebSettings.columnsdel;
+    //    //this.ebSettingsCopy.columnsextdel = this.ebSettings.columnsextdel;
+    //    //this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
+    //    //this.updateRenderFunc();
+    //    //if (this.ebSettingsCopy.rowGrouping.length > 0) {
+    //    //    var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
+    //    //    groupcols[0].visible = false;
+    //    //}
+    //    //console.log(JSON.stringify(this.ebSettingsCopy));
+    //    //$.post('TVPref4User', { tvid: this.dvid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
     //};
 
     this.reinitDataTable = function () {

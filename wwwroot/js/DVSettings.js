@@ -7,7 +7,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.width = wid;
 };
 
-var DVObj = function (dsid, settings) {
+var DVObj = function (dsid, settings, login) {
     this.TVPrefObj = settings;
     this.dsid = dsid;
     this.settings_tbl = null;
@@ -15,8 +15,6 @@ var DVObj = function (dsid, settings) {
     this.columnsextdel = [];
 
     this.init = function () {
-        console.log(JSON.stringify(this.TVPrefObj));
-        //alert(Object.keys(this.TVPrefObj).length);
         if (Object.keys(this.TVPrefObj).length > 0) {
             $("#dvName_txt").val(this.TVPrefObj.dvName);
             $("#serial_check").prop("checked", this.TVPrefObj.hideSerial);
@@ -35,7 +33,8 @@ var DVObj = function (dsid, settings) {
         $('#columnDropdown .dropdown-menu a').off("click").on("click", this.clickDropdownfunc.bind(this));
     };
 
-    this.setDropdownDatasource = function(e){
+    this.setDropdownDatasource = function (e) {
+        $("#loader").show();
         this.dsid = $(e.target).parent().attr("data-dsid");
         alert("dsid" +this.dsid);
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
@@ -45,6 +44,7 @@ var DVObj = function (dsid, settings) {
     };
 
     this.getColumnsSuccess = function (data) {
+        $("#loader").hide();
         alert("hhhh----");
         this.TVPrefObj = JSON.parse(data);
         alert(JSON.stringify(this.TVPrefObj));
@@ -53,8 +53,7 @@ var DVObj = function (dsid, settings) {
     };
 
     this.callPost4SettingsTable = function () {
-        alert("ggags");
-        //this.getcolumn4dropdown();
+        $("#loader").show();
         this.settings_tbl = $('#Table_Settings').DataTable(
         {
             columns: this.column4SettingsTbl(),
@@ -113,12 +112,12 @@ var DVObj = function (dsid, settings) {
     };
 
     this.renderFontSelect = function (data, type, row, meta) {
-        if (data.length > 0 && data !== undefined) {
+        if (data.length > 8 ) {
             var fontName = data.replace("tdheight", " ");
             fontName = fontName.substring(5).replace(/_/g, " ");
             index = fontName.lastIndexOf(" ");
             fontName = fontName.substring(0, index);
-            return "<input type='text' class='font' style='width: 100px;' name='font' >";
+                return "<input type='text' value=" + fontName + " class='font' style='width: 100px;' name='font' >";
         }
         else
             return "<input type='text' class='font' style='width: 100px;' name='font'>";
@@ -127,6 +126,7 @@ var DVObj = function (dsid, settings) {
     this.initComplete4Settingstbl = function (settings, json) {
         $('#Table_Settings').DataTable().columns.adjust();
         $('.font').fontselect();
+        $("#loader").hide();
         //this.addEventListner4Settingstbl();
     };
 
@@ -137,6 +137,7 @@ var DVObj = function (dsid, settings) {
     };
 
     this.saveSettings = function (e) {
+        $("#loader").show();
         var objId= $(e.target).attr("data-objId");
         this.isSettingsSaved = true;
         var ct = 0; var objcols = [];
@@ -183,6 +184,7 @@ var DVObj = function (dsid, settings) {
         this.TVPrefObj.dvName = $("#dvName_txt").val();
         this.TVPrefObj.dsId = this.dsid;
         this.TVPrefObj.columns = objcols;
+        
         //this.TVPrefObj.columnsext = this.TVPrefObj.columnsext;
         //this.ebSettingsCopy.columnsdel = this.columnsdel;
         //this.ebSettingsCopy.columnsextdel = this.columnsextdel;
@@ -192,14 +194,18 @@ var DVObj = function (dsid, settings) {
             var groupcols = $.grep(this.TVPrefObj.columns, function (e) { return e.name === this.TVPrefObj.rowGrouping });
             groupcols[0].visible = false;
         }
-        console.log(JSON.stringify(this.TVPrefObj));
-        //this.EbConfig.GetRedisClient().Set(string.Format("{0}_TVPref_{1}", ViewBag.cid, tvid), json);
-        $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
+        //console.log(JSON.stringify(this.TVPrefObj));
+        $.post('../Tenant/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
         
     };
 
     this.saveSuccess = function () {
         $(".alert").show();
+        if (login == "uc") {
+            $("#settingsmodal").modal('hide');
+            //var ebdt = new EbDataTable({cols : settings})
+        }
+        $("#loader").hide();
     };
 
     this.getColobj = function (col_name) {
@@ -251,13 +257,21 @@ var DVObj = function (dsid, settings) {
         var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
         var deletedRow = $.extend(true, {}, this.settings_tbl.row(idx).data());
         this.deleted_colname = deletedRow.name;
-        this.TVPrefObj.columnsdel.push(deletedRow);
-        //this.TVPrefObj.columnsdel = this.columnsdel;
+        if (this.TVPrefObj.columnsdel == undefined || this.TVPrefObj.columnsdel == null) {
+            this.columnsdel.push(deletedRow);
+            this.TVPrefObj.columnsdel = this.columnsdel;
+        }
+        else
+            this.TVPrefObj.columnsdel.push(deletedRow);
         this.settings_tbl.rows(idx).remove().draw();
         this.TVPrefObj.columns = $.grep(this.TVPrefObj.columns, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
         var del_obj = $.grep(this.TVPrefObj.columnsext, function (obj) { return obj.name === this.deleted_colname; }.bind(this));
-        this.TVPrefObj.columnsextdel.push(del_obj[0]);
-        //this.TVPrefObj.columnsextdel = this.columnsextdel;
+        if (this.TVPrefObj.columnsextdel == undefined || this.TVPrefObj.columnsextdel == null) {
+            this.columnsextdel.push(del_obj[0]);
+            this.TVPrefObj.columnsextdel = this.columnsextdel;
+        }
+        else
+            this.TVPrefObj.columnsextdel.push(del_obj[0]);
         this.TVPrefObj.columnsext = $.grep(this.TVPrefObj.columnsext, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
         
         var liId = "li_" + deletedRow.name;

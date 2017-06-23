@@ -125,6 +125,10 @@ var EbDataTable = function (settings) {
         this.csvbtn = $("#btnCsv" + this.tableId);
         this.pdfbtn = $("#btnPdf" + this.tableId);
         //this.settingsbtn = $("#" + this.tableId + "_btnSettings");
+        if(index == 1)
+            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
+        else
+            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
         $("#dvName_lbl"+this.tableId).text(this.dvName);
 
         this.eb_agginfo = this.getAgginfo();
@@ -561,7 +565,8 @@ var EbDataTable = function (settings) {
         $(".eb_selall"+this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas"+this.tableId).off("click").on("click", this.renderMainGraph);
-        $(".tablelink_"+this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -889,7 +894,9 @@ var EbDataTable = function (settings) {
         //alert(ui.newTab.index());
         index++;
         $("#table_tabs").append("<li class='nav-item'>"+
-                   " <a class='nav-link' href='#dv" + this.linkDV + "_tab_" + index + "' data-toggle='tab'>General</a>" +
+                   " <a class='nav-link' href='#dv" + this.linkDV + "_tab_" + index + "' data-toggle='tab'>"+
+                       
+                    "</a>" +
                " </li>");
         $("#table_tabcontent").append("<div id='dv" + this.linkDV + "_tab_" + index + "' class='tab-pane active'>" +
                 "<div id='TableControls_dv" + this.linkDV + "_" + index + "'>" +
@@ -924,6 +931,13 @@ var EbDataTable = function (settings) {
             linktable: true
             //directLoad: true
         });
+    };
+
+    this.deleteTab = function (e) {
+        var tabContentId = $(e.target).parent().attr("href");
+        $(e.target).parent().parent().remove(); //remove li of tab
+        $('#table_tabs a:last').tab('show'); // Select first tab
+        $(tabContentId).remove();
     };
 
     this.CopyToClipboard = function (e) {

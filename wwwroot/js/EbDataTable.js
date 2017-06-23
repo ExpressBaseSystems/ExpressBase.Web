@@ -41,11 +41,15 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.width = wid;
 };
 
+
+var index = 1;
+
 //ds_id, dv_id, ss_url, tid, setting
 var EbDataTable = function (settings) {
     this.dtsettings = settings;
     this.dsid = this.dtsettings.ds_id;
     this.dvid = this.dtsettings.dv_id;
+    this.dvName = null;
     this.ssurl = this.dtsettings.ss_url;
     this.ebSettings = this.dtsettings.settings;
     this.ebSettingsCopy = $.extend(true, {}, this.ebSettings);
@@ -97,6 +101,7 @@ var EbDataTable = function (settings) {
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
         this.dsid = this.ebSettings.dsId;//not sure..
+        this.dvName = this.ebSettings.dvName;
         this.ebSettingsCopy = this.ebSettings;
         this.Init();
 
@@ -112,15 +117,19 @@ var EbDataTable = function (settings) {
         //this.filterbtn = $('#4filterbtn');
         //this.clearfilterbtn = $("#clearfilterbtn_"+this.tableId);
         this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
-        this.copybtn = $("#btnCopy");
-        this.printbtn = $("#btnPrint");
-        this.printAllbtn = $("#btnprintAll");
-        this.printSelectedbtn = $("#btnprintSelected");
-        this.excelbtn = $("#btnExcel");
-        this.csvbtn = $("#btnCsv");
-        this.pdfbtn = $("#btnPdf");
+        this.copybtn = $("#btnCopy" + this.tableId);
+        this.printbtn = $("#btnPrint" + this.tableId);
+        this.printAllbtn = $("#btnprintAll" + this.tableId);
+        this.printSelectedbtn = $("#btnprintSelected" + this.tableId);
+        this.excelbtn = $("#btnExcel" + this.tableId);
+        this.csvbtn = $("#btnCsv" + this.tableId);
+        this.pdfbtn = $("#btnPdf" + this.tableId);
         //this.settingsbtn = $("#" + this.tableId + "_btnSettings");
-        $("#dvName_lbl").text(this.ebSettings.dvName);
+        if(index == 1)
+            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
+        else
+            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
+        $("#dvName_lbl"+this.tableId).text(this.dvName);
 
         this.eb_agginfo = this.getAgginfo();
         if (this.dtsettings.directLoad !== true)
@@ -130,7 +139,7 @@ var EbDataTable = function (settings) {
             this.ebSettings.columns[0].visible = false;
         }
         if (!this.ebSettings.hideCheckbox) {
-            this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
+            this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall"+this.tableId+"' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
             this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
         }
         else
@@ -452,8 +461,8 @@ var EbDataTable = function (settings) {
                     "<div class='input-group-btn'>" +
                     "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
                    " <ul class='dropdown-menu'>" +
-                    "  <li><a href ='#' class='eb_ftsel' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + ">&sum;</a></li>" +
-                    "  <li><a href ='#' class='eb_ftsel' " + data_table + " " + data_colum + " " + data_decip + " {4}>x&#772;</a></li>" +
+                    "  <li><a href ='#' class='eb_ftsel" + tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + ">&sum;</a></li>" +
+                    "  <li><a href ='#' class='eb_ftsel" + tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}>x&#772;</a></li>" +
                    " </ul>" +
                    " </div>" +
                    " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;' style='z-index:" + zidx.toString() + "'>" +
@@ -549,14 +558,15 @@ var EbDataTable = function (settings) {
 
     this.addFilterEventListeners = function () {
         $('#' + this.tableId + '_wrapper thead tr:eq(0)').off('click').on('click', 'th', this.orderingEvent.bind(this));
-        $(".eb_fsel").off("click").on("click", this.setLiValue);
-        $(".eb_ftsel").off("click").on("click", this.fselect_func.bind(this));
+        $(".eb_fsel" + this.tableId).off("click").on("click", this.setLiValue);
+        $(".eb_ftsel" + this.tableId).off("click").on("click", this.fselect_func.bind(this));
         $.each($(this.Api.columns().header()).parent().siblings().children().toArray(), this.setFilterboxValue.bind(this));
-        $(".eb_fbool").off("change").on("change", this.toggleInFilter.bind(this));
-        $(".eb_selall").off("click").on("click", this.clickAlSlct.bind(this));
+        $(".eb_fbool"+this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
+        $(".eb_selall"+this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
-        $(".eb_canvas").off("click").on("click", this.renderMainGraph);
-        $(".tablelink").off("click").on("click", this.link2NewTable.bind(this));
+        $(".eb_canvas"+this.tableId).off("click").on("click", this.renderMainGraph);
+        $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -579,23 +589,23 @@ var EbDataTable = function (settings) {
     };
 
     this.GenerateButtons = function () {
-        $("#TableControls").prepend("<div style='display: inline;float: right;'>" +
+        $("#TableControls_"+this.tableId).prepend("<div style='display: inline;float: right;'>" +
             "<button type='button' id='"+this.tableId+"_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
              "<div class='btn-group'>" +
                 "<div class='btn-group'>" +
-                   " <div id='btnPrint' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></div>" +
+                   " <div id='btnPrint"+this.tableId+"' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></div>" +
                        " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
                          "   <span class='caret'></span>  <!-- caret --></div>" +
                          "   <ul class='dropdown-menu' role='menu'>" +
-                          "      <li><a href = '#' id='btnprintAll'> Print All</a></li>" +
-                           "     <li><a href = '#' id='btnprintSelected'> Print Selected</a></li>" +
+                          "      <li><a href = '#' id='btnprintAll" + this.tableId + "'> Print All</a></li>" +
+                           "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
                             "</ul>" +
                 "</div>" +
-                "<div id='btnExcel' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></div>" +
-                "<div id='btnPdf' class='btn btn-default'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></div>" +
-                "<div id='btnCsv' class='btn btn-default'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></div>  " +
-                "<div id='btnCopy' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></div>" +
+                "<div id='btnExcel" + this.tableId + "' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></div>" +
+                "<div id='btnPdf" + this.tableId + "' class='btn btn-default'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></div>" +
+                "<div id='btnCsv" + this.tableId + "' class='btn btn-default'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></div>  " +
+                "<div id='btnCopy" + this.tableId + "' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></div>" +
             "</div>" +
             "</div>" +
             "<a id='" + this.tableId + "_btnSettings' class='btn btn-default' data-toggle='modal'  data-target='#settingsmodal'><i class='fa fa-cog' aria-hidden='true'></i></a>" +
@@ -682,12 +692,12 @@ var EbDataTable = function (settings) {
         "<div class='input-group-btn'>" +
             " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
             " <ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
-            "   <li ><a href ='#' class='eb_fsel' " + data_table + data_colum + ">=</a></li>" +
-              " <li><a href ='#' class='eb_fsel' " + data_table + data_colum + "><</a></li>" +
-              " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">></a></li>" +
-              " <li><a href='#' class='eb_fsel' " + data_table + data_colum + "><=</a></li>" +
-              " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">>=</a></li>" +
-              "<li ><a href='#' class='eb_fsel' " + data_table + data_colum + ">B</a></li>" +
+            "   <li ><a href ='#' class='eb_fsel"+this.tableId+"' " + data_table + data_colum + ">=</a></li>" +
+              " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
+              " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
+              " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><=</a></li>" +
+              " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">>=</a></li>" +
+              "<li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
         " </div>" +
         " <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
@@ -740,7 +750,7 @@ var EbDataTable = function (settings) {
         var filter = "";
         var id = tableId + "_" + colum + "_hdr_txt1";
         var cls = tableId + "_hchk";
-        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool'></center>";
+        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool"+this.tableId+"'></center>";
         return filter;
     };
 
@@ -868,38 +878,66 @@ var EbDataTable = function (settings) {
     };
 
     this.NewTableModal = function () {
-        $(document.body).append("<div class='modal fade' id='newmodal' role='dialog' style='display:none'>"
-    + "<div class='modal-dialog modal-lg' style='width: 100%;height: 100%;margin: 0;padding: 0;'>"
-     + " <div class='modal-content' style=' height: auto;min-height: 100%;border-radius: 0;'>"
-        + "<div class='modal-header'>"
-          + "<button type = 'button' class='close' data-dismiss='modal'>&times;</button>"
-          + "<h4 class='modal-title'></h4>"
-        + "</div>"
-        + "<div class='modal-body'>"
-         + "<table class='table table-striped table-bordered' id='Newtable'></table>"
-        + "</div>"
-     + "</div>"
-    + "</div>"
- + "</div>");
-        $("#newmodal").on('shown.bs.modal', this.call2newTable.bind(this));
-        $("#newmodal").on('hidden.bs.modal', function (e) {
-            $('#Newtable').DataTable().destroy();
-            setTimeout(function () {
-                $("#newmodal").remove();
-            }, 500);
-        });
-        $("#newmodal").modal('show');
+ //       $(document.body).append("<div class='modal fade' id='newmodal' role='dialog' style='display:none'>"
+ //   + "<div class='modal-dialog modal-lg' style='width: 100%;height: 100%;margin: 0;padding: 0;'>"
+ //    + " <div class='modal-content' style=' height: auto;min-height: 100%;border-radius: 0;'>"
+ //       + "<div class='modal-header'>"
+ //         + "<button type = 'button' class='close' data-dismiss='modal'>&times;</button>"
+ //         + "<h4 class='modal-title'></h4>"
+ //       + "</div>"
+ //       + "<div class='modal-body'>"
+ //        + "<table class='table table-striped table-bordered' id='Newtable'></table>"
+ //       + "</div>"
+ //    + "</div>"
+ //   + "</div>"
+        //+ "</div>");
+        //alert(ui.newTab.index());
+        index++;
+        $("#table_tabs").append("<li class='nav-item'>"+
+                   " <a class='nav-link' href='#dv" + this.linkDV + "_tab_" + index + "' data-toggle='tab'>"+
+                       
+                    "</a>" +
+               " </li>");
+        $("#table_tabcontent").append("<div id='dv" + this.linkDV + "_tab_" + index + "' class='tab-pane active'>" +
+                "<div id='TableControls_dv" + this.linkDV + "_" + index + "'>" +
+                   " <div style='display: inline;'>"+
+                    "    <label id='dvName_lbldv" + this.linkDV + "_"+index+"'></label>" +
+                   " </div>"+
+                "</div>" +
+                "<div style='width:auto;' id='dv"+this.linkDV+"_"+index+"divcont'>"+
+                " <table id='dv" + this.linkDV + "_" + index + "' class='table table-striped table-bordered'></table>" +
+              "  </div>"+
+             "</div>");
+        //$("#newmodal").on('shown.bs.modal', this.call2newTable.bind(this));
+        //$("#newmodal").on('hidden.bs.modal', function (e) {
+        //    $('#Newtable').DataTable().destroy();
+        //    setTimeout(function () {
+        //        $("#newmodal").remove();
+        //    }, 500);
+        //});
+        //$("#newmodal").modal('show');
+        
+        this.call2newTable();
+        $(".nav-tabs a[href='#dv" + this.linkDV + "_tab_" + index + "']").tab('show');
     };
 
     this.call2newTable = function () {
+        alert(this.linkDV);
         var EbDataTable_Newtable = new EbDataTable({
             //ds_id: 32,
             dv_id: this.linkDV, 
             ss_url: "https://expressbaseservicestack.azurewebsites.net",
-            tid: 'Newtable',
+            tid: 'dv' + this.linkDV + '_' + index,
             linktable: true
             //directLoad: true
         });
+    };
+
+    this.deleteTab = function (e) {
+        var tabContentId = $(e.target).parent().attr("href");
+        $(e.target).parent().parent().remove(); //remove li of tab
+        $('#table_tabs a:last').tab('show'); // Select first tab
+        $(tabContentId).remove();
     };
 
     this.CopyToClipboard = function (e) {
@@ -1059,16 +1097,16 @@ var EbDataTable = function (settings) {
         this.Init();
     };
 
-    this.getColobj = function (col_name) {
-        var selcol = null;
-        $.each(this.ebSettings.columns, function (i, col) {
-            if (col.name.trim() === col_name.trim()) {
-                selcol = col;
-                return false;
-            }
-        });
-        return selcol;
-    };
+    //this.getColobj = function (col_name) {
+    //    var selcol = null;
+    //    $.each(this.ebSettings.columns, function (i, col) {
+    //        if (col.name.trim() === col_name.trim()) {
+    //            selcol = col;
+    //            return false;
+    //        }
+    //    });
+    //    return selcol;
+    //};
 
     //this.saveSettings = function () {
 
@@ -1134,9 +1172,9 @@ var EbDataTable = function (settings) {
     //    //$.post('TVPref4User', { tvid: this.dvid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
     //};
 
-    this.reinitDataTable = function () {
-        $("#settingsmodal").modal('hide');
-    };
+    //this.reinitDataTable = function () {
+    //    $("#settingsmodal").modal('hide');
+    //};
 
 
 
@@ -1251,43 +1289,43 @@ var EbDataTable = function (settings) {
     //    $('#columnDropdown .dropdown-menu a').off("click").on("click", this.clickDropdownfunc.bind(this));
     //};
 
-    this.renderFontSelect = function (data, type, row, meta) {
-        if (data.length > 0 && data !== undefined) {
-            var fontName = data.replace("tdheight", " ");
-            fontName = fontName.substring(5).replace(/_/g, " ");
-            index = fontName.lastIndexOf(" ");
-            fontName = fontName.substring(0, index);
-            return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
-        }
-        else
-            return "<input type='text' class='font' style='width: 100px;' name='font'>";
-    };
+    //this.renderFontSelect = function (data, type, row, meta) {
+    //    if (data.length > 0 && data !== undefined) {
+    //        var fontName = data.replace("tdheight", " ");
+    //        fontName = fontName.substring(5).replace(/_/g, " ");
+    //        index = fontName.lastIndexOf(" ");
+    //        fontName = fontName.substring(0, index);
+    //        return "<input type='text' value='" + fontName + "' class='font' style='width: 100px;' name='font'>";
+    //    }
+    //    else
+    //        return "<input type='text' class='font' style='width: 100px;' name='font'>";
+    //};
 
-    this.GetLengthOption = function (len) {
-        var ia = [];
-        for (var i = 0; i < 10; i++)
-            ia[i] = (len * (i + 1));
-        return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
-    };
+    //this.GetLengthOption = function (len) {
+    //    var ia = [];
+    //    for (var i = 0; i < 10; i++)
+    //        ia[i] = (len * (i + 1));
+    //    return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
+    //};
 
-    this.AddSerialAndOrCheckBoxColumns = function (tx) {
-        if (!tx.hideCheckbox) {
-            var chkObj = new Object();
-            chkObj.data = null;
-            chkObj.title = "<input id='{0}_select-all' type='checkbox' class='eb_selall' data-table='{0}'/>".replace("{0}", this.tableId);
-            chkObj.width = 10;
-            chkObj.orderable = false;
-            chkObj.visible = true;
-            chkObj.name = "checkbox";
-            var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
-            // chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
-            chkObj.render = this.renderCheckBoxCol.bind(this);
-            tx.unshift(chkObj);
-        }
+    //this.AddSerialAndOrCheckBoxColumns = function (tx) {
+    //    if (!tx.hideCheckbox) {
+    //        var chkObj = new Object();
+    //        chkObj.data = null;
+    //        chkObj.title = "<input id='{0}_select-all' type='checkbox' class='eb_selall"+this.tableId+"' data-table='{0}'/>".replace("{0}", this.tableId);
+    //        chkObj.width = 10;
+    //        chkObj.orderable = false;
+    //        chkObj.visible = true;
+    //        chkObj.name = "checkbox";
+    //        var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
+    //        // chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
+    //        chkObj.render = this.renderCheckBoxCol.bind(this);
+    //        tx.unshift(chkObj);
+    //    }
 
-        if (!tx.hideSerial)
-            tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#"}'));
-    };
+    //    if (!tx.hideSerial)
+    //        tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#"}'));
+    //};
 
     this.updateRenderFunc = function () {
         $.each(this.ebSettingsCopy.columns, this.updateRenderFunc_Inner.bind(this));
@@ -1315,6 +1353,7 @@ var EbDataTable = function (settings) {
         if (col.type === "System.String") {
             if (this.ebSettingsCopy.columnsext[i].RenderAs === "Link") {
                 this.linkDV = this.ebSettingsCopy.columnsext[i].linkDv;
+                alert("render:" + this.linkDV);
                 this.ebSettingsCopy.columns[i].render = this.renderlink4NewTable.bind(this);
             }
             if (this.ebSettingsCopy.columnsext[i].RenderAs === "Graph") {
@@ -1344,7 +1383,7 @@ var EbDataTable = function (settings) {
     };
 
     this.renderlink4NewTable = function (data) {
-        return "<a href='#' class ='tablelink'>" + data + "</a>";
+        return "<a href='#' class ='tablelink_"+this.tableId+"'>" + data + "</a>";
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -1388,7 +1427,7 @@ var EbDataTable = function (settings) {
         if (!data)
             return "";
         else
-            return "<canvas id='eb_cvs" + meta.row + "' class='eb_canvas' style='width:120px; height:40px; cursor:pointer;' data-graph='" + data + "' data-toggle='modal'></canvas><script>renderLineGraphs(" + meta.row + "); $('#eb_cvs" + meta.row + "').mousemove(function(e){ GPointPopup(e); });</script>";
+            return "<canvas id='eb_cvs" + meta.row + "' class='eb_canvas"+this.tableId+"' style='width:120px; height:40px; cursor:pointer;' data-graph='" + data + "' data-toggle='modal'></canvas><script>renderLineGraphs(" + meta.row + "); $('#eb_cvs" + meta.row + "').mousemove(function(e){ GPointPopup(e); });</script>";
     };
 
     this.RenderGraphModal = function () {

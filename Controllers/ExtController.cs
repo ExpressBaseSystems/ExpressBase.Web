@@ -46,6 +46,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SignupSuccess(string email)
         {
             ViewBag.SignupEmail = email;
+            //IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            //client.Post<EmailServicesResponse>(new EmailServicesRequest { To = email, Message = "XXXX", Subject = "YYYY" });
             return View();
         }
 
@@ -85,57 +87,63 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public IActionResult test()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()
         {
             var req = this.HttpContext.Request.Form;
             ViewBag.EbConfig = this.EbConfig;
-            string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
+            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", req["g-recaptcha-response"]);
             if (!data.Success)
             {
-                if (data.ErrorCodes.Count <= 0)
+                if (data.ErrorCodes.Count > 0)
                 {
-                    return View();
-                }
-                var error = data.ErrorCodes[0].ToLower();
-                switch (error)
-                {
-                    case ("missing-input-secret"):
-                        ViewBag.CaptchaMessage = "The secret parameter is missing.";
-                        break;
-                    case ("invalid-input-secret"):
-                        ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
-                        break;
+                    var error = data.ErrorCodes[0].ToLower();
+                    switch (error)
+                    {
+                        case ("missing-input-secret"):
+                            ViewBag.CaptchaMessage = "The secret parameter is missing.";
+                            break;
+                        case ("invalid-input-secret"):
+                            ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
+                            break;
 
-                    case ("missing-input-response"):
-                        ViewBag.CaptchaMessage = "The captcha input is missing.";
-                        break;
-                    case ("invalid-input-response"):
-                        ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
-                        break;
+                        case ("missing-input-response"):
+                            ViewBag.CaptchaMessage = "The captcha input is missing.";
+                            break;
+                        case ("invalid-input-response"):
+                            ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
+                            break;
 
-                    default:
-                        ViewBag.CaptchaMessage = "Error occured. Please try again";
-                        break;
+                        default:
+                            ViewBag.CaptchaMessage = "Error occured. Please try again";
+                            break;
+                    }
                 }
-                return View();
             }
             else
             {
                 IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-                var res = client.Post<InfraResponse>(new InfraRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-                if (res.id >= 0)
+                try
                 {
-                   
-                    return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
-                  
+                     var res = client.Post<RegisterResponse>(new Register { Email = req["email"], Password = req["password"] });
+                                     
+                    if (Convert.ToInt32(res.UserId) >= 0)
+                    {
+                        client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message =string.Format("http://localhost:53431/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
+                        return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
+                    }
+
                 }
-                else
-                {
-                    return View();
-                }
+                catch (WebServiceException e) { }
             }
+
+            return View();
         }
 
         private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
@@ -214,9 +222,9 @@ namespace ExpressBase.Web.Controllers
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
-                        UserName = ViewBag.cid + "/" + req["uname"],
+                        UserName = req["uname"],
                         Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "wc",whichconsole } },
+                        Meta = new Dictionary<string, string> { { "wc",whichconsole }, { "cid", ViewBag.cid } },
                         //UseTokenCookie = true
                     });
 
@@ -274,9 +282,9 @@ namespace ExpressBase.Web.Controllers
                 MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
-                    UserName = "expressbase/" + email + "/" + socialId,
+                    UserName =  email,
                     Password = "NIL",
-                    Meta =  new Dictionary<string, string> { { "wc", "dc" } },
+                    Meta =  new Dictionary<string, string> { { "wc", "dc" }, { "cid", "expressbase" }, { "socialId", socialId } },
                    // UseTokenCookie = true
                 });
 
@@ -300,6 +308,29 @@ namespace ExpressBase.Web.Controllers
             }
 
             
+        }
+
+
+        public IActionResult VerificationStatus()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            var email = HttpContext.Request.Query["email"];
+            var token = HttpContext.Request.Query["signup_tok"];
+            var authClient = this.EbConfig.GetServiceStackClient();
+            MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+            {
+                provider = CredentialsAuthProvider.Name,
+                UserName =  email,
+                Password = "NIL",
+                Meta = new Dictionary<string, string> { { "signup_tok", token } , { "wc", "tc" } },
+                // UseTokenCookie = true
+            });
+
+            if (authResponse != null)
+                ViewBag.SuccessMessage = "Successfully Verified";
+            else
+                ViewBag.SuccessMessage = "Verification failed";
+            return View();
         }
     }
 

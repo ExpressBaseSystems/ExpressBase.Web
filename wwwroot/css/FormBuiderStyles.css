@@ -12,6 +12,7 @@
     margin-left: 8px;
     margin-top: 7px;
 }
+
 .form-buider-form {
     width: 850px;
     padding: 3px;
@@ -22,4 +23,25 @@
     border: solid 1px #dddddd;
     margin-left: 8px;
     margin-top: 7px;
+}
+
+.tdDropable {
+    width: 50%;
+    height: 30px;
+}
+
+.gridCont {
+    padding: .25rem .25rem !important;
+    border: 1px solid #e3e3e3;
+}
+
+.controlTile {
+    min-height: 20px;
+    padding: 5px;
+    margin-bottom: 2px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
 }

@@ -417,6 +417,20 @@ namespace ExpressBase.Web2.Controllers
             var CurrSaveId = client.Post<EbObjectWrapperResponse>(ds);
             return CurrSaveId.id;
         }
+         public List<EbObjectWrapper> GetVersions()
+        {
+            var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id=Convert.ToInt32(req["Id"]), TenantAccountId = ViewBag.cid, Token = ViewBag.token, GetAllVer = true});
+            var rlist = resultlist.Data;
+            //List<EbObjectWrapper> ObjList = new List<EbObjectWrapper>();
+            //foreach (var element in rlist)
+            //{
+            //     ObjList.Add(element);
+               
+            //}
+            return rlist;
+        }
         public IActionResult objects()
         {
             return View();

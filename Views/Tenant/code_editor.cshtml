@@ -47,14 +47,14 @@
         <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
         <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-        <a href="#" class="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
+        <a class="comp" id="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
         <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
         <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-code-fork fa-1x" aria-hidden="true"></i></a>
     </div>
     <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
     @ViewBag.Status
-    <a href="#" class="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-sm btn-info fa fa-history fa-1x" aria-hidden="true"></i></a>
+    <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-sm btn-info fa fa-history fa-1x" aria-hidden="true"></i></a>
     Version v.@ViewBag.VersionNumber
     @*</span>*@
     <div id="objCollapse" class="collapse">
@@ -72,11 +72,11 @@
                     @using ExpressBase.Objects.ServiceStack_Artifacts;
                     Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
                     filterDialogs = ViewBag.FilterDialogs;
-                <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
-                <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
+                    <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
+                    <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
                     foreach (var filter in filterDialogs)
                     {
-                <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
+                        <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
                     }
                 }
             </select>
@@ -117,7 +117,7 @@
                 <div class="modal-footer">
                     <div class="help"></div>
                     <input type="submit" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
-                    <input type="submit" name="run" value="Run" class="btn-primary" id="run"/>
+                    <input type="submit" name="run" value="Run" class="btn-primary" id="run" />
                 </div>
             </div>
         </div>
@@ -134,6 +134,34 @@
                 </div>
                 <div class="modal-body filter_modal_body">
                     <table class="table table-striped table-bordered" id="sample"></table>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="versionHist" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="height:100%;width:100%">
+            <!-- Modal content-->
+            <div class="modal-content" style="height:auto;min-height:100%">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Version History</h4>
+                </div>
+                <div class="modal-body filter_modal_body">
+                    <table class="table table-striped table-bordered" id="versions">
+                        <thead class="verthead">
+                            <tr>
+                                <th>Version Number</th>
+                                <th>Change Log</th>
+                                <th>Committed User Id</th>
+                                <th>Committed At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vertbody" class="vertbody"></tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
 
@@ -194,5 +222,6 @@
 
     .eb-loader {
         margin-top: 20%;
+        margin-left: 50%;
     }
 </style>

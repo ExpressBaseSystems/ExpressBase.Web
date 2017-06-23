@@ -85,6 +85,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public IActionResult test()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()
         {

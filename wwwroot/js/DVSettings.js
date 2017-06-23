@@ -282,8 +282,6 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.clickDropdownfunc = function (e) {
-        alert(JSON.stringify(this.TVPrefObj.columnsdel));
-        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
         this.dropdown_colname = $(e.target).text();
         var col = JSON.parse($(e.target).attr("data-data").replace(/\'/g, "\""));
         this.settings_tbl.row.add(col).draw();
@@ -297,13 +295,9 @@ var DVObj = function (dsid, settings, login) {
             }
         });
         $("#columnDropdown ul #" + $(e.target).parent().attr("id")).remove();
-        alert(JSON.stringify(this.TVPrefObj.columnsdel));
-        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
     };
 
     this.getcolumn4dropdown = function () {
-        alert(JSON.stringify(this.TVPrefObj.columnsdel));
-        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
         if (this.TVPrefObj.columnsdel !== undefined && this.TVPrefObj.columnsdel !== null) {
             this.TVPrefObj.columnsdel = this.TVPrefObj.columnsdel.sort(function (a, b) {
                 return a.name.localeCompare(b.name);

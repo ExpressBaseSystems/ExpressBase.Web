@@ -9,13 +9,17 @@
     this.CommitBtn;
     this.SaveBtn;
     this.Fd_DropDown;
+    this.VersionHistBtn;
+    this.Versions;
 
     this.Init = function () {
         this.SaveBtn = $('#save');
         this.CommitBtn = $('#commit');
+        this.VersionHistBtn = $('#ver_his');
 
         $(this.SaveBtn).off("click").on("click", this.Save.bind(this));
         $(this.CommitBtn).off("click").on("click", this.Commit.bind(this));
+        $(this.VersionHistBtn).off("click").on("click", this.VerHistory.bind(this));
 
         var MyFd = new FilterDialog(this.Obj_Id);
     }
@@ -74,6 +78,29 @@
     "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
     "<strong>Success!</strong>" +
     "</div>");
+    }
+
+    this.VerHistory = function () {
+        $(".eb-loader").show();
+        $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/GetVersions",
+                          {
+                              "Id": this.Obj_Id
+                          }, this.Version_List.bind(this));
+    }
+
+    this.Version_List = function (result) {
+        $(".eb-loader").hide();
+        this.Versions=result;
+        $('#vertbody').children().remove();
+        $.each(this.Versions, function (i, obj) {
+            $('#vertbody').append("<tr>"+
+                                       "<td>"+obj.versionNumber+"</td> " +
+                                       "<td>" + obj.changeLog + "</td> " +
+                                       "<td>" + obj.commitUid + "</td> " +
+                                       "<td>" + obj.commitTs + "</td> " +
+                                 " </tr>");
+        });
+        $('#versionHist').modal('show');
     }
 
     this.Init();
@@ -227,7 +254,7 @@ var FilterDialog = function (obj_id) {
     }
 
     this.Execute = function () {
-
+        $(".eb-loader").show();
         this.SetValues();
         this.Find_parameters();
         if (this.Parameter_Count === 0) {
@@ -308,6 +335,7 @@ var FilterDialog = function (obj_id) {
                     dataSrc: function (dd) { return dd.data; },
                 }
             });
+            $(".eb-loader").hide();
             $('#filterDialog').modal('hide');
             $('#filterRun').modal('show');
         }
@@ -325,7 +353,7 @@ var FilterDialog = function (obj_id) {
     this.Save_Success = function (result) {
         this.Success_alert();
         this.SelectedFdId = result;
-        this.Load_Fd();       
+        this.Load_Fd();
     }
 
     this.Success_alert = function (result) {

@@ -1,0 +1,194 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+}
+<script>
+    $("#signIn").hide();
+    $("#signUpFree").hide();
+    $(document).ready(function () {
+        $('.input-phone').intlInputPhone();
+    });  
+</script>
+<style>
+    .btn-file {
+    position: relative;
+    overflow: hidden;
+background-color: #3b5998;
+color:white;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none; 
+    cursor: inherit;
+    display: block;
+}
+    #img-upload {
+        max-height: 150px;
+        max-width: 100px;
+    }
+.dropdown ul.dropdown-menu {
+        border-radius: 4px;
+        width: 250px;
+    }
+
+    .navbar-default {
+        height: 70px !important;
+    }
+</style>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"></a>
+            <a href="index">
+                <img class="img-responsive" src="~/images/EB_Logo.png">
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <img  class="img-responsive img-circle" alt="dropdown-toggle" data-toggle="dropdown" src="~/images/proimg.jpg" id="img-upload"/>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">My Account<span class="fa fa-user pull-right"></span></a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">My Preferences<span class="fa fa-user pull-right"></span></a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Sign Out<span class="fa fa-sign-out pull-right"></span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>-
+</nav>
+<div class="container">
+    <h1>Edit Profile</h1>
+    <hr>
+    <div class="row">
+        <form class="form-horizontal" role="form">
+            <div class="col-md-3">
+                <div class="text-center">
+                    <img src="~/images/proimg.jpg" class="avatar img-circle" alt="avatar">
+                    <h6>Upload photo...</h6>
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <span class="btn btn-default btn-file">
+                                Browse… <input type="file" id="imgInp">
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- edit form column -->
+            <div class="col-md-9 personal-info">
+                <div class="alert alert-info alert-dismissable">
+                    <a class="panel-close close" data-dismiss="alert">×</a>
+                    <i class="fa fa-thumbs-up fa-2x"></i>
+                    Thanks for signing up for ExpressBase Systems! Now edit your Profile.
+                </div>
+                <h3>Personal info</h3>
+
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Name:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Date of Bith:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Mobile:</label>
+                    <div class="col-lg-8">
+                        <div class="input-phone"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Company:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Designation:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Employees:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <select id="user_time_zone" class="form-control">
+                                <option value="0"></option>
+                                <option value="1-10">1-10</option>
+                                <option value="11-50">11-50</option>
+                                <option value="51-100">51-100</option>
+                                <option value="101-250">101-250</option>
+                                <option value="251-500">250-500</option>
+                                <option value="greater than 500">greater than 500</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label"></label>
+                    <div class="col-md-8">
+                        <input type="button" class="btn btn-primary" value="Save">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<hr>
+<script>
+    $(document).ready(function () {
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [label]);
+        });
+
+        $('.btn-file :file').on('fileselect', function (event, label) {
+
+            var input = $(this).parents('.input-group').find(':text'),
+		        log = label;
+
+            if (input.length) {
+                input.val(log);
+            }
+        });
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#img-upload').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgInp").change(function () {
+            readURL(this);
+        });
+    });
+</script>
+<script type="text/javascript" src="~/js/intlInputPhone.min.js"></script>

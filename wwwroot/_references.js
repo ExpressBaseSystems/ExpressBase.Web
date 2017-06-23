@@ -22,6 +22,7 @@
 /// <reference path="js/gridstack.jqueryui.min.js" />
 /// <reference path="js/gridstack.js" />
 /// <reference path="js/infra.js" />
+/// <reference path="js/intlinputphone.min.js" />
 /// <reference path="js/jquery mask plugin v1.14.9.js" />
 /// <reference path="js/jquery.cookie.js" />
 /// <reference path="js/jquery.datetimepicker.min.js" />

@@ -135,7 +135,7 @@ namespace ExpressBase.Web.Controllers
                                      
                     if (Convert.ToInt32(res.UserId) >= 0)
                     {
-                        client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message =string.Format("http://localhost:53431/Ext/VerificationStatus?signup_tok={0}", res.UserName), Subject = "EXPRESSbase Signup Confirmation" });
+                        client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message =string.Format("http://localhost:53431/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
                         return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
                     }
 
@@ -222,9 +222,9 @@ namespace ExpressBase.Web.Controllers
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
-                        UserName = ViewBag.cid + "/" + req["uname"],
+                        UserName = req["uname"],
                         Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "wc",whichconsole } },
+                        Meta = new Dictionary<string, string> { { "wc",whichconsole }, { "cid", ViewBag.cid } },
                         //UseTokenCookie = true
                     });
 
@@ -282,9 +282,9 @@ namespace ExpressBase.Web.Controllers
                 MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
-                    UserName = "expressbase/" + email + "/" + socialId,
+                    UserName =  email,
                     Password = "NIL",
-                    Meta =  new Dictionary<string, string> { { "wc", "dc" } },
+                    Meta =  new Dictionary<string, string> { { "wc", "dc" }, { "cid", "expressbase" }, { "socialId", socialId } },
                    // UseTokenCookie = true
                 });
 
@@ -314,6 +314,22 @@ namespace ExpressBase.Web.Controllers
         public IActionResult VerificationStatus()
         {
             ViewBag.EbConfig = this.EbConfig;
+            var email = HttpContext.Request.Query["email"];
+            var token = HttpContext.Request.Query["signup_tok"];
+            var authClient = this.EbConfig.GetServiceStackClient();
+            MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+            {
+                provider = CredentialsAuthProvider.Name,
+                UserName =  email,
+                Password = "NIL",
+                Meta = new Dictionary<string, string> { { "signup_tok", token } , { "wc", "tc" } },
+                // UseTokenCookie = true
+            });
+
+            if (authResponse != null)
+                ViewBag.SuccessMessage = "Successfully Verified";
+            else
+                ViewBag.SuccessMessage = "Verification failed";
             return View();
         }
     }

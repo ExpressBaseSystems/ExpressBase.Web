@@ -43,7 +43,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 
 
 var index = 1;
-
+var isSettingsSaved = false;
 //ds_id, dv_id, ss_url, tid, setting
 var EbDataTable = function (settings) {
     this.dtsettings = settings;
@@ -81,7 +81,7 @@ var EbDataTable = function (settings) {
     this.eb_filter_controls_4sb = [];
     this.zindex = 0;
     this.rowId = -1;
-    this.isSettingsSaved = false;
+    //this.isSettingsSaved = false;
     this.dropdown_colname = null;
     this.deleted_colname = null;
     this.tempcolext = [];
@@ -125,9 +125,10 @@ var EbDataTable = function (settings) {
         this.csvbtn = $("#btnCsv" + this.tableId);
         this.pdfbtn = $("#btnPdf" + this.tableId);
         //this.settingsbtn = $("#" + this.tableId + "_btnSettings");
-        if(index == 1)
-            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
-        else
+        //if(index == 1)
+        //    $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
+        //else
+        if (index !== 1)
             $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
         $("#dvName_lbl"+this.tableId).text(this.dvName);
 
@@ -151,7 +152,7 @@ var EbDataTable = function (settings) {
         $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.clickCallbackFunc.bind(this));
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
 
-        $.fn.dataTable.ext.errMode = 'throw';
+        //$.fn.dataTable.ext.errMode = 'throw';
 
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
@@ -899,11 +900,11 @@ var EbDataTable = function (settings) {
                     "</a>" +
                " </li>");
         $("#table_tabcontent").append("<div id='dv" + this.linkDV + "_tab_" + index + "' class='tab-pane active'>" +
-                "<div id='TableControls_dv" + this.linkDV + "_" + index + "'>" +
+                "<div id='TableControls_dv" + this.linkDV + "_" + index + "' class = 'well well-sm'>" +
                    " <div style='display: inline;'>"+
                     "    <label id='dvName_lbldv" + this.linkDV + "_"+index+"'></label>" +
                    " </div>"+
-                "</div>" +
+                "</div>"+
                 "<div style='width:auto;' id='dv"+this.linkDV+"_"+index+"divcont'>"+
                 " <table id='dv" + this.linkDV + "_" + index + "' class='table table-striped table-bordered'></table>" +
               "  </div>"+
@@ -1050,15 +1051,13 @@ var EbDataTable = function (settings) {
                       "  <div id='loader' class='loadingdiv'><i class='fa fa-spinner fa-pulse fa-3x fa-fw'></i></div>" +
 
                 "    </div>" +
-                  "  <div class='modal-footer'>" +
-                  // "     <button id='Save_User_settings' class='btn btn-primary'>Save Changes</button>" +
-                "    </div>" +
+                  
              "   </div>" +
            " </div>" +
         "</div>");
         $("#loader").show();
         $.ajax({
-            url: "http://eb_roby_dev.localhost:53431/Tenant/DVEditor",
+            url: "../Tenant/DVEditor",
             type: "POST",
             data:{objid:this.dvid},
             success: function (data) {
@@ -1073,21 +1072,28 @@ var EbDataTable = function (settings) {
     };
 
     this.hideModalFunc = function (e) {
-        alert("hide");
-        //var abc = new DVObj(0, { });
-        //alert("typeof DVObj:" + typeof DVObj);
-        $('#Table_Settings').DataTable().destroy();
-        setTimeout(function () {
-            $("#settingsmodal").remove();
-        }, 500);
+        if (isSettingsSaved) {
+            $('#Table_Settings').DataTable().destroy();
+            setTimeout(function () {
+                $("#settingsmodal").remove();
+            }, 500);
             this.Api.destroy();
-            $('#' + this.tableId + '_divcont').children()[1].remove();
-            $("#TableControls div:eq(0)").remove();
+            $('#' + this.tableId + 'divcont').children()[0].remove();
+            $("#TableControls_" + this.tableId + " div:eq(0)").remove();
             var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
-            $('#' + this.tableId + '_divcont').append(table);
+            $('#' + this.tableId + 'divcont').append(table);
             $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getSavedColumnsSuccess.bind(this));
             //this.ebSettings = redis.Get < string > (string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dvid, ViewBag.UId));
             //this.Init();
+            isSettingsSaved = false;
+        }
+        else {
+            $('#Table_Settings').DataTable().destroy();
+            setTimeout(function () {
+                $("#settingsmodal").remove();
+            }, 500);
+        }
+
     };
 
     this.getSavedColumnsSuccess = function (data) {

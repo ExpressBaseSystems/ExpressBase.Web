@@ -11,15 +11,19 @@
     this.Fd_DropDown;
     this.VersionHistBtn;
     this.Versions;
+    this.var_id
+    // this.openPrevVersions;
 
     this.Init = function () {
         this.SaveBtn = $('#save');
         this.CommitBtn = $('#commit');
         this.VersionHistBtn = $('#ver_his');
+        //this.openPrevVersions = $('.view_code');
 
         $(this.SaveBtn).off("click").on("click", this.Save.bind(this));
         $(this.CommitBtn).off("click").on("click", this.Commit.bind(this));
         $(this.VersionHistBtn).off("click").on("click", this.VerHistory.bind(this));
+        //$(this.openPrevVersions).off("click").on("click", this.OpenPrevVer.bind(this));
 
         var MyFd = new FilterDialog(this.Obj_Id);
     }
@@ -90,17 +94,28 @@
 
     this.Version_List = function (result) {
         $(".eb-loader").hide();
-        this.Versions=result;
+        this.Versions = result;
         $('#vertbody').children().remove();
         $.each(this.Versions, function (i, obj) {
-            $('#vertbody').append("<tr>"+
-                                       "<td>"+obj.versionNumber+"</td> " +
+            $('#vertbody').append("<tr>" +
+                                       "<td>" + obj.versionNumber + "</td> " +
                                        "<td>" + obj.changeLog + "</td> " +
-                                       "<td>" + obj.commitUid + "</td> " +
+                                       "<td>" + obj.commitUname + "</td> " +
                                        "<td>" + obj.commitTs + "</td> " +
+                                        "<td><input type='button' class='view_code' value='View' data-id=" + obj.id + "></td>" +
                                  " </tr>");
         });
+
         $('#versionHist').modal('show');
+        $('.view_code').off("click").on("click", this.OpenPrevVer.bind(this));
+    }
+
+    this.OpenPrevVer = function (e) {
+        this.var_id = $(e.target).attr("data-id");
+        $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes",
+                             {
+                                 "objid": this.var_id
+                             }); //this.Version_List.bind(this));
     }
 
     this.Init();

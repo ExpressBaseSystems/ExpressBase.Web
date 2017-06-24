@@ -168,22 +168,27 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
+
         public IActionResult dbConfig()
         {
             return View();
         }
+
         public IActionResult AddAccount2()
         {
             return View();
         }
+
         public IActionResult SimpleAdvanced()
         {
             return View();
         }
+
         public IActionResult SimpleDbConf()
         {
             return View();
         }
+
         public IActionResult Engineering()
         {
             return View();
@@ -261,6 +266,28 @@ namespace ExpressBase.Web2.Controllers
                 }
             }
             ViewBag.FilterDialogs = filterDialogs;
+            return View();
+        }
+
+        public IActionResult VersionCodes()
+        {
+            var req = this.HttpContext.Request.Form;
+
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), TenantAccountId = ViewBag.cid, Token = ViewBag.token , GetParticularVer =true});
+            var rlist = resultlist.Data;
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
+                {
+                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                    ViewBag.Code = dsobj.Sql;
+                    ViewBag.VersionNumber = element.VersionNumber;
+                    ViewBag.EditorHint = "CodeMirror.hint.sql";
+                    ViewBag.EditorMode = "text/x-sql";
+                    ViewBag.Icon = "fa fa-database";
+                }
+            }
             return View();
         }
 
@@ -417,6 +444,7 @@ namespace ExpressBase.Web2.Controllers
             var CurrSaveId = client.Post<EbObjectWrapperResponse>(ds);
             return CurrSaveId.id;
         }
+
          public List<EbObjectWrapper> GetVersions()
         {
             var req = this.HttpContext.Request.Form;
@@ -431,6 +459,7 @@ namespace ExpressBase.Web2.Controllers
             //}
             return rlist;
         }
+
         public IActionResult objects()
         {
             return View();

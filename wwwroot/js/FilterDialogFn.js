@@ -112,6 +112,8 @@
 
     this.OpenPrevVer = function (e) {
         this.var_id = $(e.target).attr("data-id");
+        // window.open("'http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes?objid=' + var_id",'_blank');
+        $('#versionHist').modal('hide');
         $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes",
                              {
                                  "objid": this.var_id

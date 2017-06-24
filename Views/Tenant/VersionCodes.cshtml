@@ -1,4 +1,7 @@
-﻿<html>
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<html lang="en">
 <head>
     <title>Code editor</title>
     <meta charset="utf-8" />
@@ -20,23 +23,18 @@
 </head>
 <body>
     <textarea id="vercode" name="vercode" class="code">@ViewBag.Code</textarea>
-    <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
+    <p class="help">Hit Ctrl+Space to trigger autocomplete</p>
     <script type="text/javascript">
-        window.onload = function() {
-            CodeMirror.commands.autocomplete = function(cm)
-            {
-                CodeMirror.showHint(cm, @ViewBag.EditorHint);
-            };
-
+        window.onload = function () {
             window.editor = CodeMirror.fromTextArea(document.getElementById("vercode"), {
-                mode: "@ViewBag.EditorMode",
+                //  mode: "ViewBag.EditorMode",
+                mode: "text/x-sql",
                 lineNumbers: true,
                 lineWrapping: true,
-                extraKeys: { "Ctrl-Space": "autocomplete" },
+                readOnly: true,
                 foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
                 gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
             });
-
         };
     </script>
 </body>

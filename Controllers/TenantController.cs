@@ -33,7 +33,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-      
+
 
         [HttpGet]
         public IActionResult TenantDashboard()
@@ -201,7 +201,7 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.IsNew = "true";
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.Obj_id), TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            var rlist = resultlist.Data;          
+            var rlist = resultlist.Data;
             ViewBag.EditorHint = "CodeMirror.hint.sql";
             ViewBag.EditorMode = "text/x-sql";
             ViewBag.Icon = "fa fa-database";
@@ -268,25 +268,28 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.FilterDialogs = filterDialogs;
             return View();
         }
-
+        [HttpGet]
         public IActionResult VersionCodes()
         {
-            var req = this.HttpContext.Request.Form;
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult VersionCodes(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            // var req = this.HttpContext.Request.Query;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), TenantAccountId = ViewBag.cid, Token = ViewBag.token , GetParticularVer =true});
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), TenantAccountId = ViewBag.cid, Token = ViewBag.token, GetParticularVer = true });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
-                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
-                {
-                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
-                    ViewBag.Code = dsobj.Sql;
-                    ViewBag.VersionNumber = element.VersionNumber;
-                    ViewBag.EditorHint = "CodeMirror.hint.sql";
-                    ViewBag.EditorMode = "text/x-sql";
-                    ViewBag.Icon = "fa fa-database";
-                }
+                var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                ViewBag.Code = dsobj.Sql;
+                ViewBag.VersionNumber = element.VersionNumber;
+                ViewBag.EditorHint = "CodeMirror.hint.sql";
+                ViewBag.EditorMode = "text/x-sql";
+                ViewBag.Icon = "fa fa-database";
             }
             return View();
         }
@@ -445,17 +448,17 @@ namespace ExpressBase.Web2.Controllers
             return CurrSaveId.id;
         }
 
-         public List<EbObjectWrapper> GetVersions()
+        public List<EbObjectWrapper> GetVersions()
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id=Convert.ToInt32(req["Id"]), TenantAccountId = ViewBag.cid, Token = ViewBag.token, GetAllVer = true});
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["Id"]), TenantAccountId = ViewBag.cid, Token = ViewBag.token, GetAllVer = true });
             var rlist = resultlist.Data;
             //List<EbObjectWrapper> ObjList = new List<EbObjectWrapper>();
             //foreach (var element in rlist)
             //{
             //     ObjList.Add(element);
-               
+
             //}
             return rlist;
         }
@@ -573,7 +576,7 @@ namespace ExpressBase.Web2.Controllers
                     else
                     {
                         ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, objid, ViewBag.UId));
-                        if(ViewBag.tvpref == null)
+                        if (ViewBag.tvpref == null)
                             ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
                     }
                 }
@@ -613,11 +616,12 @@ namespace ExpressBase.Web2.Controllers
             var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
             var paramsList = new List<Dictionary<string, string>>();
-            if (parameter == null) {
+            if (parameter == null)
+            {
                 paramsList = null;
             }
             else
-            {                
+            {
                 Newtonsoft.Json.Linq.JArray ja = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(parameter);
                 foreach (Newtonsoft.Json.Linq.JToken jt in ja)
                 {
@@ -626,11 +630,12 @@ namespace ExpressBase.Web2.Controllers
                         _dict.Add(jp.Name, jp.Value.ToString());
                     paramsList.Add(_dict);
                 }
-              
+
             }
             var columnColletion = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, TenantAccountId = ViewBag.cid, Token = ViewBag.token, Params = paramsList });
             //redis.Set<ColumnColletion>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid), columnColletion.Columns);           
-            if (columnColletion.Columns.Count== 0) {
+            if (columnColletion.Columns.Count == 0)
+            {
                 return "";
             }
             else

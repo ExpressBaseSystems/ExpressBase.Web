@@ -1,122 +1,151 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPageHeader2");
 }
 <script>
     $("#signIn").hide();
     $("#signUpFree").hide();
     $(document).ready(function () {
         $('.input-phone').intlInputPhone();
-    });  
+    });
 </script>
 <style>
     .btn-file {
+        position: relative;
+        overflow: hidden;
+        background-color: #3b5998;
+        color: white;
+    }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            cursor: inherit;
+            display: block;
+        }
+
+    .image-cropper {
+    width:65px;
+        height: 65px;
     position: relative;
     overflow: hidden;
-background-color: #3b5998;
-color:white;
-}
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none; 
-    cursor: inherit;
-    display: block;
+    border-radius: 50%;
 }
 
-#img-upload{
-   max-height:150px;
-   max-width:100px;
+.image-cropper img {
+    display: inline;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
 }
+
+    .dropdown ul.dropdown-menu {
+        border-radius: 4px;
+        width: 250px;
+    }
+
+    .navbar-default {
+        height: 70px !important;
+    }
 </style>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"></a>
+            <a href="index">
+                <img class="img-responsive" src="~/images/EB_Logo.png">
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <div class="image-cropper">
+                           <img class="img-responsive img-rounded" alt="dropdown-toggle" data-toggle="dropdown" src="~/images/proimg.jpg" id="img-upload"/>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">My Account<span class="fa fa-user pull-right"></span></a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">My Preferences<span class="fa fa-user pull-right"></span></a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Sign Out<span class="fa fa-sign-out pull-right"></span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>-
+</nav>
 <div class="container">
-    <h1>Edit Profile</h1>
-    <hr>
     <div class="row">
         <form class="form-horizontal" role="form">
-            <div class="col-md-3">
-                <div class="text-center">
-                    <img src="~/images/proimg.jpg" class="avatar img-circle" alt="avatar" id="img-upload">
-                    <h6>Upload photo...</h6>
-                    <div class="input-group">
-                        <span class="input-group-btn">
-                            <span class="btn btn-default btn-file">
-                                Browse… <input type="file" id="imgInp">
-                            </span>
-                        </span>
-                    </div>
-                </div>
-            </div>
 
             <!-- edit form column -->
-            <div class="col-md-9 personal-info">
+            <div class="col-md-12 personal-info">
                 <div class="alert alert-info alert-dismissable">
                     <a class="panel-close close" data-dismiss="alert">×</a>
                     <i class="fa fa-thumbs-up fa-2x"></i>
                     Thanks for signing up for ExpressBase Systems! Now edit your Profile.
                 </div>
+            </div>
+
+            <div class="col-md-4 col-md-offset-4">
                 <h3>Personal info</h3>
+                <hr>
+                <div class="form-group">
+                    <input class="form-control" type="text" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="date" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <div class="input-phone"></div>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" placeholder="Company">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" value="" placeholder="Designtion">
+                </div>
+                <div class="form-group">
+                    <div class="ui-select">
+                        <select id="user_time_zone" class="form-control">
+                            <option value="0">Employees</option>
+                            <option value="1-10">1-10</option>
+                            <option value="11-50">11-50</option>
+                            <option value="51-100">51-100</option>
+                            <option value="101-250">101-250</option>
+                            <option value="251-500">250-500</option>
+                            <option value="greater than 500">greater than 500</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
 
-                <div class="form-group">
-                    <label class="col-lg-3 control-label">Name:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="text">
+                        <input id="imgInp" type="file" style="display:none;" />
+                        <input class="form-control" type="text" placeholder="Uplaoad Photo">
+                        <span class="input-group-addon" onclick="$('#imgInp').click();"><i class="fa fa-folder-open"></i></span>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-lg-3 control-label">Date of Bith:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="date">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-3 control-label">Mobile:</label>
-                    <div class="col-lg-8">
-                        <div class="input-phone"></div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-3 control-label">Company:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="text" value="">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-3 control-label">Designation:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="text" value="">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-lg-3 control-label">Employees:</label>
-                    <div class="col-lg-8">
-                        <div class="ui-select">
-                            <select id="user_time_zone" class="form-control">
-                                <option value="0"></option>
-                                <option value="1-10">1-10</option>
-                                <option value="11-50">11-50</option>
-                                <option value="51-100">51-100</option>
-                                <option value="101-250">101-250</option>
-                                <option value="251-500">250-500</option>
-                                <option value="greater than 500">greater than 500</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-3 control-label"></label>
-                    <div class="col-md-8">
+                    <div class="col-md-3">
                         <input type="button" class="btn btn-primary" value="Save">
                     </div>
-                </div>
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary" value="Skip">
+                        </div>
+                    </div>
             </div>
         </form>
     </div>

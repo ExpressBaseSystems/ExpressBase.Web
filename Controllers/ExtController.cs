@@ -133,11 +133,11 @@ namespace ExpressBase.Web.Controllers
                 {
                      var res = client.Post<RegisterResponse>(new Register { Email = req["email"], Password = req["password"] });
                                      
-                    if (Convert.ToInt32(res.UserId) >= 0)
-                    {
-                        client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message =string.Format("http://localhost:53431/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
-                        return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
-                    }
+                    //if (Convert.ToInt32(res.UserId) >= 0)
+                    //{
+                    //    client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message =string.Format("http://localhost:53431/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
+                    //    return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
+                    //}
 
                 }
                 catch (WebServiceException e) { }

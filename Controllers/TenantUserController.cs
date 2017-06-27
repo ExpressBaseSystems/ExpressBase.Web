@@ -139,6 +139,7 @@ namespace ExpressBase.Web2.Controllers
             //var result = JsonConvert.DeserializeObject<Object>(tvpref);
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
+            ViewBag.dvname = _dict["dvName"];
             ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
 
             return View();

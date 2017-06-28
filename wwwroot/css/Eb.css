@@ -157,7 +157,7 @@
 }
 
 
-input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
+.Eb-ctrlContainer input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
     height: auto !important;
     min-height: 28px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
@@ -169,7 +169,6 @@ input[type="text"], input[type="email"], input[type="password"], input[type="sin
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
 }
-
 
 input[type="color"] {
     height: auto;

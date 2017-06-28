@@ -12,6 +12,7 @@
 /// <reference path="js/eb_datatable.js" />
 /// <reference path="js/eb_dragula.js" />
 /// <reference path="js/eb_formbuilder.js" />
+/// <reference path="js/eb_formbuilderpropertygrid.js" />
 /// <reference path="js/eb_jqpropertygrid.js" />
 /// <reference path="js/eb_objlist_tbl.js" />
 /// <reference path="js/Eb_PropertyGrid.js" />

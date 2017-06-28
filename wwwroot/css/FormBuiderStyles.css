@@ -2,7 +2,7 @@
 }
 
 .form-buider-toolBox {
-    width: 207px;
+    width: 155px;
     padding: 3px;
     display: inline-block;
     vertical-align: top;
@@ -14,7 +14,7 @@
 }
 
 .form-buider-form {
-    width: 850px;
+    width: 1005px;
     padding: 3px;
     display: inline-block;
     vertical-align: top;
@@ -23,6 +23,54 @@
     border: solid 1px #dddddd;
     margin-left: 8px;
     margin-top: 7px;
+}
+
+    .form-buider-form input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
+        height: auto !important;
+        min-height: 28px;
+        -webkit-tap-highlight-color: rgba(255,255,255,0);
+        background: #FFF;
+        border: 1px solid rgba(34,36,38,.15);
+        padding: 3px;
+        font-size: 13px;
+        -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+        transition: box-shadow .1s ease,border-color .1s ease;
+        box-shadow: none;
+    }
+
+.property-grid-cont input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
+    height: auto !important;
+    min-height: 21px;
+    width: 110px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    border: 1px solid rgba(34,36,38,.15);
+    padding: 3px;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+
+
+.property-grid-cont {
+    position: absolute;
+    visibility: visible;
+    top: 50px;
+    right: 0px;
+    background-color: white;
+    visibility: hidden;
+    padding: 3px;
+    display: inline-block;
+    vertical-align: top;
+    height: 340px;
+    border: solid 1px #dddddd;
+    margin-left: 8px;
+    margin-top: 7px;
+    -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
 }
 
 .tdDropable {

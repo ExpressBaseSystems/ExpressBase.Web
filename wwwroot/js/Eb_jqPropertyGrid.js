@@ -99,7 +99,7 @@
 
     setTimeout(function () {
         $('#Table_Settings_wrapper').css("width", "813px");
-        $('#Table_Settings_wrapper table:eq(0)').css("min-width", "813px");
+        //$('#Table_Settings_wrapper table:eq(0)').css("min-width", "813px");
         $('#Table_Settings_wrapper table:eq(1)').css("min-width", "805px");
         $('.prop-grid-cont').css("visibility", "visible");
         $('#propGrid table').removeClass("pgTable").addClass("table-bordered table-hover");

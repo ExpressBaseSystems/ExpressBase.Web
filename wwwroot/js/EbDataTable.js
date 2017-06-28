@@ -52,7 +52,7 @@ var EbDataTable = function (settings) {
     this.dvName = null;
     this.ssurl = this.dtsettings.ss_url;
     this.ebSettings = this.dtsettings.settings;
-    this.ebSettingsCopy = $.extend(true, {}, this.ebSettings);
+    //this.ebSettingsCopy = $.extend(true, {}, this.ebSettings);
     this.tableId = this.dtsettings.tid;
     this.eb_agginfo = null;
     this.isSecondTime = false;
@@ -86,6 +86,9 @@ var EbDataTable = function (settings) {
     this.deleted_colname = null;
     this.tempcolext = [];
     this.linkDV = null;
+    this.filterFlag = false;
+    if (index !== 1)
+        this.cellData = this.dtsettings.cellData;
 
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
@@ -102,18 +105,19 @@ var EbDataTable = function (settings) {
         this.ebSettings = JSON.parse(data);
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
-        this.ebSettingsCopy = this.ebSettings;
+        //this.ebSettingsCopy = this.ebSettings;
         this.Init();
 
-        if (this.filterBox !== null && this.dtsettings.directLoad !== true)
-            this.filterBox.collapse('hide');
     };
 
     this.Init = function () {
 
+       
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
+        //if (this.filterBox !== null && this.dtsettings.directLoad !== true)
+            this.filterBox.collapse('hide');
         //this.filterbtn = $('#4filterbtn');
         //this.clearfilterbtn = $("#clearfilterbtn_"+this.tableId);
         this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
@@ -129,7 +133,7 @@ var EbDataTable = function (settings) {
         //    $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
         //else
         if (index !== 1)
-            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
+            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
         $("#dvName_lbl"+this.tableId).text(this.dvName);
 
         this.eb_agginfo = this.getAgginfo();
@@ -198,7 +202,7 @@ var EbDataTable = function (settings) {
                 o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
             o.lengthMenu = this.ebSettings.lengthMenu;
 
-            o.dom = "<'col-sm-2'l><'col-sm-1'i><'col-sm-4'B><'col-sm-5'p>tr";
+            o.dom = "<'col-sm-2'l><'col-sm-1'i><'col-sm-4'B><'col-sm-5'p>rt";
             o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         }
         else if (this.dtsettings.directLoad) {
@@ -239,7 +243,8 @@ var EbDataTable = function (settings) {
         dq.Token = getToken();
         dq.rToken = getrToken();
         //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
-            dq.TFilters = JSON.stringify(this.repopulate_filter_arr());
+        var serachItems = this.repopulate_filter_arr();
+        dq.TFilters = JSON.stringify(serachItems);
         //else {
         //    var arr = [];
         //    arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
@@ -248,6 +253,9 @@ var EbDataTable = function (settings) {
         dq.Params = JSON.stringify(this.getFilterValues());
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
+        if (serachItems.length>0) {
+            this.filterFlag = true;
+        }
         return dq;
     };
 
@@ -257,8 +265,10 @@ var EbDataTable = function (settings) {
             this.RenderGraphModal();
             this.getColumns();
         }
-        else
+        else {
+            this.filterBox.collapse("hide");
             this.Api.ajax.reload();
+        }
     };
 
    
@@ -333,7 +343,7 @@ var EbDataTable = function (settings) {
                     }
                 }
             });
-        }
+        } 
         return filter_obj_arr;
     };
 
@@ -353,6 +363,12 @@ var EbDataTable = function (settings) {
 
         if (this.dtsettings.initComplete)
             this.dtsettings.initComplete();
+        //setTimeout(function () {
+        //    var wid = parseInt($(".dataTables_scrollHead table:eq(0)").css("width"));
+        //    alert(wid);
+        //    $(".dataTables_scrollFoot table:eq(0)").css("width",wid);
+        //},500);
+        
         this.Api.columns.adjust();
     }
 
@@ -360,6 +376,7 @@ var EbDataTable = function (settings) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         //if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
         this.summarize2();
+        this.addFilterEventListeners();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -693,7 +710,7 @@ var EbDataTable = function (settings) {
         "<div class='input-group-btn'>" +
             " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
             " <ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
-            "   <li ><a href ='#' class='eb_fsel"+this.tableId+"' " + data_table + data_colum + ">=</a></li>" +
+            "   <li ><a href ='#' class='eb_fsel" +this.tableId+"' " + data_table + data_colum + ">=</a></li>" +
               " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
               " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
               " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><=</a></li>" +
@@ -714,12 +731,12 @@ var EbDataTable = function (settings) {
         "<div class='input-group-btn'>" +
            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
             "<ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
-             " <li ><a href ='#' class='eb_fsel' " + data_table + data_colum + ">=</a></li>" +
-             " <li><a href ='#' class='eb_fsel' " + data_table + data_colum + "><</a></li>" +
-             " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">></a></li>" +
-             " <li><a href='#' class='eb_fsel' " + data_table + data_colum + "><=</a></li>" +
-             " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">>=</a></li>" +
-             " <li ><a href='#' class='eb_fsel' " + data_table + data_colum + ">B</a></li>" +
+             " <li ><a href ='#' class='eb_fsel"+this.tableId+"' " + data_table + data_colum + ">=</a></li>" +
+             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
+             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
+             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><=</a></li>" +
+             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">>=</a></li>" +
+             " <li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
            " </ul>" +
         " </div>" +
         " <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
@@ -736,10 +753,10 @@ var EbDataTable = function (settings) {
         "<div class='input-group-btn' style='z-index:" + zidx.toString() + "'>" +
            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
            " <ul class='dropdown-menu'>" +
-           "   <li ><a href ='#' class='eb_fsel' " + data_table + data_colum + ">x*</a></li>" +
-            "  <li><a href ='#' class='eb_fsel' " + data_table + data_colum + ">*x</a></li>" +
-            "  <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">*x*</a></li>" +
-             " <li><a href='#' class='eb_fsel' " + data_table + data_colum + ">=</a></li>" +
+           "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">x*</a></li>" +
+            "  <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x</a></li>" +
+            "  <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x*</a></li>" +
+             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
            " </ul>" +
         " </div>" +
         " <input type='text' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
@@ -782,8 +799,11 @@ var EbDataTable = function (settings) {
                 }
             }
         });
-        if (flag)
+        if (flag || this.filterFlag) {
             this.Api.ajax.reload();
+            this.filterFlag = false;
+
+        }
     };
 
     this.setLiValue = function (e) {
@@ -828,7 +848,6 @@ var EbDataTable = function (settings) {
 
     this.clickAlSlct = function (e) {
         //var tableid = $(e.target).attr('data-table');
-        alert(e.target.checked);
         if (e.target.checked)
             $('#' + this.tableId + '_wrapper tbody [type=checkbox]:not(:checked)').trigger('click');
         else
@@ -873,6 +892,7 @@ var EbDataTable = function (settings) {
     };
 
     this.link2NewTable = function (e) {
+        this.cellData = $(e.target).text();
         var idx = this.Api.row($(e.target).parent().parent()).index();
         var Rowobj = $.extend(true, {}, this.Api.row(idx).data());
         this.NewTableModal();
@@ -923,13 +943,13 @@ var EbDataTable = function (settings) {
     };
 
     this.call2newTable = function () {
-        alert(this.linkDV);
+
         var EbDataTable_Newtable = new EbDataTable({
-            //ds_id: 32,
             dv_id: this.linkDV, 
             ss_url: "https://expressbaseservicestack.azurewebsites.net",
             tid: 'dv' + this.linkDV + '_' + index,
-            linktable: true
+            linktable: true,
+            cellData: this.cellData
             //directLoad: true
         });
     };
@@ -1047,7 +1067,7 @@ var EbDataTable = function (settings) {
                       "  <button class='close' data-dismiss='modal'>x</button>" +
                      "   <h4 class='modal-title'>" + this.ebSettings.dvName + ": SettingsTable</h4>" +
                     "</div>" +
-                    "<div class='modal-body'>" +
+                    "<div class='modal-body' style='padding-bottom: 40px;'>" +
                       "  <div id='loader' class='loadingdiv'><i class='fa fa-spinner fa-pulse fa-3x fa-fw'></i></div>" +
 
                 "    </div>" +
@@ -1098,8 +1118,8 @@ var EbDataTable = function (settings) {
 
     this.getSavedColumnsSuccess = function (data) {
         this.ebSettings = JSON.parse(data);
-        this.ebSettingsCopy = this.ebSettings;
-        console.log(JSON.stringify(this.ebSettings));
+        //this.ebSettingsCopy = this.ebSettings;
+        //console.log(JSON.stringify(this.ebSettings));
         this.Init();
     };
 
@@ -1334,36 +1354,35 @@ var EbDataTable = function (settings) {
     //};
 
     this.updateRenderFunc = function () {
-        $.each(this.ebSettingsCopy.columns, this.updateRenderFunc_Inner.bind(this));
+        $.each(this.ebSettings.columns, this.updateRenderFunc_Inner.bind(this));
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
-            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Progressbar") {
-                this.ebSettingsCopy.columns[i].render = this.renderProgressCol;
+            if (this.ebSettings.columnsext[i].RenderAs === "Progressbar") {
+                this.ebSettings.columns[i].render = this.renderProgressCol;
             }
         }
         if (col.type === "System.Boolean") {
-            if (this.ebSettingsCopy.columnsext[i].name === "sys_locked" || this.ebSettingsCopy.columnsext[i].name === "sys_cancelled") {
-                this.ebSettingsCopy.columns[i].render = (this.ebSettingsCopy.columnsext[i].name === "sys_locked") ? this.renderLockCol : this.renderEbVoidCol;
+            if (this.ebSettings.columnsext[i].name === "sys_locked" || this.ebSettings.columnsext[i].name === "sys_cancelled") {
+                this.ebSettings.columns[i].render = (this.ebSettings.columnsext[i].name === "sys_locked") ? this.renderLockCol : this.renderEbVoidCol;
             }
             else {
-                if (this.ebSettingsCopy.columnsext[i].IsEditable) {
-                    this.ebSettingsCopy.columns[i].render = this.renderEditableCol;
+                if (this.ebSettings.columnsext[i].IsEditable) {
+                    this.ebSettings.columns[i].render = this.renderEditableCol;
                 }
-                if (this.ebSettingsCopy.columnsext[i].RenderAs === "Icon") {
-                    this.ebSettingsCopy.columns[i].render = this.renderIconCol;
+                if (this.ebSettings.columnsext[i].RenderAs === "Icon") {
+                    this.ebSettings.columns[i].render = this.renderIconCol;
                 }
             }
         }
         if (col.type === "System.String") {
-            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Link") {
-                this.linkDV = this.ebSettingsCopy.columnsext[i].linkDv;
-                alert("render:" + this.linkDV);
-                this.ebSettingsCopy.columns[i].render = this.renderlink4NewTable.bind(this);
+            if (this.ebSettings.columnsext[i].RenderAs === "Link") {
+                this.linkDV = this.ebSettings.columnsext[i].linkDv;
+                this.ebSettings.columns[i].render = this.renderlink4NewTable.bind(this);
             }
-            if (this.ebSettingsCopy.columnsext[i].RenderAs === "Graph") {
-                this.ebSettingsCopy.columns[i].render = this.lineGraphDiv;
+            if (this.ebSettings.columnsext[i].RenderAs === "Graph") {
+                this.ebSettings.columns[i].render = this.lineGraphDiv;
             }
         }
     };

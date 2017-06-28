@@ -199,8 +199,8 @@ var DVObj = function (dsid, settings, login) {
         
     };
 
-    this.saveSuccess = function () {
-        $(".alert").show();
+    this.saveSuccess = function () {//var d = new EbDataTable();d.isSettingsSaved=true;
+        $(".alert").show(); isSettingsSaved = true;
         if (login == "uc") {
             $("#settingsmodal").modal('hide');
             //var ebdt = new EbDataTable({cols : settings})
@@ -252,8 +252,6 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.deleteRow = function (e) {
-        alert(JSON.stringify(this.TVPrefObj.columnsdel));
-        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
         var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
         var deletedRow = $.extend(true, {}, this.settings_tbl.row(idx).data());
         this.deleted_colname = deletedRow.name;
@@ -276,9 +274,7 @@ var DVObj = function (dsid, settings, login) {
         
         var liId = "li_" + deletedRow.name;
         $("#columnDropdown ul").append($("<li id=" + liId + "><a data-data=\"" + JSON.stringify(deletedRow).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.TVPrefObj.columnsextdel[this.TVPrefObj.columnsextdel.length - 1]).replace(/\"/g, "'") + "\" href='#'>" + deletedRow.name + "</a></li>"));
-        
-        alert(JSON.stringify(this.TVPrefObj.columnsdel));
-        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
+ 
     };
 
     this.clickDropdownfunc = function (e) {

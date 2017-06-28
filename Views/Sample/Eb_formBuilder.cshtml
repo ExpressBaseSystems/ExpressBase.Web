@@ -6,6 +6,7 @@
 
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src='~/js/Eb_dragula.js'></script>
+<script src='~/js/Eb_formBuilder.js'></script>
 <div id="con">
     <div id="form-buider-toolBox" class="form-buider-toolBox">
         <div class="well well-sm"><strong>ToolBox</strong></div>
@@ -44,69 +45,7 @@
     </div>
 </div>
 <script>
-    $(function () {
-
-        $(".controlTile").click(function () { alert(0); $(this).focus(); });
-
-        var drake = dragula([document.getElementById("form-buider-toolBox"), document.getElementById("form-buider-form"), document.getElementById("form-buider-table")], {
-            removeOnSpill: false,
-            copy: function (el, source) {
-                return (source.className !== 'tdDropable' && source.className !== 'form-buider-form');
-            },
-            copySortSource: true,
-            mirrorContainer: document.body,
-            accepts: function (el, target, source, sibling) {
-                // prevent tool box copy
-                if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") === "form-buider-toolBox") {
-                    console.log("1 $(source).attr(id) === form-buider-toolBox && $(target).attr(id) === form-buider-toolBox")
-                    return false;
-                }
-                // allow copy except toolbox
-                if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") !== "form-buider-toolBox") {
-                    console.log("2 $(source).attr(id) !== form-buider-toolBox && $(target).attr(id) !== form-buider-toolBox")
-                    return true;
-                }
-                // sortable with in the container
-                if ($(source).attr("id") !== "form-buider-toolBox" && source === target) {
-                    console.log("3 $(source).attr(id) !== form-buider-toolBox && source === target")
-                    return true;
-                }
-                else return true;
-                console.log("else");
-                console.log("class:" + $(source).attr("class"));
-                console.log("100 source id: " + ($(source).attr("id") + ", target id:" + $(target).attr("id")));
-
-            },
-        });
-        drake.on("drop", function (el, target, source, sibling) {
-            if ($(source).attr("id") === "form-buider-toolBox") {
-                el.className = 'controlTile';
-                //$(el).attr("tabindex", "1");
-                //$(el).attr("onclick", "$(this).focus()");
-                if ($(el).text().trim() === "TextBox")
-                    $(el).html("<input type='text' readonly style='width:100%' />");
-                else if ($(el).text().trim() === "ComboBox")
-                    $(el).html("<div id='acmasteridContainer' role='form' data-toggle='validator' style=' width: 900px;'><input type='hidden' name='acmasteridHidden4val' data-ebtype='16' id='acmasterid'> <div id='acmasteridLbl' style='display: inline-block;'></div> <div id='acmasteridWraper' data-toggle='tooltip' title='' data-original-title=''><div style='display: inline-block; width: 300px; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid0'><div type='button' class='dropdown-toggle clearfix' style='border-top-left-radius: 5px; border-bottom-left-radius: 5px;'> <input debounce='0' type='search' placeholder='label0' class='form-control' id='acmaster1_xid' style='width: 100%;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 300px; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid1'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' placeholder='label1' class='form-control' id='acmaster1_name' style='width: 100%;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 300px; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid2'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' placeholder='label2' class='form-control' id='tdebit' style='width: 100%;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div></div> <div id='acmasterid_loadingdiv' class='ebCombo-loader'><i id='acmasterid_loading-image' class='fa fa-spinner fa-pulse fa-2x fa-fw' style='display: none;'></i><span class='sr-only'>Loading...</span></div> <center><div id='acmasteridDDdiv' class='DDdiv expand-transition' style='width: 600px; display: none;'><table id='acmasteridtbl' class='table table-striped table-bordered' style='width: 100%;'></table></div></center></div>");
-                else if ($(el).text().trim() === "NumericBox")
-                    $(el).html("<div class='Eb-ctrlContainer'  style='width:100%; min-height: 12px;'><span id='nameLbl' >Amount</span><div  class='input-group'><span class='input-group-addon'>$</span><input type='text'  class='numinput' name='name'  data-toggle='tooltip' title='toolTipText' id='name' style='width:300px; display:inline-block; /></div><span class='helpText'> helpText </span></div>");
-                else if ($(el).text().trim() === "Date") {
-                    $(el).html("<div id='datefromContainer' style='width:100%;' class='Eb-ctrlContainer'><span id='datefromLbl' style='background-color:#000000; color:#000000;'></span><div class='input-group' style='width:1px;'><input id='datefrom' data-ebtype='5' data-toggle='tooltip' title='' class='date' type='text' name='datefrom' autocomplete='on' value='01-01-0001 05:30:00 AM' readonly style='width:200px; height:21px; background-color:#FFFFFF; color:#000000; display:inline-block;  ' placeholder='' maxlength='10' data-original-title=''><span class='input-group-addon'> <i id='datefromTglBtn' class='fa  fa-calendar' aria-hidden='true'></i> </span></div><span class='helpText'>  </span></div>");
-                }
-                else if ($(el).text().trim() === "Button") {
-                    $(el).html("<div class='btn btn-default'>Button</div>");
-                }
-                else if ($(el).text().trim() === "GridView") {
-                    el.className = 'gridCont';
-                    $(el).html("<table  style='width:100%'><tr><td class='tdDropable' ></td> <td class='tdDropable'></td style='min-height:20px;'> </tr></table>");
-                    $.each($(".tdDropable"), function (i) { drake.containers.push(document.getElementsByClassName("tdDropable")[i]); })
-                }
-                var _html = $(el).html();
-                //$(el).html("<a href='#' style='display:none;' class='close' data-dismiss='alert' aria-label='close' title='close'>×</a>" + _html);
-            }
-            else
-                console.log("remove");
-        });
-    });
+    var t = new formBuilder("form-buider-toolBox", "form-buider-form");
 </script>
 <style>
     /*overridding*/
@@ -121,13 +60,22 @@
         vertical-align: initial;
     }
 
+    .moveBtn {
+        font-size: 10px;
+        vertical-align: top;
+        margin-left: 6px;
+        margin-top: 3px;
+        opacity: .9;
+    }
+
     .close {
-        margin-top: -5px;
+        margin-top: -1px;
+        height: 17px;
     }
 
         .close:hover, .close:focus {
             color: #f00 !important;
-            opacity: .6!important;
+            opacity: .6 !important;
         }
 
     table {

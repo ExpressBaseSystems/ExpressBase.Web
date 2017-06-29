@@ -156,18 +156,12 @@
                 <button id='Save_btn' class='btn btn-primary' data-objId="@ViewBag.Obj_id">Save Changes</button>
             </div>
             <div class="alert alert-success" style="display:none">
-                <strong>Success!</strong> Indicates a successful or positive action.
+                <strong>Success!</strong> 
             </div>
 
             <script>
-                
-            var ds= @ViewBag.dsid;
-            @*var sett;
-            if("@ViewBag.tvpref" === "abc")
-                sett= "@ViewBag.tvpref";
-            else*@
-             var sett= @Html.Raw(ViewBag.tvpref);
-                var dvo= new DVObj(ds, sett, "@ViewBag.wc");
+            var sett = @Html.Raw(ViewBag.tvpref);
+            var dvo = new DVObj(@ViewBag.dsid, sett, "@ViewBag.wc");
             </script>
         </div>
     </body>

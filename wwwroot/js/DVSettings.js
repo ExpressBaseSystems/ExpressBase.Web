@@ -36,7 +36,6 @@ var DVObj = function (dsid, settings, login) {
     this.setDropdownDatasource = function (e) {
         $("#loader").show();
         this.dsid = $(e.target).parent().attr("data-dsid");
-        alert("dsid" +this.dsid);
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
         $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
         $.post('../Tenant/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
@@ -45,9 +44,7 @@ var DVObj = function (dsid, settings, login) {
 
     this.getColumnsSuccess = function (data) {
         $("#loader").hide();
-        alert("hhhh----");
         this.TVPrefObj = JSON.parse(data);
-        alert(JSON.stringify(this.TVPrefObj));
         //this.TVPrefObjCopy = JSON.parse(data);
         this.callPost4SettingsTable();
     };
@@ -69,6 +66,9 @@ var DVObj = function (dsid, settings, login) {
         });
         CreatePropGrid(this.settings_tbl.row(0).data(), this.TVPrefObj.columnsext);
         $('#Table_Settings tbody').on('click', 'tr', this.showPropertyGrid.bind(this));
+        //setTimeout(function (){
+        //    $("#Table_Settings_wrapper table:eq(0)").css("min-width", "");
+        //}, 500);
         //$(".modal-content").on("click", function (e) {
         //    if ($(e.target).closest(".font-select").length === 0) {
         //        $(".font-select").removeClass('font-select-active');
@@ -124,9 +124,10 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.initComplete4Settingstbl = function (settings, json) {
-        $('#Table_Settings').DataTable().columns.adjust();
         $('.font').fontselect();
         $("#loader").hide();
+        $('#Table_Settings').DataTable().columns.adjust();
+        
         //this.addEventListner4Settingstbl();
     };
 
@@ -199,8 +200,8 @@ var DVObj = function (dsid, settings, login) {
         
     };
 
-    this.saveSuccess = function () {
-        $(".alert").show();
+    this.saveSuccess = function () {//var d = new EbDataTable();d.isSettingsSaved=true;
+        $(".alert").show(); isSettingsSaved = true;
         if (login == "uc") {
             $("#settingsmodal").modal('hide');
             //var ebdt = new EbDataTable({cols : settings})
@@ -252,8 +253,6 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.deleteRow = function (e) {
-        alert(JSON.stringify(this.TVPrefObj.columnsdel));
-        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
         var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
         var deletedRow = $.extend(true, {}, this.settings_tbl.row(idx).data());
         this.deleted_colname = deletedRow.name;
@@ -276,9 +275,7 @@ var DVObj = function (dsid, settings, login) {
         
         var liId = "li_" + deletedRow.name;
         $("#columnDropdown ul").append($("<li id=" + liId + "><a data-data=\"" + JSON.stringify(deletedRow).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.TVPrefObj.columnsextdel[this.TVPrefObj.columnsextdel.length - 1]).replace(/\"/g, "'") + "\" href='#'>" + deletedRow.name + "</a></li>"));
-        
-        alert(JSON.stringify(this.TVPrefObj.columnsdel));
-        alert(JSON.stringify(this.TVPrefObj.columnsextdel));
+ 
     };
 
     this.clickDropdownfunc = function (e) {

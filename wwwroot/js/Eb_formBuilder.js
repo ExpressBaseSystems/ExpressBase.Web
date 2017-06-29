@@ -1,4 +1,5 @@
 ﻿var formBuilder = function (toolBoxid, formid) {
+    this.id,
     this.toolBoxid = toolBoxid;
     this.formid = formid;
     this.ComboBoxCounter = 0;
@@ -50,7 +51,8 @@
             $(el).attr("onclick", "event.stopPropagation();$(this).focus()");
             $(el).attr("onfocus", "event.stopPropagation();$(this).children('.ctrlHead').show(); CreatePropGrid($(this));");
             $(el).attr("onfocusout", "$(this).children('.ctrlHead').hide()");
-            $(el).attr("ebtype", $(el).text().trim());
+            $(el).attr("ebtype", $(el).text().trim()).focus();
+
             if ($(el).text().trim() === "TextBox") {
                 $(el).attr("id",  "TextBox" + this.TextBoxCounter++);
                 $(el).html("<input type='text' readonly style='width:100%' />");
@@ -76,9 +78,15 @@
                 el.className = 'gridCont';
                 $(el).html("<table style='width:100%'><tr><td class='tdDropable' ></td> <td class='tdDropable'></td style='min-height:20px;'> </tr></table>");
             }
+
             var _html = $(el).html();
-            $(el).html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' data-dismiss='alert' aria-label='close' onclick='$(this).parent().parent().remove().hide()' title='close'>×</a><i class='fa fa-bars moveBtn' style='float:right; color: black; margin-top: 5px;margin-right: 4px;' aria-hidden='true'></i></div>" + _html);
+            $(el).html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a><i class='fa fa-bars moveBtn' style='float:right; color: black; margin-top: 5px;margin-right: 4px;' aria-hidden='true'></i></div>" + _html);
             $.each($(".tdDropable"), this.pushContainers.bind(this));
+            
+            $(".controls-dd-cont select").append("<option id='SelOpt" + $(el).attr("id") + "'>" + $(el).attr("id") + "</option>");
+
+            $('.selectpicker').selectpicker('refresh');
+            $(el).find(".close").on("click", function () { $("#SelOpt" + $(this).parent().parent().attr("id")).remove(); $('.selectpicker').selectpicker('refresh'); $(this).parent().parent().remove().hide(); });
         }
         else
             console.log("else : removed");

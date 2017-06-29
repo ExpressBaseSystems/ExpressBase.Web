@@ -38,9 +38,8 @@
         box-shadow: none;
     }
 
-.property-grid-cont input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
-    height: auto !important;
-    min-height: 21px;
+.propgrid-table-cont input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
+    height: 21px;
     width: 110px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
@@ -52,22 +51,36 @@
     box-shadow: none;
 }
 
+.propgrid-table-cont {
+    overflow-y: auto;
+    height: 526px;
+    background-color: white;
+}
 
+.property-grid-cont .bs-searchbox .form-control {
+    height: 21px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    border-radius:2px;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
 
 .property-grid-cont {
-    position: absolute;
-    visibility: visible;
-    top: 50px;
-    right: 0px;
-    background-color: white;
-    visibility: hidden;
-    padding: 3px;
     display: inline-block;
-    vertical-align: top;
-    height: 340px;
+    position: absolute;
+    z-index: 100;
+    top: 50px;
+    right: 2px;
+    height: 590px;
+    visibility: hidden;
+    background-color: white;
+    padding: 3px;
     border: solid 1px #dddddd;
     margin-left: 8px;
-    margin-top: 7px;
+    margin-top: 117px;
+    vertical-align: top;
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);

@@ -82,10 +82,19 @@
             </select>
         </div>
     </div>
-    <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
-    <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
-    <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-    <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
+    <div class="container">
+        <ul class="nav nav-tabs" id="versionNav">
+            <li class="active"><a data-toggle="tab" href="#code_edit1">@ViewBag.ObjectName</a></li>          
+        </ul>
+
+        <div class="tab-content " id="versionTab">
+            <div id="code_edit1" class="tab-pane fade in active">
+                <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
+                <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
+                <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
+                <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div></div>
+        </div>
+    </div>  
 
     <div id="filterDialog" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -134,35 +143,6 @@
                 </div>
                 <div class="modal-body filter_modal_body">
                     <table class="table table-striped table-bordered" id="sample"></table>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="versionHist" class="modal fade" role="dialog">
-        <div class="modal-dialog" style="height:80%;width:80%">
-            <!-- Modal content-->
-            <div class="modal-content" style="height:auto;min-height:100%">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Version History</h4>
-                </div>
-                <div class="modal-body filter_modal_body">
-                    <table class="table table-striped table-bordered" id="versions">
-                        <thead class="verthead">
-                            <tr>
-                                <th class="col-md-1">Version Number</th>
-                                <th class="col-md-5">Change Log</th>
-                                <th class="col-md-1">Committed By</th>
-                                <th class="col-md-2">Committed At</th>
-                                <th class="col-md-1"> </th>
-                            </tr>
-                        </thead>
-                        <tbody id="vertbody" class="vertbody"></tbody>
-                    </table>
                 </div>
                 <div class="modal-footer">
 

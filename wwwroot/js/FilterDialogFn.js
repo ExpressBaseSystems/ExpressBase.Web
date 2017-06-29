@@ -11,7 +11,9 @@
     this.Fd_DropDown;
     this.VersionHistBtn;
     this.Versions;
-    this.var_id
+    this.var_id;
+    this.tabNum = 0;
+    this.HistoryVerNum;
     // this.openPrevVersions;
 
     this.Init = function () {
@@ -82,6 +84,7 @@
     "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
     "<strong>Success!</strong>" +
     "</div>");
+        window.location.reload();
     }
 
     this.VerHistory = function () {
@@ -94,32 +97,75 @@
 
     this.Version_List = function (result) {
         $(".eb-loader").hide();
+        this.SetValues();
         this.Versions = result;
-        $('#vertbody').children().remove();
-        $.each(this.Versions, function (i, obj) {
-            $('#vertbody').append("<tr>" +
-                                       "<td>" + obj.versionNumber + "</td> " +
-                                       "<td>" + obj.changeLog + "</td> " +
-                                       "<td>" + obj.commitUname + "</td> " +
-                                       "<td>" + obj.commitTs + "</td> " +
-                                        "<td><input type='button' class='view_code' value='View' data-id=" + obj.id + "></td>" +
-                                 " </tr>");
-        });
+        this.tabNum = this.tabNum + 1;
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Name + this.tabNum + "'>Version History</a></li>");
+        $('#versionTab').append("<div id='vernav" + this.Name + this.tabNum + "' class='tab-pane fade'>" +
+        "<table class='table table-striped table-bordered col-md-12' id='versions" + this.Name + this.tabNum + "'>" +
+                       "<thead class='verthead" + this.Name + this.tabNum + "'>" +
+                           "<tr>" +
+                               "<th class='col-md-1'>Version Number</th>" +
+                              "<th class='col-md-4'>Change Log</th>" +
+                              "<th class='col-md-1'>Committed By</th>" +
+                               "<th class='col-md-2'>Committed At</th>" +
+                               "<th class='col-md-1'> </th>" +
+                           "</tr>" +
+                      " </thead>" +
+                       "<tbody id='vertbody" + this.Name + this.tabNum + "' class='vertbody'></tbody>" +
+                   "</table>" +
+                   "</div>");
+        $("#versionNav a[href='#vernav" + this.Name + this.tabNum + "']").tab('show');
+         this.ShowVersions();
+        }
 
-        $('#versionHist').modal('show');
-        $('.view_code').off("click").on("click", this.OpenPrevVer.bind(this));
+    this.ShowVersions = function () {
+        $.each(this.Versions, this.ShowVersions_inner.bind(this));
+        
     }
+
+    this.ShowVersions_inner = function (i, obj) {
+        $('#vertbody' + this.Name + this.tabNum).append("<tr>" +
+                                   "<td>" + obj.versionNumber + "</td> " +
+                                   "<td>" + obj.changeLog + "</td> " +
+                                   "<td>" + obj.commitUname + "</td> " +
+                                   "<td>" + obj.commitTs + "</td> " +
+                                    "<td><input type='button' id='view_code" + this.Name + this.tabNum +i+ "' class='view_code' value='View' data-id=" + obj.id + " data-verNum=" + obj.versionNumber + "></td>" +
+                             " </tr>");
+        $('#view_code' + this.Name + this.tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
+    };
 
     this.OpenPrevVer = function (e) {
+        $(".eb-loader").show();
+        this.tabNum = this.tabNum + 1;
         this.var_id = $(e.target).attr("data-id");
-        // window.open("'http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes?objid=' + var_id",'_blank');
-        $('#versionHist').modal('hide');
-        $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes",
-                             {
-                                 "objid": this.var_id
-                             }); //this.Version_List.bind(this));
+        this.HistoryVerNum = $(e.target).attr("data-verNum");
+        $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes', { "objid": this.var_id, "ver_num": this.HistoryVerNum })
+        .done(this.VersionCode_success.bind(this));
     }
 
+    this.VersionCode_success = function (data) {
+        console.log(data);
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Name + this.tabNum + "'>" +this.Name+" V."+ this.HistoryVerNum + "</a></li>");
+        $('#versionTab').append("<div id='vernav" + this.Name + this.tabNum + "' class='tab-pane fade'>");
+        $('#vernav' + this.Name + this.tabNum).append(" <div><label>"+this.HistoryVerNum+"</label>"+
+            "<textarea id='vercode" + this.tabNum + "' name='vercode' class='code'>" + data + "</textarea>" +
+            "</div>");
+            window.editor = CodeMirror.fromTextArea(document.getElementById("vercode" + this.tabNum), {
+                mode: "text/x-sql",
+                lineNumbers: true,
+                lineWrapping: true,
+                readOnly: true,
+                foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+            });
+          
+            $("#versionNav a[href='#vernav" + this.Name + this.tabNum + "']").tab('show');
+            $(".eb-loader").hide();
+            setTimeout(function () {
+                window.editor.refresh();
+            }, 100);
+    };
     this.Init();
 }
 
@@ -259,6 +305,7 @@ var FilterDialog = function (obj_id) {
                 });
             }
             $('#filterDialog').modal('show');
+            $(".eb-loader").hide();
             $('#saveFilter').hide();
             $('#run').show();
         });

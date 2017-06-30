@@ -479,10 +479,7 @@ namespace ExpressBase.Web2.Controllers
             return rlist;
         }
 
-        public IActionResult objects()
-        {
-            return View();
-        }
+        
 
         public IActionResult ds_save()
         {
@@ -513,11 +510,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        public IActionResult DevConsole()
-        {
-
-            return View();
-        }
+       
 
         public IActionResult DVList()
         {

@@ -1,4 +1,5 @@
-﻿var DataSource = function (obj_id, is_new, ver_num, cid) {
+﻿var tabNum = 0;
+var DataSource = function (obj_id, is_new, ver_num, cid) {
     this.Obj_Id = obj_id;
     this.Name;
     this.Description;
@@ -10,21 +11,25 @@
     this.SaveBtn;
     this.Fd_DropDown;
     this.VersionHistBtn;
+    this.CloseTabBtn;
     this.Versions;
     this.var_id;
-    this.tabNum = 0;
     this.HistoryVerNum;
-    // this.openPrevVersions;
+    this.changeLog;
+    this.commitUname;
+    this.commitTs;
 
     this.Init = function () {
         this.SaveBtn = $('#save');
         this.CommitBtn = $('#commit');
         this.VersionHistBtn = $('#ver_his');
+        this.CloseTabBtn = $('.closeTab');
         //this.openPrevVersions = $('.view_code');
 
         $(this.SaveBtn).off("click").on("click", this.Save.bind(this));
         $(this.CommitBtn).off("click").on("click", this.Commit.bind(this));
         $(this.VersionHistBtn).off("click").on("click", this.VerHistory.bind(this));
+        $(this.CloseTabBtn).off("click").on("click", this.deleteTab.bind(this));
         //$(this.openPrevVersions).off("click").on("click", this.OpenPrevVer.bind(this));
 
         var MyFd = new FilterDialog(this.Obj_Id);
@@ -59,6 +64,7 @@
 
     this.Commit = function () {
         $(".eb-loader").show();
+        $('.alert').remove();
         this.SetValues();
         if (this.Obj_Id === 0) {
             $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/CommitEbDataSource",
@@ -99,11 +105,11 @@
         $(".eb-loader").hide();
         this.SetValues();
         this.Versions = result;
-        this.tabNum = this.tabNum + 1;
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Name + this.tabNum + "'>Version History</a></li>");
-        $('#versionTab').append("<div id='vernav" + this.Name + this.tabNum + "' class='tab-pane fade'>" +
-        "<table class='table table-striped table-bordered col-md-12' id='versions" + this.Name + this.tabNum + "'>" +
-                       "<thead class='verthead" + this.Name + this.tabNum + "'>" +
+        tabNum++;
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Name + tabNum + "'>Version History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + this.Name + tabNum + "' class='tab-pane fade'>" +
+        "<table class='table table-striped table-bordered col-md-12' id='versions" + this.Name + tabNum + "'>" +
+                       "<thead class='verthead" + this.Name + tabNum + "'>" +
                            "<tr>" +
                                "<th class='col-md-1'>Version Number</th>" +
                               "<th class='col-md-4'>Change Log</th>" +
@@ -112,60 +118,77 @@
                                "<th class='col-md-1'> </th>" +
                            "</tr>" +
                       " </thead>" +
-                       "<tbody id='vertbody" + this.Name + this.tabNum + "' class='vertbody'></tbody>" +
+                       "<tbody id='vertbody" + this.Name + tabNum + "' class='vertbody'></tbody>" +
                    "</table>" +
                    "</div>");
-        $("#versionNav a[href='#vernav" + this.Name + this.tabNum + "']").tab('show');
-         this.ShowVersions();
-        }
+        $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show');
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+
+        this.ShowVersions();
+    }
 
     this.ShowVersions = function () {
         $.each(this.Versions, this.ShowVersions_inner.bind(this));
-        
+
     }
 
     this.ShowVersions_inner = function (i, obj) {
-        $('#vertbody' + this.Name + this.tabNum).append("<tr>" +
+        $('#vertbody' + this.Name + tabNum).append("<tr>" +
                                    "<td>" + obj.versionNumber + "</td> " +
                                    "<td>" + obj.changeLog + "</td> " +
                                    "<td>" + obj.commitUname + "</td> " +
                                    "<td>" + obj.commitTs + "</td> " +
-                                    "<td><input type='button' id='view_code" + this.Name + this.tabNum +i+ "' class='view_code' value='View' data-id=" + obj.id + " data-verNum=" + obj.versionNumber + "></td>" +
+                                    "<td><input type='button' id='view_code" + this.Name + tabNum + i + "' class='view_code' value='View' data-id=" + obj.id + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
                              " </tr>");
-        $('#view_code' + this.Name + this.tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
+        $('#view_code' + this.Name + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
     };
 
     this.OpenPrevVer = function (e) {
         $(".eb-loader").show();
-        this.tabNum = this.tabNum + 1;
+        tabNum++;
         this.var_id = $(e.target).attr("data-id");
         this.HistoryVerNum = $(e.target).attr("data-verNum");
-        $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes', { "objid": this.var_id, "ver_num": this.HistoryVerNum })
+        this.changeLog = $(e.target).attr("data-changeLog");
+        this.commitUname = $(e.target).attr("data-commitUname");
+        this.commitTs = $(e.target).attr("data-commitTs");
+        $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes', { "objid": this.var_id })
         .done(this.VersionCode_success.bind(this));
     }
 
     this.VersionCode_success = function (data) {
         console.log(data);
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Name + this.tabNum + "'>" +this.Name+" V."+ this.HistoryVerNum + "</a></li>");
-        $('#versionTab').append("<div id='vernav" + this.Name + this.tabNum + "' class='tab-pane fade'>");
-        $('#vernav' + this.Name + this.tabNum).append(" <div><label>"+this.HistoryVerNum+"</label>"+
-            "<textarea id='vercode" + this.tabNum + "' name='vercode' class='code'>" + data + "</textarea>" +
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Name + tabNum + "'>" + this.Name + " V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + this.Name + tabNum + "' class='tab-pane fade'>");
+        $('#vernav' + this.Name + tabNum).append(" <div><label class = 'label label-danger codeEditLabel'>Version V." + this.HistoryVerNum + "</label>" +
+            " <label class = 'label label-success codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
+            "<label  class = 'label label-warning codeEditLabel'>Committed By: " + this.commitUname + " </label>" +
+            " <label class = 'label label-info codeEditLabel'>CommittedAt: " + this.commitTs + "</label>" +
+            "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + data + "</textarea>" +
             "</div>");
-            window.editor = CodeMirror.fromTextArea(document.getElementById("vercode" + this.tabNum), {
-                mode: "text/x-sql",
-                lineNumbers: true,
-                lineWrapping: true,
-                readOnly: true,
-                foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-            });
-          
-            $("#versionNav a[href='#vernav" + this.Name + this.tabNum + "']").tab('show');
-            $(".eb-loader").hide();
-            setTimeout(function () {
-                window.editor.refresh();
-            }, 100);
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        window.editor = CodeMirror.fromTextArea(document.getElementById("vercode" + tabNum), {
+            mode: "text/x-sql",
+            lineNumbers: true,
+            lineWrapping: true,
+            readOnly: true,
+            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+
+        $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show');
+        $(".eb-loader").hide();
+        setTimeout(function () {
+            window.editor.refresh();
+        }, 500);
     };
+
+    this.deleteTab = function (e) {
+        var tabContentId = $(e.target).parent().attr("href");
+        $(e.target).parent().parent().remove(); //remove li of tab
+        $(tabContentId).remove();
+        $('#versionNav a:last').tab('show'); // Select first tab        
+    };
+
     this.Init();
 }
 
@@ -232,6 +255,7 @@ var FilterDialog = function (obj_id) {
             }
             else {
                 alert("no filters ");
+                $(".eb-loader").hide();
             }
         }
     }
@@ -328,6 +352,7 @@ var FilterDialog = function (obj_id) {
         }
         else if ($('#fd option:selected').text() === "Select Filter Dialog") {
             alert("Please select a filter dialog");
+            $(".eb-loader").hide();
         }
         else if ($('#fd option:selected').text() !== "Auto Generate Filter Dialog") {
             this.SelectedFdId = $('#fd option:selected').val();
@@ -363,10 +388,18 @@ var FilterDialog = function (obj_id) {
         });
         ObjString = ObjString.slice(0, -1) + ']';
         this.Object_String_WithVal = ObjString;
-        alert('this.Object_String_WithVal' + this.Object_String_WithVal);
     }
 
     this.DrawTable = function () {
+        $(".eb-loader").show();
+        tabNum++;
+        this.Fd_Name = $('#fdname').val();
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Fd_Name + tabNum + "'>Result-" + this.Fd_Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + this.Fd_Name + tabNum + "' class='tab-pane fade'>");
+        $('#vernav' + this.Fd_Name + tabNum).append("  <div class=' filter_modal_body'>" +
+                  "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
+              "</div>");
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         if (this.ValidInput === true) {
             $.post('GetColumns4Trial', {
                 dsid: this.Ds_id,
@@ -376,6 +409,8 @@ var FilterDialog = function (obj_id) {
         else {
             alert('not valid');
         }
+
+        $("#versionNav a[href='#vernav" + this.Fd_Name + tabNum + "']").tab('show');
     }
 
     this.Load_Table_Columns = function (result) {
@@ -386,7 +421,7 @@ var FilterDialog = function (obj_id) {
         else {
             console.log(cols);
             var cols = JSON.parse(result);
-            $("#sample").dataTable({
+            $("#sample"+tabNum).dataTable({
                 columns: cols,
                 serverSide: true,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -401,7 +436,6 @@ var FilterDialog = function (obj_id) {
             });
             $(".eb-loader").hide();
             $('#filterDialog').modal('hide');
-            $('#filterRun').modal('show');
         }
     }
 
@@ -428,6 +462,13 @@ var FilterDialog = function (obj_id) {
     "<strong>Success!</strong>" +
     "</div>");
     }
+
+    this.deleteTab = function (e) {
+        var tabContentId = $(e.target).parent().attr("href");
+        $(e.target).parent().parent().remove(); //remove li of tab
+        $(tabContentId).remove();
+        $('#versionNav a:last').tab('show'); // Select first tab        
+    };
 
     this.Init();
 }

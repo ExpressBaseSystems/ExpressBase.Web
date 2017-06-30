@@ -36,7 +36,6 @@ var DVObj = function (dsid, settings, login) {
     this.setDropdownDatasource = function (e) {
         $("#loader").show();
         this.dsid = $(e.target).parent().attr("data-dsid");
-        alert("dsid" +this.dsid);
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
         $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
         $.post('../Tenant/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
@@ -45,9 +44,7 @@ var DVObj = function (dsid, settings, login) {
 
     this.getColumnsSuccess = function (data) {
         $("#loader").hide();
-        alert("hhhh----");
         this.TVPrefObj = JSON.parse(data);
-        alert(JSON.stringify(this.TVPrefObj));
         //this.TVPrefObjCopy = JSON.parse(data);
         this.callPost4SettingsTable();
     };
@@ -69,6 +66,9 @@ var DVObj = function (dsid, settings, login) {
         });
         CreatePropGrid(this.settings_tbl.row(0).data(), this.TVPrefObj.columnsext);
         $('#Table_Settings tbody').on('click', 'tr', this.showPropertyGrid.bind(this));
+        //setTimeout(function (){
+        //    $("#Table_Settings_wrapper table:eq(0)").css("min-width", "");
+        //}, 500);
         //$(".modal-content").on("click", function (e) {
         //    if ($(e.target).closest(".font-select").length === 0) {
         //        $(".font-select").removeClass('font-select-active');
@@ -124,9 +124,10 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.initComplete4Settingstbl = function (settings, json) {
-        $('#Table_Settings').DataTable().columns.adjust();
         $('.font').fontselect();
         $("#loader").hide();
+        $('#Table_Settings').DataTable().columns.adjust();
+        
         //this.addEventListner4Settingstbl();
     };
 

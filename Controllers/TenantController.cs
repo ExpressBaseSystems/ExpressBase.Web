@@ -288,17 +288,13 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.FilterDialogs = filterDialogs;
             return View();
         }
-        [HttpGet]
-        public IActionResult VersionCodes()
-        {
-            return View();
-        }
 
         [HttpPost]
-        public IActionResult VersionCodes(int i)
+        public string VersionCodes(/*int i*/)
         {
             var req = this.HttpContext.Request.Form;
-            // var req = this.HttpContext.Request.Query;
+            // var objid = this.HttpContext.Request.Query["objid"];
+            // var ver_num = this.HttpContext.Request.Query["ver_num"];
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), TenantAccountId = ViewBag.cid, Token = ViewBag.token, GetParticularVer = true });
             var rlist = resultlist.Data;
@@ -306,12 +302,12 @@ namespace ExpressBase.Web2.Controllers
             {
                 var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
                 ViewBag.Code = dsobj.Sql;
-                ViewBag.VersionNumber = element.VersionNumber;
-                ViewBag.EditorHint = "CodeMirror.hint.sql";
-                ViewBag.EditorMode = "text/x-sql";
-                ViewBag.Icon = "fa fa-database";
+                //ViewBag.VersionNumber = req["ver_num"];
+                //ViewBag.EditorHint = "CodeMirror.hint.sql";
+                //ViewBag.EditorMode = "text/x-sql";
+                //ViewBag.Icon = "fa fa-database";
             }
-            return View();
+            return ViewBag.Code;
         }
 
         public JsonResult CommitEbDataSource()

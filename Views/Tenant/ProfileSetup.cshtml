@@ -9,6 +9,10 @@
     });
 </script>
 <style>
+    body {
+        background-color: #e5e5e5;
+    }
+
     .btn-file {
         position: relative;
         overflow: hidden;
@@ -32,19 +36,19 @@
         }
 
     .image-cropper {
-    width:65px;
+        width: 65px;
         height: 65px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 50%;
-}
+        position: relative;
+        overflow: hidden;
+        border-radius: 50%;
+    }
 
-.image-cropper img {
-    display: inline;
-    margin: 0 auto;
-    height: 100%;
-    width: auto;
-}
+        .image-cropper img {
+            display: inline;
+            margin: 0 auto;
+            height: 100%;
+            width: auto;
+        }
 
     .dropdown ul.dropdown-menu {
         border-radius: 4px;
@@ -70,17 +74,10 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
+                <li>
                     <div class="image-cropper">
-                           <img class="img-responsive img-rounded" alt="dropdown-toggle" data-toggle="dropdown" src="~/images/proimg.jpg" id="img-upload"/>
+                        <img class="img-responsive img-rounded" src="~/images/proimg.jpg" id="img-upload" />
                     </div>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">My Account<span class="fa fa-user pull-right"></span></a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">My Preferences<span class="fa fa-user pull-right"></span></a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">Sign Out<span class="fa fa-sign-out pull-right"></span></a></li>
-                    </ul>
                 </li>
             </ul>
         </div>
@@ -92,15 +89,15 @@
 
             <!-- edit form column -->
             <div class="col-md-12 personal-info">
-                <div class="alert alert-info alert-dismissable">
+                <div class="alert alert-danger alert-dismissable">
                     <a class="panel-close close" data-dismiss="alert">×</a>
                     <i class="fa fa-thumbs-up fa-2x"></i>
                     Thanks for signing up for ExpressBase Systems! Now edit your Profile.
                 </div>
             </div>
 
-            <div class="col-md-4 col-md-offset-4">
-                <h3>Personal info</h3>
+            <div class="col-md-4 col-md-offset-4 bg-white">
+                <h3 class="text-center">Personal info</h3>
                 <hr>
                 <div class="form-group">
                     <input class="form-control" type="text" name="Name" placeholder="Name">
@@ -148,6 +145,7 @@
                         <input type="button" class="btn btn-primary" value="Skip">
                         </div>
                     </div>
+                </div>
             </div>
         </form>
     </div>

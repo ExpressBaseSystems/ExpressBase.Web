@@ -5,42 +5,47 @@
 <script>
     $("#signUpFree").hide();
 
-     function onSubmit(token) {
+    function onSubmit(token) {
         document.getElementById("signup_form").submit();
-        }
+    }
 </script>
+<style>
+    body {
+        background-color: #e5e5e5;
+    }
+</style>
 <section id="signup" style="margin-top:100px;">
     <div class="container">
-        <div class="row">         
-            <div class="col-md-5 col-md-offset-3">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4 bg-white">
                 <form id="signup_form" role="form" class="form-horizontal" action="~/Ext/TenantExtSignup" method="post" data-toggle="validator">
                     <div class="form-group">
-                        <h4 class="text-center">
+                        <h3 class="text-center">
                             Sign Up
-                        </h4>
-                        <hr /> 
+                        </h3>
+                        <hr />
                         <label for="email" class="col-sm-2 control-label">
-                           
+
                         </label>
                         <div class="col-sm-12">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required style="border:none;border-bottom:1px solid;border-radius:0;outline:0;"/>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required" />
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="password" class="col-sm-2 control-label">
-                            
+
                         </label>
                         <div class="col-sm-12">
-                            <input type="password" class="form-control" data-minlength="8" id="password" name="password" placeholder="Password" data-error="Minimum of 8 characters" style="border:none;border-bottom:1px solid;border-radius:0;outline:0;"/>
+                            <input type="password" class="form-control" data-minlength="8" id="password" name="password" placeholder="Password" data-error="Minimum of 8 characters" />
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <h6>By clicking 'Sign Up', you agree to the Terms of Service and Privacy Policy.</h6>
-                            <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' style="background-color:#3b5998;color:white;border-radius:0;">
+                            <button type="submit" class="btn btn-block btn-flat g-recaptcha btn-primary" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit'>
                                 SIGN UP
                             </button>
                         </div>
@@ -68,7 +73,7 @@
                                     <i class="fa fa-linkedin fa-2x"></i>
                                     <span class="hidden-xs"></span>
                                 </a>
-                                <a href="#" class="btn btn-lg btn-block">
+                                <a href="@ViewBag.EbConfig.ServiceStackUrl/auth/googleoauth" class="btn btn-lg btn-block">
                                     <i class="fa fa-google-plus fa-2x text-danger"></i>
                                     <span class="hidden-xs"></span>
                                 </a>

@@ -81,11 +81,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult ProfileSetup()
-        {
-            ViewBag.EbConfig = this.EbConfig;
-            return View();
-        }
+       
 
         public IActionResult test()
         {
@@ -129,19 +125,20 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+                IServiceClient client = this.EbConfig.GetServiceStackClient();
                 try
                 {
                      var res = client.Post<RegisterResponse>(new Register { Email = req["email"], Password = req["password"] });
-                                     
-                    //if (Convert.ToInt32(res.UserId) >= 0)
-                    //{
-                    //    client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message =string.Format("http://localhost:53431/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
-                    //    return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
-                    //}
+
+                    if (Convert.ToInt32(res.UserId) >= 0)
+                    {
+                        client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message = string.Format("http://localhost:53431/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
+                        return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
+                    }
 
                 }
-                catch (WebServiceException e) { }
+                catch (WebServiceException e) {
+                }
             }
 
             return View();
@@ -261,7 +258,12 @@ namespace ExpressBase.Web.Controllers
 
 
                     if(firstDomain.Length == 1)
-                        return RedirectToAction("TenantDashboard", "Tenant");
+                    {
+                        if(authResponse.User.loginattempts <= 2)
+                            return RedirectToAction("ProfileSetup", "Tenant");
+                        else
+                            return RedirectToAction("TenantDashboard", "Tenant");
+                    }                      
                     else if (firstDomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
                         return RedirectToAction("DevConsole", "Tenant");
                     else
@@ -274,7 +276,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet]
         public IActionResult AfterSignInSocial(string provider, string providerToken, 
-            string email, string socialId)
+            string email, string socialId,int lg)
         {
 
             try
@@ -294,7 +296,13 @@ namespace ExpressBase.Web.Controllers
                     CookieOptions options = new CookieOptions();
                     Response.Cookies.Append("Token", authResponse.BearerToken, options);
                     Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
-                    return RedirectToAction("TenantDashboard", "Tenant");
+                    if(lg <= 1)
+                    {
+                        return RedirectToAction("ProfileSetup", "Tenant");
+                    }
+                    {
+                        return RedirectToAction("TenantDashboard", "Tenant");
+                    }                    
                 }
                 else
                 {

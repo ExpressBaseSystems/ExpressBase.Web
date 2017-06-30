@@ -1,24 +1,59 @@
-﻿var txtBox = {
+﻿var TextBoxObj = {
+    id:"",
     Name: "",
     Label: "",
     Value: "",
     Textmode: "",
-    TextTransform: "LowerCase",
-    Height: 0,
+    TextTransform: "Normal",
+    Font: "consolace",
+    LabelForeColor: "a3ac03",
+    LabelBackColor: "ffac03",
+    TextForeColor: "a3aff3",
+    TextBackColor: "f3acff",
+    Height: "100",
     AutoCompleteOff:false
 }
-function CreatePropGrid(control) {//
+
+var DateObj = {
+    MinDate:""
+}
+
+var FormControls = {
+    TextBox: TextBoxObj,
+    Date: Object.assign(TextBoxObj,DateObj)
+
+}
+
+function CreatePropGrid(control) {
     $('#propGrid').empty();
     $('#propHead').empty().html("<strong> " + control.attr("id") + "</strong>");
     var NumProps = null;
     var metaObj = null;
     //$.each(colExt, function (i, obj) {
         if (control.attr("ebtype").trim() === "TextBox") {
-            NumProps = txtBox
+            NumProps = FormControls.TextBox
             metaObj = {
+                id: { browsable: false },
                 AutoCompleteOff: { group: 'Behavior ', name: 'Aggragate', type: 'boolean' },
-                height: { group: 'Behavior ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
-                TextTransform: { group: 'Behavior ', name: 'LowerCase', type: 'BootstrapDD', options: ['Normal', "LowerCase", "UpperCase"] },
+                height: { group: 'Layout ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
+                LabelForeColor: { group: 'Layout', name: 'LabelForeColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+                LabelBackColor: { group: 'Layout', name: 'LabelBackColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+                TextForeColor: { group: 'Layout', name: 'TextForeColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+                TextBackColor: { group: 'Layout', name: 'TextBackColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+                TextTransform: { group: 'Behavior ', name: 'TextTransform', type: 'BootstrapDD', options: ['Normal', "lower case", "UPPER CASE"] },
+            };
+        }
+        else if (control.attr("ebtype").trim() === "Date") {
+            NumProps = FormControls.Date
+            metaObj = {
+                id: { browsable: false },
+                AutoCompleteOff: { group: 'Behavior ', name: 'Aggragate', type: 'boolean' },
+                height: { group: 'Layout ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
+                LabelForeColor: { group: 'Layout', name: 'LabelForeColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+                LabelBackColor: { group: 'Layout', name: 'LabelBackColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+                TextForeColor: { group: 'Layout', name: 'TextForeColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+                TextBackColor: { group: 'Layout', name: 'TextBackColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+                TextTransform: { group: 'Behavior ', name: 'TextTransform', type: 'BootstrapDD', options: ['Normal', "lower case", "UPPER CASE"] },
             };
         }
         //else

@@ -33,7 +33,27 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult ProfileSetup()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult ProfileSetup(int i)
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
+            if (res.id >= 0)
+            {
+                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
+            }
+
+            return View();
+        }
 
         [HttpGet]
         public IActionResult TenantDashboard()

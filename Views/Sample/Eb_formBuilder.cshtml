@@ -1,116 +1,132 @@
 ﻿
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/ValYouW/jqPropertyGrid/9218bbd5df05bf7efe58591f434ea27ece11a045/jqPropertyGrid.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/ValYouW/jqPropertyGrid/9218bbd5df05bf7efe58591f434ea27ece11a045/jqPropertyGrid.css">
 <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />
 <link rel="stylesheet" type="text/css" href="~/css/Eb.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
 
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-*.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
 <script src='~/js/Eb_dragula.js'></script>
 <script src='~/js/Eb_formBuilder.js'></script>
 <script src='~/js/Eb_FormBuilderPropertyGrid.js'></script>
 <script src='~/js/Eb_PropertyGrid.js'></script>
-
-<div id="con">
-    <div id="form-buider-toolBox" class="form-buider-toolBox">
-        <div class="well well-sm"><strong>ToolBox</strong></div>
-        <div class="well well-sm">
-            TextBox
-        </div>
-        <div class="well well-sm">
-            Label
-        </div>
-        <div class="well well-sm">
-            ComboBox
-        </div><div class="well well-sm">
-            Button
-        </div>
-        <div class="well well-sm">
-            CheckBox
-        </div>
-        <div class="well well-sm">
-            NumericBox
-        </div>
-        <div class="well well-sm">
-            Date
-        </div>
-        <div class="well well-sm">
-            GridView
-        </div>
-    </div>
-
-    <div id="form-buider-form" class="form-buider-form">
-
-    </div>
-
-
-    <div id='form-buider-propGrid' class='property-grid-cont'>
-            <div style="background-color:#ccc; padding:5px; font-weight: bold;">Properties<i class="fa fa-times" style="float:right" onclick="$(this).parent().parent().css('visibility','hidden')" aria-hidden="true"></i><i class="fa fa-thumb-tack" style="float:right; margin-top: 1px; margin-right: 5px;" aria-hidden="true"></i></div>
-            <select class="selectpicker">
-                <option>TextBox0</option>
-                <option>TextBox1</option>
-                <option>TextBox2</option>
-            </select>
-            @*<div id='propHead'></div>*@
-        <div id='propGrid' style="overflow-y:auto"></div>
-    </div>
-
-
+<div class="form-group">
+    <input type="text" id="save_txtBox" class="form-control" placeholder="Save As...">
+    <button id="saveformBtn" onclick="saveForm();" type ="submit" class="btn btn-default">Save</button>
 </div>
-<script>
-    var t = new formBuilder("form-buider-toolBox", "form-buider-form");
-    $('.selectpicker').selectpicker({
-        style: 'btn-default',
-        size: 4
-    });
 
-</script>
-<style>
-    /*overridding*/
-    .pgGroupCell {
-        padding: 2px!important;
-        font-weight: normal!important;
-    }
+    <div id="con">
+        <div id="form-buider-toolBox" class="form-buider-toolBox">
+            <div class="well well-sm"><strong>ToolBox</strong></div>
+            <div class="well well-sm">
+                TextBox
+            </div>
+            <div class="well well-sm">
+                Label
+            </div>
+            <div class="well well-sm">
+                ComboBox
+            </div><div class="well well-sm">
+                Button
+            </div>
+            <div class="well well-sm">
+                CheckBox
+            </div>
+            <div class="well well-sm">
+                NumericBox
+            </div>
+            <div class="well well-sm">
+                Date
+            </div>
+            <div class="well well-sm">
+                GridView
+            </div>
+        </div>
 
-    .property-grid-cont .btn:first-child {
-    margin-left: 0!important;
-    border-radius: 0px!important;
-}
+        <div id="form-buider-form" class="form-buider-form">
+            <textarea id="txtValues" rows="15" cols="40"></textarea>
+        </div>
 
-    .btn {
-        padding: 3px 12px !important;
-        width: 100%;
-    }
 
-    table td {
-        border: 1px dashed #cccccc;
-        padding: 1px;
-        vertical-align: initial;
-    }
+        <div id='form-buider-propGrid' class='property-grid-cont'>
+            <div style="background-color:#ccc; padding:5px; font-weight: bold; cursor: move;">Properties<i class="fa fa-times" style="float:right; cursor:default;" onclick="$(this).parent().parent().css('visibility','hidden')" aria-hidden="true"></i><i class="fa fa-thumb-tack" style="float:right; margin-top: 1px; cursor:default; margin-right: 5px;" aria-hidden="true"></i></div>
+            <div class="controls-dd-cont">
+                <select class="selectpicker" data-live-search="true"> </select>
+            </div>
+            <div id='propGrid' class="propgrid-table-cont"></div>
+        </div>
 
-    .moveBtn {
-        font-size: 10px;
-        vertical-align: top;
-        margin-left: 6px;
-        margin-top: 3px;
-        opacity: .9;
-    }
 
-    .close {
-        margin-top: -1px;
-        height: 17px;
-    }
+    </div>
+    <script>
+        var t = new formBuilder("form-buider-toolBox", "form-buider-form");
+        $("#form-buider-propGrid").draggable();
+    </script>
+    <style>
+        /*overridding*/
 
-        .close:hover, .close:focus {
-            color: #f00 !important;
-            opacity: .6 !important;
+        .property-grid-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+            width: 100%;
         }
 
-    table {
-        width: 100%;
-        height: inherit;
-    }
-</style>
+        .property-grid-cont .sp-preview {
+            width: calc(100% - 15px) !important;
+            height: 15px;
+        }
+
+        .property-grid-cont .sp-replacer {
+            width: 100% !important;
+            padding: 2px;
+        }
+
+        .property-grid-cont .pgGroupCell {
+            padding: 2px !important;
+            font-weight: normal !important;
+        }
+
+        .property-grid-cont .btn:first-child {
+            margin-left: 0 !important;
+            border-radius: 0px !important;
+        }
+
+        .form-buider-form .btn {
+            padding: 3px 12px !important;
+            width: 100%;
+        }
+
+        .form-buider-form table td {
+            border: 1px dashed #cccccc;
+            padding: 1px;
+            vertical-align: initial;
+        }
+
+        .moveBtn {
+            font-size: 10px;
+            vertical-align: top;
+            margin-left: 6px;
+            margin-top: 3px;
+            opacity: .9;
+        }
+
+        .close {
+            margin-top: -1px;
+            height: 17px;
+        }
+
+            .close:hover, .close:focus {
+                color: #f00 !important;
+                opacity: .6 !important;
+            }
+
+        table {
+            width: 100%;
+            height: inherit;
+        }
+    </style>

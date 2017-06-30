@@ -50,48 +50,46 @@ namespace ExpressBase.Web.Filters
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            string area = null;
             var host = context.HttpContext.Request.Host;
             var path = context.HttpContext.Request.Path;
 
-            string[] subdomain = host.ToString().Split('.');
-            string[] subpaths = path.ToString().Split('/');
+            string[] subdomain = host.Host.Split('.');
+           // string[] subpaths = path.ToString().Split('/');
 
-            if (subpaths.Length <= 2)
+            if (path == "/")
             {
-                if (subdomain.Length == 3) // DEV CONSOLE
+                if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
                 {
-                    area = subdomain[1];
-                    context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                    context.RouteData.Values["action"] = "DevSignIn";
-                    // context.RouteData.Values["area"]= area;
+                    if (subdomain.Length == 3) // USER CONSOLE
+                    {
+                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                        context.RouteData.Values["action"] = "UsrSignIn";
+                    }
+                    else // TENANT CONSOLE
+                    {
+                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                        context.RouteData.Values["action"] = "Index";
+                    }
                 }
-                else if (subdomain.Length == 2) // USER CONSOLE
+                else if (host.Host.EndsWith("localhost"))
                 {
-                    area = subdomain[0];
-                    context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                    context.RouteData.Values["action"] = "UsrSignIn";
-                    // context.RouteData.Values.Add("area", area);
-                }
-                else if (subdomain.Length == 1) // TENANT CONSOLE
-                {
-                    context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                    context.RouteData.Values["action"] = "Index";
+                    if (subdomain.Length == 2) // USER CONSOLE
+                    {
+                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                        context.RouteData.Values["action"] = "UsrSignIn";
+                    }
+                    else // TENANT CONSOLE
+                    {
+                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                        context.RouteData.Values["action"] = "Index";
+                    }
                 }
             }
-            else
-            {
-                if (subdomain.Length == 3) // DEV CONSOLE
-                    area = subdomain[1];
-                else if (subdomain.Length == 2) // USER CONSOLE
-                    area = subdomain[0];
-                else if (subdomain.Length == 1) // TENANT CONSOLE
-                    area = null;
-
-                context.RouteData.Values["controller"] = subpaths[1]; //Goes to the relevant Controller  class
-                context.RouteData.Values["action"]= subpaths[2];
-                //context.RouteData.Values.Add("area", area);
-            }
+            //else
+            //{
+            //    context.RouteData.Values["controller"] = subpaths[1]; //Goes to the relevant Controller  class
+            //    context.RouteData.Values["action"] = subpaths[2];
+            //}
 
             await base.RouteAsync(context);
         }

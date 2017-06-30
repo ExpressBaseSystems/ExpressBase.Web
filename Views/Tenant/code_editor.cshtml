@@ -35,57 +35,74 @@
                     e.preventDefault();
                     $("#save").trigger("click");
                 }
-            });          
+            });
         });
     </script>
 </head>
 <body>
     <div class='eb-loader'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>
-    @*<span>*@
-    <div class="btn-group">
-        <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn btn-sm btn-info fa fa-plus-square  fa-1x" aria-hidden="true"></i></a>
-        <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-sm btn-info fa fa-save fa-1x" aria-hidden="true"></i></a>
-        <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-sm btn-info fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
-        <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-sm btn-info fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-        <a class="comp" id="comp" data-toggle="tooltip" title="Compare"><i class="btn btn-info btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
-        <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-sm btn-info fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-        <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-info fa fa-play fa-1x" aria-hidden="true"></i></a>
-        <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn btn-sm btn-info fa fa-code-fork fa-1x" aria-hidden="true"></i></a>
-    </div>
-    <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-sm btn-info fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
-    @ViewBag.Status
-    <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-sm btn-info fa fa-history fa-1x" aria-hidden="true"></i></a>
-    Version v.@ViewBag.VersionNumber
-    @*</span>*@
-    <div id="objCollapse" class="collapse">
-        <div class="form-group inputBox ">
-            <label class="control-label">DataSource Name</label>
-            <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control " />
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <div class="form-group " style="float:left">
+                <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control inputBox" />
+            </div>
+            <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn-default btn btn-sm fa fa-plus-square  fa-1x" aria-hidden="true"></i></a>
+            <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn-default btn btn-sm fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+            <a class="comp" id="comp" data-toggle="tooltip" title="Compare"><i class="btn-default btn btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
+            <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn-default btn btn-sm fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
+            <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn btn-sm fa fa-code-fork fa-1x" aria-hidden="true"></i></a>
+            <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn-default btn btn-sm fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
+            <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-default btn btn-sm fa fa-history fa-1x" aria-hidden="true"></i></a>
+            <span class="label label-success codeEditLabel">Status : @ViewBag.Status</span>
+            <span class="label label-warning codeEditLabel"> Version v.@ViewBag.VersionNumber</span>
         </div>
-        <div class="form-group inputBox ">
-            <label class="control-label">Description</label>
-            <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
-        </div>
-        <div class="dropdown fdlist">
-            <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
-                @{
-                    @using ExpressBase.Objects.ServiceStack_Artifacts;
-                    Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
-                    filterDialogs = ViewBag.FilterDialogs;
-                    <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
-                    <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
-                    foreach (var filter in filterDialogs)
-                    {
-                        <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
-                    }
-                }
-            </select>
+
+        <div id="objCollapse" class="collapse">
+            <div class="form-group ">
+                <label class="control-label">Description</label>
+                <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
+            </div>
         </div>
     </div>
-    <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
-    <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
-    <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-    <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
+    <div class="container">
+        <ul class="nav nav-tabs versionNav" id="versionNav">
+            <li class="active"><a data-toggle="tab" href="#code_edit0">@ViewBag.ObjectName</a></li>
+        </ul>
+
+        <div class="tab-content " id="versionTab">
+            <div id="code_edit0" class="tab-pane fade in active">
+                <div class="btn-group">
+                    <div class="dropdown fdlist btn-group">
+                        <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
+                            @{
+                                @using ExpressBase.Objects.ServiceStack_Artifacts;
+                                Dictionary
+                                <int, EbObjectWrapper>
+                                    filterDialogs = new Dictionary<int, EbObjectWrapper>
+                                        ();
+                                filterDialogs = ViewBag.FilterDialogs;
+                                <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
+                                <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
+                                foreach (var filter in filterDialogs)
+                                {
+                                    <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="btn-group">
+                        <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-sm btn-default fa fa-save fa-1x" aria-hidden="true"></i></a>
+                        <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-sm btn-default fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
+                        <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
+                <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
+                <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
+                <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
+            </div>
+        </div>
+    </div>
 
     <div id="filterDialog" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -122,55 +139,6 @@
             </div>
         </div>
     </div>
-
-
-    <div id="filterRun" class="modal fade" role="dialog">
-        <div class="modal-dialog" style="height:100%;width:100%">
-            <!-- Modal content-->
-            <div class="modal-content" style="height:auto;min-height:100%">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Run Query </h4>
-                </div>
-                <div class="modal-body filter_modal_body">
-                    <table class="table table-striped table-bordered" id="sample"></table>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="versionHist" class="modal fade" role="dialog">
-        <div class="modal-dialog" style="height:80%;width:80%">
-            <!-- Modal content-->
-            <div class="modal-content" style="height:auto;min-height:100%">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Version History</h4>
-                </div>
-                <div class="modal-body filter_modal_body">
-                    <table class="table table-striped table-bordered" id="versions">
-                        <thead class="verthead">
-                            <tr>
-                                <th class="col-md-1">Version Number</th>
-                                <th class="col-md-5">Change Log</th>
-                                <th class="col-md-1">Committed By</th>
-                                <th class="col-md-2">Committed At</th>
-                                <th class="col-md-1"> </th>
-                            </tr>
-                        </thead>
-                        <tbody id="vertbody" class="vertbody"></tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script type="text/javascript">
         window.onload = function() {
             CodeMirror.commands.autocomplete = function(cm)
@@ -188,8 +156,6 @@
             });
 
         };
-
-
     </script>
 </body>
 </html>
@@ -211,6 +177,7 @@
 
     .inputBox {
         width: 216px;
+        height: 27px;
     }
 
     .controls-group {
@@ -224,5 +191,19 @@
     .eb-loader {
         margin-top: 20%;
         margin-left: 50%;
+    }
+
+    .versionNav li a {
+        height: 33px;
+    }
+
+    .codeEditLabel {
+        height: 27px;
+        padding-top: 5px;
+        padding-bottom: 9px;
+    }
+
+    .btn {
+        border-radius: 2px;
     }
 </style>

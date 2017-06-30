@@ -493,7 +493,7 @@ var CustomFilterDialogFuncs = function (acid, obj_id, obj_name, obj_desc, code, 
     this.FilterD = function () {
        
             $('#saveFilter').on("click", function () {
-                $.post("http://localhost:53431/Tenant/SaveEbDataSource", { "Id": obj_id, "Code": code, "Name": obj_name, "Description": obj_desc, "Token": getToken(), "isSave": "true", "VersionNumber": versionNumber }, function (result) {
+                $.post("http://expressbase.org/Tenant/SaveEbDataSource", { "Id": obj_id, "Code": code, "Name": obj_name, "Description": obj_desc, "Token": getToken(), "isSave": "true", "VersionNumber": versionNumber }, function (result) {
                 });
             });
         

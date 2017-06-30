@@ -31,6 +31,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public IActionResult DevSignIn()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
+
         public IActionResult AboutUs()
         {
             ViewBag.EbConfig = this.EbConfig;
@@ -63,11 +69,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult DevSignIn()
-        {
-            ViewBag.EbConfig = this.EbConfig;
-            return View();
-        }
+       
 
         public IActionResult UsrSignIn()
         {
@@ -81,11 +83,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult ProfileSetup()
-        {
-            ViewBag.EbConfig = this.EbConfig;
-            return View();
-        }
+       
 
         public IActionResult test()
         {
@@ -93,8 +91,13 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpPost]
+        public IActionResult TenanatAcc()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
 
+        [HttpPost]
         public async Task<IActionResult> TenantExtSignup()
         {
             var req = this.HttpContext.Request.Form;
@@ -129,19 +132,20 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+                IServiceClient client = this.EbConfig.GetServiceStackClient();
                 try
                 {
                      var res = client.Post<RegisterResponse>(new Register { Email = req["email"], Password = req["password"] });
-                                     
-                    //if (Convert.ToInt32(res.UserId) >= 0)
-                    //{
-                    //    client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message =string.Format("http://localhost:53431/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
-                    //    return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
-                    //}
+
+                    if (Convert.ToInt32(res.UserId) >= 0)
+                    {
+                        client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message = string.Format("http://expressbase.org/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
+                        return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
+                    }
 
                 }
-                catch (WebServiceException e) { }
+                catch (WebServiceException e) {
+                }
             }
 
             return View();
@@ -162,25 +166,38 @@ namespace ExpressBase.Web.Controllers
         public async Task<IActionResult> TenantSignin(int i)
         {
             ViewBag.EbConfig = this.EbConfig;
-            string url = this.HttpContext.Request.Headers["HOST"];
-            string[] firstDomain = url.Split('.');
+           // string url = this.HttpContext.Request.Headers["HOST"];
+            var host = this.HttpContext.Request.Host;
+            string[] subdomain = host.Host.Split('.');
             string whichconsole = null;
 
-            if (firstDomain.Length == 2)
+            if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
             {
-                ViewBag.cid = firstDomain[0];
-                whichconsole = "uc";
+                if (subdomain.Length == 3) // USER CONSOLE
+                {
+                    ViewBag.cid = subdomain[0];
+                    whichconsole = "uc";
+                }
+                else // TENANT CONSOLE
+                {
+                    ViewBag.cid = "expressbase";
+                    whichconsole = "tc";
+                }
             }
-            else if (firstDomain.Length == 3)
+            else if (host.Host.EndsWith("localhost"))
             {
-                ViewBag.cid = firstDomain[1];
-                whichconsole = "dc";
+                if (subdomain.Length == 2) // USER CONSOLE
+                {
+                    ViewBag.cid = subdomain[0];
+                    whichconsole = "uc";
+                }
+                else // TENANT CONSOLE
+                {
+                    ViewBag.cid = "expressbase";
+                    whichconsole = "tc";
+                }
             }
-            else
-            {
-                ViewBag.cid = "expressbase";
-                whichconsole = "tc";
-            }        
+               
             var req = this.HttpContext.Request.Form;
             MyAuthenticateResponse authResponse = null;
 
@@ -260,10 +277,15 @@ namespace ExpressBase.Web.Controllers
                     }
 
 
-                    if(firstDomain.Length == 1)
-                        return RedirectToAction("TenantDashboard", "Tenant");
-                    else if (firstDomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
-                        return RedirectToAction("DevConsole", "Tenant");
+                    if(subdomain.Length == 2)
+                    {
+                        if(authResponse.User.loginattempts <= 2)
+                            return RedirectToAction("ProfileSetup", "Tenant");
+                        else
+                            return RedirectToAction("TenantDashboard", "Tenant");
+                    }                      
+                    else if (subdomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
+                        return RedirectToAction("DevConsole", "Dev");
                     else
                         return RedirectToAction("UserDashboard", "TenantUser");
                     
@@ -274,7 +296,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet]
         public IActionResult AfterSignInSocial(string provider, string providerToken, 
-            string email, string socialId)
+            string email, string socialId,int lg)
         {
 
             try
@@ -294,7 +316,13 @@ namespace ExpressBase.Web.Controllers
                     CookieOptions options = new CookieOptions();
                     Response.Cookies.Append("Token", authResponse.BearerToken, options);
                     Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
-                    return RedirectToAction("TenantDashboard", "Tenant");
+                    if(lg <= 1)
+                    {
+                        return RedirectToAction("ProfileSetup", "Tenant");
+                    }
+                    {
+                        return RedirectToAction("TenantDashboard", "Tenant");
+                    }                    
                 }
                 else
                 {

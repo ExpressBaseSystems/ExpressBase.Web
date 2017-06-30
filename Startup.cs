@@ -79,8 +79,15 @@ namespace ExpressBase.Web2
             {
                 routes.DefaultHandler = areaRouter;
                 routes.MapRoute(
+                 name: "developer",
+                 template: "dev",
+                 defaults: new { controller = "Ext", action = "DevSignIn" }
+                );
+
+                routes.MapRoute(
                     name: "default",
-                    template: "{controller=Ext}/{action=Index}/{id?}");
+                    template: "{controller=Ext}/{action=Index}");
+
             });
         }
     }

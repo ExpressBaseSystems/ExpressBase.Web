@@ -33,7 +33,27 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult ProfileSetup()
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult ProfileSetup(int i)
+        {
+            ViewBag.EbConfig = this.EbConfig;
+            var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
+            if (res.id >= 0)
+            {
+                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
+            }
+
+            return View();
+        }
 
         [HttpGet]
         public IActionResult TenantDashboard()
@@ -268,17 +288,13 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.FilterDialogs = filterDialogs;
             return View();
         }
-        [HttpGet]
-        public IActionResult VersionCodes()
-        {
-            return View();
-        }
 
         [HttpPost]
-        public IActionResult VersionCodes(int i)
+        public string VersionCodes(/*int i*/)
         {
             var req = this.HttpContext.Request.Form;
-            // var req = this.HttpContext.Request.Query;
+            // var objid = this.HttpContext.Request.Query["objid"];
+            // var ver_num = this.HttpContext.Request.Query["ver_num"];
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), TenantAccountId = ViewBag.cid, Token = ViewBag.token, GetParticularVer = true });
             var rlist = resultlist.Data;
@@ -286,12 +302,12 @@ namespace ExpressBase.Web2.Controllers
             {
                 var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
                 ViewBag.Code = dsobj.Sql;
-                ViewBag.VersionNumber = element.VersionNumber;
-                ViewBag.EditorHint = "CodeMirror.hint.sql";
-                ViewBag.EditorMode = "text/x-sql";
-                ViewBag.Icon = "fa fa-database";
+                //ViewBag.VersionNumber = req["ver_num"];
+                //ViewBag.EditorHint = "CodeMirror.hint.sql";
+                //ViewBag.EditorMode = "text/x-sql";
+                //ViewBag.Icon = "fa fa-database";
             }
-            return View();
+            return ViewBag.Code;
         }
 
         public JsonResult CommitEbDataSource()
@@ -463,10 +479,7 @@ namespace ExpressBase.Web2.Controllers
             return rlist;
         }
 
-        public IActionResult objects()
-        {
-            return View();
-        }
+        
 
         public IActionResult ds_save()
         {
@@ -497,11 +510,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        public IActionResult DevConsole()
-        {
-
-            return View();
-        }
+       
 
         public IActionResult DVList()
         {

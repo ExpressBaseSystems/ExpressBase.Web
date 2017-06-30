@@ -8,12 +8,12 @@
             if (RowObj.type.toString().trim() === "System.Int32" || RowObj.type.toString().trim() === "System.Decimal" ||  RowObj.type.toString().trim() === "System.Int16" ||  RowObj.type.toString().trim() === "System.Int64"){
                 NumProps = {
                     AggInfo: obj.AggInfo,
-                    DecimalPlace: obj.DecimalPlace,
+                    DecimalPlace: obj.DecimalPlace.toString(),
                     RenderAs: obj.RenderAs.toString()
                 };
                 metaObj = {
                     AggInfo: { group: 'Behavior ', name: 'Aggragate', type: 'boolean' },
-                    DecimalPlace: { group: 'Behavior ', name: 'DecimalPlace', type: 'number', options: { min: 0, max: 500, step: 10 } },
+                    DecimalPlace: { group: 'Behavior ', name: 'DecimalPlace'},
                     RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', "Progressbar" ] },
                 };
             } else if (RowObj.type.toString().trim() === "System.Boolean") {
@@ -82,7 +82,7 @@
                 "<ul class='dropdown-menu'>"
                 $.each(meta.options, function (i, val) {
                     _html += "<li><a  id=" + elemId + i + "  href='#' data-dvid='" + val.value + "'>" + val.text + "</a></li>"
-                    if (value !== null) {
+                    if (value !== null && value !== undefined) {
                         if (val.value.toString() === value.toString())
                             txt = val.text;
                     }
@@ -108,7 +108,8 @@
             $(this).parent().siblings('[data-toggle=dropdown]').attr("data-dvid", $(this).children().attr("data-dvid"));
             saveObj();
         });
-        $('#propGrid table td').find("input").change(function () { saveObj(); });
+        $('#propGrid table td').find("input").change(function () {saveObj(); });
+        //$('#propGrid table td input').change(function (e) {  saveObj(); });
     }, 1);
 
     $('#propGrid').jqPropertyGrid(NumProps, { meta: metaObj, customTypes: theCustomTypes });

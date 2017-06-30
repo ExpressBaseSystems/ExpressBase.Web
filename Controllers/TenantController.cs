@@ -686,11 +686,11 @@ namespace ExpressBase.Web2.Controllers
                 colDef += string.Format(",\"title\": \"{0}<span hidden>{0}</span>\"", column.ColumnName);
                 var vis = (column.ColumnName == "id") ? false.ToString().ToLower() : true.ToString().ToLower();
                 colDef += ",\"visible\": " + vis;
-                colDef += ",\"width\": " + 100;
+                colDef += ",\"width\": \"100px\"";
                 colDef += ",\"name\": \"" + column.ColumnName + "\"";
                 colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
-                //var cls = (column.Type.ToString() == "System.Boolean") ? "dt-center tdheight" : "tdheight";
-                colDef += ",\"className\": \"tdheight\"";
+                var cls = (column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int64") ? "dt-right tdheight" : "tdheight";
+                colDef += ",\"className\": \""+ cls + "\"";
                 colDef += "},";
             }
             colDef = colDef.Substring(0, colDef.Length - 1) + "],";

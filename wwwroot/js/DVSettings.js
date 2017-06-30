@@ -112,8 +112,8 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.renderFontSelect = function (data, type, row, meta) {
-        if (data.length > 8 ) {
-            var fontName = data.replace("tdheight", " ");
+        var fontName = data.replace("tdheight", " ").replace("dt-right"," ");
+        if (fontName === "") {
             fontName = fontName.substring(5).replace(/_/g, " ");
             index = fontName.lastIndexOf(" ");
             fontName = fontName.substring(0, index);
@@ -167,10 +167,17 @@ var DVObj = function (dsid, settings, login) {
                     var replacedName = fontName.replace(/ /g, "_");
                     style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
                     document.getElementsByTagName('head')[0].appendChild(style);
-                    cls = 'font_' + replacedName + ' tdheight';
+                    if (ty == "System.Int32" || ty == "System.Decimal" || ty == "System.Int64")
+                        cls = 'font_' + replacedName + ' tdheight dt-right';
+                    else
+                        cls = 'font_' + replacedName + ' tdheight';
                 }
-                else
-                    cls = 'tdheight';
+                else {
+                    if (ty == "System.Int32" || ty == "System.Decimal" || ty == "System.Int64")
+                        cls = 'tdheight dt-right';
+                    else
+                        cls = 'tdheight';
+                }
             }
             
             if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }

@@ -4,12 +4,12 @@ function saveForm() {
     alert(JSON.stringify(FormControls));
 }
 
-function CreatePropGrid(control) {
+var createPgrid =  function(control) {
     //control objects
     {
         var TextBoxObj = {
             props: {
-                id:"ID",
+                id: "ID",
                 Name: control.attr("id"),
                 Label: "",
                 Value: "",
@@ -91,10 +91,10 @@ function CreatePropGrid(control) {
     $('#propHead').empty().html("<strong> " + control.attr("id") + "</strong>");
     var Props = null;
     var Props = null;
-    
+
     //$.each(colExt, function (i, obj) {
     if (control.attr("ebtype").trim() === "TextBox") {
-        Props = control.data("propsObj")|| TextBoxObj.props
+        Props = control.data("propsObj") || TextBoxObj.props
         metaObj = TextBoxObj.meta;
     }
     else if (control.attr("ebtype").trim() === "Date") {
@@ -195,4 +195,4 @@ function CreatePropGrid(control) {
         var selected = $(this).find("option:selected").val();
         $("#" + selected).focus();
     });
-}
+};

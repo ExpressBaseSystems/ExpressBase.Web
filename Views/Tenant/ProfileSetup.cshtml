@@ -88,7 +88,7 @@
 </nav>
 <div class="container">
     <div class="row">
-        <form class="form-horizontal" role="form">
+        <form class="form-horizontal" role="form" method="post">
 
             <!-- edit form column -->
             <div class="col-md-12 personal-info">
@@ -103,23 +103,24 @@
                 <h3>Personal info</h3>
                 <hr>
                 <div class="form-group">
-                    <input class="form-control" type="text" placeholder="Name">
+                    <input class="form-control" type="text" name="Name" placeholder="Name">
                 </div>
-                <div class="form-group">
+                @*<div class="form-group">
                     <input class="form-control" type="date" placeholder="Name">
+                </div>*@
+                <div class="form-group">
+                    <input class="form-control" type="text" name="Phone" placeholder="Phone">
+                    @*<div class="input-phone"></div>*@
                 </div>
                 <div class="form-group">
-                    <div class="input-phone"></div>
+                    <input class="form-control" type="text" name="Company" placeholder="Company">
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" placeholder="Company">
-                </div>
-                <div class="form-group">
-                    <input class="form-control" type="text" value="" placeholder="Designtion">
+                    <input class="form-control" type="text" name="Designation" placeholder="Designation">
                 </div>
                 <div class="form-group">
                     <div class="ui-select">
-                        <select id="user_time_zone" class="form-control">
+                        <select id="user_time_zone" name="Employees" class="form-control">
                             <option value="0">Employees</option>
                             <option value="1-10">1-10</option>
                             <option value="11-50">11-50</option>
@@ -134,13 +135,14 @@
                     <div class="input-group">
 
                         <input id="imgInp" type="file" style="display:none;" />
-                        <input class="form-control" type="text" placeholder="Uplaoad Photo">
+                        <input class="form-control" type="text" placeholder="Upload Photo">
                         <span class="input-group-addon" onclick="$('#imgInp').click();"><i class="fa fa-folder-open"></i></span>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <input type="button" class="btn btn-primary" value="Save">
+                        <input type="hidden" id="proimg" name="proimg" />
+                        <input type="submit" class="btn btn-primary" value="Save">
                     </div>
                     <div class="col-md-3">
                         <input type="button" class="btn btn-primary" value="Skip">
@@ -173,6 +175,8 @@
                 var reader = new FileReader();
 
                 reader.onload = function (e) {
+                  
+                    $('#proimg').val(reader.result);
                     $('#img-upload').attr('src', e.target.result);
                 }
 

@@ -276,19 +276,49 @@ namespace ExpressBase.Web.Controllers
                         Response.Cookies.Append("UserName", req["uname"], options);
                     }
 
-
-                    if(subdomain.Length == 2)
+                    if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
                     {
-                        if(authResponse.User.loginattempts <= 2)
+                        if (subdomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
+                            return RedirectToAction("DevConsole", "Dev");
+
+                        else if (subdomain.Length == 3) // USER CONSOLE
+                            return RedirectToAction("UserDashboard", "TenantUser");
+
+                        else if (authResponse.User.loginattempts <= 2) // TENANT CONSOLE
                             return RedirectToAction("ProfileSetup", "Tenant");
                         else
                             return RedirectToAction("TenantDashboard", "Tenant");
-                    }                      
-                    else if (subdomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
-                        return RedirectToAction("DevConsole", "Dev");
+                    }
+
+                    else if (host.Host.EndsWith("localhost"))
+                    {
+                        if (subdomain.Length == 2 && authResponse.User.RoleCollection.HasSystemRole())
+                            return RedirectToAction("DevConsole", "Dev");
+
+                        else if (subdomain.Length == 2) // USER CONSOLE
+                            return RedirectToAction("UserDashboard", "TenantUser");
+
+                        else if (authResponse.User.loginattempts <= 2) // TENANT CONSOLE  
+                            return RedirectToAction("ProfileSetup", "Tenant");
+                        else
+                            return RedirectToAction("TenantDashboard", "Tenant");            
+                    }
                     else
-                        return RedirectToAction("UserDashboard", "TenantUser");
-                    
+                        return RedirectToAction("Error", "Ext");
+
+
+                    //if (subdomain.Length == 2)
+                    //{
+                    //    if(authResponse.User.loginattempts <= 2)
+                    //        return RedirectToAction("ProfileSetup", "Tenant");
+                    //    else
+                    //        return RedirectToAction("TenantDashboard", "Tenant");
+                    //}                      
+                    //else if (subdomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
+                    //    return RedirectToAction("DevConsole", "Dev");
+                    //else
+                    //    return RedirectToAction("UserDashboard", "TenantUser");
+
                 }
             }
         }

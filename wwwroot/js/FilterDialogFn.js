@@ -49,7 +49,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         }
         else {
             $(".eb-loader").show();
-            $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/SaveEbDataSource",
+            $.post("http://dev.eb_roby_dev.localhost:53431/Dev/SaveEbDataSource",
                 {
                     "Id": this.Obj_Id,
                     "Code": this.Code,
@@ -67,7 +67,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         $('.alert').remove();
         this.SetValues();
         if (this.Obj_Id === 0) {
-            $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/CommitEbDataSource",
+            $.post("http://dev.eb_roby_dev.localhost:53431/Dev/CommitEbDataSource",
                    {
                        "Id": this.Obj_Id,
                        "Code": this.Code,
@@ -78,7 +78,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
                        "VersionNumber": this.Version_num
                    }, this.Success_alert.bind(this));
         }
-        var Dswzd = new EbWizard("http://dev.eb_roby_dev.localhost:53431/Tenant/ds_save", "http://dev.eb_roby_dev.localhost:53431/Tenant/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
+        var Dswzd = new EbWizard("http://dev.eb_roby_dev.localhost:53431/Dev/ds_save", "http://dev.eb_roby_dev.localhost:53431/Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
         Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num).DataSource;
 
     }
@@ -95,7 +95,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
 
     this.VerHistory = function () {
         $(".eb-loader").show();
-        $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/GetVersions",
+        $.post("http://dev.eb_roby_dev.localhost:53431/Dev/GetVersions",
                           {
                               "Id": this.Obj_Id
                           }, this.Version_List.bind(this));

@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DevSignIn()
         {
-            ViewBag.EbConfig = this.EbConfig;
+            ViewBag.EbConfig = this.EbConfig;         
             return View();
         }
 
@@ -170,13 +170,25 @@ namespace ExpressBase.Web.Controllers
             var host = this.HttpContext.Request.Host;
             string[] subdomain = host.Host.Split('.');
             string whichconsole = null;
+            var req = this.HttpContext.Request.Form;
+
+           
 
             if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
             {
                 if (subdomain.Length == 3) // USER CONSOLE
                 {
-                    ViewBag.cid = subdomain[0];
-                    whichconsole = "uc";
+                    if (!string.IsNullOrEmpty(req["console"]))
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "dc";
+                    }
+                    else
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "uc";
+                    }
+                   
                 }
                 else // TENANT CONSOLE
                 {
@@ -188,8 +200,16 @@ namespace ExpressBase.Web.Controllers
             {
                 if (subdomain.Length == 2) // USER CONSOLE
                 {
-                    ViewBag.cid = subdomain[0];
-                    whichconsole = "uc";
+                    if (!string.IsNullOrEmpty(req["console"]))
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "dc";
+                    }
+                    else
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "uc";
+                    }
                 }
                 else // TENANT CONSOLE
                 {
@@ -198,7 +218,10 @@ namespace ExpressBase.Web.Controllers
                 }
             }
                
-            var req = this.HttpContext.Request.Form;
+            
+               
+
+
             MyAuthenticateResponse authResponse = null;
 
             string token = req["g-recaptcha-response"];
@@ -278,10 +301,10 @@ namespace ExpressBase.Web.Controllers
 
                     if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
                     {
-                        if (subdomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
+                        if (subdomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole() && whichconsole=="dc")
                             return RedirectToAction("DevConsole", "Dev");
 
-                        else if (subdomain.Length == 3) // USER CONSOLE
+                        else if (subdomain.Length == 3 && whichconsole == "uc") // USER CONSOLE
                             return RedirectToAction("UserDashboard", "TenantUser");
 
                         else if (authResponse.User.loginattempts <= 2) // TENANT CONSOLE
@@ -292,13 +315,13 @@ namespace ExpressBase.Web.Controllers
 
                     else if (host.Host.EndsWith("localhost"))
                     {
-                        if (subdomain.Length == 2 && authResponse.User.RoleCollection.HasSystemRole())
+                        if (subdomain.Length == 2 && authResponse.User.RoleCollection.HasSystemRole() && whichconsole == "dc")
                             return RedirectToAction("DevConsole", "Dev");
 
-                        else if (subdomain.Length == 2) // USER CONSOLE
+                        else if (subdomain.Length == 2 && whichconsole == "uc") // USER CONSOLE
                             return RedirectToAction("UserDashboard", "TenantUser");
 
-                        else if (authResponse.User.loginattempts <= 2) // TENANT CONSOLE  
+                        else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
                             return RedirectToAction("ProfileSetup", "Tenant");
                         else
                             return RedirectToAction("TenantDashboard", "Tenant");            

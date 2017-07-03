@@ -23,11 +23,13 @@
                         <h3 class="text-center">
                             Sign Up
                         </h3>
-                        <label for="email" class="col-sm-2 control-label">
-
-                        </label>
+                        <br />
                         <div class="col-sm-12">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required" />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required" />
+
+                            </div>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
@@ -36,7 +38,10 @@
 
                         </label>
                         <div class="col-sm-12">
-                            <input type="password" class="form-control" data-minlength="8" id="password" name="password" placeholder="Password" data-error="Minimum of 8 characters" />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                                <input type="password" class="form-control" data-minlength="8" id="password" name="password" placeholder="Password" data-error="Minimum of 8 characters" />
+                            </div>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>

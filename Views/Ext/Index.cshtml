@@ -4,29 +4,30 @@
     Html.RenderPartial("ExtPageHeader");
 }
 <!--Navigation bar/-->
-
 <!--Slider-->
 <section class="slider">
-<div class="container-fluid nopadding">
-<div id="myCarousel" class="carousel slide" data-ride="carousel">
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner">
-        <div class="item active">
-            <img src="~/images/aboutus.jpg">
-        </div>
-        <div class="item">
-            <img src="~/images/aboutus.jpg">
-        </div>
-        <div class="item">
-            <img src="~/images/aboutus.jpg">
+    <div class="container-fluid">
+        <div class="row">
+            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <img src="~/images/aboutus.jpg" alt="First slide">
+                    </div>
+                    <div class="item">
+                        <img src="~/images/aboutus.jpg" alt="Second slide">
+                    </div>
+                    <div class="item">
+                        <img src="~/images/aboutus.jpg" alt="Third slide">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-</div>
 </section>
 <!--Slider/-->
 <!--work-shop-->
@@ -34,7 +35,7 @@
     <div class="container">
         <div class="row">
             <div class="header-section text-center">
-                <h2>Express Build Enterprise Applications</h2>
+                <h3>EXPRESSbuild Enterprise Applications</h3>
             </div>
             <div class="col-md-4 col-sm-6">
                 <div class="service-box">
@@ -111,9 +112,9 @@
         <div class="row">
             <div class="header-section text-center">
                 <form>
-                    <h2 class="white">Sell,Market and Service</h2>
-                    <p class="white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Exercitationem nesciunt vitae,<br> maiores, magni dolorum aliquam.</p>
-                    <input type="email" id="quicksignup" placeholder="Enter your email address" /><button class="btn" id="overlay2-btn">Sign Up</button>
+                    <h2 class="white">Get Started for FREE</h2>
+                    <p class="white">No Credit card required.</p>
+                    <a href="SignUp" class="btn btn-primary">Sign Up</a>
                 </form>
             </div>
         </div>
@@ -124,8 +125,7 @@
     <div class="container">
         <div class="row">
             <div class="header-section text-center">
-                <h2>We are Supported by</h2>
-                <hr class="bottom-line">
+                <h4>WE ARE SUPPORTED BY</h4>   
             </div>
         </div>
     </div>

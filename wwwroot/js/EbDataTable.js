@@ -320,7 +320,7 @@ var EbDataTable = function (settings) {
                                     val1 = $(textid).val();
                                     val2 = $(textid).siblings('input').val();
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
-                                        if (type === 'numeric') {
+                                        if (type === 'number') {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
                                             filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
                                         }
@@ -709,7 +709,7 @@ var EbDataTable = function (settings) {
     };
 
     this.getFilterForNumeric = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
-        var coltype = "data-coltyp='numeric'";
+        var coltype = "data-coltyp='number'";
         var drptext = "";
 
         drptext = "<div class='input-group input-group-sm' style='width:100%!important'>" +
@@ -817,12 +817,13 @@ var EbDataTable = function (settings) {
         var table = $(e.target).attr('data-table');
         var flag = false;
         var colum = $(e.target).attr('data-colum');
+        var ctype = $(e.target).parents('.input-group').find("input").attr('data-coltyp');
         $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
         //" <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">"dv173_1_discount_hdr_txt1
         //$(e.target).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
-                $(e.target).parents('.input-group').append("<input type='number' style='width:100%!important' class='form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
+                $(e.target).parents('.input-group').append("<input type='" + ctype + "' style='width:100%!important' class='form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
                 //$($(e.target).parents('.input-group-btn')).attr("style='height:100% !important'");
                 //$($(e.target).parents('ul').siblings("button")).css("height", "100%!important");
             }

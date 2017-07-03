@@ -38,7 +38,7 @@ var DVObj = function (dsid, settings, login) {
         this.dsid = $(e.target).parent().attr("data-dsid");
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
         $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
-        $.post('../Tenant/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
+        $.post('../Dev/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
         
     };
 
@@ -203,7 +203,7 @@ var DVObj = function (dsid, settings, login) {
             groupcols[0].visible = false;
         }
         //console.log(JSON.stringify(this.TVPrefObj));
-        $.post('../Tenant/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
+        $.post('../Dev/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
         
     };
 

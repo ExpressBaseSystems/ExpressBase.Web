@@ -4,9 +4,6 @@
 <script>
     $("#signIn").hide();
     $("#signUpFree").hide();
-    $(document).ready(function () {
-        $('.input-phone').intlInputPhone();
-    });
 </script>
 <style>
     body {
@@ -103,8 +100,8 @@
                     <input class="form-control" type="text" name="Name" placeholder="Name">
                 </div>
                 @*<div class="form-group">
-                    <input class="form-control" type="date" placeholder="Name">
-                </div>*@
+                        <input class="form-control" type="date" placeholder="Name">
+                    </div>*@
                 <div class="form-group">
                     <input class="form-control" type="text" name="Phone" placeholder="Phone">
                     @*<div class="input-phone"></div>*@
@@ -143,7 +140,6 @@
                     </div>
                     <div class="col-md-3">
                         <input type="button" class="btn btn-primary" value="Skip">
-                        </div>
                     </div>
                 </div>
             </div>
@@ -173,7 +169,7 @@
                 var reader = new FileReader();
 
                 reader.onload = function (e) {
-                  
+
                     $('#proimg').val(reader.result);
                     $('#img-upload').attr('src', e.target.result);
                 }
@@ -187,4 +183,3 @@
         });
     });
 </script>
-<script type="text/javascript" src="~/js/intlInputPhone.min.js"></script>

@@ -1,16 +1,4 @@
 ﻿
-<script>
-    $(document).ready(function () {
-        $('img').click(function () {
-            $('.selected').removeClass('selected'); // removes the previous selected class
-            $(this).addClass('selected'); // adds the class to the clicked image
-        });
-        $("#tid td").click(function () {
-            $("#tid td").removeClass("border_blue");
-            $(this).addClass("border_blue");
-        });
-    });
-</script>
 @{
     var tid = ViewBag.tenantid;
 }
@@ -48,45 +36,44 @@
 
 <div class="col-md-12 ebWizStep">
     <h4>Account Information</h4>
-    <div class="controls-group">
+    <div class="col-md-6 tier">
+        <img class="img-responsive" src="~/images/proimg.jpg" id="img-upload" />
+    </div>
+    <div class="col-md-6 pull-right tier">
         <div class="form-group">
-            <label class="control-label">Account Name</label>
-            <input maxlength="100" type="text" required="required" id="accountname" name="accountname" class="form-control" style="width:360px;" />
-        </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Client id</label>
-            <input maxlength="100" type="text" required="required" id="cid" name="cid" class="form-control" />
+            <div class="input-group">
+                <input type="file" style="display:none;" name="alogo" id="imgInp"/>
+                <input class="form-control" type="text" placeholder="Upload Logo">
+                <span class="input-group-addon" onclick="$('#imgInp').click();"><i class="fa fa-folder-open"></i></span>
+            </div>
         </div>
         <div class="form-group">
-            <label class="control-label">Upload Logo</label>
-            <input type="file" name="alogo" id="files" accept="image/*" onchange="readURL(this)" class="file">
-            <img id="img" src="#" alt="your image1" />
+           
+            <input type="text" required="required" id="accountname" name="accountname" class="form-control" placeholder="Account Name"/>
+        </div>
+        <div class="form-group ">
+            <input type="text" required="required" id="cid" name="cid" class="form-control" placeholder="Client id"/>
         </div>
     </div>
 </div>
 
 <div class="col-md-12 ebWizStep">
     <h3> Personal details</h3>
-    <div class="controls-group">
+    <div class="col-md-8">
         <div class="form-group">
-            <label class="control-label">Full Name</label>
-            <input maxlength="100" type="text" id="tenantname" name="tenantname" required="required" class="form-control" style="width:360px;" />
-        </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Address</label>
-            <input maxlength="100" type="text" required="required" id="address" name="address" class="form-control" />
-        </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Phone</label>
-            <input maxlength="100" type="text" required="required" id="phone" name="phone" class="form-control" />
+            <input type="text" id="tenantname" name="tenantname" required="required" class="form-control" placeholder="Name"/>
         </div>
         <div class="form-group">
-            <label class="control-label">Email</label>
-            <input maxlength="100" type="email" required="required" id="email" name="email" class="form-control" style="width:360px;" />
+            <input type="text" required="required" id="address" name="address" class="form-control" placeholder="Address"/>
         </div>
-        <div class="form-group align_singleLine">
-            <label class="control-label">Website</label>
-            <input maxlength="100" type="text" required="required" id="website" name="website" class="form-control" style="width:360px;" />
+        <div class="form-group">
+            <input  type="text" required="required" id="phone" name="phone" class="form-control" placeholder="Mobile"/>
+        </div>
+        <div class="form-group">
+            <input  type="email" required="required" id="email" name="email" class="form-control" placeholder="Email"/>
+        </div>
+        <div class="form-group">
+            <input type="text" required="required" id="website" name="website" class="form-control" placeholder="Website" />
         </div>
         <div>
             <input type="hidden" id="imgpro" name="imgpro" />
@@ -94,21 +81,11 @@
             <input type="hidden" id="tier" name="tier" value="@ViewBag.tier" />
             <input type="hidden" id="tenantid" name="tenantid" value="@ViewBag.tenantid" />
             <input type="hidden" id="tenantuserid" name="tenantuserid" />
-
         </div>
     </div>
 </div>
 <style>
-    .form-control {
-        /*display: inline-block;*/
-    }
-
-    .align_singleLine {
-        display: inline-block;
-        width: 35%;
-        margin-right: 5px;
-    }
-.tier{
+    .tier{
     text-align:center;
 padding-top:50px;
 }

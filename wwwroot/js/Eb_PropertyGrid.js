@@ -71,6 +71,8 @@
 
             // Append the current cell html into the group html
             propertyRowsHTML[currGroup] += getPropertyRowHtml(pgId, prop, obj[prop], meta[prop], postCreateInitFuncs, getValueFuncs, options);
+
+
         }
 
         // Now we have all the html we need, just assemble it
@@ -114,7 +116,6 @@
 
             return result;
         };
-
         this.data(GET_VALS_FUNC_KEY, getValues);
     };
 

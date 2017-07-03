@@ -53,7 +53,7 @@
 
 .propgrid-table-cont {
     overflow-y: auto;
-    height: 526px;
+    max-height: 526px;
     background-color: white;
 }
 

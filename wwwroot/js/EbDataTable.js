@@ -12,9 +12,9 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
-var Agginfo = function (col) {
+var Agginfo = function (col,deci) {
     this.colname = col;
-    //this.deci_val = 2;
+    this.deci_val = deci;
 };
 
 var filter_obj = function (colu, oper, valu) {
@@ -211,7 +211,7 @@ var EbDataTable = function (settings) {
             o.dom = "rti";
         }
         //o.rowReorder = true;
-        o.autowidth = true;
+        //o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
         o.language = { processing: "<div class='fa fa-spinner fa-pulse  fa-3x fa-fw'></div>", info: "_START_ - _END_ / _TOTAL_" };
@@ -274,12 +274,13 @@ var EbDataTable = function (settings) {
    
     this.getAgginfo = function () {
         var _ls = [];
-        $.each(this.ebSettings.columns, function (i, col) {
-            if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int64"))
-                _ls.push(new Agginfo(col.name));
-        });
-
+        $.each(this.ebSettings.columns, this.getAgginfo_inner.bind(this, _ls));
         return _ls;
+    };
+
+    this.getAgginfo_inner = function (_ls, i, col) {
+        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int64"))
+            _ls.push(new Agginfo(col.name, this.ebSettings.columnsext[i].DecimalPlace));
     };
 
     this.getFooterFromSettingsTbl = function () {
@@ -463,36 +464,39 @@ var EbDataTable = function (settings) {
     this.GetAggregateControls = function (footer_id, zidx) {
         var ScrollY = this.ebSettings.scrollY;
         var ResArray = [];
-        var _ls;
         var tableId = this.tableId;
-        $.each(this.ebSettings.columns, function (i, col) {
-            if (col.visible) {
-                if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
-                    var footer_select_id = tableId + "_" + col.name + "_ftr_sel" + footer_id;
-                    var fselect_class = tableId + "_fselect";
-                    var data_colum = "data-column=" + col.name;
-                    var data_table = "data-table=" + tableId;
-                    var footer_txt = tableId + "_" + col.name + "_ftr_txt" + footer_id;
-                    var data_decip = "data-decip=2";
-
-                    _ls = "<div class='input-group'>" +
-                    "<div class='input-group-btn'>" +
-                    "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
-                   " <ul class='dropdown-menu'>" +
-                    "  <li><a href ='#' class='eb_ftsel" + tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + ">&sum;</a></li>" +
-                    "  <li><a href ='#' class='eb_ftsel" + tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}>x&#772;</a></li>" +
-                   " </ul>" +
-                   " </div>" +
-                   " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;' style='z-index:" + zidx.toString() + "'>" +
-                   " </div>";
-                }
-                else
-                    _ls = "&nbsp;";
-
-                ResArray.push(_ls);
-            }
-        });
+        $.each(this.ebSettings.columns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        console.log("ResArray:" + ResArray);
         return ResArray;
+    };
+
+    this.GetAggregateControls_inner = function (ResArray, footer_id, zidx, i, col) {
+        var _ls;
+        if (col.visible) {
+            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
+                var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
+                var fselect_class = this.tableId + "_fselect";
+                var data_colum = "data-column=" + col.name;
+                var data_table = "data-table=" + this.tableId;
+                var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
+                var data_decip = "data-decip=" + this.ebSettings.columnsext[i].DecimalPlace;
+
+                _ls = "<div class='input-group input-group-sm'>" +
+                "<div class='input-group-btn'>" +
+                "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
+               " <ul class='dropdown-menu'>" +
+                "  <li><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + ">&sum;</a></li>" +
+                "  <li><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}>x&#772;</a></li>" +
+               " </ul>" +
+               " </div>" +
+               " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;' style='z-index:" + zidx.toString() + "'>" +
+               " </div>";
+            }
+            else
+                _ls = "&nbsp;";
+
+            ResArray.push(_ls);
+        }
     };
 
     this.summarize2 = function () {
@@ -521,7 +525,8 @@ var EbDataTable = function (settings) {
             }
             // IF decimal places SET, round using toFixed
             //  alert(summary_val + "," + summary_val);
-            $(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val.toFixed(2));
+            //$(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val.toFixed(2));
+            $(ftrtxt).val(summary_val.toFixed(agginfo.deci_val));
         });
     };
 
@@ -576,7 +581,7 @@ var EbDataTable = function (settings) {
 
     this.addFilterEventListeners = function () {
         $('#' + this.tableId + '_wrapper thead tr:eq(0)').off('click').on('click', 'th', this.orderingEvent.bind(this));
-        $(".eb_fsel" + this.tableId).off("click").on("click", this.setLiValue);
+        $(".eb_fsel" + this.tableId).off("click").on("click", this.setLiValue.bind(this));
         $(".eb_ftsel" + this.tableId).off("click").on("click", this.fselect_func.bind(this));
         $.each($(this.Api.columns().header()).parent().siblings().children().toArray(), this.setFilterboxValue.bind(this));
         $(".eb_fbool"+this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
@@ -667,7 +672,8 @@ var EbDataTable = function (settings) {
     this.GetFiltersFromSettingsTbl_inner = function (i, col) {
         var _ls = "";
         if (col.visible === true) {
-            var span = "<span hidden>" + col.name + "</span>";
+            //var span = "<span hidden>" + col.name + "</span>";
+            var span = "";
 
             var htext_class = this.tableId + "_htext";
 
@@ -678,7 +684,7 @@ var EbDataTable = function (settings) {
             var header_text1 = this.tableId + "_" + col.name + "_hdr_txt1";
             var header_text2 = this.tableId + "_" + col.name + "_hdr_txt2";
 
-            _ls += "<th style='padding: 0px; margin: 0px; height: 40px;'>";
+            _ls += "<th style='vertical-align:top; padding: 0px; margin: 0px; height: 28px!important;'>";
 
             if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
                 _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
@@ -693,7 +699,7 @@ var EbDataTable = function (settings) {
             else if (col.type === "System.Boolean")
                 _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
             else if (col.name === "serial")
-                _ls += (span + "<a class='btn btn-default center-block'  id='clearfilterbtn_"+this.tableId+"' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='width:35px'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
+                _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
             else
                 _ls += (span);
 
@@ -706,30 +712,30 @@ var EbDataTable = function (settings) {
         var coltype = "data-coltyp='numeric'";
         var drptext = "";
 
-        drptext = "<div class='input-group'>" +
-        "<div class='input-group-btn'>" +
-            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+        drptext = "<div class='input-group input-group-sm' style='width:100%!important'>" +
+        "<div class='input-group-btn' style='height:100%!important'>" +
+            " <button type='button' style='width:100% !important;height:100%!important;' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
             " <ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
             "   <li ><a href ='#' class='eb_fsel" +this.tableId+"' " + data_table + data_colum + ">=</a></li>" +
               " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
               " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
               " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><=</a></li>" +
               " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">>=</a></li>" +
-              "<li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
+              "<li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
         " </div>" +
-        " <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
-        " <span class='input-group-btn'></span>" +
-        " <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
+        " <input type='number' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        //" <span class='input-group-btn'></span>" +
+        //" <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
         " </div> ";
         return drptext;
     };
 
     this.getFilterForDateTime = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
         var coltype = "data-coltyp='date'";
-        var filter = "<div class='input-group'>" +
-        "<div class='input-group-btn'>" +
-           " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
+        var filter = "<div class='input-group input-group-sm' style='width:100%!important'>" +
+        "<div class='input-group-btn' style='height:100%!important'>" +
+           " <button type='button' style='width:100% !important;height:100% !important;' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
             "<ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
              " <li ><a href ='#' class='eb_fsel"+this.tableId+"' " + data_table + data_colum + ">=</a></li>" +
              " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
@@ -739,9 +745,9 @@ var EbDataTable = function (settings) {
              " <li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
            " </ul>" +
         " </div>" +
-        " <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
-        " <span class='input-group-btn'></span>" +
-        " <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
+        " <input type='date' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        //" <span class='input-group-btn'></span>" +
+        //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
         " </div> ";
         return filter;
     };
@@ -749,9 +755,9 @@ var EbDataTable = function (settings) {
     this.getFilterForString = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
         var coltype = " data-coltyp='string'";
         var drptext = "";
-        drptext = "<div class='input-group'>" +
+        drptext = "<div class='input-group input-group-sm' style='width:100%!important'>" +
         "<div class='input-group-btn' style='z-index:" + zidx.toString() + "'>" +
-           " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
+           " <button type='button' style='width:100% !important' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
            " <ul class='dropdown-menu'>" +
            "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">x*</a></li>" +
             "  <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x</a></li>" +
@@ -759,7 +765,7 @@ var EbDataTable = function (settings) {
              " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
            " </ul>" +
         " </div>" +
-        " <input type='text' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+        " <input type='text' style='width:100%!important'  class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
         " </div> ";
         return drptext;
     };
@@ -768,7 +774,7 @@ var EbDataTable = function (settings) {
         var filter = "";
         var id = tableId + "_" + colum + "_hdr_txt1";
         var cls = tableId + "_hchk";
-        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool"+this.tableId+"'></center>";
+        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool"+this.tableId+"' style='vertical-align: middle;'></center>";
         return filter;
     };
 
@@ -809,9 +815,29 @@ var EbDataTable = function (settings) {
     this.setLiValue = function (e) {
         var selText = $(e.target).text();
         var table = $(e.target).attr('data-table');
+        var flag = false;
         var colum = $(e.target).attr('data-colum');
         $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
-        $(e.target).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
+        //" <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">"dv173_1_discount_hdr_txt1
+        //$(e.target).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
+        if (selText.trim() === 'B') {
+            if ($(e.target).parents('.input-group').find("input").length == 1) {
+                $(e.target).parents('.input-group').append("<input type='number' style='width:100%!important' class='form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
+                //$($(e.target).parents('.input-group-btn')).attr("style='height:100% !important'");
+                //$($(e.target).parents('ul').siblings("button")).css("height", "100%!important");
+            }
+            //flag = true;
+        }
+        else if (selText.trim() !== 'B') {
+            if ($(e.target).parents('.input-group').find("input").length == 2) {
+                $(e.target).parents('.input-group').find("input").eq(1).remove();
+                //$(e.target).parents('.input-group-btn').css("height", " ");
+                //$(e.target).parents('ul').siblings("button").css("height", " ");
+            }
+            //flag = false;
+        }
+        this.Api.columns.adjust();
+        e.preventDefault();
     };
 
     this.call_filter = function (e) {
@@ -843,7 +869,10 @@ var EbDataTable = function (settings) {
         else if (selValue === 'x̄')
             pageTotal = col.data().average();
         // IF decimal places SET, round using toFixed  
-        $(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal.toFixed(2));
+        //$(ftrtxt).val((decip > 0) ? pageTotal.toFixed(decip) : pageTotal.toFixed(2));
+        $(ftrtxt).val(pageTotal.toFixed(decip));
+        e.preventDefault();
+        //e.stopPropagation();
     };
 
     this.clickAlSlct = function (e) {
@@ -1362,6 +1391,12 @@ var EbDataTable = function (settings) {
             if (this.ebSettings.columnsext[i].RenderAs === "Progressbar") {
                 this.ebSettings.columns[i].render = this.renderProgressCol;
             }
+            if (this.ebSettings.columnsext[i].DecimalPlace > 0) {
+                var deci = this.ebSettings.columnsext[i].DecimalPlace;
+                this.ebSettings.columns[i].render = function (data, type, row, meta) {
+                    return parseFloat(data).toFixed(deci);
+                }
+            }
         }
         if (col.type === "System.Boolean") {
             if (this.ebSettings.columnsext[i].name === "sys_locked" || this.ebSettings.columnsext[i].name === "sys_cancelled") {
@@ -1389,6 +1424,10 @@ var EbDataTable = function (settings) {
 
     this.renderProgressCol = function (data, type, row, meta) {
         return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>";
+    };
+
+    this.renderToDecimalPlace = function (data, type, row, meta) {
+        return parseFloat(data).toFixed();
     };
 
     this.renderEditableCol = function (data) {

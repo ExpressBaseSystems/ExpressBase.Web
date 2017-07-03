@@ -94,7 +94,7 @@ var EbDataTable = function (settings) {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
             $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
         else
-            $.post('../Tenant/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
@@ -1106,7 +1106,7 @@ var EbDataTable = function (settings) {
         "</div>");
         $("#loader").show();
         $.ajax({
-            url: "../Tenant/DVEditor",
+            url: "../Dev/DVEditor",
             type: "POST",
             data:{objid:this.dvid},
             success: function (data) {

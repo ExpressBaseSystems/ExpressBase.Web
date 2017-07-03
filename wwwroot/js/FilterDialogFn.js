@@ -67,7 +67,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         $('.alert').remove();
         this.SetValues();
         if (this.Obj_Id === 0) {
-            $.post("http://dev.eb_roby_dev.localhost:53431/Dev/CommitEbDataSource",
+            $.post("http://eb_roby_dev.localhost:53431/Dev/CommitEbDataSource",
                    {
                        "Id": this.Obj_Id,
                        "Code": this.Code,
@@ -78,7 +78,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
                        "VersionNumber": this.Version_num
                    }, this.Success_alert.bind(this));
         }
-        var Dswzd = new EbWizard("http://dev.eb_roby_dev.localhost:53431/Dev/ds_save", "http://dev.eb_roby_dev.localhost:53431/Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
+        var Dswzd = new EbWizard("http://eb_roby_dev.localhost:53431/Dev/ds_save", "http://eb_roby_dev.localhost:53431/Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
         Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num).DataSource;
 
     }
@@ -95,7 +95,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
 
     this.VerHistory = function () {
         $(".eb-loader").show();
-        $.post("http://dev.eb_roby_dev.localhost:53431/Dev/GetVersions",
+        $.post("../Dev/GetVersions",
                           {
                               "Id": this.Obj_Id
                           }, this.Version_List.bind(this));
@@ -151,7 +151,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         this.changeLog = $(e.target).attr("data-changeLog");
         this.commitUname = $(e.target).attr("data-commitUname");
         this.commitTs = $(e.target).attr("data-commitTs");
-        $.post('http://dev.eb_roby_dev.localhost:53431/Tenant/VersionCodes', { "objid": this.var_id })
+        $.post('http://eb_roby_dev.localhost:53431/Dev/VersionCodes', { "objid": this.var_id })
         .done(this.VersionCode_success.bind(this));
     }
 
@@ -292,7 +292,7 @@ var FilterDialog = function (obj_id) {
         })
         this.ObjectString_WithoutVal = ObjString.slice(0, -1) + ']';
 
-        $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/SaveFilterDialog", {
+        $.post("http://eb_roby_dev.localhost:53431/Dev/SaveFilterDialog", {
             "Id": this.Fd_Id,
             "DsId": this.Ds_id,
             "FilterDialogJson": this.ObjectString_WithoutVal,
@@ -305,7 +305,7 @@ var FilterDialog = function (obj_id) {
     }
 
     this.Load_Fd = function () {
-        $.post("http://dev.eb_roby_dev.localhost:53431/Tenant/GetByteaEbObjects_json", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
+        $.post("http://eb_roby_dev.localhost:53431/Dev/GetByteaEbObjects_json", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
         function (result) {
             $('#fdtbody').children().remove();
             $('.fdthead').children().remove();

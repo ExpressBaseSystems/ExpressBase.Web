@@ -90,6 +90,11 @@
         $(this.Steps[0]).find('input:eq(0)').focus();
     };
 
+    this.ShowStep = function () {
+        $(this.Steps).hide();
+        $(this.Steps[this.currentStepNo]).show().find('input:eq(0)').focus();
+    };
+
     this.SaveWizard = function () {
         if (this.IsStepValid()) {
             $(".eb-loader").show();
@@ -110,51 +115,53 @@
                 $("#errmsg").empty().append("<strong> Success <i class='fa fa-check fa-2x' aria-hidden='true'></i></strong>");
                 setTimeout(function () { $('#dbModal').modal('hide'); }, 800);
                 //alert("Success status.message = " + status.message);
-            }).fail(function (jq, jqStatus, statusDesc) {
-                $(".eb-loader").hide();
-                $(".wiz-error").show();
-                var status = $.ss.parseResponseStatus(jq.responseText, statusDesc);
-                alert("Error status.message = " + status.message);
-                if (status.message.trim() === "Error in data") {
-                    $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Data");
-                    this.currentStepNo = 0;
-                }
-                else if (status.message.trim() === "Error in data read only") {
-                    $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for read only");
-                    this.currentStepNo = 0;
-                }
-                else if (status.message.trim() === "Error in objects ") {
-                    $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Object.");
-                    this.currentStepNo = 1;
-                }
-                else if (status.message.trim() === "Error in objects read only") {
-                    $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for Object read only.");
-                    this.currentStepNo = 1;
-                }
-                else if (status.message.trim() === "Error in logs") {
-                    $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs.");
-                    this.currentStepNo = 2;
-                } else if (status.message.trim() === "Error in log read only") {
-                    $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs read only.");
-                    this.currentStepNo = 2;
-                }
-                else if (status.message.trim() === "Error in files") {
-                    $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files.");
-                    this.currentStepNo = 3;
-                } else if (status.message.trim() === "Error in files read only") {
-                    $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files read only.");
-                    this.currentStepNo = 3;
-                }
-                else if (status.message.trim() === "Input string was not in a correct format.") {
-                    $("#errmsg").empty().append("<strong>Error!</strong>Input string was not in a correct format.");
-                }
-                else
-                    $("#errmsg").empty().append("<strong>Error!</strong>An Unhandles Error.");
-                this.ShowStep();
-                this.SyncProgress();
-            });
+            }).fail(this.ajaxFailFn.bind(this));
         }
     };
+
+    this.ajaxFailFn = function (jq, jqStatus, statusDesc) {
+        $(".eb-loader").hide();
+        $(".wiz-error").show();
+        var status = $.ss.parseResponseStatus(jq.responseText, statusDesc);
+        alert("Error status.message = " + status.message);
+        if (status.message.trim() === "Error in data") {
+            $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Data");
+            this.currentStepNo = 0;
+        }
+        else if (status.message.trim() === "Error in data read only") {
+            $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for read only");
+            this.currentStepNo = 0;
+        }
+        else if (status.message.trim() === "Error in objects ") {
+            $("#errmsg").empty().append("<strong>Error!</strong> Error in Configuring database for Object.");
+            this.currentStepNo = 1;
+        }
+        else if (status.message.trim() === "Error in objects read only") {
+            $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for Object read only.");
+            this.currentStepNo = 1;
+        }
+        else if (status.message.trim() === "Error in logs") {
+            $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs.");
+            this.currentStepNo = 2;
+        } else if (status.message.trim() === "Error in log read only") {
+            $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for logs read only.");
+            this.currentStepNo = 2;
+        }
+        else if (status.message.trim() === "Error in files") {
+            $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files.");
+            this.currentStepNo = 3;
+        } else if (status.message.trim() === "Error in files read only") {
+            $("#errmsg").empty().append("<strong>Error!</strong> Error in Configure database for files read only.");
+            this.currentStepNo = 3;
+        }
+        else if (status.message.trim() === "Input string was not in a correct format.") {
+            $("#errmsg").empty().append("<strong>Error!</strong>Input string was not in a correct format.");
+        }
+        else
+            $("#errmsg").empty().append("<strong>Error!</strong>An Unhandles Error.");
+        this.ShowStep();
+        this.SyncProgress();
+    }
 
     this.NavsClick = function (e) {
         var clickedStepNo = parseInt($(e.target).html().trim()) - 1;
@@ -231,11 +238,6 @@
         $(this.Steps[this.currentStepNo]).find(".has-error input:eq(0)").focus();
         $($(this.Navs[this.currentStepNo]).children()[0]).removeClass("btn-default").addClass("btn-success");
         return res;
-    };
-
-    this.ShowStep = function () {
-        $(this.Steps).hide();
-        $(this.Steps[this.currentStepNo]).show().find('input:eq(0)').focus();
     };
 
     this.RenderModal = function () {
@@ -464,14 +466,14 @@ var CustomWizFuncs = function (acid) {
     };
 };
 
-var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,versionNumber) {
+var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,versionNumber,filterDialogId) {
     this.AcId = acid;
     this.ObjectId = obj_id;
     this.ObjectName = obj_name;
     this.ObjectDesc = obj_desc;
     this.Code = code;
     this.VersionNumber = versionNumber;
-  
+    this.FilterDialogId = filterDialogId;
     this.DataSource = function () {
         if (obj_id === 0) {
             $('#changeLogDiv').remove();            
@@ -486,6 +488,7 @@ var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,ver
         $('#code').val(code);
         $('#id').val(obj_id);       
         $('#versionNumber').val(versionNumber);
+        $('#filterDialogId').val(filterDialogId);
     };
 };
 

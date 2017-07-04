@@ -1,0 +1,24 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPAgeHeader2");
+
+}
+<script>
+    $('document').ready(function () {
+        $('#submen').click(function () {
+            $('.side').toggle();
+        });
+    });
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4 col-md-3 side">
+        @{ 
+            Html.RenderPartial("_SidebarMenu");
+        }
+        </div>
+        <div class="col-md-8 main-cont">
+           fdgjhvgfhdgjfxmbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+        </div>
+    </div>
+</div>

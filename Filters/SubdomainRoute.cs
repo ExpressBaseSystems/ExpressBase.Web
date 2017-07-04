@@ -80,7 +80,6 @@ namespace ExpressBase.Web.Filters
                     }
                 }
             }
-
             await base.RouteAsync(context);
         }
     }

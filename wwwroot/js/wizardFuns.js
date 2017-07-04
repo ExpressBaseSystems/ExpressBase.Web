@@ -81,7 +81,7 @@
         this.PrevBtn.hide();
         $(".modal-body").css("height", this.height - 163 + "px");
         this.SyncProgress();
-        this.CustomWizFunc();
+        if (this.CustomWizFunc) this.CustomWizFunc();
         setTimeout(this.TimeOutFunc.bind(this), 10);
         if (this.EditObj) this.EditWiz();
     };

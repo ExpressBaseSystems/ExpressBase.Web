@@ -103,6 +103,8 @@ var EbDataTable = function (settings) {
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
+        if (this.ebSettings.renderAs == "graph")
+            this.dygraph();
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
         //this.ebSettingsCopy = this.ebSettings;
@@ -140,15 +142,15 @@ var EbDataTable = function (settings) {
         if (this.dtsettings.directLoad !== true)
             this.table_jQO.append($(this.getFooterFromSettingsTbl()));
 
-        if (this.ebSettings.hideSerial) {
-            this.ebSettings.columns[0].visible = false;
-        }
-        if (!this.ebSettings.hideCheckbox) {
+        //if (this.ebSettings.hideSerial) {
+        //    this.ebSettings.columns[0].visible = false;
+        //}
+        //if (!this.ebSettings.hideCheckbox) {
             this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall"+this.tableId+"' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
             this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
-        }
-        else
-            this.ebSettings.columns[1].visible = false;
+        //}
+        //else
+            this.ebSettings.columns[1].visible = true;
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
@@ -184,7 +186,7 @@ var EbDataTable = function (settings) {
         // $('#' + this.tableId + '_filterdiv [name=filterbtn]').css('display', 'inline-block');
         //$('#' + this.tableId + '_btnSettings').css('display', 'inline-block');
 
-        if (!this.ebSettings.hideSerial)
+        //if (!this.ebSettings.hideSerial)
             this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
         //new ResizeSensor(jQuery('#@tableId_container'), function() {
@@ -1418,7 +1420,7 @@ var EbDataTable = function (settings) {
                 this.ebSettings.columns[i].render = this.renderlink4NewTable.bind(this);
             }
             if (this.ebSettings.columnsext[i].RenderAs === "Graph") {
-                this.ebSettings.columns[i].render = this.lineGraphDiv;
+                this.ebSettings.columns[i].render = this.lineGraphDiv.bind(this);
             }
         }
     };
@@ -1605,6 +1607,21 @@ var EbDataTable = function (settings) {
         this.getColumns();
     if (this.dtsettings.linktable)
         this.getColumns();
+
+    this.dygraph = function () {
+        new Dygraph(
+                document.getElementById('divgraph'),
+                [
+                [1,10,100],
+                [2,20,80],
+                [3,50,60],
+                [4,70,80]
+                ],
+                {
+                  labels: ["x", "A", "B"]
+              }
+            );
+    };
 };
 
 function csv(gdata) {

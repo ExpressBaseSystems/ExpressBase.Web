@@ -94,7 +94,7 @@ var EbDataTable = function (settings) {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
             $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
         else
-            $.post('../Tenant/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
@@ -103,6 +103,8 @@ var EbDataTable = function (settings) {
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
+        if (this.ebSettings.renderAs == "graph")
+            this.dygraph();
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
         //this.ebSettingsCopy = this.ebSettings;
@@ -140,15 +142,15 @@ var EbDataTable = function (settings) {
         if (this.dtsettings.directLoad !== true)
             this.table_jQO.append($(this.getFooterFromSettingsTbl()));
 
-        if (this.ebSettings.hideSerial) {
-            this.ebSettings.columns[0].visible = false;
-        }
-        if (!this.ebSettings.hideCheckbox) {
+        //if (this.ebSettings.hideSerial) {
+        //    this.ebSettings.columns[0].visible = false;
+        //}
+        //if (!this.ebSettings.hideCheckbox) {
             this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall"+this.tableId+"' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
             this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
-        }
-        else
-            this.ebSettings.columns[1].visible = false;
+        //}
+        //else
+            this.ebSettings.columns[1].visible = true;
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
@@ -184,7 +186,7 @@ var EbDataTable = function (settings) {
         // $('#' + this.tableId + '_filterdiv [name=filterbtn]').css('display', 'inline-block');
         //$('#' + this.tableId + '_btnSettings').css('display', 'inline-block');
 
-        if (!this.ebSettings.hideSerial)
+        //if (!this.ebSettings.hideSerial)
             this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
         //new ResizeSensor(jQuery('#@tableId_container'), function() {
@@ -320,7 +322,7 @@ var EbDataTable = function (settings) {
                                     val1 = $(textid).val();
                                     val2 = $(textid).siblings('input').val();
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
-                                        if (type === 'numeric') {
+                                        if (type === 'number') {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
                                             filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
                                         }
@@ -709,7 +711,7 @@ var EbDataTable = function (settings) {
     };
 
     this.getFilterForNumeric = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
-        var coltype = "data-coltyp='numeric'";
+        var coltype = "data-coltyp='number'";
         var drptext = "";
 
         drptext = "<div class='input-group input-group-sm' style='width:100%!important'>" +
@@ -817,12 +819,13 @@ var EbDataTable = function (settings) {
         var table = $(e.target).attr('data-table');
         var flag = false;
         var colum = $(e.target).attr('data-colum');
+        var ctype = $(e.target).parents('.input-group').find("input").attr('data-coltyp');
         $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
         //" <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">"dv173_1_discount_hdr_txt1
         //$(e.target).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
-                $(e.target).parents('.input-group').append("<input type='number' style='width:100%!important' class='form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
+                $(e.target).parents('.input-group').append("<input type='" + ctype + "' style='width:100%!important' class='form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
                 //$($(e.target).parents('.input-group-btn')).attr("style='height:100% !important'");
                 //$($(e.target).parents('ul').siblings("button")).css("height", "100%!important");
             }
@@ -1106,7 +1109,7 @@ var EbDataTable = function (settings) {
         "</div>");
         $("#loader").show();
         $.ajax({
-            url: "../Tenant/DVEditor",
+            url: "../Dev/DVEditor",
             type: "POST",
             data:{objid:this.dvid},
             success: function (data) {
@@ -1417,7 +1420,7 @@ var EbDataTable = function (settings) {
                 this.ebSettings.columns[i].render = this.renderlink4NewTable.bind(this);
             }
             if (this.ebSettings.columnsext[i].RenderAs === "Graph") {
-                this.ebSettings.columns[i].render = this.lineGraphDiv;
+                this.ebSettings.columns[i].render = this.lineGraphDiv.bind(this);
             }
         }
     };
@@ -1604,6 +1607,21 @@ var EbDataTable = function (settings) {
         this.getColumns();
     if (this.dtsettings.linktable)
         this.getColumns();
+
+    this.dygraph = function () {
+        new Dygraph(
+                document.getElementById('divgraph'),
+                [
+                [1,10,100],
+                [2,20,80],
+                [3,50,60],
+                [4,70,80]
+                ],
+                {
+                  labels: ["x", "A", "B"]
+              }
+            );
+    };
 };
 
 function csv(gdata) {

@@ -17,8 +17,9 @@ var DVObj = function (dsid, settings, login) {
     this.init = function () {
         if (Object.keys(this.TVPrefObj).length > 0) {
             $("#dvName_txt").val(this.TVPrefObj.dvName);
-            $("#serial_check").prop("checked", this.TVPrefObj.hideSerial);
-            $("#select_check").prop("checked", this.TVPrefObj.hideCheckbox);
+            //$("#serial_check").prop("checked", this.TVPrefObj.hideSerial);
+            //$("#select_check").prop("checked", this.TVPrefObj.hideCheckbox);
+            $("input[name=renderAs][value=" + this.TVPrefObj.renderAs + "]").attr('checked', true);
             $("#pageLength_text").val(this.TVPrefObj.lengthMenu[0][0]);
             $("#scrollY_text").val(this.TVPrefObj.scrollY);
             $("#rowGrouping_text").val(this.TVPrefObj.rowGrouping);
@@ -30,7 +31,7 @@ var DVObj = function (dsid, settings, login) {
         $(".dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
         $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $(".eb_delete_btn").off("click").on("click", this.deleteRow.bind(this));
-        $('#columnDropdown .dropdown-menu a').off("click").on("click", this.clickDropdownfunc.bind(this));
+        $("#columnDropdown .dropdown-menu a").off("click").on("click", this.clickDropdownfunc.bind(this));
     };
 
     this.setDropdownDatasource = function (e) {
@@ -38,7 +39,7 @@ var DVObj = function (dsid, settings, login) {
         this.dsid = $(e.target).parent().attr("data-dsid");
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
         $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
-        $.post('../Tenant/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
+        $.post('../Dev/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
         
     };
 
@@ -127,7 +128,6 @@ var DVObj = function (dsid, settings, login) {
         $('.font').fontselect();
         $("#loader").hide();
         $('#Table_Settings').DataTable().columns.adjust();
-        
         //this.addEventListner4Settingstbl();
     };
 
@@ -182,8 +182,9 @@ var DVObj = function (dsid, settings, login) {
             
             if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
-        this.TVPrefObj.hideSerial = $("#serial_check").prop("checked");
-        this.TVPrefObj.hideCheckbox = $("#select_check").prop("checked");
+        //this.TVPrefObj.hideSerial = $("#serial_check").prop("checked");
+        //this.TVPrefObj.hideCheckbox = $("#select_check").prop("checked");$("input[name=rate]:checked").val()
+        this.TVPrefObj.renderAs = $("input[name=renderAs]:checked").val();
         this.TVPrefObj.lengthMenu = this.GetLengthOption($("#pageLength_text").val());
         this.TVPrefObj.scrollY = $("#scrollY_text").val();
         this.TVPrefObj.rowGrouping = $("#rowGrouping_text").val();
@@ -203,7 +204,7 @@ var DVObj = function (dsid, settings, login) {
             groupcols[0].visible = false;
         }
         //console.log(JSON.stringify(this.TVPrefObj));
-        $.post('../Tenant/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
+        $.post('../Dev/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
         
     };
 
@@ -235,7 +236,7 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.AddSerialAndOrCheckBoxColumns = function (tx) {
-        if (!tx.hideCheckbox) {
+       // if (!tx.hideCheckbox) {
             var chkObj = new Object();
             chkObj.data = null;
             chkObj.title = "<input id='{0}_select-all' type='checkbox' class='eb_selall' data-table='{0}'/>".replace("{0}", this.tableId);
@@ -247,9 +248,9 @@ var DVObj = function (dsid, settings, login) {
             // chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
             chkObj.render = this.renderCheckBoxCol.bind(this);
             tx.unshift(chkObj);
-        }
+       // }
 
-        if (!tx.hideSerial)
+        //if (!tx.hideSerial)
             tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#"}'));
     };
 
@@ -309,12 +310,12 @@ var DVObj = function (dsid, settings, login) {
             this.TVPrefObj.columnsextdel = this.TVPrefObj.columnsextdel.sort(function (a, b) {
                 return a.name.localeCompare(b.name);
             });
-            $.each(this.TVPrefObj.columnsdel, this.adddelColsandColsext2dropdown.bind(this));
+            $.each(this.TVPrefObj.columnsdel, this.addColsandColsext2dropdown.bind(this));
         }
 
     };
 
-    this.adddelColsandColsext2dropdown = function (i, obj) {
+    this.addColsandColsext2dropdown = function (i, obj) {
         var liId = "li_" + obj.name;
         $("#columnDropdown ul").append("<li id=" + liId + "><a data-data=\"" + JSON.stringify(obj).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.TVPrefObj.columnsextdel[i]).replace(/\"/g, "'") + "\" href='#'>" + obj.name + "</a></li>");
     };

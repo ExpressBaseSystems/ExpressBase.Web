@@ -135,7 +135,7 @@ namespace ExpressBase.Web.Controllers
                 IServiceClient client = this.EbConfig.GetServiceStackClient();
                 try
                 {
-                     var res = client.Post<RegisterResponse>(new Register { Email = req["email"], Password = req["password"] });
+                     var res = client.Post<RegisterResponse>(new Register { Email = req["email"], Password = req["password"] ,DisplayName = "expressbase" });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
                     {

@@ -15,14 +15,11 @@ namespace ExpressBase.Web.Filters
 {
     public class AreaRouter : MvcRouteHandler, IRouter
     {
-       // private string[] _allowedSubdomains = { "Vpn", "Password" };
-        //These are actualy copies of same values from base class. Some of them are used later.
         private IActionContextAccessor _actionContextAccessor;
         private IActionInvokerFactory _actionInvokerFactory;
         private IActionSelector _actionSelector;
         private ILogger _logger;
         private DiagnosticSource _diagnosticSource;
-
 
         public AreaRouter(
             IActionInvokerFactory actionInvokerFactory,
@@ -50,15 +47,13 @@ namespace ExpressBase.Web.Filters
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            var host = context.HttpContext.Request.Host;
+            var host = context.HttpContext.Request.Host.Host.Replace("www.", string.Empty);
             var path = context.HttpContext.Request.Path;
-
-            string[] subdomain = host.Host.Split('.');
-           // string[] subpaths = path.ToString().Split('/');
+            string[] subdomain = host.Split('.');
 
             if (path == "/")
             {
-                if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
+                if (host.EndsWith("expressbase.com") || host.EndsWith("expressbase.org"))
                 {
                     if (subdomain.Length == 3) // USER CONSOLE
                     {
@@ -71,7 +66,7 @@ namespace ExpressBase.Web.Filters
                         context.RouteData.Values["action"] = "Index";
                     }
                 }
-                else if (host.Host.EndsWith("localhost"))
+                else if (host.EndsWith("localhost"))
                 {
                     if (subdomain.Length == 2) // USER CONSOLE
                     {
@@ -85,12 +80,6 @@ namespace ExpressBase.Web.Filters
                     }
                 }
             }
-            //else
-            //{
-            //    context.RouteData.Values["controller"] = subpaths[1]; //Goes to the relevant Controller  class
-            //    context.RouteData.Values["action"] = subpaths[2];
-            //}
-
             await base.RouteAsync(context);
         }
     }

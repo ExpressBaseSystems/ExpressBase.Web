@@ -12,7 +12,7 @@
                     RenderAs: obj.RenderAs.toString()
                 };
                 metaObj = {
-                    AggInfo: { group: 'Behavior ', name: 'Aggragate', type: 'boolean' },
+                    AggInfo: { group: 'Behavior ', name: 'Aggrigate', type: 'boolean' },
                     DecimalPlace: { group: 'Behavior ', name: 'DecimalPlace'},
                     RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', "Progressbar" ] },
                 };

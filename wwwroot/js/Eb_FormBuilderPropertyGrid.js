@@ -1,10 +1,5 @@
-﻿var FormControls = [];
-
-function saveForm() {
-    alert(JSON.stringify(FormControls));
-}
-
-var createPgrid =  function(control) {
+﻿
+function createPropGrid(control) {
     //control objects
     {
         var TextBoxObj = {

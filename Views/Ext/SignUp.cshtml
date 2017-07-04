@@ -3,17 +3,88 @@
     Html.RenderPartial("ExtPageHeader");
 }
 <script>
-    $("#signUpFree").hide();
+    $('document').ready(function () {
+        $("#signUpFree").hide();
 
-    function onSubmit(token) {
-        document.getElementById("signup_form").submit();
-    }
+        function onSubmit(token) {
+            document.getElementById("signup_form").submit();
+        }
+        $.fn.goValidate = function () {
+            var $form = this,
+                $inputs = $form.find('input:password');
+
+            var validators = {
+                name: {
+                    regex: /^[A-Za-z]{3,}$/
+                },
+                pass: {
+                    regex: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/
+                }
+            };
+            var validate = function (klass, value) {
+                var isValid = true,
+                    error = '';
+
+                if (!value && /required/.test(klass)) {
+                    error = 'This field is required';
+                    isValid = false;
+                } else {
+                    klass = klass.split(/\s/);
+                    $.each(klass, function (i, k) {
+                        if (validators[k]) {
+                            if (value && !validators[k].regex.test(value)) {
+                                isValid = false;
+                                error = validators[k].error;
+                            }
+                        }
+                    });
+                }
+                return {
+                    isValid: isValid,
+                    error: error
+                }
+            };
+            var showError = function ($input) {
+                var klass = $input.attr('class'),
+                    value = $input.val(),
+                    test = validate(klass, value);
+
+                $input.removeClass('invalid').parent().removeClass('has-error');
+
+                if (!test.isValid) {
+                    $input.addClass('invalid');
+
+                    if (typeof $input.data("shown") == "undefined" || $input.data("shown") == false) {
+                        $input.popover('show').parent().addClass('has-error');
+                    }
+
+                }
+                else {
+                    $input.popover('hide');
+                }
+            };
+            $inputs.each(function () {
+                if ($(this).is('.required')) {
+                    //showError($(this)); /* rem comment to enable initial display of validation rules */
+                }
+            });
+            $inputs.keyup(function () {
+                showError($(this));
+            });
+
+            $inputs.on('shown.bs.popover', function () {
+                $(this).data("shown", true);
+            });
+
+            $inputs.on('hidden.bs.popover', function () {
+                $(this).data("shown", false);
+            });
+
+            return this;
+        };
+        $('form').goValidate();
+    });
 </script>
-<style>
-    body {
-        background-color: #e5e5e5;
-    }
-</style>
 <section id="signup" style="margin-top:100px;">
     <div class="container">
         <div class="row">
@@ -27,22 +98,18 @@
                         <div class="col-sm-12">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required" />
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required onchange="validate()" />
 
                             </div>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="password" class="col-sm-2 control-label">
-
-                        </label>
                         <div class="col-sm-12">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                <input type="password" class="form-control" data-minlength="8" id="password" name="password" placeholder="Password" data-error="Minimum of 8 characters" />
+                                <input type="password" class="form-control required pass" id="password" name="password" placeholder="Password" data-placement="right" data-trigger="manual" data-content="Must be   at least 8 characters long,contain at least one number, one uppercase and one lowercase letter." />
                             </div>
-                            <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="row">
@@ -92,3 +159,11 @@
         </div>
     </div>
 </section>
+<style>
+    body{
+        background-color:#f5f2f2;
+    }
+    .popover {
+    width:200px;
+}
+</style>

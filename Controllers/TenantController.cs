@@ -249,5 +249,13 @@ namespace ExpressBase.Web2.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult TenantAcc()
+        {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = Convert.ToInt32(ViewBag.UId), Token = ViewBag.token });
+            ViewBag.dict = fr.returnlist;
+            return View();
+        }
     }
 }

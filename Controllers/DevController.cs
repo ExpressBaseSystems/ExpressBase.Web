@@ -508,7 +508,7 @@ namespace ExpressBase.Web.Controllers
         private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid)
         {
             string colDef = string.Empty;
-            colDef = "{\"dsId\":" + dsid + ",\"dvName\": \"<Untitled>\",\"hideSerial\": false, \"hideCheckbox\": false, \"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
+            colDef = "{\"dsId\":" + dsid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"options\":\"\", \"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
             colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\"},";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\"},";
@@ -540,7 +540,7 @@ namespace ExpressBase.Web.Controllers
                 else if (column.Type.ToString() == "System.DateTime")
                     colext += "\"name\":\"" + column.ColumnName + "\",\"Format\":\"Date\"";
                 else if (column.Type.ToString() == "System.String")
-                    colext += "\"name\":\"" + column.ColumnName + "\",\"RenderAs\":\"Default\",\"linkDv\":";
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"RenderAs\":\"Default\",\"linkDv\":\"\"";
                 colext += "},";
             }
             colext = colext.Substring(0, colext.Length - 1) + "]";

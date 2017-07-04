@@ -83,8 +83,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-       
-
         public IActionResult test()
         {
             ViewBag.EbConfig = this.EbConfig;

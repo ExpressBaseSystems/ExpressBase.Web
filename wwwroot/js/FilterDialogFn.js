@@ -18,69 +18,38 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
     this.changeLog;
     this.commitUname;
     this.commitTs;
-
+    this.ValidInput = true;
+    this.Object_String_WithVal;
+    this.Filter_Params;
+    this.Parameter_Count;
+    this.SelectedFdId;
+    this.FilterDId;
+    this.MyFd = new FilterDialog();
     this.Init = function () {
         this.SaveBtn = $('#save');
         this.CommitBtn = $('#commit');
         this.VersionHistBtn = $('#ver_his');
         this.CloseTabBtn = $('.closeTab');
-        //this.openPrevVersions = $('.view_code');
+        this.Fd_DropDown = $('#fd');
+        this.RunBtn = $('#run');
+        this.ExecBtn = $('#execute');
+        this.CompareButton = $('#comp');
+        this.DifferButton = $('#diff');
+      
 
-        $(this.SaveBtn).off("click").on("click", this.Save.bind(this));
-        $(this.CommitBtn).off("click").on("click", this.Commit.bind(this));
         $(this.VersionHistBtn).off("click").on("click", this.VerHistory.bind(this));
         $(this.CloseTabBtn).off("click").on("click", this.deleteTab.bind(this));
-        //$(this.openPrevVersions).off("click").on("click", this.OpenPrevVer.bind(this));
-
-        var MyFd = new FilterDialog(this.Obj_Id);
+        $(this.Fd_DropDown).off("change").on("change", this.SelectFD.bind(this));
+        $(this.RunBtn).off("click").on("click", this.RunDs.bind(this));
+        $(this.ExecBtn).off("click").on("click", this.Execute.bind(this));
+        $(this.CompareButton).off("click").on("click", this.Compare.bind(this));
     }
+
 
     this.SetValues = function () {
         this.Code = window.editor.getValue();
         this.Name = $('#obj_name').val();
         this.Description = $('#obj_desc').val();
-    }
-
-    this.Save = function () {
-        this.SetValues();
-        alert('save');
-        if (this.Is_New === true) {
-            $(".commit").trigger("click");
-        }
-        else {
-            $(".eb-loader").show();
-            $.post("http://dev.eb_roby_dev.localhost:53431/Dev/SaveEbDataSource",
-                {
-                    "Id": this.Obj_Id,
-                    "Code": this.Code,
-                    "Name": this.Name,
-                    "Description": this.Description,
-                    "Token": getToken(),
-                    "isSave": "true",
-                    "VersionNumber": this.Version_num
-                }, this.Success_alert.bind(this));
-        };
-    }
-
-    this.Commit = function () {
-        $(".eb-loader").show();
-        $('.alert').remove();
-        this.SetValues();
-        if (this.Obj_Id === 0) {
-            $.post("http://eb_roby_dev.localhost:53431/Dev/CommitEbDataSource",
-                   {
-                       "Id": this.Obj_Id,
-                       "Code": this.Code,
-                       "Name": this.Name,
-                       "Description": this.Description,
-                       "Token": getToken(),
-                       "isSave": "true",
-                       "VersionNumber": this.Version_num
-                   }, this.Success_alert.bind(this));
-        }
-        var Dswzd = new EbWizard("http://eb_roby_dev.localhost:53431/Dev/ds_save", "http://eb_roby_dev.localhost:53431/Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
-        Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num).DataSource;
-
     }
 
     this.Success_alert = function (result) {
@@ -151,7 +120,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         this.changeLog = $(e.target).attr("data-changeLog");
         this.commitUname = $(e.target).attr("data-commitUname");
         this.commitTs = $(e.target).attr("data-commitTs");
-        $.post('http://eb_roby_dev.localhost:53431/Dev/VersionCodes', { "objid": this.var_id })
+        $.post('../Dev/VersionCodes', { "objid": this.var_id })
         .done(this.VersionCode_success.bind(this));
     }
 
@@ -189,43 +158,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         $('#versionNav a:last').tab('show'); // Select first tab        
     };
 
-    this.Init();
-}
-
-
-var FilterDialog = function (obj_id) {
-    this.Fd_Id;
-    this.Fd_Name;
-    this.Fd_Description;
-    this.Code;
-    this.Ds_id = obj_id;
-    this.Object_String_WithVal;
-    this.ObjectString_WithoutVal;
-    this.ValidInput = true;
-    this.Parameter_Count;
-    this.Filter_Params;
-    this.SelectedFdId;
-
-    this.Init = function () {
-        this.Fd_DropDown = $('#fd');
-        this.Fd_Save = $('#saveFilter');
-        this.ExecBtn = $('#execute');
-        this.RunBtn = $('#run');
-
-        $(this.Fd_DropDown).off("change").on("change", this.SelectFD.bind(this));
-        $(this.Fd_Save).off("click").on("click", this.SaveFilterDialog.bind(this));
-        $(this.ExecBtn).off("click").on("click", this.Execute.bind(this));
-        $(this.RunBtn).off("click").on("click", this.RunDs.bind(this));
-    }
-
-    this.SetValues = function () {
-        this.Code = window.editor.getValue();
-        this.Fd_Name = $('#fdname').val();
-        this.Fd_Description = $('#fddesc').val();
-    }
-
     this.SelectFD = function () {
-        this.SetValues();
         var selectVal = $('#fd option:selected').text();
         if (selectVal === "Auto Generate Filter Dialog") {
             this.Find_parameters();
@@ -258,7 +191,98 @@ var FilterDialog = function (obj_id) {
                 $(".eb-loader").hide();
             }
         }
+        else {
+            alert("no filters ");
+            $(".eb-loader").hide();
+        }
     }
+
+    this.Execute = function () {
+        $(".eb-loader").show();
+        this.SetValues();
+        if ($('#fd option:selected').text() === "Select Filter Dialog") {
+            alert("Please select a filter dialog");
+            $(".eb-loader").hide();
+        }
+        else if ($('#fd option:selected').text() !== "Auto Generate Filter Dialog") {
+
+            this.Save();
+            this.SelectedFdId = $('#fd option:selected').val();
+            this.Load_Fd();
+        }
+        else {
+            this.Save();
+            this.Find_parameters();
+            if (this.Parameter_Count === 0) {
+                this.ValidInput = true;
+                this.Object_String_WithVal = "";
+                this.DrawTable();
+            }
+        }
+
+    }
+
+    this.RunDs = function () {
+        this.Find_parameters();
+        this.CreateObjString();
+        this.DrawTable();
+    }
+
+    this.Compare = function () {
+        $(this.DifferButton).off("click").on("click", this.Differ.bind(this));
+    }
+
+    this.Init();
+
+    this.Save = function () {
+        this.SetValues();
+        alert('save');
+        if (this.Is_New === true) {
+            $(".commit").trigger("click");
+        }
+        else {
+            $(".eb-loader").show();
+            this.FilterDId = $('#fd option:selected').val();
+            $.post("../Dev/SaveEbDataSource",
+                {
+                    "Id": this.Obj_Id,
+                    "Code": this.Code,
+                    "Name": this.Name,
+                    "Description": this.Description,
+                    "Token": getToken(),
+                    "isSave": "true",
+                    "VersionNumber": this.Version_num,
+                    "FilterDialogId": this.FilterDId
+                }, this.Success_alert.bind(this));
+        };
+    }
+
+    this.Commit = function () {
+        $(".eb-loader").show();
+        $('.alert').remove();
+        alert('commit');
+        this.SetValues();
+        this.FilterDId = $('#fd option:selected').val();
+        // this.FilterDId = this.MyFd.SelectedFdId;
+        //if (this.Obj_Id === 0) {
+        //    $.post("../Dev/CommitEbDataSource",
+        //           {
+        //               "Id": this.Obj_Id,
+        //               "Code": this.Code,
+        //               "Name": this.Name,
+        //               "Description": this.Description,
+        //               "isSave": "true",
+        //               "VersionNumber": this.Version_num,
+        //               "FilterDialogId": this.FilterDId
+        //           }, this.Success_alert.bind(this));
+        //}
+        var Dswzd = new EbWizard("../Dev/ds_save", "../Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
+        Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num, this.FilterDId).DataSource;
+
+    }
+
+    $(this.SaveBtn).off("click").on("click", this.Save.bind(this));
+    $(this.CommitBtn).off("click").on("click", this.Commit.bind(this));
 
     this.Find_parameters = function () {
         var result = this.Code.match(/\@\w+/g);
@@ -276,87 +300,6 @@ var FilterDialog = function (obj_id) {
             filterparams.sort();
             this.Filter_Params = filterparams;
             this.Parameter_Count = filterparams.length;
-        }
-    }
-
-    this.SaveFilterDialog = function () {
-        $(".eb-loader").show();
-        this.Fd_Id = "0";
-        var AllInputs = $('.filter_modal_body').find("input, select");
-        var ObjString = "[";
-        $.each(AllInputs, function (i, inp) {
-            if ($(inp).hasClass("param_val")) {
-                //ObjString += '{"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '"},';
-                ObjString += '{\"name\":\"' + $(inp).attr("id") + '\",\"type\":\"' + $("#" + $(inp).attr("id")).val() + '\"},';
-            }
-        })
-        this.ObjectString_WithoutVal = ObjString.slice(0, -1) + ']';
-
-        $.post("http://eb_roby_dev.localhost:53431/Dev/SaveFilterDialog", {
-            "Id": this.Fd_Id,
-            "DsId": this.Ds_id,
-            "FilterDialogJson": this.ObjectString_WithoutVal,
-            "Name": $('#fdname').val(),
-            "Description": $('#fddesc').val(),
-            "Token": getToken(),
-            "isSave": "false",
-            "VersionNumber": "1"
-        }, this.Save_Success.bind(this));
-    }
-
-    this.Load_Fd = function () {
-        $.post("http://eb_roby_dev.localhost:53431/Dev/GetByteaEbObjects_json", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
-        function (result) {
-            $('#fdtbody').children().remove();
-            $('.fdthead').children().remove();
-            $('.fdthead').append(" <tr>" +
-                                           "<th>Parameter Name</th>" +
-                                           "<th>Parameter Type</th>" +
-                                          "<th>Parameter Value</th>" +
-                   " </tr>");
-
-            for (var key in result) {
-                $('#fdname').val(result[key].name);
-                $('#fddesc').val(result[key].description);
-                var fdjson = result[key].filterDialogJson;
-                $.each(JSON.parse(fdjson), function (i, fdj) {
-                    $('#fdtbody').append("<tr><td><label class='param_val align_singleLine param_name'>" + fdj.name + "</label>" +
-                                          "  </td>" +
-                                          "<td><label class='param_val align_singleLine param_type'>" + fdj.type + "</label>" +
-                                        " </td>" +
-                                           " <td> <input type='text' name=" + fdj.name + " class='param_val param_value align_singleLine form-control' required/> </td>" +
-                                       " </tr>");
-                });
-            }
-            $('#filterDialog').modal('show');
-            $(".eb-loader").hide();
-            $('#saveFilter').hide();
-            $('#run').show();
-        });
-    }
-
-    this.RunDs = function () {
-        this.Find_parameters();
-        this.CreateObjString();
-        this.DrawTable();
-    }
-
-    this.Execute = function () {
-        $(".eb-loader").show();
-        this.SetValues();
-        this.Find_parameters();
-        if (this.Parameter_Count === 0) {
-            this.ValidInput = true;
-            this.Object_String_WithVal = "";
-            this.DrawTable();
-        }
-        else if ($('#fd option:selected').text() === "Select Filter Dialog") {
-            alert("Please select a filter dialog");
-            $(".eb-loader").hide();
-        }
-        else if ($('#fd option:selected').text() !== "Auto Generate Filter Dialog") {
-            this.SelectedFdId = $('#fd option:selected').val();
-            this.Load_Fd();
         }
     }
 
@@ -393,16 +336,16 @@ var FilterDialog = function (obj_id) {
     this.DrawTable = function () {
         $(".eb-loader").show();
         tabNum++;
-        this.Fd_Name = $('#fdname').val();
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Fd_Name + tabNum + "'>Result-" + this.Fd_Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        $('#versionTab').append("<div id='vernav" + this.Fd_Name + tabNum + "' class='tab-pane fade'>");
-        $('#vernav' + this.Fd_Name + tabNum).append("  <div class=' filter_modal_body'>" +
+        Fd_Name = $('#fdname').val();
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + Fd_Name + tabNum + "'>Result-" + Fd_Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + Fd_Name + tabNum + "' class='tab-pane fade'>");
+        $('#vernav' + Fd_Name + tabNum).append("  <div class=' filter_modal_body'>" +
                   "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
               "</div>");
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         if (this.ValidInput === true) {
             $.post('GetColumns4Trial', {
-                dsid: this.Ds_id,
+                dsid: this.Obj_Id,
                 parameter: this.Object_String_WithVal
             }, this.Load_Table_Columns.bind(this));
         }
@@ -410,7 +353,7 @@ var FilterDialog = function (obj_id) {
             alert('not valid');
         }
 
-        $("#versionNav a[href='#vernav" + this.Fd_Name + tabNum + "']").tab('show');
+        $("#versionNav a[href='#vernav" + Fd_Name + tabNum + "']").tab('show');
     }
 
     this.Load_Table_Columns = function (result) {
@@ -419,16 +362,15 @@ var FilterDialog = function (obj_id) {
             alert('Error in Query');
         }
         else {
-            console.log(cols);
             var cols = JSON.parse(result);
-            $("#sample"+tabNum).dataTable({
+            $("#sample" + tabNum).dataTable({
                 columns: cols,
                 serverSide: true,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 scrollX: "100%",
                 scrollY: "300px",
                 ajax: {
-                    url: "https://expressbaseservicestack.azurewebsites.net/ds/data/" + this.Ds_id,
+                    url: "https://expressbaseservicestack.azurewebsites.net/ds/data/" + this.Obj_Id,
                     type: "POST",
                     data: this.Load_tble_Data.bind(this),
                     dataSrc: function (dd) { return dd.data; },
@@ -441,17 +383,121 @@ var FilterDialog = function (obj_id) {
 
     this.Load_tble_Data = function (dq) {
         delete dq.columns; delete dq.order; delete dq.search;
-        dq.Id = this.Ds_id;
+        dq.Id = this.Obj_Id;
         dq.Token = getToken();
         //dq.rToken = getrToken();
         dq.TFilters = [];
         dq.Params = this.Object_String_WithVal;
     }
 
+    this.Load_Fd = function () {
+        $.post("../Dev/GetByteaEbObjects_json", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
+        function (result) {
+            $('#fdtbody').children().remove();
+            $('.fdthead').children().remove();
+            $('.fdthead').append(" <tr>" +
+                                           "<th>Parameter Name</th>" +
+                                           "<th>Parameter Type</th>" +
+                                          "<th>Parameter Value</th>" +
+                   " </tr>");
+
+            for (var key in result) {
+                $('#fdname').val(result[key].name);
+                $('#fddesc').val(result[key].description);
+                var fdjson = result[key].filterDialogJson;
+                $.each(JSON.parse(fdjson), function (i, fdj) {
+                    $('#fdtbody').append("<tr><td><label class='param_val align_singleLine param_name'>" + fdj.name + "</label>" +
+                                          "  </td>" +
+                                          "<td><label class='param_val align_singleLine param_type'>" + fdj.type + "</label>" +
+                                        " </td>" +
+                                           " <td> <input type='text' name=" + fdj.name + " class='param_val param_value align_singleLine form-control' required/> </td>" +
+                                       " </tr>");
+                });
+            }
+            $('#filterDialog').modal('show');
+            $(".eb-loader").hide();
+            $('#saveFilter').hide();
+            $('#run').show();
+        });
+    } 
+
+    this.Differ = function () {
+        $(".eb-loader").show();
+        var verid = $('#selected_Ver option:selected').val();
+        $.post('../Dev/VersionCodes', { "objid": verid })
+           .done(this.CallDiffer.bind(this));     
+    }
+
+    this.CallDiffer = function (data) {
+        this.SetValues();
+        $.post("../Dev/GetDiffer", {
+            NewText: this.Code, OldText: data
+        })
+        .done(this.showDiff.bind(this));
+    }
+
+    this.showDiff = function (data) {
+        var verid = $('#selected_Ver option:selected').val();
+        var vername= $('#selected_Ver option:selected').attr("data-tokens");
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + verid + tabNum + "'>Compare with-v." + vername + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + verid + tabNum + "' class='tab-pane fade'>");
+        $('#vernav' + verid + tabNum).append("<div id='oldtext" + verid + tabNum + "'class='leftPane'>" +
+              "</div>" +
+              "  <div id='newtext"+ verid + tabNum +"' class='rightPane'>" +
+              "</div>");
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        $("#versionNav a[href='#vernav" + verid + tabNum + "']").tab('show');
+        $('#oldtext'+ verid + tabNum).html("<div class='diffHeader'>OldText</div>" + data[0]);
+        $('#newtext'+ verid + tabNum).html("<div class='diffHeader'>NewText</div>" + data[1]);
+        $(".eb-loader").hide();
+    }
+}
+
+
+var FilterDialog = function () {
+    this.Fd_Id;
+    this.Fd_Name;
+    this.Fd_Description;
+    this.ObjectString_WithoutVal;
+    this.SelectedFdId = null;
+
+    this.Init = function () {
+        this.Fd_Save = $('#saveFilter');
+        $(this.Fd_Save).off("click").on("click", this.SaveFilterDialog.bind(this));
+    }
+
+    this.SetValues = function () {
+        this.Fd_Name = $('#fdname').val();
+        this.Fd_Description = $('#fddesc').val();
+    }
+
+    this.SaveFilterDialog = function () {
+        $(".eb-loader").show();
+        this.Fd_Id = "0";
+        var AllInputs = $('.filter_modal_body').find("input, select");
+        var ObjString = "[";
+        $.each(AllInputs, function (i, inp) {
+            if ($(inp).hasClass("param_val")) {
+                //ObjString += '{"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '"},';
+                ObjString += '{\"name\":\"' + $(inp).attr("id") + '\",\"type\":\"' + $("#" + $(inp).attr("id")).val() + '\"},';
+            }
+        })
+        this.ObjectString_WithoutVal = ObjString.slice(0, -1) + ']';
+
+        $.post("../Dev/SaveFilterDialog", {
+            "Id": this.Fd_Id,
+            "FilterDialogJson": this.ObjectString_WithoutVal,
+            "Name": $('#fdname').val(),
+            "Description": $('#fddesc').val(),
+            "Token": getToken(),
+            "isSave": "false",
+            "VersionNumber": "1"
+        }, this.Save_Success.bind(this));
+    }
+
     this.Save_Success = function (result) {
         this.Success_alert();
         this.SelectedFdId = result;
-        this.Load_Fd();
     }
 
     this.Success_alert = function (result) {
@@ -462,13 +508,6 @@ var FilterDialog = function (obj_id) {
     "<strong>Success!</strong>" +
     "</div>");
     }
-
-    this.deleteTab = function (e) {
-        var tabContentId = $(e.target).parent().attr("href");
-        $(e.target).parent().parent().remove(); //remove li of tab
-        $(tabContentId).remove();
-        $('#versionNav a:last').tab('show'); // Select first tab        
-    };
 
     this.Init();
 }

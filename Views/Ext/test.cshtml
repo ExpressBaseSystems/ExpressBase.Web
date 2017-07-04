@@ -1,0 +1,12 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPAgeHeader2");
+    Html.RenderPartial("_SidebarMenu");
+}
+<script>
+    $('document').ready(function(){
+        $('#submen').click(function () {
+            $('.side').toggle();
+        });
+    });
+</script>

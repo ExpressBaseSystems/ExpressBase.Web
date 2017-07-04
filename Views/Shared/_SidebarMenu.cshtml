@@ -1,14 +1,43 @@
-﻿@*<ul class="sidebar-nav list-group" style="list-style-type: none;">
-        <li class="list-group-item"><a href="TenantAccounts?id=@ViewBag.UId"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; My Accounts</a></li>
-    </ul>*@
-
-<div id="sidebar-wrapper">
-    <ul class="sidebar-nav">   
-        <li class="sidebar-brand">
-            <br>
-        </li>
-        <li>
-            <a href="TenantAccounts?id=@ViewBag.UId"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; My Accounts</a>
-        </li>
-    </ul>
+﻿
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4 col-md-3 side">
+            <div class="list-group">
+                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown1">
+                    <i class="fa fa-comment-o"></i>DROPDOWN<i class="fa fa-caret-down pull-right"></i>
+                </a>
+                <ul class="sub-menu collapse" id="dropdown1">
+                    <li><i class="fa fa-caret-right"></i><a href="#"> General</a></li>
+                    <li><i class="fa fa-caret-right"></i><a href="#"> Buttons</a></li>
+                    <li><i class="fa fa-caret-right"></i><a href="#"> Tabs & Accordions</a></li>
+                    <li><i class="fa fa-caret-right"></i><a href="#"> Typography</a></li>
+                </ul>
+                <a href="#" class="list-group-item">
+                    <i class="fa fa-search"></i> Lorem ipsum
+                </a>
+                <a href="#" class="list-group-item">
+                    <i class="fa fa-user"></i> Lorem ipsum
+                </a>
+                <a href="#" class="list-group-item">
+                    <i class="fa fa-folder-open-o"></i>Lorem ipsum 
+                </a>
+                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown2">
+                    <i class="fa fa-comment-o"></i>DROPDOWN<i class="fa fa-caret-down pull-right"></i>
+                </a>
+                <ul class="sub-menu collapse" id="dropdown2">
+                    <li><i class="fa fa-caret-right"></i><a href="#"> General</a></li>
+                    <li><i class="fa fa-caret-right"></i><a href="#"> Buttons</a></li>
+                    <li><i class="fa fa-caret-right"></i><a href="#"> Tabs & Accordions</a></li>
+                    <li><i class="fa fa-caret-right"></i><a href="#"> Typography</a></li>
+                </ul>
+                <a href="#" class="list-group-item">
+                    <i class="fa fa-envelope"></i> Lorem ipsum
+                </a>
+                <a href="#" class="list-group-item">
+                    <i class="fa fa-envelope"></i> Lorem ipsum
+                </a>
+                
+            </div>
+        </div>
+    </div>
 </div>

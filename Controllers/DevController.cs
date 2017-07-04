@@ -19,8 +19,9 @@ namespace ExpressBase.Web.Controllers
 {
     public class DevController : EbBaseController
     {
-
+       
         public DevController(IOptionsSnapshot<EbSetupConfig> ss_settings) : base(ss_settings) { }
+        
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -236,6 +237,11 @@ namespace ExpressBase.Web.Controllers
                 //ViewBag.Icon = "fa fa-database";
             }
             return ViewBag.Code;
+        }
+
+        public IActionResult Eb_formBuilder()
+        {
+            return View();
         }
 
         public int SaveFilterDialog()

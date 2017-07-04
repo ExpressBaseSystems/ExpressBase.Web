@@ -1,5 +1,6 @@
 ﻿var TextBoxObj = function (id) {
-    this.Id = id,
+    this.Name = id,
+    this.__type = "ExpressBase.Objects.EbTextBox",
     this.props = {
         Name: id,
         Parent: "",
@@ -79,6 +80,48 @@
 //    }
 //};
 
+var EbControlCollection = function () {
+    this.InnerCollection = [];
+    this.flatCollection = [];
+
+    this.ToArray = function () {
+        return this.InnerCollection;
+    };
+
+    this.Append = function (newObject)
+    {
+        this.InnerCollection.push(newObject);
+        this.flatCollection.push(newObject);
+    };
+
+    this.InsertAt = function (index, newObject) {
+        this.InnerCollection.splice(index, 0, newObject);
+        this.flatCollection.push(newObject);
+    };
+
+    this.InsertBefore = function (beforeObj, newObject) {
+        this.InnerCollection.splice(this.InnerCollection.indexOf(beforeObj), 0, newObject);
+        this.flatCollection.push(newObject);
+    };
+
+    this.GetByName = function (_name) {
+        var retObject = new Object();
+        this.GetByNameInner(_name, this.InnerCollection, retObject);
+        return retObject.Value;
+    };
+
+    this.GetByNameInner = function (_name, _collection, retObject) {
+        for (i = 0; i < _collection.length; i++) {
+            if (_collection[i].isContainer)
+                this.GetByNameInner(_name, _collection[i].Controls, retObject);
+            else if (_collection[i].Name === _name) {
+                retObject.Value = _collection[i];
+                break;
+            }
+        }
+    };
+};
+
 var formBuilder = function (toolBoxid, formid) {
     this.toolBoxid = toolBoxid;
     this.formid = formid;
@@ -89,10 +132,30 @@ var formBuilder = function (toolBoxid, formid) {
     this.GridViewCounter = 0;
     this.TextBoxCounter = 0;
     this.curControl = null;
-    this.Controls = [];
+    this.Controls = new EbControlCollection();
 
     this.save = function () {
-        alert("save:" + JSON.stringify(this.Controls));
+        //alert("save:" + JSON.stringify(this.Controls));
+        $(".eb-loader").show();
+
+        $.post("SaveFilterDialog", {
+            "Id": 0,
+            "FilterDialogJson": JSON.stringify(this.Controls.ToArray()),
+            "Name": $('#save_txtBox').val(),
+            "Description": "",
+            "isSave": "false",
+            "VersionNumber": "1"
+        }, this.Save_Success.bind(this));
+    };
+
+    this.Save_Success = function (result) {
+        alert("Saved");
+        $(".eb-loader").hide();
+        $('.alert').remove();
+        $('.help').append("<div class='alert alert-success alert-dismissable'>" +
+    "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+    "<strong>Success!</strong>" +
+    "</div>");
     };
 
     $("#saveformBtn").on("click", this.save.bind(this));
@@ -116,8 +179,8 @@ var formBuilder = function (toolBoxid, formid) {
             BootstrapDD: {
                 html: function (elemId, name, value, meta) { // custom renderer for type (required)
                     var _html = "<div class='dropdown'>" +
-        "<button id=" + elemId + " name=" + name + " class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'><div style='display: inline-block; overflow: hidden; text-overflow: ellipsis; '>" + value +
-        " </div><span class='caret' style='vertical-align: super'></span></button>" +
+                    "<button id=" + elemId + " name=" + name + " class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'><div style='display: inline-block; overflow: hidden; text-overflow: ellipsis; '>" + value +
+                    " </div><span class='caret' style='vertical-align: super'></span></button>" +
                     "<ul class='dropdown-menu'>"
                     $.each(meta.options, function (i, val) { _html += "<li><a href='#'>" + val + "</a></li>"; })
                     _html += "</ul></div>";
@@ -132,9 +195,9 @@ var formBuilder = function (toolBoxid, formid) {
                 html: function (elemId, name, value, meta) { // custom renderer for type (required)
                     var txt = "";
                     var _html = "<div class='dropdown'>" +
-        "<button id=" + elemId + " name='Select dv' class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" +
-        "$$text" +
-        " <span class='caret'></span></button>" +
+                    "<button id=" + elemId + " name='Select dv' class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" +
+                    "$$text" +
+                    " <span class='caret'></span></button>" +
                     "<ul class='dropdown-menu'>"
                     $.each(meta.options, function (i, val) {
                         _html += "<li><a  id=" + elemId + i + "  href='#' data-dvid='" + val.value + "'>" + val.text + "</a></li>"
@@ -161,7 +224,6 @@ var formBuilder = function (toolBoxid, formid) {
             var selected = $(this).find("option:selected").val();
             $("#" + selected).focus();
         });
-////////////
     };
 
     this.saveObj = function () {
@@ -225,12 +287,15 @@ var formBuilder = function (toolBoxid, formid) {
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
         //alert(this.Controls[this.curControl.attr("id")]);
-        this.CreatePG(this.Controls[this.curControl.attr("id")]);
+        this.CreatePG(this.Controls.GetByName(this.curControl.attr("id")));
     };
 
     this.pushContainers = function (i) { if (!this.drake.containers.contains(document.getElementsByClassName("tdDropable")[i])) this.drake.containers.push(document.getElementsByClassName("tdDropable")[i]); };
 
     this.onDropFn = function (el, target, source, sibling) {
+
+        console.log("sibling id:" + $(sibling).attr("id"));
+        console.log("target id:" + $(target).attr("class"));
         if ($(source).attr("id") === "form-buider-toolBox") {
             el.className = 'controlTile';
             $(el).attr("tabindex", "1");
@@ -244,7 +309,7 @@ var formBuilder = function (toolBoxid, formid) {
                 var id = "TextBox" + this.TextBoxCounter++;
                 $(el).attr("id", id);
                 $(el).html("<input type='text' readonly style='width:100%' />");
-                this.Controls[id] = new TextBoxObj(id);
+                this.Controls.Append(new TextBoxObj(id));
             }
             else if ($(el).text().trim() === "ComboBox") {
                 $(el).attr("id", "ComboBox" + this.ComboBoxCounter++);

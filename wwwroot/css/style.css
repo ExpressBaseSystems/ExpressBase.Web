@@ -1,4 +1,5 @@
 body {
+    background-color: white;
     background-size: cover;
     line-height: 1.52;
     color: #717f86;
@@ -574,4 +575,8 @@ text-align:center;
 /*sidebar end*/
 .main-cont{
     padding-top:80px;
+}
+.padd{
+    padding-right:7px;
+    padding-bottom:10px;
 }

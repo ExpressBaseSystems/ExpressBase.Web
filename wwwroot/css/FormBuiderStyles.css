@@ -1,6 +1,29 @@
 ﻿body {
 }
 
+.settings-cont {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0px;
+    left: 0px;
+    background: rgba(100,100,100,0.4);
+    display: flex;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+
+.contol-settings-window {
+    padding: 30px;
+    background: #fff;
+    color: #000000;
+    width: 30vw;
+}
+
 .form-buider-toolBox {
     width: 155px;
     padding: 3px;
@@ -38,6 +61,12 @@
         box-shadow: none;
     }
 
+    .form-buider-form table {
+        width: 100%;
+        height: inherit;
+        table-layout: fixed;
+    }
+
 .propgrid-table-cont input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
     height: 21px;
     width: 110px;
@@ -60,7 +89,7 @@
 .property-grid-cont .bs-searchbox .form-control {
     height: 21px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
-    border-radius:2px;
+    border-radius: 2px;
     font-size: 13px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
@@ -87,7 +116,7 @@
 }
 
 .tdDropable {
-    width: 50%;
+    /*width: 50%;*/
     height: 30px;
 }
 

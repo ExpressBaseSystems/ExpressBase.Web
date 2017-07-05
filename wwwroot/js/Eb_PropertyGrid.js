@@ -25,7 +25,8 @@
         // Check if the user called the 'get' function (to get the values back from the grid).
         if (typeof obj === 'string' && obj === 'get') {
             if (typeof this.data(GET_VALS_FUNC_KEY) === 'function') {
-                return this.data(GET_VALS_FUNC_KEY)();
+                obj = this.data(GET_VALS_FUNC_KEY)();
+                return obj;
             }
 
             return null;
@@ -44,6 +45,7 @@
         options.helpHtml = options.helpHtml || '[?]';
 
         // Seems like we are ok to create the grid
+        var extObject = obj;
         var meta = options.meta;
         var propertyRowsHTML = { OTHER_GROUP_NAME: '' };
         var groupsHeaderRowHTML = {};
@@ -112,6 +114,7 @@
                 }
 
                 result[prop] = getValueFuncs[prop]();
+                extObject[prop] = result[prop];
             }
 
             return result;
@@ -195,20 +198,20 @@
 
             // If number and a jqueryUI spinner is loaded use it
         } else if (typeof $.fn.spinner === 'function' && (type === 'number' || (type === '' && typeof value === 'number'))) {
-            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '" style="width:50px" />';
-            if (postCreateInitFuncs) {
-                postCreateInitFuncs.push(initSpinner(elemId, meta.options));
-            }
+            valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
+            //if (postCreateInitFuncs) {
+            //    postCreateInitFuncs.push(initSpinner(elemId, meta.options));
+            //}
 
             if (getValueFuncs) {
                 getValueFuncs[name] = function () {
-                    return $('#' + elemId).spinner('value');
+                    return $('#' + elemId).val();
                 };
             }
 
             // If color and we have the spectrum color picker use it
         } else if (type === 'color' && typeof $.fn.spectrum === 'function') {
-            valueHTML = '<input type="text" id="' + elemId + '" />';
+            valueHTML = '<input type="text" id="' + elemId + '" style="width:100%" />';
             if (postCreateInitFuncs) {
                 postCreateInitFuncs.push(initColorPicker(elemId, value, meta.options));
             }

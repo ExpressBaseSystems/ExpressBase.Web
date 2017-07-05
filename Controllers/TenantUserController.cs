@@ -13,6 +13,8 @@ using ExpressBase.Web.Filters;
 using ExpressBase.Data;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using ExpressBase.Web.Controllers;
+using ExpressBase.Common;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -140,9 +142,32 @@ namespace ExpressBase.Web2.Controllers
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
             ViewBag.dvname = _dict["dvName"];
-            ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
-
+            var obj = GetByteaEbObjects_json(220);
+            ViewBag.EbForm38 = (obj.Value as Dictionary<int, EbFilterDialog>)[220];
             return View();
+        }
+
+        public JsonResult GetByteaEbObjects_json(int objId)
+        {
+           
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var rlist = resultlist.Data;
+
+            Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType.ToString() == "FilterDialog")
+                {
+
+                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
+                    dsobj.EbObjectType = element.EbObjectType;
+                    dsobj.Id = element.Id;
+                    ObjList[element.Id] = dsobj;
+                }
+            }
+            return Json(ObjList);
         }
 
         [HttpGet]

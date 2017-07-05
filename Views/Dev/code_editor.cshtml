@@ -25,105 +25,122 @@
     <script type="text/javascript">
         $(document).ready(function(){
             var MyDs=new DataSource(@ViewBag.Obj_id,@ViewBag.IsNew, @ViewBag.VersionNumber,'@ViewBag.cid');
+            if(@ViewBag.IsNew===true){
+                $('#comp').hide();
+                $('#ver_his').remove();
+                $('#statusLabel').remove();
+                $('#save').remove();
+                $('#stat_his').remove();
+                $('#rel_obj').remove();
+            }
+
+            $('#fd').on("loaded.bs.select",function selectMe(me){
+                if(@ViewBag.IsNew===false){
+                    if( @ViewBag.FilterDialogId === "null"){
+                        var val ="Select Filter Dialog";
+                    }
+                    else{
+                        var val = @ViewBag.FilterDialogId ;
+                    }
+                    $(this).selectpicker('val', val);
+                }
+            });
             $(".eb-loader").hide();
             $('#filterRun').on('hidden.bs.modal', function () {
                 $("#sample").DataTable().destroy();
                 $("#sample").children().remove();
             });
-            $(document).keydown(function (e) {
-                if (e.keyCode == 83 && e.ctrlKey) {
-                    e.preventDefault();
-                    $("#save").trigger("click");
-                }
-            });
         });
+
+        $(document).keydown(function (e) {
+            if (e.keyCode == 83 && e.ctrlKey) {
+                e.preventDefault();
+                $("#save").trigger("click");
+            }
+        });
+
     </script>
 </head>
 <body>
     <div class='eb-loader'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>
-    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group mr-2" role="group" aria-label="First group">
-            <div class="form-group " style="float:left">
-                <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control inputBox" />
-            </div>
-            <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn-default btn btn-sm fa fa-plus-square  fa-1x" aria-hidden="true"></i></a>
-            <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-sm btn-default fa fa-save fa-1x" aria-hidden="true"></i></a>
-            <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-sm btn-default fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn-default btn btn-sm fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-            <a class="comp" id="comp" data-toggle="collapse" title="Compare" data-target="#compareCollapse"><i class="btn-default btn btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn-default btn btn-sm fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn btn-sm fa fa-code-fork fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn-default btn btn-sm fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-default btn btn-sm fa fa-history fa-1x" aria-hidden="true"></i></a>
-            <div class="dropdown fdlist btn-group">
-                <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
-                    @{
-                        @using ExpressBase.Objects.ServiceStack_Artifacts;
-                        Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
-                        filterDialogs = ViewBag.FilterDialogs;
-                        <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
-                        <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
-                        foreach (var filter in filterDialogs)
-                        {
-                            <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
+    <div class="btn-toolbar container " role="toolbar" aria-label="Toolbar with button groups">
+        <h3>@ViewBag.Header</h3>
+        <div class="well col-md-12">
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <div class="form-group " style="float:left">
+                    <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control inputBoxinHead" />
+                </div>
+                <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn-default btn btn-lg fa fa-chevron-down  fa-1x" aria-hidden="true"></i></a>
+                <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-lg btn-default fa fa-save fa-1x" aria-hidden="true"></i></a>
+                <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-lg btn-default fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
+                <a href="#" id="rel_obj" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn-default btn btn-lg fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+                <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn-default btn btn-lg fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
+                @*<a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn btn-lg fa fa-code-fork fa-1x" aria-hidden="true"></i></a>*@
+                <a href="#" id="stat_his" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn-default btn btn-lg fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
+                <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-default btn btn-lg fa fa-history fa-1x" aria-hidden="true"></i></a>
+                <div class="dropdown fdlist btn-group">
+                    <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
+                        @{
+                            @using ExpressBase.Objects.ServiceStack_Artifacts;
+                            Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
+                            filterDialogs = ViewBag.FilterDialogs;
+                            <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
+                            <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
+                            foreach (var filter in filterDialogs)
+                            {
+                                <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
+                            }
                         }
-                    }
-                </select>
+                    </select>
+                </div>
+                <a class="label label-success codeEditLabel" id="statusLabel">Status : @ViewBag.Status</a>
+                <a class="label label-warning codeEditLabel"> Version @ViewBag.VersionNumber</a>
             </div>
-            <span class="label label-success codeEditLabel">Status : @ViewBag.Status</span>
-            <span class="label label-warning codeEditLabel"> Version v.@ViewBag.VersionNumber</span>
+
+            <div id="objCollapse" class="collapse">
+                <div class="form-group ">
+                    <label class="control-label">Description</label>
+                    <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
+                </div>
+            </div>
         </div>
 
-        <div id="objCollapse" class="collapse">
-            <div class="form-group ">
-                <label class="control-label">Description</label>
-                <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
-            </div>
-        </div>
-        @{ if (ViewBag.IsNew == "false")
-            {
-                <div id="compareCollapse" class="collapse">
-                    <div class="form-group ">
-                        <div class="dropdown verlist btn-group">
-                            <label class="control-label">
-                                Select versions to compare
-                            </label>
-                            <select id="selected_Ver" name="selected_Ver" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
-                                @{
-                                    List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
-                                    Allversions = ViewBag.Allversions;
-                                    <option value="Select Version" data-tokens="Select Version">Select Version</option>
-                                    foreach (var version in Allversions)
-                                    {
-                                        <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
-                                    }
-                                }
-                            </select>
-                            <button class="diff" id="diff">Compare</button>
-                        </div>
-                    </div>
-                </div>
-                                    }
-        }
-    </div>
-    <div class="container">
         <ul class="nav nav-tabs versionNav" id="versionNav">
             <li class="active"><a data-toggle="tab" href="#code_edit0">@ViewBag.ObjectName</a></li>
         </ul>
 
         <div class="tab-content " id="versionTab">
             <div id="code_edit0" class="tab-pane fade in active">
-                <div class="btn-group">
-
-                    <div class="btn-group">
-                        <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+                <div class="col-md-12">
+                   
+                     @*<a class="comp" id="comp" data-toggle="collapse" title="Compare" data-target="#compareCollapse"><i class="btn-default btn btn-lg fa fa-exchange fa-1x" aria-hidden="true"></i></a>*@
+                    <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+                    @{ if (ViewBag.IsNew == "false")
+                        {
+                    <div class="dropdown verlist btn-group">
+                        <select id="selected_Ver" name="selected_Ver" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
+                            @{
+                                List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
+                                Allversions = ViewBag.Allversions;
+                                <option value="Select Version" data-tokens="Select Version">Select Version</option>
+                                foreach (var version in Allversions)
+                                {
+                                    <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                                }
+                            }
+                        </select>
+                        <button class="diff" id="diff">Compare</button>
                     </div>
+               }
+                    }
                 </div>
-                <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
-                <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
-                <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-                <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
-            </div>
+
+                <div class="col-md-12">
+                    <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
+                    <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
+                    <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
+                    <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
+                </div>
         </div>
     </div>
 
@@ -163,10 +180,7 @@
         </div>
     </div>
     <script type="text/javascript">
-        $('#fd').on("loaded.bs.select",function selectMe(me){
-            var val = @ViewBag.FilterDialogId || "Select Filter Dialog";
-            $(this).selectpicker('val', val);
-        });
+
         window.onload = function() {
             CodeMirror.commands.autocomplete = function(cm)
             {
@@ -204,7 +218,13 @@
 
     .inputBox {
         width: 216px;
-        height: 27px;
+        /*height: 27px;*/
+    }
+
+
+    .inputBoxinHead {
+        width: 300px;
+        /*height: 27px;*/
     }
 
     .controls-group {
@@ -225,13 +245,22 @@
     }
 
     .codeEditLabel {
-        height: 27px;
-        padding-top: 5px;
-        padding-bottom: 9px;
+        height: 33px;
+        padding-top: 4px;
+        padding-bottom: 15px;
+        font-size: 85%;
+        margin-left: -3px;
+        border-radius: 2px;
     }
 
     .btn {
         border-radius: 2px;
+        height: 33px;
+    }
+
+    .dropdown {
+        position: relative;
+        margin-right: -6px;
     }
     /*differ styles*/
     #diffBar {
@@ -306,11 +335,11 @@
     }
 
     .ModifiedLine {
-        background-color: #DCDCFF;
+        background-color: lightyellow;
     }
 
     .DeletedLine {
-        background-color: #FFC864;
+        background-color: lightpink;
     }
 
     .UnchangedLine {
@@ -322,11 +351,11 @@
     }
 
     .InsertedCharacter {
-        background-color: lightgreen;
+        background-color: seagreen;
     }
 
     .DeletedCharacter {
-        background-color: #C86464;
+        background-color: palevioletred;
     }
 
     .UnchangedCharacter {

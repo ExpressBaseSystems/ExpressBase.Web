@@ -39,7 +39,10 @@
 
                     </div>
                     <div style='margin-left: 800px;'>
-                        <input type='button' id='newobj' class='new btn btn-success' value='Add' onClick="window.open('http://eb_roby_dev.localhost:53431/Dev/'+editor)" style='height: 45px; margin-left: 50px;' />
+                        @using (Html.BeginForm(editor, "Dev", FormMethod.Get, new { target = "_blank" }))
+                        {
+                         <input type="submit" class="btn btn-success" value="New" />
+                        }
                     </div>
                     <div class="btn btn-sm btn-danger" id="reload"> Refresh Test</div>
                     <div id="dslist">

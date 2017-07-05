@@ -99,13 +99,13 @@
 <body>
    
 
-        @{if (ViewBag.cid == "expressbase" || string.IsNullOrEmpty(ViewBag.cid))
+        @{if (ViewBag.wc == "tc")
             {
-                Html.RenderPartial("ExtPageHeader2");
+                Html.RenderPartial("_PageheaderTenant");
             }
-            else
+            else if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
             {
-                Html.RenderPartial("_PageheaderTUser");
+                Html.RenderPartial("_PageheaderDev");
 
             }
         }
@@ -136,10 +136,8 @@
 
                 </div>
             </div>
-        </div>
-    
-    
-        
+        </div>    
+     
 </body>
 </html>
 

@@ -6,19 +6,118 @@
 <script>
     $('document').ready(function () {
         $('#submen').click(function () {
-            $('.side').toggle();
+            $('.side').toggle(300);
         });
     });
 </script>
+<style>
+    .objitems{
+        border:solid 1px #e6e0e0;
+        padding-bottom:5px;
+        padding-top:5px;
+        border-radius:4px;
+        padding-left:2px;
+        padding-right:2px;
+        margin-bottom:10px;
+    }
+    .bottpadd{
+        margin-bottom:50px;
+    }
+    .objitems button{
+        margin-top:40px;
+        margin-left:15px;
+    }
+    .nopadding{
+        padding:0;
+    }
+</style>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4 col-md-3 side">
-        @{ 
-            Html.RenderPartial("_SidebarMenu");
-        }
+            @{
+                Html.RenderPartial("_SidebarMenu");
+            }
         </div>
-        <div class="col-md-8 main-cont">
-           fdgjhvgfhdgjfxmbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+        <div class="col-md-9 main-cont">
+            <div class="col-md-12 bottpadd">
+                <div class="col-sm-1">
+                    <button class="btn btn-success">Add</button>
+                </div>
+                <div class="col-sm-4">
+                    <button class="btn btn-danger">Refresh Test</button>
+                </div>
+                <div class="col-sm-4 pull-right">
+                    <div class="input-group">
+                        <input class="form-control" type="text" placeholder="Search">
+                        <span class="input-group-addon"><i class="fa fa-search"><i class="fa fa-caret-down"></i></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 objitems">
+                <div class="col-sm-8 tex-left">
+                    <h4>Name</h4>
+                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
+                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
+                </div>
+                <div class="col-sm-2">
+                    <span class="label label-default">Default Label</span>
+                    <span class="label label-primary">Primary Label</span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="label label-success">Success Label</span>
+                    <span class="label label-warning">Warning Label</span>
+                    <button class="btn">Open<i class="fa fa-caret-down"></i></button>
+                </div>
+            </div>
+            <div class="col-md-12 objitems">
+                <div class="col-sm-8 tex-left">
+                    <h4>Name</h4>
+                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
+                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
+                </div>
+                <div class="col-sm-2">
+                    <span class="label label-default">Default Label</span>
+                    <span class="label label-primary">Primary Label</span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="label label-success">Success Label</span>
+                    <span class="label label-warning">Warning Label</span>
+                    <button class="btn">Open<i class="fa fa-caret-down"></i></button>
+                </div>
+            </div>
+            <div class="col-md-12 objitems">
+                <div class="col-sm-8 tex-left">
+                    <h4>Name</h4>
+                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
+                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
+                </div>
+                <div class="col-sm-2">
+                    <span class="label label-default">Default Label</span>
+                    <span class="label label-primary">Primary Label</span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="label label-success">Success Label</span>
+                    <span class="label label-warning">Warning Label</span>
+                    <button class="btn">Open<i class="fa fa-caret-down"></i></button>
+                </div>
+            </div>
+            <div class="col-md-12 objitems">
+                <div class="col-sm-8 tex-left">
+                    <h4>Name</h4>
+                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
+                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
+                </div>
+                <div class="col-sm-2">
+                    <span class="label label-default">Default Label</span>
+                    <span class="label label-primary">Primary Label</span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="label label-success">Success Label</span>
+                    <span class="label label-warning">Warning Label</span>
+                    <button class="btn">Open<i class="fa fa-caret-down"></i></button>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>

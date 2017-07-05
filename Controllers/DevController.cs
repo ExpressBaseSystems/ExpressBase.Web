@@ -46,28 +46,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult DSList()
-        {
-
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            foreach (var element in rlist)
-            {
-                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
-                {
-                    ObjList[element.Id] = element;
-                }
-            }
-            ViewBag.DSList = ObjList;
-            return View();
-        }
+      
 
         [HttpGet]
         public IActionResult code_editor()
         {
+            ViewBag.Header = "New Datasource";
             ViewBag.VersionNumber = 1;
             ViewBag.Obj_id = 0;
             ViewBag.IsNew = "true";
@@ -78,6 +62,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorMode = "text/x-sql";
             ViewBag.Icon = "fa fa-database";
             ViewBag.ObjType = (int)EbObjectType.DataSource;
+            ViewBag.ObjectName = "New";
             // list filter dialogs
             IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
@@ -90,6 +75,7 @@ namespace ExpressBase.Web.Controllers
                     filterDialogs[element.Id] = element;
                 }
             }
+            ViewBag.FilterDialogId = "null";
             ViewBag.FilterDialogs = filterDialogs;          
             return View();
         }
@@ -97,6 +83,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult code_editor(int i)
         {
+            ViewBag.Header = "Edit Datasource";
             ViewBag.Obj_id = HttpContext.Request.Form["objid"];
             int objid = Convert.ToInt32(ViewBag.Obj_id);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -384,23 +371,7 @@ namespace ExpressBase.Web.Controllers
                 return colDef.Substring(0, colDef.Length - 1) + "]";
             }
         }
-
-        public IActionResult DVList()
-        {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            foreach (var element in rlist)
-            {
-                if (element.EbObjectType == EbObjectType.DataVisualization)
-                {
-                    ObjList[element.Id] = element;
-                }
-            }
-            ViewBag.DVList = ObjList;
-            return View();
-        }
+      
 
         [HttpGet]
         public IActionResult DVEditor()
@@ -590,15 +561,16 @@ namespace ExpressBase.Web.Controllers
         public List<string> GetDiffer(string OldText,string NewText)
         {
             List<string> Diff = new List<string>();
-            var d = new Differ();
-            var inlineBuilder = new SideBySideDiffBuilder(d);
+            var inlineBuilder = new SideBySideDiffBuilder(new Differ());
 
             var diffmodel = inlineBuilder.BuildDiffModel(OldText, NewText);
             Diff.Add(Differ(diffmodel.OldText));
             Diff.Add(Differ(diffmodel.NewText));
+
             return Diff;
         }
-        public string Differ(DiffPaneModel text)
+
+        private string Differ(DiffPaneModel text)
         {
             string spaceValue = "\u00B7";
             string tabValue = "\u00B7\u00B7";
@@ -640,10 +612,32 @@ namespace ExpressBase.Web.Controllers
             html += "</table></div>";
             
             return html;
-
         }
+
         public ActionResult Diff()
         {
+            return View();
+        }
+
+        public IActionResult EbObjectList(EbObjectType type)
+        {
+            ViewBag.EbObjectType = (int)type;
+
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var rlist = resultlist.Data;
+
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == type)
+                    ObjList[element.Id] = element;
+            }
+
+            ViewBag.Objlist = ObjList;
+
             return View();
         }
     }

@@ -35,19 +35,23 @@ Navigation bar
 }
 
     .navbar-default img {
-        height: 60px;
-        margin-top: 0px;
-        margin-bottom: 10px;
+        height: 44px;
+        margin-top: 3px;
+        margin-bottom: 0px;
+        margin-right:10px;
     }
 
 .course-text {
     padding: 84px;
 }
-
+.navbar {height:40px !important;}
 .navbar-default .navbar-nav > li > a {
     color: #717f86;
     font-size: 13px;
     font-weight: normal;
+}
+#submenu .fa .fa-list{
+    font-size:20px;
 }
 
 .navbar-nav > li > a {
@@ -65,6 +69,8 @@ Navigation bar
 .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover {
     background-color: #3b5998;
     color: #ffffff !important;
+    padding-bottom:6px;
+    padding-top:6px;
 }
 
 .btn-trial a {
@@ -559,16 +565,16 @@ text-align:center;
 
 /*sidebar*/
 .side{
-       padding-top:71px;
+       padding-top:53px;
        padding-left:0;
        width:250px;
        border-radius:0;
        height:100%;
+       
        }
 .list-group ul li {
     border: none;
   line-height: 28px;
-  border-bottom: 1px solid #dcdcdc;
   display:block;
   margin-left: 0px;
 }
@@ -578,5 +584,11 @@ text-align:center;
 }
 .padd{
     padding-right:7px;
-    padding-bottom:10px;
+    padding-bottom:7px;
+}
+.side a{
+padding-bottom:4px;
+}
+.side i{
+    padding-right:5px;
 }

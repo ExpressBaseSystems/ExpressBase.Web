@@ -114,22 +114,20 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-4 col-md-3 side">
-                    @if (ViewBag.cid == "expressbase" || string.IsNullOrEmpty(ViewBag.cid))
+                    @if (ViewBag.wc == "tc")
                     {
                         Html.RenderPartial("_SidebarMenu");
                     }
+                    else if (ViewBag.wc == "dc")
+                    {
+                        Html.RenderPartial("_SideBarDev");
+                    }
                     else
                     {
+                        Html.RenderPartial("_SidebarmenuTUser");
 
-                        if (@Context.Request.Path == "/Dev/objects")
-                        {
-                            Html.RenderPartial("_SideBarObjects");
-                        }
-                        else
-                        {
-                            Html.RenderPartial("_SidebarmenuTUser");
-                        }
                     }
+                                       
                 </div>
 
                 <div class="col-md-9 main-cont">

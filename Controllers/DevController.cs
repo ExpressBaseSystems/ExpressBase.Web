@@ -46,24 +46,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult DSList()
-        {
-
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            foreach (var element in rlist)
-            {
-                if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
-                {
-                    ObjList[element.Id] = element;
-                }
-            }
-            ViewBag.DSList = ObjList;
-            return View();
-        }
+      
 
         [HttpGet]
         public IActionResult code_editor()
@@ -384,23 +367,7 @@ namespace ExpressBase.Web.Controllers
                 return colDef.Substring(0, colDef.Length - 1) + "]";
             }
         }
-
-        public IActionResult DVList()
-        {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            foreach (var element in rlist)
-            {
-                if (element.EbObjectType == EbObjectType.DataVisualization)
-                {
-                    ObjList[element.Id] = element;
-                }
-            }
-            ViewBag.DVList = ObjList;
-            return View();
-        }
+      
 
         [HttpGet]
         public IActionResult DVEditor()
@@ -644,6 +611,28 @@ namespace ExpressBase.Web.Controllers
         }
         public ActionResult Diff()
         {
+            return View();
+        }
+
+        public IActionResult EbObjectList(EbObjectType type)
+        {
+            ViewBag.EbObjectType = (int)type;
+
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var rlist = resultlist.Data;
+
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType == type)
+                    ObjList[element.Id] = element;
+            }
+
+            ViewBag.Objlist = ObjList;
+
             return View();
         }
     }

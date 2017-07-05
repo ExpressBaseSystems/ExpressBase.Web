@@ -1,0 +1,78 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using ExpressBase.Objects;
+
+@{
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
+    var ObjectType = ViewBag.EbObjectType;
+    string editor = null;
+    if (ObjectType == (int)EbObjectType.DataSource)
+    {
+        editor = "code_editor";
+    }
+    else if(ObjectType == (int)EbObjectType.DataVisualization)
+    {
+        editor = "DVEditor";
+    }
+}
+<div>
+    <section class='content'>
+        <div>
+            <div class='panel panel-default' style='width: 100%;'>
+                <div class='panel-body' style='margin-top: 50px;'>
+                    <h1>Object List</h1>
+                    <div class='input-group input-group-lg col-md-3' style='width:600px;margin-left: 70px;'>
+                        <div class='input-group-btn'>
+                            <button type='button' class='btn btn-search btn-info dropdown-toggle' data-toggle='dropdown'>
+                                <span class='glyphicon glyphicon-search'></span>
+                                <span class='label-icon'>Search</span>
+                                <span class='caret'></span>
+                            </button>
+                            
+                        </div>
+                        <input type='text' class='form-control' id='MySearch' style='width:535px;'>
+                        <div class='input-group-btn'>
+
+                        </div>
+
+                    </div>
+                    <div style='margin-left: 800px;'>
+                        <input type='button' id='newobj' class='new btn btn-success' value='Add' onClick="window.open('http://eb_roby_dev.localhost:53431/Dev/'+editor)" style='height: 45px; margin-left: 50px;' />
+                    </div>
+                    <div class="btn btn-sm btn-danger" id="reload"> Refresh Test</div>
+                    <div id="dslist">
+                        @{
+                            foreach (var element in Objlist)
+                            {
+                                <div class="tr">
+                                    <div class="row">
+                                        <div class="col-sm-7">
+                                            <label>@element.Value.Name</label>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            @using (Html.BeginForm(editor, "Dev", FormMethod.Post, new { target = "_blank" }))
+                                            {
+                                                <input type="hidden" name="objid" value="@element.Value.Id" />
+                                                <input type="hidden" name="tacid" value="@ViewBag.cid" />
+                                                <input type="submit" class="btn btn-success" value="Open" />
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <input type="hidden" id="tacid" value="@ViewBag.cid" />
+
+
+                </div>
+            </div>
+            <div class='content-footer'>
+            </div>
+        </div>
+    </section>
+</div>
+  
+

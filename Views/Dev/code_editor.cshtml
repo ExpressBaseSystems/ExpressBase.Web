@@ -79,12 +79,12 @@
                 <a href="#" id="stat_his" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn-default btn btn-lg fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
                 <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-default btn btn-lg fa fa-history fa-1x" aria-hidden="true"></i></a>
                 <div class="dropdown fdlist btn-group">
-                    <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
+                    <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true">
                         @{
                             @using ExpressBase.Objects.ServiceStack_Artifacts;
                             Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
                             filterDialogs = ViewBag.FilterDialogs;
-                            <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
+                            <option value="Select Filter Dialog" data-tokens="Select Filter Dialog" selected>Select Filter Dialog</option>
                             <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
                             foreach (var filter in filterDialogs)
                             {
@@ -112,26 +112,26 @@
         <div class="tab-content " id="versionTab">
             <div id="code_edit0" class="tab-pane fade in active">
                 <div class="col-md-12">
-                   
-                     @*<a class="comp" id="comp" data-toggle="collapse" title="Compare" data-target="#compareCollapse"><i class="btn-default btn btn-lg fa fa-exchange fa-1x" aria-hidden="true"></i></a>*@
+
+                    @*<a class="comp" id="comp" data-toggle="collapse" title="Compare" data-target="#compareCollapse"><i class="btn-default btn btn-lg fa fa-exchange fa-1x" aria-hidden="true"></i></a>*@
                     <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
                     @{ if (ViewBag.IsNew == "false")
-                        {
-                    <div class="dropdown verlist btn-group">
-                        <select id="selected_Ver" name="selected_Ver" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
-                            @{
-                                List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
-                                Allversions = ViewBag.Allversions;
-                                <option value="Select Version" data-tokens="Select Version">Select Version</option>
-                                foreach (var version in Allversions)
-                                {
-                                    <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                        {        <div class="form-group ">
+                        <div class="dropdown verlist btn-group">
+                            <select id="selected_Ver" name="selected_Ver" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
+                                @{
+                                    List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
+                                    Allversions = ViewBag.Allversions;
+                                    <option value="Select Version" data-tokens="Select Version">Select Version</option>
+                                    foreach (var version in Allversions)
+                                    {
+                                        <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                                    }
                                 }
-                            }
-                        </select>
-                        <button class="diff" id="diff">Compare</button>
-                    </div>
-               }
+                            </select>
+                            <button class="diff" id="diff">Compare</button>
+                        </div>
+                    </div>       }
                     }
                 </div>
 
@@ -141,9 +141,9 @@
                     <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
                     <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
                 </div>
+            </div>
         </div>
     </div>
-
     <div id="filterDialog" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->

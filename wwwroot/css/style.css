@@ -1,3 +1,4 @@
+
 body {
     background-color: white;
     background-size: cover;
@@ -29,22 +30,16 @@ Navigation bar
 .navbar-default .navbar-brand {
     color: #3b5998;
 }
-
 .navbar-default {
     background-color: #ffffff;
 }
-
     .navbar-default img {
         height: 44px;
         margin-top: 3px;
         margin-bottom: 0px;
         margin-right:10px;
     }
-
-.course-text {
-    padding: 84px;
-}
-.navbar {height:40px !important;}
+.navbar{height:40px !important;}
 .navbar-default .navbar-nav > li > a {
     color: #717f86;
     font-size: 13px;
@@ -57,15 +52,8 @@ Navigation bar
 .navbar-nav > li > a {
     padding: 0px;
     margin: 10px 5px;
-    padding: 10px 15px;
+    padding: 10px 10px;
 }
-
-.navbar-nav .active a {
-    background: none !important;
-    color: #5FCF80 !important;
-    outline: none;
-}
-
 .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover {
     background-color: #3b5998;
     color: #ffffff !important;
@@ -78,30 +66,12 @@ Navigation bar
     color: #ffffff !important;
     border: 0px solid;
 }
-
-    .btn-trial a:hover, .btn-trial a:focus {
-        border: 0px;
-        background-color: #3b5998;
-        color: #5FCF80 !important;
-    }
-
-.navbar-default .navbar-brand {
-    font-family: 'Dosis', sans-serif !important;
-    font-weight: normal;
-    padding: 0px;
-    height: inherit;
-    font-size: 36px;
-    margin: 20px 0px;
+.navbar-collapse { 
+    text-align:center;
+} 
+@media(max-width: 768px){
+    .navbar-collapse{ background:white;}
 }
-
-    .navbar-default .navbar-brand span {
-        font-weight: 100 !important;
-    }
-
-.navbar {
-    margin-bottom: 0px;
-}
-
 .padding-zero {
     padding: 0px;
 }
@@ -120,50 +90,6 @@ Navigation bar
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
-
-.login-box-body {
-    padding: 15px 30px;
-    margin-top: 60px;
-    border: solid 1px rgba(0, 0, 0,0.1);
-    border-radius: 4px;
-}
-
-.login-box-msg, .register-box-msg {
-    margin: 0px;
-    text-align: center;
-    padding: 0px 20px 20px;
-}
-
-.padleft-right {
-    padding-left: 5px;
-    padding-right: 0px;
-}
-
-.big-text {
-    font-size: 35px;
-}
-
-.small-text {
-    font-size: 16px;
-}
-
-.quote .btn {
-    background-color: #5fcf80;
-    color: #fff;
-    -webkit-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
-    margin-top: 10px;
-}
-
-    .quote .btn:hover, .quote .btn:focus {
-        background-color: #fff;
-        color: #5fcf80;
-        border-color: #fff;
-        -webkit-transition: all 0.3s ease-in-out;
-        -moz-transition: all 0.3s ease-in-out;
-        transition: all 0.3s ease-in-out;
-    }
 /*PARTNERS*/
 .img-responsive {
     margin: 20px auto;
@@ -231,10 +157,7 @@ Navigation bar
     background-color: rgb(260,260,260);
 }
 .profile {
-    margin-top: 25px;
-    border: solid rgba(0, 0, 0,0.1);
-    border-width: 1px;
-    margin-right: 30px;
+    margin-top: 25px;    
 }
 
     .profile h1 {
@@ -258,7 +181,6 @@ Navigation bar
         .profile .img-box:after {
             content: "";
             opacity: 0;
-            position: absolute;
         }
 /*end team*/
 /*overlay2*/
@@ -425,9 +347,10 @@ footer {
 }
 
 .aboutus-header {
-    height: 500px;
+    min-height: 500px;
     background: url('../images/aboutus.jpg') center center no-repeat scroll;
     background-size: cover;
+    width:100%;
 }
 /*pricing*/
 #headerPricing {

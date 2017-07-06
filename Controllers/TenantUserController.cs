@@ -61,74 +61,6 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult f(int fid, int id)
-        {
-            var token = Request.Cookies["Token"];
-            var handler = new JwtSecurityTokenHandler();
-            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
-            ViewBag.EbConfig = this.EbConfig;
-            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
-            ViewBag.token = token;
-
-            var redisClient = this.EbConfig.GetRedisClient();
-            redisClient.Set<string>("token", token);
-            Objects.EbForm _form = null;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fid, Token = token });
-            if (id > 0)
-            {
-                if (fr.Data.Count > 0)
-                {
-                    _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
-                    _form.IsUpdate = true;
-                    redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
-                }
-                string html = string.Empty;
-                var vr = client.Get<ViewResponse>(new View { TableId = _form.Table.Id, ColId = id, FId = fid });
-                redisClient.Set<EbForm>("cacheform", vr.ebform);
-                ViewBag.EbForm = vr.ebform;
-                ViewBag.FormId = fid;
-                ViewBag.DataId = id;
-                return View();
-            }
-            else
-            {
-                if (fr.Data.Count > 0)
-                {
-                    _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
-                    _form.IsUpdate = false;
-                    redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
-                }
-                ViewBag.EbForm = _form;
-                ViewBag.FormId = fid;
-                ViewBag.DataId = id;
-                ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 38));
-                return View();
-            }
-        }
-
-        [HttpPost]
-        public IActionResult f()
-        {
-
-            var req = this.HttpContext.Request.Form;
-            var fid = Convert.ToInt32(req["fId"]);
-
-            var redisClient = this.EbConfig.GetRedisClient();
-            ViewBag.EbConfig = this.EbConfig;
-            Objects.EbForm _form = redisClient.Get<Objects.EbForm>(string.Format("form{0}", fid));
-            bool b = _form.IsUpdate;
-            ViewBag.EbForm = _form;
-            ViewBag.FormId = fid;
-            ViewBag.formcollection = req as FormCollection;
-          
-            return View();
-        }
-
         public IActionResult dv(int dvid)
         {
             var token = Request.Cookies["Token"];
@@ -186,11 +118,7 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
-        public IActionResult TenantLogout()
-        {
-            ViewBag.Fname = null;
-            return RedirectToAction("TenantSignup", "TenantExt");
-        }
+       
 
         public void TVPref4User(int tvid, string json)
         {
@@ -258,7 +186,21 @@ namespace ExpressBase.Web2.Controllers
         //    return colDef + colext + "}";
         //}
 
-       
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+        public IActionResult UserLogout()
+        {
+            ViewBag.Fname = null;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var abc = client.Post(new Authenticate { provider = "logout" });
+            HttpContext.Response.Cookies.Delete("Token");
+            HttpContext.Response.Cookies.Delete("rToken");
+            return RedirectToAction("UsrSignIn", "Ext");
+
+        }
     }
 }
         

@@ -118,11 +118,7 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
-        public IActionResult TenantLogout()
-        {
-            ViewBag.Fname = null;
-            return RedirectToAction("TenantSignup", "TenantExt");
-        }
+       
 
         public void TVPref4User(int tvid, string json)
         {
@@ -193,6 +189,17 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult CreateUser()
         {
             return View();
+        }
+
+        public IActionResult UserLogout()
+        {
+            ViewBag.Fname = null;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var abc = client.Post(new Authenticate { provider = "logout" });
+            HttpContext.Response.Cookies.Delete("Token");
+            HttpContext.Response.Cookies.Delete("rToken");
+            return RedirectToAction("UsrSignIn", "Ext");
+
         }
     }
 }

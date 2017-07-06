@@ -4,115 +4,41 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-<style>
-    body {
-        background-color: white;
-    }
-
-    .btn-file {
-        position: relative;
-        overflow: hidden;
-        background-color: #3b5998;
-        color: white;
-    }
-
-        .btn-file input[type=file] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 100px;
-            text-align: right;
-            filter: alpha(opacity=0);
-            opacity: 0;
-            outline: none;
-            cursor: inherit;
-            display: block;
-        }
-
-    .image-cropper {
-        width: 65px;
-        height: 65px;
-        position: relative;
-        overflow: hidden;
-        border-radius: 50%;
-    }
-
-        .image-cropper img {
-            display: inline;
-            margin: 0 auto;
-            height: 100%;
-            width: auto;
-        }
-
-    .dropdown ul.dropdown-menu {
-        border-radius: 4px;
-        width: 250px;
-    }
-
-    .navbar-default {
-        height: 70px !important;
-    }
-
-    .badgebox
-{
-    opacity: 0;
-}
-
-.badgebox + .badge
-{
-    /* Move the check mark away when unchecked */
-    text-indent: -999999px;
-    /* Makes the badge's width stay the same checked and unchecked */
-	width: 27px;
-}
-
-.badgebox:focus + .badge
-{
-    /* Set something to make the badge looks focused */
-    /* This really depends on the application, in my case it was: */
-    
-    /* Adding a light border */
-    box-shadow: inset 0px 0px 5px;
-    /* Taking the difference out of the padding */
-}
-
-.badgebox:checked + .badge
-{
-    /* Move the check mark back when checked */
-	text-indent: 0;
-}
-</style>
-
-<div class="container">
-    <div class="row">
-
-
-        <!-- edit form column -->
-
-        <div class="col-md-4 col-md-offset-4 bg-white">
-            <h3 class="text-center">Create User</h3>
-            <hr>
-            <form role="form" method="post">      
-                <div class="input-group">
-                    <input class="form-control" type="text" name="Name" placeholder="Name">
-                </div>
-                <div class="input-group">
-                    <input class="form-control" type="email" name="email" placeholder="Email">
-                    <label for="info" class="btn btn-info">Send Mail <input type="checkbox" id="info" class="badgebox"><span class="badge">&check;</span></label>
-                </div>
-
-                <div class="input-group">          
-                    <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
-                </div>
-                <div class="input-group">
-                    <input type="submit" class="btn btn-primary" value="Save">
-                </div>
-               
-            </form>
+<div class="col-md-4 col-md-offset-4 bg-white">
+    <h3 class="text-center">Create User</h3>
+    <div class="form-group">
+        <input type="text" class="form-control" name="" placeholder="Name" />
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control" name="" placeholder="Email" />
+    </div>
+    <div class="form-group pull-right">
+        <div class="input-group">
+            <span>Send mail. </span><input type="checkbox" id="sendmail" />
         </div>
-
-
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control" id="pw" name="" placeholder="Password" />
+    </div>
+    <div class="form-group">
+        <div class="ui-select">
+            <select id="#" name="" class="form-control">
+                <option value="0">Select Role</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group pull-right">
+        <input type="submit" class="btn btn-primary" value="Create" />
     </div>
 </div>
+<script>
+    $('document').ready(function () {
+        $('#sendmail').change(function () {
+            if (this.checked)
+                $('#pw').fadeIn();
+            else
+                $('#pw').fadeOut();
+
+        });
+    });
+</script>

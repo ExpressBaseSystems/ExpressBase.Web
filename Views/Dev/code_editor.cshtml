@@ -25,85 +25,125 @@
     <script type="text/javascript">
         $(document).ready(function(){
             var MyDs=new DataSource(@ViewBag.Obj_id,@ViewBag.IsNew, @ViewBag.VersionNumber,'@ViewBag.cid');
-            $(".eb-loader").hide();
+            if(@ViewBag.IsNew===true){
+                $('#comp').hide();
+                $('#ver_his').remove();
+                $('#statusLabel').remove();
+                $('#save').remove();
+                $('#stat_his').remove();
+                $('#rel_obj').remove();
+            }
+
+            $('#fd').on("loaded.bs.select",function selectMe(me){
+                if(@ViewBag.IsNew===false){
+                    if( @ViewBag.FilterDialogId === "null"){
+                        var val ="Select Filter Dialog";
+                    }
+                    else{
+                        var val = @ViewBag.FilterDialogId ;
+                    }
+                    $(this).selectpicker('val', val);
+                }
+            });
+            $(".eb-loaderOnEditor").hide();
             $('#filterRun').on('hidden.bs.modal', function () {
                 $("#sample").DataTable().destroy();
                 $("#sample").children().remove();
             });
-            $(document).keydown(function (e) {
-                if (e.keyCode == 83 && e.ctrlKey) {
-                    e.preventDefault();
-                    $("#save").trigger("click");
-                }
-            });
+          
         });
+
+        $(document).keydown(function (e) {
+            if (e.keyCode == 83 && e.ctrlKey) {
+                e.preventDefault();
+                $("#save").trigger("click");
+            }
+        });
+
     </script>
 </head>
 <body>
-    <div class='eb-loader'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>
-    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group mr-2" role="group" aria-label="First group">
-            <div class="form-group " style="float:left">
-                <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control inputBox" />
+    <div class='eb-loaderOnEditor'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>
+    <div class="btn-toolbar container " role="toolbar" aria-label="Toolbar with button groups">
+        <h3>@ViewBag.Header</h3>
+        <div class="well col-md-12">
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <div class="form-group " style="float:left">
+                    <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control inputBoxinHead" />
+                </div>
+                <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn-default btn btn-lg fa fa-chevron-down  fa-1x" aria-hidden="true"></i></a>
+                <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-lg btn-default fa fa-save fa-1x" aria-hidden="true"></i></a>
+                <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-lg btn-default fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
+                <a href="#" id="rel_obj" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn-default btn btn-lg fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+                <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn-default btn btn-lg fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
+                @*<a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn btn-lg fa fa-code-fork fa-1x" aria-hidden="true"></i></a>*@
+                <a href="#" id="stat_his" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn-default btn btn-lg fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
+                <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-default btn btn-lg fa fa-history fa-1x" aria-hidden="true"></i></a>
+                <div class="dropdown fdlist btn-group">
+                    <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true">
+                        @{
+                            @using ExpressBase.Objects.ServiceStack_Artifacts;
+                            Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
+                            filterDialogs = ViewBag.FilterDialogs;
+                            <option value="Select Filter Dialog" data-tokens="Select Filter Dialog" selected>Select Filter Dialog</option>
+                            <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
+                            foreach (var filter in filterDialogs)
+                            {
+                                <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <a class="label label-success codeEditLabel" id="statusLabel">Status : @ViewBag.Status</a>
+                <a class="label label-warning codeEditLabel"> Version @ViewBag.VersionNumber</a>
             </div>
-            <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn-default btn btn-sm fa fa-plus-square  fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn-default btn btn-sm fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-            <a class="comp" id="comp" data-toggle="tooltip" title="Compare"><i class="btn-default btn btn-sm fa fa-exchange fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn-default btn btn-sm fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn btn-sm fa fa-code-fork fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn-default btn btn-sm fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-default btn btn-sm fa fa-history fa-1x" aria-hidden="true"></i></a>
-            <span class="label label-success codeEditLabel">Status : @ViewBag.Status</span>
-            <span class="label label-warning codeEditLabel"> Version v.@ViewBag.VersionNumber</span>
+
+            <div id="objCollapse" class="collapse">
+                <div class="form-group ">
+                    <label class="control-label">Description</label>
+                    <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
+                </div>
+            </div>
         </div>
 
-        <div id="objCollapse" class="collapse">
-            <div class="form-group ">
-                <label class="control-label">Description</label>
-                <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
-            </div>
-        </div>
-    </div>
-    <div class="container">
         <ul class="nav nav-tabs versionNav" id="versionNav">
             <li class="active"><a data-toggle="tab" href="#code_edit0">@ViewBag.ObjectName</a></li>
         </ul>
 
         <div class="tab-content " id="versionTab">
             <div id="code_edit0" class="tab-pane fade in active">
-                <div class="btn-group">
-                    <div class="dropdown fdlist btn-group">
-                        <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true" )">
-                            @{
-                                @using ExpressBase.Objects.ServiceStack_Artifacts;
-                                Dictionary
-                                <int, EbObjectWrapper>
-                                    filterDialogs = new Dictionary<int, EbObjectWrapper>
-                                        ();
-                                filterDialogs = ViewBag.FilterDialogs;
-                                <option value="Select Filter Dialog" data-tokens="Select Filter Dialog">Select Filter Dialog</option>
-                                <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
-                                foreach (var filter in filterDialogs)
-                                {
-                                    <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
+                <div class="col-md-12">                   
+                    <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+                    @{ if (ViewBag.IsNew == "false")
+                        {        <div class="form-group ">
+                        <div class="dropdown verlist btn-group">
+                            <select id="selected_Ver" name="selected_Ver" class="selectpicker show-tick align_singleLine" data-live-search="true" >
+                                @{
+                                    List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
+                                    Allversions = ViewBag.Allversions;
+                                    <option value="Select Version" data-tokens="Select Version">Select Version</option>
+                                    foreach (var version in Allversions)
+                                    {
+                                        <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                                    }
                                 }
-                            }
-                        </select>
-                    </div>
-                    <div class="btn-group">
-                        <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-sm btn-default fa fa-save fa-1x" aria-hidden="true"></i></a>
-                        <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-sm btn-default fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
-                        <a href="#" id="execute" data-toggle="tooltip" title="Execute"><i class="btn btn-sm btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
-                    </div>
+                            </select>
+                            <button class="diff" id="diff">Compare</button>
+                        </div>
+                    </div>       }
+                    }
                 </div>
-                <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
-                <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
-                <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-                <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
+
+                <div class="col-md-12">
+                    <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
+                    <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
+                    <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />                    
+                    <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
+                    <button class="comment" id="comment">comment</button>
+                </div>
             </div>
         </div>
     </div>
-
     <div id="filterDialog" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -140,6 +180,7 @@
         </div>
     </div>
     <script type="text/javascript">
+
         window.onload = function() {
             CodeMirror.commands.autocomplete = function(cm)
             {
@@ -154,56 +195,319 @@
                 foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
                 gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
             });
+            CodeMirror.commands["selectAll"](editor);
+      
+            function getSelectedRange() {
+                return { from: editor.getCursor(true), to: editor.getCursor(false) };
+            }
+      
+            function autoFormatSelection() {
+                var range = getSelectedRange();
+                editor.autoFormatRange(range.from, range.to);
+            }
+      
+            function commentSelection(isComment) {
+                var range = getSelectedRange();
+                alert(range);
+                alert(isComment);
+                editor.commentRange(isComment, range.from, range.to);
+            }     
+            $('#comment').on('click',function(){
+                commentSelection(true);
+            })
 
-        };
+
+
+
+
+     
+
+                CodeMirror.extendMode("css", {
+                    commentStart: "/*",
+                    commentEnd: "*/",
+                    newlineAfterToken: function(type, content) {
+                        return /^[;{}]$/.test(content);
+                    }
+                });
+
+                CodeMirror.extendMode("javascript", {
+                    commentStart: "/*",
+                    commentEnd: "*/",
+                    // FIXME semicolons inside of for
+                    newlineAfterToken: function(type, content, textAfter, state) {
+                        if (this.jsonMode) {
+                            return /^[\[,{]$/.test(content) || /^}/.test(textAfter);
+                        } else {
+                            if (content == ";" && state.lexical && state.lexical.type == ")") return false;
+                            return /^[;{}]$/.test(content) && !/^;/.test(textAfter);
+                        }
+                    }
+                });
+
+                CodeMirror.extendMode("xml", {
+                    commentStart: "<!--",
+                    commentEnd: "-->",
+                    newlineAfterToken: function(type, content, textAfter) {
+                        return type == "tag" && />$/.test(content) || /^</.test(textAfter);
+                    }
+                });
+
+                // Comment/uncomment the specified range
+                CodeMirror.defineExtension("commentRange", function (isComment, from, to) {
+                    var cm = this, curMode = CodeMirror.innerMode(cm.getMode(), cm.getTokenAt(from).state).mode;
+                    cm.operation(function() {
+                        if (isComment) { // Comment range
+                            cm.replaceRange(curMode.commentEnd, to);
+                            cm.replaceRange(curMode.commentStart, from);
+                            if (from.line == to.line && from.ch == to.ch) // An empty comment inserted - put cursor inside
+                                cm.setCursor(from.line, from.ch + curMode.commentStart.length);
+                        } else { // Uncomment range
+                            var selText = cm.getRange(from, to);
+                            var startIndex = selText.indexOf(curMode.commentStart);
+                            var endIndex = selText.lastIndexOf(curMode.commentEnd);
+                            if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
+                                // Take string till comment start
+                                selText = selText.substr(0, startIndex)
+                                // From comment start till comment end
+                                  + selText.substring(startIndex + curMode.commentStart.length, endIndex)
+                                // From comment end till string end
+                                  + selText.substr(endIndex + curMode.commentEnd.length);
+                            }
+                            cm.replaceRange(selText, from, to);
+                        }
+                    });
+                });
+
+                // Applies automatic mode-aware indentation to the specified range
+                CodeMirror.defineExtension("autoIndentRange", function (from, to) {
+                    var cmInstance = this;
+                    this.operation(function () {
+                        for (var i = from.line; i <= to.line; i++) {
+                            cmInstance.indentLine(i, "smart");
+                        }
+                    });
+                });
+
+                // Applies automatic formatting to the specified range
+                CodeMirror.defineExtension("autoFormatRange", function (from, to) {
+                    var cm = this;
+                    var outer = cm.getMode(), text = cm.getRange(from, to).split("\n");
+                    var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
+                    var tabSize = cm.getOption("tabSize");
+
+                    var out = "", lines = 0, atSol = from.ch == 0;
+                    function newline() {
+                        out += "\n";
+                        atSol = true;
+                        ++lines;
+                    }
+
+                    for (var i = 0; i < text.length; ++i) {
+                        var stream = new CodeMirror.StringStream(text[i], tabSize);
+                        while (!stream.eol()) {
+                            var inner = CodeMirror.innerMode(outer, state);
+                            var style = outer.token(stream, state), cur = stream.current();
+                            stream.start = stream.pos;
+                            if (!atSol || /\S/.test(cur)) {
+                                out += cur;
+                                atSol = false;
+                            }
+                            if (!atSol && inner.mode.newlineAfterToken &&
+                                inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i+1] || "", inner.state))
+                                newline();
+                        }
+                        if (!stream.pos && outer.blankLine) outer.blankLine(state);
+                        if (!atSol) newline();
+                    }
+
+                    cm.operation(function () {
+                        cm.replaceRange(out, from, to);
+                        for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
+                            cm.indentLine(cur, "smart");
+                        cm.setSelection(from, cm.getCursor(false));
+                    });
+                });
+            };
     </script>
 </body>
 </html>
 <style>
-    .align_singleLine {
-        display: inline-block;
-        margin-right: 10px;
-        align-content: center;
-    }
+        .align_singleLine {
+            display: inline-block;
+            margin-right: 10px;
+            align-content: center;
+        }
 
-    .CodeMirror {
-        height: 500px;
-        background-color: azure;
-    }
+        .CodeMirror {
+            height: 500px;
+            background-color: azure;
+        }
 
-    .table-responsive {
-        overflow-x: inherit;
-    }
+        .table-responsive {
+            overflow-x: inherit;
+        }
 
-    .inputBox {
-        width: 216px;
-        height: 27px;
-    }
+        .inputBox {
+            width: 216px;
+            /*height: 27px;*/
+        }
 
-    .controls-group {
-        overflow-y: inherit;
-    }
 
-    .fd_top_content {
-        margin-bottom: 10px;
-    }
+        .inputBoxinHead {
+            width: 300px;
+            /*height: 27px;*/
+        }
 
-    .eb-loader {
-        margin-top: 40px;
-        margin-left: 50%;
-    }
+        .controls-group {
+            overflow-y: inherit;
+        }
 
-    .versionNav li a {
-        height: 33px;
-    }
+        .fd_top_content {
+            margin-bottom: 10px;
+        }
 
-    .codeEditLabel {
-        height: 27px;
-        padding-top: 5px;
-        padding-bottom: 9px;
-    }
+        .eb-loaderOnEditor {
+            margin-top: 20%;
+            margin-left: 50%;
+        }
 
-    .btn {
-        border-radius: 2px;
-    }
+      
+
+        .codeEditLabel {
+            height: 33px;
+            padding-top: 4px;
+            padding-bottom: 15px;
+            font-size: 85%;
+            margin-left: -3px;
+            border-radius: 2px;
+        }
+
+        .btn {
+            border-radius: 2px;
+            height: 33px;
+        }
+
+        .dropdown {
+            position: relative;
+            margin-right: -6px;
+        }
+        /*differ styles*/
+        #diffBar {
+            width: 3%;
+            height: 100%;
+            float: left;
+            position: relative;
+            background: #DDDDDD;
+        }
+
+        .diffBarLineLeft, .diffBarLineRight {
+            width: 50%;
+            float: left;
+            height: 0px;
+            cursor: pointer;
+        }
+
+        .inView {
+            background-repeat: repeat;
+        }
+
+        #activeBar {
+            position: absolute;
+            top: 0px;
+            background-color: #6699FF;
+            opacity: 0.5;
+            filter: alpha(opacity= '50');
+        }
+
+
+        #diffBox {
+            margin-left: auto;
+            margin-right: auto;
+            border: solid 2px #000000;
+        }
+
+
+        .leftPane, .rightPane {
+            float: left;
+            width: 50%;
+        }
+
+        .diffHeader {
+            font-weight: bold;
+            padding: 2px 0px 2px 10px;
+            background-color: #FFFFFF;
+            text-align: center;
+        }
+
+        .diffPane {
+            margin-right: 0px;
+            padding: 0px;
+            overflow-y: scroll;
+            font-family: Consolas;
+            font-size: xx-small;
+        }
+
+        .line {
+            padding-left: .2em;
+            white-space: nowrap;
+            width: 50%;
+        }
+
+        .lineNumber {
+            padding: 0 .3em;
+            background-color: #FFFFFF;
+            text-align: right;
+        }
+
+        .InsertedLine {
+            background-color: lightgreen;
+        }
+
+        .ModifiedLine {
+            background-color: lightyellow;
+        }
+
+        .DeletedLine {
+            background-color: lightpink;
+        }
+
+        .UnchangedLine {
+            background-color: #FFFFFF;
+        }
+
+        .ImaginaryLine {
+            background-color: #C8C8C8;
+        }
+
+        .InsertedCharacter {
+            background-color: palegreen;
+        }
+
+        .DeletedCharacter {
+            background-color: hotpink;
+        }
+
+        .UnchangedCharacter {
+        }
+
+        .ImaginaryCharacter {
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        #oldtext .diffTable {
+            width: 50%;
+            height: 50%;
+            padding-left: 0px;
+            overflow-y: scroll;
+        }
+
+        #newtext .diffTable {
+            width: 50%;
+            height: 50%;
+            padding-right: 0px;
+            overflow-y: scroll;
+        }
 </style>

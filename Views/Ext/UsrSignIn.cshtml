@@ -1,9 +1,12 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPAgeHeader2");
 }
 
 <script>
-
+    $('#prof').hide();
+    $('#submen').hide();
+    $('.noti').hide();
     function onSubmit(token) {
             document.getElementById("log_form").submit();
         }
@@ -12,7 +15,7 @@
 <section id="login">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 col-md-offset-8">
+            <div class="col-md-4 col-md-offset-4">
                 <div class="login-box-body">
                     <div class="login-box-msg">
                         <img id="profile-img" class="img-cir" src="~/images/proimg.jpg" />
@@ -33,6 +36,9 @@
                                 <label>
                                     <input type="checkbox" id="loginrem"> Remember Me
                                 </label>
+                                <div class="text-right nopadding">
+                                    <a href="#">Forgot password?</a>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' style="background-color:#3b5998;color:white;">Sign In</button>
                         </form>

@@ -26,7 +26,8 @@
     "ExpressBase.Common": "1.0.0",
     "ExpressBase.Data": "1.0.0",
     "System.IdentityModel.Tokens.Jwt": "5.1.3",
-    "ExpressBase.Objects": "1.0.0"  },
+    "ExpressBase.Objects": "1.0.0",
+    "DiffPlex": "1.4.1"  },
 
   "tools": {
     "BundlerMinifier.Core": "2.0.238",

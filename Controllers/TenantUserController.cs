@@ -13,6 +13,8 @@ using ExpressBase.Web.Filters;
 using ExpressBase.Data;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using ExpressBase.Web.Controllers;
+using ExpressBase.Common;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -59,74 +61,6 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult f(int fid, int id)
-        {
-            var token = Request.Cookies["Token"];
-            var handler = new JwtSecurityTokenHandler();
-            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
-            ViewBag.EbConfig = this.EbConfig;
-            ViewBag.Fname = tokenS.Claims.First(claim => claim.Type == "Fname").Value;
-            ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
-            ViewBag.token = token;
-
-            var redisClient = this.EbConfig.GetRedisClient();
-            redisClient.Set<string>("token", token);
-            Objects.EbForm _form = null;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fid, Token = token });
-            if (id > 0)
-            {
-                if (fr.Data.Count > 0)
-                {
-                    _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
-                    _form.IsUpdate = true;
-                    redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
-                }
-                string html = string.Empty;
-                var vr = client.Get<ViewResponse>(new View { TableId = _form.Table.Id, ColId = id, FId = fid });
-                redisClient.Set<EbForm>("cacheform", vr.ebform);
-                ViewBag.EbForm = vr.ebform;
-                ViewBag.FormId = fid;
-                ViewBag.DataId = id;
-                return View();
-            }
-            else
-            {
-                if (fr.Data.Count > 0)
-                {
-                    _form = Common.EbSerializers.ProtoBuf_DeSerialize<EbForm>(fr.Data[0].Bytea);
-                    _form.Init4Redis(this.EbConfig.GetRedisClient(), this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
-                    _form.IsUpdate = false;
-                    redisClient.Set<EbForm>(string.Format("form{0}", fid), _form);
-                }
-                ViewBag.EbForm = _form;
-                ViewBag.FormId = fid;
-                ViewBag.DataId = id;
-                ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 38));
-                return View();
-            }
-        }
-
-        [HttpPost]
-        public IActionResult f()
-        {
-
-            var req = this.HttpContext.Request.Form;
-            var fid = Convert.ToInt32(req["fId"]);
-
-            var redisClient = this.EbConfig.GetRedisClient();
-            ViewBag.EbConfig = this.EbConfig;
-            Objects.EbForm _form = redisClient.Get<Objects.EbForm>(string.Format("form{0}", fid));
-            bool b = _form.IsUpdate;
-            ViewBag.EbForm = _form;
-            ViewBag.FormId = fid;
-            ViewBag.formcollection = req as FormCollection;
-          
-            return View();
-        }
-
         public IActionResult dv(int dvid)
         {
             var token = Request.Cookies["Token"];
@@ -140,9 +74,32 @@ namespace ExpressBase.Web2.Controllers
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
             ViewBag.dvname = _dict["dvName"];
-            ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
-
+            var obj = GetByteaEbObjects_json(220);
+            ViewBag.EbForm38 = (obj.Value as Dictionary<int, EbFilterDialog>)[220];
             return View();
+        }
+
+        public JsonResult GetByteaEbObjects_json(int objId)
+        {
+           
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
+            var rlist = resultlist.Data;
+
+            Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
+            foreach (var element in rlist)
+            {
+                if (element.EbObjectType.ToString() == "FilterDialog")
+                {
+
+                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
+                    dsobj.EbObjectType = element.EbObjectType;
+                    dsobj.Id = element.Id;
+                    ObjList[element.Id] = dsobj;
+                }
+            }
+            return Json(ObjList);
         }
 
         [HttpGet]
@@ -161,11 +118,7 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
-        public IActionResult TenantLogout()
-        {
-            ViewBag.Fname = null;
-            return RedirectToAction("TenantSignup", "TenantExt");
-        }
+       
 
         public void TVPref4User(int tvid, string json)
         {
@@ -233,7 +186,21 @@ namespace ExpressBase.Web2.Controllers
         //    return colDef + colext + "}";
         //}
 
-       
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+        public IActionResult UserLogout()
+        {
+            ViewBag.Fname = null;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var abc = client.Post(new Authenticate { provider = "logout" });
+            HttpContext.Response.Cookies.Delete("Token");
+            HttpContext.Response.Cookies.Delete("rToken");
+            return RedirectToAction("UsrSignIn", "Ext");
+
+        }
     }
 }
         

@@ -192,10 +192,6 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
                 $(".eb-loader").hide();
             }
         }
-        else {
-            alert("no filters ");
-            $(".eb-loader").hide();
-        }
     }
 
     this.Execute = function () {
@@ -298,6 +294,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
     $(this.CommitBtn).off("click").on("click", this.Commit.bind(this));
 
     this.Find_parameters = function () {
+        this.SetValues();
         var result = this.Code.match(/\@\w+/g);
         var filterparams = [];
         if (result.length > 0) {

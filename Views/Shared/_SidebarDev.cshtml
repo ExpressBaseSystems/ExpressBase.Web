@@ -11,7 +11,7 @@
             <i class="fa-object-group"></i>Objects<i class="fa fa-caret-down pull-right"></i>
         </a>
         <ul class="sub-menu collapse" id="dropdown2">
-            <li onclick="LoadObjectList44(2)"><i class="fa fa-caret-right"></i><a href="#"> Data Sources</a></li>
+            <li onclick="LoadObjectList44(2)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=2"> Data Sources</a></li>
             <li><i class="fa fa-caret-right"></i><a href="#"> Filter Dialogs</a></li>
             <li><i class="fa fa-caret-right"></i><a href="#"> Forms</a></li>
             <li><i class="fa fa-caret-right"></i><a href="#"> Javascript Functions</a></li>
@@ -19,7 +19,7 @@
             <li><i class="fa fa-caret-right"></i><a href="#"> Reports</a></li>
             <li><i class="fa fa-caret-right"></i><a href="#"> Sql Functions</a></li>
             <li><i class="fa fa-caret-right"></i><a href="#"> Sql Validators</a></li>
-            <li onclick="LoadObjectList44(11)"><i class="fa fa-caret-right"></i><a href="#"> Data Visualizations</a></li>
+            <li onclick="LoadObjectList44(11)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=11"> Data Visualizations</a></li>
             <li><i class="fa fa-caret-right"></i><a href="#"> Views</a></li>
         </ul>
         
@@ -27,15 +27,15 @@
 </div>
 <script>
     function LoadObjectList44(type44) {
-        var _container = $("#cont");
+    event.preventDefault();
+        var _container = $("#main-cont");
         $.ajax({
-            url: "../Dev/EbObjectList",
+            url: "EbObjectList",
             type: "GET",
             cache: false,
-            context: _container,
             data: { "type": type44 },
             success: function (result) {
-                this.html(result);
+                _container.html(result);
             }
         });
     }

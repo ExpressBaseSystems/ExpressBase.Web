@@ -1,10 +1,15 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@using ExpressBase.Objects;
+﻿@using ExpressBase.Objects;
+@using ExpressBase.Objects.ServiceStack_Artifacts;
 
 @{
-    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    if (ViewBag.isAjaxCall)
+    {
+        Layout = null;
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+    }
     Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
     var ObjectType = ViewBag.EbObjectType;
     string editor = null;
@@ -12,70 +17,65 @@
     {
         editor = "code_editor";
     }
-    else if(ObjectType == (int)EbObjectType.DataVisualization)
+    else if (ObjectType == (int)EbObjectType.DataVisualization)
     {
         editor = "DVEditor";
     }
 }
-<div>
-    <section class='content'>
-        <div>
-            <div class='panel panel-default' style='width: 100%;'>
-                <div class='panel-body' style='margin-top: 50px;'>
-                    <h1>Object List</h1>
-                    <div class='input-group input-group-lg col-md-3' style='width:600px;margin-left: 70px;'>
-                        <div class='input-group-btn'>
-                            <button type='button' class='btn btn-search btn-info dropdown-toggle' data-toggle='dropdown'>
-                                <span class='glyphicon glyphicon-search'></span>
-                                <span class='label-icon'>Search</span>
-                                <span class='caret'></span>
-                            </button>
-                            
-                        </div>
-                        <input type='text' class='form-control' id='MySearch' style='width:535px;'>
-                        <div class='input-group-btn'>
-
-                        </div>
-
-                    </div>
-                    <div style='margin-left: 800px;'>
-                        @using (Html.BeginForm(editor, "Dev", FormMethod.Get, new { target = "_blank" }))
-                        {
-                         <input type="submit" class="btn btn-success" value="New" />
-                        }
-                    </div>
-                    <div class="btn btn-sm btn-danger" id="reload"> Refresh Test</div>
-                    <div id="dslist">
-                        @{
-                            foreach (var element in Objlist)
-                            {
-                                <div class="tr">
-                                    <div class="row">
-                                        <div class="col-sm-7">
-                                            <label>@element.Value.Name</label>
-                                        </div>
-                                        <div class="col-sm-5">
-                                            @using (Html.BeginForm(editor, "Dev", FormMethod.Post, new { target = "_blank" }))
-                                            {
-                                                <input type="hidden" name="objid" value="@element.Value.Id" />
-                                                <input type="hidden" name="tacid" value="@ViewBag.cid" />
-                                                <input type="submit" class="btn btn-success" value="Open" />
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        }
-                    </div>
-                    <input type="hidden" id="tacid" value="@ViewBag.cid" />
-
-
-                </div>
-            </div>
-            <div class='content-footer'>
+<script>
+    $('#reload').next().css("display", "inline-block");
+</script>
+<div class="row main-cont" style="padding-top:40px !important;">
+    <div class="form-inline">
+        <button class="btn btn-default" id="reload">Refresh</button>
+        @using (Html.BeginForm(editor, "Dev", FormMethod.Get, new { target = "_blank" }))
+            {
+            <input type="submit" class="btn btn-default" value="New" />
+        }
+        <button class="btn btn-default">Import</button>
+        <button class="btn btn-default">Export</button>
+        <div class="input-group pull-right">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>
+                <input type="text" class="form-control" aria-label="...">
+                <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
             </div>
         </div>
-    </section>
+    </div>
 </div>
-  
-
+@{
+    foreach (var element in Objlist)
+    {
+        <div class="row objitems">
+            <div class="col-md-10">
+                <h4>@element.Value.Name</h4>
+                <p class="text-justify">@element.Value.Description</p>
+                <h5>Last commit:@element.Value.CommitUname on @element.Value.CommitTs</h5>
+                <span class="label label-primary">Status</span>
+                <span class="label label-default">v @element.Value.VersionNumber</span>
+                <span class="label label-success">Dependency</span>
+                <span class="label label-danger">Application</span>
+                <span class="label label-default">Module</span>
+            </div>
+            <div class="col-md-2 pull-right">
+                @using (Html.BeginForm(editor, "Dev", FormMethod.Post, new { target = "_blank" }))
+                {
+                    <input type="hidden" name="objid" value="@element.Value.Id" />
+                        <input type="hidden" name="tacid" value="@ViewBag.cid" />
+                        <input type="submit" class="btn btn-default" id="btnOpen" value="Open ">
+                }
+            </div>
+        </div>
+    }
+}
+<style>
+    .main-cont {
+        padding-top: 40px !important;
+    }
+</style>

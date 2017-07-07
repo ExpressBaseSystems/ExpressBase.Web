@@ -638,7 +638,10 @@ namespace ExpressBase.Web.Controllers
 
             ViewBag.Objlist = ObjList;
 
-            return PartialView();
+            if (ViewBag.isAjaxCall)
+                return PartialView();
+            else
+                return View();
         }
 
         public IActionResult DevLogout()

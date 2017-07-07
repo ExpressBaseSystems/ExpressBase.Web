@@ -2,9 +2,17 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @using ExpressBase.Objects;
+@using ExpressBase.Objects.ServiceStack_Artifacts;
 
 @{
-    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    if (ViewBag.isAjaxCall)
+    {
+        Layout = null;
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+    }
     Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
     var ObjectType = ViewBag.EbObjectType;
     string editor = null;

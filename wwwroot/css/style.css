@@ -504,6 +504,7 @@ text-align:center;
 /*sidebar end*/
 .main-cont{
     padding-top:80px;
+  margin-bottom: 40px;
 }
 .padd{
     padding-right:7px;
@@ -516,23 +517,19 @@ padding-bottom:4px;
     padding-right:5px;
 }
 /*ebObject list*/
- .objitems {
+ 
+.objitems {
         border: solid 1px #e6e0e0;
         margin-bottom: 10px;
         padding-top: 5px;
         padding-bottom: 5px;
-    }
+   
+         }
 
     .bottpadd {
         margin-bottom: 50px;
     }
     #btnOpen{
-    margin-top: 43px;
     margin-left: 53px;
     }
-    .main-cont {
-        margin-bottom: 60px;
-    }
-    label { display: block; width: 100px !important; }
-  
-
+   

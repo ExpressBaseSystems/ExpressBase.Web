@@ -1,82 +1,247 @@
-﻿@{
-    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPAgeHeader2");
+﻿<script>
+    $(function () {
+        var move_right = '<span class="glyphicon glyphicon-minus pull-left  dual-list-move-right" title="Remove Selected"></span>';
+        var move_left = '<span class="glyphicon glyphicon-plus  pull-right dual-list-move-left " title="Add Selected"></span>';
 
-}
-<script>
-    $('document').ready(function () {
-        $('#submen').click(function () {
-            $('.side').toggle(300);
-        });
-    });
-</script>
-<style>
-    .objitems {
-        border: solid 1px #e6e0e0;
-        margin-bottom: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-    }
-
-    .bottpadd {
-        margin-bottom: 50px;
-    }
-    #btnOpen{
-    margin-top: 43px;
-    margin-left: 53px;
-    }
-    .main-cont {
-        margin-bottom: 60px;
-    }
-    label { display: block; width: 100px !important; }
-</style>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-4 col-md-3 side">
-            @{
-                Html.RenderPartial("_SidebarMenu");
+        $(".dual-list.list-left .list-group").sortable({
+            stop: function (event, ui) {
+                updateSelectedOptions();
             }
-        </div>
-        <div class="col-md-8">
-            <div class="row main-cont">
-                <div class="form-inline">
-                    <button class="btn btn-default">Add</button>
-                    <button class="btn btn-default">Refresh Test</button>
-                    <button class="btn btn-default">Import</button>
-                    <button class="btn btn-default">Export</button>
-                    <div class="input-group pull-right">
-                        <div class="input-group-btn">
-                            <input type="text" class="form-control" aria-label="...">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                            </ul>
+        });
+
+
+        $('body').on('click', '.list-group .list-group-item', function () {
+            $(this).toggleClass('active');
+        });
+
+
+        $('body').on('click', '.dual-list-move-right', function (e) {
+            e.preventDefault();
+
+            actives = $(this).parent();
+            $(this).parent().find("span").remove();
+            $(move_left).clone().appendTo(actives);
+            actives.clone().appendTo('.list-right ul').removeClass("active");
+            actives.remove();
+
+            sortUnorderedList("dual-list-right");
+
+            updateSelectedOptions();
+        });
+
+
+        $('body').on('click', '.dual-list-move-left', function (e) {
+            e.preventDefault();
+
+            actives = $(this).parent();
+            $(this).parent().find("span").remove();
+            $(move_right).clone().appendTo(actives);
+            actives.clone().appendTo('.list-left ul').removeClass("active");
+            actives.remove();
+
+            updateSelectedOptions();
+        });
+
+
+        $('.move-right, .move-left').click(function () {
+            var $button = $(this), actives = '';
+            if ($button.hasClass('move-left')) {
+                actives = $('.list-right ul li.active');
+                actives.find(".dual-list-move-left").remove();
+                actives.append($(move_right).clone());
+                actives.clone().appendTo('.list-left ul').removeClass("active");
+                actives.remove();
+
+            } else if ($button.hasClass('move-right')) {
+                actives = $('.list-left ul li.active');
+                actives.find(".dual-list-move-right").remove();
+                actives.append($(move_left).clone());
+                actives.clone().appendTo('.list-right ul').removeClass("active");
+                actives.remove();
+
+            }
+
+            updateSelectedOptions();
+        });
+
+
+        function updateSelectedOptions() {
+            $('#dual-list-options').find('option').remove();
+
+            $('.list-left ul li').each(function (idx, opt) {
+                $('#dual-list-options').append($("<option></option>")
+                    .attr("value", $(opt).data("value"))
+                    .text($(opt).text())
+                    .prop("selected", "selected")
+                );
+            });
+        }
+
+
+        $('.dual-list .selector').click(function () {
+            var $checkBox = $(this);
+            if (!$checkBox.hasClass('selected')) {
+                $checkBox.addClass('selected').closest('.well').find('ul li:not(.active)').addClass('active');
+                $checkBox.children('i').removeClass('glyphicon-unchecked').addClass('glyphicon-check');
+            } else {
+                $checkBox.removeClass('selected').closest('.well').find('ul li.active').removeClass('active');
+                $checkBox.children('i').removeClass('glyphicon-check').addClass('glyphicon-unchecked');
+            }
+        });
+
+
+        $('[name="SearchDualList"]').keyup(function (e) {
+            var code = e.keyCode || e.which;
+            if (code == '9') return;
+            if (code == '27') $(this).val(null);
+            var $rows = $(this).closest('.dual-list').find('.list-group li');
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+            $rows.show().filter(function () {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return !~text.indexOf(val);
+            }).hide();
+        });
+
+
+        $(".glyphicon-search").on("click", function () {
+            $(this).next("input").focus();
+        });
+
+
+        function sortUnorderedList(ul, sortDescending) {
+            $("#" + ul + " li").sort(sort_li).appendTo("#" + ul);
+
+            function sort_li(a, b) {
+                return ($(b).data('value')) < ($(a).data('value')) ? 1 : -1;
+            }
+        }
+
+
+        $("#dual-list-left li").append(move_right);
+        $("#dual-list-right li").append(move_left);
+
+
+        /*
+
+            // let the gallery items be draggable
+            $( ".dual-list.list-left .list-group .list-group-item" ).draggable({
+              cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+              revert: "invalid", // when not dropped, the item will revert back to its initial position
+              containment: "document",
+              helper: "clone",
+              cursor: "move"
+            });
+
+            $( ".dual-list.list-right .list-group .list-group-item" ).draggable({
+              //connectToSortable: ".dual-list.list-right .list-group",
+              cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+              revert: "invalid", // when not dropped, the item will revert back to its initial position
+              containment: "document",
+              helper: "clone",
+              cursor: "move"
+            });
+
+            // let the trash be droppable, accepting the gallery items
+            $( ".dual-list.list-right .list-group .list-group-item" ).droppable({
+              accept: ".dual-list.list-left .list-group .list-group-item",
+              drop: function( event, ui ) {
+                //deleteImage( ui.draggable );
+                console.log(this);
+                console.log(event);
+                console.log(ui);
+
+                moveItem(ui.draggable);
+              }
+            });
+
+            // let the trash be droppable, accepting the gallery items
+            $( ".dual-list.list-left .list-group .list-group-item" ).droppable({
+              accept: ".dual-list.list-right .list-group .list-group-item",
+              drop: function( event, ui ) {
+                //deleteImage( ui.draggable );
+                console.log(this);
+                console.log(event);
+                console.log(ui);
+
+                moveItem(ui.draggable);
+              }
+            });
+
+
+            // let the gallery be droppable as well, accepting items from the trash
+            $gallery.droppable({
+              accept: "#trash li",
+              activeClass: "custom-state-active",
+              drop: function( event, ui ) {
+                recycleImage( ui.draggable );
+              }
+            });
+
+
+            function moveItem(item) {
+                console.log("move item");
+                console.log($(item));
+                var from = $(item).closest(".dual-list").hasClass("list-left") ? "left" : "right"
+                var to = $(item).closest(".dual-list").hasClass("list-left") ? "right" : "left"
+                console.log(from, to);
+
+                if (to == "left") {
+                    $(item).find("span.dual-list-move-left").remove();
+                    $(item).append($(move_right).clone());
+                    $(item).appendTo('.list-' + to + ' ul');
+
+                } else if (to == "right") {
+                    $(item).find("span.dual-list-move-right").remove();
+                    $(item).append($(move_left).clone());
+                    $(item).appendTo('.list-' + to + ' ul');
+
+                }
+
+
+            }
+
+
+        */
+
+
+    });
+
+
+</script>
+
+
+<style>
+    .list-left li, .list-right li {
+        cursor: pointer;
+    }
+</style>
+
+
+<div class="container">
+    <div class="row">
+        <div class="dual-list list-right col-md-4 col-md-offset-4">
+            <div class="well">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon glyphicon glyphicon-search" style="top: 0px;"></span>
+                            <input type="text" name="SearchDualList" class="form-control" placeholder="search">
+                            <span class="input-group-addon glyphicon glyphicon-unchecked selector" style="cursor: pointer; top: 0px;" title="Select All"></span>
+                            <span class="input-group-addon glyphicon glyphicon-plus move-left" style="cursor: pointer; top: 0px;" title="Add Selected"></span>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row objitems">
-                <div class="col-md-8" style="border: solid 1px #e6e0e0;margin-left:5px;">
-                    <h4>Name</h4>
-                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
-                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
-                </div>
-                <div class="col-md-1">
-                    <span class="label label-primary">Dependency</span>
-                    <span class="label label-success">Application</span>
-                    <span class="label label-default">Version</span>
-            
-                </div>   
-                <div class="col-md-2 pull-right">
-                    <span class="label label-danger"style="margin-right:20px;">Modules</span>
-                    <span class="label label-default">Status.</span>
-                    <button class="btn btn-default" id="btnOpen">Open <i class="caret"></i></button>
-                </div>             
+
+                <ul class="list-group" id="dual-list-right">
+                    <li class="list-group-item" data-value="6">Option 6</li>
+                    <li class="list-group-item" data-value="7">Option 7</li>
+                    <li class="list-group-item" data-value="8">Option 8</li>
+                    <li class="list-group-item" data-value="9">Option 9</li>
+                    <li class="list-group-item" data-value="10">Option 10</li>
+                </ul>
             </div>
         </div>
+
+
     </div>
 </div>

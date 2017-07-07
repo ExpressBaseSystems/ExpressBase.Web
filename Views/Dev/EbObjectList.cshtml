@@ -22,20 +22,22 @@
         editor = "DVEditor";
     }
 }
-<div class="col-md-8">
-    <div class="row main-cont">
+<script>
+    $('#reload').next().css("display", "inline-block");
+</script>
+    <div class="row main-cont" style="padding-top:40px !important;">
         <div class="form-inline">
+            <button class="btn btn-default" id="reload">Refresh</button>
             @using (Html.BeginForm(editor, "Dev", FormMethod.Get, new { target = "_blank" }))
             {
                 <input type="submit" class="btn btn-default" value="New" />
             }
-            <button class="btn btn-default" id="reload">Refresh Test</button>
             <button class="btn btn-default">Import</button>
             <button class="btn btn-default">Export</button>
             <div class="input-group pull-right">
                 <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>                 
                     <input type="text" class="form-control" aria-label="...">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="#">Action</a></li>
                         <li><a href="#">Another action</a></li>
@@ -43,6 +45,7 @@
                         <li role="separator" class="divider"></li>
                         <li><a href="#">Separated link</a></li>
                     </ul>
+                    
                 </div>
             </div>
         </div>
@@ -51,27 +54,29 @@
         foreach (var element in Objlist)
         {
             <div class="row objitems">
-                <div class="col-md-8" style="border: solid 1px #e6e0e0;margin-left:5px;">
+                <div class="col-md-10">
                     <h4>@element.Value.Name</h4>
                     <p class="text-justify">@element.Value.Description</p>
-                    <h5>created by dsfsff</h5>
-                </div>
-                <div class="col-md-1">
-                    <span class="label label-primary">Dependency</span>
-                    <span class="label label-success">Application</span>
+                    <h5>created by name on dd/mm/yyyy</h5>
+                    <span class="label label-primary">Status</span>
                     <span class="label label-default">Version</span>
+                    <span class="label label-success">Dependency</span>
+                    <span class="label label-danger">Application</span>
+                    <span class="label label-default">Module</span>
                 </div>
                 <div class="col-md-2 pull-right">
-                    <span class="label label-danger" style="margin-right:20px;">Modules</span>
-                    <span class="label label-default">Status.</span>
                     @using (Html.BeginForm(editor, "Dev", FormMethod.Post, new { target = "_blank" }))
                     {
                         <input type="hidden" name="objid" value="@element.Value.Id" />
                         <input type="hidden" name="tacid" value="@ViewBag.cid" />
-                        <input type="submit" class="btn btn-default" id="btnOpen" value="Open "><i class="caret"></i>
+                        <input type="submit" class="btn btn-default" id="btnOpen" value="Open ">
                     }
                 </div>
             </div>
         }
     }
-</div>
+<style>
+    .main-cont{
+        padding-top:40px !important;
+    }
+</style>

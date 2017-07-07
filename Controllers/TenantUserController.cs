@@ -186,8 +186,16 @@ namespace ExpressBase.Web2.Controllers
         //    return colDef + colext + "}";
         //}
 
+        [HttpGet]
         public IActionResult CreateUser()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateUser(int i)
+        {
+            var req = this.HttpContext.Request.Form;
             return View();
         }
 

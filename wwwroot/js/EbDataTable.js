@@ -103,8 +103,10 @@ var EbDataTable = function (settings) {
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
-        if (this.ebSettings.renderAs == "graph")
-            this.dygraph();
+        if (this.ebSettings.renderAs == "graph") {
+            new eb_chart(this.ebSettings, this.ssurl, false);
+            return false;
+        }
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
         //this.ebSettingsCopy = this.ebSettings;
@@ -1418,6 +1420,7 @@ var EbDataTable = function (settings) {
             if (this.ebSettings.columnsext[i].RenderAs === "Link") {
                 this.linkDV = this.ebSettings.columnsext[i].linkDv;
                 this.ebSettings.columns[i].render = this.renderlink4NewTable.bind(this);
+                alert(this.linkDV);
             }
             if (this.ebSettings.columnsext[i].RenderAs === "Graph") {
                 this.ebSettings.columns[i].render = this.lineGraphDiv.bind(this);
@@ -1607,21 +1610,6 @@ var EbDataTable = function (settings) {
         this.getColumns();
     if (this.dtsettings.linktable)
         this.getColumns();
-
-    this.dygraph = function () {
-        new Dygraph(
-                document.getElementById('divgraph'),
-                [
-                [1,10,100],
-                [2,20,80],
-                [3,50,60],
-                [4,70,80]
-                ],
-                {
-                  labels: ["x", "A", "B"]
-              }
-            );
-    };
 };
 
 function csv(gdata) {

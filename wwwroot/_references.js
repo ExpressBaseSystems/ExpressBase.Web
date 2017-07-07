@@ -8,6 +8,7 @@
 /// <reference path="js/dvsettings.js" />
 /// <reference path="js/dygraphplotters.js" />
 /// <reference path="js/eb_basic_datatable.js" />
+/// <reference path="js/eb_chart.js" />
 /// <reference path="js/eb_common.js" />
 /// <reference path="js/eb_datatable.js" />
 /// <reference path="js/eb_dragula.js" />

@@ -36,6 +36,7 @@ var DVObj = function (dsid, settings, login) {
             $("#rightFixedColumns_text").val(this.TVPrefObj.rightFixedColumns);
             this.callPost4SettingsTable();
             this.getcolumn4dropdown();
+            $("#graphtypeDD .btn:first-child").text(this.TVPrefObj.options.type.trim());
         }
         $("#datatSourceDropdown .dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
         $("#graphtypeDD .dropdown-menu li a").off("click").on("click", this.setDropdownGraphType.bind(this));
@@ -351,7 +352,7 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.setDropdownGraphType = function (e) {
-        $("#graphtypeDD .btn:first-child").text($(e.target).text());
+        $("#graphtypeDD .btn:first-child").html($(e.target).text() + "&nbsp;<span class = 'caret'></span>");
         $("#graphtypeDD .btn:first-child").val($(e.target).text());
     };
 

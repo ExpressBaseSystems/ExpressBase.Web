@@ -34,7 +34,7 @@
 <script>
     $('document').ready(function () {
         $('#sendmail').change(function () {
-            if (this.checked)
+            if (!this.checked)
                 $('#pw').fadeIn();
             else
                 $('#pw').fadeOut();

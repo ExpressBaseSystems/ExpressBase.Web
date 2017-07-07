@@ -21,11 +21,15 @@
         <input type="text" class="form-control" id="pw" name="" placeholder="Password" />
     </div>
     <div class="form-group">
-        <div class="ui-select">
-            <select id="#" name="" class="form-control">
-                <option value="0">Select Role</option>
-            </select>
-        </div>
+        <select class="selectpicker" data-live-search="true" multiple>
+            <option value="ME">aine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">chigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">souri</option>
+        </select>
     </div>
     <div class="form-group pull-right">
         <input type="submit" class="btn btn-primary" value="Create" />
@@ -34,7 +38,7 @@
 <script>
     $('document').ready(function () {
         $('#sendmail').change(function () {
-            if (this.checked)
+            if (!this.checked)
                 $('#pw').fadeIn();
             else
                 $('#pw').fadeOut();

@@ -14,159 +14,191 @@
 }
 <style>
     .scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: visible;
-  	overflow-y: scroll;
-}
+        height: auto;
+        max-height: 200px;
+        overflow-x: visible;
+        overflow-y: scroll;
+    }
+
     .hideme {
-  display:none;
-}
+        display: none;
+    }
 </style>
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Excel To HTML using codebeautify.org</title>
-    </head>
-    <body>
-        @{ 
-            
-            @using ExpressBase.Objects.ServiceStack_Artifacts;
-            Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
-            Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
-            Dictionary<int, EbObjectWrapper> ObjDVListAll = new Dictionary<int, EbObjectWrapper>();
-            ObjDSList = ViewBag.DSList;
-            ObjDSListAll = ViewBag.DSListAll;
-            ObjDVListAll = ViewBag.ObjDVListAll;
-            var xx = (ObjDSList.Count > 0) ? (ObjDSList.Values.First<EbObjectWrapper>().Name) : "Data Source";
-            var cls = "show";
-        }
-        <div id="loader" class="loadingdiv"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
-        <div id="settingsdiv" style="background-color:rgb(260,260,260)">
-            @if (isAjaxCall) { cls = "hidden"; }
-            <div class=@cls>
-                <div class='dropdown' id='datatSourceDropdown'>
-                    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>@xx
-                        <span class='caret'></span>
-                    </button>
-                    <ul class='dropdown-menu scrollable-menu'>
-                        @{
-                            foreach (var element in ObjDSListAll)
-                            {
-                                <li data-dsid="@element.Key">
-                                    <a href="#">
-                                        @element.Value.Name
-                                    </a>
-                                </li>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Excel To HTML using codebeautify.org</title>
+</head>
+<body>
+    @{
 
-                            }
-                        }
+        @using ExpressBase.Objects.ServiceStack_Artifacts;
+        Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+        Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+        Dictionary<int, EbObjectWrapper> ObjDVListAll = new Dictionary<int, EbObjectWrapper>();
+        ObjDSList = ViewBag.DSList;
+        ObjDSListAll = ViewBag.DSListAll;
+        ObjDVListAll = ViewBag.ObjDVListAll;
+        var xx = (ObjDSList.Count > 0) ? (ObjDSList.Values.First<EbObjectWrapper>().Name) : "Data Source";
+        var cls = "show";
+    }
+    <div id="loader" class="loadingdiv"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
+    <div id="settingsdiv" style="background-color:rgb(260,260,260)">
+        @if (isAjaxCall) { cls = "hidden"; }
+        <div class=@cls>
+            <div class='dropdown' id='datatSourceDropdown'>
+                <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
+                    @xx
+                <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu scrollable-menu'>
+                @{
+                    foreach (var element in ObjDSListAll)
+                    {
+                        <li data-dsid="@element.Key">
+                            <a href="#">
+                                @element.Value.Name
+                            </a>
+                        </li>
+
+                    }
+                }
 
 
-                    </ul>
-                </div>
+            </ul>
+        </div>
+        <div>
+            <label> Visualization Name</label>
+            <input id='dvName_txt' type='text' />
+        </div>
+    </div>
+
+    <ul class='nav nav-tabs'>
+        <li class='nav-item'>
+            <a class='nav-link' href='#1a' data-toggle='tab'>General</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='#2a' data-toggle='tab'>Columns</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='#3a' data-toggle='tab' style="display: none;">Graph</a>
+        </li>
+    </ul>
+    <div class='tab-content'>
+        <div id='1a' class='tab-pane active'>
+            <div class='table-responsive'>
+                <table class='table table-bordered table-hover'>
+                    <tbody>
+                        <tr>
+                            <td>Render As </td>
+                            <td>
+                                <input type="radio" name="renderAs" value="table"> Table &nbsp;
+                                <input type="radio" name="renderAs" value="graph"> Graph &nbsp;
+                                <input type="radio" name="renderAs" value="both"> Both
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Page Length</td>
+                            <td>
+                                <input id='pageLength_text' type='numeric' value='100' />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Table Height</td>
+                            <td>
+                                <input id='scrollY_text' type='numeric' value='300' />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Row Grouping</td>
+                            <td>
+                                <input id='rowGrouping_text' type='numeric' />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Left Fixed Columns</td>
+                            <td>
+                                <input id='leftFixedColumns_text' type='numeric' value='0' />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Right Fixed Columns</td>
+                            <td>
+                                <input id='rightFixedColumns_text' type='numeric' value='0' />
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id='2a' class='tab-pane '>
+            <div class='dropdown' id='columnDropdown'>
+                <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
+                    Add Column
+                    <span class='caret'></span>
+                </button>
+                <ul class='dropdown-menu'></ul>
+            </div>
+            <table class='table table-striped table-bordered' id='Table_Settings'></table>
+            <div id='propCont' class='prop-grid-cont'>
+                <div id='propHead'></div>
+                <div id='propGrid'></div>
                 <div>
-                    <label> Visualization Name</label>
-                    <input id='dvName_txt' type='text'/>
+                    <textarea id='txtValues' hidden rows='4' cols='30'></textarea>
+                    <br>
+                    <input hidden id='btnGetValues' type='button' value='Get values' />
                 </div>
             </div>
-
-            <ul class='nav nav-tabs'>
-                <li class='nav-item'>
-                    <a class='nav-link' href='#1a' data-toggle='tab'>General</a>
-                </li>
-                <li class='nav-item'>
-                    <a class='nav-link' href='#2a' data-toggle='tab'>Columns</a>
-                </li>
-            </ul>
-            <div class='tab-content'>
-                <div id='1a' class='tab-pane active'>
-                    <div class='table-responsive'>
-                        <table class='table table-bordered table-hover'>
-                            <tbody>
-                               <tr>
-                                   <td>Render As </td>
-                                   <td>
-                                       <input type="radio" name="renderAs" value="table"> Table &nbsp;
-                                       <input type="radio" name="renderAs" value="graph"> Graph &nbsp;
-                                       <input type="radio" name="renderAs" value="both"> Both
-                                   </td>
-                               </tr>
-                                <tr>
-                                    <td>Page Length</td>
-                                    <td>
-                                        <input id='pageLength_text' type='numeric' value='100' />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Table Height</td>
-                                    <td>
-                                        <input id='scrollY_text' type='numeric' value='300' />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Row Grouping</td>
-                                    <td>
-                                        <input id='rowGrouping_text' type='numeric' />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Left Fixed Columns</td>
-                                    <td>
-                                        <input id='leftFixedColumns_text' type='numeric' value='0' />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Right Fixed Columns</td>
-                                    <td>
-                                        <input id='rightFixedColumns_text' type='numeric' value='0' />
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
+        </div>
+        <div id='3a' class='tab-pane'>
+            <br>
+            <div>
+                <div style="display: inline-block;vertical-align: middle;">
+                    <div class="well well-sm" style="width: 200px;">
+                        <input type="button" class="btn btn-default" value="X" id="btnMovetoX">
+                        <input type="button" class="btn btn-default" value="Y" id="btnMovetoY">
                     </div>
+                    <ul class="list-group" id="list_allcolumns" style="width: 200px;height: 300px;overflow-x: scroll; border-style: solid;border-width: 1px;display: inline-block;"></ul>
+                    <ul class="list-group" id="list_Xcolumns" style="width: 200px;height: 140px;overflow-x: scroll;border-style: solid;border-width: 1px;display: inline-block;vertical-align: top;"></ul>
+                    <ul class="list-group" id="list_Ycolumns" style="width: 200px;height: 140px;overflow-x: scroll;border-style: solid;border-width: 1px;display: inline-block;margin-left: -200px;"></ul>
                 </div>
-                <div id='2a' class='tab-pane '>
-                    <div class='dropdown' id='columnDropdown'>
+                <div style="display: inline-block;">
+                    <div class='dropdown' id='graphtypeDD'>
                         <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
-                            Add Column
+                            Select type
                             <span class='caret'></span>
                         </button>
-                        <ul class='dropdown-menu'></ul>
-                    </div>
-                    <table class='table table-striped table-bordered' id='Table_Settings'></table>
-                    <div id='propCont' class='prop-grid-cont'>
-                        <div id='propHead'></div>
-                        <div id='propGrid'></div>
-                        <div>
-                            <textarea id='txtValues' hidden rows='4' cols='30'></textarea>
-                            <br>
-                            <input hidden id='btnGetValues' type='button' value='Get values' />
-                        </div>
+                        <ul class='dropdown-menu'>
+                            <li><a href="#">Line</a></li>
+                            <li><a href="#">Bar</a></li>
+                            <li><a href="#">AreaFilled</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div style="float:right;">
-                <button id='Save_btn' class='btn btn-primary' data-objId="@ViewBag.Obj_id">Save Changes</button>
-            </div>
-            <div class="alert alert-success" style="display:none">
-                <strong>Success!</strong> 
-            </div>
 
-            <script>
+        </div>
+        <div style="float:right;">
+            <button id='Save_btn' class='btn btn-primary' data-objId="@ViewBag.Obj_id">Save Changes</button>
+        </div>
+        <div class="alert alert-success" style="display:none">
+            <strong>Success!</strong>
+        </div>
+
+        <script>
             var sett = @Html.Raw(ViewBag.tvpref);
             var dvo = new DVObj(@ViewBag.dsid, sett, "@ViewBag.wc");
-            </script>
-        </div>
-    </body>
+        </script>
+    </div>
+</body>
 </html>
 <style>
     .loadingdiv {
-    vertical-align:middle;
-    margin: 5% 50%;
-    z-index:1;
-    display:none;
-}
+        vertical-align: middle;
+        margin: 5% 50%;
+        z-index: 1;
+        display: none;
+    }
 </style>

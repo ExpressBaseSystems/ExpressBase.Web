@@ -29,7 +29,6 @@ namespace ExpressBase.Web.Filters
                 var rToken = context.HttpContext.Request.Cookies["rToken"];
 
                 var tokenS = (new JwtSecurityTokenHandler()).ReadToken(token) as JwtSecurityToken;
-
                 
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
@@ -38,6 +37,8 @@ namespace ExpressBase.Web.Filters
                 controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
                 controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
                 controller.ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
+
+                controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
 
                 base.OnActionExecuting(context);
             }

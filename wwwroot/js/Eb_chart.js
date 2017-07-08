@@ -53,11 +53,11 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
         var dta = "";
         $.each(this.columnInfo.options.Xaxis, function (i, obj) {
             Xindx.push(obj.index);
-            dta += "'"+obj.name+",";
+            dta += "'" + obj.name + ",";
         });
         $.each(this.columnInfo.options.Yaxis, function (i, obj) {
             Yindx.push(obj.index);
-            dta +=  obj.name + ",";
+            dta += obj.name + ",";
         });
         dta = dta.substring(0, dta.length - 1) + "\n";
         //var dta = 'netamt,grossamt,forms_id\n';
@@ -69,7 +69,7 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
             dta += '\n';
         });
         console.log(dta);
-        return dta+"'";
+        return dta + "'";
     };
 
     //this.getCSV = function () {
@@ -213,7 +213,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
     this.gdata = null;
     this.goptions = null;
 
-    this.init = function(){
+    this.init = function () {
         $("#reset_zoom").off("click").on("click", this.ResetZoom.bind(this));
         $("#graphDropdown .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
         if (data)
@@ -270,7 +270,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
         $.each(this.data, this.getBarDataLabel.bind(this, Xindx, Yindx));
         var fill = false;
         if (this.type == "areafilled") {
-            this.type = "line";
+            this.columnInfo.options.type = "line";
             fill = true;
         }
         var Ycolor = ["rgba(255,99,132,0.2)", "rgba(10,10,10,0.2)"];
@@ -289,8 +289,6 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
 
     this.drawGeneralGraph = function () {
         this.getBarData();
-        console.log(this.XLabel);
-        console.log(this.dataset);
         this.gdata = {
             labels: this.XLabel,
             datasets: this.dataset,
@@ -328,13 +326,63 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
             },
         };
 
+        this.RemoveCanvasandCheckButton();
+    };
+
+    this.RemoveCanvasandCheckButton = function () {
+        console.log("RemoveCanvasandCheckButton");
+        var ty = $("#graphcontainer button:eq(0)").text().trim().toLowerCase();
+        if (ty == "areafilled" || ty == "line") {
+            console.log(" || ty ==");
+            if (this.chartApi !== null) {
+                console.log("his.chart");
+
+                $.each(this.chartApi.config.data.datasets, this.ApiDSiterFn.bind(this));
+            }
+            else {
+                $.each(this.gdata.datasets, this.GdataDSiterFn.bind(this));
+            }
+            this.type = "line";
+        }
+        else
+            this.type = "bar";
+
+        this.columnInfo.options.type = this.type;
+        $("#myChart").remove();
+        $("#graphcontainer").append("<canvas id='myChart' width='auto' height='auto'></canvas>");
+
         this.drawGraph();
     };
+
+    this.ApiDSiterFn = function (i, obj) {
+
+        var ty = $("#graphcontainer button:eq(0)").text().trim().toLowerCase();
+        console.log("each" + i);
+        if (ty == "areafilled") {
+            this.gdata.datasets[i].fill = true;
+        }
+        else {
+            this.gdata.datasets[i].fill = false;
+            console.log("obj.fill = f");
+        }
+
+    };
+
+    this.GdataDSiterFn = function (j, obj) {
+
+        var ty = $("#graphcontainer button:eq(0)").text().trim().toLowerCase();
+        if (ty == "areafilled") {
+            this.gdata.datasets[j].fill = true;
+        }
+        else {
+            this.gdata.datasets[j].fill = false;
+        }
+    }
 
     this.drawGraph = function () {
         var canvas = document.getElementById('myChart');
         this.chartApi = new Chart(canvas, {
-            type: this.type,
+            type: this.columnInfo.options.type.trim().toLowerCase(),
             data: this.gdata,
             options: this.goptions
         });
@@ -346,27 +394,9 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
     };
 
     this.setGraphType = function (e) {
-        $("#graphDropdown .btn:first-child").html($(e.target).text()+ "&nbsp;<span class = 'caret'></span>");
-        var ty = $(e.target).text().trim().toLowerCase();
-        $("#myChart").remove();
-        $("#graphcontainer").append("<canvas id='myChart' width='auto' height='auto'></canvas>");
-        if (ty == "areafilled") {
-            this.type = "line";
-            $.each(this.chartApi.config.data.datasets, function (i, obj) {
-                obj.fill = true;
-            });
-        }
-        else if (ty == "line") {
-            this.type = "line";
-            $.each(this.chartApi.config.data.datasets, function (i, obj) {
-                obj.fill = false;
-            });
-        }
-        else
-            this.type = "bar";
-
-        
-        this.drawGraph();
+        $("#graphDropdown .btn:first-child").html($(e.target).text() + "&nbsp;<span class = 'caret'></span>");
+        this.type = $(e.target).text().trim().toLowerCase();
+        this.RemoveCanvasandCheckButton();
         e.preventDefault();
     };
 
@@ -387,7 +417,7 @@ var eb_chart = function (columnInfo, ssurl, data) {
         //    new Eb_dygraph(this.type, this.data, this.columnInfo, this.ssurl);
         //}
         //else {
-        this.chartJs =  new Eb_chartJSgraph(this.type, this.data, this.columnInfo, this.ssurl);
+        this.chartJs = new Eb_chartJSgraph(this.type, this.data, this.columnInfo, this.ssurl);
         //}
 
     };

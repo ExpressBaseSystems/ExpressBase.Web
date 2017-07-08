@@ -62,6 +62,8 @@ var EbDataTable = function (settings) {
     this.order_info.dir = 0;
     this.columnsdel = [];
     this.columnsextdel = [];
+    this.MainData = null;
+    this.chartJs = null;
 
     //Controls & Buttons
     this.table_jQO = null;
@@ -104,8 +106,10 @@ var EbDataTable = function (settings) {
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
         if (this.ebSettings.renderAs == "graph") {
+            $("#graphcontainer").show();
             new eb_chart(this.ebSettings, this.ssurl, false);
-            return false;
+            $("#graphDropdown .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
+                return false;
         }
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
@@ -115,8 +119,6 @@ var EbDataTable = function (settings) {
     };
 
     this.Init = function () {
-
-       
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
@@ -231,7 +233,7 @@ var EbDataTable = function (settings) {
             type: 'POST',
             timeout: 180000,
             data: this.ajaxData.bind(this),
-            dataSrc: function (dd) { return dd.data; }
+            dataSrc: function (dd) { this.MainData = dd.data; return dd.data; }
         };
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
@@ -373,7 +375,11 @@ var EbDataTable = function (settings) {
         //    alert(wid);
         //    $(".dataTables_scrollFoot table:eq(0)").css("width",wid);
         //},500);
-        
+        if (this.ebSettings.renderAs == "both") {
+            $("#graphcontainer").show();
+            this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData);
+            $("#graphDropdown .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
+        }
         this.Api.columns.adjust();
     }
 
@@ -382,6 +388,11 @@ var EbDataTable = function (settings) {
         //if (this.ebSettings.rowGrouping !== '') { this.doRowgrouping(); }
         this.summarize2();
         this.addFilterEventListeners();
+        this.Api.columns.adjust();
+        if (this.ebSettings.renderAs == "both") {
+            if (this.chartJs !== null)
+                this.chartJs.drawGraphHelper(this.Api.data());
+        }
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {

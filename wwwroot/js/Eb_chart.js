@@ -209,6 +209,19 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
     this.XLabel = [];
     this.YLabel = [];
     this.dataset = [];
+    this.chartApi = null;
+    this.gdata = null;
+    this.goptions = null;
+
+    this.init = function(){
+        $("#reset_zoom").off("click").on("click", this.ResetZoom.bind(this));
+        $("#graphDropdown .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
+        if (data)
+            this.data = data;
+        else {
+            $.post(this.ssurl + '/ds/data/' + this.columnInfo.dsId, { draw: 1, Id: this.columnInfo.dsId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(this.getFilterValues()) }, this.getDataSuccess.bind(this));
+        }
+    };
 
     this.getFilterValues = function () {
         var fltr_collection = [];
@@ -229,24 +242,24 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
         return fltr_collection;
     };
 
-
     this.getDataSuccess = function (result) {
-        this.data = result.data;
+        this.drawGraphHelper(result.data);
+    };
+
+    this.drawGraphHelper = function (datain) {
+        this.data = datain;
         console.log(this.data);
         if (this.type === "bar" || this.type === "line" || this.type === "areafilled") {
             this.drawGeneralGraph();
         }
     };
 
-    if (data)
-        this.data = data;
-    else {
-        $.post(this.ssurl + '/ds/data/' + this.columnInfo.dsId, { draw: 1, Id: this.columnInfo.dsId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(this.getFilterValues()) }, this.getDataSuccess.bind(this));
-    }
-
     this.getBarData = function () {
         var Xindx = [];
         var Yindx = [];
+        this.dataset = [];
+        this.XLabel = [];
+        this.YLabel = [];
         $.each(this.columnInfo.options.Xaxis, function (i, obj) {
             Xindx.push(obj.index);
         });
@@ -273,19 +286,16 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
         for (k = 0; k < Xindx.length; k++)
             this.XLabel.push(value[Xindx[k]]);
     };
-        
-   
 
     this.drawGeneralGraph = function () {
         this.getBarData();
         console.log(this.XLabel);
         console.log(this.dataset);
-        var canvas = document.getElementById('myChart');
-        var data = {
+        this.gdata = {
             labels: this.XLabel,
             datasets: this.dataset,
         };
-        var option = {
+        this.goptions = {
             scales: {
                 yAxes: [{
                     scaleLabel: {
@@ -307,16 +317,60 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
                         display: true
                     }
                 }]
-            }
+            },
+            zoom: {
+                // Boolean to enable zooming
+                enabled: true,
+
+                // Zooming directions. Remove the appropriate direction to disable 
+                // Eg. 'y' would only allow zooming in the y direction
+                mode: 'x',
+            },
         };
 
-        var myBarChart = new Chart(canvas, {
-            type: 'line',
-            data: data,
-            options: option
-        });
-
+        this.drawGraph();
     };
+
+    this.drawGraph = function () {
+        var canvas = document.getElementById('myChart');
+        this.chartApi = new Chart(canvas, {
+            type: this.type,
+            data: this.gdata,
+            options: this.goptions
+        });
+    };
+
+    this.ResetZoom = function () {
+        alert("hahahh");
+        this.chartApi.resetZoom();
+    };
+
+    this.setGraphType = function (e) {
+        $("#graphDropdown .btn:first-child").html($(e.target).text()+ "&nbsp;<span class = 'caret'></span>");
+        var ty = $(e.target).text().trim().toLowerCase();
+        $("#myChart").remove();
+        $("#graphcontainer").append("<canvas id='myChart' width='auto' height='auto'></canvas>");
+        if (ty == "areafilled") {
+            this.type = "line";
+            $.each(this.chartApi.config.data.datasets, function (i, obj) {
+                obj.fill = true;
+            });
+        }
+        else if (ty == "line") {
+            this.type = "line";
+            $.each(this.chartApi.config.data.datasets, function (i, obj) {
+                obj.fill = false;
+            });
+        }
+        else
+            this.type = "bar";
+
+        
+        this.drawGraph();
+        e.preventDefault();
+    };
+
+    this.init();
 };
 
 var eb_chart = function (columnInfo, ssurl, data) {
@@ -324,6 +378,7 @@ var eb_chart = function (columnInfo, ssurl, data) {
     this.columnInfo = columnInfo;
     this.type = this.columnInfo.options.type.trim().toLowerCase();
     this.ssurl = ssurl;
+    this.chartJs = null;
 
     // functions
 
@@ -332,10 +387,14 @@ var eb_chart = function (columnInfo, ssurl, data) {
         //    new Eb_dygraph(this.type, this.data, this.columnInfo, this.ssurl);
         //}
         //else {
-            new Eb_chartJSgraph(this.type, this.data, this.columnInfo, this.ssurl);
+        this.chartJs =  new Eb_chartJSgraph(this.type, this.data, this.columnInfo, this.ssurl);
         //}
 
     };
+
+    this.drawGraphHelper = function (datain) {
+        this.chartJs.drawGraphHelper(datain);
+    }
 
     this.init();
 }

@@ -4,13 +4,15 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
+@using (Html.BeginForm(FormMethod.Post))
+{
 <div class="col-md-4 col-md-offset-4 bg-white">
     <h3 class="text-center">Create User</h3>
     <div class="form-group">
-        <input type="text" class="form-control" name="" placeholder="Name" />
+        <input type="text" class="form-control" name="name" placeholder="Name" />
     </div>
     <div class="form-group">
-        <input type="text" class="form-control" name="" placeholder="Email" />
+        <input type="text" class="form-control" name="email" placeholder="Email" />
     </div>
     <div class="form-group pull-right">
         <div class="input-group">
@@ -18,10 +20,10 @@
         </div>
     </div>
     <div class="form-group">
-        <input type="text" class="form-control" id="pw" name="" placeholder="Password" />
+        <input type="text" class="form-control" id="pw" name="password" placeholder="Password" />
     </div>
     <div class="form-group">
-        <select class="selectpicker" data-live-search="true" multiple>
+        <select class="selectpicker" name="select" data-live-search="true" multiple>
             <option value="ME">aine</option>
             <option value="MD">Maryland</option>
             <option value="MA">Massachusetts</option>
@@ -35,6 +37,7 @@
         <input type="submit" class="btn btn-primary" value="Create" />
     </div>
 </div>
+}
 <script>
     $('document').ready(function () {
         $('#sendmail').change(function () {

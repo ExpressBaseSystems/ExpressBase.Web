@@ -205,7 +205,7 @@
 
             if (getValueFuncs) {
                 getValueFuncs[name] = function () {
-                    return $('#' + elemId).val();
+                    return parseInt($('#' + elemId).val());
                 };
             }
 

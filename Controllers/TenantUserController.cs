@@ -116,7 +116,6 @@ namespace ExpressBase.Web2.Controllers
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
-
             return View();
         }
        
@@ -190,6 +189,9 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult CreateUser()
         {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype="roles", Token = ViewBag.token });
+            ViewBag.dict = fr.Data;
             return View();
         }
 
@@ -197,6 +199,8 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult CreateUser(int i)
         {
             var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token ,op = "createuser" });
             return View();
         }
 

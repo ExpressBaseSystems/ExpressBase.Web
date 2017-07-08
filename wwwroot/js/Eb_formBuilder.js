@@ -1,4 +1,5 @@
 ﻿var TextBoxObj = function (id) {
+    this.id= id
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
     this.IsContainer = false,
@@ -32,6 +33,7 @@
 }
 
 var GridViewObj = function (id) {
+    this.id = id
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
     this.IsContainer = true,
@@ -53,6 +55,7 @@ var GridViewObj = function (id) {
 }
 
 var GridViewTdObj = function (id) {
+    this.id = id
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
     this.Controls = new EbControlCollection(),
@@ -124,13 +127,36 @@ var EbControlCollection = function () {
     this.ToArray = function () {
         return this.InnerCollection;
     };
+    this.PopByName = function (_name) {
+        var parentId = $("#" + _name).parent().attr("id");
+        var ele = this.GetByName(_name);
+
+        if (parentId === "form-buider-form")
+            return this.InnerCollection.pop(this.InnerCollection.indexOf(ele));
+
+        var parent = this.GetByName(parentId);
+        return parent.Controls.InnerCollection.pop(parent.Controls.InnerCollection.indexOf(ele));
+    };
+
+    this.AppendIn = function (newObject) {
+        var parentId = $("#" + newObject.Name).parent().attr("id");
+        var parent = this.GetByName(parentId);
+        return parent.Controls.InnerCollection.push(newObject);
+    };
 
     this.Append = function (newObject) {
         this.InnerCollection.push(newObject);
     };
 
+    this.PopByindex = function () {
+
+    };
+
     this.InsertAt = function (index, newObject) {
-        this.InnerCollection.splice(index, 0, newObject);
+        var parentId = $("#" + newObject.Name).parent().attr("id");
+        var parent = this.GetByName(parentId);
+        parent.Controls.InnerCollection.splice(index, 0, newObject);
+        return parent.Controls.InnerCollection.length;
     };
 
     this.InsertBefore = function (beforeObj, newObject) {
@@ -145,23 +171,18 @@ var EbControlCollection = function () {
     this.GetByName = function (_name) {
         var retObject = new Object();
         this.GetByNameInner(_name, this.InnerCollection, retObject);
-        return retObject.Value;
+        return (retObject.Value) ? retObject.Value : null;
     };
 
 
     this.GetByNameInner = function (_name, _collection, retObject) {
         for (var i = 0; i < _collection.length; i++) {
-            console.log("> 1: " + _collection[i].Name + ", " + _name);
             if (_collection[i].Name === _name) {
-                console.log(">   2: " + _collection[i].Name + ", " + _name);
                 retObject.Value = _collection[i];
-                console.log("break; ele found");
                 break;
             }
             else {
-                console.log(">  3: " + _collection[i].Name + ", " + _name);
                 if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0) {
-                    console.log(">       4: " + _collection[i].Name + ", " + _name);
                     this.GetByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
                 }
             }
@@ -176,21 +197,13 @@ var EbControlCollection = function () {
 
     this.DelByNameInner = function (_name, _collection, retObject) {
         for (var i = 0; i < _collection.length; i++) {
-            console.log("> 1: " + _collection[i].Name + ", " + _name);
             if (_collection[i].Name === _name) {
-                console.log(">   2: " + _collection[i].Name + ", " + _name);
-
                 _collection.splice(i, 1);
-
-                console.log("break; ele found");
                 break;
             }
             else {
-                console.log(">  3: " + _collection[i].Name + ", " + _name);
-                if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0) {
-                    console.log(">       4: " + _collection[i].Name + ", " + _name);
+                if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0)
                     this.DelByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
-                }
             }
         }
     };
@@ -198,6 +211,7 @@ var EbControlCollection = function () {
 };
 
 var formBuilder = function (toolBoxid, formid) {
+    this.Name = "form-buider-form";
     this.toolBoxid = toolBoxid;
     this.formid = formid;
     this.ComboBoxCounter = 0;
@@ -211,8 +225,9 @@ var formBuilder = function (toolBoxid, formid) {
     this.Controls = new EbControlCollection();
     this.drake = null;
     // need to change
-    this.CurRowCount = 2
-    this.CurColCount = 2
+    this.CurRowCount = 2;
+    this.CurColCount = 2;
+    this.movingObj = {};
 
     this.save = function () {
         //alert("save:" + JSON.stringify(this.Controls));
@@ -304,12 +319,7 @@ var formBuilder = function (toolBoxid, formid) {
         });
 
 
-        $("#propGrid td:contains(Columns)").next().children().on("focus click", this.RFocus.bind());
-    };
-
-    this.RFocus = function (e) {
-        this.CurColCount = $(e.target).val();
-        console.log(this.CurColCount);
+        //$("#propGrid td:contains(Columns)").next().children().on("focus click", this.RFocus.bind());
     };
 
     this.saveObj = function () {
@@ -339,7 +349,7 @@ var formBuilder = function (toolBoxid, formid) {
         this.CurColCount = $(e.target).val();//tmp
     };
 
-    this.movesfn = function (el, target, source, sibling) {
+    this.movesfn = function (el, source, handle, sibling) {
         this.makeTdsDropable();
         return true;
     };
@@ -358,7 +368,6 @@ var formBuilder = function (toolBoxid, formid) {
             return true;
         }
         else {
-            console.log("else");
             return true;
         }
 
@@ -369,6 +378,7 @@ var formBuilder = function (toolBoxid, formid) {
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
         this.CreatePG(this.Controls.GetByName(this.curControl.attr("id")));
+        this.CurColCount = $(e.target).val();
     };
 
     this.makeTdsDropable = function () {
@@ -383,8 +393,47 @@ var formBuilder = function (toolBoxid, formid) {
         }
     }
 
+    this.onDragFn = function (el, source) {
+        console.log("onDragFn");
+        //if drag start within the form
+        if (!($(source).attr("id") === "form-buider-toolBox")) {
+            console.log("el poped");
+            this.movingObj = this.Controls.PopByName($(el).attr("id"));
+        }
+        else
+            this.movingObj = null;
+    }// start
+
+    this.onDragendFn = function (el) {
+        console.log("onDragendFn");
+        var sibling = $(el).next();
+        console.log("sibling: " + sibling.attr("id"));
+        var target = $(el).parent();
+        if (this.movingObj) {
+
+            //Drag end with in the form
+            if (target.attr("id") !== "form-buider-toolBox") {
+                console.log("elObj : " + JSON.stringify(this.movingObj));
+                console.log("sibling : " + sibling.attr("id"));
+                if (sibling.attr("id")) {
+                    console.log("sibling : " + sibling.id);
+                    var idx = sibling.index() - 1;
+                    this.Controls.InsertAt(idx, this.movingObj);
+                }
+                else {
+                    console.log("no sibling ");
+                    this.Controls.AppendIn(this.movingObj)
+                }
+                this.saveObj();
+            }
+
+        }
+    }
+
     this.onDropFn = function (el, target, source, sibling) {
+        //drop from toolbox to form
         if ($(source).attr("id") === "form-buider-toolBox") {
+            //if ( $(source).parentsUntil("div", "[id=form-buider-toolBox]") ) {
             var _html = "";
 
             el.className = 'controlTile';
@@ -438,7 +487,7 @@ var formBuilder = function (toolBoxid, formid) {
             $(el).find(".close").on("click", this.controlCloseOnClick.bind(this));
         }
         else
-            console.log("else : removed");
+            console.log("ondrop else : removed");
         this.saveObj();
     };
 
@@ -470,18 +519,32 @@ var formBuilder = function (toolBoxid, formid) {
 
         if (this.CurColCount < newVal)
             for (var i = noOfTds; i < newVal; i++) {
-                console.log(">  "+ i)
+                console.log(">  " + i)
                 this.addTd();
             }
-        //else if (this.CurColCount < newVal)
-        //    this.removeTd(id);
+        else if (this.CurColCount > newVal)
+            for (var i = noOfTds; i > newVal; i--) {
+                console.log(">  " + i)//
+                this.removeTd();
+            }
     };
 
     this.addTd = function () {
         var id = this.curControl.attr("id");
-        var noOfTds = this.curControl.children().children().children().children().length;
+        var curTr = this.curControl.children().children().children();
+        alert("this.curControl: " + id);
+        var noOfTds = curTr.children().length;
         this.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
-        this.curControl.find("tr").last().append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'></td>");
+        curTr.append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'>" + (noOfTds + 1) + "</td>");
+        curTr.css("background", "yellow");
+        this.makeTdsDropable.bind(this);
+    };
+
+    this.removeTd = function () {
+        var id = this.curControl.attr("id");
+        var noOfTds = this.curControl.children().children().children().children().length;
+        this.Controls.GetByName(id).Controls.Pop();
+        this.curControl.find("tr").find("td").last().remove();
         this.makeTdsDropable.bind(this);
     };
 
@@ -500,6 +563,8 @@ var formBuilder = function (toolBoxid, formid) {
         });
 
         this.drake.on("drop", this.onDropFn.bind(this));
+        this.drake.on("drag", this.onDragFn.bind(this));
+        this.drake.on("dragend", this.onDragendFn.bind(this));
     };
 
     this.Init();

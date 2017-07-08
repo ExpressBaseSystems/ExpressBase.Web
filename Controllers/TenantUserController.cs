@@ -74,8 +74,9 @@ namespace ExpressBase.Web2.Controllers
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
             ViewBag.dvname = _dict["dvName"];
-            var obj = GetByteaEbObjects_json(220);
-            ViewBag.EbForm38 = (obj.Value as Dictionary<int, EbFilterDialog>)[220];
+            //var obj = GetByteaEbObjects_json(220);
+            //ViewBag.EbForm38 = (obj.Value as Dictionary<int, EbFilterDialog>)[220];
+            ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
             return View();
         }
 
@@ -186,8 +187,16 @@ namespace ExpressBase.Web2.Controllers
         //    return colDef + colext + "}";
         //}
 
+        [HttpGet]
         public IActionResult CreateUser()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateUser(int i)
+        {
+            var req = this.HttpContext.Request.Form;
             return View();
         }
 

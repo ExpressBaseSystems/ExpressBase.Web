@@ -3,13 +3,16 @@
 *@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
+
+    Dictionary<string, object> Dict = ViewBag.dict;
 }
+
 @using (Html.BeginForm(FormMethod.Post))
 {
 <div class="col-md-4 col-md-offset-4 bg-white">
     <h3 class="text-center">Create User</h3>
     <div class="form-group">
-        <input type="text" class="form-control" name="name" placeholder="Name" />
+        <input type="text" class="form-control" name="firstname" placeholder="Name" />
     </div>
     <div class="form-group">
         <input type="text" class="form-control" name="email" placeholder="Email" />
@@ -20,17 +23,18 @@
         </div>
     </div>
     <div class="form-group">
-        <input type="text" class="form-control" id="pw" name="password" placeholder="Password" />
+        <input type="text" class="form-control" id="pwd" name="pwd" placeholder="Password" />
     </div>
     <div class="form-group">
-        <select class="selectpicker" name="select" data-live-search="true" multiple>
-            <option value="ME">aine</option>
-            <option value="MD">Maryland</option>
-            <option value="MA">Massachusetts</option>
-            <option value="MI">chigan</option>
-            <option value="MN">Minnesota</option>
-            <option value="MS">Mississippi</option>
-            <option value="MO">souri</option>
+        <select class="selectpicker" name="roles" data-live-search="true" multiple>
+           @{
+               foreach (var element in Dict.Keys)
+               {
+                <option value="@element">@Dict[element]</option>
+
+               }
+        }
+            
         </select>
     </div>
     <div class="form-group pull-right">

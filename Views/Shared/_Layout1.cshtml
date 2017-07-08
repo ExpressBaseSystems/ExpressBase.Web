@@ -98,6 +98,10 @@
         $('document').ready(function () {
             $('#submen').click(function () {
                 $('.side').toggle();
+                if ($('.side').css("display") === "none")
+                    $("#main_cont").css("margin-left", "135px");
+                else
+                    $("#main_cont").css("margin-left", "0px");
             });
         });
     </script>
@@ -115,11 +119,9 @@
 
             }
         }
-
-
-        <div class="container-fluid">
+        <div id ="tenatDtls" class="container-fluid">
             <div class="row">
-                <div class="col-md-4 col-md-3 side">
+                <div class="col-md-3 hidden-sm-down hidden-xs-down side">
                     @if (ViewBag.wc == "tc")
                     {
                         Html.RenderPartial("_SidebarMenu");
@@ -135,15 +137,12 @@
                     }
                                        
                 </div>
-
-                <div id="main-cont" class="col-md-9 main-cont">
-                    @RenderBody()
-                    @RenderSection("EbHead", false)
-
+                <div id="main_cont" class="col-md-9 col-sm-4 col-xs-12 main-cont">
+                        @RenderBody()
+                        @RenderSection("EbHead", false)
                 </div>
             </div>
         </div>    
-     
 </body>
 </html>
 

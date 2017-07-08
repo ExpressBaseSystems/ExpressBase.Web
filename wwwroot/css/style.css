@@ -30,22 +30,29 @@ Navigation bar
 .navbar-default .navbar-brand {
     color: #3b5998;
 }
+
 .navbar-default {
     background-color: #ffffff;
 }
+
     .navbar-default img {
         height: 44px;
         margin-top: 3px;
         margin-bottom: 0px;
     }
-.navbar{height:40px !important;}
+
+.navbar {
+    height: 40px !important;
+}
+
 .navbar-default .navbar-nav > li > a {
     color: #717f86;
     font-size: 13px;
     font-weight: normal;
 }
-#submenu .fa .fa-list{
-    font-size:20px;
+
+#submenu .fa .fa-list {
+    font-size: 20px;
 }
 
 .navbar-nav > li > a {
@@ -53,11 +60,12 @@ Navigation bar
     margin: 10px 5px;
     padding: 10px 10px;
 }
+
 .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover {
     background-color: #3b5998;
     color: #ffffff !important;
-    padding-bottom:6px;
-    padding-top:6px;
+    padding-bottom: 6px;
+    padding-top: 6px;
 }
 
 .btn-trial a {
@@ -65,13 +73,20 @@ Navigation bar
     color: #ffffff !important;
     border: 0px solid;
 }
-.navbar-collapse { 
-    text-align:center;
-} 
-@media(max-width: 768px){
-    .navbar-collapse{ background:white;}
-    #logo img{}
+
+.navbar-collapse {
+    text-align: center;
 }
+
+@media(max-width: 768px) {
+    .navbar-collapse {
+        background: white;
+    }
+
+    #logo img {
+    }
+}
+
 .padding-zero {
     padding: 0px;
 }
@@ -156,8 +171,9 @@ Navigation bar
     padding: 75px 0;
     background-color: rgb(260,260,260);
 }
+
 .profile {
-    margin-top: 25px;    
+    margin-top: 25px;
 }
 
     .profile h1 {
@@ -350,14 +366,15 @@ footer {
     min-height: 500px;
     background: url('../images/aboutus.jpg') center center no-repeat scroll;
     background-size: cover;
-    width:100%;
+    width: 100%;
 }
 /*pricing*/
 #headerPricing {
     background-color: rgb(260,260,260);
-margin-top:100px;
-text-align:center;
+    margin-top: 100px;
+    text-align: center;
 }
+
 .pricing {
     min-height: 500px;
     background-color: rgb(260, 260, 260);
@@ -478,58 +495,65 @@ text-align:center;
     font-size: 12px;
 }
 
-#technnology{
-    padding-bottom:40px;
+#technnology {
+    padding-bottom: 40px;
 }
-#technnology img {
-    margin-bottom: 20px;
-    height: 150px;
-}
+
+    #technnology img {
+        margin-bottom: 20px;
+        height: 150px;
+    }
 
 /*sidebar*/
-.side{
-       padding-top:53px;
-       padding-left:0;
-       width:250px;
-       border-radius:0;
-       height:100%;
-       
-       }
+.side {
+    padding-top: 53px;
+    padding-left: 0;
+    width: 250px;
+    border-radius: 0;
+    height: 100%;
+}
+
 .list-group ul li {
     border: none;
-  line-height: 28px;
-  display:block;
-  margin-left: 0px;
+    line-height: 28px;
+    display: block;
+    margin-left: 0px;
 }
 /*sidebar end*/
-.main-cont{
-    padding-top:80px;
-  margin-bottom: 40px;
+.main-cont {
+    padding-top: 80px;
+    margin-bottom: 40px;
 }
-.padd{
-    padding-right:7px;
-    padding-bottom:7px;
+
+.padd {
+    padding-right: 7px;
+    padding-bottom: 7px;
 }
-.side a{
-padding-bottom:4px;
+
+.side a {
+    padding-bottom: 4px;
 }
-.side i{
-    padding-right:5px;
+
+.side i {
+    padding-right: 5px;
 }
 /*ebObject list*/
- 
-.objitems {
-        border: solid 1px #e6e0e0;
-        margin-bottom: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-   
-         }
 
-    .bottpadd {
-        margin-bottom: 50px;
-    }
-    #btnOpen{
+.objitems {
+    border: solid 1px #e6e0e0;
+    margin-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.bottpadd {
+    margin-bottom: 50px;
+}
+
+#btnOpen {
     margin-left: 53px;
-    }
-   
+}
+
+#tenatDtls .col-md-9 {
+    width: 80% !important;
+}

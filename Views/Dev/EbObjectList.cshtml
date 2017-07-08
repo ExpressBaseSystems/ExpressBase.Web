@@ -25,7 +25,7 @@
 <script>
     $('#reload').next().css("display", "inline-block");
 </script>
-<div class="row main-cont" style="padding-top:40px !important;">
+<div class="row">
     <div class="form-inline">
         <button class="btn btn-default" id="reload">Refresh</button>
         @using (Html.BeginForm(editor, "Dev", FormMethod.Get, new { target = "_blank" }))
@@ -74,8 +74,3 @@
         </div>
     }
 }
-<style>
-    .main-cont {
-        padding-top: 40px !important;
-    }
-</style>

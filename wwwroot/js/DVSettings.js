@@ -7,19 +7,28 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
     this.width = wid;
 };
 
+var axis = function (indx, name) {
+    this.index = indx;
+    this.name = name;
+};
+
 var DVObj = function (dsid, settings, login) {
     this.TVPrefObj = settings;
     this.dsid = dsid;
     this.settings_tbl = null;
     this.columnsdel = [];
     this.columnsextdel = [];
+    this.XLength = 0;
+    this.XLength = 0;
 
     this.init = function () {
+        //$(".nav-item a[href='3a']").tab('hide');
+        $("input[name=renderAs]").off("click").on("click", this.graphSettings.bind(this));
         if (Object.keys(this.TVPrefObj).length > 0) {
             $("#dvName_txt").val(this.TVPrefObj.dvName);
             //$("#serial_check").prop("checked", this.TVPrefObj.hideSerial);
             //$("#select_check").prop("checked", this.TVPrefObj.hideCheckbox);
-            $("input[name=renderAs][value=" + this.TVPrefObj.renderAs + "]").attr('checked', true);
+            $("input[name=renderAs][value=" + this.TVPrefObj.renderAs + "]").prop("checked", true).trigger("click");
             $("#pageLength_text").val(this.TVPrefObj.lengthMenu[0][0]);
             $("#scrollY_text").val(this.TVPrefObj.scrollY);
             $("#rowGrouping_text").val(this.TVPrefObj.rowGrouping);
@@ -27,11 +36,16 @@ var DVObj = function (dsid, settings, login) {
             $("#rightFixedColumns_text").val(this.TVPrefObj.rightFixedColumns);
             this.callPost4SettingsTable();
             this.getcolumn4dropdown();
+            $("#graphtypeDD .btn:first-child").text(this.TVPrefObj.options.type.trim());
         }
-        $(".dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
+        $("#datatSourceDropdown .dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
+        $("#graphtypeDD .dropdown-menu li a").off("click").on("click", this.setDropdownGraphType.bind(this));
         $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $(".eb_delete_btn").off("click").on("click", this.deleteRow.bind(this));
         $("#columnDropdown .dropdown-menu a").off("click").on("click", this.clickDropdownfunc.bind(this));
+        
+        $("#btnMovetoX").off("click").on("click", this.Moveto_X_List.bind(this));
+        $("#btnMovetoY").off("click").on("click", this.Moveto_Y_List.bind(this));
     };
 
     this.setDropdownDatasource = function (e) {
@@ -39,8 +53,8 @@ var DVObj = function (dsid, settings, login) {
         this.dsid = $(e.target).parent().attr("data-dsid");
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
         $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
-        $.post('../Dev/GetColumns', { dsid: this.dsid },this.getColumnsSuccess.bind(this));
-        
+        $.post('../Dev/GetColumns', { dsid: this.dsid }, this.getColumnsSuccess.bind(this));
+
     };
 
     this.getColumnsSuccess = function (data) {
@@ -113,12 +127,12 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.renderFontSelect = function (data, type, row, meta) {
-        var fontName = data.replace("tdheight", " ").replace("dt-right"," ");
+        var fontName = data.replace("tdheight", " ").replace("dt-right", " ");
         if (fontName === "") {
             fontName = fontName.substring(5).replace(/_/g, " ");
             index = fontName.lastIndexOf(" ");
             fontName = fontName.substring(0, index);
-                return "<input type='text' value=" + fontName + " class='font' style='width: 100px;' name='font' >";
+            return "<input type='text' value=" + fontName + " class='font' style='width: 100px;' name='font' >";
         }
         else
             return "<input type='text' class='font' style='width: 100px;' name='font'>";
@@ -139,7 +153,7 @@ var DVObj = function (dsid, settings, login) {
 
     this.saveSettings = function (e) {
         $("#loader").show();
-        var objId= $(e.target).attr("data-objId");
+        var objId = $(e.target).attr("data-objId");
         this.isSettingsSaved = true;
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
@@ -179,12 +193,29 @@ var DVObj = function (dsid, settings, login) {
                         cls = 'tdheight';
                 }
             }
-            
+
             if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
         });
         //this.TVPrefObj.hideSerial = $("#serial_check").prop("checked");
         //this.TVPrefObj.hideCheckbox = $("#select_check").prop("checked");$("input[name=rate]:checked").val()
         this.TVPrefObj.renderAs = $("input[name=renderAs]:checked").val();
+        if (this.TVPrefObj.renderAs != "table") {
+            var Xax = [];
+            var opt = new Object();
+            var xaxis = $("#list_Xcolumns li");
+            $.each(xaxis, function (i, obj) {
+                Xax.push(new axis($(obj).attr("data-id"), $(obj).text().substring(0, $(obj).text().length - 1).trim()));
+            });
+            opt.Xaxis = Xax;
+            var yaxis = $("#list_Ycolumns li");
+            Xax = [];
+            $.each(yaxis, function (i, obj) {
+                Xax.push(new axis($(obj).attr("data-id"), $(obj).text().substring(0, $(obj).text().length - 1).trim()));
+            });
+            opt.Yaxis = Xax;
+            opt.type = $("#graphtypeDD .btn:first-child").text();
+            this.TVPrefObj["options"] = opt;
+        }
         this.TVPrefObj.lengthMenu = this.GetLengthOption($("#pageLength_text").val());
         this.TVPrefObj.scrollY = $("#scrollY_text").val();
         this.TVPrefObj.rowGrouping = $("#rowGrouping_text").val();
@@ -193,7 +224,7 @@ var DVObj = function (dsid, settings, login) {
         this.TVPrefObj.dvName = $("#dvName_txt").val();
         this.TVPrefObj.dsId = this.dsid;
         this.TVPrefObj.columns = objcols;
-        
+
         //this.TVPrefObj.columnsext = this.TVPrefObj.columnsext;
         //this.ebSettingsCopy.columnsdel = this.columnsdel;
         //this.ebSettingsCopy.columnsextdel = this.columnsextdel;
@@ -205,7 +236,7 @@ var DVObj = function (dsid, settings, login) {
         }
         //console.log(JSON.stringify(this.TVPrefObj));
         $.post('../Dev/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.TVPrefObj), dvid: objId }, this.saveSuccess.bind(this));
-        
+
     };
 
     this.saveSuccess = function () {//var d = new EbDataTable();d.isSettingsSaved=true;
@@ -236,22 +267,22 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.AddSerialAndOrCheckBoxColumns = function (tx) {
-       // if (!tx.hideCheckbox) {
-            var chkObj = new Object();
-            chkObj.data = null;
-            chkObj.title = "<input id='{0}_select-all' type='checkbox' class='eb_selall' data-table='{0}'/>".replace("{0}", this.tableId);
-            chkObj.width = 10;
-            chkObj.orderable = false;
-            chkObj.visible = true;
-            chkObj.name = "checkbox";
-            var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
-            // chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
-            chkObj.render = this.renderCheckBoxCol.bind(this);
-            tx.unshift(chkObj);
-       // }
+        // if (!tx.hideCheckbox) {
+        var chkObj = new Object();
+        chkObj.data = null;
+        chkObj.title = "<input id='{0}_select-all' type='checkbox' class='eb_selall' data-table='{0}'/>".replace("{0}", this.tableId);
+        chkObj.width = 10;
+        chkObj.orderable = false;
+        chkObj.visible = true;
+        chkObj.name = "checkbox";
+        var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
+        // chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
+        chkObj.render = this.renderCheckBoxCol.bind(this);
+        tx.unshift(chkObj);
+        // }
 
         //if (!tx.hideSerial)
-            tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#"}'));
+        tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#"}'));
     };
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
@@ -280,10 +311,10 @@ var DVObj = function (dsid, settings, login) {
         else
             this.TVPrefObj.columnsextdel.push(del_obj[0]);
         this.TVPrefObj.columnsext = $.grep(this.TVPrefObj.columnsext, function (obj) { return obj.name !== this.deleted_colname; }.bind(this));
-        
+
         var liId = "li_" + deletedRow.name;
         $("#columnDropdown ul").append($("<li id=" + liId + "><a data-data=\"" + JSON.stringify(deletedRow).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.TVPrefObj.columnsextdel[this.TVPrefObj.columnsextdel.length - 1]).replace(/\"/g, "'") + "\" href='#'>" + deletedRow.name + "</a></li>"));
- 
+
     };
 
     this.clickDropdownfunc = function (e) {
@@ -320,9 +351,103 @@ var DVObj = function (dsid, settings, login) {
         $("#columnDropdown ul").append("<li id=" + liId + "><a data-data=\"" + JSON.stringify(obj).replace(/\"/g, "'") + "\" data-colext=\"" + JSON.stringify(this.TVPrefObj.columnsextdel[i]).replace(/\"/g, "'") + "\" href='#'>" + obj.name + "</a></li>");
     };
 
-    this.init();
+    this.setDropdownGraphType = function (e) {
+        $("#graphtypeDD .btn:first-child").html($(e.target).text() + "&nbsp;<span class = 'caret'></span>");
+        $("#graphtypeDD .btn:first-child").val($(e.target).text());
+    };
 
+    this.graphSettings = function (e) {
+        alert("hahhaha");
+        if (Object.keys(this.TVPrefObj).length > 0) {
+            if ($(e.target).attr("value") !== "table") {
+                $(".nav-link").eq(2).show();
+                if (this.TVPrefObj.options !== null && this.TVPrefObj.options !== undefined) {
+                    var colsX = [], colsAll_X =[];
+                    $.each(this.TVPrefObj.options.Xaxis, function (i, obj) {
+                          colsX.push(obj.name);
+                    });
+                    $.each(this.TVPrefObj.columns, function (i, obj) {
+                        if (!colsX.contains(obj.name))
+                            colsAll_X.push(obj);
+                    });
+                    var colsY = [], colsAll_XY =[];
+                    $.each(this.TVPrefObj.options.Yaxis, function (i, obj) {
+                        colsY.push(obj.name);
+                    });
+                    $.each(colsAll_X, function (i, obj) {
+                        if (!colsY.contains(obj.name))
+                            colsAll_XY.push(obj);
+                    });
+                    //cols = $.grep(this.TVPrefObj.columns, function (i, obj) { return obj.name !== this.TVPrefObj.options.Xaxis.name; });
+                    //cols = $.grep(cols, function (i, obj) { return obj.name !== this.TVPrefObj.options.Yaxis.name; });
+                    $.each(colsAll_XY, function (i, obj) {
+                        if (obj.data != undefined) {
+                            $("#list_allcolumns").append("<li class='list-group-item' data-id='" + obj.data + "'>" + obj.name + "</li>");
+                        }
+                    });
+                    $.each(this.TVPrefObj.options.Xaxis, function (i, obj) {
+                        $("#list_Xcolumns").append("<li class='list-group-item' data-id='" + obj.index + "'>" + obj.name + "&nbsp;&nbsp;<button class='close' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >x</button></li>");
+                    });
+                    $.each(this.TVPrefObj.options.Yaxis, function (i, obj) {
+                        $("#list_Ycolumns").append("<li class='list-group-item' data-id='" + obj.index + "'>" + obj.name + "&nbsp;&nbsp;<button class='close' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >x</button></li>");
+                    });
+                    $("#list_Xcolumns button[class=close]").off("click").on("click", this.RemoveLi.bind(this));
+                    $("#list_Ycolumns button[class=close]").off("click").on("click", this.RemoveLi.bind(this));
+                }
+                else {
+                    $.each(this.TVPrefObj.columns, function (i, obj) {
+                        if (obj.data != undefined) {
+                            $("#list_allcolumns").append("<li class='list-group-item' data-id='" + obj.data + "'>" + obj.name + "</li>");
+                        }
+                    });
+                }
+            }
+        }
+        $(".list-group-item").off("click").on("click", this.AddCsstoLi.bind(this));
+    };
+
+    this.AddCsstoLi = function (e) {
+        if ($(e.target).hasClass("active"))
+            $(e.target).removeClass("active");
+        else {
+            if ($("#list_allcolumns li").hasClass("active")) {
+                $("#list_allcolumns li.active").removeClass("active");
+                $(e.target).addClass("active");
+            }
+            else
+                $(e.target).addClass("active");
+        }
+    };
+
+    this.Moveto_X_List = function (e) {
+        if ($("#list_allcolumns li").hasClass("active")) {
+                var element = $("#list_allcolumns li.active");
+                $("#list_Xcolumns").append("<li class='list-group-item' data-id='" + element.attr("data-id") + "'>" + element.text() + "&nbsp;&nbsp;<button class='close' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >x</button></li>");
+                element.remove();
+                this.XLength++;
+        }
+        $("#list_Xcolumns button[class=close]").off("click").on("click", this.RemoveLi.bind(this));
+    };
+
+    this.Moveto_Y_List = function (e) {
+        if ($("#list_allcolumns li").hasClass("active")) {
+                var element = $("#list_allcolumns li.active");
+                $("#list_Ycolumns").append("<li class='list-group-item' data-id='" + element.attr("data-id") + "'>" + element.text() + "&nbsp;&nbsp;<button class='close' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >x</button></li>");
+                element.remove();
+                this.YLength++;
+        }
+        $("#list_Ycolumns button[class=close]").off("click").on("click", this.RemoveLi.bind(this));
+    };
+
+    this.RemoveLi = function (e) {
+        var str = $(e.target).parent().text();
+        alert(str.substring(0,str.length-1).trim());
+        $("#list_allcolumns").append("<li class='list-group-item' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "</li>");
+        $(e.target).parent().remove();
+        $(".list-group-item").off("click").on("click", this.AddCsstoLi.bind(this));
+    };
     
+    this.init();
 };
 
 

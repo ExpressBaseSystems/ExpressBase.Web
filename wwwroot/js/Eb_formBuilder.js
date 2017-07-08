@@ -36,8 +36,8 @@ var GridViewObj = function (id) {
     this.__type = "ExpressBase.Objects.EbTextBox",
     this.IsContainer = true,
     this.Controls = new EbControlCollection();
-    this.Controls.Append(new GridViewTdObj("GridViewTd0"));
-    this.Controls.Append(new GridViewTdObj("GridViewTd1"));
+    this.Controls.Append(new GridViewTdObj(id + "_Td0"));
+    this.Controls.Append(new GridViewTdObj(id + "_Td1"));
     this.props = {
         Name: id,
         Parent: "",
@@ -120,56 +120,86 @@ var GridViewTdObj = function (id) {
 
 var EbControlCollection = function () {
     this.InnerCollection = [];
-    this.flatCollection = [];
 
     this.ToArray = function () {
         return this.InnerCollection;
     };
+    this.PopByName = function (_name) {
+        var parent = this.GetByName($("#" + _name).parent().attr("id"));
+        var ele = this.GetByName(_name);
+        return parent.Controls.InnerCollection.pop(parent.Controls.InnerCollection.indexOf(ele));
+    };
+
+    this.AppendIn = function (newObject) {
+        var parentId = $("#" + newObject.Name).parent().attr("id");
+        var parent = this.GetByName(parentId);
+        return parent.Controls.InnerCollection.push(newObject);
+    };
 
     this.Append = function (newObject) {
         this.InnerCollection.push(newObject);
-        this.flatCollection.push(newObject);
+    };
+
+    this.PopByindex = function () {
+
     };
 
     this.InsertAt = function (index, newObject) {
-        this.InnerCollection.splice(index, 0, newObject);
-        this.flatCollection.push(newObject);
+        var parentId = $("#" + newObject.Name).parent().attr("id");
+        var parent = this.GetByName(parentId);
+        parent.Controls.InnerCollection.splice(index, 0, newObject);
+        return parent.Controls.InnerCollection.length;
     };
 
     this.InsertBefore = function (beforeObj, newObject) {
         this.InnerCollection.splice(this.InnerCollection.indexOf(beforeObj), 0, newObject);
-        this.flatCollection.push(newObject);
     };
 
     this.GetByIndex = function (_index) {
         return this.InnerCollection[_index];
     };
 
+
     this.GetByName = function (_name) {
         var retObject = new Object();
         this.GetByNameInner(_name, this.InnerCollection, retObject);
-        return retObject.Value;
+        return (retObject.Value) ? retObject.Value : null;
     };
 
+
     this.GetByNameInner = function (_name, _collection, retObject) {
-        for (i = 0; i < _collection.length; i++) {
-            console.log("> 1: " + _collection[i].Name + ", " + _name);
+        for (var i = 0; i < _collection.length; i++) {
             if (_collection[i].Name === _name) {
-                console.log("> 2: " + _collection[i].Name + ", " + _name);
                 retObject.Value = _collection[i];
-                return;
+                break;
             }
-            else
-            {
-                console.log("> 3: " + _collection[i].Name + ", " + _name);
-                if (_collection[i].IsContainer === true && _collection[i].Controls.ToArray().length > 0) {
-                    console.log("> 4: " + _collection[i].Name + ", " + _name);
-                    //console.log("> GetByNameInner called: " + _collection[i].Name + ", " + _collection[i].IsContainer);
+            else {
+                if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0) {
                     this.GetByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
                 }
             }
         }
     };
+
+    this.DelByName = function (_name) {
+        var retObject = new Object();
+        this.DelByNameInner(_name, this.InnerCollection, retObject);
+        return retObject.Value;
+    };
+
+    this.DelByNameInner = function (_name, _collection, retObject) {
+        for (var i = 0; i < _collection.length; i++) {
+            if (_collection[i].Name === _name) {
+                _collection.splice(i, 1);
+                break;
+            }
+            else {
+                if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0)
+                    this.DelByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
+            }
+        }
+    };
+
 };
 
 var formBuilder = function (toolBoxid, formid) {
@@ -180,12 +210,15 @@ var formBuilder = function (toolBoxid, formid) {
     this.DateCounter = 0;
     this.ButtonCounter = 0;
     this.GridViewCounter = 0;
-    this.TdCounter = 0;
     this.TextBoxCounter = 0;
     this.curControl = null;
     this.currentProperty = null;
     this.Controls = new EbControlCollection();
     this.drake = null;
+    // need to change
+    this.CurRowCount = 2;
+    this.CurColCount = 2;
+    this.movingObj = {};
 
     this.save = function () {
         //alert("save:" + JSON.stringify(this.Controls));
@@ -275,6 +308,9 @@ var formBuilder = function (toolBoxid, formid) {
             var selected = $(this).find("option:selected").val();
             $("#" + selected).focus();
         });
+
+
+        //$("#propGrid td:contains(Columns)").next().children().on("focus click", this.RFocus.bind());
     };
 
     this.saveObj = function () {
@@ -300,9 +336,11 @@ var formBuilder = function (toolBoxid, formid) {
         this.currentProperty = $(e.target);
         this.updateHTML();
         this.saveObj();
+
+        this.CurColCount = $(e.target).val();//tmp
     };
 
-    this.movesfn = function (el, target, source, sibling) {
+    this.movesfn = function (el, source, handle, sibling) {
         this.makeTdsDropable();
         return true;
     };
@@ -321,7 +359,6 @@ var formBuilder = function (toolBoxid, formid) {
             return true;
         }
         else {
-            console.log("else");
             return true;
         }
 
@@ -331,8 +368,8 @@ var formBuilder = function (toolBoxid, formid) {
         this.curControl = $(e.target).closest(".controlTile");
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
-        //alert(this.Controls[this.curControl.attr("id")]);
         this.CreatePG(this.Controls.GetByName(this.curControl.attr("id")));
+        this.CurColCount = $(e.target).val();
     };
 
     this.makeTdsDropable = function () {
@@ -347,8 +384,41 @@ var formBuilder = function (toolBoxid, formid) {
         }
     }
 
+    this.onDragFn = function (el, source) {
+        console.log("onDragFn");
+        //if drag start within the form
+        if (!($(source).attr("id") === "form-buider-toolBox")) {
+            console.log("el poped");
+            this.movingObj = this.Controls.PopByName($(el).attr("id"));
+        }
+
+    }// start
+
+    this.onDragendFn = function (el) {
+        console.log("onDragendFn");
+        var sibling = $(el).next();
+        console.log("sibling: " + sibling.attr("id"));
+        var target = $(el).parent();
+        //Drag end with in the form
+        if (target.attr("id") !== "form-buider-toolBox") {
+            console.log("elObj : " + JSON.stringify(this.movingObj));
+            console.log("sibling : " + sibling.attr("id"));
+            if (sibling.attr("id")) {
+                console.log("sibling : " + sibling.id);
+                var idx = sibling.index()-1;
+                this.Controls.InsertAt(idx, this.movingObj);
+            }
+            else {
+                console.log("no sibling ");
+                this.Controls.AppendIn(this.movingObj)
+            }
+        }
+    }
+
     this.onDropFn = function (el, target, source, sibling) {
+        //drop from toolbox to form
         if ($(source).attr("id") === "form-buider-toolBox") {
+            //if ( $(source).parentsUntil("div", "[id=form-buider-toolBox]") ) {
             var _html = "";
 
             el.className = 'controlTile';
@@ -388,49 +458,75 @@ var formBuilder = function (toolBoxid, formid) {
                 var id = "GridView" + this.GridViewCounter++;
                 $(el).attr("id", id);
                 //el.className = 'gridCont';
-                _html = "<table style='width:100%'><tr><td id='GridViewTd" + this.TdCounter++ + "' class='tdDropable' ></td> <td id='GridViewTd" + this.TdCounter++ + "' class='tdDropable'></td style='min-height:20px;'> </tr></table>";
-                this.Controls.Append(new GridViewObj(id));
+                _html = "<table style='width:100%'><tr><td id='" + id + "_Td0' class='tdDropable' ></td> <td id='" + id + "_Td1' class='tdDropable'></td style='min-height:20px;'> </tr></table>";
+                if ($(target).attr("id") === "form-buider-form")
+                    this.Controls.Append(new GridViewObj(id));
+                else
+                    this.Controls.GetByName($(target).attr("id")).Controls.Append(new GridViewObj(id));
             }
             $(el).focus();
 
             $(el).html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + _html);
             $(".controls-dd-cont select").append("<option id='SelOpt" + $(el).attr("id") + "'>" + $(el).attr("id") + "</option>");
             $('.selectpicker').selectpicker('refresh');
-            $(el).find(".close").on("click", this.controlCloseOnClick);
-            $(el).find(".fa-bars").on("click", this.controlSettingsOnClick);
-            //this.makeTdsDropable();
+            $(el).find(".close").on("click", this.controlCloseOnClick.bind(this));
         }
         else
-            console.log("else : removed");
-    }
+            console.log("ondrop else : removed");
+        this.saveObj();
+    };
 
     this.controlCloseOnClick = function (e) {
-        $("#SelOpt" + $(e.target).parent().parent().attr("id")).remove(); $('.selectpicker').selectpicker('refresh');
-        $(e.target).parent().parent().remove().hide();
+        var ControlTile = $(e.target).parent().parent();
+        var id = ControlTile.attr("id");
+        $("#SelOpt" + id).remove();
+        $('.selectpicker').selectpicker('refresh');
+        ControlTile.remove();
+        this.Controls.DelByName(id);
         e.preventDefault();
-    }
+        this.saveObj();
+    };
 
     this.updateHTML = function () {
         if (this.curControl.attr("id").toString().substr(0, 8) === "GridView") {
-            if (this.currentProperty.parent().prev().text() === "Rows") {
+            if (this.currentProperty.parent().prev().text() === "Columns") {
                 this.ChangeGridColNo();
             }
 
         }
 
-    }
-
-    this.ChangeGridColNo = function () {
-        if (1 > 0)
-            this.addTdToGrid();
-        else if (oldNo < newNo)
-            this.removeTdToGrid(id);
     };
 
-    this.addTdToGrid = function () {
-        //alert(this.curControl.html());
-        //this.curControl.html("hello");
-        this.curControl.find("tr").last().append("<td id='GridViewTd" + this.TdCounter++ + "' class='tdDropable'></td>");
+    this.ChangeGridColNo = function () {
+        var newVal = $("#propGrid td:contains(Columns)").next().children().val();
+        console.log("this.CurColCount: " + this.CurColCount + ", newVal " + newVal);
+        var noOfTds = this.curControl.children().children().children().children().length;
+
+        if (this.CurColCount < newVal)
+            for (var i = noOfTds; i < newVal; i++) {
+                console.log(">  " + i)
+                this.addTd();
+            }
+        else if (this.CurColCount > newVal)
+            for (var i = noOfTds; i > newVal; i--) {
+                console.log(">  " + i)//
+                this.removeTd();
+            }
+    };
+
+    this.addTd = function () {
+        var id = this.curControl.attr("id");
+        var noOfTds = this.curControl.children().children().children().children().length;
+        this.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
+        this.curControl.find("tr").last().append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'>" + (noOfTds + 1) + "</td>");
+        this.makeTdsDropable.bind(this);
+    };
+
+    this.removeTd = function () {
+        var id = this.curControl.attr("id");
+        var noOfTds = this.curControl.children().children().children().children().length;
+        this.Controls.GetByName(id).Controls.Pop();
+        this.curControl.find("tr").find("td").last().remove();
         this.makeTdsDropable.bind(this);
     };
 
@@ -449,6 +545,8 @@ var formBuilder = function (toolBoxid, formid) {
         });
 
         this.drake.on("drop", this.onDropFn.bind(this));
+        this.drake.on("drag", this.onDragFn.bind(this));
+        this.drake.on("dragend", this.onDragendFn.bind(this));
     };
 
     this.Init();

@@ -1,123 +1,59 @@
-﻿@{
-    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPAgeHeader2");
-
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Html.RenderPartial("ExtPageHeader2");
 }
+<div class="col-md-4 col-md-offset-4">
+    <h3 class="text-center">Create User</h3>
+    <div class="form-group">
+        <input type="text" class="form-control" name="" placeholder="Name" />
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control" name="" placeholder="Email" />
+    </div>
+    <div class="form-group pull-right">
+        <div class="input-group">
+            <span>Send mail. </span><input type="checkbox" id="sendmail" />
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control" id="pw" name="" placeholder="Password" />
+    </div>
+    <div class="form-group">
+        <div id="roleSel" class="input-group">
+            <select class="selectpicker" data-live-search="true" id="roles" multiple>
+                <option value="ME">Select Role</option>
+                <option value="MD">Maryland</option>
+                <option value="MA">Massachusetts</option>
+                <option value="MI">chigan</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">souri</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group pull-right">
+        <input type="submit" class="btn btn-primary" value="Create" />
+    </div>
+</div>
 <script>
     $('document').ready(function () {
-        $('#submen').click(function () {
-            $('.side').toggle(300);
+        $('#sendmail').change(function () {
+            if (!this.checked)
+                $('#pw').fadeIn();
+            else
+                $('#pw').fadeOut();
+        });
+        var f = true;
+        $('.selectpicker').on('rendered.bs.select', function (e) {
+            if (f)
+                $("#roleSel").find("span:eq(0)").text("Select Role")
+            f = false;
         });
     });
 </script>
 <style>
-    .objitems{
-        border:solid 1px #e6e0e0;
-        padding-bottom:5px;
-        padding-top:5px;
-        border-radius:4px;
-        padding-left:2px;
-        padding-right:2px;
-        margin-bottom:10px;
-    }
-    .bottpadd{
-        margin-bottom:50px;
-    }
-    .objitems button{
-        margin-top:40px;
-        margin-left:15px;
-    }
-    .nopadding{
-        padding:0;
-    }
-</style>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-4 col-md-3 side">
-            @{
-                Html.RenderPartial("_SidebarMenu");
-            }
-        </div>
-        <div class="col-md-9 main-cont">
-            <div class="col-md-12 bottpadd">
-                <div class="col-sm-1">
-                    <button class="btn btn-success">Add</button>
-                </div>
-                <div class="col-sm-4">
-                    <button class="btn btn-danger">Refresh Test</button>
-                </div>
-                <div class="col-sm-4 pull-right">
-                    <div class="input-group">
-                        <input class="form-control" type="text" placeholder="Search">
-                        <span class="input-group-addon"><i class="fa fa-search"><i class="fa fa-caret-down"></i></i></span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 objitems">
-                <div class="col-sm-8 tex-left">
-                    <h4>Name</h4>
-                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
-                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
-                </div>
-                <div class="col-sm-2">
-                    <span class="label label-default">Default Label</span>
-                    <span class="label label-primary">Primary Label</span>
-                </div>
-                <div class="col-sm-2">
-                    <span class="label label-success">Success Label</span>
-                    <span class="label label-warning">Warning Label</span>
-                    <button class="btn">Open<i class="fa fa-caret-down"></i></button>
-                </div>
-            </div>
-            <div class="col-md-12 objitems">
-                <div class="col-sm-8 tex-left">
-                    <h4>Name</h4>
-                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
-                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
-                </div>
-                <div class="col-sm-2">
-                    <span class="label label-default">Default Label</span>
-                    <span class="label label-primary">Primary Label</span>
-                </div>
-                <div class="col-sm-2">
-                    <span class="label label-success">Success Label</span>
-                    <span class="label label-warning">Warning Label</span>
-                    <button class="btn">Open<i class="fa fa-caret-down"></i></button>
-                </div>
-            </div>
-            <div class="col-md-12 objitems">
-                <div class="col-sm-8 tex-left">
-                    <h4>Name</h4>
-                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
-                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
-                </div>
-                <div class="col-sm-2">
-                    <span class="label label-default">Default Label</span>
-                    <span class="label label-primary">Primary Label</span>
-                </div>
-                <div class="col-sm-2">
-                    <span class="label label-success">Success Label</span>
-                    <span class="label label-warning">Warning Label</span>
-                    <button class="btn">Open<i class="fa fa-caret-down"></i></button>
-                </div>
-            </div>
-            <div class="col-md-12 objitems">
-                <div class="col-sm-8 tex-left">
-                    <h4>Name</h4>
-                    <p class="text-justify">dfdsgdfzh dgsdfsh dfhfdhyb dsgre dgrsgete dd fdfdsf sdfesf ada f sdfsef sfesfsdv sefdsv sdfesf</p>
-                    <h5>Date created sfs grdg xgrdgvdfg degergreg dfgregergreg</h5>
-                </div>
-                <div class="col-sm-2">
-                    <span class="label label-default">Default Label</span>
-                    <span class="label label-primary">Primary Label</span>
-                </div>
-                <div class="col-sm-2">
-                    <span class="label label-success">Success Label</span>
-                    <span class="label label-warning">Warning Label</span>
-                    <button class="btn">Open<i class="fa fa-caret-down"></i></button>
-                </div>
-            </div>
-        </div>
 
-    </div>
-</div>
+</style>

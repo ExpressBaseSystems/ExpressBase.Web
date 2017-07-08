@@ -37,7 +37,6 @@ Navigation bar
         height: 44px;
         margin-top: 3px;
         margin-bottom: 0px;
-        margin-right:10px;
     }
 .navbar{height:40px !important;}
 .navbar-default .navbar-nav > li > a {
@@ -71,6 +70,7 @@ Navigation bar
 } 
 @media(max-width: 768px){
     .navbar-collapse{ background:white;}
+    #logo img{}
 }
 .padding-zero {
     padding: 0px;
@@ -504,6 +504,7 @@ text-align:center;
 /*sidebar end*/
 .main-cont{
     padding-top:80px;
+  margin-bottom: 40px;
 }
 .padd{
     padding-right:7px;
@@ -515,3 +516,20 @@ padding-bottom:4px;
 .side i{
     padding-right:5px;
 }
+/*ebObject list*/
+ 
+.objitems {
+        border: solid 1px #e6e0e0;
+        margin-bottom: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+   
+         }
+
+    .bottpadd {
+        margin-bottom: 50px;
+    }
+    #btnOpen{
+    margin-left: 53px;
+    }
+   

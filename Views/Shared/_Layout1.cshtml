@@ -100,9 +100,9 @@
             $('#submen').click(function () {
                 $('.side').toggle();
                 if ($('.side').css("display") === "none")
-                    $("#main_cont").css("margin-left", "135px");
+                    $("#layout_div").css("margin-left", "135px");
                 else
-                    $("#main_cont").css("margin-left", "0px");
+                    $("#layout_div").css("margin-left", "0px");
             });
         });
     </script>
@@ -138,8 +138,8 @@
                     }
                                        
                 </div>
-                <div id="main_cont" class="col-md-9 col-sm-4 col-xs-12 main-cont">
-                        @RenderBody()
+                <div id="layout_div" class="col-md-9 col-sm-4 col-xs-12 main-cont">
+                     @RenderBody()
                         @RenderSection("EbHead", false)
                 </div>
             </div>

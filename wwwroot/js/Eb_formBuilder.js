@@ -1,4 +1,5 @@
 ﻿var TextBoxObj = function (id) {
+    this.id= id
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
     this.IsContainer = false,
@@ -32,6 +33,7 @@
 }
 
 var GridViewObj = function (id) {
+    this.id = id
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
     this.IsContainer = true,
@@ -53,6 +55,7 @@ var GridViewObj = function (id) {
 }
 
 var GridViewTdObj = function (id) {
+    this.id = id
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
     this.Controls = new EbControlCollection(),
@@ -125,8 +128,13 @@ var EbControlCollection = function () {
         return this.InnerCollection;
     };
     this.PopByName = function (_name) {
-        var parent = this.GetByName($("#" + _name).parent().attr("id"));
+        var parentId = $("#" + _name).parent().attr("id");
         var ele = this.GetByName(_name);
+
+        if (parentId === "form-buider-form")
+            return this.InnerCollection.pop(this.InnerCollection.indexOf(ele));
+
+        var parent = this.GetByName(parentId);
         return parent.Controls.InnerCollection.pop(parent.Controls.InnerCollection.indexOf(ele));
     };
 
@@ -203,6 +211,7 @@ var EbControlCollection = function () {
 };
 
 var formBuilder = function (toolBoxid, formid) {
+    this.Name = "form-buider-form";
     this.toolBoxid = toolBoxid;
     this.formid = formid;
     this.ComboBoxCounter = 0;
@@ -391,7 +400,8 @@ var formBuilder = function (toolBoxid, formid) {
             console.log("el poped");
             this.movingObj = this.Controls.PopByName($(el).attr("id"));
         }
-
+        else
+            this.movingObj = null;
     }// start
 
     this.onDragendFn = function (el) {
@@ -399,19 +409,24 @@ var formBuilder = function (toolBoxid, formid) {
         var sibling = $(el).next();
         console.log("sibling: " + sibling.attr("id"));
         var target = $(el).parent();
-        //Drag end with in the form
-        if (target.attr("id") !== "form-buider-toolBox") {
-            console.log("elObj : " + JSON.stringify(this.movingObj));
-            console.log("sibling : " + sibling.attr("id"));
-            if (sibling.attr("id")) {
-                console.log("sibling : " + sibling.id);
-                var idx = sibling.index()-1;
-                this.Controls.InsertAt(idx, this.movingObj);
+        if (this.movingObj) {
+
+            //Drag end with in the form
+            if (target.attr("id") !== "form-buider-toolBox") {
+                console.log("elObj : " + JSON.stringify(this.movingObj));
+                console.log("sibling : " + sibling.attr("id"));
+                if (sibling.attr("id")) {
+                    console.log("sibling : " + sibling.id);
+                    var idx = sibling.index() - 1;
+                    this.Controls.InsertAt(idx, this.movingObj);
+                }
+                else {
+                    console.log("no sibling ");
+                    this.Controls.AppendIn(this.movingObj)
+                }
+                this.saveObj();
             }
-            else {
-                console.log("no sibling ");
-                this.Controls.AppendIn(this.movingObj)
-            }
+
         }
     }
 
@@ -516,9 +531,12 @@ var formBuilder = function (toolBoxid, formid) {
 
     this.addTd = function () {
         var id = this.curControl.attr("id");
-        var noOfTds = this.curControl.children().children().children().children().length;
+        var curTr = this.curControl.children().children().children();
+        alert("this.curControl: " + id);
+        var noOfTds = curTr.children().length;
         this.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
-        this.curControl.find("tr").last().append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'>" + (noOfTds + 1) + "</td>");
+        curTr.append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'>" + (noOfTds + 1) + "</td>");
+        curTr.css("background", "yellow");
         this.makeTdsDropable.bind(this);
     };
 

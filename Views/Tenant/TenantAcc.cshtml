@@ -4,7 +4,8 @@
 }
 <style>
     .padd {
-        margin-top: 50px;
+        margin-top: 29px;
+        padding-left: 5px;
     }
 </style>
 <script>
@@ -68,22 +69,17 @@
 
 
 
-
-    <div class="col-md-12">
-        <div class="col-sm-2">
-            <label style="font-size:20px;">My Accounts</label>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary" id="newAcc">New Account</button>
-        </div>
-        <div class="col-md-3 col-md-offset-5">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search" aria-describedby="basic-addon2">
-                <span class="input-group-addon" id="basic-addon2"><i class="fa fa-search"></i></span>
+    
+        <div class="row center-block">
+            <div class="form-inline">
+                <label style="font-size:20px;">My Accounts</label>
+                <button class="btn btn-primary" id="newAcc">New Account</button>
+                <div class="input-group pull-right">
+                    <input type="text" class="form-control" placeholder="Search" aria-describedby="basic-addon2">
+                    <span class="input-group-addon" id="basic-addon2"><i class="fa fa-search"></i></span>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-12">
         <div class="row">
             @foreach (var sublist in list)
             {
@@ -133,7 +129,6 @@
                     </div>
                 </div>
                                 }
-
         </div>
-    </div>
+    
 }

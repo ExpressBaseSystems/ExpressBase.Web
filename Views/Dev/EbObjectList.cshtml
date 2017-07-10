@@ -36,16 +36,16 @@
         <button class="btn btn-default">Export</button>
         <div class="input-group pull-right">
             <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>
-                <input type="text" class="form-control" aria-label="...">              
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Application</a></li>
+                    <li><a href="#">Application module</a></li>
                     <li><a href="#">Something else here</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a href="#">Separated link</a></li>
                 </ul>
             </div>
+            <input type="text" class="form-control" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
         </div>
     </div>
 </div>
@@ -53,7 +53,10 @@
     foreach (var element in Objlist)
     {
         <div class="row objitems">
-            <div class="col-md-10">
+            <div class="col-md-1">
+                <input type="checkbox" aria-label="...">
+            </div>
+            <div class="col-md-8">
                 <h4>@element.Value.Name</h4>
                 <p class="text-justify">@element.Value.Description</p>
                 <h5>Last commit:@element.Value.CommitUname on @element.Value.CommitTs</h5>

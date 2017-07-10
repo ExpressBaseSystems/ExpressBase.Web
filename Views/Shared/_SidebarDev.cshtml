@@ -29,13 +29,15 @@
     function LoadObjectList44(type44) {
     event.preventDefault();
     var _container = $("#layout_div");
-        $.ajax({
+    $('#loader').show();
+    $.ajax({
             url: "EbObjectList",
             type: "GET",
             cache: false,
             data: { "type": type44 },
             success: function (result) {         
                 _container.html(result);
+                $('#loader').hide();
             }
         });
     }

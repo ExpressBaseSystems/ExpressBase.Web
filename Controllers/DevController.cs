@@ -124,7 +124,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["Id"]), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["Id"]), VersionId = 0, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
             var rlist = resultlist.Data;
             //List<EbObjectWrapper> ObjList = new List<EbObjectWrapper>();
             //foreach (var element in rlist)

@@ -121,7 +121,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         this.changeLog = $(e.target).attr("data-changeLog");
         this.commitUname = $(e.target).attr("data-commitUname");
         this.commitTs = $(e.target).attr("data-commitTs");
-        $.post('../Dev/VersionCodes', { "objid": this.var_id })
+        $.post('../Dev/VersionCodes', { "objid": this.var_id ,"obj_type":"2"})
         .done(this.VersionCode_success.bind(this));
     }
 
@@ -321,6 +321,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
             for (var i = 0; i < result.length; i++) {
                 result[i] = result[i].substr(1);
                 if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby") {
+                //
                 }
                 else {
                     if ($.inArray(result[i], filterparams) === -1)

@@ -27,13 +27,15 @@
 </script>
 <div class="row">
     <div class="form-inline">
-        <button class="btn btn-default" id="reload">Refresh</button>
+        <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
         @using (Html.BeginForm(editor, "Dev", FormMethod.Get, new { target = "_blank" }))
-            {
-            <input type="submit" class="btn btn-default" value="New" />
+        {
+
+            <input type="submit" class="btn btn-default fa-input" value="&#xf055; new" style="font-family: FontAwesome, 'Helvetica Neue', Helvetica, Arial, sans-serif;" />
+
         }
-        <button class="btn btn-default">Import</button>
-        <button class="btn btn-default">Export</button>
+        <button class="btn btn-default"><i class="fa fa-download" aria-hidden="true"></i> Import</button>
+        <button class="btn btn-default"><i class="fa fa-upload" aria-hidden="true"></i> Export</button>
         <div class="input-group pull-right">
             <div class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
@@ -45,19 +47,19 @@
                     <li><a href="#">Separated link</a></li>
                 </ul>
             </div>
-            <input type="text" class="form-control" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+            <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
         </div>
     </div>
 </div>
 @{
     foreach (var element in Objlist)
     {
-        <div class="row objitems">
+        <div class="row objitems" name="objBox" id="searchid+@element.Value.Name">
             <div class="col-md-1">
                 <input type="checkbox" aria-label="...">
             </div>
             <div class="col-md-8">
-                <h4>@element.Value.Name</h4>
+                <h4 name="head4">@element.Value.Name</h4>
                 <p class="text-justify">@element.Value.Description</p>
                 <h5>Last commit:@element.Value.CommitUname on @element.Value.CommitTs</h5>
                 <span class="label label-primary">Status</span>
@@ -70,10 +72,35 @@
                 @using (Html.BeginForm(editor, "Dev", FormMethod.Post, new { target = "_blank" }))
                 {
                     <input type="hidden" name="objid" value="@element.Value.Id" />
-                        <input type="hidden" name="tacid" value="@ViewBag.cid" />
-                        <input type="submit" class="btn btn-default" id="btnOpen" value="Open ">
+                    <input type="hidden" name="tacid" value="@ViewBag.cid" />
+                    <input type="submit" class="btn btn-default" id="btnOpen" value="Open ">
                 }
             </div>
         </div>
     }
+    <div class="text-center" id="notfound" style="margin-top:230px;">
+        </div>
 }
+<script>
+    $(document).ready(function () {
+
+        $("#searchobj").on("keyup", function (e) {
+            var f = false;
+            var srch = $(this).val().toLowerCase();
+            $("[name=head4]").each(function (i, v) {
+                $(this).parent().parent().hide();
+                var head = $(this).text().toLowerCase();
+                if (head.match(srch)) {
+                    $(this).parent().parent().show();
+                    f = true;
+                }
+            });
+
+            if (!f)
+                $("#notfound").text('Item not found.......');
+            else
+                $("#notfound").text('');
+        });
+
+    });
+</script>

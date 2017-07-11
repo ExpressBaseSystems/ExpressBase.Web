@@ -584,6 +584,16 @@ namespace ExpressBase.Web.Controllers
             else
                 return View();
         }
+        public IActionResult CreateApplication()
+        {
+
+            return View();
+        }
+        public IActionResult CreateApplicationModule()
+        {
+
+            return View();
+        }
 
         public IActionResult DevLogout()
         {

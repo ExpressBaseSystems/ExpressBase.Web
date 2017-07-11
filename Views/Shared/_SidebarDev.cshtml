@@ -28,13 +28,13 @@
 <script>
     function LoadObjectList44(type44) {
     event.preventDefault();
-        var _container = $("#main-cont");
+    var _container = $("#layout_div");
         $.ajax({
             url: "EbObjectList",
             type: "GET",
             cache: false,
             data: { "type": type44 },
-            success: function (result) {
+            success: function (result) {         
                 _container.html(result);
             }
         });

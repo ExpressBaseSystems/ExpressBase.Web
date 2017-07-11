@@ -42,12 +42,12 @@ namespace ExpressBase.Web2.Controllers
             EbObjectResponse fr = null;
             var EbConfig = ViewBag.EbConfig;
             IServiceClient client = EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.token });
+            fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType =(int) EbObjectType.DataVisualization, Token = ViewBag.token });
             foreach(var element in fr.Data)
-            if (element.EbObjectType==EbObjectType.DataVisualization)
-                {
+            //if (element.EbObjectType==EbObjectType.DataVisualization)
+            //    {
                     dvlist.Add(element);
-                }
+            //    }
             ViewBag.dvlist = dvlist;
             return View();
         }

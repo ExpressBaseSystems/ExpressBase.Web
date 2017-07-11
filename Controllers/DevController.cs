@@ -151,7 +151,7 @@ namespace ExpressBase.Web.Controllers
 
             ds.IsSave = false;
             ds.Id = Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
-            ds.EbObjectType = (EbObjectType)Convert.ToInt32(req["obj_type"]);
+            ds.EbObjectType = (int)EbObjectType.DataSource;
             ds.Name = _dict["name"];
             ds.Description = _dict["description"];
             ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
@@ -164,6 +164,7 @@ namespace ExpressBase.Web.Controllers
                 FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
             });
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
+            ds.TenantAccountId = ViewBag.cid;
             if (_dict["id"] == "0")
             {
                 ds.ChangeLog = "";
@@ -175,7 +176,7 @@ namespace ExpressBase.Web.Controllers
             ds.Token = ViewBag.token;//removed tcid
 
             ViewBag.IsNew = "false";
-            using (client.Post<HttpWebResponse>(ds)) { }
+            var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return Json("Success");
         }
 
@@ -243,7 +244,7 @@ namespace ExpressBase.Web.Controllers
 
             ds.IsSave = false;
             ds.Id = Convert.ToInt32(req["id"]);
-            ds.EbObjectType = (EbObjectType)Convert.ToInt32(req["obj_type"]);
+            ds.EbObjectType = (int)EbObjectType.FilterDialog;
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbFilterDialog
@@ -476,7 +477,7 @@ namespace ExpressBase.Web.Controllers
             if (ds.Id > 0)
                 ds.IsSave = true;
             ds.Id = dvid;
-            ds.EbObjectType = Objects.EbObjectType.DataVisualization;
+            ds.EbObjectType = (int)EbObjectType.DataVisualization;
             ds.Name = _dict["dvName"].ToString();
             ds.Description = "abcd";
             ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataVisualization

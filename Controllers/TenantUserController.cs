@@ -214,6 +214,13 @@ namespace ExpressBase.Web2.Controllers
             return RedirectToAction("UsrSignIn", "Ext");
 
         }
+
+        [HttpGet]
+        public IActionResult AddRoles()
+        {
+
+            return View();
+        }
     }
 }
         

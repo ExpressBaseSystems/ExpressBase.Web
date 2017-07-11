@@ -138,7 +138,7 @@ namespace ExpressBase.Web.Controllers
         public List<EbObjectWrapper> GetVersions2(int objid)
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = 0, Token = ViewBag.token });
             var rlist = resultlist.Data;
             return rlist;
         }
@@ -221,7 +221,7 @@ namespace ExpressBase.Web.Controllers
             //EbObjectType content;
             //Enum.TryParse(req["obj_type"], out content);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = vers_id, EbObjectType = (int)obj_type, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = objid, EbObjectType = (int)obj_type, Token = ViewBag.token });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {

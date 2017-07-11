@@ -521,8 +521,8 @@ footer {
 }
 /*sidebar end*/
 .main-cont {
-    padding-top: 80px;
-    margin-bottom: 40px;
+    margin-top: 67px;
+    margin-bottom:40px;
 }
 
 .padd {
@@ -544,6 +544,7 @@ footer {
     margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
+    margin-top:20px;
 }
 
 .bottpadd {

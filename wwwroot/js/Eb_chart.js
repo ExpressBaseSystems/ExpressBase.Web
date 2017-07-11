@@ -212,15 +212,33 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
     this.chartApi = null;
     this.gdata = null;
     this.goptions = null;
+    this.Xax = []; this.Yax = [];
 
     this.init = function () {
+        $.event.props.push('dataTransfer');
         $("#reset_zoom").off("click").on("click", this.ResetZoom.bind(this));
         $("#graphDropdown .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
+        $("#btnColumnCollapse").off("click").on("click", this.collapseGraph.bind(this));
+        this.appendColumns();
+        $("#X_col_name").off("drop").on("drop", this.colDrop.bind(this));
+        $("#X_col_name").off("dragover").on("dragover", this.colAllowDrop.bind(this));
+        $("#Y_col_name").off("drop").on("drop", this.colDrop.bind(this));
+        $("#Y_col_name").off("dragover").on("dragover", this.colAllowDrop.bind(this));
         if (data)
             this.data = data;
         else {
             $.post(this.ssurl + '/ds/data/' + this.columnInfo.dsId, { draw: 1, Id: this.columnInfo.dsId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(this.getFilterValues()) }, this.getDataSuccess.bind(this));
         }
+    };
+
+    this.appendColumns = function () {
+        console.log("ns = functi");
+        $.each(this.columnInfo.columns, function (i, obj) {
+            if (obj.data != undefined) {
+                $("#columns4Drag .list-group").append("<li class='list-group-item' id='li" + obj.name + "' draggable='true' data-id='" + obj.data + "'>" + obj.name + "</li>");
+            }
+        });
+        $("#columns4Drag .list-group-item").off("dragstart").on("dragstart", this.colDrag.bind(this));
     };
 
     this.getFilterValues = function () {
@@ -249,9 +267,9 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
     this.drawGraphHelper = function (datain) {
         this.data = datain;
         console.log(this.data);
-        if (this.type === "bar" || this.type === "line" || this.type === "areafilled") {
+        //if (this.type === "bar" || this.type === "line" || this.type === "areafilled") {
             this.drawGeneralGraph();
-        }
+        //}
     };
 
     this.getBarData = function () {
@@ -330,13 +348,9 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
     };
 
     this.RemoveCanvasandCheckButton = function () {
-        console.log("RemoveCanvasandCheckButton");
         var ty = $("#graphcontainer button:eq(0)").text().trim().toLowerCase();
         if (ty == "areafilled" || ty == "line") {
-            console.log(" || ty ==");
             if (this.chartApi !== null) {
-                console.log("his.chart");
-
                 $.each(this.chartApi.config.data.datasets, this.ApiDSiterFn.bind(this));
             }
             else {
@@ -344,8 +358,12 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
             }
             this.type = "line";
         }
-        else
+        else if (ty == "bar")
             this.type = "bar";
+        else if (ty == "pie")
+            this.type = "pie";
+        else if (ty == "doughnut")
+            this.type = "doughnut";
 
         this.columnInfo.options.type = this.type;
         $("#myChart").remove();
@@ -398,6 +416,56 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
         this.type = $(e.target).text().trim().toLowerCase();
         this.RemoveCanvasandCheckButton();
         e.preventDefault();
+    };
+
+    this.colDrag = function (e) {
+        e.dataTransfer.setData("text", e.target.id);
+    };
+
+    this.colDrop = function (e) {
+        console.log(this.columnInfo.options.Xaxis); console.log(this.columnInfo.options.Yaxis);
+        e.preventDefault();
+        var data = e.dataTransfer.getData("text");
+        $(e.target).append("<div class='alert alert-success' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='" + data + "' data-id='" + $("#" + data).attr("data-id") + "'><strong>" + $("#" + data).text() + "</strong><button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
+        if ($(e.target).attr("id") == "X_col_name")
+            this.Xax.push(new axis($("#" + data).attr("data-id"), $("#" + data).text()));
+        if ($(e.target).attr("id") == "Y_col_name")
+            this.Yax.push(new axis($("#" + data).attr("data-id"), $("#" + data).text()));
+        this.columnInfo.options.Xaxis = this.Xax;
+        this.columnInfo.options.Yaxis = this.Yax;
+        console.log(this.columnInfo.options.Xaxis); console.log(this.columnInfo.options.Yaxis);
+        $("#" + data).remove();
+        $("#X_col_name button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
+        $("#Y_col_name button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
+    };
+
+    this.colAllowDrop = function (e) {
+        e.preventDefault();
+    };
+
+    this.collapseGraph = function () {
+        $("#columns4Drag").toggle();
+        if ($("#columns4Drag").css("display") === "none") {
+            $("#myChart").css("width", "99%");
+            $("#myChart").css("margin-left", "0px");
+            $("#myChart").css("margin-top", "0px");
+            $("#myChart").css("height", "522px");
+        }
+        else {
+            $("#myChart").css("width", "848px");
+            $("#myChart").css("height", "454px");
+            $("#myChart").css("margin-left", "175px");
+            $("#myChart").css("margin-top", "-163px");
+        }
+
+        
+    };
+
+    this.RemoveAndAddToColumns = function (e) {
+        var str = $(e.target).parent().text();
+        $("#columns4Drag .list-group").append("<li class='list-group-item' id='" + $(e.target).parent().attr("id") + "' draggable='true' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "</li>");
+        $(e.target).parent().remove();
+        $("#columns4Drag .list-group-item").off("dragstart").on("dragstart", this.colDrag.bind(this));
     };
 
     this.init();

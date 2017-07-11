@@ -10,6 +10,7 @@
         Value: "",
         Textmode: "",
         TextTransform: "Normal",
+        Test: "Normal",
         Font: "consolace",
         LabelForeColor: "a3ac03",
         LabelBackColor: "ffac03",
@@ -29,6 +30,7 @@
         TextForeColor: { group: 'Layout', name: 'TextForeColor', type: 'color', options: { preferredFormat: 'hex' } },
         TextBackColor: { group: 'Layout', name: 'TextBackColor', type: 'color', options: { preferredFormat: 'hex' } },
         TextTransform: { group: 'Behavior ', name: 'TextTransform', type: 'BootstrapDD', options: ['Normal', "lower case", "UPPER CASE"] },
+        Test: { group: 'Behavior ', name: 'Test', type: 'BootstrapSelect', options: ['Normal', "lower case", "UPPER CASE"] },
     }
 };
 
@@ -235,7 +237,6 @@ var formBuilder = function (toolBoxid, formid) {
     this.movingObj = {};
 
     this.save = function () {
-        //alert("save:" + JSON.stringify(this.Controls));
         $(".eb-loader").show();
 
         $.post("SaveFilterDialog", {
@@ -289,28 +290,21 @@ var formBuilder = function (toolBoxid, formid) {
                     return $('#' + DDid).text().trim();
                 }
             },
-            linkDD: {
+            BootstrapSelect: {
                 html: function (elemId, name, value, meta) { // custom renderer for type (required)
                     var txt = "";
-                    var _html = "<div class='dropdown'>" +
-                    "<button id=" + elemId + " name='Select dv' class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'>" +
-                    "$$text" +
-                    " <span class='caret'></span></button>" +
-                    "<ul class='dropdown-menu'>"
-                    $.each(meta.options, function (i, val) {
-                        _html += "<li><a  id=" + elemId + i + "  href='#' data-dvid='" + val.value + "'>" + val.text + "</a></li>"
-                        if (value !== null) {
-                            if (val.value.toString() === value.toString())
-                                txt = val.text;
-                        }
-                    })
-                    _html += "</ul></div>";
-                    LDDid = elemId;
-                    return _html.toString().replace("$$text", txt);
+                    var _html = "<select class='selectpicker' data-live-search='true'>"+
+                                  "<option data-tokens='ketchup mustard'>Hot Dog, Fries and a Soda</option>"+
+                                  "<option data-tokens='mustard'>Burger, Shake and a Smile</option>"+
+                                  "<option data-tokens='frosting'>Sugar, Spice and all things nice</option>"+
+                                "</select>"+
+                                "<input type='hidden' value='############' id='" + elemId + "'>"
+                    ;
+                    return _html;
                 },
-                valueFn: function () {
-                    return parseInt($('#' + LDDid).attr("data-dvid"));
-                }
+                //valueFn: function () {
+                //    return parseInt($('#' + LDDid).attr("data-dvid"));
+                //}
             }
         };
 
@@ -318,8 +312,9 @@ var formBuilder = function (toolBoxid, formid) {
 
         $('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
 
-        $('.selectpicker').on('change', function () {
+        $('.selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();
+            $(this).parent().siblings("input").val(selected);
             $("#" + selected).focus();
         });
 

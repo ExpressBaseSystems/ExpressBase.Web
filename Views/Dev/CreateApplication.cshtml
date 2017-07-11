@@ -3,16 +3,9 @@
     Html.RenderPartial("ExtPageHeader2");
 }
 <div class="col-md-4 col-md-offset-4">
-    <h3 class="text-center">Create Module</h3>
+    <h3 class="text-center">Create Application</h3>
     <div class="form-group">
-        <select class="form-control">
-            <option value="ME">Select Appliaction</option>
-            <option value="ME">Select Role</option>
-            <option value="MD">Maryland</option>
-            </select>
-    </div>
-    <div class="form-group">
-        <input type="text" class="form-control" name="" placeholder="Module Name"/>
+        <input type="text" class="form-control" name="" placeholder="Application Name" />
     </div>
     <div class="form-group">
         <textarea name="desc" placeholder="Description" class="form-control"></textarea>
@@ -35,7 +28,7 @@
     </div>
 </div>
 <script>
-    $('document').ready(function () {       
+    $('document').ready(function () {
         var f = true;
         $('.selectpicker').on('rendered.bs.select', function (e) {
             if (f)

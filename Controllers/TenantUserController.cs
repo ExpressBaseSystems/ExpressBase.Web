@@ -74,9 +74,9 @@ namespace ExpressBase.Web2.Controllers
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
             ViewBag.dvname = _dict["dvName"];
-            //var obj = GetByteaEbObjects_json(220);
-            //ViewBag.EbForm38 = (obj.Value as Dictionary<int, EbFilterDialog>)[220];
-            ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
+            var obj = GetByteaEbObjects_json(267);
+            ViewBag.EbForm38 = (obj.Value as Dictionary<int, EbFilterDialog>)[267];
+            //ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
             return View();
         }
 
@@ -84,7 +84,7 @@ namespace ExpressBase.Web2.Controllers
         {
            
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue,  EbObjectType =(int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
 
@@ -221,6 +221,7 @@ namespace ExpressBase.Web2.Controllers
 
             return View();
         }
+        
     }
 }
         

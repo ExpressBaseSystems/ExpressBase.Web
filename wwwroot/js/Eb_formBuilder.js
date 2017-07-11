@@ -1,6 +1,7 @@
 ﻿var TextBoxObj = function (id) {
+    this.$type = "ExpressBase.Objects.EbTextBox, ExpressBase.Objects",
     this.Name = id,
-    this.__type = "ExpressBase.Objects.EbTextBox",
+    this.type = "EbTextBox",
     this.IsContainer = false,
     this.props = {
         Name: id,
@@ -72,8 +73,8 @@ var GridViewTdObj = function (id) {
 };
 
 var DateObj = function (id) {
+    this.$type = "ExpressBase.Objects.EbDate, ExpressBase.Objects",
     this.Name = id,
-    this.__type = "ExpressBase.Objects.EbTextBox",
     this.IsContainer = false,
     this.props = {
         Name: id,
@@ -100,6 +101,7 @@ var DateObj = function (id) {
 };
 
 var NumericBoxObj = function (id) {
+    this.$type = "ExpressBase.Objects.EbNumeric, ExpressBase.Objects",
     this.Name = id,
     this.props = {
         Name: id,

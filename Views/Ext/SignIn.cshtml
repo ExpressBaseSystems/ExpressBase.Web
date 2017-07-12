@@ -5,8 +5,8 @@
 <script>
 
     function onSubmit(token) {
-            document.getElementById("log_form").submit();
-        }
+        document.getElementById("log_form").submit();
+    }
     $("#signIn").hide();
 </script>
 <section id="login" style="margin-top:70px;">
@@ -15,7 +15,7 @@
             <div class="col-md-4 col-md-offset-4 col-sm-6 col-xs-12">
                 <div class="login-box-body">
                     <div class="login-box-msg">
-                        <img id="profile-img" class="img-responsive img-cir"  src="~/images/proimg.jpg" />
+                        <img id="profile-img" class="img-responsive img-cir" src="~/images/proimg.jpg" />
                         <p id="profile-name" class="profile-name-card"></p>
                     </div>
                     <div class="form-group">
@@ -43,35 +43,37 @@
                         <div class="row">
                             <hr class="bottom-line">
                             <div class="text-center">Or Sign In by</div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="@ViewBag.EbConfig.ServiceStackUrl/auth/facebook" class="btn btn-lg btn-block">
-                                    <i class="fa fa-facebook fa-lg"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="#" class="btn btn-lg btn-block">
-                                    <i class="fa fa-twitter fa-lg text-info"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="#" class="btn btn-lg btn-block">
-                                    <i class="fa fa-google-plus fa-lg text-danger"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="#" class="btn btn-lg btn-block">
-                                    <i class="fa fa-linkedin fa-lg"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="#" class="btn btn-lg btn-block">
-                                    <i class="fa fa-github fa-lg text-muted"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
+                            <div style="padding-left: 34px;">
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="@ViewBag.EbConfig.ServiceStackUrl/auth/facebook" class="btn btn-lg btn-block">
+                                        <i class="fa fa-facebook fa-lg"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="#" class="btn btn-lg btn-block">
+                                        <i class="fa fa-twitter fa-lg text-info"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="#" class="btn btn-lg btn-block">
+                                        <i class="fa fa-google-plus fa-lg text-danger"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="#" class="btn btn-lg btn-block">
+                                        <i class="fa fa-linkedin fa-lg"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="#" class="btn btn-lg btn-block">
+                                        <i class="fa fa-github fa-lg text-muted"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

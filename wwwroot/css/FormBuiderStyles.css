@@ -101,7 +101,7 @@
     position: absolute;
     z-index: 100;
     top: 50px;
-    /*right: 2px;*/
+    right: 2px;
     height: 590px;
     visibility: hidden;
     background-color: white;

@@ -1,1 +1,54 @@
-﻿
+﻿<style>
+    table {
+        margin-top: 30px;
+        display: none;
+    }
+</style>
+    <div class="row  objitems">
+        <div class="col-md-10 col-sm-12 col-xs-12">
+            <h4 style="color:black;">Roll name</h4>
+            <p>asddsaf dgdfrgdrgdhhfd gfdhhthth fdgfdhfjj  fdhgfhftrhtfg hfjytjyjkfdfdsfgggggggggggdre grgrdgdhth.</p>
+        </div>
+        <div class="col-md-2 pull-right">
+            <input type="submit" class="btn btn-primary" value="&#xf013; Permission" style="font-family: FontAwesome, sans-serif;" id="addPerm" />
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-responsive" id="dropdowntable">
+            <thead>
+                <tr>
+                    <th>Objects</th>
+                    <th>Operation1</th>
+                    <th>Operation1</th>
+                    <th>Operation1</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Dv1</th>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                </tr>
+                <tr>
+                    <th scope="row">Dv2</th>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                </tr>
+                <tr>
+                    <th scope="row">Dv3</th>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<script>
+    $('document').ready(function () {
+        $('#addPerm').click(function () {
+            $('#dropdowntable').slideToggle(200,"linear");
+        });
+    })
+</script>

@@ -17,26 +17,26 @@
     <div class="form-group">
         <input type="text" class="form-control" name="email" placeholder="Email" />
     </div>
-    <div class="form-group pull-right">
-        <div class="input-group">
-            <span>Send mail. </span><input type="checkbox" id="sendmail" />
-        </div>
+    <div class="form-group">
+        <span>Send mail. </span><input type="checkbox" id="sendmail" />
     </div>
     <div class="form-group">
-        <input type="text" class="form-control" id="pwd" name="pwd" placeholder="Password" />
+        <input type="text" class="form-control" id="pw" name="pwd" placeholder="Password" />
     </div>
     <div class="form-group">
-        <select class="selectpicker" name="roles" data-live-search="true" multiple>
-           @{
-               foreach (var element in Dict.Keys)
-               {
-                <option value="@element">@Dict[element]</option>
+        <div id="roleSel" class="input-group">
+            <select class="selectpicker" name="roles" data-live-search="true" multiple data-selected-text-format="count>3">
+                @{
+                    foreach (var element in Dict.Keys)
+                    {
+                        <option value="@element">@Dict[element]</option>
 
-               }
-        }
-            
-        </select>
-    </div>
+                    }
+                }
+
+            </select>
+            </div>
+        </div>
     <div class="form-group pull-right">
         <input type="submit" class="btn btn-primary" value="Create" />
     </div>
@@ -46,10 +46,15 @@
     $('document').ready(function () {
         $('#sendmail').change(function () {
             if (!this.checked)
-                $('#pwd').fadeIn();
+                $('#pw').fadeIn();
             else
-                $('#pwd').fadeOut();
-
+                $('#pw').fadeOut();
+        });
+        var f = true;
+        $('.selectpicker').on('rendered.bs.select', function (e) {
+            if (f)
+                $("#roleSel").find("span:eq(0)").text("Select Role")
+            f = false;
         });
     });
 </script>

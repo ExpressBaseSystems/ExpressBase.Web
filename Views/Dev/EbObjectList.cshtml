@@ -21,56 +21,98 @@
     {
         editor = "DVEditor";
     }
+    else if (ObjectType == (int)EbObjectType.Application)
+    {
+        editor = "CreateApplication";
+    }
 }
 <script>
-    $('#reload').next().css("display", "inline-block");
+    $('#impexp').next().css("display", "inline-block");
 </script>
 <div class="row">
     <div class="form-inline">
-        <button class="btn btn-default" id="reload">Refresh</button>
+        <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+        <div class="input-group" id="impexp">
+            <div class="input-group-btn">
+                <button class="btn btn-default"><i class="fa fa-download" aria-hidden="true"></i> Import</button>
+                <button class="btn btn-default"><i class="fa fa-upload" aria-hidden="true"></i> Export</button>
+            </div>
+        </div>
         @using (Html.BeginForm(editor, "Dev", FormMethod.Get, new { target = "_blank" }))
             {
-            <input type="submit" class="btn btn-default" value="New" />
+
+            <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;" />
+
         }
-        <button class="btn btn-default">Import</button>
-        <button class="btn btn-default">Export</button>
+        
         <div class="input-group pull-right">
             <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>
-                <input type="text" class="form-control" aria-label="...">              
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Application</a></li>
+                    <li><a href="#">Application module</a></li>
                     <li><a href="#">Something else here</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a href="#">Separated link</a></li>
                 </ul>
             </div>
+            <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
         </div>
     </div>
 </div>
 @{
     foreach (var element in Objlist)
     {
-        <div class="row objitems">
-            <div class="col-md-10">
-                <h4>@element.Value.Name</h4>
-                <p class="text-justify">@element.Value.Description</p>
-                <h5>Last commit:@element.Value.CommitUname on @element.Value.CommitTs</h5>
-                <span class="label label-primary">Status</span>
-                <span class="label label-default">v @element.Value.VersionNumber</span>
-                <span class="label label-success">Dependency</span>
-                <span class="label label-danger">Application</span>
-                <span class="label label-default">Module</span>
+        <div class="row objitems" name="objBox" id="searchid+@element.Value.Name">
+            <div class="col-md-1">
+                <input type="checkbox" aria-label="...">
             </div>
+            <div class="col-md-8">
+                    <h4 name="head4" style="color:black;">@element.Value.Name</h4>
+                    <p class="text-justify">@element.Value.Description</p>
+                <h6>
+                    <i style="font-style:italic;">Last commit by @element.Value.CommitUname on @element.Value.CommitTs</i> 
+                    <a style="margin-left:10px;">
+                        <span class="label label-primary">Status</span>
+                        <span class="label label-default">v @element.Value.VersionNumber</span>
+                        <span class="label label-success">Dependency</span>
+                        <span class="label label-danger">Application</span>
+                        <span class="label label-default">Module</span>
+                    </a>
+                </h6>
+                </div>
             <div class="col-md-2 pull-right">
                 @using (Html.BeginForm(editor, "Dev", FormMethod.Post, new { target = "_blank" }))
                 {
                     <input type="hidden" name="objid" value="@element.Value.Id" />
-                        <input type="hidden" name="tacid" value="@ViewBag.cid" />
-                        <input type="submit" class="btn btn-default" id="btnOpen" value="Open ">
+                    <input type="hidden" name="tacid" value="@ViewBag.cid" />
+                    <input type="submit" class="btn btn-primary fa-input" value="Open &#xf054;" style="font-family: FontAwesome;" id="btnOpen">
                 }
             </div>
         </div>
     }
+    <div class="text-center" id="notfound" style="margin-top:230px;">
+        </div>
 }
+<script>
+    $(document).ready(function () {
+
+        $("#searchobj").on("keyup", function (e) {
+            var f = false;
+            var srch = $(this).val().toLowerCase();
+            $("[name=head4]").each(function (i, v) {
+                $(this).parent().parent().hide();
+                var head = $(this).text().toLowerCase();
+                if (head.match(srch)) {
+                    $(this).parent().parent().show();
+                    f = true;
+                }
+            });
+
+            if (!f)
+                $("#notfound").text('Item not found.......');
+            else
+                $("#notfound").text('');
+        });
+    });
+</script>

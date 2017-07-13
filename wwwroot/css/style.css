@@ -521,8 +521,9 @@ footer {
 }
 /*sidebar end*/
 .main-cont {
-    padding-top: 80px;
-    margin-bottom: 40px;
+    
+    margin-bottom:40px;
+    margin-left: 27px;
 }
 
 .padd {
@@ -544,6 +545,7 @@ footer {
     margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
+    margin-top:20px;
 }
 
 .bottpadd {
@@ -552,8 +554,10 @@ footer {
 
 #btnOpen {
     margin-left: 53px;
+    margin-top: 9%;
 }
-
-#tenatDtls .col-md-9 {
-    width: 80% !important;
+@media (min-width: 992px){
+.col-md-12 {
+    width: 96% !important;
+    }
 }

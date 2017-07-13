@@ -49,6 +49,14 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.setDropdownDatasource = function (e) {
+
+        if (this.settings_tbl !== null) {
+            $('#Table_Settings').DataTable().destroy();
+            $("#2a").children("#Table_Settings_wrapper").remove();
+            $("#Table_Settings").remove();
+            var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', "Table_Settings");
+            $("#2a").children("#columnDropdown").after(table);
+        }
         $("#loader").show();
         this.dsid = $(e.target).parent().attr("data-dsid");
         $("#datatSourceDropdown .btn:first-child").text($(e.target).text());

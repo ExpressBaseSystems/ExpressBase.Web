@@ -11,6 +11,7 @@
             <i class="fa-object-group"></i>Objects<i class="fa fa-caret-down pull-right"></i>
         </a>
         <ul class="sub-menu collapse" id="dropdown2">
+            <li onclick="LoadObjectList44(9)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=9"> Applications</a></li>
             <li onclick="LoadObjectList44(2)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=2"> Data Sources</a></li>
             <li><i class="fa fa-caret-right"></i><a href="#"> Filter Dialogs</a></li>
             <li><i class="fa fa-caret-right"></i><a href="#"> Forms</a></li>
@@ -29,13 +30,15 @@
     function LoadObjectList44(type44) {
     event.preventDefault();
     var _container = $("#layout_div");
-        $.ajax({
+    $('#loader').show();
+    $.ajax({
             url: "EbObjectList",
             type: "GET",
             cache: false,
             data: { "type": type44 },
             success: function (result) {         
                 _container.html(result);
+                $('#loader').hide();
             }
         });
     }

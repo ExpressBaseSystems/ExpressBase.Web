@@ -1,11 +1,10 @@
 ﻿var TextBoxObj = function (id) {
+    this.$type = "ExpressBase.Objects.EbTextBox, ExpressBase.Objects",
     this.Name = id,
-    this.__type = "ExpressBase.Objects.EbTextBox",
+    this.type = "EbTextBox",
     this.IsContainer = false,
     this.props = {
         Name: id,
-        Parent: "",
-        Sibling: "",
         Label: "",
         Value: "",
         Textmode: "",
@@ -72,8 +71,8 @@ var GridViewTdObj = function (id) {
 };
 
 var DateObj = function (id) {
+    this.$type = "ExpressBase.Objects.EbDate, ExpressBase.Objects",
     this.Name = id,
-    this.__type = "ExpressBase.Objects.EbTextBox",
     this.IsContainer = false,
     this.props = {
         Name: id,
@@ -100,6 +99,7 @@ var DateObj = function (id) {
 };
 
 var NumericBoxObj = function (id) {
+    this.$type = "ExpressBase.Objects.EbNumeric, ExpressBase.Objects",
     this.Name = id,
     this.props = {
         Name: id,
@@ -158,6 +158,10 @@ var EbControlCollection = function () {
 
     this.InsertAt = function (index, newObject) {
         var parentId = $("#" + newObject.Name).parent().attr("id");
+        if (parentId === "form-buider-form") {
+            this.InnerCollection.splice(index, 0, newObject);
+            return this.InnerCollection.length;
+        }
         var parent = this.GetByName(parentId);
         parent.Controls.InnerCollection.splice(index, 0, newObject);
         return parent.Controls.InnerCollection.length;

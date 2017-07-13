@@ -1,0 +1,34 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Html.RenderPartial("ExtPageHeader2");
+}
+
+@using (Html.BeginForm("SaveApplications", "Dev", FormMethod.Post))
+{
+<div class="col-md-4 col-md-offset-4">
+    <h3 class="text-center">@ViewBag.Header</h3>
+    <div class="form-group">
+        <input type="text" class="form-control" name="name" placeholder="Application Name" value="@ViewBag.ObjectName"/>
+    </div>
+    <div class="form-group">
+        <textarea name="description"  placeholder="Description" class="form-control">@ViewBag.ObjectDesc</textarea>
+    </div>
+   
+    <div class="form-group pull-right">
+        <input type="submit" class="btn btn-primary" id="sub" value="Create" />
+    </div>
+</div>
+}
+<script>
+    $('document').ready(function () {
+        var f = true;
+        $('.selectpicker').on('rendered.bs.select', function (e) {
+            if (f)
+                $("#obj").find("span:eq(0)").text("Select Objects")
+            f = false;
+        });
+    });
+</script>
+<style>
+
+</style>

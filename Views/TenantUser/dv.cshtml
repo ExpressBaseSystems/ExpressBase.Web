@@ -14,9 +14,9 @@
     var id = Convert.ToInt32(ViewBag.DataId);
     var dvname = ViewBag.dvname;
 
-    var cnames = (ViewBag.EbForm38 != null) ? (ViewBag.EbForm38 as EbForm).GetControlNames() : string.Empty;
+    //var cnames = (ViewBag.EbForm38 != null) ? (ViewBag.EbForm38 as EbForm).GetControlNames() : string.Empty;
 
-    html += string.Format("<input type='hidden' value='{0}' id='hiddenparams'/>", cnames);
+    //html += string.Format("<input type='hidden' value='{0}' id='hiddenparams'/>", cnames);
 
     EbDataGridView dgv = new EbDataGridView
     {
@@ -30,10 +30,11 @@
     dgv.Token = ViewBag.token;
     dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
 
-    head += dgv.GetHead();
-    head += (ViewBag.EbForm38 as EbForm).GetHead();
+
     dgv.SetFilterForm(ViewBag.EbForm38);
     html += dgv.GetHtml();
+    head += dgv.GetHead();
+    // head += (ViewBag.EbForm38 as EbForm).GetHead();
 }
 
 @section EbHead {

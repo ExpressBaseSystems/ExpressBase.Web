@@ -75,7 +75,7 @@ namespace ExpressBase.Web.Controllers
 
             ViewBag.Obj_id = obj_id;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = obj_id, VersionId = -1, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = obj_id, VersionId = -1, EbObjectType = (int) EbObjectType.DataSource, Token = ViewBag.token });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -492,6 +492,7 @@ namespace ExpressBase.Web.Controllers
             ds.EbObjectType = (int)EbObjectType.DataVisualization;
             ds.Name = _dict["dvName"].ToString();
             ds.Description = "abcd";
+            ds.ChangeLog = "";
             ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataVisualization
             {
                 Name = _dict["dvName"].ToString(),
@@ -501,6 +502,7 @@ namespace ExpressBase.Web.Controllers
             });
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
+            ds.TenantAccountId = ViewBag.cid;
 
             var result = client.Post<EbObjectSaveOrCommitResponse>(ds);
             if (result.Id > 0)
@@ -579,6 +581,7 @@ namespace ExpressBase.Web.Controllers
 
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 
+
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)type, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
 
@@ -647,7 +650,7 @@ namespace ExpressBase.Web.Controllers
             var ds = new EbObjectSaveOrCommitRequest();
 
             ds.IsSave = false;
-            ds.Id = 0;           //Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
+            ds.Id =(string.IsNullOrEmpty(req["objid"]))? 0:Convert.ToInt32(req["objid"]);           //Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
             ds.EbObjectType = (int)EbObjectType.Application;
             ds.Name = req["name"];
             ds.Description = req["description"];

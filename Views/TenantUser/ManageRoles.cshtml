@@ -1,21 +1,16 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
-    Html.RenderPartial("ExtPageHeader2");
-}
-<style>
+﻿<style>
     table {
         margin-top: 30px;
         display: none;
     }
 </style>
-<div id="tenatDtls" class="container-fluid">
     <div class="row  objitems">
         <div class="col-md-10 col-sm-12 col-xs-12">
             <h4 style="color:black;">Roll name</h4>
             <p>asddsaf dgdfrgdrgdhhfd gfdhhthth fdgfdhfjj  fdhgfhftrhtfg hfjytjyjkfdfdsfgggggggggggdre grgrdgdhth.</p>
         </div>
         <div class="col-md-2 pull-right">
-            <input type="submit" class="btn btn-primary" value="&#xf013; Permission" style="font-family: FontAwesome, sans-serif;" id="addPerm"/>
+            <input type="submit" class="btn btn-primary" value="&#xf013; Permission" style="font-family: FontAwesome, sans-serif;" id="addPerm" />
         </div>
     </div>
     <div class="row">
@@ -50,9 +45,8 @@
             </tbody>
         </table>
     </div>
-</div>
 <script>
-    $('document').ready(function () {      
+    $('document').ready(function () {
         $('#addPerm').click(function () {
             $('#dropdowntable').slideToggle(200,"linear");
         });

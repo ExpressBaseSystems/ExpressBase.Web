@@ -1,6 +1,7 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="js/bootstrap.min.js" />
 /// <reference path="js/bootstrap-checkbox.js" />
+/// <reference path="js/bootstrap-select.min.js" />
 /// <reference path="js/colreorderwithresize.js" />
 /// <reference path="js/custom.js" />
 /// <reference path="js/datatables.colresize.js" />

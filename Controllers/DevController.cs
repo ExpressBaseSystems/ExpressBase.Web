@@ -413,6 +413,18 @@ namespace ExpressBase.Web.Controllers
             var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
 
+
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(dsid), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var rlist = resultlist.Data;
+            var fdid = 0;
+            foreach (var element in rlist)
+            {
+                var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                fdid = dsobj.FilterDialogId;
+               
+            }
+
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
             DataSourceColumnsResponse result;
@@ -422,14 +434,14 @@ namespace ExpressBase.Web.Controllers
                 result = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Token = ViewBag.token });
                 columnColletion = result.Columns;
             }
-            var tvpref = this.GetColumn4DataTable(columnColletion, dsid);
+            var tvpref = this.GetColumn4DataTable(columnColletion, dsid, fdid);
             return tvpref;
         }
 
-        private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid)
+        private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid, int fdid)
         {
             string colDef = string.Empty;
-            colDef = "{\"dsId\":" + dsid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
+            colDef = "{\"dsId\":" + dsid + ",\"fdId\":" + fdid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
             colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\"},";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\"},";

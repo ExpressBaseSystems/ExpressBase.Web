@@ -493,6 +493,7 @@ namespace ExpressBase.Web.Controllers
             ds.EbObjectType = (int)EbObjectType.DataVisualization;
             ds.Name = _dict["dvName"].ToString();
             ds.Description = "abcd";
+            ds.ChangeLog = "";
             ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataVisualization
             {
                 Name = _dict["dvName"].ToString(),
@@ -502,6 +503,7 @@ namespace ExpressBase.Web.Controllers
             });
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
+            ds.TenantAccountId = ViewBag.cid;
 
             var result = client.Post<EbObjectSaveOrCommitResponse>(ds);
             if (result.Id > 0)

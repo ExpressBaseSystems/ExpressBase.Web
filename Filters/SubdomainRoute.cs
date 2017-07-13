@@ -79,6 +79,20 @@ namespace ExpressBase.Web.Filters
                         context.RouteData.Values["action"] = "Index";
                     }
                 }
+
+                else if (host.EndsWith("nip.io") || host.EndsWith("xip.io"))
+                {
+                    if (subdomain.Length == 7) // USER CONSOLE
+                    {
+                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                        context.RouteData.Values["action"] = "UsrSignIn";
+                    }
+                    else // TENANT CONSOLE
+                    {
+                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
+                        context.RouteData.Values["action"] = "Index";
+                    }
+                }
             }
             await base.RouteAsync(context);
         }

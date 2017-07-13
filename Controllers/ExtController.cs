@@ -215,9 +215,30 @@ namespace ExpressBase.Web.Controllers
                     whichconsole = "tc";
                 }
             }
-               
-            
-               
+            else if (host.Host.EndsWith("nip.io") || host.Host.EndsWith("xip.io"))
+            {
+                if (subdomain.Length == 7) // USER CONSOLE
+                {
+                    if (!string.IsNullOrEmpty(req["console"]))
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "dc";
+                    }
+                    else
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "uc";
+                    }
+                }
+                else // TENANT CONSOLE
+                {
+                    ViewBag.cid = "expressbase";
+                    whichconsole = "tc";
+                }
+            }
+
+
+
 
 
             MyAuthenticateResponse authResponse = null;
@@ -323,6 +344,19 @@ namespace ExpressBase.Web.Controllers
                             return RedirectToAction("ProfileSetup", "Tenant");
                         else
                             return RedirectToAction("TenantDashboard", "Tenant");            
+                    }
+                    else if (host.Host.EndsWith("nip.io") || host.Host.EndsWith("xip.io"))
+                    {
+                        if (subdomain.Length == 7 && authResponse.User.RoleCollection.HasSystemRole() && whichconsole == "dc")
+                            return RedirectToAction("DevConsole", "Dev");
+
+                        else if (subdomain.Length == 7 && whichconsole == "uc") // USER CONSOLE
+                            return RedirectToAction("UserDashboard", "TenantUser");
+
+                        else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
+                            return RedirectToAction("ProfileSetup", "Tenant");
+                        else
+                            return RedirectToAction("TenantDashboard", "Tenant");
                     }
                     else
                         return RedirectToAction("Error", "Ext");

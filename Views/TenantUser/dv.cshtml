@@ -30,10 +30,11 @@
     dgv.Token = ViewBag.token;
     dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
 
-    head += dgv.GetHead();
-   // head += (ViewBag.EbForm38 as EbForm).GetHead();
+
     dgv.SetFilterForm(ViewBag.EbForm38);
     html += dgv.GetHtml();
+    head += dgv.GetHead();
+    // head += (ViewBag.EbForm38 as EbForm).GetHead();
 }
 
 @section EbHead {

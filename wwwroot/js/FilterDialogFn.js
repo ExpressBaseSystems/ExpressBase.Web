@@ -121,7 +121,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         this.changeLog = $(e.target).attr("data-changeLog");
         this.commitUname = $(e.target).attr("data-commitUname");
         this.commitTs = $(e.target).attr("data-commitTs");
-        $.post('../Dev/VersionCodes', { "objid": this.var_id ,"obj_type":"2"})
+        $.post('../Dev/VersionCodes', { objid: this.var_id})
         .done(this.VersionCode_success.bind(this));
     }
 
@@ -473,8 +473,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
 
     this.showDiff = function (data) {
        var getNav = $("#versionNav li.active a").attr("href");
-       var verid = $(getNav + '#selected_Ver option:selected').val();
-       var vername = $(getNav + '#selected_Ver option:selected').attr("data-tokens");
+       var verid = $(getNav + ' #selected_Ver option:selected').val();
+       var vername = $(getNav + ' #selected_Ver option:selected').attr("data-tokens");
         tabNum++;
         $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + verid + tabNum + "'> v." + this.Version_num + " v/s v." + vername + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
         $('#versionTab').append("<div id='vernav" + verid + tabNum + "' class='tab-pane fade'>");

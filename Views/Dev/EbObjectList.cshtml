@@ -21,6 +21,10 @@
     {
         editor = "DVEditor";
     }
+    else if (ObjectType == (int)EbObjectType.Application)
+    {
+        editor = "CreateApplication";
+    }
 }
 <script>
     $('#impexp').next().css("display", "inline-block");

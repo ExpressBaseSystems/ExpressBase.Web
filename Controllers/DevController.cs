@@ -116,8 +116,7 @@ namespace ExpressBase.Web.Controllers
             foreach (var element in fdrlist)
             {
                 filterDialogs[element.Id] = element;
-            }
-            ViewBag.FilterDialogId = "null";//related to 
+            }           
             return filterDialogs;
         }
 
@@ -213,16 +212,16 @@ namespace ExpressBase.Web.Controllers
         //for ajax call
 
         [HttpPost]
-        public string VersionCodes()
+        public string VersionCodes(int objid)
         {
-            var req = this.HttpContext.Request.Form;
-            var objid = Convert.ToInt32(req["objid"]);
-            var vers_id = Convert.ToInt32(req["vers_id"]);
-            var obj_type = (EbObjectType)Convert.ToInt32(req["obj_type"]);
+            //var req = this.HttpContext.Request.Form;
+            //var objid = Convert.ToInt32(req["objid"]);
+           // var vers_id = Convert.ToInt32(req["vers_id"]);
+           // var obj_type = (EbObjectType)Convert.ToInt32(req["obj_type"]);
             //EbObjectType content;
             //Enum.TryParse(req["obj_type"], out content);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = objid, EbObjectType = (int)obj_type, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = objid, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {

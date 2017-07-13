@@ -1487,7 +1487,7 @@ var EbDataTable = function (settings) {
 
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var paramstxt = $('#hiddenparams').val().trim();
+        var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();
         if (paramstxt.length > 0) {
             var params = paramstxt.split(',');
             $.each(params, function (i, id) {

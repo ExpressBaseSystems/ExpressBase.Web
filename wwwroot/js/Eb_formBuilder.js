@@ -5,8 +5,6 @@
     this.IsContainer = false,
     this.props = {
         Name: id,
-        Parent: "",
-        Sibling: "",
         Label: "",
         Value: "",
         Textmode: "",
@@ -160,6 +158,10 @@ var EbControlCollection = function () {
 
     this.InsertAt = function (index, newObject) {
         var parentId = $("#" + newObject.Name).parent().attr("id");
+        if (parentId === "form-buider-form") {
+            this.InnerCollection.splice(index, 0, newObject);
+            return this.InnerCollection.length;
+        }
         var parent = this.GetByName(parentId);
         parent.Controls.InnerCollection.splice(index, 0, newObject);
         return parent.Controls.InnerCollection.length;

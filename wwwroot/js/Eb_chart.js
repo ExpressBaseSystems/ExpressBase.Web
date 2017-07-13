@@ -382,20 +382,19 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl) {
     this.RemoveCanvasandCheckButton = function () {
         var ty = $("#graphcontainer button:eq(0)").text().trim().toLowerCase();
         if (ty == "areafilled" || ty == "line") {
-        //    if (this.chartApi !== null) {
-        //        $.each(this.chartApi.config.data.datasets, this.ApiDSiterFn.bind(this));
-        //    }
-        //    else {
-                $.each(this.gdata.datasets, this.GdataDSiterFn.bind(this));
-          //  }
+            $.each(this.gdata.datasets, this.GdataDSiterFn.bind(this));
             this.type = "line";
         }
         else if (ty == "bar")
             this.type = "bar";
-        else if (ty == "pie")
+        else if (ty == "pie") {
+            this.goptions = null;
             this.type = "pie";
-        else if (ty == "doughnut")
+        }
+        else if (ty == "doughnut") {
+            this.goptions = null;
             this.type = "doughnut";
+        }
 
         this.columnInfo.options.type = this.type;
         $("#myChart").remove();

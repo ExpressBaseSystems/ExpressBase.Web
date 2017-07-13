@@ -7,7 +7,13 @@
     return color;
 }
 
-Array.prototype.contains = function(obj) {
+//function getRandomColor() {
+//    var colors = ["#FF3D67", "#36A2EB", "#FFCD56", "#A67AFF", "#4BC0C0", "#C9CBCF", "#00FF7F"];
+//    var color = colors[Math.floor(Math.random() * 7)];
+//    return color;
+//}
+
+Array.prototype.contains = function (obj) {
     var i = this.length;
     while (i--) {
         if (this[i] === obj) {
@@ -22,7 +28,7 @@ var ctxCollection = [];
 
 var dy_plotters = {
 
-    barChartPlotter: function(e) {
+    barChartPlotter: function (e) {
         var nVal = e.allSeriesPoints.length;
         var barNo = e.seriesIndex;
         var ctx = e.drawingContext;
@@ -51,7 +57,7 @@ var dy_plotters = {
             ctx.strokeStyle = "#000000";
             ctx.strokeRect(p.canvasx - (barr / 2) + (barNo * bar_width), p.canvasy, bar_width, 1000000000 + p.canvasy);
         }
-        
+
     },
 
     lineChartPlotter: function (e) {
@@ -67,7 +73,7 @@ var dy_plotters = {
         ctx.stroke();
     },
 
-    filledAreaChartPlotter: function(e) {
+    filledAreaChartPlotter: function (e) {
         var ctx = e.drawingContext;
         var points = e.points;
         ctx.beginPath();
@@ -84,7 +90,7 @@ var dy_plotters = {
         ctx.stroke();
     },
 
-    splineChartPlotter: function(e) {
+    splineChartPlotter: function (e) {
         var ctx = e.drawingContext;
         var points = e.points;
         ctx.beginPath();

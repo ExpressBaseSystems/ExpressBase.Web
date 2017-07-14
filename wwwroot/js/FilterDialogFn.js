@@ -43,7 +43,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         $(this.RunBtn).off("click").on("click", this.RunDs.bind(this));
         $(this.ExecBtn).off("click").on("click", this.Execute.bind(this));
         //$(this.CompareButton).off("click").on("click", this.Compare.bind(this));
-        $('#diff' + tabNum).off("click").on("click", this.Differ.bind(this));
+        $('#diff').off("click").on("click", this.Differ.bind(this));
     }
 
 
@@ -54,7 +54,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
     }
 
     this.Success_alert = function (result) {
-        $(".eb-loader").hide();
+        $("#loader").hide();
         $('.alert').remove();
         $('.help').append("<div class='alert alert-success alert-dismissable'>" +
     "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
@@ -64,7 +64,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
     }
 
     this.VerHistory = function () {
-        $(".eb-loaderOnEditor").show();
+        $("#loader").show();
         $.post("../Dev/GetVersions",
                           {
                               "Id": this.Obj_Id
@@ -72,7 +72,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
     }
 
     this.Version_List = function (result) {
-        $(".eb-loaderOnEditor").hide();
+         $("#loader").hide();
         this.SetValues();
         this.Versions = result;
         tabNum++;
@@ -114,7 +114,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
     };
 
     this.OpenPrevVer = function (e) {
-        $(".eb-loaderOnEditor").show();
+         $("#loader").show();
         tabNum++;
         this.var_id = $(e.target).attr("data-id");
         this.HistoryVerNum = $(e.target).attr("data-verNum");
@@ -142,16 +142,16 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
             $.each(this.Versions, this.VersionCode_drpListItem.bind(this));
             $('#vernav' + this.Obj_Id + tabNum).append("</select>" +
                                  "  <span class='input-group-btn'>" +
-                                       " <a href='#' class='diff' id='diff" + tabNum + "' data-toggle='tooltip' title='compare'><i class='btn btn-lg btn-default fa fa-play fa-1x' aria-hidden='true'></i></a>" +
+                                       " <a href='#' class='diff' id='diff' data-toggle='tooltip' title='compare'><i class='btn btn-lg btn-default fa fa-play fa-1x' aria-hidden='true'></i></a>" +
                                    "</span>" +
                             "</div>");
         }
         $('#vernav' + this.Obj_Id + tabNum).append("</div>");
         $('#vernav' + this.Obj_Id + tabNum).append(
-         " <div><label class = 'label label-danger codeEditLabel'>Version V." + this.HistoryVerNum + "</label>" +
-            " <label class = 'label label-success codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
-            "<label  class = 'label label-warning codeEditLabel'>Committed By: " + this.commitUname + " </label>" +
-            " <label class = 'label label-info codeEditLabel'>CommittedAt: " + this.commitTs + "</label>" +
+         " <div><label class = 'label  codeEditLabel'>Version V." + this.HistoryVerNum + "</label>" +
+            " <label class = 'label  codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
+            "<label  class = 'label  codeEditLabel'>Committed By: " + this.commitUname + " </label>" +
+            " <label class = 'label  codeEditLabel'>CommittedAt: " + this.commitTs + "</label>" +
             "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + data + "</textarea>" +
             "</div>");
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
@@ -165,13 +165,14 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         });
 
         $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
-        $('#diff' + tabNum).off("click").on("click", this.Differ.bind(this));
-        $(".eb-loaderOnEditor").hide();
+        $('#diff').off("click").on("click", this.Differ.bind(this));
+        $('#execute').off("click").on("click", this.Execute.bind(this));
+        $("#loader").hide();
         setTimeout(function () {
             window.editor.refresh();
         }, 500);
         $('.selectpicker').selectpicker({
-            style: 'btn-info',
+            //style: 'btn-info',
             size: 4
         });
 
@@ -180,7 +181,6 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");
         $(e.target).parent().parent().remove(); //remove li of tab
-        alert("tabContentId to delete " + tabContentId);
         $(tabContentId).remove();
         $('#versionNav a:last').tab('show'); // Select first tab        
     };
@@ -216,17 +216,17 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
             }
             else {
                 alert("no filters ");
-                $(".eb-loaderOnEditor").hide();
+                $("#loader").hide();
             }
         }
     }
 
     this.Execute = function () {
-        $(".eb-loaderOnEditor").show();
+        $("#loader").show();
         this.SetValues();
         if ($('#fd option:selected').text() === "Select Filter Dialog") {
             alert("Please select a filter dialog");
-            $(".eb-loaderOnEditor").hide();
+            $("#loader").hide();
         }
         else if ($('#fd option:selected').text() !== "Auto Generate Filter Dialog") {
 
@@ -253,9 +253,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
     }
 
     this.Differ = function () {
-        $(".eb-loaderOnEditor").show();
-        var verid = $('#selected_Ver option:selected').val();
-        var ver_number = $('#selected_Ver option:selected').attr("data-tokens");
+        $("#loader").show();
+        var getNav = $("#versionNav li.active a").attr("href");
+        alert(getNav);
+        var verid = $(getNav + ' #selected_Ver option:selected').val();
+        alert(verid);
+        var ver_number = $(getNav + ' #selected_Ver option:selected').attr("data-tokens");
+        alert(ver_number);
         if (verid === "Select Version") {
             alert("Please Select A Version");
         }
@@ -264,10 +268,6 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
                .done(this.CallDiffer.bind(this, ver_number));
         }
     }
-
-    //this.Compare = function () {
-    //    $(this.DifferButton).off("click").on("click", this.Differ.bind(this));
-    //}
 
     this.Init();
 
@@ -476,7 +476,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
        var verid = $(getNav + ' #selected_Ver option:selected').val();
        var vername = $(getNav + ' #selected_Ver option:selected').attr("data-tokens");
         tabNum++;
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + verid + tabNum + "'> v." + this.Version_num + " v/s v." + vername + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + verid + tabNum + "'> v." + vername + " v/s v." + this.Version_num + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
         $('#versionTab').append("<div id='vernav" + verid + tabNum + "' class='tab-pane fade'>");
         $('#vernav' + verid + tabNum).append("<div id='oldtext" + verid + tabNum + "'class='leftPane'>" +
               "</div>" +
@@ -486,7 +486,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid) {
         $("#versionNav a[href='#vernav" + verid + tabNum + "']").tab('show');
         $('#oldtext' + verid + tabNum).html("<div class='diffHeader'>v." + vername + "</div>" + data[0]);
         $('#newtext' + verid + tabNum).html("<div class='diffHeader'>v." + this.Version_num + "</div>" + data[1]);
-        $(".eb-loaderOnEditor").hide();
+        $("#loader").hide();
     }
 }
 

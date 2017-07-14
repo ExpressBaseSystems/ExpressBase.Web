@@ -1,4 +1,9 @@
-﻿<div class="row">
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+
+    Dictionary<string, object> Dict = ViewBag.dict;
+}
+<div class="row">
     <div class="form-inline">
         <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
         <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;" />
@@ -17,12 +22,16 @@
         </div>
     </div>
 </div>
+@{ 
+    foreach (var element in Dict.Keys)
+    {
 <div class="row objitems" name="objBox">
     <div class="col-md-1">
         <input type="checkbox" aria-label="...">
     </div>
+
     <div class="col-md-8">
-        <h4 name="head4" style="color:black;">Role Name</h4>
+        <h4 name="head4" style="color:black;">@Dict[element]</h4>
         <p class="text-justify">dsgfds dgfrdhg dfhgdrewteberyrt reyhrtu6trujhfg reyer5y54</p>
         <h6>
             <i style="font-style:italic;">Created by Mr X on 12/09/2017 at 02:00 pm</i>
@@ -39,5 +48,7 @@
         <input type="submit" class="btn btn-primary fa-input" value="Manage Role &#xf054;" style="font-family: FontAwesome;">
     </div>
 </div>
+        }
+    }
 
 

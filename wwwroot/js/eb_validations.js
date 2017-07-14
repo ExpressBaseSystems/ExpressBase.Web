@@ -1,4 +1,14 @@
-﻿function isRequired(element) {
+﻿function isValid() {
+    $('form').find('input').each(function () {
+        var id = $(this).attr("id");
+        var ele = document.getElementById(id);
+        if (ele.checkValidity() == false)
+            return false;
+    });
+    return false
+};
+
+function isRequired(element) {
     var ele = document.getElementById(element.id);
     if (ele.value.trim() === '')
         ele.setCustomValidity("This field is required");

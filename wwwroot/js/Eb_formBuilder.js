@@ -241,8 +241,9 @@ var formBuilder = function (toolBoxid, formid) {
     this.movingObj = {};
 
     this.save = function () {
-        $(".eb-loader").show();
-
+        if ($('#save_txtBox').val().trim() === '')
+            return false;
+        $(".eb-loaderFixed").show();
         $.post("SaveFilterDialog", {
             "Id": 0,
             "FilterDialogJson": JSON.stringify(this.Controls.ToArray()),
@@ -255,7 +256,7 @@ var formBuilder = function (toolBoxid, formid) {
 
     this.Save_Success = function (result) {
         alert("Saved");
-        $(".eb-loader").hide();
+        $(".eb-loaderFixed").hide();
         $('.alert').remove();
         $('.help').append("<div class='alert alert-success alert-dismissable'>" +
     "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +

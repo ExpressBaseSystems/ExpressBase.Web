@@ -71,6 +71,7 @@ namespace ExpressBase.Web2.Controllers
             var redisClient = this.EbConfig.GetRedisClient();
             var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, dvid));
             //var result = JsonConvert.DeserializeObject<Object>(tvpref);
+
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
             ViewBag.dvname = _dict["dvName"];
@@ -85,7 +86,7 @@ namespace ExpressBase.Web2.Controllers
         {
            
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue,  EbObjectType =(int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue,  EbObjectType =(int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
             var rlist = resultlist.Data;
 

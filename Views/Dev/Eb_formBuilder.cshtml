@@ -17,8 +17,10 @@
 <script src='~/js/Eb_formBuilder.js'></script>
 <script src='~/js/Eb_FormBuilderPropertyGrid.js'></script>
 <script src='~/js/Eb_PropertyGrid.js'></script>
+<div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
+
 <div class="form-group">
-    <input type="text" id="save_txtBox" class="form-control" placeholder="Save As...">
+    <input type="text" id="save_txtBox" required class="form-control" placeholder="Save As...">
     <button id="saveformBtn" type="submit" class="btn btn-submit">Save</button>
 </div>
 <div id="con">
@@ -50,7 +52,7 @@
     </div>
 
     <div id="form-buider-form" class="form-buider-form">
-        <textarea id="txtValues" rows="15" cols="40"></textarea>
+        @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
     </div>
 
 

@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+
+    Dictionary<string, object> Dict = ViewBag.dict;
+}
+<div class="row">
+    <div class="form-inline">
+        <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+        <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;" />
+        <div class="input-group pull-right">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Application</a></li>
+                    <li><a href="#">Application module</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
+            </div>
+            <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+        </div>
+    </div>
+</div>
+@{ 
+    foreach (var element in Dict.Keys)
+    {
+<div class="row objitems" name="objBox">
+    <div class="col-md-1">
+        <input type="checkbox" aria-label="...">
+    </div>
+
+    <div class="col-md-8">
+        <h4 name="head4" style="color:black;">@Dict[element]</h4>
+        <p class="text-justify">dsgfds dgfrdhg dfhgdrewteberyrt reyhrtu6trujhfg reyer5y54</p>
+        <h6>
+            <i style="font-style:italic;">Created by Mr X on 12/09/2017 at 02:00 pm</i>
+            <a style="margin-left:10px;">
+                <span class="label label-primary">Status</span>
+                <span class="label label-default">version</span>
+                <span class="label label-success">Dependency</span>
+                <span class="label label-danger">Application</span>
+                <span class="label label-default">Module</span>
+            </a>
+        </h6>
+    </div>
+    <div class="col-md-2 pull-right">
+        <input type="submit" class="btn btn-primary fa-input" value="Manage Role &#xf054;" style="font-family: FontAwesome;">
+    </div>
+</div>
+        }
+    }
+
+

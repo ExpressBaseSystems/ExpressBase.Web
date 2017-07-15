@@ -74,34 +74,29 @@ namespace ExpressBase.Web2.Controllers
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
             ViewBag.dvname = _dict["dvName"];
-            int fdid = Convert.ToInt32( _dict["fdId"] );
-            var obj = GetByteaEbObjects_json(fdid);
-            ViewBag.EbForm38 = (obj.Value as Dictionary<int, EbFilterDialog>)[fdid];
+            int fdid = Convert.ToInt32(_dict["fdId"] );
+            //var obj = GetByteaEbObjects_json(fdid);
+            ViewBag.FDialog = GetByteaEbObjects_json(fdid);  //(obj.Value as Dictionary<int, EbFilterDialog>)[fdid];
             //ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
             return View();
         }
 
-        public JsonResult GetByteaEbObjects_json(int objId)
+        public EbFilterDialog GetByteaEbObjects_json(int objId)
         {
-           
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue,  EbObjectType =(int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            //List<EbObjectWrapper> rlist = new List<EbObjectWrapper>();
-            var rlist = resultlist.Data;
+            var element = resultlist.Data[0];
 
-            Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
-            foreach (var element in rlist)
-            {
-                if (element.EbObjectType.ToString() == "FilterDialog")
-                {
+            //Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
 
-                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
-                    dsobj.EbObjectType = element.EbObjectType;
-                    dsobj.Id = element.Id;
-                    ObjList[element.Id] = dsobj;
-                }
-            }
-            return Json(ObjList);
+            var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
+            dsobj.Id = element.Id;
+            //dsobj.EbObjectType = element.EbObjectType;
+            //dsobj.Id = element.Id;
+            //ObjList[element.Id] = dsobj;
+
+            //return Json(ObjList);
+            return dsobj;
         }
 
         [HttpGet]

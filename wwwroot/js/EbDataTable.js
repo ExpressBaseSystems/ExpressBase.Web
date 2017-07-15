@@ -94,9 +94,9 @@ var EbDataTable = function (settings) {
 
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
-            $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(getFilterValues()) }, this.getColumnsSuccess.bind(this));
         else
-            $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
@@ -105,10 +105,14 @@ var EbDataTable = function (settings) {
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
+        if (index !== 1)
+            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
+        //$("#dvName_lbl" + this.tableId).text(this.dvName);
+
         if (this.ebSettings.renderAs == "graph") {
-            $("#graphcontainer").show();
-            new eb_chart(this.ebSettings, this.ssurl, false);
-            $("#graphDropdown .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
+            $("#graphcontainer_tab" + this.tableId).show();
+            new eb_chart(this.ebSettings, this.ssurl, false, this.tableId);
+            $("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
                 return false;
         }
         this.dsid = this.ebSettings.dsId;//not sure..
@@ -138,9 +142,7 @@ var EbDataTable = function (settings) {
         //if(index == 1)
         //    $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
         //else
-        if (index !== 1)
-            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
-        $("#dvName_lbl"+this.tableId).text(this.dvName);
+        
 
         this.eb_agginfo = this.getAgginfo();
         if (this.dtsettings.directLoad !== true)
@@ -163,6 +165,10 @@ var EbDataTable = function (settings) {
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
 
         //$.fn.dataTable.ext.errMode = 'throw';
+
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+            alert("ajax erpttt......");
+        };
 
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
@@ -256,7 +262,7 @@ var EbDataTable = function (settings) {
         //    arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
         //    dq.TFilters = JSON.stringify(arr);
         //}
-        dq.Params = JSON.stringify(this.getFilterValues());
+        dq.Params = JSON.stringify(getFilterValues());
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (serachItems.length>0) {
@@ -376,9 +382,9 @@ var EbDataTable = function (settings) {
         //    $(".dataTables_scrollFoot table:eq(0)").css("width",wid);
         //},500);
         if (this.ebSettings.renderAs == "both") {
-            $("#graphcontainer").show();
-            this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData);
-            $("#graphDropdown .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
+            $("#graphcontainer_tab"+this.tableId).show();
+            this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
+            $("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         }
         this.Api.columns.adjust();
     }
@@ -972,7 +978,37 @@ var EbDataTable = function (settings) {
                 "</div>"+
                 "<div style='width:auto;' id='dv"+this.linkDV+"_"+index+"divcont'>"+
                 " <table id='dv" + this.linkDV + "_" + index + "' class='table table-striped table-bordered'></table>" +
-              "  </div>"+
+              "  </div>" +
+             " <div id='graphcontainer_tabdv" + this.linkDV + "_" + index + "' style='border:1px solid;display: none;'>" +
+              "  <div style='height: 38px; border: 1px solid;'>"+
+               "      <div class='dropdown' id='graphDropdown_tabdv" + this.linkDV + "_" + index + "' style='display: inline-block;padding-top: 1px;'>" +
+                "             <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>"+
+                 "          <span class='caret'></span></button>"+
+                  "        <ul class='dropdown-menu'>"+
+                   "             <li><a href='#'>Line</a></li>"+
+                    "            <li><a href = '#'> Bar </a ></li>"+
+                     "           <li><a href = '#'> AreaFilled </a></li>"+
+                      "          <li><a href = '#'> pie </a></li>"+
+                       "         <li><a href = '#'> doughnut </a></li>"+
+                        "        </ul>"+
+                      "</div>"+
+                      "<button id='reset_zoomdv" + this.linkDV + "_" + index + "' class='btn btn-primary'>Reset zoom</button>" +
+                      "<div id = 'btnColumnCollapsedv" + this.linkDV + "_" + index + "' class='btn btn-default'>" +
+                       "     <i class='fa fa-chevron-down' aria-hidden='true'></i>"+
+                      "</div>"+
+                "</div>"+
+                "<div id ='columns4Dragdv" + this.linkDV + "_" + index + "' style='display:none;'>" +
+                 "   <div style='display: inline-block;'>"+
+                  "      <ul class='list-group'  style='height: 470px; overflow-x: scroll;'>"+
+                   "     </ul>  "+
+                   " </div>"+
+                    "<div style='display: inline-block;vertical-align: top;width: 794px;'>"+
+                     "   <b>Columns (X-Axis) </b><div style='padding: 4px;border:solid 1px grey;height:33px' id ='X_col_namedv" + this.linkDV + "_" + index + "'></div>" +
+                      "  <b>Rows (Y-Axis)</b><div style='padding: 4px;border:solid 1px grey;height:33px' id ='Y_col_namedv" + this.linkDV + "_" + index + "'></div>" +
+                    "</div>"+
+                "</div>"+
+                "<canvas id='myChartdv" + this.linkDV + "_" + index + "' width='auto' height='auto'></canvas>" +
+            "</div>" +
              "</div>");
         //$("#newmodal").on('shown.bs.modal', this.call2newTable.bind(this));
         //$("#newmodal").on('hidden.bs.modal', function (e) {
@@ -1485,24 +1521,6 @@ var EbDataTable = function (settings) {
         });
     };
 
-    this.getFilterValues = function () {
-        var fltr_collection = [];
-        var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();
-        if (paramstxt.length > 0) {
-            var params = paramstxt.split(',');
-            $.each(params, function (i, id) {
-                var v = null;
-                var dtype = $('#' + id).attr('data-ebtype');
-                if (dtype === '6')
-                    v = $('#' + id).val().substring(0, 10);
-                else
-                    v = $('#' + id).val();
-                fltr_collection.push(new fltr_obj(dtype, id, v));
-            });
-        }
-
-        return fltr_collection;
-    };
 
     this.lineGraphDiv = function (data, type, row, meta) {
         if (!data)
@@ -1678,3 +1696,21 @@ function GPointPopup(e) {
     //alert(e.pageX);
 };
 
+function getFilterValues() {
+    var fltr_collection = [];
+    var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();
+    if (paramstxt.length > 0) {
+        var params = paramstxt.split(',');
+        $.each(params, function (i, id) {
+            var v = null;
+            var dtype = $('#' + id).attr('data-ebtype');
+            if (dtype === '6')
+                v = $('#' + id).val().substring(0, 10);
+            else
+                v = $('#' + id).val();
+            fltr_collection.push(new fltr_obj(dtype, id, v));
+        });
+    }
+
+    return fltr_collection;
+};

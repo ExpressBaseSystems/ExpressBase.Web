@@ -12,7 +12,7 @@ var axis = function (indx, name) {
     this.name = name;
 };
 
-var DVObj = function (dsid, settings, login) {
+var DVObj = function (dsid, settings, login, dvlist) {
     this.TVPrefObj = settings;
     this.dsid = dsid;
     this.settings_tbl = null;
@@ -20,6 +20,8 @@ var DVObj = function (dsid, settings, login) {
     this.columnsextdel = [];
     this.XLength = 0;
     this.XLength = 0;
+    this.ddClicked = false;
+    this.dvList = dvlist;
 
     this.init = function () {
         //$(".nav-item a[href='3a']").tab('hide');
@@ -36,7 +38,8 @@ var DVObj = function (dsid, settings, login) {
             $("#rightFixedColumns_text").val(this.TVPrefObj.rightFixedColumns);
             this.callPost4SettingsTable();
             this.getcolumn4dropdown();
-            $("#graphtypeDD .btn:first-child").text(this.TVPrefObj.options.type.trim());
+            if (this.TVPrefObj.options !== null && this.TVPrefObj.options !== undefined)
+                $("#graphtypeDD .btn:first-child").text(this.TVPrefObj.options.type.trim());
         }
         $("#datatSourceDropdown .dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
         $("#graphtypeDD .dropdown-menu li a").off("click").on("click", this.setDropdownGraphType.bind(this));
@@ -49,13 +52,16 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.setDropdownDatasource = function (e) {
-
+        this.ddClicked = true;
         if (this.settings_tbl !== null) {
             $('#Table_Settings').DataTable().destroy();
             $("#2a").children("#Table_Settings_wrapper").remove();
             $("#Table_Settings").remove();
             var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', "Table_Settings");
             $("#2a").children("#columnDropdown").after(table);
+            //$("input[name=renderAs][value=" + this.TVPrefObj.renderAs + "]").prop("checked", true).trigger("click");
+            
+            $("input[name=renderAs][value=" + this.TVPrefObj.renderAs + "]").prop("checked", true).trigger("click");
         }
         $("#loader").show();
         this.dsid = $(e.target).parent().attr("data-dsid");
@@ -87,7 +93,7 @@ var DVObj = function (dsid, settings, login) {
             //rowReorder: { selector: 'tr' },
             initComplete: this.initComplete4Settingstbl.bind(this),
         });
-        CreatePropGrid(this.settings_tbl.row(0).data(), this.TVPrefObj.columnsext);
+        CreatePropGrid(this.settings_tbl.row(0).data(), this.TVPrefObj.columnsext, this.dvList);
         $('#Table_Settings tbody').on('click', 'tr', this.showPropertyGrid.bind(this));
         //setTimeout(function (){
         //    $("#Table_Settings_wrapper table:eq(0)").css("min-width", "");
@@ -155,7 +161,7 @@ var DVObj = function (dsid, settings, login) {
 
     this.showPropertyGrid = function (e) {
         var idx = this.settings_tbl.row(e.target).index();
-        CreatePropGrid(this.settings_tbl.row(idx).data(), this.TVPrefObj.columnsext);
+        CreatePropGrid(this.settings_tbl.row(idx).data(), this.TVPrefObj.columnsext, this.dvList);
         this.settings_tbl.columns.adjust();
     };
 
@@ -365,54 +371,71 @@ var DVObj = function (dsid, settings, login) {
     };
 
     this.graphSettings = function (e) {
-        alert("hahhaha");
         if (Object.keys(this.TVPrefObj).length > 0) {
             if ($(e.target).attr("value") !== "table") {
                 $(".nav-link").eq(2).show();
-                if (this.TVPrefObj.options !== null && this.TVPrefObj.options !== undefined) {
-                    var colsX = [], colsAll_X =[];
-                    $.each(this.TVPrefObj.options.Xaxis, function (i, obj) {
-                          colsX.push(obj.name);
-                    });
-                    $.each(this.TVPrefObj.columns, function (i, obj) {
-                        if (!colsX.contains(obj.name))
-                            colsAll_X.push(obj);
-                    });
-                    var colsY = [], colsAll_XY =[];
-                    $.each(this.TVPrefObj.options.Yaxis, function (i, obj) {
-                        colsY.push(obj.name);
-                    });
-                    $.each(colsAll_X, function (i, obj) {
-                        if (!colsY.contains(obj.name))
-                            colsAll_XY.push(obj);
-                    });
-                    //cols = $.grep(this.TVPrefObj.columns, function (i, obj) { return obj.name !== this.TVPrefObj.options.Xaxis.name; });
-                    //cols = $.grep(cols, function (i, obj) { return obj.name !== this.TVPrefObj.options.Yaxis.name; });
-                    $.each(colsAll_XY, function (i, obj) {
-                        if (obj.data != undefined) {
-                            $("#list_allcolumns").append("<li class='list-group-item' data-id='" + obj.data + "'>" + obj.name + "</li>");
-                        }
-                    });
-                    $.each(this.TVPrefObj.options.Xaxis, function (i, obj) {
-                        $("#list_Xcolumns").append("<li class='list-group-item' data-id='" + obj.index + "'>" + obj.name + "&nbsp;&nbsp;<button class='close' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >x</button></li>");
-                    });
-                    $.each(this.TVPrefObj.options.Yaxis, function (i, obj) {
-                        $("#list_Ycolumns").append("<li class='list-group-item' data-id='" + obj.index + "'>" + obj.name + "&nbsp;&nbsp;<button class='close' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >x</button></li>");
-                    });
-                    $("#list_Xcolumns button[class=close]").off("click").on("click", this.RemoveLi.bind(this));
-                    $("#list_Ycolumns button[class=close]").off("click").on("click", this.RemoveLi.bind(this));
-                }
-                else {
-                    $.each(this.TVPrefObj.columns, function (i, obj) {
-                        if (obj.data != undefined) {
-                            $("#list_allcolumns").append("<li class='list-group-item' data-id='" + obj.data + "'>" + obj.name + "</li>");
-                        }
-                    });
-                }
+                
             }
+            else {
+                $(".nav-link").eq(2).hide();
+            }
+        }
+    };
+
+
+    
+    this.graphTabEvent = function () {
+        if (this.ddClicked) {
+            $("#list_allcolumns").empty();
+            $("#list_Xcolumns").empty();
+            $("#list_Ycolumns").empty();
+            this.ddClicked = false;
+        }
+        if (this.TVPrefObj.options !== null && this.TVPrefObj.options !== undefined) {
+            var colsX = [], colsAll_X = [];
+            $.each(this.TVPrefObj.options.Xaxis, function (i, obj) {
+                colsX.push(obj.name);
+            });
+            $.each(this.TVPrefObj.columns, function (i, obj) {
+                if (!colsX.contains(obj.name))
+                    colsAll_X.push(obj);
+            });
+            var colsY = [], colsAll_XY = [];
+            $.each(this.TVPrefObj.options.Yaxis, function (i, obj) {
+                colsY.push(obj.name);
+            });
+            $.each(colsAll_X, function (i, obj) {
+                if (!colsY.contains(obj.name))
+                    colsAll_XY.push(obj);
+            });
+            //cols = $.grep(this.TVPrefObj.columns, function (i, obj) { return obj.name !== this.TVPrefObj.options.Xaxis.name; });
+            //cols = $.grep(cols, function (i, obj) { return obj.name !== this.TVPrefObj.options.Yaxis.name; });
+            $.each(colsAll_XY, function (i, obj) {
+                if (obj.data != undefined) {
+                    $("#list_allcolumns").append("<li class='list-group-item' data-id='" + obj.data + "'>" + obj.name + "</li>");
+                }
+            });
+            $.each(this.TVPrefObj.options.Xaxis, function (i, obj) {
+                $("#list_Xcolumns").append("<li class='list-group-item' data-id='" + obj.index + "'>" + obj.name + "&nbsp;&nbsp;<button class='close' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >x</button></li>");
+            });
+            $.each(this.TVPrefObj.options.Yaxis, function (i, obj) {
+                $("#list_Ycolumns").append("<li class='list-group-item' data-id='" + obj.index + "'>" + obj.name + "&nbsp;&nbsp;<button class='close' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >x</button></li>");
+            });
+            $("#list_Xcolumns button[class=close]").off("click").on("click", this.RemoveLi.bind(this));
+            $("#list_Ycolumns button[class=close]").off("click").on("click", this.RemoveLi.bind(this));
+        }
+        else {
+            $.each(this.TVPrefObj.columns, function (i, obj) {
+                if (obj.data != undefined) {
+                    $("#list_allcolumns").append("<li class='list-group-item' data-id='" + obj.data + "'>" + obj.name + "</li>");
+                }
+            });
         }
         $(".list-group-item").off("click").on("click", this.AddCsstoLi.bind(this));
     };
+
+
+    $('a[href="#3a"]').on('shown.bs.tab', this.graphTabEvent.bind(this));
 
     this.AddCsstoLi = function (e) {
         if ($(e.target).hasClass("active"))

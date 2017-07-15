@@ -30,17 +30,22 @@ Navigation bar
 .navbar-default .navbar-brand {
     color: #3b5998;
 }
-
+   .navbar-brand{
+       padding:0px;
+       padding-left:25px;
+   }
+    .navbar-brand i{
+        padding-top:15px;
+    }
 .navbar-default {
     background-color: #ffffff;
 }
-
-    .navbar-default img {
-        height: 44px;
+  .navbar-default img {
+        height: 40px;
         margin-top: 3px;
         margin-bottom: 0px;
+        margin-right:20px;
     }
-
 .navbar {
     height: 40px !important;
 }
@@ -541,13 +546,14 @@ footer {
 /*ebObject list*/
 
 .objitems {
-    border: solid 1px #e6e0e0;
+    border: solid 1px #eee;
+    border-left:none !important;
+    border-right:none !important;
     margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-top:20px;
 }
-
 .bottpadd {
     margin-bottom: 50px;
 }

@@ -1,4 +1,76 @@
-﻿function isRequired(element) {
+﻿var jsFunArr = ["function maxd(){ alert('maxd'); var ele = document.getElementById('#datefrom'); var df = new Date($('#datefrom').val()); var dt = new Date($('#dateto').val()); var df = new Date($('#datefrom').val()); if (dt < df) return { 'isValid': false, 'message': 'Enter a smaller date than DATE FROM input' }; return true; }; "];
+function maxd() {
+    alert('maxd');
+    var ele = document.getElementById('#datefrom');
+    var df = new Date($('#datefrom').val());
+    var dt = new Date($('#dateto').val());
+    var df = new Date($('#datefrom').val());
+    if (dt < df)
+        return { 'isValid': false, 'message': 'Enter a smaller date than DATE FROM input' };
+    return true;
+};
+
+var validator = function () {
+    this.datefrom = $('datefrom');
+    
+
+
+    this.datefrom.onclick(this.clickFN);
+    this.submitFn = function () {
+
+    };
+};
+
+function isValid(controlIds) {
+    var res = true;
+    retObj = maxd();
+
+    var errMsg = "Enter a valid input";
+    $.each(controlIds, function (i, id) {
+        var ele = document.getElementById(id);
+        var fn = $("#" + id).attr("funs");
+        eval(fn + "()");
+        if (ele.checkValidity() == false) {
+            setNotValidStyle(id, errMsg);
+            res = false;
+        }
+        else
+            NotValidStyle(id);
+    });
+    return res;
+};
+
+
+function setNotValidStyle(id, errMsg) {
+    var $contId = "#" + id + "Container";
+    if ($($contId + " .errMsg").length===0)
+        $($contId).append("<label class='errMsg' >" + errMsg + "</label>").css("color", "#a94442");
+    $($contId + " input").css({ "color": "#a94442", "background-color": "#ffffff", "border-color": "#a94442" });//inputs
+    $($contId + " span").css({ "color": "#a94442", "border-color": "#a94442" });//all labels
+};
+
+function NotValidStyle(id) {
+    var $contId = "#" + id + "Container";
+    $($contId + " .errMsg").remove();
+    $($contId + " input").css({ "color": "#555", "border-color": "rgb(204, 204, 204)" });//inputs
+    $($contId + " span").css({ "color": "#555", "border-color": "rgb(204, 204, 204)" });//all labels
+
+};
+
+//function isValid() {
+//    var res = true;
+//    $('form').find('input').each(function () {
+//        var id = $(this).attr("id");
+//        var ele = document.getElementById(id);
+//        if (ele.checkValidity() == false) {
+//            res = false;
+//            return null;
+//        }
+//    });
+//    return res;
+//};
+
+function isRequired(element) {
     var ele = document.getElementById(element.id);
     if (ele.value.trim() === '')
         ele.setCustomValidity("This field is required");
@@ -141,8 +213,8 @@ query_to_hash = function (queryString) {
     $.each(q, function (i, arr) {
         arr = arr.replace('=', ':');
         
-            var aRR = arr.split(":");
-            arr =  aRR[0] +":"+"\""+aRR[1]+"\"";
+        var aRR = arr.split(":");
+        arr =  aRR[0] +":"+"\""+aRR[1]+"\"";
         
         t += arr+",";
     });
@@ -159,7 +231,7 @@ function deletebutton()
     var isupdate = document.getElementById("isUpdate").value;
     var fid = document.getElementById("FId").value;
     var modal = document.getElementById("myModal");
-  //  var btn = document.getElementById("confirm");
+    //  var btn = document.getElementById("confirm");
    
     modal.style.display ="block";
  

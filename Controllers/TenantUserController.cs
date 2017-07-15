@@ -71,6 +71,7 @@ namespace ExpressBase.Web2.Controllers
             var redisClient = this.EbConfig.GetRedisClient();
             var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, dvid));
             //var result = JsonConvert.DeserializeObject<Object>(tvpref);
+
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
             ViewBag.dvname = _dict["dvName"];
@@ -212,12 +213,14 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddRoles()
+        public IActionResult EbRoles()
         {
-
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", Token = ViewBag.token });
+            ViewBag.dict = fr.Data;
             return View();
         }
-        
+
     }
 }
         

@@ -45,7 +45,7 @@
                     $(this).selectpicker('val', val);
                 }
             });
-            $(".eb-loaderOnEditor").hide();
+            $("#loader").hide();
             $('#filterRun').on('hidden.bs.modal', function () {
                 $("#sample").DataTable().destroy();
                 $("#sample").children().remove();
@@ -63,7 +63,6 @@
     </script>
 </head>
 <body>
-    <div class='eb-loaderOnEditor'><i class='fa fa-spinner fa-pulse fa-3x fa-fw center-block'></i></div>
     <div class="btn-toolbar container " role="toolbar" aria-label="Toolbar with button groups">
         <h3>@ViewBag.Header</h3>
         <div class="well col-md-12">
@@ -363,14 +362,6 @@
         margin-bottom: 10px;
     }
 
-   .eb-loaderOnEditor {
-       opacity:1;
-        /* margin-top: 20%;
-        margin-left: 50%;*/
-    }
-
-
-
     .codeEditLabel {
         height: 33px;
         padding-top: 4px;
@@ -379,6 +370,7 @@
         margin-left: -3px;
         border-radius: 2px;
     }
+
     .codeEditLabel2 {
         height: 33px;
         padding-top: 4px;
@@ -387,6 +379,7 @@
         margin-left: -3px;
         border-radius: 2px;
     }
+
     .btn {
         border-radius: 2px;
         height: 33px;
@@ -441,6 +434,9 @@
     .leftPane, .rightPane {
         float: left;
         width: 50%;
+        font-family: monospace;
+        height: 300px;
+        color: black;
     }
 
     .diffHeader {

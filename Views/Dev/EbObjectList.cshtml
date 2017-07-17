@@ -25,6 +25,10 @@
     {
         editor = "CreateApplication";
     }
+    else if (ObjectType == (int)EbObjectType.SqlFunction)
+    {
+        editor = "SqlFunction_Editor";
+    }
 }
 <script>
     $('#impexp').next().css("display", "inline-block");

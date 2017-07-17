@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
-
-    Dictionary<string, object> Dict = ViewBag.dict;
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    List<EbObjectWrapper> List = ViewBag.dict;
 }
 <style>
     table {
@@ -24,9 +24,10 @@
             <div class="form-group">
                 <select class="form-control" id="appselect">
                     @{
-                        foreach (var element in Dict.Keys)
+                        foreach (var element in List)
                         {
-                            <option value="@element">@Dict[element]</option>
+                            
+                            <option value="@element.Id">@element.Name</option>
 
                         }
                     }

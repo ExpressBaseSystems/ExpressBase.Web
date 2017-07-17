@@ -472,29 +472,25 @@ var CustomWizFuncs = function (acid) {
     };
 };
 
-var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,versionNumber,filterDialogId) {
+var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,versionNumber,filterDialogId,objType) {
     this.AcId = acid;
     this.ObjectId = obj_id;
     this.ObjectName = obj_name;
     this.ObjectDesc = obj_desc;
+    this.ObjectType = objType;
     this.Code = code;
     this.VersionNumber = versionNumber;
     this.FilterDialogId = filterDialogId;
-    this.DataSource = function () {
-        if (obj_id === 0) {
-            $('#changeLogDiv').remove();            
-        }
-        //else {
-        //    $('#nameDiv').hide();
-        //    $('#descDiv').hide();
-        //}
+    alert("objType  " + objType);
+    this.DataSource = function () {       
         $('#name').val(obj_name);
         $('#description').val(obj_desc);
         $('#tcid').val(acid);
         $('#code').val(code);
+        $('#objtype').val(objType);
         $('#id').val(obj_id);       
         $('#versionNumber').val(versionNumber);
-        $('#filterDialogId').val(filterDialogId);
+        $('#filterDialogId').val(filterDialogId);        
     };
 };
 

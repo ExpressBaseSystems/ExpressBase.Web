@@ -156,6 +156,21 @@
     margin-right: -4px;
 }
 
+.eb-loader {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: 10000;
+}
+
+.eb-loaderFixed {
+    display:none;
+    position: fixed;
+    width: 100%;
+    margin-top: 35vh;
+    z-index: 10000;
+}
 
 .Eb-ctrlContainer input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
     height: auto !important;
@@ -255,7 +270,7 @@ input[type="color"] {
 
     .close:hover,
     .close:focus {
-        color: #f00!important;
+        color: #f00 !important;
         text-decoration: none;
         cursor: pointer;
     }
@@ -372,10 +387,9 @@ input[type="color"] {
     width: calc(100% - 15px);
 }
 
-.v-select .selected-tag .close {
-    color: red;
-    position: absolute;
-    top: 8px;
-    left: calc(100% - 32px);
-}
-
+    .v-select .selected-tag .close {
+        color: red;
+        position: absolute;
+        top: 8px;
+        left: calc(100% - 32px);
+    }

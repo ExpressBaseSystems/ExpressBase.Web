@@ -23,7 +23,7 @@
         DataSourceId = dsid,
         dvId = dvid,
         dvname = dvname,
-        FilterDialogId = 47,
+       // FilterDialogId = (ViewBag.FDialog as EbFilterDialog).Id,
         Name = "dv" + dvid.ToString()
     };
 
@@ -31,7 +31,7 @@
     dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
 
 
-    dgv.SetFilterForm(ViewBag.EbForm38);
+    dgv.SetFilterForm(ViewBag.FDialog);
     html += dgv.GetHtml();
     head += dgv.GetHead();
     // head += (ViewBag.EbForm38 as EbForm).GetHead();

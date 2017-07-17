@@ -1,4 +1,13 @@
-﻿function CreatePropGrid(RowObj, colExt) {
+﻿var LinkDvObj = function (txt, val) {
+    this.text = txt;
+    this.value = val;
+};
+
+function CreatePropGrid(RowObj, colExt, dvList) {
+    var dvListArr = [];
+    $.each(dvList, function (key, val) {
+        dvListArr.push(new LinkDvObj(val, key));
+    });
     $('#propGrid').empty();
     $('#propHead').empty().html("<strong> " + RowObj.name + "</strong>");
     var NumProps = null;
@@ -39,7 +48,7 @@
                 };
                 metaObj = {
                     RenderAs: { group: 'Behavior ', name: 'RenderAs', type: 'BootstrapDD', options: ['Default', 'Graph', 'Link'] },
-                    linkDv: { group: 'Behavior ', name: 'linkDv', type: 'linkDD', options: [{ text: 'dv_invtrans', value: 173 }, { text: 'wwwwww', value: 206 }] },
+                    linkDv: { group: 'Behavior ', name: 'linkDv', type: 'linkDD', options: dvListArr },
                 };
             }
             else

@@ -1,5 +1,6 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+
 *@
 @{
     bool isAjaxCall = (this.Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
@@ -32,16 +33,17 @@
 </head>
 <body>
     @{
-
+        @using Newtonsoft.Json;
         @using ExpressBase.Objects.ServiceStack_Artifacts;
         Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
         Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
-        Dictionary<int, EbObjectWrapper> ObjDVListAll = new Dictionary<int, EbObjectWrapper>();
+        Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
         ObjDSList = ViewBag.DSList;
         ObjDSListAll = ViewBag.DSListAll;
-        ObjDVListAll = ViewBag.ObjDVListAll;
+        ObjDVListAll = ViewBag.DVListAll;
         var xx = (ObjDSList.Count > 0) ? (ObjDSList.Values.First<EbObjectWrapper>().Name) : "Data Source";
         var cls = "show";
+        string json = JsonConvert.SerializeObject(ObjDVListAll);
     }
     <div id="loader" class="loadingdiv"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
     <div id="settingsdiv" style="background-color:rgb(260,260,260)">
@@ -189,7 +191,8 @@
 
         <script>
             var sett = @Html.Raw(ViewBag.tvpref);
-            var dvo = new DVObj(@ViewBag.dsid, sett, "@ViewBag.wc");
+            var collection =@Html.Raw(JsonConvert.DeserializeObject(json));            
+            var dvo = new DVObj(@ViewBag.dsid, sett, "@ViewBag.wc", collection);
         </script>
     </div>
 </body>

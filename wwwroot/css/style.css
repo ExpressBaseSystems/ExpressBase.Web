@@ -32,10 +32,11 @@ Navigation bar
 }
    .navbar-brand{
        padding:0px;
-       padding-left:25px;
    }
     .navbar-brand i{
-        padding-top:15px;
+        margin-top:15px;
+         margin-left:10px;
+         margin-right:30px;
     }
 .navbar-default {
     background-color: #ffffff;
@@ -44,7 +45,7 @@ Navigation bar
         height: 40px;
         margin-top: 3px;
         margin-bottom: 0px;
-        margin-right:20px;
+        margin-right:10px;
     }
 .navbar {
     height: 40px !important;
@@ -527,8 +528,7 @@ footer {
 /*sidebar end*/
 .main-cont {
     
-    margin-bottom:40px;
-    margin-left: 27px;
+    margin-bottom:40px;   
 }
 
 .padd {
@@ -564,6 +564,13 @@ footer {
 }
 @media (min-width: 992px){
 .col-md-12 {
-    width: 96% !important;
+    width: 98% !important;
+        margin-left: 10px;
+    padding-right: 10px;
+    }
+    .col-md-9 {
+        width: 80% !important;
     }
 }
+
+

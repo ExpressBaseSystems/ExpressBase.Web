@@ -221,6 +221,14 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult ManageRoles()
+        {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", Token = ViewBag.token });
+            ViewBag.dict = fr.Data;
+            return View();          
+        }
     }
 }
         

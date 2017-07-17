@@ -30,17 +30,23 @@ Navigation bar
 .navbar-default .navbar-brand {
     color: #3b5998;
 }
-
+   .navbar-brand{
+       padding:0px;
+   }
+    .navbar-brand i{
+        margin-top:15px;
+         margin-left:10px;
+         margin-right:30px;
+    }
 .navbar-default {
     background-color: #ffffff;
 }
-
-    .navbar-default img {
-        height: 44px;
+  .navbar-default img {
+        height: 40px;
         margin-top: 3px;
         margin-bottom: 0px;
+        margin-right:10px;
     }
-
 .navbar {
     height: 40px !important;
 }
@@ -522,8 +528,7 @@ footer {
 /*sidebar end*/
 .main-cont {
     
-    margin-bottom:40px;
-    margin-left: 27px;
+    margin-bottom:40px;   
 }
 
 .padd {
@@ -541,13 +546,14 @@ footer {
 /*ebObject list*/
 
 .objitems {
-    border: solid 1px #e6e0e0;
+    border: solid 1px #eee;
+    border-left:none !important;
+    border-right:none !important;
     margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-top:20px;
 }
-
 .bottpadd {
     margin-bottom: 50px;
 }
@@ -558,6 +564,13 @@ footer {
 }
 @media (min-width: 992px){
 .col-md-12 {
-    width: 96% !important;
+    width: 98% !important;
+        margin-left: 10px;
+    padding-right: 10px;
+    }
+    .col-md-9 {
+        width: 80% !important;
     }
 }
+
+

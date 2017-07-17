@@ -12,7 +12,7 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
-var Agginfo = function (col,deci) {
+var Agginfo = function (col, deci) {
     this.colname = col;
     this.deci_val = deci;
 };
@@ -94,9 +94,9 @@ var EbDataTable = function (settings) {
 
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
-            $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(getFilterValues()) }, this.getColumnsSuccess.bind(this));
         else
-            $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
@@ -105,10 +105,14 @@ var EbDataTable = function (settings) {
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
+        if (index !== 1)
+            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
+        //$("#dvName_lbl" + this.tableId).text(this.dvName);
+
         if (this.ebSettings.renderAs == "graph") {
-            $("#graphcontainer").show();
-            new eb_chart(this.ebSettings, this.ssurl, false);
-            $("#graphDropdown .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
+            $("#graphcontainer_tab" + this.tableId).show();
+            new eb_chart(this.ebSettings, this.ssurl, false, this.tableId);
+            $("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
                 return false;
         }
         this.dsid = this.ebSettings.dsId;//not sure..
@@ -123,7 +127,7 @@ var EbDataTable = function (settings) {
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         //if (this.filterBox !== null && this.dtsettings.directLoad !== true)
-            this.filterBox.collapse('hide');
+        this.filterBox.collapse('hide');
         //this.filterbtn = $('#4filterbtn');
         //this.clearfilterbtn = $("#clearfilterbtn_"+this.tableId);
         this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
@@ -138,9 +142,7 @@ var EbDataTable = function (settings) {
         //if(index == 1)
         //    $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
         //else
-        if (index !== 1)
-            $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
-        $("#dvName_lbl"+this.tableId).text(this.dvName);
+        
 
         this.eb_agginfo = this.getAgginfo();
         if (this.dtsettings.directLoad !== true)
@@ -150,11 +152,11 @@ var EbDataTable = function (settings) {
         //    this.ebSettings.columns[0].visible = false;
         //}
         //if (!this.ebSettings.hideCheckbox) {
-            this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall"+this.tableId+"' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-            this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
+        this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
+        this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
         //}
         //else
-            this.ebSettings.columns[1].visible = true;
+        this.ebSettings.columns[1].visible = true;
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
@@ -163,6 +165,10 @@ var EbDataTable = function (settings) {
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
 
         //$.fn.dataTable.ext.errMode = 'throw';
+
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+            alert("ajax erpttt......");
+        };
 
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
@@ -191,7 +197,7 @@ var EbDataTable = function (settings) {
         //$('#' + this.tableId + '_btnSettings').css('display', 'inline-block');
 
         //if (!this.ebSettings.hideSerial)
-            this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
         //new ResizeSensor(jQuery('#@tableId_container'), function() {
         //    if ( $.fn.dataTable.isDataTable( '#@tableId' ) )
@@ -256,28 +262,51 @@ var EbDataTable = function (settings) {
         //    arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
         //    dq.TFilters = JSON.stringify(arr);
         //}
-        dq.Params = JSON.stringify(this.getFilterValues());
+        dq.Params = JSON.stringify(getFilterValues());
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
-        if (serachItems.length>0) {
+        if (serachItems.length > 0) {
             this.filterFlag = true;
         }
         return dq;
     };
 
+
+    //$("form").submit(function (e) {
+    //    if (isValid()) {
+    //        if (!this.isSecondTime) {
+    //            this.isSecondTime = true;
+    //            this.RenderGraphModal();
+    //            this.getColumns();
+    //        }
+    //        else {
+    //            this.filterBox.collapse("hide");
+    //            this.Api.ajax.reload();
+    //        }
+    //    }
+    //    e.preventDefault();
+    //});
+
     this.btnGoClick = function (e) {
-        if (!this.isSecondTime) {
-            this.isSecondTime = true;
-            this.RenderGraphModal();
-            this.getColumns();
+        var controlIds = ["datefrom", "dateto"];// temp
+        
+        if (isValid(controlIds)) {
+            if (!this.isSecondTime) {
+                this.isSecondTime = true;
+                this.RenderGraphModal();
+                this.getColumns();
+            }
+            else {
+                this.filterBox.collapse("hide");
+                this.Api.ajax.reload();
+            }
         }
-        else {
-            this.filterBox.collapse("hide");
-            this.Api.ajax.reload();
-        }
+        maxd();
+        //eval(jsFunArr[0]);
+        e.preventDefault();
     };
 
-   
+
     this.getAgginfo = function () {
         var _ls = [];
         $.each(this.ebSettings.columns, this.getAgginfo_inner.bind(this, _ls));
@@ -350,7 +379,7 @@ var EbDataTable = function (settings) {
                     }
                 }
             });
-        } 
+        }
         return filter_obj_arr;
     };
 
@@ -376,9 +405,9 @@ var EbDataTable = function (settings) {
         //    $(".dataTables_scrollFoot table:eq(0)").css("width",wid);
         //},500);
         if (this.ebSettings.renderAs == "both") {
-            $("#graphcontainer").show();
-            this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData);
-            $("#graphDropdown .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
+            $("#graphcontainer_tab"+this.tableId).show();
+            this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
+            $("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         }
         this.Api.columns.adjust();
     }
@@ -599,10 +628,10 @@ var EbDataTable = function (settings) {
         $(".eb_fsel" + this.tableId).off("click").on("click", this.setLiValue.bind(this));
         $(".eb_ftsel" + this.tableId).off("click").on("click", this.fselect_func.bind(this));
         $.each($(this.Api.columns().header()).parent().siblings().children().toArray(), this.setFilterboxValue.bind(this));
-        $(".eb_fbool"+this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
-        $(".eb_selall"+this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
+        $(".eb_fbool" + this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
+        $(".eb_selall" + this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
-        $(".eb_canvas"+this.tableId).off("click").on("click", this.renderMainGraph);
+        $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
@@ -613,7 +642,7 @@ var EbDataTable = function (settings) {
         });
 
         //this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
-        $("#clearfilterbtn_"+this.tableId).off("click").on("click", this.clearFilter.bind(this));
+        $("#clearfilterbtn_" + this.tableId).off("click").on("click", this.clearFilter.bind(this));
         this.totalpagebtn.off("click").on("click", this.showOrHideAggrControl.bind(this));
         this.copybtn.off("click").on("click", this.CopyToClipboard.bind(this));
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
@@ -627,12 +656,12 @@ var EbDataTable = function (settings) {
     };
 
     this.GenerateButtons = function () {
-        $("#TableControls_"+this.tableId).prepend("<div style='display: inline;float: right;'>" +
-            "<button type='button' id='"+this.tableId+"_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
+        $("#TableControls_" + this.tableId).prepend("<div style='display: inline;float: right;'>" +
+            "<button type='button' id='" + this.tableId + "_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
              "<div class='btn-group'>" +
                 "<div class='btn-group'>" +
-                   " <div id='btnPrint"+this.tableId+"' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></div>" +
+                   " <div id='btnPrint" + this.tableId + "' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></div>" +
                        " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
                          "   <span class='caret'></span>  <!-- caret --></div>" +
                          "   <ul class='dropdown-menu' role='menu'>" +
@@ -651,8 +680,8 @@ var EbDataTable = function (settings) {
          "</div>");
     };
     //href='http://dev.eb_roby_dev.localhost:53431/Tenant/DVEditor #'
-    
-       
+
+
     this.setFilterboxValue = function (i, obj) {
         if (this.dtsettings.filterParams !== null && this.dtsettings.filterParams !== undefined) {
             var colum = $(obj).children('span').text();
@@ -731,7 +760,7 @@ var EbDataTable = function (settings) {
         "<div class='input-group-btn' style='height:100%!important'>" +
             " <button type='button' style='width:100% !important;height:100%!important;' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
             " <ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
-            "   <li ><a href ='#' class='eb_fsel" +this.tableId+"' " + data_table + data_colum + ">=</a></li>" +
+            "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
               " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
               " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
               " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><=</a></li>" +
@@ -752,7 +781,7 @@ var EbDataTable = function (settings) {
         "<div class='input-group-btn' style='height:100%!important'>" +
            " <button type='button' style='width:100% !important;height:100% !important;' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
             "<ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
-             " <li ><a href ='#' class='eb_fsel"+this.tableId+"' " + data_table + data_colum + ">=</a></li>" +
+             " <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
              " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
              " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
              " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><=</a></li>" +
@@ -789,7 +818,7 @@ var EbDataTable = function (settings) {
         var filter = "";
         var id = tableId + "_" + colum + "_hdr_txt1";
         var cls = tableId + "_hchk";
-        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool"+this.tableId+"' style='vertical-align: middle;'></center>";
+        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool" + this.tableId + "' style='vertical-align: middle;'></center>";
         return filter;
     };
 
@@ -944,35 +973,65 @@ var EbDataTable = function (settings) {
     };
 
     this.NewTableModal = function () {
- //       $(document.body).append("<div class='modal fade' id='newmodal' role='dialog' style='display:none'>"
- //   + "<div class='modal-dialog modal-lg' style='width: 100%;height: 100%;margin: 0;padding: 0;'>"
- //    + " <div class='modal-content' style=' height: auto;min-height: 100%;border-radius: 0;'>"
- //       + "<div class='modal-header'>"
- //         + "<button type = 'button' class='close' data-dismiss='modal'>&times;</button>"
- //         + "<h4 class='modal-title'></h4>"
- //       + "</div>"
- //       + "<div class='modal-body'>"
- //        + "<table class='table table-striped table-bordered' id='Newtable'></table>"
- //       + "</div>"
- //    + "</div>"
- //   + "</div>"
+        //       $(document.body).append("<div class='modal fade' id='newmodal' role='dialog' style='display:none'>"
+        //   + "<div class='modal-dialog modal-lg' style='width: 100%;height: 100%;margin: 0;padding: 0;'>"
+        //    + " <div class='modal-content' style=' height: auto;min-height: 100%;border-radius: 0;'>"
+        //       + "<div class='modal-header'>"
+        //         + "<button type = 'button' class='close' data-dismiss='modal'>&times;</button>"
+        //         + "<h4 class='modal-title'></h4>"
+        //       + "</div>"
+        //       + "<div class='modal-body'>"
+        //        + "<table class='table table-striped table-bordered' id='Newtable'></table>"
+        //       + "</div>"
+        //    + "</div>"
+        //   + "</div>"
         //+ "</div>");
         //alert(ui.newTab.index());
         index++;
-        $("#table_tabs").append("<li class='nav-item'>"+
-                   " <a class='nav-link' href='#dv" + this.linkDV + "_tab_" + index + "' data-toggle='tab'>"+
-                       
+        $("#table_tabs").append("<li class='nav-item'>" +
+                   " <a class='nav-link' href='#dv" + this.linkDV + "_tab_" + index + "' data-toggle='tab'>" +
+
                     "</a>" +
                " </li>");
         $("#table_tabcontent").append("<div id='dv" + this.linkDV + "_tab_" + index + "' class='tab-pane active'>" +
                 "<div id='TableControls_dv" + this.linkDV + "_" + index + "' class = 'well well-sm'>" +
-                   " <div style='display: inline;'>"+
-                    "    <label id='dvName_lbldv" + this.linkDV + "_"+index+"'></label>" +
-                   " </div>"+
-                "</div>"+
-                "<div style='width:auto;' id='dv"+this.linkDV+"_"+index+"divcont'>"+
+                   " <div style='display: inline;'>" +
+                    "    <label id='dvName_lbldv" + this.linkDV + "_" + index + "'></label>" +
+                   " </div>" +
+                "</div>" +
+                "<div style='width:auto;' id='dv" + this.linkDV + "_" + index + "divcont'>" +
                 " <table id='dv" + this.linkDV + "_" + index + "' class='table table-striped table-bordered'></table>" +
-              "  </div>"+
+              "  </div>" +
+             " <div id='graphcontainer_tabdv" + this.linkDV + "_" + index + "' style='border:1px solid;display: none;'>" +
+              "  <div style='height: 38px; border: 1px solid;'>"+
+               "      <div class='dropdown' id='graphDropdown_tabdv" + this.linkDV + "_" + index + "' style='display: inline-block;padding-top: 1px;'>" +
+                "             <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>"+
+                 "          <span class='caret'></span></button>"+
+                  "        <ul class='dropdown-menu'>"+
+                   "             <li><a href='#'>Line</a></li>"+
+                    "            <li><a href = '#'> Bar </a ></li>"+
+                     "           <li><a href = '#'> AreaFilled </a></li>"+
+                      "          <li><a href = '#'> pie </a></li>"+
+                       "         <li><a href = '#'> doughnut </a></li>"+
+                        "        </ul>"+
+                      "</div>"+
+                      "<button id='reset_zoomdv" + this.linkDV + "_" + index + "' class='btn btn-primary'>Reset zoom</button>" +
+                      "<div id = 'btnColumnCollapsedv" + this.linkDV + "_" + index + "' class='btn btn-default'>" +
+                       "     <i class='fa fa-chevron-down' aria-hidden='true'></i>"+
+                      "</div>"+
+                "</div>"+
+                "<div id ='columns4Dragdv" + this.linkDV + "_" + index + "' style='display:none;'>" +
+                 "   <div style='display: inline-block;'>"+
+                  "      <ul class='list-group'  style='height: 470px; overflow-x: scroll;'>"+
+                   "     </ul>  "+
+                   " </div>"+
+                    "<div style='display: inline-block;vertical-align: top;width: 794px;'>"+
+                     "   <b>Columns (X-Axis) </b><div style='padding: 4px;border:solid 1px grey;height:33px' id ='X_col_namedv" + this.linkDV + "_" + index + "'></div>" +
+                      "  <b>Rows (Y-Axis)</b><div style='padding: 4px;border:solid 1px grey;height:33px' id ='Y_col_namedv" + this.linkDV + "_" + index + "'></div>" +
+                    "</div>"+
+                "</div>"+
+                "<canvas id='myChartdv" + this.linkDV + "_" + index + "' width='auto' height='auto'></canvas>" +
+            "</div>" +
              "</div>");
         //$("#newmodal").on('shown.bs.modal', this.call2newTable.bind(this));
         //$("#newmodal").on('hidden.bs.modal', function (e) {
@@ -982,7 +1041,7 @@ var EbDataTable = function (settings) {
         //    }, 500);
         //});
         //$("#newmodal").modal('show');
-        
+
         this.call2newTable();
         $(".nav-tabs a[href='#dv" + this.linkDV + "_tab_" + index + "']").tab('show');
     };
@@ -990,7 +1049,7 @@ var EbDataTable = function (settings) {
     this.call2newTable = function () {
 
         var EbDataTable_Newtable = new EbDataTable({
-            dv_id: this.linkDV, 
+            dv_id: this.linkDV,
             ss_url: "https://expressbaseservicestack.azurewebsites.net",
             tid: 'dv' + this.linkDV + '_' + index,
             linktable: true,
@@ -1116,7 +1175,7 @@ var EbDataTable = function (settings) {
                       "  <div id='loader' class='loadingdiv'><i class='fa fa-spinner fa-pulse fa-3x fa-fw'></i></div>" +
 
                 "    </div>" +
-                  
+
              "   </div>" +
            " </div>" +
         "</div>");
@@ -1124,7 +1183,7 @@ var EbDataTable = function (settings) {
         $.ajax({
             url: "../Dev/DVEditor",
             type: "POST",
-            data:{objid:this.dvid},
+            data: { objid: this.dvid },
             success: function (data) {
                 $("#settingsmodal .modal-body").html(data);
                 $("#loader").hide();
@@ -1188,7 +1247,7 @@ var EbDataTable = function (settings) {
     //    //objcols.push(this.getColobj("id"));
     //    //$.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
     //    //    ct++;
-            
+
     //    //    if (obj.type === 'text' && obj.name === 'name')
     //    //        n = obj.value;
     //    //    else if (obj.type === 'text' && obj.name === 'index')
@@ -1464,7 +1523,7 @@ var EbDataTable = function (settings) {
     };
 
     this.renderlink4NewTable = function (data) {
-        return "<a href='#' class ='tablelink_"+this.tableId+"'>" + data + "</a>";
+        return "<a href='#' class ='tablelink_" + this.tableId + "'>" + data + "</a>";
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -1485,30 +1544,12 @@ var EbDataTable = function (settings) {
         });
     };
 
-    this.getFilterValues = function () {
-        var fltr_collection = [];
-        var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();
-        if (paramstxt.length > 0) {
-            var params = paramstxt.split(',');
-            $.each(params, function (i, id) {
-                var v = null;
-                var dtype = $('#' + id).attr('data-ebtype');
-                if (dtype === '6')
-                    v = $('#' + id).val().substring(0, 10);
-                else
-                    v = $('#' + id).val();
-                fltr_collection.push(new fltr_obj(dtype, id, v));
-            });
-        }
-
-        return fltr_collection;
-    };
 
     this.lineGraphDiv = function (data, type, row, meta) {
         if (!data)
             return "";
         else
-            return "<canvas id='eb_cvs" + meta.row + "' class='eb_canvas"+this.tableId+"' style='width:120px; height:40px; cursor:pointer;' data-graph='" + data + "' data-toggle='modal'></canvas><script>renderLineGraphs(" + meta.row + "); $('#eb_cvs" + meta.row + "').mousemove(function(e){ GPointPopup(e); });</script>";
+            return "<canvas id='eb_cvs" + meta.row + "' class='eb_canvas" + this.tableId + "' style='width:120px; height:40px; cursor:pointer;' data-graph='" + data + "' data-toggle='modal'></canvas><script>renderLineGraphs(" + meta.row + "); $('#eb_cvs" + meta.row + "').mousemove(function(e){ GPointPopup(e); });</script>";
     };
 
     this.RenderGraphModal = function () {
@@ -1678,3 +1719,21 @@ function GPointPopup(e) {
     //alert(e.pageX);
 };
 
+function getFilterValues() {
+    var fltr_collection = [];
+    var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();
+    if (paramstxt.length > 0) {
+        var params = paramstxt.split(',');
+        $.each(params, function (i, id) {
+            var v = null;
+            var dtype = $('#' + id).attr('data-ebtype');
+            if (dtype === '6')
+                v = $('#' + id).val().substring(0, 10);
+            else
+                v = $('#' + id).val();
+            fltr_collection.push(new fltr_obj(dtype, id, v));
+        });
+    }
+
+    return fltr_collection;
+};

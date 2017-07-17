@@ -103,8 +103,14 @@
                 html += $(this.Steps[i]).html();
             var AllInputs = $(html).find("input, textarea");
             $.each(AllInputs, function (i, inp) {
-                ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
-            })
+                if ($(inp).attr("id") === "code") {
+                    ObjString += '"' + $(inp).attr("id") + '"' + ':"' + btoa(unescape(encodeURIComponent($("#" + $(inp).attr("id")).val()))) + '",';
+                    alert("ObjString" + ObjString);
+                }
+                else {
+                    ObjString += '"' + $(inp).attr("id") + '"' + ':"' + $("#" + $(inp).attr("id")).val() + '",';
+                }
+               })
             ObjString = ObjString.slice(0, -1) + '}';
             this.EditObj = ObjString;
             var jqxhr = $.post(this.destUrl, { "Colvalues": ObjString, "Token": getToken() },

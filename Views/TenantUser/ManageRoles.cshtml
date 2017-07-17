@@ -44,8 +44,8 @@
     <div class="row">
         <div class="col-md-12" style="display:none" id="objlist1">
             <div class="list-group">
-                <a class="list-group-item list-group-item-action collapsed" data-toggle="collapse" data-target="#dropdown3">DataSource <i class="fa fa-caret-right pull-right"></i></a>
-                <table class="table table-responsive sub-menu collapse" id="dropdown3">
+                <a class="list-group-item list-group-item-action collapsed" data-toggle="collapse" data-target="#dropdownPerm">DataSource <i class="fa fa-caret-right pull-right"></i></a>
+                <table class="table table-responsive sub-menu collapse" id="dropdownPerm">
                     <thead>
                         <tr>
                             <th>Objects</th>
@@ -131,8 +131,9 @@
             $(this).css("background-color","#f5f5f5");
         });
         $("#appselect").change(function () {
-            $('#objlist1').slideToggle(200, "linear");
+            $('#objlist1').show();
         });
+        $("#appselect").find("span:eq(0)").text("Select Application");
     })
 </script>
 

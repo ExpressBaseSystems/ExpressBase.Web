@@ -104,7 +104,7 @@
             var AllInputs = $(html).find("input, textarea");
             $.each(AllInputs, function (i, inp) {
                 if ($(inp).attr("id") === "code") {
-                    ObjString += '"' + $(inp).attr("id") + '"' + ':"' + btoa($("#" + $(inp).attr("id")).val()) + '",';
+                    ObjString += '"' + $(inp).attr("id") + '"' + ':"' + btoa(unescape(encodeURIComponent($("#" + $(inp).attr("id")).val()))) + '",';
                     alert("ObjString" + ObjString);
                 }
                 else {

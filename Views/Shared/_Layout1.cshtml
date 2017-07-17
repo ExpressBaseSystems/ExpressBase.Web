@@ -104,16 +104,14 @@
                     else
                         $('div[id^="layout_div"]').removeClass('col-md-12').addClass('col-md-9');
             });
-            $('.list-group a').on('click', function () {
-                var selector = $(this).text();          
-                $('.item').append("/", selector);             
+            $('.list-group a').on('click', function (e) {         
+               var selector = $(this).text();               
+                    $('.item').append("/", selector);                                    
             });
         })
     </script>
 </head>
 <body>
-
-
     @{if (ViewBag.wc == "tc")
             {
                 Html.RenderPartial("_PageheaderTenant");
@@ -163,5 +161,6 @@
     background-color:white;
     color:#337ab7;
     margin-top:54px;
+   
 }
 </style>

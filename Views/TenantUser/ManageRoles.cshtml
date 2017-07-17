@@ -1,37 +1,103 @@
-﻿<style>
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    List<EbObjectWrapper> List = ViewBag.dict;
+}
+<style>
     table {
-        margin-top: 30px;
-        display: none;
+        width: 100%;
+    }
+    .col-md-4{
+        padding-left:0 !important;
+    }
+     .col-md-8{
+        padding-right:0 !important;
+    }
+    tr {
+        text-align: center;
+    }
+
+    input[type=checkbox] {
     }
 </style>
-    <div class="row  objitems">
-        <div class="col-md-10 col-sm-12 col-xs-12">
-            <h4 style="color:black;">Roll name</h4>
-            <p>asddsaf dgdfrgdrgdhhfd gfdhhthth fdgfdhfjj  fdhgfhftrhtfg hfjytjyjkfdfdsfgggggggggggdre grgrdgdhth.</p>
+@using (Html.BeginForm(FormMethod.Post))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="text" class="form-control" name="firstname" placeholder="Role Name" />
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="appselect">
+                    @{
+                        foreach (var element in List)
+                        {
+
+                            <option value="@element.Id">@element.Name</option>
+
+                        }
+                    }
+                </select>
+            </div>
         </div>
-        <div class="col-md-2 pull-right">
-            <input type="submit" class="btn btn-primary" value="&#xf013; Permission" style="font-family: FontAwesome, sans-serif;" id="addPerm" />
+        <div class="col-md-8">
+            <div class="form-group">
+                <textarea class="form-control" placeholder="Description" style="height:83px;width:100%;"></textarea>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <table class="table table-responsive" id="dropdowntable">
+                        }
+<div class="row" style="display:none" id="objlist1">
+    <div class="list-group">
+        <a class="list-group-item list-group-item-action collapsed" data-toggle="collapse" data-target="#dropdownPerm">DataSource <i class="fa fa-caret-right pull-right"></i></a>
+        <table class="table table-responsive sub-menu collapse" id="dropdownPerm">
             <thead>
                 <tr>
                     <th>Objects</th>
                     <th>Operation1</th>
-                    <th>Operation1</th>
-                    <th>Operation1</th>
+                    <th>Operation2</th>
+                    <th>Operation3</th>
+                    <th>Operation4</th>
+                    <th>Operation5</th>
+                    <th>Operation6</th>
+                    <th>Operation7</th>
+                    <th>Operation8</th>
+                    <th>Operation9</th>
+                    <th>Operation10</th>
+                    <th>Operation11</th>
+                    <th>Operation10</th>
+                    <th>Operation11</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <th scope="row">Dv1</th>
-                    <td><input type="checkbox" aria-label="..."></td>
-                    <td><input type="checkbox" aria-label="..."></td>
-                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                    <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
                 </tr>
                 <tr>
                     <th scope="row">Dv2</th>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
                     <td><input type="checkbox" aria-label="..."></td>
                     <td><input type="checkbox" aria-label="..."></td>
                     <td><input type="checkbox" aria-label="..."></td>
@@ -41,14 +107,37 @@
                     <td><input type="checkbox" aria-label="..."></td>
                     <td><input type="checkbox" aria-label="..."></td>
                     <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
+                    <td><input type="checkbox" aria-label="..."></td>
                 </tr>
+
             </tbody>
         </table>
+        <a class="list-group-item list-group-item-action">D V <i class="fa fa-caret-right pull-right"></i></a>
+        <a class="list-group-item list-group-item-action">Javascript Functions <i class="fa fa-caret-right pull-right"></i></a>
+        <a class="list-group-item list-group-item-action">Javascript Validators <i class="fa fa-caret-right pull-right"></i></a>
+        <a class="list-group-item list-group-item-action">Forms <i class="fa fa-caret-right pull-right"></i></a>
+        <a class="list-group-item list-group-item-action">Reports <i class="fa fa-caret-right pull-right"></i></a>
     </div>
+</div>
+
+
 <script>
     $('document').ready(function () {
-        $('#addPerm').click(function () {
-            $('#dropdowntable').slideToggle(200,"linear");
+        $('a').click(function () {
+            $(this).css("background-color", "#f5f5f5");
+        });
+        $("#appselect").change(function () {
+            $('#objlist1').show();
         });
     })
 </script>
+

@@ -49,37 +49,24 @@
                     <thead>
                         <tr>
                             <th>Objects</th>
-                            <th>Operation1</th>
-                            <th>Operation2</th>
-                            <th>Operation3</th>
-                            <th>Operation4</th>
-                            <th>Operation5</th>
-                            <th>Operation6</th>
-                            <th>Operation7</th>
-                            <th>Operation8</th>
-                            <th>Operation9</th>
-                            <th>Operation10</th>
-                            <th>Operation11</th>
-                            <th>Operation10</th>
-                            <th>Operation11</th>
+                           @{
+                               List<string> DvOperations = ViewBag.DVOperations;
+                               foreach (var element in DvOperations)
+                               {
+                                <th>@element</th>
+                               }
+                        }
+                           
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <th scope="row">Dv1</th>
+                            @foreach (var element in DvOperations)
+                            {
                             <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
+                            }
+                                                    
                         </tr>
                         <tr>
                             <th scope="row">Dv2</th>

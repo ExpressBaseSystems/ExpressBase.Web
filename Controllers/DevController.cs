@@ -167,6 +167,7 @@ namespace ExpressBase.Web.Controllers
             });
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
+            ds.Relations = "10,15,20,25";
             if (_dict["id"] == "0")
             {
                 ds.ChangeLog = "";

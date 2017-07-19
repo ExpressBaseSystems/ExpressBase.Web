@@ -47,7 +47,10 @@ padding:0px!important;
 }
 
 .dt-right {text-align: right;}
-.dt-buttons {visibility:hidden;}
+.dt-buttons {
+    visibility:hidden;
+    height: 9px;
+}
 th { font-size: 14px; }
 td { font-size: 12px; }
 .progress {
@@ -64,29 +67,40 @@ white-space: nowrap;
 table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected {
     color: #090808;
 }
-.icon-stack {
-  position: relative;
-  display: inline-block;
-  width: 2em;
-  height: 2em;
-  line-height: 2em;
-  vertical-align: middle;
-}
-.icon-stack-2x,
-.icon-stack-3x {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  text-align: center;
-}
-.icon-stack-2x {
-  font-size: 1em;
-}
-.icon-stack-3x {
-  font-size: 1em;
-}
-
 .eb_finput {
  width: auto !important;
 }
+
+.columnDrag{
+    margin: 0px 2px;
+    padding: 2px 5px;
+    width: auto; 
+    height: 25px;
+    margin-top: 2px;
+}
+
+.noPadding{
+    padding-right: 0px!important;
+    padding-left: 0px!important;
+}
+
+.Btnpaginate{
+    float: right;
+}
+.Btninfo{
+    margin-top: 2px;
+}
+div.dataTables_wrapper div.dataTables_length label{
+    margin-top: 2px;
+}
+div.dataTables_wrapper div.dataTables_length select {
+    height: 34px!important; 
+    padding-top: 7px!important;
+}
+div.dataTables_wrapper div.dataTables_info {
+    padding-top: 1px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+    
 

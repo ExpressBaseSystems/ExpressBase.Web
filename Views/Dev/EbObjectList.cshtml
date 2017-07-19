@@ -25,6 +25,10 @@
     {
         editor = "CreateApplication";
     }
+    else if (ObjectType == (int)EbObjectType.SqlFunction)
+    {
+        editor = "SqlFunction_Editor";
+    }
 }
 <script>
     $('#impexp').next().css("display", "inline-block");
@@ -96,7 +100,6 @@
 }
 <script>
     $(document).ready(function () {
-
         $("#searchobj").on("keyup", function (e) {
             var f = false;
             var srch = $(this).val().toLowerCase();
@@ -108,7 +111,6 @@
                     f = true;
                 }
             });
-
             if (!f)
                 $("#notfound").text('Item not found.......');
             else

@@ -21,7 +21,7 @@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.0.0/dygraph.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.css">@*jith*@
-    
+
     <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/ValYouW/jqPropertyGrid/9218bbd5df05bf7efe58591f434ea27ece11a045/jqPropertyGrid.css">@*jith*@
     <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
 
@@ -98,22 +98,38 @@
     <script>
         $('document').ready(function () {
             $('#submen').click(function () {
-                $('.side').toggle();             
-                    if ($('.side').css("display")==="none") 
-                        $('div[id^="layout_div"]').removeClass('col-md-9').addClass('col-md-12');
-                    else
-                        $('div[id^="layout_div"]').removeClass('col-md-12').addClass('col-md-9');
+                $('.side').toggle();
+                if ($('.side').css("display") === "none")
+                    $('div[id^="layout_div"]').removeClass('col-md-9').addClass('col-md-12');
+                else
+                    $('div[id^="layout_div"]').removeClass('col-md-12').addClass('col-md-9');
             });
+
             $('.list-group a').on('click', function () {
-                var selector = $(this).text();
-                $('.item').append("/", selector);             
-            });
+                var $this = $(this),
+                    $bc = $('<div class="item"></div>');
+
+                $this.parents('li').each(function (i, parent) {
+                    var i = $(parent).children('a').text();
+                    $bc.prepend(' / ', i);
+                    parent = i;
+                });
+                $('.item').html($bc.prepend('<a href="#"> Home</a>'));
+            })
+
+            //$('.list-group a').on('click', function () {
+            //    var bc = $(".item").empty();
+            //    $(this).parents('li').each(function (i, parent) {
+            //        var atxt = $(parent).children('a').text();
+            //        bc.prepend(' / ', atxt);
+            //    });
+            //    bc.prepend('<a href="#home">Home</a>');
+            //})
+
         })
     </script>
 </head>
 <body>
-
-
     @{if (ViewBag.wc == "tc")
             {
                 Html.RenderPartial("_PageheaderTenant");
@@ -124,44 +140,42 @@
 
             }
     }
-    <div id="tenatDtls" class="container-fluid">                  
-            <div class="row">
-                <div class="col-md-3 side">
-                    @if (ViewBag.wc == "tc")
-                    {
-                        Html.RenderPartial("_SidebarMenu");
-                    }
-                    else if (ViewBag.wc == "dc")
-                    {
-                        Html.RenderPartial("_SidebarDev");
-                    }
-                    else
-                    {
-                        Html.RenderPartial("_SidebarmenuTUser");
+    <div id="tenatDtls" class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 side">
+                @if (ViewBag.wc == "tc")
+                {
+                    Html.RenderPartial("_SidebarMenu");
+                }
+                else if (ViewBag.wc == "dc")
+                {
+                    Html.RenderPartial("_SidebarDev");
+                }
+                else
+                {
+                    Html.RenderPartial("_SidebarmenuTUser");
 
-                    }
+                }
 
-                </div>
-                <div class="col-md-9 col-sm-12 col-xs-12">
-                    <div class="breadcrumb">
-                        <div class="item">
-                            <a href="#">Home</a>
-                        </div>
-                    </div>
-                </div>
-                <div id="layout_div" class="col-md-9 col-sm-12 col-xs-12 main-cont">
-                    <i class="fa fa-spinner fa-pulse fa-4x fa-fw center-block" id="loader" aria-hidden="true" style="display:none;margin:200px 400px;color:#808080;">  </i>
-                    @RenderBody()
-                    @RenderSection("EbHead", false)
+            </div>
+            <div class="col-md-9 col-sm-12 col-xs-12" style="padding:0;">
+                <div class="item">
+                    <a href="#"> Home/</a>
                 </div>
             </div>
+            <div id="layout_div" class="col-md-9 col-sm-12 col-xs-12 main-cont">
+                <i class="fa fa-spinner fa-pulse fa-4x fa-fw center-block" id="loader" aria-hidden="true" style="display:none;margin:200px 400px;color:#808080;">  </i>
+                @RenderBody()
+                @RenderSection("EbHead", false)
+            </div>
         </div>
+    </div>
 </body>
 </html>
 <style>
-.breadcrumb{
-    background-color:white;
-    color:#337ab7;
-    margin-top:54px;
-}
+    .item {
+        color: #337ab7;
+        margin-top: 57px;
+        margin-bottom:10px;
+    }
 </style>

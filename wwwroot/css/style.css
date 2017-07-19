@@ -519,11 +519,22 @@ footer {
     height: 100%;
 }
 
-.list-group ul li {
+.list-group ul li{
     border: none;
     line-height: 28px;
     display: block;
     margin-left: 0px;
+    
+}
+list-group-item:last-child {
+    margin-bottom: 0;
+    border-bottom-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}
+
+list-group-item:first-child {
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
 }
 /*sidebar end*/
 .main-cont {
@@ -535,13 +546,14 @@ footer {
     padding-right: 7px;
     padding-bottom: 7px;
 }
-
-.side a {
-    padding-bottom: 4px;
+.list-group a{
+    padding:0;
+    padding-left:5px;
+    
 }
-
 .side i {
     padding-right: 5px;
+    padding-top:5px;
 }
 /*ebObject list*/
 
@@ -563,12 +575,12 @@ footer {
     margin-top: 9%;
 }
 @media (min-width: 992px){
-.col-md-12 {
+#tenatDtls .col-md-12 {
     width: 98% !important;
         margin-left: 10px;
     padding-right: 10px;
     }
-    .col-md-9 {
+    #tenatDtls .col-md-9 {
         width: 80% !important;
     }
 }

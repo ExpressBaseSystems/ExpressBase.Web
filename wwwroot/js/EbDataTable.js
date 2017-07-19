@@ -126,10 +126,7 @@ var EbDataTable = function (settings) {
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
-        //if (this.filterBox !== null && this.dtsettings.directLoad !== true)
-        this.filterBox.collapse('hide');
-        //this.filterbtn = $('#4filterbtn');
-        //this.clearfilterbtn = $("#clearfilterbtn_"+this.tableId);
+        this.collapseFilter();
         this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
@@ -214,7 +211,7 @@ var EbDataTable = function (settings) {
                 o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
             o.lengthMenu = this.ebSettings.lengthMenu;
 
-            o.dom = "<'col-sm-2'l><'col-sm-1'i><'col-sm-4'B><'col-sm-5'p>rt";
+            o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
             o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         }
         else if (this.dtsettings.directLoad) {
@@ -226,7 +223,13 @@ var EbDataTable = function (settings) {
         //o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
-        o.language = { processing: "<div class='fa fa-spinner fa-pulse  fa-3x fa-fw'></div>", info: "_START_ - _END_ / _TOTAL_" };
+        o.language = {
+            processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>", info: "_START_ - _END_ / _TOTAL_",
+            paginate: {
+                "previous": "Prev"
+            },
+            lengthMenu: "_MENU_ / Page",
+        };
         o.columns = this.ebSettings.columns;
         o.order = [];
         o.deferRender = true;
@@ -250,6 +253,7 @@ var EbDataTable = function (settings) {
     };
 
     this.ajaxData = function (dq) {
+        
         delete dq.columns; delete dq.order; delete dq.search;
         dq.Id = this.dsid;
         dq.Token = getToken();
@@ -290,17 +294,18 @@ var EbDataTable = function (settings) {
     this.btnGoClick = function (e) {
         var controlIds = ["datefrom", "dateto"];// temp
         
-        if (isValid(controlIds)) {
-            if (!this.isSecondTime) {
-                this.isSecondTime = true;
-                this.RenderGraphModal();
-                this.getColumns();
-            }
-            else {
-                this.filterBox.collapse("hide");
-                this.Api.ajax.reload();
-            }
+        //if (isValid(controlIds)) {
+        this.btnGo.attr("disabled", true);
+        if (!this.isSecondTime) {
+            this.isSecondTime = true;
+            this.RenderGraphModal();
+            this.getColumns();
         }
+        else{
+            this.Api.ajax.reload();
+        }
+            
+       // }
         maxd();
         //eval(jsFunArr[0]);
         e.preventDefault();
@@ -422,6 +427,7 @@ var EbDataTable = function (settings) {
             if (this.chartJs !== null)
                 this.chartJs.drawGraphHelper(this.Api.data());
         }
+        this.btnGo.attr("disabled", false);
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -653,6 +659,9 @@ var EbDataTable = function (settings) {
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
         $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsModal.bind(this));
+        $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
+        //$(this.filterBox).off("toggle").on("toggle", this.modifyFilterBox.bind(this));
+        
     };
 
     this.GenerateButtons = function () {
@@ -676,7 +685,9 @@ var EbDataTable = function (settings) {
             "</div>" +
             "</div>" +
             "<a id='" + this.tableId + "_btnSettings' class='btn btn-default' data-toggle='modal'  data-target='#settingsmodal'><i class='fa fa-cog' aria-hidden='true'></i></a>" +
-
+            "<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
+                   " <i class='fa fa-chevron-down' aria-hidden='true'></i>"+
+               " </div>"+
          "</div>");
     };
     //href='http://dev.eb_roby_dev.localhost:53431/Tenant/DVEditor #'
@@ -994,7 +1005,7 @@ var EbDataTable = function (settings) {
                     "</a>" +
                " </li>");
         $("#table_tabcontent").append("<div id='dv" + this.linkDV + "_tab_" + index + "' class='tab-pane active'>" +
-                "<div id='TableControls_dv" + this.linkDV + "_" + index + "' class = 'well well-sm'>" +
+                "<div id='TableControls_dv" + this.linkDV + "_" + index + "' class = 'well well-sm' style='margin-bottom:5px!important;'>" +
                    " <div style='display: inline;'>" +
                     "    <label id='dvName_lbldv" + this.linkDV + "_" + index + "'></label>" +
                    " </div>" +
@@ -1457,6 +1468,19 @@ var EbDataTable = function (settings) {
     //        tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#"}'));
     //};
 
+    this.collapseFilter = function () {
+        this.filterBox.toggle();
+        if (this.filterBox.css("display") == "none") {
+            $("#btnCollapse" + this.tableId).children().remove();
+            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-down' aria-hidden='true'></i>")
+        }
+        else {
+            $("#btnCollapse" + this.tableId).children().remove();
+            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
+        }
+    };
+
+    
     this.updateRenderFunc = function () {
         $.each(this.ebSettings.columns, this.updateRenderFunc_Inner.bind(this));
     };

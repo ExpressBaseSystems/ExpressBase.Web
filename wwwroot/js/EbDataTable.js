@@ -126,6 +126,7 @@ var EbDataTable = function (settings) {
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
+        this.collapseFilter();
         this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
@@ -210,7 +211,7 @@ var EbDataTable = function (settings) {
                 o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
             o.lengthMenu = this.ebSettings.lengthMenu;
 
-            o.dom = "<'row'<'form-inline'liBp>>rt";
+            o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
             o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         }
         else if (this.dtsettings.directLoad) {
@@ -252,7 +253,7 @@ var EbDataTable = function (settings) {
     };
 
     this.ajaxData = function (dq) {
-        this.collapseFilter();
+        
         delete dq.columns; delete dq.order; delete dq.search;
         dq.Id = this.dsid;
         dq.Token = getToken();
@@ -294,8 +295,15 @@ var EbDataTable = function (settings) {
         var controlIds = ["datefrom", "dateto"];// temp
         
         //if (isValid(controlIds)) {
-                this.RenderGraphModal();
-                this.getColumns();
+        this.btnGo.attr("disabled", true);
+        if (!this.isSecondTime) {
+            this.isSecondTime = true;
+            this.RenderGraphModal();
+            this.getColumns();
+        }
+        else{
+            this.Api.ajax.reload();
+        }
             
        // }
         maxd();
@@ -419,6 +427,7 @@ var EbDataTable = function (settings) {
             if (this.chartJs !== null)
                 this.chartJs.drawGraphHelper(this.Api.data());
         }
+        this.btnGo.attr("disabled", false);
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -651,6 +660,7 @@ var EbDataTable = function (settings) {
         //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
         $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsModal.bind(this));
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
+        //$(this.filterBox).off("toggle").on("toggle", this.modifyFilterBox.bind(this));
         
     };
 
@@ -995,7 +1005,7 @@ var EbDataTable = function (settings) {
                     "</a>" +
                " </li>");
         $("#table_tabcontent").append("<div id='dv" + this.linkDV + "_tab_" + index + "' class='tab-pane active'>" +
-                "<div id='TableControls_dv" + this.linkDV + "_" + index + "' class = 'well well-sm'>" +
+                "<div id='TableControls_dv" + this.linkDV + "_" + index + "' class = 'well well-sm' style='margin-bottom:5px!important;'>" +
                    " <div style='display: inline;'>" +
                     "    <label id='dvName_lbldv" + this.linkDV + "_" + index + "'></label>" +
                    " </div>" +
@@ -1460,12 +1470,17 @@ var EbDataTable = function (settings) {
 
     this.collapseFilter = function () {
         this.filterBox.toggle();
-        if(this.filterBox.css("display")=="none")
-            this.btnGo.attr("disabled", true);
-        else 
-            this.btnGo.attr("disabled", false);
+        if (this.filterBox.css("display") == "none") {
+            $("#btnCollapse" + this.tableId).children().remove();
+            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-down' aria-hidden='true'></i>")
+        }
+        else {
+            $("#btnCollapse" + this.tableId).children().remove();
+            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
+        }
     };
 
+    
     this.updateRenderFunc = function () {
         $.each(this.ebSettings.columns, this.updateRenderFunc_Inner.bind(this));
     };

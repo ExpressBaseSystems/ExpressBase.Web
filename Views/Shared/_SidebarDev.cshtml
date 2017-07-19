@@ -1,42 +1,45 @@
 ﻿@using ExpressBase.Objects;
 <div class="list-group">
-    
-        <a href="#" class="list-group-item">
-            <i class="fa fa-align-right fa-rotate-90"></i> Applications
-        </a>
-        <a href="#" class="list-group-item">
+    <ul style="padding-left:0;">
+        <li>
+            <a href="#" class="list-group-item">
+                <i class="fa fa-align-right"></i> Applications
+            </a>
+        </li>
+        <li><a href="#" class="list-group-item">
             <i class="fa fa-cog fa-fw"></i> Modules
-        </a>      
-        <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown2">
-            <i class="fa-object-group"></i>Objects<i class="fa fa-caret-down pull-right"></i>
-        </a>
-        <ul class="sub-menu collapse" id="dropdown2">
-            <li onclick="LoadObjectList44(9)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=9"> Applications</a></li>
-            <li onclick="LoadObjectList44(2)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=2"> Data Sources</a></li>
-            <li><i class="fa fa-caret-right"></i><a href="#"> Filter Dialogs</a></li>
-            <li><i class="fa fa-caret-right"></i><a href="#"> Forms</a></li>
-            <li><i class="fa fa-caret-right"></i><a href="#"> Javascript Functions</a></li>
-            <li><i class="fa fa-caret-right"></i><a href="#"> Javascript Validators</a></li>
-            <li><i class="fa fa-caret-right"></i><a href="#"> Reports</a></li>
-            <li onclick="LoadObjectList44(5)"><i class="fa fa-caret-right"></i><a href="#"> Sql Functions</a></lionclick="LoadObjectList44(11)">
-            <li><i class="fa fa-caret-right"></i><a href="#"> Sql Validators</a></li>
-            <li onclick="LoadObjectList44(11)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=11"> Data Visualizations</a></li>
-            <li><i class="fa fa-caret-right"></i><a href="#"> Views</a></li>
-        </ul>
-        
-
+        </a></li>
+        <li>
+            <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown2">
+                <i class="fa fa-object-group"></i>Objects<i class="fa fa-caret-down pull-right"></i>
+            </a>
+            <ul class="sub-menu collapse" id="dropdown2">
+                <li onclick="LoadObjectList44(9)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=9"> Applications</a></li>
+                <li onclick="LoadObjectList44(2)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=2"> Data Sources</a></li>
+                <li><i class="fa fa-caret-right"></i><a href="#"> Filter Dialogs</a></li>
+                <li><i class="fa fa-caret-right"></i><a href="#"> Forms</a></li>
+                <li><i class="fa fa-caret-right"></i><a href="#"> Javascript Functions</a></li>
+                <li><i class="fa fa-caret-right"></i><a href="#"> Javascript Validators</a></li>
+                <li><i class="fa fa-caret-right"></i><a href="#"> Reports</a></li>
+                <li onclick="LoadObjectList44(5)"><i class="fa fa-caret-right"></i><a href="#"> Sql Functions</a></li>
+                <li><i class="fa fa-caret-right"></i><a href="#"> Sql Validators</a></li>
+                <li onclick="LoadObjectList44(11)"><i class="fa fa-caret-right"></i><a href="EbObjectList?type=11"> Data Visualizations</a></li>
+                <li><i class="fa fa-caret-right"></i><a href="#"> Views</a></li>
+            </ul>
+        </li>
+    </ul>
 </div>
 <script>
     function LoadObjectList44(type44) {
-    event.preventDefault();
-    var _container = $("#layout_div");
-    $('#loader').show();
-    $.ajax({
+        event.preventDefault();
+        var _container = $("#layout_div");
+        $('#loader').show();
+        $.ajax({
             url: "EbObjectList",
             type: "GET",
             cache: false,
             data: { "type": type44 },
-            success: function (result) {         
+            success: function (result) {
                 _container.html(result);
                 $('#loader').hide();
             }

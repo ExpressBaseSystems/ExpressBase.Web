@@ -229,7 +229,7 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.cid = subdomain[0];
                         whichconsole = "uc";
                     }
-                }
+                }                
                 else // TENANT CONSOLE
                 {
                     ViewBag.cid = "expressbase";

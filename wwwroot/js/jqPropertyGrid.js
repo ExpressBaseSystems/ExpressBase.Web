@@ -1,285 +1,4 @@
-﻿
-var Eb_PropertyGrid = function (id, obj) {
-    //params check
-    {
-        if (typeof obj === 'string') {
-            console.error('Eb_PropertyGrid got "string" parameter instead of "object"');
-            return null;
-        } else if (typeof id === 'object') {
-            console.error('Eb_PropertyGrid got "object" parameter instead of "string"');
-            return;
-        } else if (typeof obj !== 'object' || obj === null) {
-            console.error('Eb_PropertyGrid must get an object in order to initialize the grid.');
-            return;
-        }
-    }
-    this.Metas = obj.Metas;
-    delete obj.Metas;
-    this.PropsObj = obj;
-    this.$container = $("#" + id);
-
-    this.propNames = [];
-
-    this.MISC_GROUP_NAME = 'Misc';
-    this.GET_VALS_FUNC_KEY = 'pg.getValues';
-    this.pgIdSequence = 0;
-
-    this.propertyRowsHTML = { 'Misc': '' };
-    this.groupsHeaderRowHTML = {};
-    this.postCreateInitFuncs = [];
-    this.getValueFuncs = {};
-    this.pgId = 'pg' + (this.pgIdSequence++);
-    this.currGroup = null;
-    this.innerHTML = '<table class="pgTable">';
-
-    //alert("Metas:" + JSON.stringify(this.Metas));
-    //alert("PropsObj:" + JSON.stringify(this.PropsObj));
-
-    this.isContains = function (obj, val) {
-        for (var i = 0; i < obj.length; i++)
-            if (obj[i].name === val)
-                return true;
-        return false;
-    };
-
-    this.buildRows = function () {
-
-        for (var prop in this.PropsObj) {
-            // Skip if this is not a direct property, a function, or its meta says it's non browsable
-            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop))
-                continue;
-
-            // Check what is the group of the current property or use the default 'Other' group
-            this.currGroup = (this.Metas[this.propNames.indexOf(prop)]).group || this.MISC_GROUP_NAME;
-
-            // If this is the first time we run into this group create the group row
-            if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup])
-                this.groupsHeaderRowHTML[this.currGroup] = this.getGroupHeaderRowHtml(this.currGroup);
-
-            // Initialize the group cells html
-            this.propertyRowsHTML[this.currGroup] = this.propertyRowsHTML[this.currGroup] || '';
-
-            // Append the current cell html into the group html
-            this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop)], (this.Metas[this.propNames.indexOf(prop)]).options);
-
-        }
-    };
-
-    this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell">' + displayName + '</td></tr>';
-    }
-
-    this.init = function () {
-        for (var i = 0; i < this.Metas.length; i++)
-            this.propNames.push(this.Metas[i].name);
-
-        this.buildRows();
-        this.buildGrid();
-    };
-
-
-    this.buildGrid = function () {
-        // Now we have all the html we need, just assemble it
-        var innerHTML = '<table class="pgTable">';
-        for (var group in this.groupsHeaderRowHTML) {
-            // Add the group row
-            innerHTML += this.groupsHeaderRowHTML[group];
-            // Add the group cells
-            innerHTML += this.propertyRowsHTML[group];
-        }
-
-        // Finally we add the 'Other' group (if we have something there)
-        if (this.propertyRowsHTML[this.MISC_GROUP_NAME]) {
-            innerHTML += this.getGroupHeaderRowHtml(this.MISC_GROUP_NAME);
-            innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
-        }
-
-        // Close the table and apply it to the div
-        innerHTML += '</table>';
-        console.log("innerHTML: \n\n"+innerHTML);
-        this.$container.html(innerHTML);
-    };
-    
-
-    
-
-
-
-    this.assembleHtml = function () {
-        // Now we have all the html we need, just assemble it
-        for (var group in this.groupsHeaderRowHTML) {
-            // Add the group row
-            this.innerHTML += this.groupsHeaderRowHTML[group];
-            // Add the group cells
-            innerHTML += this.propertyRowsHTML[group];
-        }
-
-        // Finally we add the 'Other' group (if we have something there)
-        if (this.propertyRowsHTML[OTHER_GROUP_NAME]) {
-            this.innerHTML += this.getGroupHeaderRowHtml(this.MISC_GROUP_NAME);
-            this.innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
-        }
-
-        // Close the table and apply it to the div
-        innerHTML += '</table>';
-        this.html(innerHTML);
-
-    }
-
-    this.getPropertyRowHtml = function (name, value, meta, options) {
-        {
-            //if (!name) {
-            //    return '';
-            //}
-
-            //meta = meta || {};
-            //// We use the name in the meta if available
-            //var displayName = meta.name || name;
-
-            //// check if type is registered in customTypes
-            //var customTypes = options.customTypes;
-            //var isCustomType = false;
-            //for (var customType in customTypes) {
-            //    if (type === customType) {
-            //        isCustomType = customTypes[customType];
-            //    }
-            //}
-
-            //// If value was handled by custom type
-            //if (isCustomType !== false) {
-            //    valueHTML = isCustomType.html(elemId, name, value, meta);
-            //    if (getValueFuncs) {
-            //        if (isCustomType.hasOwnProperty('makeValueFn')) {
-            //            getValueFuncs[name] = isCustomType.makeValueFn(elemId, name, value, meta);
-            //        } else if (isCustomType.hasOwnProperty('valueFn')) {
-            //            getValueFuncs[name] = isCustomType.valueFn;
-            //        } else {
-            //            getValueFuncs[name] = function () {
-            //                return $('#' + elemId).val();
-            //            };
-            //        }
-            //    }
-            //}
-            //else
-        }
-        var valueHTML;
-        var type = meta.editor || '';
-        var elemId = this.pgId + name;
-
-        // If boolean create checkbox
-        if (type === 0 || typeof value === 'boolean') {
-            valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + name + '"' + (value ? ' checked' : '') + ' />';
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return $('#' + elemId).prop('checked');
-                };
-            }
-
-            // If options create drop-down list
-        } else if (type === 1 && Array.isArray(meta.options)) {
-            valueHTML = this.getSelectOptionHtml(elemId, value, meta.options);
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return $('#' + elemId).val();
-                };
-            }
-
-            // If number and a jqueryUI spinner is loaded use it
-        } else if (type === 2) {
-            valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
-            //if (postCreateInitFuncs) {
-            //    postCreateInitFuncs.push(initSpinner(elemId, meta.options));
-            //}
-
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return parseInt($('#' + elemId).val());
-                };
-            }
-
-            // If color and we have the spectrum color picker use it
-        } else if (type === 3 && typeof $.fn.spectrum === 'function') {
-            valueHTML = '<input type="color" id="' + elemId + '" style="width:100%; height: 21px;" />';
-            if (this.postCreateInitFuncs) {
-                this.postCreateInitFuncs.push(this.initColorPicker(elemId, value, meta.options));
-            }
-
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return $('#' + elemId).spectrum('get').toHexString();
-                };
-            }
-
-            // If label (for read-only)
-        } else if (type === 4) {
-            valueHTML = '<label for="' + elemId + '">' + value + '</label>';
-
-            // Default is textbox
-        } else {
-            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></input>';
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return $('#' + elemId).val();
-                };
-            }
-        }
-
-        if (typeof meta.description === 'string' && meta.description &&
-			(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
-            this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
-        }
-
-        if (meta.colspan2) {
-            return '<tr class="pgRow"><td colspan="2" class="pgCell">' + valueHTML + '</td></tr>';
-        } else {
-            return '<tr class="pgRow"><td class="pgCell">' + name + '</td><td class="pgCell">' + valueHTML + '</td></tr>';
-        }
-    };
-   
-    this.getSelectOptionHtml = function (id, selectedValue, options) {
-        selectedValue = selectedValue || '';
-        if (options === null)
-            return;
-
-        var html = "<select class='selectpicker' data-live-search='true'>";
-
-        for (var i = 0; i < options.length; i++)
-            html += "<option data-tokens='ketchup mustard'>" + options[i] + "</option>";
-
-        html += "</select><input type='hidden' value='############' id='" + id + "'>";
-
-        return html;
-    }
-
-    this.initColorPicker = function (id, color, options) {
-        if (!id)
-            return null;
-
-        var opts = {};
-        $.extend(opts, options);
-        if (typeof color === 'string')
-            opts.color = color;
-
-        return function onColorPickerInit() {
-            $('#' + id).spectrum(opts);
-        };
-    }
-    
-    this.init();
-};
-
-
-
-var obj = new TextBoxObj("text0");
-var id = "propGrid";
-var q = new Eb_PropertyGrid(id, obj);
-
-
-
-
-
-
-/**
+﻿/**
  * jqPropertyGrid
  * https://github.com/ValYouW/jqPropertyGrid
  * Author: YuvalW (ValYouW)
@@ -611,5 +330,29 @@ var q = new Eb_PropertyGrid(id, obj);
         };
     }
 
+    /**
+	 * Handler for the spinner change event
+	 */
+    function onSpinnerChange() {
+        var $spinner = $(this);
+        var value = $spinner.spinner('value');
 
+        // If the value is null and the real value in the textbox is string we empty the textbox
+        if (value === null && typeof $spinner.val() === 'string') {
+            $spinner.val('');
+            return;
+        }
+
+        // Now check that the number is in the min/max range.
+        var min = $spinner.spinner('option', 'min');
+        var max = $spinner.spinner('option', 'max');
+        if (typeof min === 'number' && this.value < min) {
+            this.value = min;
+            return;
+        }
+
+        if (typeof max === 'number' && this.value > max) {
+            this.value = max;
+        }
+    }
 })(window.$);

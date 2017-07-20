@@ -185,7 +185,7 @@
     box-shadow: none;
 }
 
-input[type="color"] {
+.Eb-ctrlContainer input[type="color"] {
     height: auto;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
@@ -196,8 +196,6 @@ input[type="color"] {
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
 }
-
-
 
 .numinput {
     -webkit-tap-highlight-color: rgba(255,255,255,0);
@@ -335,21 +333,6 @@ input[type="color"] {
 .tdheight {
     vertical-align: bottom;
 }
-
-/*.DDdiv {
-    border: solid 1px buttonface;
-    border-top-color: none;
-}*/
-
-/*.DDdiv {
-    border: solid 1px #666;
-    padding: 6px;
-    border-top-color: none;
-    position: absolute;
-    z-index: 2147483647;
-    background: white;
-    padding-right: 0px;
-}*/
 
 .DDdiv {
     position: absolute;

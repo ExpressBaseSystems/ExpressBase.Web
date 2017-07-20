@@ -1,36 +1,56 @@
-﻿var TextBoxObj = function (id) {
-    this.$type = "ExpressBase.Objects.EbTextBox, ExpressBase.Objects",
-    this.Name = id,
-    this.type = "EbTextBox",
-    this.IsContainer = false,
-    this.props = {
-        Name: id,
-        Label: "",
-        Value: "",
-        Textmode: "",
-        TextTransform: "Normal",
-        Test: "Normal",
-        Font: "consolace",
-        LabelForeColor: "a3ac03",
-        LabelBackColor: "ffac03",
-        TextForeColor: "a3aff3",
-        TextBackColor: "f3acff",
-        Height: "100",
-        AutoCompleteOff: false
-    },
-    this.meta = {
-        Parent: { group: 'meta ', name: 'Parent', type: 'label' },
-        Sibling: { group: 'meta ', name: 'Sibling', type: 'label' },
-        AutoCompleteOff: { group: 'Behavior ', name: 'AutoCompleteOff', type: 'boolean' },
-        height: { group: 'Layout ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
-        LabelForeColor: { group: 'Layout', name: 'LabelForeColor', type: 'color', options: { preferredFormat: 'hex' } },
-        fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-        LabelBackColor: { group: 'Layout', name: 'LabelBackColor', type: 'color', options: { preferredFormat: 'hex' } },
-        TextForeColor: { group: 'Layout', name: 'TextForeColor', type: 'color', options: { preferredFormat: 'hex' } },
-        TextBackColor: { group: 'Layout', name: 'TextBackColor', type: 'color', options: { preferredFormat: 'hex' } },
-        TextTransform: { group: 'Behavior ', name: 'TextTransform', type: 'BootstrapDD', options: ['Normal', "lower case", "UPPER CASE"] },
-        Test: { group: 'Behavior ', name: 'Test', type: 'BootstrapSelect', options: ['Normal', "lower case", "UPPER CASE"] },
-    }
+﻿//var TextBoxObj = function (id) {
+//    this.$type = "ExpressBase.Objects.EbTextBox, ExpressBase.Objects",
+//    this.Name = id,
+//    this.type = "EbTextBox",
+//    this.IsContainer = false,
+//    this.props = {
+//        Name: id,
+//        Label: "",
+//        Value: "",
+//        Textmode: "",
+//        TextTransform: "Normal",
+//        Test: "Normal",
+//        Font: "consolace",
+//        LabelForeColor: "a3ac03",
+//        LabelBackColor: "ffac03",
+//        TextForeColor: "a3aff3",
+//        TextBackColor: "f3acff",
+//        Height: "100",
+//        AutoCompleteOff: false
+//    },
+//    this.meta = {
+//        AutoCompleteOff: { name: 'AutoCompleteOff', group: 'Behavior ', type: 'boolean' },
+//        height: { group: 'Layout ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
+//        LabelForeColor: { group: 'Layout', name: 'LabelForeColor', type: 'color', options: { preferredFormat: 'hex' } },
+//        fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
+//        LabelBackColor: { group: 'Layout', name: 'LabelBackColor', type: 'color', options: { preferredFormat: 'hex' } },
+//        TextForeColor: { group: 'Layout', name: 'TextForeColor', type: 'color', options: { preferredFormat: 'hex' } },
+//        TextBackColor: { group: 'Layout', name: 'TextBackColor', type: 'color', options: { preferredFormat: 'hex' } },
+//        TextTransform: { group: 'Behavior ', name: 'TextTransform', type: 'BootstrapDD', options: ['Normal', "lower case", "UPPER CASE"] },
+//        Test: { group: 'Behavior ', name: 'Test', type: 'BootstrapSelect', options: ['Normal', "lower case", "UPPER CASE"] },
+//    }
+//};
+
+var TextBoxObj = function (id) {
+    this.$type = 'ExpressBase.Objects.EbTextBox';
+    this.Id = id;
+    this.Name = id;
+    this.MaxLength = 0;
+    this.TextTransform = '--select--';
+    this.TextMode = '--select--';
+    this.PlaceHolder = '';
+    this.Text = '';
+    this.AutoCompleteOff = false;
+    this.BackColor = '#FFFFFF';
+    this.ForeColor = '#FFFFFF';
+    this.Metas = [{ "name": "MaxLength", "group": "Behavior", "editor": 2, "options": null },
+	{ "name": "TextTransform", "group": "Behavior", "editor": 1, "options": ["Normal", "LowerCase", "UpperCase"] },
+	{ "name": "TextMode", "group": "Behavior", "editor": 1, "options": ["SingleLine", "Email", "Password", "Color"] },
+	{ "name": "PlaceHolder", "group": "Behavior", "editor": 5, "options": null },
+	{ "name": "Text", "group": "Appearance", "editor": 5, "options": null },
+	{ "name": "AutoCompleteOff", "group": "Behavior", "editor": 0, "options": null },
+	{ "name": "BackColor", "group": "Appearance", "editor": 3, "options": null },
+	{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null }]
 };
 
 var GridViewObj = function (id) {
@@ -315,7 +335,8 @@ var formBuilder = function (toolBoxid, formid) {
 
         setTimeout(this.SetTimeOutFn.bind(this), 1);
 
-        $('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
+var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
+        //$('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
 
         $('.selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();

@@ -60,7 +60,8 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjType = (int)EbObjectType.DataSource;
             ViewBag.ObjectName = "New";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
-            ViewBag.FilterDialogs = GetFilterDialogs();
+            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
         }
 
@@ -91,7 +92,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Status = element.Status;
                 ViewBag.VersionNumber = element.VersionNumber;
                 ViewBag.EditorHint = "CodeMirror.hint.sql";
-                ViewBag.EditorMode = "text/x-sql";
+                ViewBag.EditorMode = "text/x-pgsql";
                 ViewBag.Icon = "fa fa-database";
                 ViewBag.ObjType = (int)EbObjectType.DataSource;
                 ViewBag.FilterDialogId = dsobj.FilterDialogId;
@@ -101,8 +102,9 @@ namespace ExpressBase.Web.Controllers
 
                 //}
             }
-            ViewBag.FilterDialogs = GetFilterDialogs();
-            ViewBag.Allversions = GetVersions2(obj_id);
+            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+            ViewBag.Allversions = GetVersions(obj_id);
+            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
         }
 
@@ -112,14 +114,16 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Header = "New Sql Function";
             ViewBag.VersionNumber = 1;
             ViewBag.Obj_id = 0;
+            ViewBag.Code = "CREATE OR REPLACE FUNCTION function_name(p1 type, p2 type) \nRETURNS type AS \n$BODY$ \nBEGIN \n\t-- logic \nEND \n$BODY$ \nLANGUAGE language_name";
             ViewBag.IsNew = "true";
             ViewBag.EditorHint = "CodeMirror.hint.sql";
-            ViewBag.EditorMode = "text/x-sql";
+            ViewBag.EditorMode = "text/x-pgsql";
             ViewBag.Icon = "fa fa-database";
             ViewBag.ObjType = (int)EbObjectType.SqlFunction;
-            ViewBag.ObjectName = "New";
+            ViewBag.ObjectName = "Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
-            ViewBag.FilterDialogs = GetFilterDialogs();
+            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
         }
 
@@ -156,56 +160,41 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.FilterDialogId = dsobj.FilterDialogId;
 
             }
-            ViewBag.FilterDialogs = GetFilterDialogs();
-            ViewBag.Allversions = GetVersions2(obj_id);
+            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+            ViewBag.Allversions = GetVersions(obj_id);
             return View();
         }
-        public Dictionary<int, EbObjectWrapper> GetFilterDialogs()
+        
+        public Dictionary<int, EbObjectWrapper> GetObjects(int obj_type)
+        {
+            IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken); 
+                var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, Token = ViewBag.token });
+                var fdrlist = fdresultlist.Data;
+                Dictionary<int, EbObjectWrapper> objects_dict = new Dictionary<int, EbObjectWrapper>();
+                foreach (var element in fdrlist)
+                {
+                objects_dict[element.Id] = element;
+                }
+                return objects_dict;
+        }
+        public List<string> Getsqlfns(int obj_type)
         {
             IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, Token = ViewBag.token });
+            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, Token = ViewBag.token });
             var fdrlist = fdresultlist.Data;
-            Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
+            List<string> objects_list = new List<string>();
             foreach (var element in fdrlist)
             {
-                filterDialogs[element.Id] = element;
+                objects_list.Add(element.Name);
             }
-            return filterDialogs;
+            return objects_list;
         }
 
-        public Dictionary<int, EbObjectWrapper> GetSqlFns()
-        {
-            IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.SqlFunction, Token = ViewBag.token });
-            var fdrlist = fdresultlist.Data;
-            Dictionary<int, EbObjectWrapper> SqlFns = new Dictionary<int, EbObjectWrapper>();
-            foreach (var element in fdrlist)
-            {
-                SqlFns[element.Id] = element;
-            }
-            return SqlFns;
-        }
-
-        public List<EbObjectWrapper> GetVersions()
-        {
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["Id"]), VersionId = 0, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-            //List<EbObjectWrapper> ObjList = new List<EbObjectWrapper>();
-            //foreach (var element in rlist)
-            //{
-            //     ObjList.Add(element);
-
-            //}
-            return rlist;
-        }
-
-        //for call from another action
-        public List<EbObjectWrapper> GetVersions2(int objid)
+        public List<EbObjectWrapper> GetVersions(int objid)
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = 0, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = 0, Token = ViewBag.token });
             var rlist = resultlist.Data;
             return rlist;
         }
@@ -231,7 +220,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Name = _dict["name"],
                     Description = _dict["description"],
-                    Sql = _dict["code"],
+                    Sql = code_decoded,
                     ChangeLog = ds.ChangeLog,
                     EbObjectType = _EbObjectType,
                     FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
@@ -244,7 +233,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Name = _dict["name"],
                     Description = _dict["description"],
-                    Sql = _dict["code"],
+                    Sql = code_decoded,
                     ChangeLog = ds.ChangeLog,
                     EbObjectType = _EbObjectType,
                     FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
@@ -254,7 +243,7 @@ namespace ExpressBase.Web.Controllers
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = _dict["changeLog"];
             ds.Token = ViewBag.token;//removed tcid
-            ds.Relations = "10,11,12,13";
+            ds.Relations = _dict["rel_obj"];
             ViewBag.IsNew = "false";
             var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return Json("Success");
@@ -309,21 +298,24 @@ namespace ExpressBase.Web.Controllers
         //for ajax call
 
         [HttpPost]
-        public string VersionCodes(int objid)
+        public string VersionCodes(int objid, int objtype)
         {
-            //var req = this.HttpContext.Request.Form;
-            //var objid = Convert.ToInt32(req["objid"]);
-            // var vers_id = Convert.ToInt32(req["vers_id"]);
-            // var obj_type = (EbObjectType)Convert.ToInt32(req["obj_type"]);
-            //EbObjectType content;
-            //Enum.TryParse(req["obj_type"], out content);
+            var _EbObjectType = (EbObjectType)objtype;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = objid, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = objid, EbObjectType = objtype, Token = ViewBag.token });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
-                var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
-                ViewBag.Code = dsobj.Sql;
+                if (_EbObjectType == EbObjectType.DataSource)
+                {
+                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                    ViewBag.Code = dsobj.Sql;
+                }
+                if (_EbObjectType == EbObjectType.SqlFunction)
+                {
+                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbSqlFunction>(element.Bytea);
+                    ViewBag.Code = dsobj.Sql;
+                }
             }
             return ViewBag.Code;
         }

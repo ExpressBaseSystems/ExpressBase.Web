@@ -1,5 +1,5 @@
 ﻿var tabNum = 0;
-var DataSource = function (obj_id, is_new, ver_num, cid,type) {
+var DataSource = function (obj_id, is_new, ver_num, cid, type) {
     this.Obj_Id = obj_id;
     this.Name;
     this.Description;
@@ -25,14 +25,17 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
     this.Parameter_Count;
     this.SelectedFdId;
     this.FilterDId;
+    this.Rel_object;
+
     this.MyFd = new FilterDialog();
+
     this.Init = function () {
         this.SaveBtn = $('#save');
         this.CommitBtn = $('#commit');
         this.VersionHistBtn = $('#ver_his');
         this.CloseTabBtn = $('.closeTab');
         this.Fd_DropDown = $('#fd');
-       
+
         $(this.VersionHistBtn).off("click").on("click", this.VerHistory.bind(this));
         $(this.CloseTabBtn).off("click").on("click", this.deleteTab.bind(this));
         $(this.Fd_DropDown).off("change").on("change", this.SelectFD.bind(this));
@@ -40,7 +43,6 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
         $('#execute0').off("click").on("click", this.Execute.bind(this));
         $('#diff0').off("click").on("click", this.Differ.bind(this));
     }
-
 
     this.SetValues = function () {
         this.Code = window.editor.getValue();
@@ -62,12 +64,12 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
         $("#loader").show();
         $.post("../Dev/GetVersions",
                           {
-                              "Id": this.Obj_Id
+                              objid: this.Obj_Id
                           }, this.Version_List.bind(this));
     }
 
     this.Version_List = function (result) {
-         $("#loader").hide();
+        $("#loader").hide();
         this.SetValues();
         this.Versions = result;
         tabNum++;
@@ -109,14 +111,14 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
     };
 
     this.OpenPrevVer = function (e) {
-         $("#loader").show();
+        $("#loader").show();
         tabNum++;
         this.var_id = $(e.target).attr("data-id");
         this.HistoryVerNum = $(e.target).attr("data-verNum");
         this.changeLog = $(e.target).attr("data-changeLog");
         this.commitUname = $(e.target).attr("data-commitUname");
         this.commitTs = $(e.target).attr("data-commitTs");
-        $.post('../Dev/VersionCodes', { objid: this.var_id})
+        $.post('../Dev/VersionCodes', { objid: this.var_id, objtype: this.ObjectType })
         .done(this.VersionCode_success.bind(this));
     }
 
@@ -292,19 +294,24 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
     }
 
     this.Commit = function () {
-        $(".eb-loader").show();
+        $("#loader").show();
         $('.alert').remove();
         alert('commit');
+
+        this.SetValues();
+        if (this.ObjectType === 5) {
+            this.SetSqlFnName();
+        }
         if ($('#fd option:selected').text() === "Select Filter Dialog") {
             alert("Select A Filter Dialog");
-            $(".eb-loader").remove();
         }
         else {
-            this.SetValues();
+            this.SetValues();           
             this.FilterDId = $('#fd option:selected').val();
-            var Dswzd = new EbWizard("../Dev/ds_save", "../Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
-            Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num, this.FilterDId, this.ObjectType).DataSource;
+            this.GetUsedSqlFns();
+           
         }
+        $("#loader").hide();
     }
 
     $(this.SaveBtn).off("click").on("click", this.Save.bind(this));
@@ -314,11 +321,11 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
         this.SetValues();
         var result = this.Code.match(/\@\w+/g);
         var filterparams = [];
-        if (result.length > 0) {
+        if (result !== null) {
             for (var i = 0; i < result.length; i++) {
                 result[i] = result[i].substr(1);
                 if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby") {
-                //
+                    //
                 }
                 else {
                     if ($.inArray(result[i], filterparams) === -1)
@@ -382,7 +389,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
         }
 
         $("#versionNav a[href='#vernav" + Fd_Name + tabNum + "']").tab('show');
-    }
+    };
 
     this.Load_Table_Columns = function (result) {
         if (result === "") {
@@ -407,7 +414,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
             $(".eb-loader").hide();
             $('#filterDialog').modal('hide');
         }
-    }
+    };
 
     this.Load_tble_Data = function (dq) {
         delete dq.columns; delete dq.order; delete dq.search;
@@ -416,7 +423,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
         //dq.rToken = getrToken();
         dq.TFilters = [];
         dq.Params = this.Object_String_WithVal;
-    }
+    };
 
     this.Load_Fd = function () {
         $.post("../Dev/GetByteaEbObjects_json", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
@@ -447,7 +454,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
             $('#saveFilter').hide();
             $('#run').show();
         });
-    }
+    };
 
     this.CallDiffer = function (selected_ver_number, data) {
         var curr_ver = $("#versionNav li.active a").attr("data-verNum");// data-token
@@ -467,13 +474,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
             })
        .done(this.showDiff.bind(curr_ver, selected_ver_number, this));
         }
-    }
+    };
 
     this.showDiff = function (new_ver_num, old_ver_num, data) {
-       var getNav = $("#versionNav li.active a").attr("href");
-       var verid = $(getNav + ' #selected_Ver option:selected').val();
-       alert("new_ver_num=" + new_ver_num + "   old_ver_num=" + old_ver_num + " verid=" + verid);
-   //  var vername = $(getNav + ' #selected_Ver option:selected').attr("data-tokens");
+        var getNav = $("#versionNav li.active a").attr("href");
+        var verid = $(getNav + ' #selected_Ver option:selected').val();
+        alert("new_ver_num=" + new_ver_num + "   old_ver_num=" + old_ver_num + " verid=" + verid);
+        //  var vername = $(getNav + ' #selected_Ver option:selected').attr("data-tokens");
         tabNum++;
         $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + verid + tabNum + "'> v." + old_ver_num + " v/s v." + new_ver_num + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
         $('#versionTab').append("<div id='vernav" + verid + tabNum + "' class='tab-pane fade'>");
@@ -487,7 +494,36 @@ var DataSource = function (obj_id, is_new, ver_num, cid,type) {
         $('#oldtext' + verid + tabNum).html("<div class='diffHeader'>v." + old_ver_num + "</div>" + data[0]);
         $('#newtext' + verid + tabNum).html("<div class='diffHeader'>v." + new_ver_num + "</div>" + data[1]);
         $("#loader").hide();
-    }
+    };
+
+    this.SetSqlFnName = function () {
+        var result = this.Code.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
+        if (result.length > 0) {
+            var fnName = result[1];
+            $('#obj_name').val(fnName);
+        }
+    };
+
+    this.GetUsedSqlFns = function () {
+        $.post("../Dev/GetObjects", { obj_type:5 }, this.FetchUsedSqlFns.bind(this));
+    };
+    
+    this.FetchUsedSqlFns = function (data) {
+        this.Rel_object = null;
+        var rel_arr = [];
+        $.each(data, this.FetchUsedSqlFns_inner.bind(this, rel_arr));
+        this.Rel_object = rel_arr.toString();
+        alert("this.Rel_object" + this.Rel_object);
+        var Dswzd = new EbWizard("../Dev/ds_save", "../Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
+        Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num, this.FilterDId, this.ObjectType, this.Rel_object).DataSource;
+    };
+
+    this.FetchUsedSqlFns_inner = function (rel_arr,i, sqlFn) {
+        if (this.Code.search(sqlFn.name) !== -1) {
+            rel_arr.push(i);
+        }
+    };
+
 }
 
 

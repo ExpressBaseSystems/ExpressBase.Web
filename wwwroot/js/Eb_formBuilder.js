@@ -31,6 +31,28 @@
 //    }
 //};
 
+var TextBoxObj = function (id) {
+    this.$type = 'ExpressBase.Objects.EbTextBox';
+    this.Id = id;
+    this.Name = id;
+    this.MaxLength = 0;
+    this.TextTransform = '--select--';
+    this.TextMode = '--select--';
+    this.PlaceHolder = '';
+    this.Text = '';
+    this.AutoCompleteOff = false;
+    this.BackColor = '#FFFFFF';
+    this.ForeColor = '#FFFFFF';
+    this.Metas = [{ "name": "MaxLength", "group": "Behavior", "editor": 2, "options": null },
+	{ "name": "TextTransform", "group": "Behavior", "editor": 1, "options": ["Normal", "LowerCase", "UpperCase"] },
+	{ "name": "TextMode", "group": "Behavior", "editor": 1, "options": ["SingleLine", "Email", "Password", "Color"] },
+	{ "name": "PlaceHolder", "group": "Behavior", "editor": 5, "options": null },
+	{ "name": "Text", "group": "Appearance", "editor": 5, "options": null },
+	{ "name": "AutoCompleteOff", "group": "Behavior", "editor": 0, "options": null },
+	{ "name": "BackColor", "group": "Appearance", "editor": 3, "options": null },
+	{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null }]
+};
+
 var GridViewObj = function (id) {
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
@@ -313,7 +335,8 @@ var formBuilder = function (toolBoxid, formid) {
 
         setTimeout(this.SetTimeOutFn.bind(this), 1);
 
-        $('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
+var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
+        //$('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
 
         $('.selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();

@@ -14,8 +14,6 @@
 /// <reference path="js/eb_datatable.js" />
 /// <reference path="js/eb_dragula.js" />
 /// <reference path="js/eb_formbuilder.js" />
-/// <reference path="js/eb_formbuilderpropertygrid.js" />
-/// <reference path="js/eb_jqpropertygrid.js" />
 /// <reference path="js/eb_objlist_tbl.js" />
 /// <reference path="js/Eb_PropertyGrid.js" />
 /// <reference path="js/eb_select.js" />
@@ -27,6 +25,7 @@
 /// <reference path="js/gridstack.jqueryui.min.js" />
 /// <reference path="js/gridstack.js" />
 /// <reference path="js/infra.js" />
+/// <reference path="js/jqpropertygrid.js" />
 /// <reference path="js/jquery mask plugin v1.14.9.js" />
 /// <reference path="js/jquery.cookie.js" />
 /// <reference path="js/jquery.datetimepicker.min.js" />

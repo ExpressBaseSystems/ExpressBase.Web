@@ -195,14 +195,15 @@
             extraKeys: { "Ctrl-Space": "autocomplete" },
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        }); 
+        });
 
         var orig = CodeMirror.hint.sql;
         CodeMirror.hint.sql = function (editor) {
-           // alert("asdasda");
             var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
-            inner.list.push("sql_fn_1");
-            inner.list.push("sql_fn_2");
+            var SqlFnList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SqlFns));
+            $.each(SqlFnList, function (i, fdj) {
+                inner.list.push(fdj);
+            });
             var cursor = editor.getCursor();
             var currentLine = editor.getLine(cursor.line);
             var start = cursor.ch;
@@ -233,7 +234,7 @@
 
     .CodeMirror {
         height: 500px;
-        background-color: azure;
+        background-color: ivory;
     }
 
     .table-responsive {

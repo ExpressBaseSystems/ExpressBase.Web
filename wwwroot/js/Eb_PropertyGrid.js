@@ -1,4 +1,244 @@
-﻿/**
+﻿function isContains(obj, val) {
+    for (var i = 0; i < obj.length; i++)
+        if (obj[i].name === val)
+            return true;
+    return false;
+};
+
+
+var TextBoxObj = function (id) {
+    this.$type = 'ExpressBase.Objects.EbTextBox';
+    this.Id = id;
+    this.Name = id;
+    this.MaxLength = 0;
+    this.TextTransform = '--select--';
+    this.TextMode = '--select--';
+    this.PlaceHolder = '';
+    this.Text = '';
+    this.AutoCompleteOff = false;
+    this.Metas = [{ "name": "MaxLength", "group": "Behavior", "editor": 4 }, { "name": "TextTransform", "group": "Behavior", "editor": 0 }, { "name": "TextMode", "group": "Behavior", "editor": 0 }, { "name": "PlaceHolder", "group": "Behavior", "editor": 5 }, { "name": "Text", "group": "Appearance", "editor": 5 }, { "name": "AutoCompleteOff", "group": "Behavior", "editor": 6 }]
+};
+
+
+
+var Eb_PropertyGrid = function (id, obj) {
+    //params check
+    {
+        if (typeof obj === 'string') {
+            console.error('Eb_PropertyGrid got "string" parameter instead of "object"');
+            return null;
+        } else if (typeof id === 'object') {
+            console.error('Eb_PropertyGrid got "object" parameter instead of "string"');
+            return;
+        } else if (typeof obj !== 'object' || obj === null) {
+            console.error('Eb_PropertyGrid must get an object in order to initialize the grid.');
+            return;
+        }
+    }
+    this.Metas = obj.Metas;
+    delete obj.Metas;
+    this.PropsObj = obj;
+    this.$container = $("#" + id);
+
+    this.MISC_GROUP_NAME = 'Misc';
+    this.GET_VALS_FUNC_KEY = 'pg.getValues';
+    this.pgIdSequence = 0;
+
+    this.propertyRowsHTML = { 'Misc': '' };
+    this.groupsHeaderRowHTML = {};
+    this.postCreateInitFuncs = [];
+    this.getValueFuncs = {};
+    this.pgId = 'pg' + (this.pgIdSequence++);
+    this.currGroup = null;
+    this.innerHTML = '<table class="pgTable">';
+
+    alert("Metas:" + JSON.stringify(this.Metas));
+    alert("PropsObj:" + JSON.stringify(this.PropsObj));
+
+
+
+    this.initHtml = function () {
+
+        for (var prop in this.PropsObj) {
+            // Skip if this is not a direct property, a function, or its meta says it's non browsable
+            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !isContains(this.Metas, prop)) {
+                continue;
+            }
+
+            alert("prop:" + prop);
+
+            //// Check what is the group of the current property or use the default 'Other' group
+            //this.currGroup = (meta[prop] && meta[prop].group) || this.MISC_GROUP_NAME;
+
+            //// If this is the first time we run into this group create the group row
+            //if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup]) {
+            //    this.groupsHeaderRowHTML[this.currGroup] = this.getGroupHeaderRowHtml(this.currGroup);
+            //}
+
+            //// Initialize the group cells html
+            //this.propertyRowsHTML[this.currGroup] = this.propertyRowsHTML[this.currGroup] || '';
+
+            //// Append the current cell html into the group html
+            //this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(pgId, prop, this.PropsObj[prop], meta[prop], postCreateInitFuncs, getValueFuncs, options);
+
+
+        }
+    };
+
+    this.getGroupHeaderRowHtml = function (displayName) {
+        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell">' + displayName + '</td></tr>';
+    }
+
+    this.init = function () {
+        this.initHtml();
+    };
+
+    this.assembleHtml = function () {
+        // Now we have all the html we need, just assemble it
+        for (var group in this.groupsHeaderRowHTML) {
+            // Add the group row
+            this.innerHTML += this.groupsHeaderRowHTML[group];
+            // Add the group cells
+            innerHTML += this.propertyRowsHTML[group];
+        }
+
+        // Finally we add the 'Other' group (if we have something there)
+        if (this.propertyRowsHTML[OTHER_GROUP_NAME]) {
+            this.innerHTML += this.getGroupHeaderRowHtml(this.MISC_GROUP_NAME);
+            this.innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
+        }
+
+        // Close the table and apply it to the div
+        innerHTML += '</table>';
+        this.html(innerHTML);
+
+    }
+
+    this.getPropertyRowHtml = function (pgId, name, value, meta, postCreateInitFuncs, getValueFuncs, options) {
+        if (!name) {
+            return '';
+        }
+
+        meta = meta || {};
+        // We use the name in the meta if available
+        var displayName = meta.name || name;
+        var type = meta.type || '';
+        var elemId = pgId + name;
+
+        var valueHTML;
+
+        // check if type is registered in customTypes
+        var customTypes = options.customTypes;
+        var isCustomType = false;
+        for (var customType in customTypes) {
+            if (type === customType) {
+                isCustomType = customTypes[customType];
+            }
+        }
+
+        // If value was handled by custom type
+        if (isCustomType !== false) {
+            valueHTML = isCustomType.html(elemId, name, value, meta);
+            if (getValueFuncs) {
+                if (isCustomType.hasOwnProperty('makeValueFn')) {
+                    getValueFuncs[name] = isCustomType.makeValueFn(elemId, name, value, meta);
+                } else if (isCustomType.hasOwnProperty('valueFn')) {
+                    getValueFuncs[name] = isCustomType.valueFn;
+                } else {
+                    getValueFuncs[name] = function () {
+                        return $('#' + elemId).val();
+                    };
+                }
+            }
+        }
+
+            // If boolean create checkbox
+        else if (type === 'boolean' || (type === '' && typeof value === 'boolean')) {
+            valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + name + '"' + (value ? ' checked' : '') + ' />';
+            if (getValueFuncs) {
+                getValueFuncs[name] = function () {
+                    return $('#' + elemId).prop('checked');
+                };
+            }
+
+            // If options create drop-down list
+        } else if (type === 'options' && Array.isArray(meta.options)) {
+            valueHTML = getSelectOptionHtml(elemId, value, meta.options);
+            if (getValueFuncs) {
+                getValueFuncs[name] = function () {
+                    return $('#' + elemId).val();
+                };
+            }
+
+            // If number and a jqueryUI spinner is loaded use it
+        } else if (typeof $.fn.spinner === 'function' && (type === 'number' || (type === '' && typeof value === 'number'))) {
+            valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
+            //if (postCreateInitFuncs) {
+            //    postCreateInitFuncs.push(initSpinner(elemId, meta.options));
+            //}
+
+            if (getValueFuncs) {
+                getValueFuncs[name] = function () {
+                    return parseInt($('#' + elemId).val());
+                };
+            }
+
+            // If color and we have the spectrum color picker use it
+        } else if (type === 'color' && typeof $.fn.spectrum === 'function') {
+            valueHTML = '<input type="text" id="' + elemId + '" style="width:100%" />';
+            if (postCreateInitFuncs) {
+                postCreateInitFuncs.push(initColorPicker(elemId, value, meta.options));
+            }
+
+            if (getValueFuncs) {
+                getValueFuncs[name] = function () {
+                    return $('#' + elemId).spectrum('get').toHexString();
+                };
+            }
+
+            // If label (for read-only)
+        } else if (type === 'label') {
+            if (typeof meta.description === 'string' && meta.description) {
+                valueHTML = '<label for="' + elemId + '" title="' + meta.description + '">' + value + '</label>';
+            } else {
+                valueHTML = '<label for="' + elemId + '">' + value + '</label>';
+            }
+
+            // Default is textbox
+        } else {
+            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"</input>';
+            if (getValueFuncs) {
+                getValueFuncs[name] = function () {
+                    return $('#' + elemId).val();
+                };
+            }
+        }
+
+        if (typeof meta.description === 'string' && meta.description &&
+			(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
+            displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
+        }
+
+        if (meta.colspan2) {
+            return '<tr class="pgRow"><td colspan="2" class="pgCell">' + valueHTML + '</td></tr>';
+        } else {
+            return '<tr class="pgRow"><td class="pgCell">' + displayName + '</td><td class="pgCell">' + valueHTML + '</td></tr>';
+        }
+    }
+
+    this.init();
+};
+
+var obj = new TextBoxObj("text0");
+var id = "propGrid";
+var q = new Eb_PropertyGrid(id, obj);
+
+
+
+
+
+
+/**
  * jqPropertyGrid
  * https://github.com/ValYouW/jqPropertyGrid
  * Author: YuvalW (ValYouW)

@@ -226,12 +226,53 @@ namespace ExpressBase.Web2.Controllers
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid, Token = ViewBag.token });            
-            ViewBag.dict = resultlist.Data;
-            List<string> DvOperations= new List<string>();
-            foreach (var Operations in Enum.GetValues(typeof(EbDataVisualization.Operations)))
-                DvOperations.Add(Operations.ToString());
-            ViewBag.DvOperations = DvOperations;
+            ViewBag.dict = resultlist.Data;            
             return View();          
+        }
+
+        [HttpPost]
+        public IActionResult ManageRoles(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            ViewBag.dict = resultlist.Data;
+            return View();
+        }
+
+        public string GetRowAndColumn(int ApplicationId,int ObjectType)
+        {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { DominantId= ApplicationId,EbObjectType = ObjectType, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            ViewBag.dict = resultlist.Data;
+
+            string checkbox = "";
+            string html = @"<thead>
+                <tr>
+                    <th> Objects </th>";
+
+            if (ObjectType == 2)
+            {
+                foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
+                {
+                    html += "<th> @Operation </th>".Replace("@Operation",Op.ToString());
+                    checkbox += "<td><input type = 'checkbox' name ='permissions' class='form-check-input' aria-label='...'></td>";
+                }
+                    
+            }
+            html += @"</tr>
+                 </thead>
+               <tbody>";
+            foreach(var obj in resultlist.Data)
+            {
+                html += @"<tr>
+                           <th scope = 'row'> @Object </th>                    
+                             @CheckBox
+                         </tr>".Replace("@Object",obj.Name).Replace("@CheckBox", checkbox);
+            }
+            html += "</tbody>";
+
+            return html;
         }
     }
 }

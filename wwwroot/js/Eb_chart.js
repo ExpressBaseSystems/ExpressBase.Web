@@ -227,6 +227,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         $("#X_col_name" + this.tableId).off("dragover").on("dragover", this.colAllowDrop.bind(this));
         $("#Y_col_name" + this.tableId).off("drop").on("drop", this.colDrop.bind(this));
         $("#Y_col_name" + this.tableId).off("dragover").on("dragover", this.colAllowDrop.bind(this));
+        $("#searchColumn"+this.tableId).off("keyup").on("keyup", this.searchDragNDropColumn.bind(this));
         if (data)
             this.data = data;
         else {
@@ -241,7 +242,10 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         var colsAll_XY = [], Ycol = [];
         $.each(this.columnInfo.options.Yaxis, this.AddYcolumns.bind(this, Ycol));
         $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
-        var tid = this.tableId
+        var tid = this.tableId;
+        colsAll_XY = colsAll_XY.sort(function (a, b) {
+            return a.name.localeCompare(b.name);
+        });
         $.each(colsAll_XY, function (i, obj) {
             if (obj.data != undefined) {
                 $("#columns4Drag" + tid + " .list-group").append("<li class='alert alert-success columnDrag' id='li" + obj.name + "' draggable='true' data-id='" + obj.data + "'>" + obj.name + "</li>");
@@ -494,9 +498,9 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             $("#btnColumnCollapsedv281_1").append("<i class='fa fa-chevron-down' aria-hidden='true'></i>")
         }
         else {
-            $("#myChart" + this.tableId).css("width", "792px");
+            $("#myChart" + this.tableId).css("width", "80%");
             $("#myChart" + this.tableId).css("height", "454px");
-            $("#myChart" + this.tableId).css("margin-left", "175px");
+            $("#myChart" + this.tableId).css("margin-left", "200px");
             $("#myChart" + this.tableId).css("margin-top", "-420px");
             $("#btnColumnCollapse" + this.tableId).children().remove();
             $("#btnColumnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
@@ -519,6 +523,22 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             $("#myChart" + this.tableId).remove();
             $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
         }
+    };
+
+    this.searchDragNDropColumn = function () {
+        var search_word = $("#searchColumn" + this.tableId).val();
+        if (search_word !== "") {
+            $("#columns4Drag" + this.tableId + " ul li").hide();
+            $("#columns4Drag" + this.tableId + " ul li").each(function () {
+                var current_keyword = $(this).text();
+                if (current_keyword.indexOf(search_word) >= 0) {
+                    $(this).show();
+                };
+            });
+        }
+        else {
+            $("#columns4Drag" + this.tableId + " ul li").show();
+        };
     };
 
     this.init();

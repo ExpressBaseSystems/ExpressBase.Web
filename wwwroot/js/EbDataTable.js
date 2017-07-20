@@ -414,6 +414,9 @@ var EbDataTable = function (settings) {
             this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
             $("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         }
+        else{
+            $("#showgraphbtn" + this.tableId).hide();
+        }
         this.Api.columns.adjust();
     }
 
@@ -660,12 +663,12 @@ var EbDataTable = function (settings) {
         //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
         $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsModal.bind(this));
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
-        //$(this.filterBox).off("toggle").on("toggle", this.modifyFilterBox.bind(this));
-        
+        //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
     };
 
     this.GenerateButtons = function () {
         $("#TableControls_" + this.tableId).prepend("<div style='display: inline;float: right;'>" +
+            "<a id='showgraphbtn"+this.tableId+"' class='btn btn-default' href='#graphcontainer_tab"+this.tableId+"'><i class='fa fa-line-chart'></i></a>" +
             "<button type='button' id='" + this.tableId + "_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
              "<div class='btn-group'>" +
@@ -690,7 +693,6 @@ var EbDataTable = function (settings) {
                " </div>"+
          "</div>");
     };
-    //href='http://dev.eb_roby_dev.localhost:53431/Tenant/DVEditor #'
 
 
     this.setFilterboxValue = function (i, obj) {

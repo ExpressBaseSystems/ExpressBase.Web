@@ -1,12 +1,4 @@
-﻿function isContains(obj, val) {
-    for (var i = 0; i < obj.length; i++)
-        if (obj[i].name === val)
-            return true;
-    return false;
-};
-
-
-var TextBoxObj = function (id) {
+﻿var TextBoxObj = function (id) {
     this.$type = 'ExpressBase.Objects.EbTextBox';
     this.Id = id;
     this.Name = id;
@@ -40,6 +32,8 @@ var Eb_PropertyGrid = function (id, obj) {
     this.PropsObj = obj;
     this.$container = $("#" + id);
 
+    this.propNames = [];
+
     this.MISC_GROUP_NAME = 'Misc';
     this.GET_VALS_FUNC_KEY = 'pg.getValues';
     this.pgIdSequence = 0;
@@ -52,34 +46,47 @@ var Eb_PropertyGrid = function (id, obj) {
     this.currGroup = null;
     this.innerHTML = '<table class="pgTable">';
 
-    alert("Metas:" + JSON.stringify(this.Metas));
-    alert("PropsObj:" + JSON.stringify(this.PropsObj));
+    //alert("Metas:" + JSON.stringify(this.Metas));
+    //alert("PropsObj:" + JSON.stringify(this.PropsObj));
 
-
+    this.isContains = function (obj, val) {
+        for (var i = 0; i < obj.length; i++)
+            if (obj[i].name === val)
+                return true;
+        return false;
+    };
 
     this.initHtml = function () {
 
         for (var prop in this.PropsObj) {
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
-            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !isContains(this.Metas, prop)) {
+            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop)) {
                 continue;
             }
 
             alert("prop:" + prop);
 
-            //// Check what is the group of the current property or use the default 'Other' group
-            //this.currGroup = (meta[prop] && meta[prop].group) || this.MISC_GROUP_NAME;
+            // Check what is the group of the current property or use the default 'Other' group
+            this.currGroup = (this.Metas[this.propNames.indexOf(prop)]).group || this.MISC_GROUP_NAME;
 
-            //// If this is the first time we run into this group create the group row
-            //if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup]) {
-            //    this.groupsHeaderRowHTML[this.currGroup] = this.getGroupHeaderRowHtml(this.currGroup);
-            //}
+            alert("this.currGroup:" + this.currGroup);
 
-            //// Initialize the group cells html
-            //this.propertyRowsHTML[this.currGroup] = this.propertyRowsHTML[this.currGroup] || '';
+            // If this is the first time we run into this group create the group row
+            if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup]) {
+                this.groupsHeaderRowHTML[this.currGroup] = this.getGroupHeaderRowHtml(this.currGroup);
+            }
 
-            //// Append the current cell html into the group html
-            //this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(pgId, prop, this.PropsObj[prop], meta[prop], postCreateInitFuncs, getValueFuncs, options);
+
+            alert("this.groupsHeaderRowHTML:" + JSON.stringify(this.groupsHeaderRowHTML));
+
+            // Initialize the group cells html
+            this.propertyRowsHTML[this.currGroup] = this.propertyRowsHTML[this.currGroup] || '';
+
+            // Append the current cell html into the group html
+            this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(pgId, prop, this.PropsObj[prop], meta[prop], postCreateInitFuncs, getValueFuncs, options);
+
+
+            alert("this.propertyRowsHTML:" + JSON.stringify(this.propertyRowsHTML));
 
 
         }
@@ -90,6 +97,9 @@ var Eb_PropertyGrid = function (id, obj) {
     }
 
     this.init = function () {
+        for (var i = 0; i < this.Metas.length; i++)
+            this.propNames.push(this.Metas[i].name);
+
         this.initHtml();
     };
 
@@ -115,48 +125,49 @@ var Eb_PropertyGrid = function (id, obj) {
     }
 
     this.getPropertyRowHtml = function (pgId, name, value, meta, postCreateInitFuncs, getValueFuncs, options) {
-        if (!name) {
-            return '';
-        }
+        //if (!name) {
+        //    return '';
+        //}
 
-        meta = meta || {};
-        // We use the name in the meta if available
-        var displayName = meta.name || name;
+        //meta = meta || {};
+        //// We use the name in the meta if available
+        //var displayName = meta.name || name;
+
+        //// check if type is registered in customTypes
+        //var customTypes = options.customTypes;
+        //var isCustomType = false;
+        //for (var customType in customTypes) {
+        //    if (type === customType) {
+        //        isCustomType = customTypes[customType];
+        //    }
+        //}
+
+        //// If value was handled by custom type
+        //if (isCustomType !== false) {
+        //    valueHTML = isCustomType.html(elemId, name, value, meta);
+        //    if (getValueFuncs) {
+        //        if (isCustomType.hasOwnProperty('makeValueFn')) {
+        //            getValueFuncs[name] = isCustomType.makeValueFn(elemId, name, value, meta);
+        //        } else if (isCustomType.hasOwnProperty('valueFn')) {
+        //            getValueFuncs[name] = isCustomType.valueFn;
+        //        } else {
+        //            getValueFuncs[name] = function () {
+        //                return $('#' + elemId).val();
+        //            };
+        //        }
+        //    }
+        //}
+        //else
+
+        var valueHTML;
         var type = meta.type || '';
         var elemId = pgId + name;
 
-        var valueHTML;
-
-        // check if type is registered in customTypes
-        var customTypes = options.customTypes;
-        var isCustomType = false;
-        for (var customType in customTypes) {
-            if (type === customType) {
-                isCustomType = customTypes[customType];
-            }
-        }
-
-        // If value was handled by custom type
-        if (isCustomType !== false) {
-            valueHTML = isCustomType.html(elemId, name, value, meta);
-            if (getValueFuncs) {
-                if (isCustomType.hasOwnProperty('makeValueFn')) {
-                    getValueFuncs[name] = isCustomType.makeValueFn(elemId, name, value, meta);
-                } else if (isCustomType.hasOwnProperty('valueFn')) {
-                    getValueFuncs[name] = isCustomType.valueFn;
-                } else {
-                    getValueFuncs[name] = function () {
-                        return $('#' + elemId).val();
-                    };
-                }
-            }
-        }
-
-            // If boolean create checkbox
-        else if (type === 'boolean' || (type === '' && typeof value === 'boolean')) {
+        // If boolean create checkbox
+        if (type === 0 || typeof value === 'boolean') {
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + name + '"' + (value ? ' checked' : '') + ' />';
-            if (getValueFuncs) {
-                getValueFuncs[name] = function () {
+            if (this.getValueFuncs) {
+                this.getValueFuncs[name] = function () {
                     return $('#' + elemId).prop('checked');
                 };
             }
@@ -164,8 +175,8 @@ var Eb_PropertyGrid = function (id, obj) {
             // If options create drop-down list
         } else if (type === 'options' && Array.isArray(meta.options)) {
             valueHTML = getSelectOptionHtml(elemId, value, meta.options);
-            if (getValueFuncs) {
-                getValueFuncs[name] = function () {
+            if (this.getValueFuncs) {
+                this.getValueFuncs[name] = function () {
                     return $('#' + elemId).val();
                 };
             }
@@ -177,8 +188,8 @@ var Eb_PropertyGrid = function (id, obj) {
             //    postCreateInitFuncs.push(initSpinner(elemId, meta.options));
             //}
 
-            if (getValueFuncs) {
-                getValueFuncs[name] = function () {
+            if (this.getValueFuncs) {
+                this.getValueFuncs[name] = function () {
                     return parseInt($('#' + elemId).val());
                 };
             }
@@ -190,8 +201,8 @@ var Eb_PropertyGrid = function (id, obj) {
                 postCreateInitFuncs.push(initColorPicker(elemId, value, meta.options));
             }
 
-            if (getValueFuncs) {
-                getValueFuncs[name] = function () {
+            if (this.getValueFuncs) {
+                this.getValueFuncs[name] = function () {
                     return $('#' + elemId).spectrum('get').toHexString();
                 };
             }
@@ -228,6 +239,8 @@ var Eb_PropertyGrid = function (id, obj) {
 
     this.init();
 };
+
+
 
 var obj = new TextBoxObj("text0");
 var id = "propGrid";

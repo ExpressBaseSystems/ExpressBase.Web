@@ -253,6 +253,7 @@ var formBuilder = function (toolBoxid, formid) {
     this.currentProperty = null;
     this.Controls = new EbControlCollection();
     this.drake = null;
+    this.PGobj = null;
     // need to change
     this.CurRowCount = 2;
     this.CurColCount = 2;
@@ -333,7 +334,7 @@ var formBuilder = function (toolBoxid, formid) {
 
         setTimeout(this.SetTimeOutFn.bind(this), 1);
 
-var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
+this.PGobj  = new Eb_PropertyGrid("propGrid", new TextboxObj("sTextBox"))
         //$('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
 
         $('.selectpicker').on('change', function (e) {
@@ -347,7 +348,7 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
     };
 
     this.saveObj = function () {
-        q.getvaluesFromPG();
+        this.PGobj.getvaluesFromPG();
         $('#propGrid').jqPropertyGrid('get');
         $('#txtValues').val(JSON.stringify(this.Controls) + '\n\n');
     };
@@ -451,20 +452,34 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
     this.onDropFn = function (el, target, source, sibling) {
         //drop from toolbox to form
         if ($(source).attr("id") === "form-buider-toolBox") {
+
             el.className = 'controlTile';
+
             var ctrl = $(el);
+
             var type = ctrl.text().trim();
+
             eval("var id = '" + type + "' + " + "this." + type + "Counter++");
+
             ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+
             ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+
             ctrl.attr("ebtype", type).attr("id", id);
+
             if ($(target).attr("id") === "form-buider-form")
+
                 eval("this.Controls.Append(new " + type + "Obj(id))");
+
             else
                 eval("this.Controls.GetByName( $(target).attr('id') ).Controls.Append(new " + type + "Obj(id))");
+
             ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
+
             $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
+
             $('.selectpicker').selectpicker('refresh');
+
             ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
         }
         else
@@ -558,7 +573,7 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
             removeOnSpill: false,
             copy: function (el, source) { return (source.className !== 'tdDropable' && source.className !== 'form-buider-form'); },
             copySortSource: true,
-            mirrorContainer: document.body,
+            mirrorContainer: document.getElementById('form-buider-form'),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });

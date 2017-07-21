@@ -35,102 +35,29 @@ var Eb_PropertyGrid = function (id, obj) {
     //alert("Metas:" + JSON.stringify(this.Metas));
     //alert("PropsObj:" + JSON.stringify(this.PropsObj));
 
-    this.isContains = function (obj, val) {
-        for (var i = 0; i < obj.length; i++)
-            if (obj[i].name === val)
-                return true;
-        return false;
-    };
-
-    this.buildRows = function () {
-
-        for (var prop in this.PropsObj) {
-            // Skip if this is not a direct property, a function, or its meta says it's non browsable
-            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop))
+    this.getvaluesFromPG = function () {
+        // Create a function that will return tha values back from the property grid
+        var result = {};
+        for (var prop in this.getValueFuncs) {
+            if (typeof this.getValueFuncs[prop] !== 'function')
                 continue;
 
-            // Check what is the group of the current property or use the default 'Other' group
-            this.currGroup = (this.Metas[this.propNames.indexOf(prop)]).group || this.MISC_GROUP_NAME;
-
-            // If this is the first time we run into this group create the group row
-            if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup])
-                this.groupsHeaderRowHTML[this.currGroup] = this.getGroupHeaderRowHtml(this.currGroup);
-
-            // Initialize the group cells html
-            this.propertyRowsHTML[this.currGroup] = this.propertyRowsHTML[this.currGroup] || '';
-
-            // Append the current cell html into the group html
-            this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop)], (this.Metas[this.propNames.indexOf(prop)]).options);
-
+            result[prop] = this.getValueFuncs[prop]();
         }
+        this.PropsObj = result;
+        console.log("resultttttttt: " + JSON.stringify(result));
+        return result;
     };
-
-    this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell">' + displayName + '</td></tr>';
-    }
-
-    this.init = function () {
-        for (var i = 0; i < this.Metas.length; i++)
-            this.propNames.push(this.Metas[i].name);
-
-        this.buildRows();
-
-        this.buildGrid();
-
-        this.getvaluesFromPG();
-    };
-
-    this.buildGrid = function () {
-        // Now we have all the html we need, just assemble it
-        var innerHTML = '<table class="pgTable">';
-        for (var group in this.groupsHeaderRowHTML) {
-            // Add the group row
-            innerHTML += this.groupsHeaderRowHTML[group];
-            // Add the group cells
-            innerHTML += this.propertyRowsHTML[group];
-        }
-
-        // Finally we add the 'Other' group (if we have something there)
-        if (this.propertyRowsHTML[this.MISC_GROUP_NAME]) {
-            innerHTML += this.getGroupHeaderRowHtml(this.MISC_GROUP_NAME);
-            innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
-        }
-
-        // Close the table and apply it to the div
-        innerHTML += '</table>';
-        this.$container.html(innerHTML);
-    };
-
-    this.assembleHtml = function () {
-        // Now we have all the html we need, just assemble it
-        for (var group in this.groupsHeaderRowHTML) {
-            // Add the group row
-            this.innerHTML += this.groupsHeaderRowHTML[group];
-            // Add the group cells
-            innerHTML += this.propertyRowsHTML[group];
-        }
-
-        // Finally we add the 'Other' group (if we have something there)
-        if (this.propertyRowsHTML[OTHER_GROUP_NAME]) {
-            this.innerHTML += this.getGroupHeaderRowHtml(this.MISC_GROUP_NAME);
-            this.innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
-        }
-
-        // Close the table and apply it to the div
-        innerHTML += '</table>';
-        this.html(innerHTML);
-
-    }
 
     this.getPropertyRowHtml = function (name, value, meta, options) {
-        
+
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.pgId + name;
 
         // If boolean create checkbox
         if (type === 0 || typeof value === 'boolean') {
-            console.log("getValueFuncs: " + JSON.stringify( this.getValueFuncs  ));
+            console.log("getValueFuncs: " + JSON.stringify(this.getValueFuncs));
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
@@ -141,16 +68,16 @@ var Eb_PropertyGrid = function (id, obj) {
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
 
-            // If number and a jqueryUI spinner is loaded use it
+            // If number 
         } else if (type === 2) {
             valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
-            
-            if (this.getValueFuncs) 
+
+            if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
 
-            // If color and we have the spectrum color picker use it
+            // If color use color picker 
         } else if (type === 3) {
-            valueHTML = '<input type="color" id="' + elemId + '" style="width:100%; height: 21px;" />';
+            valueHTML = '<input type="color" id="' + elemId + '" value="' + value + '" style="width:100%; height: 21px;" />';
 
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
@@ -191,7 +118,18 @@ var Eb_PropertyGrid = function (id, obj) {
         html += "</select><input type='hidden' value='" + selectedValue + "' id='" + id + "'>";
 
         return html;
-    }
+    };
+
+    this.getGroupHeaderRowHtml = function (displayName) {
+        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell">' + displayName + '</td></tr>';
+    };
+
+    this.isContains = function (obj, val) {
+        for (var i = 0; i < obj.length; i++)
+            if (obj[i].name === val)
+                return true;
+        return false;
+    };
 
     //this.CallpostinitFns = function () {
     //    alert("this.postCreateInitFuncs: " + this.postCreateInitFuncs);
@@ -205,28 +143,67 @@ var Eb_PropertyGrid = function (id, obj) {
     //    }
     //};
 
-    this.getvaluesFromPG = function () {
-        // Create a function that will return tha values back from the property grid
-        var result = {};
-        for (var prop in this.getValueFuncs) {
-            if (typeof this.getValueFuncs[prop] !== 'function')
+
+    this.buildGrid = function () {
+        // Now we have all the html we need, just assemble it
+        for (var group in this.groupsHeaderRowHTML) {
+            // Add the group row
+            this.innerHTML += this.groupsHeaderRowHTML[group];
+            // Add the group cells
+            this.innerHTML += this.propertyRowsHTML[group];
+        }
+
+        // Finally we add the 'Other' group (if we have something there)
+        if (this.propertyRowsHTML[this.MISC_GROUP_NAME]) {
+            this.innerHTML += this.getGroupHeaderRowHtml(this.MISC_GROUP_NAME);
+            this.innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
+        }
+
+        // Close the table and apply it to the div
+        this.innerHTML += '</table>';
+        this.$container.html(this.innerHTML);
+    };
+
+    this.buildRows = function () {
+
+        for (var prop in this.PropsObj) {
+            // Skip if this is not a direct property, a function, or its meta says it's non browsable
+            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop))
                 continue;
 
-            result[prop] = this.getValueFuncs[prop]();
+            // Check what is the group of the current property or use the default 'Other' group
+            this.currGroup = (this.Metas[this.propNames.indexOf(prop)]).group || this.MISC_GROUP_NAME;
+
+            // If this is the first time we run into this group create the group row
+            if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup])
+                this.groupsHeaderRowHTML[this.currGroup] = this.getGroupHeaderRowHtml(this.currGroup);
+
+            // Initialize the group cells html
+            this.propertyRowsHTML[this.currGroup] = this.propertyRowsHTML[this.currGroup] || '';
+
+            // Append the current cell html into the group html
+            this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop)], (this.Metas[this.propNames.indexOf(prop)]).options);
+
         }
-         this.PropsObj = result;
-        console.log("resultttttttt: " + JSON.stringify( result));
-        return result;
+    };
+
+    this.init = function () {
+        for (var i = 0; i < this.Metas.length; i++)
+            this.propNames.push(this.Metas[i].name);
+
+        this.buildRows();
+
+        this.buildGrid();
+
+        this.getvaluesFromPG();
     };
 
     this.init();
+
+
+  
 };
 
-
-
-var obj = new TextBoxObj("text0");
-var id = "propGrid";
-var q = new Eb_PropertyGrid(id, obj);
 
 
 

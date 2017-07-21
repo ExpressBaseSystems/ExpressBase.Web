@@ -304,7 +304,7 @@
     background-color: #dddddd !important;
 }
 
-.dataTables_scrollBody {
+/*.dataTables_scrollBody {
     border-bottom: solid 1px #dddddd;
 }
 
@@ -328,7 +328,7 @@
         border: 2px solid transparent;
         background-color: #ffffff;
         background-clip: content-box;
-    }
+    }*/
 
 .tdheight {
     vertical-align: bottom;

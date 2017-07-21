@@ -230,53 +230,75 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public IActionResult ManageRoles(string [] Permissions)
-        //{
-        //    var req = this.HttpContext.Request.Form;
-        //    IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-        //    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-        //    ViewBag.dict = resultlist.Data;
-        //    return View();
-        //}
-
-        public string GetRowAndColumn(int ApplicationId, int ObjectType)
+        [HttpPost]
+        public IActionResult ManageRoles(string[] Permissions)
         {
+            var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { DominantId = ApplicationId, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             ViewBag.dict = resultlist.Data;
-
-            string html = @"<thead><tr><th>@Header</th></tr></thead><tbody>@tbody</tbody>";
-
-            string header = string.Empty;
-            string tbody = string.Empty;
-
-            if (ObjectType == 2)
-            {
-                foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
-                    header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
-
-                foreach (var obj in resultlist.Data)
-                {
-                    tbody += "<tr>";
-                    tbody += "<td>{0}</td>".Fmt(obj.Name);
-                    foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
-                        tbody += "<td><input type = 'checkbox' name ='permissions' value='@permissions' class='form-check-input' aria-label='...'></td>".Replace("@permissions", string.Format("{0}_{1}", (int)Op, obj.Id));
-                    tbody += "</tr>";
-                }
-            }
-
-            return html.Replace("@Header", header).Replace("@tbody", tbody);
+            ViewBag.roleid = req["roleid"];
+            return View();
         }
 
-        public IActionResult SaveRoles(string[] Permissions, string RoleName)
+        public string GetRowAndColumn(int ApplicationId, int ObjectType,int RoleId)
         {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            List<string> _permissionsData = new List<string>(); // FOR NEW MODE
+
+            if (RoleId > 0)
+            {
+                var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { id = RoleId, restype = "getpermissions", Token = ViewBag.token });
+                _permissionsData = fr.Permissions;
+            }
+
+                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { DominantId = ApplicationId, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+                ViewBag.dict = resultlist.Data;
+                string html = @"<thead><tr><th>@Header</th></tr></thead><tbody>@tbody</tbody>";
+                string header = string.Empty;
+                string tbody = string.Empty;
+
+                if (ObjectType == 11)
+                {
+                    foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
+                        header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
+
+                    foreach (var obj in resultlist.Data)
+                    {
+                        tbody += "<tr>";
+                        tbody += "<td>{0}</td>".Fmt(obj.Name);
+                        foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
+                        {
+                            var perm = string.Format("{0}_{1}", obj.Id, (int)Op);
+                            var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
+                            tbody += "<td><input type = 'checkbox' name ='permissions' value='{0}' class='form-check-input' aria-label='...' {1}></td>".Fmt(perm, checked_string);
+                        }
+                        tbody += "</tr>";
+                    }
+                }
+
+                return html.Replace("@Header", header).Replace("@tbody", tbody);
+           
+        }
+
+        public string SaveRoles(string[] Permissions, string RoleName,string IsEdit)
+        {
+            var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
+            string return_msg;
             Dict["role_name"] = RoleName;
             Dict["permission"] = Permissions;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, Token = ViewBag.token, op = "saveroles" });
-            return View();
+            if(res.id>0)
+            {
+                return_msg = "Success";
+            }
+            else
+            {
+                return_msg = "Failed";
+            }
+            return return_msg;
 
         }
     }

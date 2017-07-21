@@ -574,7 +574,7 @@ namespace ExpressBase.Web.Controllers
             colext = colext.Substring(0, colext.Length - 1) + "]";
             return colDef + colext + "}";
         }
-
+       
         public JsonResult SaveSettings(int dsid, string json, int dvid)
         {
 
@@ -707,10 +707,9 @@ namespace ExpressBase.Web.Controllers
         public IActionResult CreateApplication(int i)
         {
             var req = this.HttpContext.Request.Form;
+
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-
             ViewBag.Header = "Edit Application";
-
             int obj_id = Convert.ToInt32(req["objid"]);
             ViewBag.Obj_id = obj_id;
 
@@ -740,13 +739,14 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult SaveApplications()
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             ViewBag.Header = "Create Application";
             var ds = new EbObjectSaveOrCommitRequest();
-
             ds.IsSave = false;
             ds.Id = (string.IsNullOrEmpty(req["objid"])) ? 0 : Convert.ToInt32(req["objid"]);           //Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
             ds.EbObjectType = (int)EbObjectType.Application;

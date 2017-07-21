@@ -41,6 +41,9 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
         $(this.Fd_DropDown).off("change").on("change", this.SelectFD.bind(this));
         $('#run').off("click").on("click", this.RunDs.bind(this));
         $('#execute0').off("click").on("click", this.Execute.bind(this));
+        $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
+        $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
+
         $('#diff0').off("click").on("click", this.Differ.bind(this));
     }
 
@@ -227,13 +230,12 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
             $("#loader").hide();
         }
         else if ($('#fd option:selected').text() !== "Auto Generate Filter Dialog") {
-
-            this.Save();
+            this.Save(false);
             this.SelectedFdId = $('#fd option:selected').val();
             this.Load_Fd();
         }
-        else {
-            this.Save();
+        else {//auto generate
+            this.Save(false);
             this.Find_parameters();
             if (this.Parameter_Count === 0) {
                 this.ValidInput = true;
@@ -242,6 +244,26 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
             }
         }
 
+    }
+
+    this.RunSqlFn = function () {
+        $("#loader").show();
+        this.SetValues();
+        if ($('#fd option:selected').text() === "Select Filter Dialog") {
+            alert("Please select a filter dialog");
+            $("#loader").hide();
+        }
+        else if ($('#fd option:selected').text() === "Auto Generate Filter Dialog") {
+            this.Save(true);
+            //create fd
+            alert("create fd");
+        }
+        this.Save(true);
+    }
+
+    this.TestSqlFn = function () {
+        $("#loader").show();
+        alert("Test");
     }
 
     this.RunDs = function () {
@@ -269,15 +291,18 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
 
     this.Init();
 
-    this.Save = function () {
+    this.Save = function (needRun) {
         this.SetValues();
         alert('save');
         if (this.Is_New === true) {
-            $(".commit").trigger("click");
+            this.Commit(needRun);
         }
         else {
             $(".eb-loader").show();
             this.FilterDId = $('#fd option:selected').val();
+            if (this.ObjectType === 5) {
+                this.SetSqlFnName();
+               }
             $.post("../Dev/SaveEbDataSource",
                 {
                     "Id": this.Obj_Id,
@@ -288,12 +313,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
                     "Token": getToken(),
                     "isSave": "true",
                     "VersionNumber": this.Version_num,
-                    "FilterDialogId": this.FilterDId
+                    "FilterDialogId": this.FilterDId,
+                    "NeedRun": needRun
                 }, this.Success_alert.bind(this));
         };
     }
 
-    this.Commit = function () {
+    this.Commit = function (needRun) {
         $("#loader").show();
         $('.alert').remove();
         alert('commit');
@@ -306,16 +332,15 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
             alert("Select A Filter Dialog");
         }
         else {
-            this.SetValues();           
+            this.SetValues();
             this.FilterDId = $('#fd option:selected').val();
-            this.GetUsedSqlFns();
-           
+            this.GetUsedSqlFns(needRun);
         }
         $("#loader").hide();
     }
 
     $(this.SaveBtn).off("click").on("click", this.Save.bind(this));
-    $(this.CommitBtn).off("click").on("click", this.Commit.bind(this));
+    $(this.CommitBtn).off("click").on("click", this.Commit.bind(this,false));
 
     this.Find_parameters = function () {
         this.SetValues();
@@ -499,26 +524,36 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
     this.SetSqlFnName = function () {
         var result = this.Code.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
         if (result.length > 0) {
-            var fnName = result[1];
-            $('#obj_name').val(fnName);
+            var fnName = result[1].replace(/\s\s+/g, ' ');
+            // var open_brace=fnName.indexOf("(");
+            var x = fnName.replace('(',"_v" + this.Version_num+'(');
+            var v = this.Code.replace(result[1], x);
+            alert(v);
+            $('#obj_name').val(x);
+            $('#code').val(v);
+            // window.editor = CodeMirror.fromTextArea(document.getElementById("code"));
+            //CodeMirror.fromTextArea(document.getElementById('code'), {
+            //    lineNumbers: true
+            //}).empty().setValue(v);
+            editor.setValue(v);
         }
     };
 
-    this.GetUsedSqlFns = function () {
-        $.post("../Dev/GetObjects", { obj_type:5 }, this.FetchUsedSqlFns.bind(this));
+    this.GetUsedSqlFns = function (needRun) {
+        $.post("../Dev/GetObjects", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this,needRun));
     };
-    
-    this.FetchUsedSqlFns = function (data) {
+
+    this.FetchUsedSqlFns = function (needRun,data) {
         this.Rel_object = null;
         var rel_arr = [];
         $.each(data, this.FetchUsedSqlFns_inner.bind(this, rel_arr));
         this.Rel_object = rel_arr.toString();
         alert("this.Rel_object" + this.Rel_object);
         var Dswzd = new EbWizard("../Dev/ds_save", "../Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
-        Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num, this.FilterDId, this.ObjectType, this.Rel_object).DataSource;
+        Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num, this.FilterDId, this.ObjectType, this.Rel_object, needRun).DataSource;
     };
 
-    this.FetchUsedSqlFns_inner = function (rel_arr,i, sqlFn) {
+    this.FetchUsedSqlFns_inner = function (rel_arr, i, sqlFn) {
         if (this.Code.search(sqlFn.name) !== -1) {
             rel_arr.push(i);
         }

@@ -44,13 +44,11 @@ var TextBoxObj = function (id) {
     this.BackColor = '#FFFFFF';
     this.ForeColor = '#FFFFFF';
     this.Metas = [{ "name": "MaxLength", "group": "Behavior", "editor": 2, "options": null },
-	{ "name": "TextTransform", "group": "Behavior", "editor": 1, "options": ["Normal", "LowerCase", "UpperCase"] },
-	{ "name": "TextMode", "group": "Behavior", "editor": 1, "options": ["SingleLine", "Email", "Password", "Color"] },
-	{ "name": "PlaceHolder", "group": "Behavior", "editor": 5, "options": null },
-	{ "name": "Text", "group": "Appearance", "editor": 5, "options": null },
-	{ "name": "AutoCompleteOff", "group": "Behavior", "editor": 0, "options": null },
-	{ "name": "BackColor", "group": "Appearance", "editor": 3, "options": null },
-	{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null }]
+ { "name": "TextTransform", "group": "Behavior", "editor": 1, "options": ["Normal", "lowercase", "UPPERCASE"] },
+ { "name": "TextMode", "group": "Behavior", "editor": 1, "options": ["SingleLine", "Email", "Password", "Color"] },
+ { "name": "PlaceHolder", "group": "Behavior", "editor": 5, "options": null },
+ { "name": "Text", "group": "Appearance", "editor": 5, "options": null },
+ { "name": "AutoCompleteOff", "group": "Behavior", "editor": 0, "options": null }, { "name": "BackColor", "group": "Appearance", "editor": 3, "options": null }, { "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null }]
 };
 
 var GridViewObj = function (id) {
@@ -349,6 +347,7 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
     };
 
     this.saveObj = function () {
+        q.getvaluesFromPG();
         $('#propGrid').jqPropertyGrid('get');
         $('#txtValues').val(JSON.stringify(this.Controls) + '\n\n');
     };
@@ -418,7 +417,6 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
     }
 
     this.onDragFn = function (el, source) {
-        console.log("onDragFn");
         //if drag start within the form
         if (!($(source).attr("id") === "form-buider-toolBox")) {
             console.log("el poped");
@@ -429,16 +427,12 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
     }// start
 
     this.onDragendFn = function (el) {
-        console.log("onDragendFn");
         var sibling = $(el).next();
-        console.log("sibling: " + sibling.attr("id"));
         var target = $(el).parent();
         if (this.movingObj) {
 
             //Drag end with in the form
             if (target.attr("id") !== "form-buider-toolBox") {
-                console.log("elObj : " + JSON.stringify(this.movingObj));
-                console.log("sibling : " + sibling.attr("id"));
                 if (sibling.attr("id")) {
                     console.log("sibling : " + sibling.id);
                     var idx = sibling.index() - 1;

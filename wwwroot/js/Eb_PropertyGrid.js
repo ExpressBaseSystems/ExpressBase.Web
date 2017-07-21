@@ -74,9 +74,11 @@ var Eb_PropertyGrid = function (id, obj) {
             this.propNames.push(this.Metas[i].name);
 
         this.buildRows();
-        this.buildGrid();
-    };
 
+        this.buildGrid();
+
+        this.getvaluesFromPG();
+    };
 
     this.buildGrid = function () {
         // Now we have all the html we need, just assemble it
@@ -96,14 +98,8 @@ var Eb_PropertyGrid = function (id, obj) {
 
         // Close the table and apply it to the div
         innerHTML += '</table>';
-        console.log("innerHTML: \n\n"+innerHTML);
         this.$container.html(innerHTML);
     };
-    
-
-    
-
-
 
     this.assembleHtml = function () {
         // Now we have all the html we need, just assemble it
@@ -127,88 +123,37 @@ var Eb_PropertyGrid = function (id, obj) {
     }
 
     this.getPropertyRowHtml = function (name, value, meta, options) {
-        {
-            //if (!name) {
-            //    return '';
-            //}
-
-            //meta = meta || {};
-            //// We use the name in the meta if available
-            //var displayName = meta.name || name;
-
-            //// check if type is registered in customTypes
-            //var customTypes = options.customTypes;
-            //var isCustomType = false;
-            //for (var customType in customTypes) {
-            //    if (type === customType) {
-            //        isCustomType = customTypes[customType];
-            //    }
-            //}
-
-            //// If value was handled by custom type
-            //if (isCustomType !== false) {
-            //    valueHTML = isCustomType.html(elemId, name, value, meta);
-            //    if (getValueFuncs) {
-            //        if (isCustomType.hasOwnProperty('makeValueFn')) {
-            //            getValueFuncs[name] = isCustomType.makeValueFn(elemId, name, value, meta);
-            //        } else if (isCustomType.hasOwnProperty('valueFn')) {
-            //            getValueFuncs[name] = isCustomType.valueFn;
-            //        } else {
-            //            getValueFuncs[name] = function () {
-            //                return $('#' + elemId).val();
-            //            };
-            //        }
-            //    }
-            //}
-            //else
-        }
+        
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.pgId + name;
 
         // If boolean create checkbox
         if (type === 0 || typeof value === 'boolean') {
-            valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + name + '"' + (value ? ' checked' : '') + ' />';
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return $('#' + elemId).prop('checked');
-                };
-            }
+            console.log("getValueFuncs: " + JSON.stringify( this.getValueFuncs  ));
+            valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
+            if (this.getValueFuncs)
+                this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
 
             // If options create drop-down list
         } else if (type === 1 && Array.isArray(meta.options)) {
-            valueHTML = this.getSelectOptionHtml(elemId, value, meta.options);
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return $('#' + elemId).val();
-                };
-            }
+            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.options);
+            if (this.getValueFuncs)
+                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
 
             // If number and a jqueryUI spinner is loaded use it
         } else if (type === 2) {
             valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
-            //if (postCreateInitFuncs) {
-            //    postCreateInitFuncs.push(initSpinner(elemId, meta.options));
-            //}
-
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return parseInt($('#' + elemId).val());
-                };
-            }
+            
+            if (this.getValueFuncs) 
+                this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
 
             // If color and we have the spectrum color picker use it
-        } else if (type === 3 && typeof $.fn.spectrum === 'function') {
+        } else if (type === 3) {
             valueHTML = '<input type="color" id="' + elemId + '" style="width:100%; height: 21px;" />';
-            if (this.postCreateInitFuncs) {
-                this.postCreateInitFuncs.push(this.initColorPicker(elemId, value, meta.options));
-            }
 
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return $('#' + elemId).spectrum('get').toHexString();
-                };
-            }
+            if (this.getValueFuncs)
+                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
 
             // If label (for read-only)
         } else if (type === 4) {
@@ -217,11 +162,8 @@ var Eb_PropertyGrid = function (id, obj) {
             // Default is textbox
         } else {
             valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></input>';
-            if (this.getValueFuncs) {
-                this.getValueFuncs[name] = function () {
-                    return $('#' + elemId).val();
-                };
-            }
+            if (this.getValueFuncs)
+                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
 
         if (typeof meta.description === 'string' && meta.description &&
@@ -235,8 +177,8 @@ var Eb_PropertyGrid = function (id, obj) {
             return '<tr class="pgRow"><td class="pgCell">' + name + '</td><td class="pgCell">' + valueHTML + '</td></tr>';
         }
     };
-   
-    this.getSelectOptionHtml = function (id, selectedValue, options) {
+
+    this.getBootstrapSelectHtml = function (id, selectedValue, options) {
         selectedValue = selectedValue || '';
         if (options === null)
             return;
@@ -246,25 +188,37 @@ var Eb_PropertyGrid = function (id, obj) {
         for (var i = 0; i < options.length; i++)
             html += "<option data-tokens='ketchup mustard'>" + options[i] + "</option>";
 
-        html += "</select><input type='hidden' value='############' id='" + id + "'>";
+        html += "</select><input type='hidden' value='" + selectedValue + "' id='" + id + "'>";
 
         return html;
     }
 
-    this.initColorPicker = function (id, color, options) {
-        if (!id)
-            return null;
+    //this.CallpostinitFns = function () {
+    //    alert("this.postCreateInitFuncs: " + this.postCreateInitFuncs);
+    //    // Call the post init functions
+    //    for (var i = 0; i < this.postCreateInitFuncs.length; ++i) {
+    //        if (typeof this.postCreateInitFuncs[i] === 'function') {
+    //            this.postCreateInitFuncs[i]();
+    //            // just in case make sure we are not holding any reference to the functions
+    //            this.postCreateInitFuncs[i] = null;
+    //        }
+    //    }
+    //};
 
-        var opts = {};
-        $.extend(opts, options);
-        if (typeof color === 'string')
-            opts.color = color;
+    this.getvaluesFromPG = function () {
+        // Create a function that will return tha values back from the property grid
+        var result = {};
+        for (var prop in this.getValueFuncs) {
+            if (typeof this.getValueFuncs[prop] !== 'function')
+                continue;
 
-        return function onColorPickerInit() {
-            $('#' + id).spectrum(opts);
-        };
-    }
-    
+            result[prop] = this.getValueFuncs[prop]();
+        }
+         this.PropsObj = result;
+        console.log("resultttttttt: " + JSON.stringify( result));
+        return result;
+    };
+
     this.init();
 };
 

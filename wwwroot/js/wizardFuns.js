@@ -472,7 +472,7 @@ var CustomWizFuncs = function (acid) {
     };
 };
 
-var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,versionNumber,filterDialogId,objType) {
+var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code, versionNumber, filterDialogId, objType, rel_obj, needRun) {
     this.AcId = acid;
     this.ObjectId = obj_id;
     this.ObjectName = obj_name;
@@ -481,7 +481,6 @@ var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,ver
     this.Code = code;
     this.VersionNumber = versionNumber;
     this.FilterDialogId = filterDialogId;
-    alert("objType  " + objType);
     this.DataSource = function () {       
         $('#name').val(obj_name);
         $('#description').val(obj_desc);
@@ -490,7 +489,9 @@ var CustomCodeEditorFuncs = function (acid, obj_id, obj_name, obj_desc, code,ver
         $('#objtype').val(objType);
         $('#id').val(obj_id);       
         $('#versionNumber').val(versionNumber);
-        $('#filterDialogId').val(filterDialogId);        
+        $('#filterDialogId').val(filterDialogId);
+        $('#rel_obj').val(rel_obj);
+        $('#needRun').val(needRun);
     };
 };
 
@@ -501,9 +502,6 @@ var CustomFilterDialogFuncs = function (acid, obj_id, obj_name, obj_desc, code, 
                 $.post("http://expressbase.org/Tenant/SaveEbDataSource", { "Id": obj_id, "Code": code, "Name": obj_name, "Description": obj_desc, "Token": getToken(), "isSave": "true", "VersionNumber": versionNumber }, function (result) {
                 });
             });
-        
-            //alert(code);
-            //$('#execode').val(code);
     };
 
 };

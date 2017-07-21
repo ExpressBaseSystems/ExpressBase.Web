@@ -227,6 +227,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         $("#X_col_name" + this.tableId).off("dragover").on("dragover", this.colAllowDrop.bind(this));
         $("#Y_col_name" + this.tableId).off("drop").on("drop", this.colDrop.bind(this));
         $("#Y_col_name" + this.tableId).off("dragover").on("dragover", this.colAllowDrop.bind(this));
+        $("#searchColumn"+this.tableId).off("keyup").on("keyup", this.searchDragNDropColumn.bind(this));
         if (data)
             this.data = data;
         else {
@@ -241,7 +242,10 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         var colsAll_XY = [], Ycol = [];
         $.each(this.columnInfo.options.Yaxis, this.AddYcolumns.bind(this, Ycol));
         $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
-        var tid = this.tableId
+        var tid = this.tableId;
+        colsAll_XY = colsAll_XY.sort(function (a, b) {
+            return a.name.localeCompare(b.name);
+        });
         $.each(colsAll_XY, function (i, obj) {
             if (obj.data != undefined) {
                 $("#columns4Drag" + tid + " .list-group").append("<li class='alert alert-success columnDrag' id='li" + obj.name + "' draggable='true' data-id='" + obj.data + "'>" + obj.name + "</li>");
@@ -444,31 +448,70 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
 
     this.colDrag = function (e) {
         e.dataTransfer.setData("text", e.target.id);
-        this.sourceElement = $(e.target).parent();
+        this.sourceElement = e.target.parentNode.tagName;
+        this.sourceElementId = e.target.parentElement.id;
     };
 
     this.colDrop = function (e) {
         e.preventDefault();
         var data = e.dataTransfer.getData("text");
-        $(e.target).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='" + data + "' data-id='" + $("#" + data).attr("data-id") + "'>" + $("#" + data).text() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
-        alert(this.sourceElement);
+        if (this.sourceElement === "UL") {
+            $(e.target).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='" + data + "' data-id='" + $("#" + data).attr("data-id") + "'>" + $("#" + data).text() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
             if ($(e.target).attr("id") == "X_col_name" + this.tableId)
-                    this.Xax.push(new axis($("#" + data).attr("data-id"), $("#" + data).text()));
+                this.Xax.push(new axis($("#" + data).attr("data-id"), $("#" + data).text()));
             if ($(e.target).attr("id") == "Y_col_name" + this.tableId)
-                    this.Yax.push(new axis($("#" + data).attr("data-id"), $("#" + data).text()));
-            if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
-                this.columnInfo.options.Xaxis = this.Xax;
-                this.columnInfo.options.Yaxis = this.Yax;
-                this.drawGeneralGraph();
+                this.Yax.push(new axis($("#" + data).attr("data-id"), $("#" + data).text()));
+            $("#" + data).remove();
+        }
+        else {
+            var str = $("#" + data).text();
+            this.Xax = []; this.Yax = [];
+            $(e.target).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='" + data + "' data-id='" + $("#" + data).attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
+            if ($(e.target).attr("id") == "X_col_name" + this.tableId) {
+                if (this.sourceElementId == "Y_col_name" + this.tableId)
+                    $("#Y_col_name" + this.tableId + " #" + data).remove();
+                else
+                    $("#" + data).remove();
+                $("#X_col_name" + this.tableId + " div").each(this.changeIndexIOfXColumns.bind(this));
+                $("#Y_col_name" + this.tableId + " div").each(this.changeIndexIOfYColumns.bind(this));
             }
-            else {
-                $("#myChart" + this.tableId).remove();
-                $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
+            else if($(e.target).attr("id") == "Y_col_name" + this.tableId) {
+                if (this.sourceElementId == "X_col_name" + this.tableId)
+                    $("#X_col_name" + this.tableId + " #" + data).remove();
+                else
+                    $("#" + data).remove();
+                $("#Y_col_name" + this.tableId + " div").each(this.changeIndexIOfYColumns.bind(this));
+                $("#X_col_name" + this.tableId + " div").each(this.changeIndexIOfXColumns.bind(this));
             }
+        }
+        this.columnInfo.options.Xaxis = this.Xax;
+        this.columnInfo.options.Yaxis = this.Yax;
+        if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
+            this.drawGeneralGraph();
+        }
+        else {
+            $("#myChart" + this.tableId).remove();
+            $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
+        }
         console.log(this.columnInfo.options.Xaxis); console.log(this.columnInfo.options.Yaxis);
-        $("#" + data).remove();
         $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
+
+        $("#X_col_name" + this.tableId + " div[draggable=true]").off("dragstart").on("dragstart", this.colDrag.bind(this));
+        $("#Y_col_name" + this.tableId + " div[draggable=true]").off("dragstart").on("dragstart", this.colDrag.bind(this));
+
+        $("#X_col_name" + this.tableId + " div[draggable=true]").off("dragover").on("dragover", this.NocolAllowDrop.bind(this));
+        $("#Y_col_name" + this.tableId + " div[draggable=true]").off("dragover").on("dragover", this.NocolAllowDrop.bind(this));
+    };
+
+    this.changeIndexIOfXColumns = function (i, obj) {
+        var str = obj.innerText;
+        this.Xax.push(new axis(obj.getAttribute("data-id"), str.substring(0,str.length-1).trim()));
+    };
+
+    this.changeIndexIOfYColumns = function (i, obj) {
+        var str = obj.innerText;
+        this.Yax.push(new axis(obj.getAttribute("data-id"), str.substring(0, str.length - 1).trim()));
     };
 
     this.colAllowDrop = function (e) {
@@ -494,9 +537,9 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             $("#btnColumnCollapsedv281_1").append("<i class='fa fa-chevron-down' aria-hidden='true'></i>")
         }
         else {
-            $("#myChart" + this.tableId).css("width", "792px");
+            $("#myChart" + this.tableId).css("width", "80%");
             $("#myChart" + this.tableId).css("height", "454px");
-            $("#myChart" + this.tableId).css("margin-left", "175px");
+            $("#myChart" + this.tableId).css("margin-left", "200px");
             $("#myChart" + this.tableId).css("margin-top", "-420px");
             $("#btnColumnCollapse" + this.tableId).children().remove();
             $("#btnColumnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
@@ -519,6 +562,22 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             $("#myChart" + this.tableId).remove();
             $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
         }
+    };
+
+    this.searchDragNDropColumn = function () {
+        var search_word = $("#searchColumn" + this.tableId).val();
+        if (search_word !== "") {
+            $("#columns4Drag" + this.tableId + " ul li").hide();
+            $("#columns4Drag" + this.tableId + " ul li").each(function () {
+                var current_keyword = $(this).text();
+                if (current_keyword.indexOf(search_word) >= 0) {
+                    $(this).show();
+                };
+            });
+        }
+        else {
+            $("#columns4Drag" + this.tableId + " ul li").show();
+        };
     };
 
     this.init();

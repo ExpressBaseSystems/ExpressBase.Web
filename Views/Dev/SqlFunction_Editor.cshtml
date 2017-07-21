@@ -114,7 +114,8 @@
     <div class="tab-content " id="versionTab">
         <div id="code_edit0" class="tab-pane fade in active">
             <div class="form-inline">
-                <a href="#" id="execute0" data-toggle="tooltip" title="Execute"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+                <a href="#" id="runSqlFn0" data-toggle="tooltip" title="Run"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+                <a href="#" id="testSqlFn0" data-toggle="tooltip" title="Test"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
                 @{ if (ViewBag.IsNew == "false")
                     {
                         <div class="verlist input-group">
@@ -191,18 +192,19 @@
         window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             mode: "@ViewBag.EditorMode",
             lineNumbers: true,
-            lineWrapping: true,
+            lineWrapping: false,
             extraKeys: { "Ctrl-Space": "autocomplete" },
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        }); 
+        });
 
         var orig = CodeMirror.hint.sql;
         CodeMirror.hint.sql = function (editor) {
-           // alert("asdasda");
             var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
-            inner.list.push("sql_fn_1");
-            inner.list.push("sql_fn_2");
+            var SqlFnList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SqlFns));
+            $.each(SqlFnList, function (i, fdj) {
+                inner.list.push(fdj);
+            });
             var cursor = editor.getCursor();
             var currentLine = editor.getLine(cursor.line);
             var start = cursor.ch;
@@ -233,7 +235,7 @@
 
     .CodeMirror {
         height: 500px;
-        background-color: azure;
+        background-color: ivory;
     }
 
     .table-responsive {

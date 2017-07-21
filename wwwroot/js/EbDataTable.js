@@ -414,6 +414,9 @@ var EbDataTable = function (settings) {
             this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
             $("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         }
+        else{
+            $("#showgraphbtn" + this.tableId).hide();
+        }
         this.Api.columns.adjust();
     }
 
@@ -660,12 +663,12 @@ var EbDataTable = function (settings) {
         //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
         $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsModal.bind(this));
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
-        //$(this.filterBox).off("toggle").on("toggle", this.modifyFilterBox.bind(this));
-        
+        //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
     };
 
     this.GenerateButtons = function () {
         $("#TableControls_" + this.tableId).prepend("<div style='display: inline;float: right;'>" +
+            "<a id='showgraphbtn"+this.tableId+"' class='btn btn-default' href='#graphcontainer_tab"+this.tableId+"'><i class='fa fa-line-chart'></i></a>" +
             "<button type='button' id='" + this.tableId + "_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
              "<div class='btn-group'>" +
@@ -690,7 +693,6 @@ var EbDataTable = function (settings) {
                " </div>"+
          "</div>");
     };
-    //href='http://dev.eb_roby_dev.localhost:53431/Tenant/DVEditor #'
 
 
     this.setFilterboxValue = function (i, obj) {
@@ -1014,31 +1016,39 @@ var EbDataTable = function (settings) {
                 " <table id='dv" + this.linkDV + "_" + index + "' class='table table-striped table-bordered'></table>" +
               "  </div>" +
              " <div id='graphcontainer_tabdv" + this.linkDV + "_" + index + "' style='border:1px solid;display: none;'>" +
-              "  <div style='height: 38px; border: 1px solid;'>"+
-               "      <div class='dropdown' id='graphDropdown_tabdv" + this.linkDV + "_" + index + "' style='display: inline-block;padding-top: 1px;'>" +
+              "  <div style='height: 50px;margin-bottom: 1px!important;>" +
+               "      <div class='dropdown' id='graphDropdown_tabdv" + this.linkDV + "_" + index + "' style='display: inline-block;padding-top: 1px;float:right'>" +
                 "             <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>"+
                  "          <span class='caret'></span></button>"+
                   "        <ul class='dropdown-menu'>"+
-                   "             <li><a href='#'>Line</a></li>"+
-                    "            <li><a href = '#'> Bar </a ></li>"+
-                     "           <li><a href = '#'> AreaFilled </a></li>"+
-                      "          <li><a href = '#'> pie </a></li>"+
-                       "         <li><a href = '#'> doughnut </a></li>"+
+                      "          <li><a href =  '#'><i class='fa fa-line-chart custom'></i> Line</a></li>"+
+                      "          <li><a href = '#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>"+
+                       "         <li><a href = '#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>"+
+                        "        <li><a href = '#'><i class='fa fa-pie-chart custom'></i> pie </a></li>"+
+                         "       <li><a href = '#'> doughnut </a></li>"+
                         "        </ul>"+
                       "</div>"+
-                      "<button id='reset_zoomdv" + this.linkDV + "_" + index + "' class='btn btn-primary'>Reset zoom</button>" +
+                      "<button id='reset_zoomdv" + this.linkDV + "_" + index + "' class='btn btn-default'>Reset zoom</button>" +
                       "<div id = 'btnColumnCollapsedv" + this.linkDV + "_" + index + "' class='btn btn-default'>" +
                        "     <i class='fa fa-chevron-down' aria-hidden='true'></i>"+
                       "</div>"+
                 "</div>"+
                 "<div id ='columns4Dragdv" + this.linkDV + "_" + index + "' style='display:none;'>" +
-                 "   <div style='display: inline-block;'>"+
-                  "      <ul class='list-group'  style='height: 470px; overflow-x: scroll;'>"+
+                 "   <div style='display: inline-block;'>" +
+                         " <label class='nav-header disabled'><center><strong>Columns</strong></center><center><font size='1'>Darg n Drop to X or Y Axis</font></center></label>" +
+                      "  <input id='searchColumndv" + this.linkDV + "_" + index + "' type='text' class ='form-control' placeholder='search for column'/>" +
+                  "      <ul class='list-group'  style='height: 470px; overflow-y: auto;'>"+
                    "     </ul>  "+
                    " </div>"+
-                    "<div style='display: inline-block;vertical-align: top;width: 794px;'>"+
-                     "   <b>Columns (X-Axis) </b><div style='padding: 4px;border:solid 1px grey;height:33px' id ='X_col_namedv" + this.linkDV + "_" + index + "'></div>" +
-                      "  <b>Rows (Y-Axis)</b><div style='padding: 4px;border:solid 1px grey;height:33px' id ='Y_col_namedv" + this.linkDV + "_" + index + "'></div>" +
+                    "<div style='display: inline-block;vertical-align: top;width: 806px;'>"+
+                    " <div class='input-group'>"+
+                      "    <span class='input-group-addon' id='basic-addon3'>X-Axis</span>"+
+                      "    <div class='form-control' style='padding: 4px;height:33px' id ='X_col_namedv" + this.linkDV + "_" + index + "'></div>" +
+                      "  </div>"+
+                       " <div class='input-group' style='padding-top: 1px;'>"+
+                       "   <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>"+
+                        "  <div class='form-control' style='padding: 4px;height:33px' id ='Y_col_namedv" + this.linkDV + "_" + index + "'></div>" +
+                       " </div>" +
                     "</div>"+
                 "</div>"+
                 "<canvas id='myChartdv" + this.linkDV + "_" + index + "' width='auto' height='auto'></canvas>" +

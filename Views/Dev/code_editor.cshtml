@@ -191,7 +191,7 @@
         window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             mode: "@ViewBag.EditorMode",
             lineNumbers: true,
-            lineWrapping: true,
+            lineWrapping: false,
             extraKeys: { "Ctrl-Space": "autocomplete" },
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]

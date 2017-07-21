@@ -29,11 +29,8 @@
     padding: 3px;
     display: inline-block;
     vertical-align: top;
-    height: 590px;
     overflow-y: auto;
     border: solid 1px #dddddd;
-    margin-left: 8px;
-    margin-top: 7px;
 }
 
 .form-buider-form {
@@ -113,6 +110,16 @@
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+}
+
+.toolbox-cont {
+    display: inline-block;
+    top: 50px;
+    background-color: white;
+    padding: 3px;
+    border: solid 1px #dddddd;
+    margin-left: 8px;
+    vertical-align: top;
 }
 
 .tdDropable {

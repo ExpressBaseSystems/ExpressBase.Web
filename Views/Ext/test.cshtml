@@ -1,134 +1,21 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPageHeader2");
 }
-<style>
-    table {
-        width: 100%;
-    }
 
-    tr {
-        text-align: center;
-    }
+<script>  
+        function moveRight() {
+            $("#float").animate({ left: "+=1000" }, 10000, moveLeft)
+        }
 
-    input[type=checkbox] {
-    }
-</style>
-<div id="tenatDtls" class="container">
-    <br />
-    <br />
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <input type="text" class="form-control" name="firstname" placeholder="Role Name" />
-            </div>
-            <div class="form-group">
-                <select class="form-control" id="appselect">
-                    <option value="">Application</option>
-                    <option value="">Application1</option>
-                    <option value="">Application2</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="form-group">
-                <textarea class="form-control" placeholder="Description" style="height:83px;width:703px;"></textarea>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12" style="display:none" id="objlist1">
-            <div class="list-group">
-                <a class="list-group-item list-group-item-action collapsed" data-toggle="collapse" data-target="#dropdown3">DataSource <i class="fa fa-caret-right pull-right"></i></a>
-                <table class="table table-responsive sub-menu collapse" id="dropdown3">
-                    <thead>
-                        <tr>
-                            <th>Objects</th>
-                            <th>Operation1</th>
-                            <th>Operation2</th>
-                            <th>Operation3</th>
-                            <th>Operation4</th>
-                            <th>Operation5</th>
-                            <th>Operation6</th>
-                            <th>Operation7</th>
-                            <th>Operation8</th>
-                            <th>Operation9</th>
-                            <th>Operation10</th>
-                            <th>Operation11</th>
-                            <th>Operation10</th>
-                            <th>Operation11</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">Dv1</th>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                            <td><input type="checkbox" class="form-check-input" aria-label="..."></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Dv2</th>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Dv3</th>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                            <td><input type="checkbox" aria-label="..."></td>
-                        </tr>
+        function moveLeft() {
+            $("#float").animate({ left: "-=1000" }, 10000, moveRight)
+        }
 
-                    </tbody>
-                </table>
-                <a class="list-group-item list-group-item-action">D V <i class="fa fa-caret-right pull-right"></i></a>
-                <a class="list-group-item list-group-item-action">Javascript Functions <i class="fa fa-caret-right pull-right"></i></a>
-                <a class="list-group-item list-group-item-action">Javascript Validators <i class="fa fa-caret-right pull-right"></i></a>
-                <a class="list-group-item list-group-item-action">Forms <i class="fa fa-caret-right pull-right"></i></a>
-                <a class="list-group-item list-group-item-action">Reports <i class="fa fa-caret-right pull-right"></i></a>
-            </div>
-        </div>
-    </div>
-</div>
+        $(document).ready(function () {
 
-<script>
-    $('document').ready(function () {
-        $('a').click(function () {
-            $(this).css("background-color","#f5f5f5");
+            moveRight();
+
         });
-        $("#appselect").change(function () {
-            $('#objlist1').slideToggle(200, "linear");
-        });
-    })
 </script>
-
 

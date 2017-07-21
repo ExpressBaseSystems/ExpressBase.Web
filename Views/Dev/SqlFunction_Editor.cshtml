@@ -114,7 +114,8 @@
     <div class="tab-content " id="versionTab">
         <div id="code_edit0" class="tab-pane fade in active">
             <div class="form-inline">
-                <a href="#" id="execute0" data-toggle="tooltip" title="Execute"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+                <a href="#" id="runSqlFn0" data-toggle="tooltip" title="Run"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+                <a href="#" id="testSqlFn0" data-toggle="tooltip" title="Test"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
                 @{ if (ViewBag.IsNew == "false")
                     {
                         <div class="verlist input-group">
@@ -191,7 +192,7 @@
         window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             mode: "@ViewBag.EditorMode",
             lineNumbers: true,
-            lineWrapping: true,
+            lineWrapping: false,
             extraKeys: { "Ctrl-Space": "autocomplete" },
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]

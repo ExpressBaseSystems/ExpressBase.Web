@@ -31,6 +31,26 @@
 //    }
 //};
 
+var TextBoxObj = function (id) {
+    this.$type = 'ExpressBase.Objects.EbTextBox';
+    this.Id = id;
+    this.Name = id;
+    this.MaxLength = 0;
+    this.TextTransform = '--select--';
+    this.TextMode = '--select--';
+    this.PlaceHolder = '';
+    this.Text = '';
+    this.AutoCompleteOff = false;
+    this.BackColor = '#FFFFFF';
+    this.ForeColor = '#FFFFFF';
+    this.Metas = [{ "name": "MaxLength", "group": "Behavior", "editor": 2, "options": null },
+ { "name": "TextTransform", "group": "Behavior", "editor": 1, "options": ["Normal", "lowercase", "UPPERCASE"] },
+ { "name": "TextMode", "group": "Behavior", "editor": 1, "options": ["SingleLine", "Email", "Password", "Color"] },
+ { "name": "PlaceHolder", "group": "Behavior", "editor": 5, "options": null },
+ { "name": "Text", "group": "Appearance", "editor": 5, "options": null },
+ { "name": "AutoCompleteOff", "group": "Behavior", "editor": 0, "options": null }, { "name": "BackColor", "group": "Appearance", "editor": 3, "options": null }, { "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null }]
+};
+
 var GridViewObj = function (id) {
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
@@ -233,6 +253,7 @@ var formBuilder = function (toolBoxid, formid) {
     this.currentProperty = null;
     this.Controls = new EbControlCollection();
     this.drake = null;
+    this.PGobj = null;
     // need to change
     this.CurRowCount = 2;
     this.CurColCount = 2;
@@ -313,7 +334,8 @@ var formBuilder = function (toolBoxid, formid) {
 
         setTimeout(this.SetTimeOutFn.bind(this), 1);
 
-        $('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
+this.PGobj  = new Eb_PropertyGrid("propGrid", new TextboxObj("sTextBox"))
+        //$('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
 
         $('.selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();
@@ -326,6 +348,7 @@ var formBuilder = function (toolBoxid, formid) {
     };
 
     this.saveObj = function () {
+        this.PGobj.getvaluesFromPG();
         $('#propGrid').jqPropertyGrid('get');
         $('#txtValues').val(JSON.stringify(this.Controls) + '\n\n');
     };
@@ -395,7 +418,6 @@ var formBuilder = function (toolBoxid, formid) {
     }
 
     this.onDragFn = function (el, source) {
-        console.log("onDragFn");
         //if drag start within the form
         if (!($(source).attr("id") === "form-buider-toolBox")) {
             console.log("el poped");
@@ -406,16 +428,12 @@ var formBuilder = function (toolBoxid, formid) {
     }// start
 
     this.onDragendFn = function (el) {
-        console.log("onDragendFn");
         var sibling = $(el).next();
-        console.log("sibling: " + sibling.attr("id"));
         var target = $(el).parent();
         if (this.movingObj) {
 
             //Drag end with in the form
             if (target.attr("id") !== "form-buider-toolBox") {
-                console.log("elObj : " + JSON.stringify(this.movingObj));
-                console.log("sibling : " + sibling.attr("id"));
                 if (sibling.attr("id")) {
                     console.log("sibling : " + sibling.id);
                     var idx = sibling.index() - 1;
@@ -434,20 +452,34 @@ var formBuilder = function (toolBoxid, formid) {
     this.onDropFn = function (el, target, source, sibling) {
         //drop from toolbox to form
         if ($(source).attr("id") === "form-buider-toolBox") {
+
             el.className = 'controlTile';
+
             var ctrl = $(el);
+
             var type = ctrl.text().trim();
+
             eval("var id = '" + type + "' + " + "this." + type + "Counter++");
+
             ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+
             ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+
             ctrl.attr("ebtype", type).attr("id", id);
+
             if ($(target).attr("id") === "form-buider-form")
+
                 eval("this.Controls.Append(new " + type + "Obj(id))");
+
             else
                 eval("this.Controls.GetByName( $(target).attr('id') ).Controls.Append(new " + type + "Obj(id))");
+
             ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
+
             $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
+
             $('.selectpicker').selectpicker('refresh');
+
             ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
         }
         else
@@ -541,7 +573,7 @@ var formBuilder = function (toolBoxid, formid) {
             removeOnSpill: false,
             copy: function (el, source) { return (source.className !== 'tdDropable' && source.className !== 'form-buider-form'); },
             copySortSource: true,
-            mirrorContainer: document.body,
+            mirrorContainer: document.getElementById('form-buider-form'),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });

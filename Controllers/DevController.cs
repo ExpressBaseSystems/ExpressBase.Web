@@ -229,6 +229,7 @@ namespace ExpressBase.Web.Controllers
 
             if (_EbObjectType == EbObjectType.SqlFunction)
             {
+                ds.NeedRun = req["NeedRun"];
                 ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbSqlFunction
                 {
                     Name = _dict["name"],
@@ -255,6 +256,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         public JsonResult SaveEbDataSource()
+
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -278,6 +280,7 @@ namespace ExpressBase.Web.Controllers
             }
             if (_EbObjectType == EbObjectType.SqlFunction)
             {
+                ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
                 ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbSqlFunction
                 {
                     Name = req["Name"],
@@ -288,11 +291,10 @@ namespace ExpressBase.Web.Controllers
                 });
             }
 
-
             ds.Token = ViewBag.token;
 
             ViewBag.IsNew = "false";
-            using (client.Post<HttpWebResponse>(ds)) { }
+            var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return Json("Success");
         }
         //for ajax call

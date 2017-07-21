@@ -417,7 +417,6 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
     }
 
     this.onDragFn = function (el, source) {
-        console.log("onDragFn");
         //if drag start within the form
         if (!($(source).attr("id") === "form-buider-toolBox")) {
             console.log("el poped");
@@ -428,16 +427,12 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
     }// start
 
     this.onDragendFn = function (el) {
-        console.log("onDragendFn");
         var sibling = $(el).next();
-        console.log("sibling: " + sibling.attr("id"));
         var target = $(el).parent();
         if (this.movingObj) {
 
             //Drag end with in the form
             if (target.attr("id") !== "form-buider-toolBox") {
-                console.log("elObj : " + JSON.stringify(this.movingObj));
-                console.log("sibling : " + sibling.attr("id"));
                 if (sibling.attr("id")) {
                     console.log("sibling : " + sibling.id);
                     var idx = sibling.index() - 1;

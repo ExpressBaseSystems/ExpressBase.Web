@@ -1,17 +1,31 @@
-﻿
+﻿@{
+    @using ServiceStack;
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    @using ExpressBase.Web2;
+
+    EbSetupConfig EbConfig = ViewBag.EbConfig;
+    IServiceClient client = EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = 9, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+    List<EbObjectWrapper> responselist = resultlist.Data;
+}
 <div class="list-group">
     <ul class="outer" style="padding-left:0;">
+        @{ 
+            foreach(var element in responselist)
+            {
         <li>
-            <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown1">
-                <i class="fa fa-cog"></i> Chat
+            <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown1_@element.Id">
+                <i class="fa fa-cog"></i> @element.Name <i class="fa fa-caret-down pull-right"></i>
             </a>
-            <ul class="sub-menu collapse" id="dropdown1">
+            <ul class="sub-menu collapse" id="dropdown1_@element.Id">
                 <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
                 <li><a class="list-group-item" onclick="LoadObjectListUser(11)"><i class="fa fa-caret-right"></i> Data visualizations</a></li>
                 <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Reports</a></li>
             </ul>
         </li> 
-        <li>
+            }
+            }
+        @*<li>
             <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown2">
                 <i class="fa fa-money"></i> Financial Accounts<i class="fa fa-caret-down pull-right"></i>
             </a>
@@ -90,7 +104,7 @@
                 <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> User Groups</a></li>
                 <li><a class="list-group-item" href="EbRoles"><i class="fa fa-caret-right"></i> Roles</a></li>
             </ul>
-        </li>
+        </li>*@
 </ul>
 </div>
 <script>

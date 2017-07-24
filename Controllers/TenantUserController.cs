@@ -231,15 +231,27 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpPost]
-        public IActionResult ManageRoles(string[] Permissions)
+        public IActionResult ManageRoles(int roleid)
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            
+            if (roleid > 0)
+            {
+                var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { id = roleid, restype = "getpermissions", Token = ViewBag.token });
+                //ViewBag.permissions = fr.Permissions;
+                ViewBag.RoleName = fr.Data["rolename"];
+                ViewBag.ApplicationId = fr.Data["applicationid"];
+                ViewBag.ApplicationName = fr.Data["applicationname"];
+            }
+                 
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             ViewBag.dict = resultlist.Data;
             ViewBag.roleid = req["roleid"];
+
             return View();
         }
+
 
         public string GetRowAndColumn(int ApplicationId, int ObjectType,int RoleId)
         {
@@ -252,42 +264,43 @@ namespace ExpressBase.Web2.Controllers
                 _permissionsData = fr.Permissions;
             }
 
-                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { DominantId = ApplicationId, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-                ViewBag.dict = resultlist.Data;
-                string html = @"<thead><tr><th>@Header</th></tr></thead><tbody>@tbody</tbody>";
-                string header = string.Empty;
-                string tbody = string.Empty;
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { DominantId = ApplicationId, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            ViewBag.dict = resultlist.Data;
+            string html = @"<thead><tr><th>@Header</th></tr></thead><tbody>@tbody</tbody>";
+            string header = string.Empty;
+            string tbody = string.Empty;
 
-                if (ObjectType == 11)
+            if (ObjectType == 11)
+            {
+                foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
+                    header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
+
+                foreach (var obj in resultlist.Data)
                 {
+                    tbody += "<tr>";
+                    tbody += "<td>{0}</td>".Fmt(obj.Name);
                     foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
-                        header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
-
-                    foreach (var obj in resultlist.Data)
                     {
-                        tbody += "<tr>";
-                        tbody += "<td>{0}</td>".Fmt(obj.Name);
-                        foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
-                        {
-                            var perm = string.Format("{0}_{1}", obj.Id, (int)Op);
-                            var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
-                            tbody += "<td><input type = 'checkbox' name ='permissions' value='{0}' class='form-check-input' aria-label='...' {1}></td>".Fmt(perm, checked_string);
-                        }
-                        tbody += "</tr>";
+                        var perm = string.Format("{0}_{1}", obj.Id, (int)Op);
+                        var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
+                        tbody += "<td><input type = 'checkbox' name ='permissions' value='{0}' class='form-check-input' aria-label='...' {1}></td>".Fmt(perm, checked_string);
                     }
+                    tbody += "</tr>";
                 }
+            }
 
-                return html.Replace("@Header", header).Replace("@tbody", tbody);
+            return html.Replace("@Header", header).Replace("@tbody", tbody);
            
         }
 
-        public string SaveRoles(string[] Permissions, string RoleName,string IsEdit)
+        public string SaveRoles(string[] Permissions, string RoleName,int ApplicationId)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
             string return_msg;
             Dict["role_name"] = RoleName;
             Dict["permission"] = Permissions;
+            Dict["applicationid"] = ApplicationId;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, Token = ViewBag.token, op = "saveroles" });
             if(res.id>0)

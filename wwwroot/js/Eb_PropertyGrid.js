@@ -30,7 +30,7 @@ var Eb_PropertyGrid = function (id, obj) {
     this.getValueFuncs = {};
     this.pgId = 'pg' + (this.pgIdSequence++);
     this.currGroup = null;
-    this.innerHTML = '<table class="pgTable">';
+    this.innerHTML = '<table class="table-bordered table-hover">';
 
     //alert("Metas:" + JSON.stringify(this.Metas));
     //alert("PropsObj:" + JSON.stringify(this.PropsObj));
@@ -162,6 +162,10 @@ var Eb_PropertyGrid = function (id, obj) {
         // Close the table and apply it to the div
         this.innerHTML += '</table>';
         this.$container.html(this.innerHTML);
+        $("#" + id + ' .selectpicker').on('change', function (e) {
+            var selected = $(this).find("option:selected").val();
+            $(this).parent().siblings("input").val(selected);
+        });
     };
 
     this.buildRows = function () {

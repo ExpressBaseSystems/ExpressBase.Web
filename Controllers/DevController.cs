@@ -229,7 +229,7 @@ namespace ExpressBase.Web.Controllers
 
             if (_EbObjectType == EbObjectType.SqlFunction)
             {
-                ds.NeedRun = req["NeedRun"];
+               // ds.NeedRun = req["NeedRun"];
                 ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbSqlFunction
                 {
                     Name = _dict["name"],

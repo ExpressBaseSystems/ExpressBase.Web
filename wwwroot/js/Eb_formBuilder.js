@@ -34,6 +34,8 @@
 var TextBoxObj = function (id) {
     this.$type = 'ExpressBase.Objects.EbTextBox';
     this.Id = id;
+    this.type = "EbTextBox",
+    this.IsContainer = false,
     this.Name = id;
     this.MaxLength = 0;
     this.TextTransform = '--select--';
@@ -287,64 +289,12 @@ var formBuilder = function (toolBoxid, formid) {
 
     this.CreatePG = function (control) {
         $('#propGrid').empty();
-        $('#propHead').empty().html("<strong> " + control.props.Name + "</strong>");
-
-        // This is the metadata object that describes the target object properties (optional)
-        var DDid = null;
-        var LDDid = null;
-        var theCustomTypes = {
-            icon: {
-                html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                    return '<i class="fa fa-' + value + '"></i>';
-                },
-                valueFn: function () { return 'Icon field value'; }
-            },
-            BootstrapDD: {
-                html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                    var _html = "<div class='dropdown'>" +
-                    "<button id=" + elemId + " name=" + name + " class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'><div style='display: inline-block; overflow: hidden; text-overflow: ellipsis; '>" + value +
-                    " </div><span class='caret' style='vertical-align: super'></span></button>" +
-                    "<ul class='dropdown-menu'>"
-                    $.each(meta.options, function (i, val) { _html += "<li><a href='#'>" + val + "</a></li>"; })
-                    _html += "</ul></div>";
-                    DDid = elemId;
-                    return _html.toString();
-                },
-                valueFn: function () {
-                    return $('#' + DDid).text().trim();
-                }
-            },
-            BootstrapSelect: {
-                html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                    var txt = "";
-                    var _html = "<select class='selectpicker' data-live-search='true'>"+
-                                  "<option data-tokens='ketchup mustard'>Hot Dog, Fries and a Soda</option>"+
-                                  "<option data-tokens='mustard'>Burger, Shake and a Smile</option>"+
-                                  "<option data-tokens='frosting'>Sugar, Spice and all things nice</option>"+
-                                "</select>"+
-                                "<input type='hidden' value='############' id='" + elemId + "'>"
-                    ;
-                    return _html;
-                },
-                //valueFn: function () {
-                //    return parseInt($('#' + LDDid).attr("data-dvid"));
-                //}
-            }
-        };
-
         setTimeout(this.SetTimeOutFn.bind(this), 1);
-
-this.PGobj  = new Eb_PropertyGrid("propGrid", new TextboxObj("sTextBox"))
-        //$('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
-
+        this.PGobj = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
         $('.selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();
-            $(this).parent().siblings("input").val(selected);
             $("#" + selected).focus();
         });
-
-
-        //$("#propGrid td:contains(Columns)").next().children().on("focus click", this.RFocus.bind());
     };
 
     this.saveObj = function () {
@@ -354,16 +304,7 @@ this.PGobj  = new Eb_PropertyGrid("propGrid", new TextboxObj("sTextBox"))
     };
 
     this.SetTimeOutFn = function () {
-        $('#Table_Settings_wrapper').css("width", "813px");
-        $('#Table_Settings_wrapper table:eq(0)').css("min-width", "813px");
-        $('#Table_Settings_wrapper table:eq(1)').css("min-width", "805px");
         $('#form-buider-propGrid').css("visibility", "visible");
-        $('#propGrid table').removeClass("pgTable").addClass("table-bordered table-hover");
-        $('.dropdown ul li').click(function () {
-            $(this).parent().siblings('[data-toggle=dropdown]').text($(this).text());
-            $(this).parent().siblings('[data-toggle=dropdown]').attr("data-dvid", $(this).children().attr("data-dvid"));
-            //saveObj();
-        });
         $('#propGrid table td').find("input").change(this.PGinputChange.bind(this));
     };
 

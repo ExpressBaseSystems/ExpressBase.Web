@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
     @using ExpressBase.Objects.ServiceStack_Artifacts;
+    @using ExpressBase.Objects;
     List<EbObjectWrapper> List = ViewBag.dict;
 }
 <style>
@@ -35,9 +36,7 @@
                     @{
                         foreach (var element in List)
                         {
-
                             <option value="@element.Id">@element.Name</option>
-
                         }
                     }
                 </select>
@@ -53,21 +52,22 @@
     <div class="row" style="display:none" id="objlist1">
         <div class="list-group">
             <ul>
+                @foreach (var ObjectType in Enum.GetValues(typeof(EbObjectTypesUI)))
+                {
+                    var intobj = (int)ObjectType;
                 <li>
-                    <a class="list-group-item list-group-item-action collapsed" data-toggle="collapse" data-target="#dropdownPerm" onclick="GetTable(2)">Data Visualization <i class="fa fa-caret-right pull-right"></i></a>
-                    <table class="table table-responsive sub-menu collapse" id="dropdownPerm">
-                        
+                    <a class="list-group-item list-group-item-action collapsed" data-toggle="collapse" data-target="#objtype_@intobj" onclick="GetTable(@intobj)">@ObjectType<i class="fa fa-caret-right pull-right"></i></a>
+                    <table class="table table-responsive sub-menu collapse" id="objtype_@intobj">
+                       
                    </table>
-                    <input type='button' value='Save' id='save_permission' />
                 </li>
-                <li><a class="list-group-item list-group-item-action">Forms <i class="fa fa-caret-right pull-right"></i></a></li>
-                <li><a class="list-group-item list-group-item-action">Javascript Functions <i class="fa fa-caret-right pull-right"></i></a></li>
-
+                }
             </ul>
         </div>
         <input type="hidden" id="applicationid" />
+        <input type="hidden" id="roleid" name="roleid" value="@ViewBag.roleid" />
     </div>
-    <input type="submit" value="Save" />
+    <input type="submit" value="Save" id = "save_permission" />
                         }
 
 <script>
@@ -88,13 +88,11 @@
             $.post("../TenantUser/SaveRoles",
             {
                 "Permissions": selected,
-                "RoleName": $('#role_name').val()
+                "RoleName": $('#role_name').val(),
+                "RoleId": $('#roleid').val()
 
-            }, function (result) {
-                
-            });
-
-            
+            }, function (result) {   
+            });        
         });
     })
     function GetTable(type) {
@@ -102,10 +100,13 @@
            {
                "ApplicationId": $('#applicationid').val(),
                "ObjectType": type,
+               "RoleId": $('#roleid').val()
+              
 
            }, function (result) {
+               alert(result);
                if (result) {
-                   document.getElementById('dropdownPerm').innerHTML = result;
+                   document.getElementById("objtype_" + type.toString()).innerHTML = result;
                }
            });
     }

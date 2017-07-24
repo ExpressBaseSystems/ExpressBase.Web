@@ -41,9 +41,13 @@
             </a>
         </h6>
     </div>
+@using (Html.BeginForm("ManageRoles", "TenantUser", FormMethod.Post))
+{
     <div class="col-md-2 pull-right">
+        <input type="hidden" id="roleid" name="roleid" value="@element"/>
         <input type="submit" class="btn btn-primary fa-input" value="Manage Role &#xf054;" style="font-family: FontAwesome;">
     </div>
+}
 </div>
         }
     }

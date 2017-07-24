@@ -5,6 +5,7 @@
 
 @using (Html.BeginForm("SaveApplications", "Dev", FormMethod.Post))
 {
+    @Html.AntiForgeryToken()
 <div class="col-md-4 col-md-offset-4">
     <h3 class="text-center">@ViewBag.Header</h3>
     <div class="form-group">

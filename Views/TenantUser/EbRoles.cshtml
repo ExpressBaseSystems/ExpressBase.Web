@@ -41,7 +41,7 @@
             </a>
         </h6>
     </div>
-@using (Html.BeginForm("ManageRoles", "TenantUser", FormMethod.Post))
+@using (Html.BeginForm("ManageRoles", "TenantUser", FormMethod.Post, new { target = "_blank" }))
 {
     <div class="col-md-2 pull-right">
         <input type="hidden" id="roleid" name="roleid" value="@element"/>

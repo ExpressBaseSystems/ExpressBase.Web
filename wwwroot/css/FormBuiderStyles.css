@@ -1,4 +1,6 @@
 ﻿body {
+    background-color: #f5f5f5;
+    padding: 10px !important;
 }
 
 .settings-cont {
@@ -30,19 +32,22 @@
     display: inline-block;
     vertical-align: top;
     overflow-y: auto;
-    border: solid 1px #dddddd;
+    height: 95vh;
 }
 
 .form-buider-form {
-    width: 1005px;
+    width: 72vw;
     padding: 3px;
     display: inline-block;
     vertical-align: top;
-    height: 590px;
+    height: 95vh;
+    background-color: white;
     overflow-y: auto;
     border: solid 1px #dddddd;
     margin-left: 8px;
-    margin-top: 7px;
+    -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
 }
 
     .form-buider-form input[type="text"], input[type="email"], input[type="number"], input[type="password"], input[type="singleline"] {
@@ -76,8 +81,9 @@
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
 }
-.propgrid-table-cont input[type="color"]{
-    padding: 0px!important;
+
+.propgrid-table-cont input[type="color"] {
+    padding: 0px !important;
 }
 
 .propgrid-table-cont {
@@ -96,13 +102,29 @@
     box-shadow: none;
 }
 
+.fb-cont{
+    width: 72vw;
+    margin-left:8px;
+    margin-bottom:8px;
+    background-color: white;
+    vertical-align: top;
+    -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+}
+.tool{
+    padding: 5px;
+    margin: 3px 0px;
+    border: dotted 2px #dddddd;
+}
+
 .property-grid-cont {
     display: inline-block;
     position: absolute;
     z-index: 100;
     top: 50px;
     right: 2px;
-    height: 590px;
+    height: 95vh;
     visibility: hidden;
     background-color: white;
     padding: 3px;
@@ -117,12 +139,16 @@
 
 .toolbox-cont {
     display: inline-block;
-    top: 50px;
+    top: 10px;
     background-color: white;
     padding: 3px;
     border: solid 1px #dddddd;
     margin-left: 8px;
     vertical-align: top;
+    border: solid 1px #dddddd;
+    -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
 }
 
 .tdDropable {

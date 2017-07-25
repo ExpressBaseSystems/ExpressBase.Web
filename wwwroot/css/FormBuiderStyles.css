@@ -45,7 +45,7 @@
     margin-top: 7px;
 }
 
-    .form-buider-form input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
+    .form-buider-form input[type="text"], input[type="email"], input[type="number"], input[type="password"], input[type="singleline"] {
         height: auto !important;
         min-height: 28px;
         -webkit-tap-highlight-color: rgba(255,255,255,0);
@@ -64,8 +64,8 @@
         table-layout: fixed;
     }
 
-.propgrid-table-cont input[type="text"], input[type="email"], input[type="password"], input[type="singleline"] {
-    height: 21px;
+.propgrid-table-cont input[type="text"], input[type="email"], input[type="color"], input[type="password"], input[type="singleline"] {
+    height: 25px;
     width: 110px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
@@ -75,6 +75,9 @@
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
+}
+.propgrid-table-cont input[type="color"]{
+    padding: 0px!important;
 }
 
 .propgrid-table-cont {
@@ -141,4 +144,13 @@
     border-radius: 2px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+}
+
+.pgCell {
+    padding: 5px;
+}
+
+.property-grid-cont .btn {
+    padding: 3px 12px !important;
+    border: 1px solid rgba(34,36,38,.15);
 }

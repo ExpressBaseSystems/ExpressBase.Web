@@ -32,6 +32,7 @@
 /// <reference path="js/jquery.easing.min.js" />
 /// <reference path="js/jquery.fontselect.min.js" />
 /// <reference path="js/jquery.min.js" />
+/// <reference path="js/jquery.ruler.js" />
 /// <reference path="js/jquery.toolbar.js" />
 /// <reference path="js/jquery-ui-timepicker-addon.min.js" />
 /// <reference path="js/jwt-decode.min.js" />

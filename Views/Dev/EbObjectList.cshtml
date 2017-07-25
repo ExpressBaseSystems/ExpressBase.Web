@@ -13,21 +13,36 @@
     Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
     var ObjectType = ViewBag.EbObjectType;
     string editor = null;
+    string whichController = null;
     if (ObjectType == (int)EbObjectType.DataSource)
     {
         editor = "code_editor";
+        whichController = "Dev";
     }
     else if (ObjectType == (int)EbObjectType.DataVisualization)
     {
-        editor = "DVEditor";
+        if(ViewBag.wc == "dc")
+        {
+            editor = "DVEditor";
+            whichController = "Dev";
+
+        }
+        else
+        {
+            editor = "dv";
+            whichController = "TenantUser";
+        }
+
     }
     else if (ObjectType == (int)EbObjectType.Application)
     {
         editor = "CreateApplication";
+        whichController = "Dev";
     }
     else if (ObjectType == (int)EbObjectType.SqlFunction)
     {
         editor = "SqlFunction_Editor";
+        whichController = "Dev";
     }
 }
 <script>
@@ -45,7 +60,7 @@
                 </div>
             </div>
 
-            @using (Html.BeginForm(editor, "Dev", FormMethod.Get, new { target = "_blank" }))
+            @using (Html.BeginForm(editor,whichController , FormMethod.Get, new { target = "_blank" }))
             {
                 <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;" />
             }
@@ -91,7 +106,7 @@
                 </h6>
             </div>
             <div class="col-md-2 pull-right">
-                @using (Html.BeginForm(editor, "Dev", FormMethod.Post, new { target = "_blank" }))
+                @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
                 {
                     <input type="hidden" name="objid" value="@element.Value.Id" />
                     <input type="hidden" name="tacid" value="@ViewBag.cid" />

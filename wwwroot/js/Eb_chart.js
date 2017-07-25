@@ -228,8 +228,10 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         $("#Y_col_name" + this.tableId).off("drop").on("drop", this.colDrop.bind(this));
         $("#Y_col_name" + this.tableId).off("dragover").on("dragover", this.colAllowDrop.bind(this));
         $("#searchColumn"+this.tableId).off("keyup").on("keyup", this.searchDragNDropColumn.bind(this));
-        if (data)
+        if (data) {
             this.data = data;
+            this.drawGraphHelper(this.data)
+        }
         else {
             $.post(this.ssurl + '/ds/data/' + this.columnInfo.dsId, { draw: 1, Id: this.columnInfo.dsId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(getFilterValues()) }, this.getDataSuccess.bind(this));
         }

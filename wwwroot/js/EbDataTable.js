@@ -92,12 +92,14 @@ var EbDataTable = function (settings) {
     //if (index !== 1)
     this.cellData = this.dtsettings.cellData;
     this.rowData = this.dtsettings.rowData;
+    this.filterValues = this.dtsettings.filterValues;
+    this.FlagPresentId = false;
 
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
-            $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify((this.filterValues !== null) ? this.filterValues : this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
         else
-            $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify(this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
+            $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify((this.filterValues !== null) ? this.filterValues : this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
     };
 
     this.getColumnsSuccess = function (data) {
@@ -119,8 +121,6 @@ var EbDataTable = function (settings) {
             $("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
             return false;
         }
-        
-        //this.ebSettingsCopy = this.ebSettings;
         this.Init();
 
     };
@@ -152,11 +152,11 @@ var EbDataTable = function (settings) {
         //    this.ebSettings.columns[0].visible = false;
         //}
         //if (!this.ebSettings.hideCheckbox) {
-        this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-        this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
+        $.each(this.ebSettings.columns, this.CheckforColumnID.bind(this))
+        if (!this.FlagPresentId)
+            this.ebSettings.columns[1].visible = false;
         //}
         //else
-        this.ebSettings.columns[1].visible = true;
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
@@ -205,6 +205,15 @@ var EbDataTable = function (settings) {
         //});
     };
 
+    this.CheckforColumnID = function (i, col) {
+        if (col.name === "id") {
+            this.FlagPresentId = true;
+            this.ebSettings.columns[1].title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
+            this.ebSettings.columns[1].render = this.renderCheckBoxCol.bind(this);
+            return false;
+        }
+    };
+
     this.createTblObject = function () {
         var o = new Object();
         o.scrollY = this.ebSettings.scrollY;
@@ -213,8 +222,11 @@ var EbDataTable = function (settings) {
             if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
                 o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
             o.lengthMenu = this.ebSettings.lengthMenu;
-
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
+            if (!this.ebSettings.isPaged) {
+
+                o.dom = "<'col-md-12 noPadding'B>rt";
+            }
             o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         }
         else if (this.dtsettings.directLoad) {
@@ -222,6 +234,8 @@ var EbDataTable = function (settings) {
             //o.lengthMenu = [[-1], ["All"]];
             o.dom = "rti";
         }
+        
+        //o.paging = false;
         //o.rowReorder = true;
         //o.autowidth = false;
         o.serverSide = true;
@@ -245,7 +259,7 @@ var EbDataTable = function (settings) {
             type: 'POST',
             timeout: 180000,
             data: this.ajaxData.bind(this),
-            dataSrc: function (dd) { this.MainData = dd.data; return dd.data; }
+            dataSrc: this.receiveAjaxData.bind(this)
         };
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
@@ -269,7 +283,7 @@ var EbDataTable = function (settings) {
         //    arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
         //    dq.TFilters = JSON.stringify(arr);
         //}
-        dq.Params = JSON.stringify(this.getFilterValues());
+        dq.Params = JSON.stringify((this.filterValues !== null) ? this.filterValues : this.getFilterValues());
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (serachItems.length > 0) {
@@ -303,7 +317,23 @@ var EbDataTable = function (settings) {
     };
 
     this.rowObj2filter = function (fltr_collection, i, data) {
-        fltr_collection.push(new fltr_obj(this.Api.columns[i].type, this.Api.columns[i].name, data));
+        var type = this.Api.settings().init().columns[i+2].type;
+        if (type === "System.Int32" || type === "System.Int16" )
+            type = 12;
+        else if (type === "System.Decimal" || type === "System.Double" || type === "System.Int64")
+            type = 7;
+        else if (type === "System.String")
+            type = 16;
+        fltr_collection.push(new fltr_obj(type, this.Api.settings().init().columns[i+2].name, data));
+    };
+
+    this.receiveAjaxData = function (dd) { 
+        this.MainData = dd.data;
+        if (!dd.isPaged) {
+            this.Api.paging = dd.isPaged;
+            this.Api.lengthChange = false;
+        }
+        return dd.data;
     };
 
     //$("form").submit(function (e) {
@@ -349,7 +379,7 @@ var EbDataTable = function (settings) {
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int64"))
+        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int64" || col.type === "System.Double") && col.name !== "serial")
             _ls.push(new Agginfo(col.name, this.ebSettings.columnsext[i].DecimalPlace));
     };
 
@@ -556,7 +586,7 @@ var EbDataTable = function (settings) {
     this.GetAggregateControls_inner = function (ResArray, footer_id, zidx, i, col) {
         var _ls;
         if (col.visible) {
-            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
+            if ((col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64" || col.type === "System.Double") && col.name !== "serial") {
                 var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = this.tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
@@ -772,23 +802,25 @@ var EbDataTable = function (settings) {
             var header_text2 = this.tableId + "_" + col.name + "_hdr_txt2";
 
             _ls += "<th style='vertical-align:top; padding: 0px; margin: 0px; height: 28px!important;'>";
-
-            if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64")
-                _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
-            else if (col.type === "System.String") {
-                //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
-                _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
-                //else
-                //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
-            }
-            else if (col.type === "System.DateTime")
-                _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
-            else if (col.type === "System.Boolean")
-                _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
-            else if (col.name === "serial")
+            if (col.name === "serial") {
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
-            else
-                _ls += (span);
+            }
+            else {
+                if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64" || col.type === "System.Double")
+                    _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                else if (col.type === "System.String") {
+                    //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
+                    _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                    //else
+                    //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
+                }
+                else if (col.type === "System.DateTime")
+                    _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                else if (col.type === "System.Boolean")
+                    _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
+                else
+                    _ls += (span);
+            }
 
             _ls += ("</th>");
         }
@@ -974,9 +1006,13 @@ var EbDataTable = function (settings) {
     };
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
-        var idpos = $.grep(this.ebSettings.columns, function (e) { return e.name === "year"; })[0].data;
-        this.rowId = meta.row; //do not remove - for updateAlSlct
-        return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+        if (this.FlagPresentId) {
+            var idpos = $.grep(this.ebSettings.columns, function (e) { return e.name === "id"; })[0].data;
+            this.rowId = meta.row; //do not remove - for updateAlSlct
+            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+        }
+        else
+            return "<input type='checkbox'";
     };
 
     this.updateAlSlct = function (e) {
@@ -1011,7 +1047,8 @@ var EbDataTable = function (settings) {
     this.link2NewTable = function (e) {
         this.cellData = $(e.target).text();
         var idx = this.Api.row($(e.target).parent().parent()).index();
-        this.rowData = $.extend(true, {}, this.Api.row(idx).data());
+        this.rowData = this.Api.row(idx).data();
+        this.filterValues = this.getFilterValues();
         this.NewTableModal();
     };
 
@@ -1092,7 +1129,8 @@ var EbDataTable = function (settings) {
             tid: 'dv' + this.linkDV + '_' + index,
             linktable: true,
             cellData: this.cellData,
-            rowData: this.rowData
+            rowData: this.rowData,
+            filterValues: this.filterValues
             //directLoad: true
         });
     };

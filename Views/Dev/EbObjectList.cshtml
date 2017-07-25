@@ -111,7 +111,7 @@
                 </h6>
             </div>
             <div class="col-md-2 pull-right">
-                @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank", param = parameters }))
+                @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
                   
                     {
                     <input type="hidden" name="objid" value="@element.Value.Id" />

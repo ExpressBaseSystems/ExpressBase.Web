@@ -3,6 +3,9 @@
         border-radius: 4px;
         width: 250px;
     }
+    .noti{
+        min-height:300px;
+    }
 </style>
 @{ string wc = "";
     if (ViewBag.wc == "dc")
@@ -23,18 +26,26 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li class="noti"><a class="fa fa-bell" href="#" style="font-size:25px;"></a></li>
-                <li class="dropdown">
-                    <img id="prof" class="img-responsive" alt="dropdown-toggle" data-toggle="dropdown" src="~/images/proimg.jpg" />
-                    <ul class="dropdown-menu">
-                        <li><a href="#">My Account<span class="fa fa-user pull-right"></span></a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">My Preferences<span class="fa fa-user pull-right"></span></a></li>
-                        <li class="divider"></li>
-                        <li><a href="@wc">Sign Out<span class="fa fa-sign-out pull-right"></span></a></li>
+                <li class="dropdown notifications">
+                    <i class="fa fa-bell fa-lg" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i><span class="badge bg-green">6</span>
+                    <ul class="dropdown-menu noti">
+                        <li>
+                           Notifications
+                            </a>
+                        </li>
                     </ul>
                 </li>
-            </ul>
+                    <li class="dropdown">
+                        <img id="prof" class="img-responsive" alt="dropdown-toggle" data-toggle="dropdown" src="~/images/proimg.jpg" />
+                        <ul class="dropdown-menu">
+                            <li><a href="#">My Account<span class="fa fa-user pull-right"></span></a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">My Preferences<span class="fa fa-user pull-right"></span></a></li>
+                            <li class="divider"></li>
+                            <li><a href="@wc">Sign Out<span class="fa fa-sign-out pull-right"></span></a></li>
+                        </ul>
+                    </li>
+                </ul>
         </div>
     </div>
 </nav>

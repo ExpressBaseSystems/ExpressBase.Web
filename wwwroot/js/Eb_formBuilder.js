@@ -31,29 +31,31 @@
 //    }
 //};
 
-var TextBoxObj = function (id) {
-    this.$type = 'ExpressBase.Objects.EbTextBox';
-    this.Id = id;
-    this.Name = id;
-    this.MaxLength = 0;
-    this.TextTransform = '--select--';
-    this.TextMode = '--select--';
-    this.PlaceHolder = '';
-    this.Text = '';
-    this.AutoCompleteOff = false;
-    this.BackColor = '#FFFFFF';
-    this.ForeColor = '#FFFFFF';
-    this.Metas = [{ "name": "MaxLength", "group": "Behavior", "editor": 2, "options": null },
- { "name": "TextTransform", "group": "Behavior", "editor": 1, "options": ["Normal", "lowercase", "UPPERCASE"] },
- { "name": "TextMode", "group": "Behavior", "editor": 1, "options": ["SingleLine", "Email", "Password", "Color"] },
- { "name": "PlaceHolder", "group": "Behavior", "editor": 5, "options": null },
- { "name": "Text", "group": "Appearance", "editor": 5, "options": null },
- { "name": "AutoCompleteOff", "group": "Behavior", "editor": 0, "options": null }, { "name": "BackColor", "group": "Appearance", "editor": 3, "options": null }, { "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null }]
-};
+//var TextBoxObj = function (id) {
+//    this.$type = 'ExpressBase.Objects.EbTextBox';
+//    this.Id = id;
+//    this.type = "EbTextBox",
+//    this.IsContainer = false,
+//    this.Name = id;
+//    this.MaxLength = 0;
+//    this.TextTransform = '--select--';
+//    this.TextMode = '--select--';
+//    this.PlaceHolder = '';
+//    this.Text = '';
+//    this.AutoCompleteOff = false;
+//    this.BackColor = '#FFFFFF';
+//    this.ForeColor = '#FFFFFF';
+//    this.Metas = [{ "name": "MaxLength", "group": "Behavior", "editor": 2, "options": null },
+// { "name": "TextTransform", "group": "Behavior", "editor": 1, "options": ["Normal", "lowercase", "UPPERCASE"] },
+// { "name": "TextMode", "group": "Behavior", "editor": 1, "options": ["SingleLine", "Email", "Password", "Color"] },
+// { "name": "PlaceHolder", "group": "Behavior", "editor": 5, "options": null },
+// { "name": "Text", "group": "Appearance", "editor": 5, "options": null },
+// { "name": "AutoCompleteOff", "group": "Behavior", "editor": 0, "options": null }, { "name": "BackColor", "group": "Appearance", "editor": 3, "options": null }, { "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null }]
+//};
 
 var GridViewObj = function (id) {
     this.Name = id,
-    this.__type = "ExpressBase.Objects.EbTextBox",
+    this.__type = "ExpressBase.Objects.EbTextBox",  
     this.IsContainer = true,
     this.Controls = new EbControlCollection();
     this.Controls.Append(new GridViewTdObj(id + "_Td0"));
@@ -253,6 +255,7 @@ var formBuilder = function (toolBoxid, formid) {
     this.currentProperty = null;
     this.Controls = new EbControlCollection();
     this.drake = null;
+    this.PGobj = null;
     // need to change
     this.CurRowCount = 2;
     this.CurColCount = 2;
@@ -286,83 +289,28 @@ var formBuilder = function (toolBoxid, formid) {
 
     this.CreatePG = function (control) {
         $('#propGrid').empty();
-        $('#propHead').empty().html("<strong> " + control.props.Name + "</strong>");
-
-        // This is the metadata object that describes the target object properties (optional)
-        var DDid = null;
-        var LDDid = null;
-        var theCustomTypes = {
-            icon: {
-                html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                    return '<i class="fa fa-' + value + '"></i>';
-                },
-                valueFn: function () { return 'Icon field value'; }
-            },
-            BootstrapDD: {
-                html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                    var _html = "<div class='dropdown'>" +
-                    "<button id=" + elemId + " name=" + name + " class='btn btn-dafault dropdown-toggle' type='button' style='min-width: 100px; padding:0px;' data-toggle='dropdown'><div style='display: inline-block; overflow: hidden; text-overflow: ellipsis; '>" + value +
-                    " </div><span class='caret' style='vertical-align: super'></span></button>" +
-                    "<ul class='dropdown-menu'>"
-                    $.each(meta.options, function (i, val) { _html += "<li><a href='#'>" + val + "</a></li>"; })
-                    _html += "</ul></div>";
-                    DDid = elemId;
-                    return _html.toString();
-                },
-                valueFn: function () {
-                    return $('#' + DDid).text().trim();
-                }
-            },
-            BootstrapSelect: {
-                html: function (elemId, name, value, meta) { // custom renderer for type (required)
-                    var txt = "";
-                    var _html = "<select class='selectpicker' data-live-search='true'>"+
-                                  "<option data-tokens='ketchup mustard'>Hot Dog, Fries and a Soda</option>"+
-                                  "<option data-tokens='mustard'>Burger, Shake and a Smile</option>"+
-                                  "<option data-tokens='frosting'>Sugar, Spice and all things nice</option>"+
-                                "</select>"+
-                                "<input type='hidden' value='############' id='" + elemId + "'>"
-                    ;
-                    return _html;
-                },
-                //valueFn: function () {
-                //    return parseInt($('#' + LDDid).attr("data-dvid"));
-                //}
-            }
-        };
-
         setTimeout(this.SetTimeOutFn.bind(this), 1);
 
-var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
-        //$('#propGrid').jqPropertyGrid(control.props, { meta: control.meta, customTypes: theCustomTypes });
+        //this.CreatePG(this.Controls.GetByName(this.curControl.attr("id")));
+
+        this.PGobj = new Eb_PropertyGrid("propGrid", this.Controls.GetByName(this.curControl.attr("id")), AllMetas.EbTextBox);
+
+        $('.selectpicker').selectpicker('refresh');
 
         $('.selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();
-            $(this).parent().siblings("input").val(selected);
             $("#" + selected).focus();
         });
-
-
-        //$("#propGrid td:contains(Columns)").next().children().on("focus click", this.RFocus.bind());
     };
 
     this.saveObj = function () {
-        q.getvaluesFromPG();
+        this.PGobj.getvaluesFromPG();
         $('#propGrid').jqPropertyGrid('get');
         $('#txtValues').val(JSON.stringify(this.Controls) + '\n\n');
     };
 
     this.SetTimeOutFn = function () {
-        $('#Table_Settings_wrapper').css("width", "813px");
-        $('#Table_Settings_wrapper table:eq(0)').css("min-width", "813px");
-        $('#Table_Settings_wrapper table:eq(1)').css("min-width", "805px");
         $('#form-buider-propGrid').css("visibility", "visible");
-        $('#propGrid table').removeClass("pgTable").addClass("table-bordered table-hover");
-        $('.dropdown ul li').click(function () {
-            $(this).parent().siblings('[data-toggle=dropdown]').text($(this).text());
-            $(this).parent().siblings('[data-toggle=dropdown]').attr("data-dvid", $(this).children().attr("data-dvid"));
-            //saveObj();
-        });
         $('#propGrid table td').find("input").change(this.PGinputChange.bind(this));
     };
 
@@ -451,20 +399,34 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
     this.onDropFn = function (el, target, source, sibling) {
         //drop from toolbox to form
         if ($(source).attr("id") === "form-buider-toolBox") {
+
             el.className = 'controlTile';
+
             var ctrl = $(el);
+
             var type = ctrl.text().trim();
+
             eval("var id = '" + type + "' + " + "this." + type + "Counter++");
+
             ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+
             ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+
             ctrl.attr("ebtype", type).attr("id", id);
+
             if ($(target).attr("id") === "form-buider-form")
-                eval("this.Controls.Append(new " + type + "Obj(id))");
+
+                eval("this.Controls.Append(new Eb" + type + "Obj(id))");
+
             else
-                eval("this.Controls.GetByName( $(target).attr('id') ).Controls.Append(new " + type + "Obj(id))");
+                eval("this.Controls.GetByName( $(target).attr('id') ).Controls.Append(new Eb" + type + "Obj(id))");
+
             ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
+
             $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
+
             $('.selectpicker').selectpicker('refresh');
+
             ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
         }
         else
@@ -476,13 +438,13 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
         var _html = "";
         if (type === "TextBox")
             _html = "<input type='text' readonly style='width:100%' />";
-        else if (type === "ComboBox") 
+        else if (type === "ComboBox")
             _html = "<div role='form' data-toggle='validator' style=' width: inherit;'><input type='hidden' name='acmasteridHidden4val' data-ebtype='16' id='acmasterid'> <div id='acmasteridLbl' style='display: inline-block;'></div> <div id='acmasteridWraper' data-toggle='tooltip' title='' data-original-title=''><div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid0'><div type='button' class='dropdown-toggle clearfix' style='border-top-left-radius: 5px; border-bottom-left-radius: 5px;'> <input debounce='0' type='search'  readonly  placeholder='label0' class='form-control' id='acmaster1_xid' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid1'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' placeholder='label1' readonly class='form-control' id='acmaster1_name' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid2'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' readonly placeholder='label2' class='form-control' id='tdebit' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div></div> <div id='acmasterid_loadingdiv' class='ebCombo-loader'><i id='acmasterid_loading-image' class='fa fa-spinner fa-pulse fa-2x fa-fw' style='display: none;'></i><span class='sr-only'>Loading...</span></div> <center><div id='acmasteridDDdiv' class='DDdiv expand-transition' style='width: 600px; display: none;'><table id='acmasteridtbl' class='table table-striped table-bordered' style='width: 100%;'></table></div></center></div>";
-        else if (type === "NumericBox") 
+        else if (type === "NumericBox")
             _html = "<div class='Eb-ctrlContainer'  style='width:100%; min-height: 12px;'><span id='nameLbl' >Amount</span><div  class='input-group'><span class='input-group-addon'>$</span><input type='text'  class='numinput' name='name'  data-toggle='tooltip' title='toolTipText' id='name' style='width:100%; display:inline-block;' /></div><span class='helpText'> helpText </span></div>";
-        else if (type === "Date") 
+        else if (type === "Date")
             _html = "<div style='width:100%;' class='Eb-ctrlContainer'><span id='datefromLbl' style='background-color:#000000; color:#000000;'></span><div class='input-group' style='width:100%;'><input id='datefrom' data-ebtype='5' data-toggle='tooltip' title='' class='date' type='text' name='datefrom' autocomplete='on' value='01-01-0001 05:30:00 AM' readonly style='width:100%; height:21px; background-color:#FFFFFF; color:#000000; display:inline-block;  ' placeholder='' maxlength='10' data-original-title=''><span class='input-group-addon'> <i id='datefromTglBtn' class='fa  fa-calendar' aria-hidden='true'></i> </span></div><span class='helpText'>  </span></div>";
-        else if (type === "Button") 
+        else if (type === "Button")
             _html = "<div class='btn btn-default'>Button</div>";
         else if (type === "GridView")
             _html = "<table style='width:100%'><tr><td id='" + id + "_Td0' class='tdDropable' ></td> <td id='" + id + "_Td1' class='tdDropable'></td style='min-height:20px;'> </tr></table>";
@@ -558,7 +520,7 @@ var q = new Eb_PropertyGrid("propGrid", new TextBoxObj("sTextBox"))
             removeOnSpill: false,
             copy: function (el, source) { return (source.className !== 'tdDropable' && source.className !== 'form-buider-form'); },
             copySortSource: true,
-            mirrorContainer: document.body,
+            mirrorContainer: document.getElementById('form-buider-form'),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });

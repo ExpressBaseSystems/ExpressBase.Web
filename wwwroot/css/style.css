@@ -111,6 +111,20 @@ Navigation bar
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
+ .badge {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 13px;
+    padding: 2px 6px;
+    position: absolute;
+    bottom: 14px !important;
+        right: -13px !important;
+        background-color:#3b5998 !important;
+}
+    .notifications{
+     top:20px !important;
+     right: 30px !important;
+    }
 /*PARTNERS*/
 .img-responsive {
     margin: 20px auto;
@@ -504,7 +518,6 @@ footer {
 #technnology {
     padding-bottom: 40px;
 }
-
     #technnology img {
         margin-bottom: 20px;
         height: 150px;
@@ -517,10 +530,20 @@ footer {
     width: 250px;
     border-radius: 0;
     height: 100%;
+    position:fixed;
+    padding-right:10px;
 }
-.list-group-item{
-    border:none !important;
-    line-height: 32px !important;     
+.list-group .list-group-item{
+    line-height: 41px !important;   
+    vertical-align: baseline;
+    border:0;
+}
+.list-group .outer{
+    
+height:100% !important;
+border:0 !important;
+ border-right: 1px solid rgba(0,0,0,.15) !important; 
+    box-shadow: 0 6px 12px rgba(0,0,0,.175) !important;
 }
 .sub-menu{
     padding:0;
@@ -538,8 +561,8 @@ list-group-item:first-child {
 }
 /*sidebar end*/
 .main-cont {
-    
     margin-bottom:40px;   
+        margin-right:10px;
 }
 
 .padd {
@@ -558,13 +581,14 @@ list-group-item:first-child {
 /*ebObject list*/
 
 .objitems {
-    border: solid 1px #eee;
+    border: 1px solid rgba(0,0,0,.15);
     border-left:none !important;
     border-right:none !important;
     margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-top:20px;
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .bottpadd {
     margin-bottom: 50px;
@@ -584,5 +608,7 @@ list-group-item:first-child {
         width: 80% !important;
     }
 }
-
+.obj-list .list-group-item{
+    padding:5px 5px 5px 5px;
+}
 

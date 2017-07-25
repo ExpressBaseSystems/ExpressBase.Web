@@ -38,6 +38,7 @@
 /// <reference path="js/jwt-decode.min.js" />
 /// <reference path="js/mobile.js" />
 /// <reference path="js/pswrd.js" />
+/// <reference path="js/reportbuilder.js" />
 /// <reference path="js/resizesensor.js" />
 /// <reference path="js/selectize.min.js" />
 /// <reference path="js/site.js" />

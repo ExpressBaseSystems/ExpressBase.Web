@@ -50,6 +50,7 @@
     <script type="text/javascript" src="~/js/jquery.fontselect.min.js"></script>
     <script type="text/javascript" src="~/js/jquery.cookie.js"></script>
 
+
     @* BOOTSTRAP JS *@
     <script type="text/javascript" src="~/js/semantic.min.js"></script>
     <script type="text/javascript" src="~/js/bootstrap-checkbox.js"></script>
@@ -62,6 +63,7 @@
     @* OTHER JS *@
     <script type="text/javascript" src="~/js/datatables.min.js"></script>
     <script type="text/javascript" src="~/js/dropdown.min.js"></script>
+    <script type="text/javascript" src="~/js/ReportBuilder.js"></script>
     @*<script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/cr-1.3.3/fc-3.2.2/fh-3.1.2/kt-2.2.1/r-2.1.1/rg-1.0.0/rr-1.2.0/sc-1.4.2/se-1.2.2/datatables.min.js"></script>*@
     @*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-colvis-1.3.1/b-flash-1.3.1/b-html5-1.3.1/b-print-1.3.1/cr-1.3.3/fc-3.2.2/fh-3.1.2/kt-2.2.1/r-2.1.1/rg-1.0.0/rr-1.2.0/sc-1.4.2/se-1.2.2/datatables.min.js"></script>*@
     @*<script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/af-2.1.3/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/cr-1.3.2/fc-3.2.2/fh-3.1.2/kt-2.2.0/r-2.1.1/rr-1.2.0/sc-1.4.2/se-1.2.0/datatables.min.js"></script>*@
@@ -116,17 +118,7 @@
                     parent = i;
                 });
                 $('.item').html($bc.prepend('<a href="#"> Home</a>'));
-            })
-
-            //$('.list-group a').on('click', function () {
-            //    var bc = $(".item").empty();
-            //    $(this).parents('li').each(function (i, parent) {
-            //        var atxt = $(parent).children('a').text();
-            //        bc.prepend(' / ', atxt);
-            //    });
-            //    bc.prepend('<a href="#home">Home</a>');
-            //})
-
+            })           
         })
     </script>
 </head>
@@ -159,12 +151,12 @@
                 }
 
             </div>
-            <div class="col-md-9 col-sm-12 col-xs-12" style="padding:0;">
+            <div class="col-md-9 col-sm-12 col-xs-12 pull-right" style="padding:0;">
                 <div class="item">
                     <a href="#"> Home/</a>
                 </div>
             </div>
-            <div id="layout_div" class="col-md-9 col-sm-12 col-xs-12 main-cont">
+            <div id="layout_div" class="col-md-9 col-sm-12 col-xs-12 main-cont pull-right">
                 <i class="fa fa-spinner fa-pulse fa-4x fa-fw center-block" id="loader" aria-hidden="true" style="display:none;margin:200px 400px;color:#808080;">  </i>
                 @RenderBody()
                 @RenderSection("EbHead", false)

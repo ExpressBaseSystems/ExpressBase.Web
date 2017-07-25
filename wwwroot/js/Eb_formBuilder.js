@@ -1,80 +1,4 @@
-﻿//var TextBoxObj = function (id) {
-//    this.$type = "ExpressBase.Objects.EbTextBox, ExpressBase.Objects",
-//    this.Name = id,
-//    this.type = "EbTextBox",
-//    this.IsContainer = false,
-//    this.props = {
-//        Name: id,
-//        Label: "",
-//        Value: "",
-//        Textmode: "",
-//        TextTransform: "Normal",
-//        Test: "Normal",
-//        Font: "consolace",
-//        LabelForeColor: "a3ac03",
-//        LabelBackColor: "ffac03",
-//        TextForeColor: "a3aff3",
-//        TextBackColor: "f3acff",
-//        Height: "100",
-//        AutoCompleteOff: false
-//    },
-//    this.meta = {
-//        AutoCompleteOff: { name: 'AutoCompleteOff', group: 'Behavior ', type: 'boolean' },
-//        height: { group: 'Layout ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
-//        LabelForeColor: { group: 'Layout', name: 'LabelForeColor', type: 'color', options: { preferredFormat: 'hex' } },
-//        fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-//        LabelBackColor: { group: 'Layout', name: 'LabelBackColor', type: 'color', options: { preferredFormat: 'hex' } },
-//        TextForeColor: { group: 'Layout', name: 'TextForeColor', type: 'color', options: { preferredFormat: 'hex' } },
-//        TextBackColor: { group: 'Layout', name: 'TextBackColor', type: 'color', options: { preferredFormat: 'hex' } },
-//        TextTransform: { group: 'Behavior ', name: 'TextTransform', type: 'BootstrapDD', options: ['Normal', "lower case", "UPPER CASE"] },
-//        Test: { group: 'Behavior ', name: 'Test', type: 'BootstrapSelect', options: ['Normal', "lower case", "UPPER CASE"] },
-//    }
-//};
-
-//var TextBoxObj = function (id) {
-//    this.$type = 'ExpressBase.Objects.EbTextBox';
-//    this.Id = id;
-//    this.type = "EbTextBox",
-//    this.IsContainer = false,
-//    this.Name = id;
-//    this.MaxLength = 0;
-//    this.TextTransform = '--select--';
-//    this.TextMode = '--select--';
-//    this.PlaceHolder = '';
-//    this.Text = '';
-//    this.AutoCompleteOff = false;
-//    this.BackColor = '#FFFFFF';
-//    this.ForeColor = '#FFFFFF';
-//    this.Metas = [{ "name": "MaxLength", "group": "Behavior", "editor": 2, "options": null },
-// { "name": "TextTransform", "group": "Behavior", "editor": 1, "options": ["Normal", "lowercase", "UPPERCASE"] },
-// { "name": "TextMode", "group": "Behavior", "editor": 1, "options": ["SingleLine", "Email", "Password", "Color"] },
-// { "name": "PlaceHolder", "group": "Behavior", "editor": 5, "options": null },
-// { "name": "Text", "group": "Appearance", "editor": 5, "options": null },
-// { "name": "AutoCompleteOff", "group": "Behavior", "editor": 0, "options": null }, { "name": "BackColor", "group": "Appearance", "editor": 3, "options": null }, { "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null }]
-//};
-
-var GridViewObj = function (id) {
-    this.Name = id,
-    this.__type = "ExpressBase.Objects.EbTextBox",  
-    this.IsContainer = true,
-    this.Controls = new EbControlCollection();
-    this.Controls.Append(new GridViewTdObj(id + "_Td0"));
-    this.Controls.Append(new GridViewTdObj(id + "_Td1"));
-    this.props = {
-        Name: id,
-        Parent: "",
-        Sibling: "",
-        Rows: 2,
-        Columns: 2,
-    },
-    this.meta = {
-        Parent: { group: 'meta ', name: 'Parent', type: 'label' },
-        Sibling: { group: 'meta ', name: 'Sibling', type: 'label' },
-        height: { group: 'Layout ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
-    }
-};
-
-var GridViewTdObj = function (id) {
+﻿var TableTdObj = function (id) {
     this.Name = id,
     this.__type = "ExpressBase.Objects.EbTextBox",
     this.Controls = new EbControlCollection(),
@@ -90,60 +14,6 @@ var GridViewTdObj = function (id) {
     }
 };
 
-var DateObj = function (id) {
-    this.$type = "ExpressBase.Objects.EbDate, ExpressBase.Objects",
-    this.Name = id,
-    this.IsContainer = false,
-    this.props = {
-        Name: id,
-        Label: "",
-        Value: "",
-        Font: "consolace",
-        LabelForeColor: "a3ac03",
-        LabelBackColor: "ffac03",
-        TextForeColor: "a3aff3",
-        TextBackColor: "f3acff",
-        Height: "100",
-        MinDate: "",
-        MaxDate: "",
-    },
-    this.meta = {
-        MinDate: { group: 'Layout ', name: 'MinDate', type: 'date', options: { min: 21, max: 500, step: 1 } },
-        MaxDate: { group: 'Layout ', name: 'MinDate', type: 'date', options: { min: 21, max: 500, step: 1 } },
-        height: { group: 'Layout ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
-        LabelForeColor: { group: 'Layout', name: 'LabelForeColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-        LabelBackColor: { group: 'Layout', name: 'LabelBackColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-        TextForeColor: { group: 'Layout', name: 'TextForeColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-        TextBackColor: { group: 'Layout', name: 'TextBackColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-    }
-};
-
-var NumericBoxObj = function (id) {
-    this.$type = "ExpressBase.Objects.EbNumeric, ExpressBase.Objects",
-    this.Name = id,
-    this.props = {
-        Name: id,
-        Label: "",
-        Value: "",
-        Font: "consolace",
-        LabelForeColor: "a3ac03",
-        LabelBackColor: "ffac03",
-        TextForeColor: "a3aff3",
-        TextBackColor: "f3acff",
-        Height: "100",
-        MaxValue: 0,
-        MinValue: 0,
-    },
-    this.meta = {
-        MaxValue: { group: 'Layout ', name: 'MaxValue', type: 'number', options: { min: 21, max: 500, step: 1 } },
-        MinValue: { group: 'Layout ', name: 'MinValue', type: 'number', options: { min: 21, max: 500, step: 1 } },
-        height: { group: 'Layout ', name: 'height', type: 'number', options: { min: 21, max: 500, step: 1 } },
-        LabelForeColor: { group: 'Layout', name: 'LabelForeColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-        LabelBackColor: { group: 'Layout', name: 'LabelBackColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-        TextForeColor: { group: 'Layout', name: 'TextForeColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-        TextBackColor: { group: 'Layout', name: 'TextBackColor', type: 'color', options: { preferredFormat: 'hex' } }, fontColor: { group: 'Editor', name: 'Font color', type: 'color', options: { preferredFormat: 'hex' } },
-    }
-};
 
 var EbControlCollection = function () {
     this.InnerCollection = [];
@@ -245,18 +115,26 @@ var formBuilder = function (toolBoxid, formid) {
     this.Name = "form-buider-form";
     this.toolBoxid = toolBoxid;
     this.formid = formid;
-    this.ComboBoxCounter = 0;
-    this.NumericBoxCounter = 0;
-    this.DateCounter = 0;
-    this.ButtonCounter = 0;
-    this.GridViewCounter = 0;
-    this.TextBoxCounter = 0;
+    //this.ComboBoxCounter = 0;
+    //this.NumericBoxCounter = 0;
+    //this.DateCounter = 0;
+    //this.ButtonCounter = 0;
+    //this.GridViewCounter = 0;
+    //this.TextBoxCounter = 0;
+    this.controlCounters = {
+        ComboBoxCounter: 0,
+        NumericCounter: 0,
+        DateCounter: 0,
+        ButtonCounter: 0,
+        TableLayoutCounter: 0,
+        TextBoxCounter: 0
+    }
     this.curControl = null;
-    this.currentProperty = null;
     this.Controls = new EbControlCollection();
     this.drake = null;
     this.PGobj = null;
     // need to change
+    this.currentProperty = null;
     this.CurRowCount = 2;
     this.CurColCount = 2;
     this.movingObj = {};
@@ -346,10 +224,15 @@ var formBuilder = function (toolBoxid, formid) {
 
     this.controlOnFocus = function (e) {
         this.curControl = $(e.target).closest(".controlTile");
+        var id = this.curControl.attr("id");
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
-        this.CreatePG(this.Controls.GetByName(this.curControl.attr("id")));
+        this.CreatePG(this.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
+        console.log("id=" + id);
+        setTimeout(function () {
+            $(".controls-dd-cont .selectpicker").selectpicker('val', id);
+        }, 10);
     };
 
     this.makeTdsDropable = function () {
@@ -404,9 +287,9 @@ var formBuilder = function (toolBoxid, formid) {
 
             var ctrl = $(el);
 
-            var type = ctrl.text().trim();
+            var type = ctrl.attr("eb-type").trim();
 
-            eval("var id = '" + type + "' + " + "this." + type + "Counter++");
+            var id = (type + (this.controlCounters[type + "Counter"])++);
 
             ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
 
@@ -414,12 +297,15 @@ var formBuilder = function (toolBoxid, formid) {
 
             ctrl.attr("ebtype", type).attr("id", id);
 
+
+            console.log("target" + $(target).attr('id'));
+
             if ($(target).attr("id") === "form-buider-form")
-
-                eval("this.Controls.Append(new Eb" + type + "Obj(id))");
-
+                this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
             else
-                eval("this.Controls.GetByName( $(target).attr('id') ).Controls.Append(new Eb" + type + "Obj(id))");
+                this.Controls.GetByName($(target).attr('id')).Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+
+            //eval("this.Controls.GetByName($(target).attr('id')).Controls.Append(new Eb" + type + "Obj(id))");
 
             ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
 
@@ -440,13 +326,13 @@ var formBuilder = function (toolBoxid, formid) {
             _html = "<input type='text' readonly style='width:100%' />";
         else if (type === "ComboBox")
             _html = "<div role='form' data-toggle='validator' style=' width: inherit;'><input type='hidden' name='acmasteridHidden4val' data-ebtype='16' id='acmasterid'> <div id='acmasteridLbl' style='display: inline-block;'></div> <div id='acmasteridWraper' data-toggle='tooltip' title='' data-original-title=''><div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid0'><div type='button' class='dropdown-toggle clearfix' style='border-top-left-radius: 5px; border-bottom-left-radius: 5px;'> <input debounce='0' type='search'  readonly  placeholder='label0' class='form-control' id='acmaster1_xid' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid1'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' placeholder='label1' readonly class='form-control' id='acmaster1_name' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid2'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' readonly placeholder='label2' class='form-control' id='tdebit' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div></div> <div id='acmasterid_loadingdiv' class='ebCombo-loader'><i id='acmasterid_loading-image' class='fa fa-spinner fa-pulse fa-2x fa-fw' style='display: none;'></i><span class='sr-only'>Loading...</span></div> <center><div id='acmasteridDDdiv' class='DDdiv expand-transition' style='width: 600px; display: none;'><table id='acmasteridtbl' class='table table-striped table-bordered' style='width: 100%;'></table></div></center></div>";
-        else if (type === "NumericBox")
+        else if (type === "Numeric")
             _html = "<div class='Eb-ctrlContainer'  style='width:100%; min-height: 12px;'><span id='nameLbl' >Amount</span><div  class='input-group'><span class='input-group-addon'>$</span><input type='text'  class='numinput' name='name'  data-toggle='tooltip' title='toolTipText' id='name' style='width:100%; display:inline-block;' /></div><span class='helpText'> helpText </span></div>";
         else if (type === "Date")
             _html = "<div style='width:100%;' class='Eb-ctrlContainer'><span id='datefromLbl' style='background-color:#000000; color:#000000;'></span><div class='input-group' style='width:100%;'><input id='datefrom' data-ebtype='5' data-toggle='tooltip' title='' class='date' type='text' name='datefrom' autocomplete='on' value='01-01-0001 05:30:00 AM' readonly style='width:100%; height:21px; background-color:#FFFFFF; color:#000000; display:inline-block;  ' placeholder='' maxlength='10' data-original-title=''><span class='input-group-addon'> <i id='datefromTglBtn' class='fa  fa-calendar' aria-hidden='true'></i> </span></div><span class='helpText'>  </span></div>";
         else if (type === "Button")
             _html = "<div class='btn btn-default'>Button</div>";
-        else if (type === "GridView")
+        else if (type === "TableLayout")
             _html = "<table style='width:100%'><tr><td id='" + id + "_Td0' class='tdDropable' ></td> <td id='" + id + "_Td1' class='tdDropable'></td style='min-height:20px;'> </tr></table>";
         return _html
     };

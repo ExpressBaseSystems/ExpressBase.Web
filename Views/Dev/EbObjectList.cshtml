@@ -44,6 +44,21 @@
         editor = "SqlFunction_Editor";
         whichController = "Dev";
     }
+    else if (ObjectType == (int)EbObjectType.FilterDialog)
+    {
+        editor = "Eb_formBuilder";
+        whichController = "Dev";
+    }
+    else if (ObjectType == (int)EbObjectType.DisplayBlock)
+    {
+        editor = "Eb_formBuilder";
+        whichController = "Dev";
+    }
+    else if (ObjectType == (int)EbObjectType.WebForm)
+    {
+        editor = "Eb_formBuilder";
+        whichController = "Dev";
+    }
 }
 <script>
     $('#impexp').next().css("display", "inline-block");
@@ -58,11 +73,11 @@
                     <button class="btn btn-default"><i class="fa fa-download" aria-hidden="true"></i> Import</button>
                     <button class="btn btn-default"><i class="fa fa-upload" aria-hidden="true"></i> Export</button>
                 </div>
-            </div>
-
+            </div>           
             @using (Html.BeginForm(editor,whichController , FormMethod.Get, new { target = "_blank" }))
-            {
-                <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;" />
+            {              
+                <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;"/>
+                <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
             }
         }
         <div class="input-group pull-right">
@@ -86,7 +101,7 @@
         <div class="row objitems bg-white" name="objBox" id="searchid+@element.Value.Name">
             <div class="col-md-1">
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input">
+                    <input type="checkbox" class="form-check-input">                  
                 </div>
             </div>
             <div class="col-md-8">
@@ -107,9 +122,11 @@
             </div>
             <div class="col-md-2 pull-right">
                 @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
-                {
+                  
+                    {
                     <input type="hidden" name="objid" value="@element.Value.Id" />
                     <input type="hidden" name="tacid" value="@ViewBag.cid" />
+                    <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
                     <input type="submit" class="btn btn-primary fa-input" value="Open &#xf054;" style="font-family: FontAwesome;" id="btnOpen">
                 }
             </div>

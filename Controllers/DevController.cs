@@ -327,6 +327,13 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public IActionResult Eb_formBuilder(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            ViewBag.Objtype = req["objtype"];
+            return View();
+        }
 
         public int SaveFilterDialog()
         {

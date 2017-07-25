@@ -28,7 +28,7 @@
         <div style="background-color:#ccc; padding:5px; font-weight: bold; cursor: move;">Toolbox  <i class="fa fa-wrench" aria-hidden="true";"></i> </div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
             
-            @Html.Raw(new EbToolbox().GetToolboxHtml(BuilderType.FormBuilder))
+            @Html.Raw(new EbToolbox(BuilderType.FormBuilder).html)
 
         </div>
     </div>
@@ -50,6 +50,9 @@
 
 </div>
 <script>
+
+    @Html.Raw(new EbToolbox(BuilderType.FormBuilder).AllControlls);
+    @Html.Raw(new EbToolbox(BuilderType.FormBuilder).AllMetas);
     var t = new formBuilder("form-buider-toolBox", "form-buider-form");
     $("#form-buider-propGrid").draggable();
     $("#form-buider-propGrid").resizable();

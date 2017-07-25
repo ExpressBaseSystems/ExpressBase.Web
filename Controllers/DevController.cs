@@ -796,5 +796,9 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("DevSignIn", "Ext");
 
         }
+        public IActionResult ReportBuilder()
+        {
+            return View();
+        }
     }
 }

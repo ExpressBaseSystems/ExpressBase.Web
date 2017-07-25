@@ -1,0 +1,60 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+    .page{
+        background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5cm;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);  
+  }
+</style>
+<div class="row">
+    <div class="col-md-3 dsTree">
+        <ul id="tree1">
+            <li>
+                <a href="#">Data Sources</a>
+                <ul>
+                    <li>Level1</li>
+                    <li>
+                        Level1
+                        <ul>
+                            <li>Level 2</li>                           
+                            <li>Level 2</li>
+                        </ul>
+                    </li>
+                    <li>Level 1</li>
+                </ul>
+            </li>          
+        </ul>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <form class="form-inline">             
+                <div class="form-group">
+                    <label for="sel1">Page Size</label>
+                    <select class="form-control" id="pagesize">
+                        <option value="A1">A1</option>
+                        <option value="A2">A2</option>
+                        <option value="A3">A3</option>
+                        <option value="A4">A4</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <div id="PageContainer">
+            </div>
+        </div>
+        </div>
+    <div class="col-md-3 propGrid">
+
+    </div>
+</div>
+
+<script>
+    $("#pagesize").change(function () {   
+        RptBuilder($(this).val());
+    });
+</script>

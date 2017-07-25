@@ -37,7 +37,7 @@
     <div id="form-buider-form" class="form-buider-form">
         <textarea id="txtValues" rows="15" cols="40"></textarea>
     </div>
-
+    <input type="hidden" id="objtype" value="@ViewBag.Objtype"/>
 
     <div id='form-buider-propGrid' class='property-grid-cont'>
         <div style="background-color:#ccc; padding:5px; font-weight: bold; cursor: move;">Properties<i class="fa fa-times" style="float:right; cursor:default;" onclick="$(this).parent().parent().css('visibility','hidden')" aria-hidden="true"></i><i class="fa fa-thumb-tack" style="float:right; margin-top: 1px; cursor:default; margin-right: 5px;" aria-hidden="true"></i></div>
@@ -54,6 +54,7 @@
     @Html.Raw(new EbToolbox(BuilderType.FormBuilder).AllControlls);
     @Html.Raw(new EbToolbox(BuilderType.FormBuilder).AllMetas);
     var t = new formBuilder("form-buider-toolBox", "form-buider-form");
+    alert($("#objtype").val());
     $("#form-buider-propGrid").draggable();
     $("#form-buider-propGrid").resizable();    
 </script>

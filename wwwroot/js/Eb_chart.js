@@ -533,16 +533,16 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             $("#myChart" + this.tableId).css("margin-left", "0px");
             $("#myChart" + this.tableId).css("margin-top", "0px");
             $("#myChart" + this.tableId).css("height", "522px");
-            $("#btnColumnCollapsedv281_1").children().remove();
-            $("#btnColumnCollapsedv281_1").append("<i class='fa fa-chevron-down' aria-hidden='true'></i>")
+            //$("#btnColumnCollapse" + this.tableId).children().remove();
+            //$("#btnColumnCollapse" + this.tableId).append("<i class='fa fa-chevron-down' aria-hidden='true'></i>")
         }
         else {
             $("#myChart" + this.tableId).css("width", "80%");
             $("#myChart" + this.tableId).css("height", "454px");
             $("#myChart" + this.tableId).css("margin-left", "200px");
             $("#myChart" + this.tableId).css("margin-top", "-420px");
-            $("#btnColumnCollapse" + this.tableId).children().remove();
-            $("#btnColumnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
+            //$("#btnColumnCollapse" + this.tableId).children().remove();
+            //$("#btnColumnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
         }
     };
 

@@ -124,7 +124,7 @@ var DVObj = function (dsid, settings, login, dvlist) {
         var colarr = [];
         var n, d, t, v, w, ty, cls;
         $.each(this.TVPrefObj.columns, function (i, col) {
-            if (col.name !== "serial" && col.name !== "id" && col.name !== "checkbox") {
+            if (col.name !== "serial" && col.name !== "checkbox") {
                 n = col.name;
                 d = col.data;
                 t = col.title.substr(0, col.title.indexOf('<'));
@@ -172,7 +172,7 @@ var DVObj = function (dsid, settings, login, dvlist) {
         var ct = 0; var objcols = [];
         var api = $('#Table_Settings').DataTable();
         var n, d, t, v, w, ty, cls;
-        objcols.push(this.getColobj("id"));
+        //objcols.push(this.getColobj("id"));
         $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
             ct++;
             if (obj.type === 'text' && obj.name === 'name')
@@ -289,14 +289,15 @@ var DVObj = function (dsid, settings, login, dvlist) {
         chkObj.orderable = false;
         chkObj.visible = true;
         chkObj.name = "checkbox";
-        var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
+        chkObj.type = "System.Boolean";
+        //var idpos = $.grep(tx, function (e) { return e.name === "id"; })[0].data;
         // chkObj.render = function (data2, type, row, meta) { return renderCheckBoxCol($('#' + tableId).DataTable(), idpos, tableId, row, meta); };
         chkObj.render = this.renderCheckBoxCol.bind(this);
         tx.unshift(chkObj);
         // }
 
         //if (!tx.hideSerial)
-        tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#"}'));
+        tx.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#", "type":"System.Int32"}'));
     };
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {

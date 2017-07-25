@@ -240,6 +240,7 @@ namespace ExpressBase.Web.Controllers
                     FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
                 });
             }
+            _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = _dict["changeLog"];
@@ -395,7 +396,7 @@ namespace ExpressBase.Web.Controllers
 
             }
             var columnColletion = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Token = ViewBag.token, Params = paramsList });
-            if (columnColletion.Columns.Count == 0)
+            if (columnColletion.Columns == null || columnColletion.Columns.Count == 0)
             {
                 return "";
             }
@@ -540,8 +541,8 @@ namespace ExpressBase.Web.Controllers
             string colDef = string.Empty;
             colDef = "{\"dsId\":" + dsid + ",\"fdId\":" + fdid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
             colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
-            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\"},";
-            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\"},";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\",\"type\":\"System.Int64\"},";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\",\"type\":\"System.Boolean\"},";
             foreach (EbDataColumn column in __columnCollection)
             {
                 colDef += "{";
@@ -552,7 +553,7 @@ namespace ExpressBase.Web.Controllers
                 colDef += ",\"width\": \"100px\"";
                 colDef += ",\"name\": \"" + column.ColumnName + "\"";
                 colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
-                var cls = (column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int64") ? "dt-right tdheight" : "tdheight";
+                var cls = (column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int64") ? "dt-right tdheight" : "tdheight";
                 colDef += ",\"className\": \"" + cls + "\"";
                 colDef += "},";
             }
@@ -563,8 +564,8 @@ namespace ExpressBase.Web.Controllers
             foreach (EbDataColumn column in __columnCollection)
             {
                 colext += "{";
-                if (column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64")
-                    colext += "\"name\":\"" + column.ColumnName + "\",\"AggInfo\":true,\"DecimalPlace\":2,\"RenderAs\":\"Default\"";
+                if (column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64")
+                    colext += "\"name\":\"" + column.ColumnName + "\",\"AggInfo\":true,\"DecimalPlace\":2,\"RenderAs\":\"Default\",\"linkDv\":\"\"";
                 else if (column.Type.ToString() == "System.Boolean")
                     colext += "\"name\":\"" + column.ColumnName + "\",\"IsEditable\":false,\"RenderAs\":\"Default\"";
                 else if (column.Type.ToString() == "System.DateTime")
@@ -601,6 +602,7 @@ namespace ExpressBase.Web.Controllers
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
+            ds.Relations = dsid.ToString();
 
             var result = client.Post<EbObjectSaveOrCommitResponse>(ds);
             if (result.Id > 0)

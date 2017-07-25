@@ -7,7 +7,7 @@ var pageA3 = function () {
     this.height = '29.7cm'
 };
 var createPage = function (type) {
-    if (type === 'A4') {
+    if (type === 'A4') {     
         $('#PageContainer').append("<div class='page' style='width :" + new pageA4().width + "; height:" + new pageA4().height + "'></div>");
     }
     if (type === 'A3') {
@@ -17,5 +17,6 @@ var createPage = function (type) {
 var RptBuilder = function (type) {
     this.type = type;
     $('#PageContainer').empty();
+    $('.PageContainer').ruler();
     new createPage(type);
 }

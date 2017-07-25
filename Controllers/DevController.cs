@@ -240,6 +240,7 @@ namespace ExpressBase.Web.Controllers
                     FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
                 });
             }
+            _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = _dict["changeLog"];

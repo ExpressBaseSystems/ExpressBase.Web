@@ -5,6 +5,7 @@ body {
     line-height: 1.52;
     color: #717f86;
     font-family: 'Open Sans', sans-serif;
+    padding: 0 !important;
 }
 
 .nopadding {
@@ -30,23 +31,28 @@ Navigation bar
 .navbar-default .navbar-brand {
     color: #3b5998;
 }
-   .navbar-brand{
-       padding:0px;
-   }
-    .navbar-brand i{
-        margin-top:15px;
-         margin-left:10px;
-         margin-right:30px;
+
+.navbar-brand {
+    padding: 0px;
+}
+
+    .navbar-brand i {
+        margin-top: 15px;
+        margin-left: 10px;
+        margin-right: 30px;
     }
+
 .navbar-default {
     background-color: #ffffff;
 }
-  .navbar-default img {
+
+    .navbar-default img {
         height: 40px;
         margin-top: 3px;
         margin-bottom: 0px;
-        margin-right:10px;
+        margin-right: 10px;
     }
+
 .navbar {
     height: 40px !important;
 }
@@ -111,20 +117,22 @@ Navigation bar
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
- .badge {
+
+.badge {
     font-size: 10px;
     font-weight: 400;
     line-height: 13px;
     padding: 2px 6px;
     position: absolute;
     bottom: 14px !important;
-        right: -13px !important;
-        background-color:#3b5998 !important;
+    right: -13px !important;
+    background-color: #3b5998 !important;
 }
-    .notifications{
-     top:20px !important;
-     right: 30px !important;
-    }
+
+.notifications {
+    top: 20px !important;
+    right: 30px !important;
+}
 /*PARTNERS*/
 .img-responsive {
     margin: 20px auto;
@@ -518,6 +526,7 @@ footer {
 #technnology {
     padding-bottom: 40px;
 }
+
     #technnology img {
         margin-bottom: 20px;
         height: 150px;
@@ -530,25 +539,30 @@ footer {
     width: 250px;
     border-radius: 0;
     height: 100%;
-    position:fixed;
-    padding-right:10px;
+    position: fixed;
+    padding-right: 10px;
 }
-.list-group .list-group-item{
-    line-height: 41px !important;   
+
+.list-group .list-group-item {
+    line-height: 41px !important;
     vertical-align: baseline;
-    border:0;
+    border: 0;
 }
-.list-group .outer{
-    
-height:100% !important;
-border:0 !important;
- border-right: 1px solid rgba(0,0,0,.15) !important; 
+
+.list-group .outer {
+    height: 100% !important;
+    border: 0 !important;
+    border-right: 1px solid rgba(0,0,0,.15) !important;
     box-shadow: 0 6px 12px rgba(0,0,0,.175) !important;
 }
-.sub-menu{
-    padding:0;
-    margin-left:10px;
+
+.sub-menu {
+    padding: 0;
+    margin-left: 10px;
+overflow-y:auto !important;
+height:400px !important;
 }
+
 list-group-item:last-child {
     margin-bottom: 0;
     border-bottom-right-radius: 0px !important;
@@ -561,35 +575,37 @@ list-group-item:first-child {
 }
 /*sidebar end*/
 .main-cont {
-    margin-bottom:40px;   
-        margin-right:10px;
+    margin-bottom: 40px;
+    margin-right: 10px;
 }
 
 .padd {
     padding-right: 7px;
     padding-bottom: 7px;
 }
-.list-group a{
-    padding:0;
-    padding-left:10px;
-    
+
+.list-group a {
+    padding: 0;
+    padding-left: 10px;
 }
+
 .side i {
     padding-right: 5px;
-    padding-top:5px;
+    padding-top: 5px;
 }
 /*ebObject list*/
 
 .objitems {
     border: 1px solid rgba(0,0,0,.15);
-    border-left:none !important;
-    border-right:none !important;
+    border-left: none !important;
+    border-right: none !important;
     margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
-    margin-top:20px;
+    margin-top: 20px;
     box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
+
 .bottpadd {
     margin-bottom: 50px;
 }
@@ -598,17 +614,19 @@ list-group-item:first-child {
     margin-left: 53px;
     margin-top: 9%;
 }
-@media (min-width: 992px){
-#tenatDtls .col-md-12 {
-    width: 98% !important;
+
+@media (min-width: 992px) {
+    #tenatDtls .col-md-12 {
+        width: 98% !important;
         margin-left: 10px;
-    padding-right: 10px;
+        padding-right: 10px;
     }
+
     #tenatDtls .col-md-9 {
         width: 80% !important;
     }
 }
-.obj-list .list-group-item{
-    padding:5px 5px 5px 5px;
-}
 
+.obj-list .list-group-item {
+    padding: 5px 5px 5px 5px;
+}

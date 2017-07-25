@@ -61,15 +61,15 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        public IActionResult dv(int dvid)
+        public IActionResult dv(int objid)
         {
             var token = Request.Cookies["Token"];
-            ViewBag.dvid = dvid;
+            ViewBag.dvid = objid;
             ViewBag.token = token;
             ViewBag.EbConfig = this.EbConfig;
 
             var redisClient = this.EbConfig.GetRedisClient();
-            var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, dvid));
+            var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, objid));
             //var result = JsonConvert.DeserializeObject<Object>(tvpref);
 
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);

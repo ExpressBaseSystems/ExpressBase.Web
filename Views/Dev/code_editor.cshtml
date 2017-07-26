@@ -62,50 +62,60 @@
 </script>
 
 <div class="row">
-    <h3>@ViewBag.Header</h3>
     <div class="form-inline">
-        <div class="btn-group mr-2" role="group" aria-label="First group">
-            <div class="form-group " style="float:left">
+        <div class="btn-group mr-2 well" role="group" aria-label="First group" style="width:100%">
+            <div class="form-group btn-group mr-2  " style="float:left">
+                <i class="fa fa-database fa-1x" aria-hidden="true"></i>
                 <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control inputBoxinHead" />
             </div>
-            <a data-toggle="collapse" title="Collapse" data-target="#objCollapse"><i class="btn-default btn btn-lg fa fa-chevron-down  fa-1x" aria-hidden="true"></i></a>
-            <a class="commit" id="commit" data-toggle="tooltip" title="Commit"><i class="btn btn-lg btn-default fa fa-save fa-1x" aria-hidden="true"></i></a>
-            <a class="save" id="save" data-toggle="tooltip" title="Save"><i class="btn btn-lg btn-default fa fa-clock-o  fa-1x" aria-hidden="true"></i></a>
-            <a href="#" id="rel_obj" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn-default btn btn-lg fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn-default btn btn-lg fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-            @*<a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn btn-lg fa fa-code-fork fa-1x" aria-hidden="true"></i></a>*@
-            <a href="#" id="stat_his" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn-default btn btn-lg fa fa-line-chart fa-1x" aria-hidden="true"></i></a>
-            <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-default btn btn-lg fa fa-history fa-1x" aria-hidden="true"></i></a>
-            <div class="dropdown fdlist btn-group">
-                <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true">
-                    @{
-                        @using ExpressBase.Objects.ServiceStack_Artifacts;
-                        Dictionary<int, EbObjectWrapper> filterDialogs = new Dictionary<int, EbObjectWrapper>();
-                        filterDialogs = ViewBag.FilterDialogs;
-                        <option value="Select Filter Dialog" data-tokens="Select Filter Dialog" selected>Select Filter Dialog</option>
-                        <option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>
+            <div class="form-group btn-group mr-2 " style="display:inline;float:right">                
+                <a href="#" id="rel_obj" class="rel_obj" data-toggle="tooltip" title="Related Objects"><i class="btn btn-default btn-group fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+                <a href="#" class="samp_cod" data-toggle="tooltip" title="Sample Code"><i class="btn btn-default btn-group fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
+                @*<a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn fa fa-code-fork fa-1x" aria-hidden="true"></i></a>*@
+                <a href="#" id="stat_his" class="stat_his" data-toggle="tooltip" title="Status History"><i class="btn btn-default btn-group fa fa-line-chart fa-1x" aria-hidden="true"> @ViewBag.Status</i></a>
+                <a href="#" class="ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn btn-default btn-group fa fa-history fa-1x" aria-hidden="true"> v.@ViewBag.VersionNumber</i></a>
+                
+                <div class="dropdown btn-group">
+                    <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="btn btn-dafault fa fa-clock-o  fa-1x" aria-hidden="true"></i>
+                        <span class="bs-caret"><span class="caret"></span></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="commit" id="commit" data-toggle="tooltip" title="Commit">Commit</a></li>
+                        <li><a class="save" id="save" data-toggle="tooltip" title="Save">Save (Ctrl+S)</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown fdlist btn-group" style="float:right">
+                    <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true">
+                        @{
+                            @using ExpressBase.Objects.ServiceStack_Artifacts;
+                            Dictionary
+                            <int, EbObjectWrapper>
+                                filterDialogs = new Dictionary<int, EbObjectWrapper>
+                                    ();
+                            filterDialogs = ViewBag.FilterDialogs;
+                            <option value="Select Filter Dialog" data-tokens="Select Filter Dialog" selected>Select Filter Dialog</option>
+                            @*<option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>*@
                         foreach (var filter in filterDialogs)
                         {
                             <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
                         }
-                    }
-                </select>
-            </div>
-            <a class="label label-success codeEditLabel" id="statusLabel">Status : @ViewBag.Status</a>
-            <a class="label label-warning codeEditLabel"> Version @ViewBag.VersionNumber</a>
-        </div>
-    </div>
-    <div class="col-md-6 col-md-offset-5">
-        <div id="objCollapse" class="collapse">
-            <div class="form-group ">
-                <label class="control-label">Description</label>
-                <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
+                        }
+                    </select>
+                </div>
+
             </div>
         </div>
     </div>
+    <div>
+        <div class="form-group ">
+            <label class="control-label">Description</label>
+            <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
+        </div>
+    </div>
+
 </div>
 <br>
-<div class="help"></div>
 <div class="row">
     <ul class="nav nav-tabs versionNav" id="versionNav">
         <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">@ViewBag.ObjectName</a></li>
@@ -113,36 +123,32 @@
 
     <div class="tab-content " id="versionTab">
         <div id="code_edit0" class="tab-pane fade in active">
-            <div class="form-inline">
-                <a href="#" id="execute0" data-toggle="tooltip" title="Execute"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
+            <div class="form-inline well">
+                <a href="#" id="execute0" data-toggle="tooltip" title="Execute"><i class="btn btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
                 @{ if (ViewBag.IsNew == "false")
                     {
                         <div class="verlist input-group">
-
-                            <select id="selected_Ver" name="selected_Ver" class="selectpicker form-control show-tick" data-live-search="true">
+                            <select id="selected_Ver" name="selected_Ver" class="selected_Ver selectpicker form-control show-tick" data-live-search="true">
                                 @{
                                     List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
                                     Allversions = ViewBag.Allversions;
-                                    <option value="Select Version" data-tokens="Select Version">Select Version</option>
+                                    <option value="Select Version" data-tokens="Select Version">Compare With</option>
                                     foreach (var version in Allversions)
                                     {
                                         <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
                                     }
                                 }
                             </select>
-
-                            <span class="input-group-btn">
-                                <a href="#" class="diff" id="diff0" data-toggle="tooltip" title="compare"><i class="btn btn-lg btn-default fa fa-play fa-1x" aria-hidden="true"></i></a>
-                            </span>
                         </div>
                                     }
                 }
             </div>
+            <div class="col-md-12">
                 <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
                 <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
                 <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-                <p class="help">Hit Ctrl+Space to trigger autocomplete</p>
-                <button class="comment" id="comment">comment</button> 
+                <p>Hit Ctrl+Space to trigger autocomplete</p>               
+            </div>
         </div>
     </div>
 </div>
@@ -196,16 +202,8 @@
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
-        //var orig = CodeMirror.hint.sql;
-        //CodeMirror.hint.sql = function(cm) {
-        //    var inner = orig(cm) || {from: cm.getCursor(), to: cm.getCursor(), list: []};
-        //    inner.list.push("sql_fn_1");
-        //    inner.list.push("sql_fn_2");
-        //    return inner;
-        //};
         var orig = CodeMirror.hint.sql;
         CodeMirror.hint.sql = function (editor) {
-           // alert("asdasda");
             var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
             inner.list.push("sql_fn_1");
             inner.list.push("sql_fn_2");
@@ -374,7 +372,6 @@
 
     .inputBox {
         width: 216px;
-        /*height: 27px;*/
     }
 
     .controls-group {
@@ -387,12 +384,7 @@
 
     .codeEditLabel {
         padding-top: 9px;
-        padding-bottom: 10px;      
-    }
-
-    .btn {
-        border-radius: 2px;
-        height: 33px;
+        padding-bottom: 10px;
     }
 
     .dropdown {

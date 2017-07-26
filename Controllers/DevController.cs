@@ -58,7 +58,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorMode = "text/x-sql";
             ViewBag.Icon = "fa fa-database";
             ViewBag.ObjType = (int)EbObjectType.DataSource;
-            ViewBag.ObjectName = "New";
+            ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
             ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
@@ -120,7 +120,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorMode = "text/x-pgsql";
             ViewBag.Icon = "fa fa-database";
             ViewBag.ObjType = (int)EbObjectType.SqlFunction;
-            ViewBag.ObjectName = "Untitled";
+            ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
             ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
@@ -355,6 +355,7 @@ namespace ExpressBase.Web.Controllers
             });
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
+            ds.Relations =null;
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return CurrSaveId.Id;
         }
@@ -462,8 +463,6 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
-                //if (element.EbObjectType == EbObjectType.DataVisualization)
-                //{
                 var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataVisualization>(element.Bytea);
                 ViewBag.ObjectName = element.Name;
                 ViewBag.dsid = dsobj.dsid;
@@ -475,18 +474,12 @@ namespace ExpressBase.Web.Controllers
                     if (ViewBag.tvpref == null)
                         ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
                 }
-                // }
             }
             resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.dsid), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
             rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
-            {
-                //if (element.EbObjectType == ExpressBase.Objects.EbObjectType.DataSource)
-                //{
                 ObjList[element.Id] = element;
-                //}
-            }
             ViewBag.DSList = ObjList;
 
             resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
@@ -494,10 +487,7 @@ namespace ExpressBase.Web.Controllers
             Dictionary<int, EbObjectWrapper> ObjListAll = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
             {
-                //if (element.EbObjectType == EbObjectType.DataSource)
-                //{
                 ObjListAll[element.Id] = element;
-                //}
             }
             ObjListAll.Remove(ObjList.Keys.First<int>());
             ViewBag.DSListAll = ObjListAll;
@@ -532,22 +522,20 @@ namespace ExpressBase.Web.Controllers
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
-            DataSourceColumnsResponse result;
-            var columnColletion = redis.Get<ColumnColletion>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
-            if (columnColletion == null || columnColletion.Count == 0)
-            {
-                result = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Token = ViewBag.token });
-                columnColletion = result.Columns;
-            }
-            var tvpref = this.GetColumn4DataTable(columnColletion, dsid, fdid);
+            redis.Remove(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
+            DataSourceColumnsResponse columnresp = redis.Get<DataSourceColumnsResponse>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
+            if (columnresp == null || columnresp.IsNull)
+                columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Token = ViewBag.token });
+
+            var tvpref = this.GetColumn4DataTable(columnresp.Columns, dsid, fdid, columnresp.IsPaged);
             return tvpref;
         }
 
-        private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid, int fdid)
+        private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid, int fdid, bool isPaged)
         {
             string colDef = string.Empty;
             colDef = "{\"dsId\":" + dsid + ",\"fdId\":" + fdid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
-            colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
+            colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"IsPaged\":"+ isPaged.ToString().ToLower() + ",\"columns\":[";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\",\"type\":\"System.Int64\"},";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\",\"type\":\"System.Boolean\"},";
             foreach (EbDataColumn column in __columnCollection)
@@ -771,15 +759,7 @@ namespace ExpressBase.Web.Controllers
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = "";
-            //if (_dict["id"] == "0")
-            //{
-
-            //    ds.ChangeLog = "";
-            //}
-            //else
-            //{
-            //    ds.ChangeLog = _dict["changeLog"];
-            //}
+            ds.Relations = null;
             ds.Token = ViewBag.token;//removed tcid
 
             ViewBag.IsNew = "false";

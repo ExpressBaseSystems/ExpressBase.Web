@@ -1,21 +1,4 @@
-﻿var TableTdObj = function (id) {
-    this.Name = id,
-    this.__type = "ExpressBase.Objects.EbTextBox",
-    this.Controls = new EbControlCollection(),
-    this.IsContainer = true,
-    this.props = {
-        Name: id,
-        Parent: "",
-        Sibling: "",
-    },
-    this.meta = {
-        Parent: { group: 'meta ', name: 'Parent', type: 'label' },
-        Sibling: { group: 'meta ', name: 'Sibling', type: 'label' },
-    }
-};
-
-
-var EbControlCollection = function () {
+﻿var EbControlCollection = function () {
     this.InnerCollection = [];
 
     this.ToArray = function () {

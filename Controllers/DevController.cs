@@ -58,7 +58,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorMode = "text/x-sql";
             ViewBag.Icon = "fa fa-database";
             ViewBag.ObjType = (int)EbObjectType.DataSource;
-            ViewBag.ObjectName = "New";
+            ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
             ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
@@ -120,7 +120,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorMode = "text/x-pgsql";
             ViewBag.Icon = "fa fa-database";
             ViewBag.ObjType = (int)EbObjectType.SqlFunction;
-            ViewBag.ObjectName = "Untitled";
+            ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
             ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);

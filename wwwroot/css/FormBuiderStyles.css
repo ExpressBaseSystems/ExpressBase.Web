@@ -1,8 +1,4 @@
-﻿body {
-    background-color: #f5f5f5;
-    padding: 10px !important;
-}
-
+﻿
 .settings-cont {
     position: absolute;
     width: 100vw;
@@ -17,6 +13,11 @@
     align-items: center;
     -webkit-justify-content: center;
     justify-content: center;
+}
+
+.form-buider-cont{
+    background-color: #f5f5f5;
+    padding:15px;
 }
 
 .contol-settings-window {
@@ -36,7 +37,7 @@
 }
 
 .form-buider-form {
-    width: 72vw;
+    width: 100%;
     padding: 3px;
     display: inline-block;
     vertical-align: top;
@@ -44,7 +45,6 @@
     background-color: white;
     overflow-y: auto;
     border: solid 1px #dddddd;
-    margin-left: 8px;
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
@@ -101,10 +101,15 @@
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
 }
+.form-save-wraper {
+    display:inline-block;
+    width:65%;
+    margin:0px 6px;
+}
 
 .fb-cont{
-    width: 72vw;
-    margin-left:8px;
+    padding:3px;
+    width: 100%;
     margin-bottom:8px;
     background-color: white;
     vertical-align: top;
@@ -120,9 +125,9 @@
 
 .property-grid-cont {
     display: inline-block;
-    position: absolute;
+    /*position: absolute;*/
     z-index: 100;
-    top: 50px;
+    /*top: 50px;*/
     right: 2px;
     height: 95vh;
     visibility: hidden;
@@ -130,7 +135,7 @@
     padding: 3px;
     border: solid 1px #dddddd;
     margin-left: 8px;
-    margin-top: 117px;
+    margin-top: 0px;
     vertical-align: top;
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
@@ -139,11 +144,9 @@
 
 .toolbox-cont {
     display: inline-block;
-    top: 10px;
     background-color: white;
     padding: 3px;
     border: solid 1px #dddddd;
-    margin-left: 8px;
     vertical-align: top;
     border: solid 1px #dddddd;
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);

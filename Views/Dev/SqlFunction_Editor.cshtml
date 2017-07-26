@@ -105,7 +105,6 @@
     </div>
 </div>
 <br>
-<div class="help"></div>
 <div class="row">
     <ul class="nav nav-tabs versionNav" id="versionNav">
         <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">@ViewBag.ObjectName</a></li>
@@ -142,7 +141,7 @@
             <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
             <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
             <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-            <p class="help">Hit Ctrl+Space to trigger autocomplete</p><div id="emails"></div>
+            <p>Hit Ctrl+Space to trigger autocomplete</p></div>
             <button class="comment" id="comment">comment</button>
         </div>
     </div>

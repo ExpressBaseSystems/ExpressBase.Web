@@ -58,7 +58,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorMode = "text/x-sql";
             ViewBag.Icon = "fa fa-database";
             ViewBag.ObjType = (int)EbObjectType.DataSource;
-            ViewBag.ObjectName = "New";
+            ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
             ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
@@ -120,7 +120,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorMode = "text/x-pgsql";
             ViewBag.Icon = "fa fa-database";
             ViewBag.ObjType = (int)EbObjectType.SqlFunction;
-            ViewBag.ObjectName = "Untitled";
+            ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
             ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
@@ -355,7 +355,7 @@ namespace ExpressBase.Web.Controllers
             });
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
-            ds.Relations = "000";
+            ds.Relations =null;
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return CurrSaveId.Id;
         }
@@ -764,15 +764,7 @@ namespace ExpressBase.Web.Controllers
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = "";
-            //if (_dict["id"] == "0")
-            //{
-
-            //    ds.ChangeLog = "";
-            //}
-            //else
-            //{
-            //    ds.ChangeLog = _dict["changeLog"];
-            //}
+            ds.Relations = null;
             ds.Token = ViewBag.token;//removed tcid
 
             ViewBag.IsNew = "false";

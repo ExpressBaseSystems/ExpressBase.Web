@@ -1,6 +1,6 @@
 ﻿@using ExpressBase.Objects;
 <div class="list-group">
-    <ul class="outer" style="padding-left:0;">
+    <ul class="outer" style="padding-left:0;overflow-y:auto;">
         <li>
             <a href="#" class="list-group-item">
                 <i class="fa fa-align-right"></i> Applications
@@ -14,7 +14,17 @@
                 <i class="fa fa-object-group"></i>Objects<i class="fa fa-caret-down pull-right"></i>
             </a>
             <ul class="sub-menu collapse" id="dropdown2">
-                <li onclick="LoadObjectList44(9)"><a class="list-group-item" href="EbObjectList?type=9"><i class="fa fa-caret-right"></i> Applications</a></li>
+                @{  foreach (var Op in Enum.GetValues(typeof(EbObjectType)))
+                        {
+                            var intop = (int)Op;
+                            <li onclick="LoadObjectList44(@intop)"><a class="list-group-item" href="EbObjectList?type=@intop"><i class="fa fa-caret-right"></i> @Op</a></li>
+
+                    }
+
+                }
+                
+              
+                @*<li onclick="LoadObjectList44(9)"><a class="list-group-item" href="EbObjectList?type=9"><i class="fa fa-caret-right"></i> Applications</a></li>
                 <li onclick="LoadObjectList44(2)"><a class="list-group-item" href="EbObjectList?type=2"><i class="fa fa-caret-right"></i> Data Sources</a></li>
                 <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Filter Dialogs</a></li>
                 <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
@@ -24,7 +34,7 @@
                 <li onclick="LoadObjectList44(5)"><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Sql Functions</a></li>
                 <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Sql Validators</a></li>
                 <li onclick="LoadObjectList44(11)"><a class="list-group-item" href="EbObjectList?type=11"><i class="fa fa-caret-right"></i> Data Visualizations</a></li>
-                <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Views</a></li>
+                <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Views</a></li>*@
             </ul>
         </li>
     </ul>

@@ -55,11 +55,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
 
     this.Success_alert = function (result) {
         $("#loader").hide();
-        $('.alert').remove();
-        $('.help').append("<div class='alert alert-success alert-dismissable'>" +
-    "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-    "<strong>Success!</strong>" +
-    "</div>");
+        alert("Saved Successfully");
     }
 
     this.deleteTab = function (e) {
@@ -586,11 +582,7 @@ var FilterDialog = function () {
 
     this.Success_alert = function (result) {
         $("#loader").hide();
-        $('.alert').remove();
-        $('.help').append("<div class='alert alert-success alert-dismissable'>" +
-    "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-    "<strong>Success!</strong>" +
-    "</div>");
+        alert("Saved Successfully");
     }
 
     this.Init();

@@ -2,96 +2,119 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <style>
-    .ruler {  
-    margin-top:20px;
-     left:0;
-    width: 100%; height: 25px;
-    background: #eee; color: #000;
-    font-family: arial;
-    font-size: 12px; line-height: 14px;
-    border-bottom: 1px solid;
-    overflow: hidden;
-    z-index: 9;
-}
-.ruler > div {
-    display: inline-block;
-    background: #000;
-}
-.ruler .tickLabel {
-    position:relative;
-    top: -10px;
-    margin-left: 4px;
-    width: 1px;
-    height: 100%;
-    text-indent: 1px;
-    line-height: 20px;
-}
-.ruler .tickLabel:first-of-type {
-    margin-left: 0px;
-}
-.ruler .tickMajor {
-    margin-top: 19px;
-    margin-left: 4px;
-    width: 1px;
-    height: 6px;
-}
-.ruler .tickMinor {
-    margin-left: 4px;
-    width: 1px;
-    height: 4px;
-}
+    .ruler {
+        margin-top: 20px;
+        color: #000;
+        font-family: arial;
+        font-size: 12px;
+        line-height: 14px;
+        overflow: hidden;
+        margin-left: 25px;
+    }
+
+        .ruler > div {
+            display: inline-block;
+            background: #000;
+        }
+
+        .ruler .tickLabel {
+            position: relative;
+            top: -10px;
+            margin-left: 4px;
+            width: 1px;
+            height: 100%;
+            text-indent: 1px;
+            line-height: 20px;
+        }
+
+            .ruler .tickLabel:first-of-type {
+                margin-left: 0px;
+            }
+
+        .ruler .tickMajor {
+            margin-top: 19px;
+            margin-left: 4px;
+            width: 1px;
+            height: 6px;
+        }
+
+        .ruler .tickMinor {
+            margin-left: 4px;
+            width: 1px;
+            height: 4px;
+        }
+
     .page {
         background: white;
         display: block;
         margin: 0;
-        margin-bottom: 0.5cm;
         box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
     }
+
+    .rulerleft {
+        position: absolute;
+        color: #000;
+    }
+
+        .rulerleft > div {
+            background: #000;
+        }
+
+        .rulerleft .tickLabel {
+            margin-top: 4px;
+            width: 100%;
+            height: 1px;
+        }
+
+            .rulerleft .tickLabel:first-of-type {
+                margin-left: 0px;
+            }
+
+        .rulerleft .tickMajor {
+            margin-top: 4px;
+            width: 6px;
+            height: 1px;
+            margin-left: 18px;
+        }
+
+        .rulerleft .tickMinor {
+            margin-top: 4px;
+            width: 4px;
+            height: 1px;
+            margin-left: 20px;
+        }
 </style>
 <div class="row">
-    <div class="col-md-2 dsTree">
-        <ul id="tree1">
-            <li>
-                <a href="#">Data Sources</a>
-                <ul>
-                    <li>Level1</li>
-                    <li>Level 1</li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    <div class="col-md-8">
-        <div class="row">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="sel1">Page Size</label>
-                    <select class="form-control" id="pagesize">
-                        <option value="A1">A1</option>
-                        <option value="A2">A2</option>
-                        <option value="A3">A3</option>
-                        <option value="A4">A4</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input id="imgbg" type="file" style="display:none;" />
-                        <input class="form-control" type="text" placeholder="Background Image">
-                        <span class="input-group-addon" onclick="$('#imgbg').click();"><i class="fa fa-folder-open"></i></span>
-                    </div>
-                </div>
-            </form>
+    <div class="form-inline">
+        <div class="form-group">
+            <label for="sel1">Page Size</label>
+            <select class="form-control" id="pagesize">
+                <option value="Letter">Letter</option>
+                <option value="A1">A1</option>
+                <option value="A3">A3</option>
+                <option value="A4">A4</option>
+                <option value="A5">A5</option>
+            </select>
         </div>
-        <div class="row"> 
-            <div class='ruler'></div>       
-            <div class='rulerleft'></div> 
-            <div id="PageContainer" style="margin-top:30px;">
-                </div>
+        <div class="form-group">
+            <div class="input-group">
+                <input id="imgbg" type="file" style="display:none;" />
+                <input class="form-control" type="text" placeholder="Background Image">
+                <span class="input-group-addon" onclick="$('#imgbg').click();"><i class="fa fa-folder-open"></i></span>
+            </div>
         </div>
-    </div>
-    <div class="col-md-2 propGrid">
-
     </div>
 </div>
+<div class="row">
+    <div id="pageCanvas">
+        <div class='ruler'></div>
+        <div class='rulerleft'></div>
+        <div id="PageContainer" style="margin-top:4px;">
+        </div>
+    </div>
+</div>
+
+
 
 <script>
     $("#pagesize").change(function () {

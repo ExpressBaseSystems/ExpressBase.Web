@@ -94,16 +94,12 @@
 
 };
 
-var formBuilder = function (toolBoxid, formid) {
+var formBuilder = function (toolBoxid, formid, propGridId) {
     this.Name = "form-buider-form";
     this.toolBoxid = toolBoxid;
     this.formid = formid;
-    //this.ComboBoxCounter = 0;
-    //this.NumericBoxCounter = 0;
-    //this.DateCounter = 0;
-    //this.ButtonCounter = 0;
-    //this.GridViewCounter = 0;
-    //this.TextBoxCounter = 0;
+    this.$propGrid = $("#" + propGridId);
+
     this.controlCounters = {
         ComboBoxCounter: 0,
         NumericCounter: 0,
@@ -149,6 +145,7 @@ var formBuilder = function (toolBoxid, formid) {
     $("#saveformBtn").on("click", this.save.bind(this));
 
     this.CreatePG = function (control) {
+        this.$propGrid.show();
         $('#propGrid').empty();
         setTimeout(this.SetTimeOutFn.bind(this), 1);
 
@@ -187,6 +184,8 @@ var formBuilder = function (toolBoxid, formid) {
     };
 
     this.acceptFn = function (el, target, source, sibling) {
+        //console.log("source:" + source.id);
+        //console.log("target:" + target.id);
         // prevent tool box copy
         if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") === "form-buider-toolBox") {
             return false;
@@ -263,44 +262,47 @@ var formBuilder = function (toolBoxid, formid) {
     }
 
     this.onDropFn = function (el, target, source, sibling) {
-        //drop from toolbox to form
-        if ($(source).attr("id") === "form-buider-toolBox") {
 
-            el.className = 'controlTile';
+        if (target) {
+            //drop from toolbox to form
+            if ($(source).attr("id") === "form-buider-toolBox") {
 
-            var ctrl = $(el);
+                el.className = 'controlTile';
 
-            var type = ctrl.attr("eb-type").trim();
+                var ctrl = $(el);
 
-            var id = (type + (this.controlCounters[type + "Counter"])++);
+                var type = ctrl.attr("eb-type").trim();
 
-            ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+                var id = (type + (this.controlCounters[type + "Counter"])++);
 
-            ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+                ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
 
-            ctrl.attr("ebtype", type).attr("id", id);
+                ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+
+                ctrl.attr("ebtype", type).attr("id", id);
 
 
-            console.log("target" + $(target).attr('id'));
+                console.log("target" + $(target).attr('id'));
 
-            if ($(target).attr("id") === "form-buider-form")
-                this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+                if ($(target).attr("id") === "form-buider-form")
+                    this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+                else
+                    this.Controls.GetByName($(target).attr('id')).Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+
+                //eval("this.Controls.GetByName($(target).attr('id')).Controls.Append(new Eb" + type + "Obj(id))");
+
+                ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
+
+                $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
+
+                $('.selectpicker').selectpicker('refresh');
+
+                ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+            }
             else
-                this.Controls.GetByName($(target).attr('id')).Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
-
-            //eval("this.Controls.GetByName($(target).attr('id')).Controls.Append(new Eb" + type + "Obj(id))");
-
-            ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
-
-            $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
-
-            $('.selectpicker').selectpicker('refresh');
-
-            ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+                console.log("ondrop else : removed");
+            this.saveObj();
         }
-        else
-            console.log("ondrop else : removed");
-        this.saveObj();
     };
 
     this.getHtml = function (el, id, type) {
@@ -327,6 +329,7 @@ var formBuilder = function (toolBoxid, formid) {
         $('.selectpicker').selectpicker('refresh');
         ControlTile.remove();
         this.Controls.DelByName(id);
+        this.$propGrid.hide();
         e.preventDefault();
         this.saveObj();
     };

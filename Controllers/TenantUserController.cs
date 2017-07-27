@@ -243,6 +243,7 @@ namespace ExpressBase.Web2.Controllers
                 ViewBag.RoleName = fr.Data["rolename"];
                 ViewBag.ApplicationId = fr.Data["applicationid"];
                 ViewBag.ApplicationName = fr.Data["applicationname"];
+                ViewBag.Description = fr.Data["description"];
             }
                  
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
@@ -293,7 +294,7 @@ namespace ExpressBase.Web2.Controllers
            
         }
 
-        public string SaveRoles(string[] Permissions, string RoleName,int ApplicationId)
+        public string SaveRoles(string[] Permissions, string RoleName,int ApplicationId,int RoleId,string Description)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
@@ -301,9 +302,11 @@ namespace ExpressBase.Web2.Controllers
             Dict["role_name"] = RoleName;
             Dict["permission"] = Permissions;
             Dict["applicationid"] = ApplicationId;
+            Dict["roleid"] = RoleId;
+            Dict["Description"] = Description;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, Token = ViewBag.token, op = "saveroles" });
-            if(res.id>0)
+            if(res.id == 0)
             {
                 return_msg = "Success";
             }

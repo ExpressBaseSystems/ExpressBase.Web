@@ -51,19 +51,19 @@
         </div>
         <div class="col-md-8">
             <div class="form-group">
-                <textarea class="form-control" placeholder="Description" style="height:83px;width:100%;"></textarea>
+                <textarea class="form-control" id="Description" placeholder="Description" style="height:83px;width:100%;">@ViewBag.Description</textarea>
             </div>
         </div>
     </div>
 
-    <div class="row" style="display:none" id="objlist1">
+    <div class="row" id="objlist1">
         <div class="list-group">
             <ul>
                 @foreach (var ObjectType in Enum.GetValues(typeof(EbObjectTypesUI)))
                 {
                     var intobj = (int)ObjectType;
                     <li>
-                        <a class="list-group-item list-group-item-action collapsed" data-toggle="collapse" data-target="#objtype_@intobj" onclick="GetTable(@intobj)">@ObjectType<i class="fa fa-caret-right pull-right"></i></a>
+                        <a class="list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#objtype_@intobj" onclick="GetTable(@intobj)">@ObjectType<i class="fa fa-caret-right pull-right"></i></a>
                         <table class="objtype table table-responsive sub-menu collapse" id="objtype_@intobj"></table>
                     </li>
                 }
@@ -77,6 +77,9 @@
 
 <script>
     $('document').ready(function () {
+       
+        $('#applicationid').val($('#appselect').val());
+
         $('a').click(function () {
             $(this).css("background-color", "#f5f5f5");
         });
@@ -84,8 +87,9 @@
         $("#appselect").change(function () {
 
             $('#applicationid').val(this.value);
-            $('#objlist1').show();
+           // $('#objlist1').show();
         });
+
         $("#save_permission").click(function () {
             var selected = [];
             $('.objtype input:checked').each(function () {
@@ -97,21 +101,23 @@
                 "RoleName": $('#role_name').val(),
                 "RoleId": $('#roleid').val(),
                 "ApplicationId": $('#applicationid').val(),
+                "Description" : $('#Description').val()
 
             }, function (result) {
             });
         });
     })
     function GetTable(type) {
+      
         $.post("../TenantUser/GetRowAndColumn",
            {
+
                "ApplicationId": $('#applicationid').val(),
                "ObjectType": type,
                "RoleId": $('#roleid').val()
 
 
-           }, function (result) {
-               alert(result);
+           }, function (result) {              
                if (result) {
                    document.getElementById("objtype_" + type.toString()).innerHTML = result;
                }

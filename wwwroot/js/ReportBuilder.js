@@ -101,19 +101,21 @@ var RptBuilder = function (type) {
     }
 
     this.PageFooter = function (height) {
-        $('.page').append("<div class='pgfooter' style='width :100%; height:" + height + ";border:none;border-top:1px dashed'></div>");
+        $('.page').append("<div class='pgfooter' style='width :100%; height:" + height + ";border:none;border-top:1px dashed;'></div>");
     }
 
     this.Reportfooter = function (height) {
         $('.page').append("<div class='rptfootr' style='width :100%; height:" + height + ";border:none;border-top:1px dashed'></div>");
     };
 
-    this.headerScaling = function () {
-        $('.rpthead').mousedown(function (e) {
-            alert(100);
-        });
+    this.headerScaling = function (hight) {
+        $('.rpthead').resizable({ containment: "parent", handles: "n , s " });
+        $('.pghead').resizable({ containment: "parent", handles: "n , s " });
+        $('.pgbody').resizable({ containment: "parent", handles: "n , s " });
+        $('.pgfooter').resizable({ containment: "parent", handles: "n , s " });      
     };
 
+   
     this.init = function () {
         //$('#pageCanvas').empty();
         $('#PageContainer').empty();
@@ -123,12 +125,8 @@ var RptBuilder = function (type) {
         this.pageBody(pages[type].PagebodyH);
         this.PageFooter(pages[type].pageFooterH);
         this.Reportfooter(pages[type].reportfooterH);
-        this.Reportfooter(pages[type].reportfooterH);       
+        this.headerScaling(pages[type].height);
         
-        $('.rpthead').enhsplitter({ vertical: false });
     };
     this.init();
 };
-
-
-

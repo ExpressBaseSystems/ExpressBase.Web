@@ -1,4 +1,58 @@
-﻿var EbControlCollection = function () {
+﻿function slideRight(leftDiv, rightDiv) {
+    var $leftDiv = $(leftDiv);
+    var $rightDiv = $(rightDiv);
+
+    stickBtn = "<div id='stickBtnR' class='stickBtn' style='right: -12px;' onclick=\"slideRight('" + leftDiv + "', '" + rightDiv + "')\">PropertyBox</div>";
+
+    lW = parseInt($leftDiv.css("width"));
+    rW = parseInt($rightDiv.css("width"));
+    if ($rightDiv.css("display") === "inline-block") {
+        $rightDiv.animate({ width: 0 }, 300);
+        $leftDiv.animate({ width: lW + rW + "px" }, 300);
+
+        setTimeout(function () {
+            $(".form-buider-cont").append(stickBtn);
+            $rightDiv.data("width", rW);
+            $rightDiv.hide();
+        }, 301);
+    }
+    else {
+        rW = $rightDiv.data("width");
+        $("#stickBtnR").remove();
+        $rightDiv.show();
+        $rightDiv.animate({ width: rW + "px" }, 300);
+        $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
+    }
+};
+
+function slideLeft(leftDiv, rightDiv) {
+    var $leftDiv = $(leftDiv);
+    var $rightDiv = $(rightDiv);
+
+    stickBtn = "<div id='stickBtnL' class='stickBtn' style='left: -12px;' onclick=\"slideLeft('" + leftDiv + "', '" + rightDiv + "')\">ToolBox</div>";
+
+    lW = parseInt($leftDiv.css("width"));
+    rW = parseInt($rightDiv.css("width"));
+    if ($rightDiv.css("display") === "inline-block") {
+        $rightDiv.animate({ width: 0 }, 300);
+        $leftDiv.animate({ width: lW + rW + "px" }, 300);
+
+        setTimeout(function () {
+            $(".form-buider-cont").append(stickBtn);
+            $rightDiv.data("width", rW);
+            $rightDiv.hide();
+        }, 301);
+    }
+    else {
+        rW = $rightDiv.data("width");
+        $("#stickBtnL").remove();
+        $rightDiv.show();
+        $rightDiv.animate({ width: rW + "px" }, 300);
+        $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
+    }
+};
+
+var EbControlCollection = function () {
     this.InnerCollection = [];
 
     this.ToArray = function () {

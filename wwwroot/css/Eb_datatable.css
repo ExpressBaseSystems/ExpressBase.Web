@@ -107,4 +107,7 @@ div.dataTables_wrapper div.dataTables_info {
     margin-top: 0px; 
     position:fixed;
 }
+    .dataTables_scrollHeadInner{
+        width:100%!important;
+    }
 

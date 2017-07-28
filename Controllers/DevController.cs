@@ -224,7 +224,7 @@ namespace ExpressBase.Web.Controllers
                     Sql = code_decoded,
                     ChangeLog = ds.ChangeLog,
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
+                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
                 });
             }
 
@@ -238,10 +238,13 @@ namespace ExpressBase.Web.Controllers
                     Sql = code_decoded,
                     ChangeLog = ds.ChangeLog,
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
+                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
                 });
             }
-            _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
+            if (_dict["filterDialogId"].ToString() != "Select Filter Dialog")
+            {
+                _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
+            }
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = _dict["changeLog"];
@@ -277,7 +280,8 @@ namespace ExpressBase.Web.Controllers
                     Description = req["Description"],
                     Sql = req["Code"],
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(req["FilterDialogId"])
+                    FilterDialogId = (req["FilterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(req["FilterDialogId"])
+
                 });
             }
             if (_EbObjectType == EbObjectType.SqlFunction)
@@ -289,7 +293,7 @@ namespace ExpressBase.Web.Controllers
                     Description = req["Description"],
                     Sql = req["Code"],
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(req["FilterDialogId"])
+                    FilterDialogId = (req["FilterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(req["FilterDialogId"])
                 });
             }
 
@@ -369,9 +373,9 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";
-                var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
-                string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
-                    filterForm.FilterDialogJson + "}";
+            var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
+            string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
+                filterForm.FilterDialogJson + "}";
             try
             {
                 var ControlColl = JsonConvert.DeserializeObject(xjson,

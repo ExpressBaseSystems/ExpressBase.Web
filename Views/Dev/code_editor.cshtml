@@ -35,7 +35,7 @@
 
         $('#fd').on("loaded.bs.select",function selectMe(me){
             if(@ViewBag.IsNew===false){
-                if( @ViewBag.FilterDialogId === "null"){
+                if( @ViewBag.FilterDialogId === 0){
                     var val ="Select Filter Dialog";
                 }
                 else{

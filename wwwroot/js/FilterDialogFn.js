@@ -286,7 +286,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
         else {
             $("#loader").show();            
             this.FilterDId = $('#fd option:selected').val();
-            if (this.FilterDId === "Select Filter Dialog") {
+            if (this.FilterDId == "Select Filter Dialog") {
                 this.FilterDId == null;
             }
             if (this.ObjectType === 5) {
@@ -333,7 +333,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
         }
     }
 
-    $(this.SaveBtn).off("click").on("click", this.Save.bind(this));
+    $(this.SaveBtn).off("click").on("click", this.Save.bind(this,false));
     $(this.CommitBtn).off("click").on("click", this.Commit.bind(this,false));
 
     this.Find_parameters = function () {

@@ -1273,7 +1273,7 @@ var EbDataTable = function (settings) {
         //$("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
         $("#" + this.tableId + "TableColumns4Drag").toggle();
         if ($("#" + this.tableId + "TableColumns4Drag").css("display") === "none") {
-            $("#" + this.tableId + "divcont").css("width", "auto");
+            $("#" + this.tableId + "divcont").css("width", "100%");
             $("#" + this.tableId + "ColumnsDispalyCont").css("display", "none");
             this.Api.columns.adjust();
             $("#" + this.tableId + "ColumnsDispaly").css("display", "none");
@@ -1749,7 +1749,7 @@ var EbDataTable = function (settings) {
         var id = this.tableId;
         $.each(this.ebSettings.columns, function (i, obj) {
             if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === true)
-                $("#" + id + "ColumnsDispaly").append("<div style='margin: 3px;border: solid 2px #dddddd;padding: 5px 5px;display: inline-block;width:auto' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
+                $("#" + id + "ColumnsDispaly").append("<div style='margin: 3px;border: solid 2px #dddddd;padding: 1px 5px;display: inline-block;width:auto' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
         });
         $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
     };
@@ -1770,7 +1770,7 @@ var EbDataTable = function (settings) {
         var colobj =JSON.parse($("#" + data).attr("data-obj"));
         colobj["visible"] = true;
         colobj["bVisible"] = true;
-        $("#" + this.tableId + "ColumnsDispaly").append("<div style='margin: 3px;border: solid 2px #dddddd;padding: 5px 5px;display: inline-block;width:auto' id='" + data + "' data-obj='" + JSON.stringify(colobj) + "'>" + $("#" + data).text() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
+        $("#" + this.tableId + "ColumnsDispaly").append("<div style='margin: 3px;border: solid 2px #dddddd;padding: 1px 5px;display: inline-block;width:auto' id='" + data + "' data-obj='" + JSON.stringify(colobj) + "'>" + $("#" + data).text() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
         $.each(this.ebSettings.columns, this.visibleChange2True.bind(this, colobj));
         $("#" + data).remove();
         $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));

@@ -73,7 +73,7 @@ var Eb_PropertyGrid = function (id, props, metas) {
             valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
 
             if (this.getValueFuncs)
-                this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
+                this.getValueFuncs[name] = function () { return ($('#' + elemId).val()==="") ? "":parseInt($('#' + elemId).val()); };
 
             // If color use color picker 
         } else if (type === 3) {

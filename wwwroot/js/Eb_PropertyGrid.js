@@ -99,9 +99,10 @@ var Eb_PropertyGrid = function (id, props, metas) {
         }
 
         if (meta.colspan2) {
-            return '<tr class="pgRow"><td colspan="2" class="pgCell">' + valueHTML + '</td></tr>';
+            return '<tr class="pgRow"><td colspan="2" group="' + valueHTML + '" class="pgCell">' + valueHTML + '</td></tr>';
+            this.currGroup = valueHTML;
         } else {
-            return '<tr class="pgRow"><td class="pgCell">' + name + '</td><td class="pgCell">' + valueHTML + '</td></tr>';
+            return '<tr class="pgRow" group="' + this.currGroup + '"><td class="pgCell">' + name + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
         }
     };
 
@@ -123,7 +124,8 @@ var Eb_PropertyGrid = function (id, props, metas) {
     };
 
     this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell">' + displayName + '</td></tr>';
+        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName+']\').slideToggle(250);">' + displayName
+            + '<span class="bs-caret" style="float: right;margin-right: 17px;"><span class="caret"></span></span></td></tr>';
     };
 
     this.isContains = function (obj, val) {

@@ -416,10 +416,9 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
     this.DrawTable = function () {
         $("#loader").show();
         tabNum++;
-        Fd_Name = $('#fdname').val();
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + Fd_Name + tabNum + "'>Result-" + Fd_Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        $('#versionTab').append("<div id='vernav" + Fd_Name + tabNum + "' class='tab-pane fade'>");
-        $('#vernav' + Fd_Name + tabNum).append("  <div class=' filter_modal_body'>" +
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Name + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + this.Name + tabNum + "' class='tab-pane fade'>");
+        $('#vernav' + this.Name + tabNum).append("  <div class=' filter_modal_body'>" +
                   "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
               "</div>");
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
@@ -433,7 +432,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
             alert('not valid');
         }
 
-        $("#versionNav a[href='#vernav" + Fd_Name + tabNum + "']").tab('show');
+        $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show');
     };
 
     this.Load_Table_Columns = function (result) {

@@ -42,15 +42,13 @@ var pages = {
 };
 
 
-
 var RptBuilder = function (type) {
     this.type = type;   
 
     this.createPage = function (type) {
 
-        $('#PageContainer').append("<div class='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";margin-left:28px;'></div>");
-        this.ruler(pages[type].width, pages[type].height);      
-
+        $('#PageContainer').append("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";margin-left:28px;'></div>");
+        this.ruler(pages[type].width, pages[type].height);             
     };
 
     this.ruler = function (width, height) {
@@ -109,6 +107,7 @@ var RptBuilder = function (type) {
     };
 
     this.headerScaling = function (hight) {
+
         $('.rpthead').resizable({ containment: "parent", handles: "n , s " });
         $('.pghead').resizable({ containment: "parent", handles: "n , s " });
         $('.pgbody').resizable({ containment: "parent", handles: "n , s " });

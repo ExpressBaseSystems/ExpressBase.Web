@@ -17,22 +17,13 @@
                 <div class="carousel-inner">                    
                     <div class="item active">
                         <img src="~/images/image banner1.jpg" alt="First slide" class="img-responsive">
-                        <div class="carousel-caption d-none d-md-block">
-                            <img class="float" src="~/images/kappal.png" style="width:200px;position:absolute;" />
-                        </div>
                     </div>
-                    @*<div class="item">
+                   <div class="item">
                         <img src="~/images/image banner.jpg" alt="First slide" class="img-responsive">
-                        <div class="carousel-caption d-none d-md-block">
-                            <img class="float" src="~/images/kappal.png" style="width:200px;position:absolute;" />
-                        </div>
                     </div>
                     <div class="item">
                         <img src="~/images/image banner.jpg" alt="First slide" class="img-responsive">
-                        <div class="carousel-caption d-none d-md-block">
-                            <img class="float" src="~/images/kappal.png" style="width:200px;position:absolute;" />
-                        </div>
-                    </div>*@
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,19 +144,3 @@
 @{
     Html.RenderPartial("PageFooter");
 }
-<script>
-
-        function moveRight() {
-            $(".float").animate({ left: "+=500" }, 5000, moveLeft)
-        }
-
-        function moveLeft() {
-            $(".float").animate({ left: "-=500" }, 5000, moveRight)
-        }
-
-        $(document).ready(function () {
-
-            moveRight();
-
-        });
-</script>

@@ -1,8 +1,4 @@
-﻿body {
-    background-color: #f5f5f5;
-    padding: 10px !important;
-}
-
+﻿
 .settings-cont {
     position: absolute;
     width: 100vw;
@@ -19,6 +15,11 @@
     justify-content: center;
 }
 
+.form-buider-cont {
+    background-color: #f5f5f5;
+    padding: .3vw;
+}
+
 .contol-settings-window {
     padding: 30px;
     background: #fff;
@@ -27,7 +28,7 @@
 }
 
 .form-buider-toolBox {
-    width: 155px;
+    width: 100%;
     padding: 3px;
     display: inline-block;
     vertical-align: top;
@@ -36,18 +37,9 @@
 }
 
 .form-buider-form {
-    width: 72vw;
-    padding: 3px;
-    display: inline-block;
-    vertical-align: top;
+    width: 100%;
     height: 95vh;
-    background-color: white;
     overflow-y: auto;
-    border: solid 1px #dddddd;
-    margin-left: 8px;
-    -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
 }
 
     .form-buider-form input[type="text"], input[type="email"], input[type="number"], input[type="password"], input[type="singleline"] {
@@ -90,6 +82,15 @@
     overflow-y: auto;
     max-height: 526px;
     background-color: white;
+    overflow-x: auto;
+}
+
+.pgHead {
+    background-color: #ccc;
+    padding: 5px;
+    font-weight: bold;
+    cursor: move;
+    width: 100%;
 }
 
 .property-grid-cont .bs-searchbox .form-control {
@@ -102,57 +103,45 @@
     box-shadow: none;
 }
 
-.fb-cont{
-    width: 72vw;
-    margin-left:8px;
-    margin-bottom:8px;
-    background-color: white;
-    vertical-align: top;
-    -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+.form-save-wraper {
+    display: inline-block;
+    width: 66%;
+    margin: 0px 4px;
 }
-.tool{
+
+.tool {
     padding: 5px;
     margin: 3px 0px;
     border: dotted 2px #dddddd;
 }
 
+
+
 .property-grid-cont {
-    display: inline-block;
-    position: absolute;
-    z-index: 100;
-    top: 50px;
-    right: 2px;
+    width: 20%;
     height: 95vh;
     visibility: hidden;
+}
+
+.formB-box {
+    display: inline-block;
     background-color: white;
     padding: 3px;
     border: solid 1px #dddddd;
-    margin-left: 8px;
-    margin-top: 117px;
     vertical-align: top;
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
 }
-
+.fb-cont {
+    width: 100%;
+    margin-bottom: 8px;
+}
 .toolbox-cont {
-    display: inline-block;
-    top: 10px;
-    background-color: white;
-    padding: 3px;
-    border: solid 1px #dddddd;
-    margin-left: 8px;
-    vertical-align: top;
-    border: solid 1px #dddddd;
-    -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    width: 12%;
 }
 
 .tdDropable {
-    /*width: 50%;*/
     height: 30px;
 }
 
@@ -172,11 +161,18 @@
     box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
 }
 
-.pgCell {
-    padding: 5px;
+.pgTdval ,.pgCell {
+    padding: 3px;
+    font-size: 13px;
 }
+.pgTdval
 
 .property-grid-cont .btn {
     padding: 3px 12px !important;
     border: 1px solid rgba(34,36,38,.15);
+}
+.property-grid-cont .btn:first-child {
+    height: 25px;
+    padding: 2px;
+    border: 1px solid rgba(34,36,38,.08);
 }

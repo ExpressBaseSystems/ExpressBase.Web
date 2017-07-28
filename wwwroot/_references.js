@@ -31,6 +31,7 @@
 /// <reference path="js/jquery.cookie.js" />
 /// <reference path="js/jquery.datetimepicker.min.js" />
 /// <reference path="js/jquery.easing.min.js" />
+/// <reference path="js/jquery.enhsplitter.js" />
 /// <reference path="js/jquery.fontselect.min.js" />
 /// <reference path="js/jquery.min.js" />
 /// <reference path="js/jquery.toolbar.js" />

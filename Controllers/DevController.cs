@@ -478,7 +478,12 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.ObjectName = element.Name;
                 ViewBag.dsid = dsobj.dsid;
                 if (ViewBag.wc == "dc")
+                {
+                    //this.EbConfig.GetRedisClient().Remove(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
                     ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
+                    //if (ViewBag.tvpref == null)
+                    //    ViewBag.tvpref = GetColumns(dsobj.dsid);
+                }
                 else
                 {
                     ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, objid, ViewBag.UId));

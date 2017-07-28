@@ -1,5 +1,6 @@
 ﻿@using ExpressBase.Objects;
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
 @*<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/ValYouW/jqPropertyGrid/9218bbd5df05bf7efe58591f434ea27ece11a045/jqPropertyGrid.css">*@
@@ -17,25 +18,29 @@
 <script src='~/js/jqPropertyGrid.js'></script>
 <script src='~/js/Eb_PropertyGrid.js'></script>
 
+@{ 
+    //Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
 
-<div id="con">
-    <div id="toolbox_cont" class='toolbox-cont'>
-        <div style="background-color:#ccc; padding:5px; font-weight: bold; cursor: move;">Toolbox  <i class="fa fa-wrench" aria-hidden="true" ;"></i> </div>
+<div id="con" class="form-buider-cont">
+    <div id="toolbox_cont" class='formB-box toolbox-cont'>
+        <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> </div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
 
             @Html.Raw(new EbToolbox(BuilderType.WebFormBuilder).html)
 
         </div>
     </div>
-    <div style="display:inline-block;">
+    <div class="form-save-wraper">
 
-        <div class="fb-cont">
-            <input type="text" id="save_txtBox" required class="form-control" style="width:93%;display:inline-block;" placeholder="Save As...">
+        <div class="formB-box fb-cont">
+            <input type="text" id="save_txtBox" required class="form-control" style="width:90%;display:inline-block;" placeholder="Save As...">
             <button id="saveformBtn" type="submit" class="btn btn-default">Save</button>
         </div>
 
-        <div id="form-buider-form" class="form-buider-form">
+        <div id="form-buider-form" class="formB-box form-buider-form">
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
         </div>
     </div>
@@ -46,8 +51,8 @@
     }
     <input type="hidden" id="objtype" value="@type" />
 
-    <div id='form-buider-propGrid' class='property-grid-cont'>
-        <div style="background-color:#ccc; padding:5px; font-weight: bold; cursor: move;">Properties<i class="fa fa-times" style="float:right; cursor:default;" onclick="$(this).parent().parent().css('visibility','hidden')" aria-hidden="true"></i><i class="fa fa-thumb-tack" style="float:right; margin-top: 1px; cursor:default; margin-right: 5px;" aria-hidden="true"></i></div>
+    <div id='form-buider-propGrid' class='formB-box property-grid-cont'>
+        <div class="pgHead">Properties<i class="fa fa-times" style="float:right; cursor:default;" onclick="$(this).parent().parent().css('visibility', 'hidden')" aria-hidden="true"></i><i class="fa fa-thumb-tack" onclick="$(this).parent().parent().slideToggle(250);" style="float:right; margin-top: 1px; cursor:default; margin-right: 5px;" aria-hidden="true"></i></div>
         <div class="controls-dd-cont">
             <select class="selectpicker" data-live-search="true"> </select>
         </div>
@@ -62,9 +67,9 @@
     }
     @Html.Raw(new EbToolbox(enu).AllControlls);
     @Html.Raw(new EbToolbox(enu).AllMetas);
-    var t = new formBuilder("form-buider-toolBox", "form-buider-form");
-    $("#form-buider-propGrid").draggable();
-    $("#form-buider-propGrid").resizable();
+    var t = new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid");
+    //$("#form-buider-propGrid").draggable();
+    //$("#form-buider-propGrid").resizable();
 </script>
 <style>
     /*overridding*/

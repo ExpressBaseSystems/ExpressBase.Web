@@ -81,8 +81,8 @@
                         <span class="bs-caret"><span class="caret"></span></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="commit" id="commit" data-toggle="tooltip" title="Commit">Commit</a></li>
                         <li><a class="save" id="save" data-toggle="tooltip" title="Save">Save (Ctrl+S)</a></li>
+                        <li><a class="commit" id="commit" data-toggle="tooltip" title="Commit">Commit</a></li>
                     </ul>
                 </div>
                 <div class="dropdown fdlist btn-group" style="float:right">
@@ -91,8 +91,7 @@
                             @using ExpressBase.Objects.ServiceStack_Artifacts;
                             Dictionary
                             <int, EbObjectWrapper>
-                                filterDialogs = new Dictionary<int, EbObjectWrapper>
-                                    ();
+                                filterDialogs = new Dictionary<int, EbObjectWrapper>();
                             filterDialogs = ViewBag.FilterDialogs;
                             <option value="Select Filter Dialog" data-tokens="Select Filter Dialog" selected>Select Filter Dialog</option>
                             @*<option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>*@
@@ -115,7 +114,6 @@
     </div>
 
 </div>
-<br>
 <div class="row">
     <ul class="nav nav-tabs versionNav" id="versionNav">
         <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">@ViewBag.ObjectName</a></li>
@@ -152,6 +150,7 @@
         </div>
     </div>
 </div>
+
 <div id="filterDialog" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
@@ -161,7 +160,7 @@
                 <h4 class="modal-title">Filter Dialog</h4>
             </div>
             <div class="modal-body filter_modal_body">
-                <div class="fd_top_content">
+                @*<div class="fd_top_content">
                     <span class="align_singleLine">
                         <label class="">Filter Dialog Name</label>
                         <input type="text" id="fdname" name="fdname" class="form-control inputBox" required />
@@ -170,7 +169,7 @@
                         <label class="">Description</label>
                         <input type="text" id="fddesc" name="fddesc" class="form-control inputBox " required />
                     </span>
-                </div>
+                </div>*@
                 <div class="table-responsive table-bordered table-responsive">
                     <table class="table fd_table">
                         <thead class="fdthead">
@@ -205,8 +204,10 @@
         var orig = CodeMirror.hint.sql;
         CodeMirror.hint.sql = function (editor) {
             var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
-            inner.list.push("sql_fn_1");
-            inner.list.push("sql_fn_2");
+            var SqlFnList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SqlFns));
+            $.each(SqlFnList, function (i, fdj) {
+                inner.list.push(fdj);
+            });
             var cursor = editor.getCursor();
             var currentLine = editor.getLine(cursor.line);
             var start = cursor.ch;
@@ -225,7 +226,6 @@
 
             return result;
         };
-
         //    CodeMirror.commands["selectAll"](editor);
 
         //    function getSelectedRange() {
@@ -380,12 +380,12 @@
 
     .fd_top_content {
         margin-bottom: 10px;
-    }
+    }s
 
-    .codeEditLabel {
+    /*.codeEditLabel {
         padding-top: 9px;
         padding-bottom: 10px;
-    }
+    }*/
 
     .dropdown {
         position: relative;

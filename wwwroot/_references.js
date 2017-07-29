@@ -24,6 +24,7 @@
 /// <reference path="js/ebdatatable.js" />
 /// <reference path="js/elementqueries.js" />
 /// <reference path="js/filterdialogfn.js" />
+/// <reference path="js/formbuilder/ebcontrolcollection.js" />
 /// <reference path="js/gridstack.jqueryui.min.js" />
 /// <reference path="js/gridstack.js" />
 /// <reference path="js/infra.js" />

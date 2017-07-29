@@ -2,53 +2,45 @@
 var pages = {
     A4: {
         width: '21cm',
-        height: '29.7cm',
-        reportheaderH: "2cm",
-        reportfooterH: "2cm",
-        pageHeaderH: "2cm",
-        pageFooterH: "2cm",
-        PagebodyH: "21.7cm",
+        height: '29.7cm',        
     },
-    
+
     A3: {
-    width: '29.7cm',
-    height: '42cm',
-    reportheaderH: "3cm",
-    reportfooterH: "3cm",
-    pageHeaderH: "3cm",
-    pageFooterH: "3cm",
-    PagebodyH: "30cm",
+        width: '29.7cm',
+        height: '42cm',      
     },
 
     Letter: {
         width: '21.59cm',
         height: '27.94cm',
-        reportheaderH: "2cm",
-        reportfooterH: "2cm",
-        pageHeaderH: "2cm",
-        pageFooterH: "2cm",
-        PagebodyH: "19.94cm",
     },
+
     A5: {
         width: '14.8cm',
         height: '21cm',
-        reportheaderH: "1.5cm",
-        reportfooterH: "1.5cm",
-        pageHeaderH: "1.5cm",
-        pageFooterH: "1.5cm",
-        PagebodyH: "15cm",
     },
-
 };
 
-
 var RptBuilder = function (type) {
-    this.type = type;   
+    this.type = type;
 
     this.createPage = function (type) {
 
+        var $pageCanvas = $('#pageCanvas');
+        $pageCanvas.empty();
+        $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
+        $pageCanvas.append("<div class='ruler'></div> <div class='rulerleft'></div><div id='PageContainer' style='margin-top:4px;'></div>");
+        $pageCanvas.append("<div class='headersections style='height:" + pages[type].height + ";'></div>");
+
+        if (pages[type].width > "21cm") {
+
+            $('#pageCanvas').css({ "transform": "scale(0.6)", "transform-origin": "0 0" });
+
+        }
+
         $('#PageContainer').append("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";margin-left:28px;'></div>");
-        this.ruler(pages[type].width, pages[type].height);             
+        this.ruler(pages[type].width, pages[type].height);
+
     };
 
     this.ruler = function (width, height) {
@@ -87,36 +79,42 @@ var RptBuilder = function (type) {
     };
 
     this.ReportHeader = function (height) {
-        $('.page').append("<div class='rpthead' style='width :100%; height:" + height + ";border:none;border-bottom:1px dashed'></div>");
+        $('.page').append("<div class='rpthead' id='1' style='width :100%'></div>");       
     }
 
     this.PageHeader = function (height) {
-        $('.page').append("<div class='pghead' style='width :100%; height:" + height + ";border:none;border-bottom:1px dashed'></div>");
+        $('.page').append("<div class='pghead'  id='2'  style='width :100%'></div>");
     }
 
     this.pageBody = function (height) {
-        $('.page').append("<div class='pgbody' style='width :100%; height:" + height + ";border:none;'></div>");
+        $('.page').append("<div class='pgbody' id='3'  style='width :100%'></div>");
     }
 
     this.PageFooter = function (height) {
-        $('.page').append("<div class='pgfooter' style='width :100%; height:" + height + ";border:none;border-top:1px dashed;'></div>");
+        $('.page').append("<div class='pgfooter' id='4'  style='width :100%'></div>");
     }
 
     this.Reportfooter = function (height) {
-        $('.page').append("<div class='rptfootr' style='width :100%; height:" + height + ";border:none;border-top:1px dashed'></div>");
+        $('.page').append("<div class='rptfootr' id='5'  style='width :100%'></div>");
     };
 
+    
     this.headerScaling = function (hight) {
 
-        $('.rpthead').resizable({ containment: "parent", handles: "n , s " });
-        $('.pghead').resizable({ containment: "parent", handles: "n , s " });
-        $('.pgbody').resizable({ containment: "parent", handles: "n , s " });
-        $('.pgfooter').resizable({ containment: "parent", handles: "n , s " });      
+        Split(['.rpthead', '.pghead', '.pgbody', '.pgfooter', '.rptfootr'], {
+            direction: 'vertical',
+            cursor: 'row-resize',
+            sizes:[10,10,60,10,10],
+            minSize: 0,
+            gutterSize: 5,
+            
+        });
     };
 
-   
+    
+
     this.init = function () {
-        //$('#pageCanvas').empty();
+
         $('#PageContainer').empty();
         this.createPage(type);
         this.ReportHeader(pages[type].reportheaderH);
@@ -125,7 +123,19 @@ var RptBuilder = function (type) {
         this.PageFooter(pages[type].pageFooterH);
         this.Reportfooter(pages[type].reportfooterH);
         this.headerScaling(pages[type].height);
-        
+
     };
     this.init();
+};
+
+var setBackgroud = function (input) {
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#page').css({ 'background-image': 'url(' + e.target.result + ')', 'width': $('#page').width(), 'background-repeat': 'no-repeat' });
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
 };

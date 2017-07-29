@@ -116,12 +116,12 @@
 }
 
 .stickBtn {
-    position: absolute;
+    position: fixed;
     width: auto;
     font-family: serif;
     font-size: 14px;
     padding: 0px 10px;
-    top: 142px;
+    top: 162px;
     background-color: #ccc;
     -ms-transform: rotate(-90deg);
     -webkit-transform: rotate(-90deg);
@@ -146,6 +146,7 @@
     display: inline-block;
     background-color: white;
     padding: 3px;
+    overflow-y: hidden;
     border: solid 1px #dddddd;
     vertical-align: top;
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);

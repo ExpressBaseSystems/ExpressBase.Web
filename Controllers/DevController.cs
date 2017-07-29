@@ -224,7 +224,7 @@ namespace ExpressBase.Web.Controllers
                     Sql = code_decoded,
                     ChangeLog = ds.ChangeLog,
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
+                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
                 });
             }
 
@@ -238,10 +238,13 @@ namespace ExpressBase.Web.Controllers
                     Sql = code_decoded,
                     ChangeLog = ds.ChangeLog,
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
+                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
                 });
             }
-            _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
+            if (_dict["filterDialogId"].ToString() != "Select Filter Dialog")
+            {
+                _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
+            }
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = _dict["changeLog"];
@@ -277,7 +280,8 @@ namespace ExpressBase.Web.Controllers
                     Description = req["Description"],
                     Sql = req["Code"],
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(req["FilterDialogId"])
+                    FilterDialogId = (req["FilterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(req["FilterDialogId"])
+
                 });
             }
             if (_EbObjectType == EbObjectType.SqlFunction)
@@ -289,7 +293,7 @@ namespace ExpressBase.Web.Controllers
                     Description = req["Description"],
                     Sql = req["Code"],
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(req["FilterDialogId"])
+                    FilterDialogId = (req["FilterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(req["FilterDialogId"])
                 });
             }
 
@@ -369,9 +373,9 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";
-                var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
-                string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
-                    filterForm.FilterDialogJson + "}";
+            var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
+            string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
+                filterForm.FilterDialogJson + "}";
             try
             {
                 var ControlColl = JsonConvert.DeserializeObject(xjson,
@@ -538,7 +542,7 @@ namespace ExpressBase.Web.Controllers
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
-            redis.Remove(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
+            //redis.Remove(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
             DataSourceColumnsResponse columnresp = redis.Get<DataSourceColumnsResponse>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
             if (columnresp == null || columnresp.IsNull)
                 columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Token = ViewBag.token });
@@ -549,6 +553,7 @@ namespace ExpressBase.Web.Controllers
 
         private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid, int fdid, bool isPaged)
         {
+            var i = 0;
             string colDef = string.Empty;
             colDef = "{\"dsId\":" + dsid + ",\"fdId\":" + fdid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
             colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"IsPaged\":" + isPaged.ToString().ToLower() + ",\"columns\":[";
@@ -560,12 +565,13 @@ namespace ExpressBase.Web.Controllers
                 colDef += "\"data\": " + __columnCollection[column.ColumnName].ColumnIndex.ToString();
                 colDef += string.Format(",\"title\": \"{0}<span hidden>{0}</span>\"", column.ColumnName);
                 var vis = (column.ColumnName == "id") ? false.ToString().ToLower() : true.ToString().ToLower();
-                colDef += ",\"visible\": " + vis;
+                colDef += ",\"visible\": " + false.ToString().ToLower();
                 colDef += ",\"width\": \"100px\"";
                 colDef += ",\"name\": \"" + column.ColumnName + "\"";
                 colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
                 var cls = (column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int64") ? "dt-right tdheight" : "tdheight";
                 colDef += ",\"className\": \"" + cls + "\"";
+                colDef += ",\"pos\": \"" + i++ + "\"";
                 colDef += "},";
             }
             colDef = colDef.Substring(0, colDef.Length - 1) + "],";

@@ -173,43 +173,43 @@ var DVObj = function (dsid, settings, login, dvlist) {
         var api = $('#Table_Settings').DataTable();
         var n, d, t, v, w, ty, cls;
         //objcols.push(this.getColobj("id"));
-        $.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
-            ct++;
-            if (obj.type === 'text' && obj.name === 'name')
-                n = obj.value;
-            else if (obj.type === 'text' && obj.name === 'index')
-                d = obj.value;
-            else if (obj.type === 'hidden' && obj.name === 'title')
-                t = obj.value + '<span hidden>' + n + '</span>';
-            else if (obj.type === 'checkbox')
-                v = obj.checked;
-            else if (obj.type === 'text' && obj.name === 'width')
-                w = obj.value;
-            else if (obj.type === 'text' && obj.name === 'type')
-                ty = obj.value;
-            else if (obj.className === 'font-select') {
-                if (!($(this).children('a').children('span').attr('style') === undefined)) {
-                    var style = document.createElement('style');
-                    style.type = 'text/css';
-                    var fontName = $(this).children('a').children('span').css('font-family');
-                    var replacedName = fontName.replace(/ /g, "_");
-                    style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
-                    document.getElementsByTagName('head')[0].appendChild(style);
-                    if (ty == "System.Int32" || ty == "System.Decimal" || ty == "System.Int64")
-                        cls = 'font_' + replacedName + ' tdheight dt-right';
-                    else
-                        cls = 'font_' + replacedName + ' tdheight';
-                }
-                else {
-                    if (ty == "System.Int32" || ty == "System.Decimal" || ty == "System.Int64")
-                        cls = 'tdheight dt-right';
-                    else
-                        cls = 'tdheight';
-                }
-            }
+        //$.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
+        //    ct++;
+        //    if (obj.type === 'text' && obj.name === 'name')
+        //        n = obj.value;
+        //    else if (obj.type === 'text' && obj.name === 'index')
+        //        d = obj.value;
+        //    else if (obj.type === 'hidden' && obj.name === 'title')
+        //        t = obj.value + '<span hidden>' + n + '</span>';
+        //    else if (obj.type === 'checkbox')
+        //        v = obj.checked;
+        //    else if (obj.type === 'text' && obj.name === 'width')
+        //        w = obj.value;
+        //    else if (obj.type === 'text' && obj.name === 'type')
+        //        ty = obj.value;
+        //    else if (obj.className === 'font-select') {
+        //        if (!($(this).children('a').children('span').attr('style') === undefined)) {
+        //            var style = document.createElement('style');
+        //            style.type = 'text/css';
+        //            var fontName = $(this).children('a').children('span').css('font-family');
+        //            var replacedName = fontName.replace(/ /g, "_");
+        //            style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
+        //            document.getElementsByTagName('head')[0].appendChild(style);
+        //            if (ty == "System.Int32" || ty == "System.Decimal" || ty == "System.Int64")
+        //                cls = 'font_' + replacedName + ' tdheight dt-right';
+        //            else
+        //                cls = 'font_' + replacedName + ' tdheight';
+        //        }
+        //        else {
+        //            if (ty == "System.Int32" || ty == "System.Decimal" || ty == "System.Int64")
+        //                cls = 'tdheight dt-right';
+        //            else
+        //                cls = 'tdheight';
+        //        }
+        //    }
 
-            if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
-        });
+        //    if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
+        //});
         //this.TVPrefObj.hideSerial = $("#serial_check").prop("checked");
         //this.TVPrefObj.hideCheckbox = $("#select_check").prop("checked");$("input[name=rate]:checked").val()
         this.TVPrefObj.renderAs = $("input[name=renderAs]:checked").val();
@@ -237,12 +237,12 @@ var DVObj = function (dsid, settings, login, dvlist) {
         this.TVPrefObj.rightFixedColumns = $("#rightFixedColumns_text").val();
         this.TVPrefObj.dvName = $("#dvName_txt").val();
         this.TVPrefObj.dsId = this.dsid;
-        this.TVPrefObj.columns = objcols;
+        //this.TVPrefObj.columns = objcols;
 
         //this.TVPrefObj.columnsext = this.TVPrefObj.columnsext;
         //this.ebSettingsCopy.columnsdel = this.columnsdel;
         //this.ebSettingsCopy.columnsextdel = this.columnsextdel;
-        this.AddSerialAndOrCheckBoxColumns(this.TVPrefObj.columns);
+        //this.AddSerialAndOrCheckBoxColumns(this.TVPrefObj.columns);
         //this.updateRenderFunc();
         if (this.TVPrefObj.rowGrouping.length > 0) {
             var groupcols = $.grep(this.TVPrefObj.columns, function (e) { return e.name === this.TVPrefObj.rowGrouping });

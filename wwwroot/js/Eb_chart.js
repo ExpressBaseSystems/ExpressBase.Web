@@ -303,7 +303,6 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
 
     this.drawGraphHelper = function (datain) {
         this.data = datain;
-        console.log(this.data);
         //if (this.type === "bar" || this.type === "line" || this.type === "areafilled") {
             this.drawGeneralGraph();
         //}
@@ -561,6 +560,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             this.drawGeneralGraph();
         }
         else {
+            //$("#graphcontainer_tabdv336_1").children("iframe").remove()
             $("#myChart" + this.tableId).remove();
             $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
         }

@@ -96,6 +96,8 @@ var EbDataTable = function (settings) {
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
     this.drake = null;
+    this.draggedPos = null;
+    this.droppedPos = null;
 
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
@@ -110,6 +112,10 @@ var EbDataTable = function (settings) {
         //else
         // this.ebSettings.columns = JSON.parse(data).columns;
         this.ebSettings = JSON.parse(data);
+
+
+        $.each(this.ebSettings.columns, this.modifyColumns.bind(this));
+
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
 
@@ -125,6 +131,11 @@ var EbDataTable = function (settings) {
         }
         this.Init();
 
+    };
+
+    this.modifyColumns = function (i, obj) {
+        if (obj.visible == false)
+            obj.pos = this.ebSettings.columns.length + 100;
     };
 
     this.Init = function () {
@@ -478,8 +489,8 @@ var EbDataTable = function (settings) {
             $("#showgraphbtn" + this.tableId).hide();
         }
         if (!this.flagAppendColumns) {
-            this.appendDelColumns();
-            this.appendDisplayColumns();
+            this.appendColumns();
+            //this.appendDisplayColumns();
         }
         this.Api.columns.adjust();
     }
@@ -1733,32 +1744,38 @@ var EbDataTable = function (settings) {
         }, 500);
     };
 
-    this.appendDelColumns = function () {
+    this.appendColumns = function () {
         var id = this.tableId;
         $("#" + id + "TableColumns4Drag").append("<div style='background-color: #ccc;padding: 5px;font-weight: bold;'>Columns</div>")
         $.each(this.ebSettings.columns, function (i, obj) {
             if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === false)
                 $("#" + id + "TableColumns4Drag").append("<div class ='Delcols' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "</div>")
+            else if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === true)
+                $("#" + id + "ColumnsDispaly").append("<div class ='Displaycols' onclick='tagFocused(event, \"" + pid + "\" )' tabIndex='0' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
         });
+        $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
+
         this.drake = new dragula([document.getElementById(id + "TableColumns4Drag"), document.getElementById(id + "ColumnsDispaly")], {
             accepts: this.acceptDrop.bind(this)
         });
+
         this.drake.on("drop", this.colDrop.bind(this));
         this.drake.on("drag", this.colDrag.bind(this));
         this.flagAppendColumns = true;
     };
 
-    this.appendDisplayColumns = function () {
-        var id = this.tableId;
-        var pid = id + "TableColumnsPPGrid";
-        $.each(this.ebSettings.columns, function (i, obj) {
-            if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === true)
-                $("#" + id + "ColumnsDispaly").append("<div class ='Displaycols' onclick='tagFocused(event, \"" + pid + "\" )' tabIndex='0' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
-        });
-        $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-    };
+    //this.appendDisplayColumns = function () {
+    //    var id = this.tableId;
+    //    var pid = id + "TableColumnsPPGrid";
+    //    $.each(this.ebSettings.columns, function (i, obj) {
+    //        if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === true)
+    //            $("#" + id + "ColumnsDispaly").append("<div class ='Displaycols' onclick='tagFocused(event, \"" + pid + "\" )' tabIndex='0' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
+    //    });
+    //    $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
+    //};
 
     this.colDrag = function (e) {
+        //this.draggedPos = $(e.target).index();
         //e.dataTransfer.setData("text", e.target.id);
         //this.sourceElement = e.target.parentNode.tagName;
         //this.sourceElementId = e.target.parentElement.id;
@@ -1768,37 +1785,35 @@ var EbDataTable = function (settings) {
         e.preventDefault();
     };
 
-    this.colDrop = function (el, target, source, siblinge) {
-        //e.preventDefault();
-        //var data = e.dataTransfer.getData("text");
+    this.colDrop = function (el, target, source, sibling) {
         if (target) {
+        //    if (sibling)
+        //        this.droppedPos = $(sibling).index() - 1;
+        //    else
+        //        this.droppedPos = $(target).children().length - 1;
             if ($(source).attr("id") === this.tableId + "TableColumns4Drag") {
                 $(el).removeClass("Delcols");
                 $(el).addClass("Displaycols");
                 var colobj = JSON.parse($(el).attr("data-obj"));
                 colobj["visible"] = true;
                 colobj["bVisible"] = true;
-                $(el).attr("data-obj", colobj);
-                $.each(this.ebSettings.columns, this.visibleChange2True.bind(this, colobj));
+                $(el).attr("data-obj", JSON.stringify(colobj));
+                $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button>");
+                $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
+                //$.each(this.ebSettings.columns, this.visibleChange2True.bind(this, colobj));
+                //$("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
+                
             }
-            else if ($(source).attr("id") === this.tableId + "ColumnsDispaly") {
+            else if ($(source).attr("id") === this.tableId + "ColumnsDispaly" && $(target).attr("id") === this.tableId + "TableColumns4Drag") {
+                
             }
+            $("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
             $('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
             var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
             $('#' + this.tableId + 'divcont').append(table);
             this.Init();
-        }
             
-        //colobj["visible"] = true;
-        //colobj["bVisible"] = true;
-        //$("#" + this.tableId + "ColumnsDispaly").append("<div style='margin: 3px;border: solid 2px #dddddd;padding: 1px 5px;display: inline-block;width:auto' id='" + data + "' data-obj='" + JSON.stringify(colobj) + "'>" + $("#" + data).text() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
-        //$.each(this.ebSettings.columns, this.visibleChange2True.bind(this, colobj));
-        //$("#" + data).remove();
-        //$("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-        //$('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
-        //var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
-        //$('#' + this.tableId + 'divcont').append(table);
-        //this.Init();
+        }
     };
 
     this.RemoveAndAddToColumns = function (e) {
@@ -1807,9 +1822,10 @@ var EbDataTable = function (settings) {
         colobj["visible"] = false;
         colobj["bVisible"] = false;
         $("#" + this.tableId + "TableColumns4Drag").append("<div class ='Delcols' id='" + $(e.target).parent().attr("id") + "' data-obj='" + JSON.stringify(colobj) + "'>" + str.substring(0, str.length - 1).trim() + "</div>")
-        $.each(this.ebSettings.columns, this.visibleChange2False.bind(this, colobj));
+        
         $(e.target).parent().remove();
-        //$("#" + this.tableId + "TableColumns4Drag").off("dragstart").on("dragstart", this.colDrag.bind(this));
+        $("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
+        $.each(this.ebSettings.columns, this.visibleChange2False.bind(this, colobj))
         $('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
         var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
         $('#' + this.tableId + 'divcont').append(table);
@@ -1817,15 +1833,38 @@ var EbDataTable = function (settings) {
         this.Init();
     };
 
-    this.visibleChange2True = function (colobj, i, obj) {
-        if (obj.name === colobj["name"])
-            this.ebSettings.columns[i] = colobj;
+
+    this.visibleChange2True = function (i, obj) {
+        $.each(this.ebSettings.columns, this.changeObjectPositionToCurrent.bind(this,i, obj));
     };
 
     this.visibleChange2False = function (colobj, i, obj) {
-        if (obj.name === colobj["name"])
-            this.ebSettings.columns[i] = colobj;
+        if (colobj.name == obj.name) {
+            this.ebSettings.columns[i].visible = false;
+            this.ebSettings.columns[i].bVisible = false;
+            this.ebSettings.columns[i].pos = this.ebSettings.columns.length + 100;
+            $(colobj).attr("data-obj", JSON.stringify(this.ebSettings.columns[i]));
+        }
     };
+
+    this.changeObjectPositionToCurrent = function (indx, colobj, i, obj) {
+        var o=JSON.parse($(colobj).attr("data-obj"));
+        if (o.name == obj.name) {
+            this.ebSettings.columns[i].visible = true;
+            this.ebSettings.columns[i].bVisible = true;
+            this.ebSettings.columns[i].pos = indx;
+            $(colobj).attr("data-obj", JSON.stringify(this.ebSettings.columns[i]));
+        }
+    };
+
+    //this.changeObjectPositionToMax = function (colobj, i, obj) {
+    //    var o = JSON.parse($(colobj).attr("data-obj"));
+    //    if (o.name == obj.name) {
+    //        this.ebSettings.columns[i].visible = true;
+    //        this.ebSettings.columns[i].bVisible = true;
+    //        this.ebSettings.columns[i].pos = this.ebSettings.columns.length + 100;
+    //    };
+    //};
 
     this.acceptDrop = function (el, target, source, sibling) {
         if ($(target).attr("id") === this.tableId + "TableColumns4Drag") {

@@ -60,11 +60,11 @@
 
 </script>
 <div class="row">
-    <div class="form-inline">
-        <div class="btn-group well" role="group" aria-label="First group" style="width:100%">
+    @*<div class="">*@
+        <div class="form-inline btn-group well well-sm" role="group" aria-label="First group" style="width:100%;margin-bottom:0px;">
             <div class="input-group">
                 <span class="input-group-addon" aria-hidden="true"><i class="fa fa-database fa-1x"></i></span>
-                <input maxlength="100" type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control inputBoxinHead" />
+                <input type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control" />
             </div>
             <div class="pull-right">          
                 <div class="form-group btn-group">
@@ -104,14 +104,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        @*</div>*@
     </div>
-    <div>
-        <div class="form-group ">
-            <label class="control-label">Description</label>
             <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
-        </div>
-    </div>
 </div>
 <div class="row">
     <ul class="nav nav-tabs versionNav" id="versionNav">
@@ -119,69 +114,72 @@
     </ul>
     <div class="tab-content " id="versionTab">
         <div id="code_edit0" class="tab-pane fade in active">
-            <div class="form-inline well">
-                <a href="#" class="btn btn-default" id="execute0" data-toggle="tooltip" title="Execute"><i class="fa fa-play fa-1x" aria-hidden="true"></i></a>
-                @{ if (ViewBag.IsNew == "false")
-                    {
-                        <div class="verlist input-group">
-                            <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker form-control show-tick" data-live-search="true">
-                                @{
-                                    List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
-                                    Allversions = ViewBag.Allversions;
-                                    <option value="Select Version" data-tokens="Select Version">Compare With</option>
-                                    foreach (var version in Allversions)
-                                    {
-                                        <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+            <div class="form-inline well well-sm" style="margin-bottom:0px;">
+                    <a href="#" class="btn btn-default" id="execute0" data-toggle="tooltip" title="Execute"><i class="fa fa-play fa-1x" aria-hidden="true"></i></a>
+                    @{ if (ViewBag.IsNew == "false")
+                        {
+                            <div class="verlist input-group">
+                                <select id="selected_Ver0" name="selected_Ver" class="form-control selected_Ver selectpicker form-control show-tick" data-live-search="true">
+                                    @{
+                                        List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
+                                        Allversions = ViewBag.Allversions;
+                                        <option value="Select Version" data-tokens="Select Version">Compare With</option>
+                                        foreach (var version in Allversions)
+                                        {
+                                            <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                                        }
                                     }
-                                }
-                            </select>
-                        </div>
-                                    }
-                }
-            </div>
-            <div class="col-md-12" style="margin:0;padding:0;">
-                <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
-                <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
-                <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-                <p>Hit Ctrl+Space to trigger autocomplete</p>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="filterDialog" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Filter Dialog</h4>
-            </div>
-            <div class="modal-body filter_modal_body">
-                @*<div class="fd_top_content">
-                        <span class="align_singleLine">
-                            <label class="">Filter Dialog Name</label>
-                            <input type="text" id="fdname" name="fdname" class="form-control inputBox" required />
-                        </span>
-                        <span class="align_singleLine">
-                            <label class="">Description</label>
-                            <input type="text" id="fddesc" name="fddesc" class="form-control inputBox " required />
-                        </span>
-                    </div>*@
-                <div class="table-responsive table-bordered table-responsive">
-                    <table class="table fd_table">
-                        <thead class="fdthead">
-                        </thead>
-                        <tbody id="fdtbody" class="fdtbody"></tbody>
-                    </table>
+                                </select>
+                            </div>
+                                        }
+                    }
+                    <div id="inner_well0"></div>
+                    <button id='run0' name='run' class='run btn btn-default' style="display:none">Run</button>
+
+                </div>
+                <div class="col-md-12" style="margin:0;padding:0;">
+                    <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
+                    <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
+                    <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
+                    <p>Hit Ctrl+Space to trigger autocomplete</p>
                 </div>
             </div>
-            <div class="modal-footer">
-                <input type="submit" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
-                <input type="submit" name="run" value="Run" class="btn-primary" id="run" />
-            </div>
         </div>
     </div>
-</div>
+@*<div id="filterDialog" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Filter Dialog</h4>
+                </div>
+                <div class="modal-body filter_modal_body">
+                    <div class="fd_top_content">
+                            <span class="align_singleLine">
+                                <label class="">Filter Dialog Name</label>
+                                <input type="text" id="fdname" name="fdname" class="form-control inputBox" required />
+                            </span>
+                            <span class="align_singleLine">
+                                <label class="">Description</label>
+                                <input type="text" id="fddesc" name="fddesc" class="form-control inputBox " required />
+                            </span>
+                        </div>
+                    <div class="table-responsive table-bordered table-responsive">
+                        <table class="table fd_table">
+                            <thead class="fdthead">
+                            </thead>
+                            <tbody id="fdtbody" class="fdtbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
+                    <input type="submit" name="run" value="Run" class="btn-primary" id="run" />
+                </div>
+            </div>
+        </div>
+    </div>*@
 <script type="text/javascript">
 
     window.onload = function() {

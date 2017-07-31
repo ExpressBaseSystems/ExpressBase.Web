@@ -57,6 +57,7 @@ function slideLeft(leftDiv, rightDiv) {
 var formBuilder = function (toolBoxid, formid, propGridId) {
     this.Name = "form-buider-form";
     this.toolBoxid = toolBoxid;
+    this.formObj = new EbObjects.EbFormObj(formid);
     this.formid = formid;
     this.$propGrid = $("#" + propGridId);
 
@@ -66,10 +67,11 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
         DateCounter: 0,
         ButtonCounter: 0,
         TableLayoutCounter: 0,
-        TextBoxCounter: 0
+        TextBoxCounter: 0,
+        TableTdCounter: 0
     }
+
     this.curControl = null;
-    this.Controls = new EbControlCollection();
     this.drake = null;
     this.PGobj = null;
     // need to change
@@ -84,7 +86,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
         $(".eb-loaderFixed").show();
         $.post("SaveFilterDialog", {
             "Id": 0,
-            "FilterDialogJson": JSON.stringify(this.Controls.ToArray()),
+            "FilterDialogJson": JSON.stringify(this.formObj),
             "Name": $('#save_txtBox').val(),
             "Description": "",
             "isSave": "false",
@@ -108,10 +110,8 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
         this.$propGrid.show();
         $('#propGrid').empty();
         setTimeout(this.SetTimeOutFn.bind(this), 1);
-
-        //this.CreatePG(this.Controls.GetByName(this.curControl.attr("id")));
-
-        this.PGobj = new Eb_PropertyGrid("propGrid", this.Controls.GetByName(this.curControl.attr("id")), AllMetas.EbTextBox);
+        console.log("type = " + this.curControl.attr("eb-type"));
+        this.PGobj = new Eb_PropertyGrid("propGrid", this.formObj.Controls.GetByName(this.curControl.attr("id")), AllMetas["Eb" + this.curControl.attr("eb-type")]);
 
         $('.selectpicker').selectpicker('refresh');
 
@@ -124,7 +124,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
     this.saveObj = function () {
         this.PGobj.getvaluesFromPG();
         $('#propGrid').jqPropertyGrid('get');
-        $('#txtValues').val(JSON.stringify(this.Controls) + '\n\n');
+        $('#txtValues').val(JSON.stringify(this.formObj) + '\n\n');
     };
 
     this.SetTimeOutFn = function () {
@@ -169,7 +169,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
         var id = this.curControl.attr("id");
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
-        this.CreatePG(this.Controls.GetByName(id));
+        this.CreatePG(this.formObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
         console.log("id=" + id);
         setTimeout(function () {
@@ -191,9 +191,9 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
 
     this.onDragFn = function (el, source) {
         //if drag start within the form
-        if (!($(source).attr("id") === "form-buider-toolBox")) {
+        if ($(source).attr("id") !== "form-buider-toolBox") {
             console.log("el poped");
-            this.movingObj = this.Controls.PopByName($(el).attr("id"));
+            this.movingObj = this.formObj.Controls.PopByName($(el).attr("id"));
         }
         else
             this.movingObj = null;
@@ -209,11 +209,11 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
                 if (sibling.attr("id")) {
                     console.log("sibling : " + sibling.id);
                     var idx = sibling.index() - 1;
-                    this.Controls.InsertAt(idx, this.movingObj);
+                    this.formObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
                     console.log("no sibling ");
-                    this.Controls.Append(this.movingObj)
+                    this.formObj.Controls.Append(this.movingObj)
                 }
                 this.saveObj();
                 $(el).on("focus", this.controlOnFocus.bind(this));
@@ -242,16 +242,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
 
                 ctrl.attr("ebtype", type).attr("id", id);
 
-
-                console.log("target" + $(target).attr('id'));
-
-                this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
-                //if ($(target).attr("id") === "form-buider-form")
-                //    this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
-                //else
-                //    this.Controls.GetByName($(target).attr('id')).Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
-
-                //eval("this.Controls.GetByName($(target).attr('id')).Controls.Append(new Eb" + type + "Obj(id))");
+                this.formObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
 
                 ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
 
@@ -290,7 +281,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
         $("#SelOpt" + id).remove();
         $('.selectpicker').selectpicker('refresh');
         ControlTile.remove();
-        this.Controls.DelByName(id);
+        this.formObj.Controls.DelByName(id);
         this.$propGrid.hide();
         e.preventDefault();
         this.saveObj();
@@ -330,7 +321,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
         var id = this.curControl.attr("id");
         var curTr = this.curControl.children().children().children();
         var noOfTds = curTr.children().length;
-        this.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
+        this.formObj.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
         curTr.append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'> </td>");
         this.makeTdsDropable.bind(this);
         this.CurColCount = $(e.target).val();//tmp
@@ -339,7 +330,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
     this.removeTd = function (e) {
         var id = this.curControl.attr("id");
         var noOfTds = this.curControl.children().children().children().children().length;
-        this.Controls.GetByName(id).Controls.Pop();
+        this.formObj.Controls.GetByName(id).Controls.Pop();
         this.curControl.find("tr").find("td").last().remove();
         this.makeTdsDropable.bind(this);
         this.CurColCount = $(e.target).val();//tmp
@@ -352,9 +343,9 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
             removeOnSpill: false,
-            copy: function (el, source) { return (source.className !== 'tdDropable' && source.className !== 'form-buider-form'); },
+            copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
             copySortSource: true,
-            mirrorContainer: document.getElementById('form-buider-form'),
+            //mirrorContainer: document.getElementById('form-buider-form'),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });

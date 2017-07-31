@@ -99,6 +99,7 @@ var EbDataTable = function (settings) {
     this.draggedPos = null;
     this.droppedPos = null;
     this.dragNdrop = false;
+    this.flagColumnVisible = false;
 
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
@@ -115,7 +116,7 @@ var EbDataTable = function (settings) {
         this.ebSettings = JSON.parse(data);
 
 
-        $.each(this.ebSettings.columns, this.modifyColumns.bind(this));
+        
 
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
@@ -134,12 +135,18 @@ var EbDataTable = function (settings) {
 
     };
 
-    this.modifyColumns = function (i, obj) {
-        if (obj.visible == false)
-            obj.pos = this.ebSettings.columns.length + 100;
-    };
+    //this.modifyColumns = function (i, obj) {
+    //    if (obj.visible == true && obj.name !== "serial" && obj.name !== "checkbox") {
+    //        this.flagColumnVisible = true;
+    //    }
+    //};
 
     this.Init = function () {
+        //$.each(this.ebSettings.columns, this.modifyColumns.bind(this));
+        //if (this.flagColumnVisible) {
+        //    this.ebSettings.columns[0].visible = true;
+        //    this.ebSettings.columns[1].visible = true;
+        //}
         $.event.props.push('dataTransfer');
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);

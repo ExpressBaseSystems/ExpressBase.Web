@@ -2,12 +2,12 @@
 var pages = {
     A4: {
         width: '21cm',
-        height: '29.7cm',        
+        height: '29.7cm',
     },
 
     A3: {
         width: '29.7cm',
-        height: '42cm',      
+        height: '42cm',
     },
 
     Letter: {
@@ -23,6 +23,8 @@ var pages = {
 
 var RptBuilder = function (type) {
     this.type = type;
+    this.report = new Object();
+    this.report.pagetype = type;
 
     this.createPage = function (type) {
 
@@ -30,22 +32,42 @@ var RptBuilder = function (type) {
         $pageCanvas.empty();
         $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
         $pageCanvas.append("<div class='ruler'></div> <div class='rulerleft'></div><div id='PageContainer' style='margin-top:4px;'></div>");
-        $pageCanvas.append("<div class='headersections style='height:" + pages[type].height + ";'></div>");
+        this.splitheaderBox();
 
         if (pages[type].width > "21cm") {
 
             $('#pageCanvas').css({ "transform": "scale(0.6)", "transform-origin": "0 0" });
 
         }
-
-        $('#PageContainer').append("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";margin-left:28px;'></div>");
+        var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>")
+        $('#PageContainer').append($div);
         this.ruler(pages[type].width, pages[type].height);
 
+        return $div;
+    };
+
+    this.splitheaderBox = function () {
+
+        $headersection = $("<div class='headersections' style='height:" + pages[type].height + ";'></div>");
+        $("#PageContainer").append($headersection);
+        $("#PageContainer").append("<div class='multiSplit' style='height:" + pages[type].height + ";'></div>");
+        
+    };
+
+    this.pageSplitHbox = function () {
+        
+        $(".headersections").append("<div class='rptheadHbox' style='width :100%'><p>Rh</p></div>");
+        $(".headersections").append("<div class='pgheadHbox' style='width :100%'><p>Ph</p></div>");
+        $(".headersections").append("<div class='pgbodyHbox' style='width :100%'><p>Dtls</p></div>");
+        $(".headersections").append("<div class='pgfooterHbox' style='width :100%'><p>Pf</p></div>");
+        $(".headersections").append("<div class='rptfooterHbox' style='width :100%'><p>Rf</p></div>");
+
+        this.splitButton();
     };
 
     this.ruler = function (width, height) {
 
-        var $ruler = $('.ruler').css({ "width": width, "height": "25px" });
+        var $ruler = $('.ruler').css({ "width": width, "height": "25px", "margin-left": "128px" });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
             var $tick = $('<div>');
             if (step == 0) {
@@ -78,52 +100,71 @@ var RptBuilder = function (type) {
         }
     };
 
-    this.ReportHeader = function (height) {
-        $('.page').append("<div class='rpthead' id='1' style='width :100%'></div>");       
-    }
+    this.pageSplitters = function ($pageref) {
 
-    this.PageHeader = function (height) {
-        $('.page').append("<div class='pghead'  id='2'  style='width :100%'></div>");
-    }
+        $pageref.append("<div class='rpthead' style='width :100%'></div>");
 
-    this.pageBody = function (height) {
-        $('.page').append("<div class='pgbody' id='3'  style='width :100%'></div>");
-    }
+        $pageref.append("<div class='pghead' style='width :100%'></div>");
 
-    this.PageFooter = function (height) {
-        $('.page').append("<div class='pgfooter' id='4'  style='width :100%'></div>");
-    }
+        $pageref.append("<div class='pgbody' style='width :100%'></div>");
 
-    this.Reportfooter = function (height) {
-        $('.page').append("<div class='rptfootr' id='5'  style='width :100%'></div>");
+        $pageref.append("<div class='pgfooter' style='width :100%'></div>");
+
+        $pageref.append("<div class='rptfooter' style='width :100%'></div>");
+
     };
 
-    
-    this.headerScaling = function (hight) {
+    this.splitButton = function () {
+        $('.headersections').children().not(".gutter").each(function (i, obj) {
+            $(obj).append("<button class='btn btn-xs'><i class='fa fa-plus'></i></button>");
+        });
 
-        Split(['.rpthead', '.pghead', '.pgbody', '.pgfooter', '.rptfootr'], {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes:[10,10,60,10,10],
-            minSize: 0,
-            gutterSize: 5,
-            
+        $('.headersections').children().children("button").off("click").on("click", function (e) {
+            var btindex = $(this).index();
+            console.log($(this).index());
+            //this.multiSplit(btindex);
         });
     };
-
     
+    this.multiSplit = function (btindex) {
+        
+    };
+
+    this.headerScaling = function () {
+
+        Split(['.rpthead', '.pghead', '.pgbody', '.pgfooter', '.rptfooter'], {
+            direction: 'vertical',
+            cursor: 'row-resize',
+            sizes: [10, 10, 60, 10, 10],
+            minSize: 0,
+            gutterSize: 3,
+            onDrag: function (e) {
+                $('.rptheadHbox').css("height", $('.rpthead').height());
+                $('.pgheadHbox').css("height", $('.pghead').height());
+                $('.pgbodyHbox').css("height", $('.pgbody').height());
+                $('.pgfooterHbox').css("height", $('.pgfooter').height());
+                $('.rptfooterHbox').css("height", $('.rptfooter').height());
+            }
+        });
+
+        Split(['.rptheadHbox', '.pgheadHbox', '.pgbodyHbox', '.pgfooterHbox', '.rptfooterHbox'], {
+            direction: 'vertical',
+            cursor: 'row-resize',
+            sizes: [10, 10, 60, 10, 10],
+            minSize: 0,
+            gutterSize: 3,         
+        });
+
+    };
 
     this.init = function () {
 
         $('#PageContainer').empty();
-        this.createPage(type);
-        this.ReportHeader(pages[type].reportheaderH);
-        this.PageHeader(pages[type].pageHeaderH);
-        this.pageBody(pages[type].PagebodyH);
-        this.PageFooter(pages[type].pageFooterH);
-        this.Reportfooter(pages[type].reportfooterH);
-        this.headerScaling(pages[type].height);
-
+        var $pageref = this.createPage(type);
+        this.pageSplitters($pageref);
+        this.pageSplitHbox();
+        this.headerScaling();
+        
     };
     this.init();
 };
@@ -139,3 +180,4 @@ var setBackgroud = function (input) {
         reader.readAsDataURL(input.files[0]);
     }
 };
+

@@ -1,7 +1,21 @@
-﻿
+﻿.headersections{
+    width:50px;
+    float:left;
+    border:1px solid;
+}
+.multiSplit{
+    width:50px;
+    float:left;
+    border:1px solid;
+}
+.headersections button{
+    align-self: flex-end;
+}
+
 .gutter.gutter-vertical {
-    background-color: #eee;
+    background-color: #cfcfcf;
     cursor: ns-resize;
+
 }
 
 .ruler {
@@ -48,7 +62,7 @@
 
 .page {
     display: block;
-    margin: 0;
+    margin-left:102px;
     box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
 }
 
@@ -96,11 +110,12 @@
     z-index: -1;
 }
 
-.rptheadlabel {
-    width: 30px;
-    height: 20px;
-    background-color: red;
+#PageContainer{
+margin-left: 26px;
 }
-.headersections{
+.rptheadHbox,.pgheadHbox,.pgbodyHbox,.pgfooterHbox,.rptfooterHbox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-}

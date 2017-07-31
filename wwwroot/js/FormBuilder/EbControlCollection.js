@@ -1,31 +1,32 @@
-﻿var EbControlCollection = function () {
-    this.InnerCollection = [];
+﻿var EbControlCollection = function (obj) {
+    this.$type = obj.$type;
+    this.$values = obj.$values || [];
 
     this.ToArray = function () {
-        return this.InnerCollection;
+        return this.$values;
     };
 
     this.PopByName = function (_name) {
         var parentId = $("#" + _name).parent().attr("id");
         var ele = this.GetByName(_name);
-
+        console.log("parentId" + parentId);
         if (parentId === "form-buider-form")
-            return this.InnerCollection.pop(this.InnerCollection.indexOf(ele));
+            return this.$values.pop(this.$values.indexOf(ele));
 
         var parent = this.GetByName(parentId);
-        return parent.Controls.InnerCollection.pop(parent.Controls.InnerCollection.indexOf(ele));
+        return parent.Controls.$values.pop(parent.Controls.$values.indexOf(ele));
     };
 
     this.Append = function (newObject) {
         var parentId = $("#" + newObject.Name).parent().attr("id");
         if (parentId === undefined)
-            this.InnerCollection.push(newObject);
+            this.$values.push(newObject);
         else if (parentId !== "form-buider-form") {
             var parent = this.GetByName(parentId);
-            parent.Controls.InnerCollection.push(newObject);
+            parent.Controls.$values.push(newObject);
         }
         else //parentId === "form-buider-form"
-            this.InnerCollection.push(newObject);
+            this.$values.push(newObject);
     };
 
     this.PopByindex = function () {
@@ -35,42 +36,41 @@
     this.InsertAt = function (index, newObject) {
         var parentId = $("#" + newObject.Name).parent().attr("id");
         if (parentId === "form-buider-form") {
-            this.InnerCollection.splice(index, 0, newObject);
-            return this.InnerCollection.length;
+            this.$values.splice(index, 0, newObject);
+            return this.$values.length;
         }
         var parent = this.GetByName(parentId);
-        parent.Controls.InnerCollection.splice(index, 0, newObject);
-        return parent.Controls.InnerCollection.length;
+        parent.Controls.$values.splice(index, 0, newObject);
+        return parent.Controls.$values.length;
     };
 
     this.InsertBefore = function (beforeObj, newObject) {
-        this.InnerCollection.splice(this.InnerCollection.indexOf(beforeObj), 0, newObject);
+        this.$values.splice(this.$values.indexOf(beforeObj), 0, newObject);
     };
 
     this.GetByIndex = function (_index) {
-        return this.InnerCollection[_index];
+        return this.$values[_index];
     };
 
     this.Pop = function (_name) {
-        this.InnerCollection.pop();
+        this.$values.pop();
     };
 
     this.GetByName = function (_name) {
         var retObject = new Object();
-        this.GetByNameInner(_name, this.InnerCollection, retObject);
+        this.GetByNameInner(_name, this.$values, retObject);
         return (retObject.Value) ? retObject.Value : null;
     };
 
-
     this.GetByNameInner = function (_name, _collection, retObject) {
         for (var i = 0; i < _collection.length; i++) {
-            if (_collection[i].Name === _name) {
+            if (_collection[i].EbSid === _name) {
                 retObject.Value = _collection[i];
                 break;
             }
             else {
                 if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0) {
-                    this.GetByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
+                    this.GetByNameInner(_name, _collection[i].Controls.$values, retObject);
                 }
             }
         }
@@ -78,19 +78,19 @@
 
     this.DelByName = function (_name) {
         var retObject = new Object();
-        this.DelByNameInner(_name, this.InnerCollection, retObject);
+        this.DelByNameInner(_name, this.$values, retObject);
         return retObject.Value;
     };
 
     this.DelByNameInner = function (_name, _collection, retObject) {
         for (var i = 0; i < _collection.length; i++) {
-            if (_collection[i].Name === _name) {
+            if (_collection[i].EbSid === _name) {
                 _collection.splice(i, 1);
                 break;
             }
             else {
                 if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0)
-                    this.DelByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
+                    this.DelByNameInner(_name, _collection[i].Controls.$values, retObject);
             }
         }
     };

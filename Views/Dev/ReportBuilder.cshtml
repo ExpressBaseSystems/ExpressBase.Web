@@ -1,95 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-<style>
-    .ruler {
-        margin-top: 20px;
-        color: #000;
-        font-family: arial;
-        font-size: 12px;
-        line-height: 14px;
-        overflow: hidden;
-        margin-left: 25px;
-    }
-
-        .ruler > div {
-            display: inline-block;
-            background: #000;
-        }
-
-        .ruler .tickLabel {
-            position: relative;
-            top: -10px;
-            margin-left: 4px;
-            width: 1px;
-            height: 100%;
-            text-indent: 1px;
-            line-height: 20px;
-        }
-
-            .ruler .tickLabel:first-of-type {
-                margin-left: 0px;
-            }
-
-        .ruler .tickMajor {
-            margin-top: 19px;
-            margin-left: 4px;
-            width: 1px;
-            height: 6px;
-        }
-
-        .ruler .tickMinor {
-            margin-left: 4px;
-            width: 1px;
-            height: 4px;
-        }
-
-    .page {
-        /*background: white;*/
-        display: block;
-        margin: 0;
-        box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
-    }
-
-    .rulerleft {
-        position: absolute;
-        color: #000;
-    }
-
-        .rulerleft > div {
-            background: #000;
-        }
-
-        .rulerleft .tickLabel {
-            margin-top: 4px;
-            width: 100%;
-            height: 1px;
-        }
-
-            .rulerleft .tickLabel:first-of-type {
-                margin-left: 0px;
-            }
-
-        .rulerleft .tickMajor {
-            margin-top: 4px;
-            width: 6px;
-            height: 1px;
-            margin-left: 18px;
-        }
-
-        .rulerleft .tickMinor {
-            margin-top: 4px;
-            width: 4px;
-            height: 1px;
-            margin-left: 20px;
-        }
-
-    .reportmenu {
-        width: 100%;
-        height: 100px;
-        background-color: #fafafa;
-    }
-</style>
 <div class="row">
     <div class="reportmenu">
         <div class="form-inline" id="options">
@@ -121,36 +32,14 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-2">
-    </div>
-    <div class="col-md-8" id="pageCanvas">
-        <div class='ruler'></div>
-        <div class='rulerleft'></div>
-        <div id="PageContainer" style="margin-top:4px;">
-        </div>
-    </div>
-    <div class="col-md-2">
-    </div>
+    <div id="pageCanvas"></div>   
 </div>
 <script>
     $("#pagesize").change(function () {
         RptBuilder($(this).val());
     });
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-
-               // $('#proimg').val(reader.result);
-                $('#page').attr('src', e.target.result);
-            }
-
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
 
     $("#Rptbgimg").change(function () {
-        readURL(this);
+        setBackgroud(this);
     });
 </script>

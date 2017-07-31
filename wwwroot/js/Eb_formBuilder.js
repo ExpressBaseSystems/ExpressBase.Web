@@ -2,16 +2,17 @@
     var $leftDiv = $(leftDiv);
     var $rightDiv = $(rightDiv);
 
-    stickBtn = "<div id='stickBtnR' class='stickBtn' style='right: -12px;' onclick=\"slideRight('" + leftDiv + "', '" + rightDiv + "')\">PropertyBox</div>";
+    $stickBtn = $("<div id='stickBtnR' class='stickBtn' style='right: 0px;' onclick=\"slideRight('" + leftDiv + "', '" + rightDiv + "')\">PropertyBox</div>");
 
-    lW = parseInt($leftDiv.css("width"));
-    rW = parseInt($rightDiv.css("width"));
+    lW = $leftDiv.width();
+    rW = $rightDiv.width();
     if ($rightDiv.css("display") === "inline-block") {
         $rightDiv.animate({ width: 0 }, 300);
         $leftDiv.animate({ width: lW + rW + "px" }, 300);
 
         setTimeout(function () {
-            $(".form-buider-cont").append(stickBtn);
+            $(".form-buider-cont").append($stickBtn);
+            $stickBtn.css({ "right": (0 - ($stickBtn.width() / 2)) + "px", "top": (198 + ($stickBtn.width() / 2)) });
             $rightDiv.data("width", rW);
             $rightDiv.hide();
         }, 301);
@@ -29,16 +30,17 @@ function slideLeft(leftDiv, rightDiv) {
     var $leftDiv = $(leftDiv);
     var $rightDiv = $(rightDiv);
 
-    stickBtn = "<div id='stickBtnL' class='stickBtn' style='left: -12px;' onclick=\"slideLeft('" + leftDiv + "', '" + rightDiv + "')\">ToolBox</div>";
+    $stickBtn = $("<div id='stickBtnL' class='stickBtn' onclick=\"slideLeft('" + leftDiv + "', '" + rightDiv + "')\">ToolBox</div>");
 
-    lW = parseInt($leftDiv.css("width"));
-    rW = parseInt($rightDiv.css("width"));
+    lW = $leftDiv.width();
+    rW = $rightDiv.width();
     if ($rightDiv.css("display") === "inline-block") {
         $rightDiv.animate({ width: 0 }, 300);
         $leftDiv.animate({ width: lW + rW + "px" }, 300);
 
         setTimeout(function () {
-            $(".form-buider-cont").append(stickBtn);
+            $(document.body).append($stickBtn);
+            $stickBtn.css({ "left": (0 - ($stickBtn.width() / 2)) + "px", "top": (198 + ($stickBtn.width() / 2)) });
             $rightDiv.data("width", rW);
             $rightDiv.hide();
         }, 301);
@@ -50,102 +52,6 @@ function slideLeft(leftDiv, rightDiv) {
         $rightDiv.animate({ width: rW + "px" }, 300);
         $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
     }
-};
-
-var EbControlCollection = function () {
-    this.InnerCollection = [];
-
-    this.ToArray = function () {
-        return this.InnerCollection;
-    };
-    this.PopByName = function (_name) {
-        var parentId = $("#" + _name).parent().attr("id");
-        var ele = this.GetByName(_name);
-
-        if (parentId === "form-buider-form")
-            return this.InnerCollection.pop(this.InnerCollection.indexOf(ele));
-
-        var parent = this.GetByName(parentId);
-        return parent.Controls.InnerCollection.pop(parent.Controls.InnerCollection.indexOf(ele));
-    };
-
-    this.AppendIn = function (newObject) {
-        var parentId = $("#" + newObject.Name).parent().attr("id");
-        var parent = this.GetByName(parentId);
-        return parent.Controls.InnerCollection.push(newObject);
-    };
-
-    this.Append = function (newObject) {
-        this.InnerCollection.push(newObject);
-    };
-
-    this.PopByindex = function () {
-
-    };
-
-    this.InsertAt = function (index, newObject) {
-        var parentId = $("#" + newObject.Name).parent().attr("id");
-        if (parentId === "form-buider-form") {
-            this.InnerCollection.splice(index, 0, newObject);
-            return this.InnerCollection.length;
-        }
-        var parent = this.GetByName(parentId);
-        parent.Controls.InnerCollection.splice(index, 0, newObject);
-        return parent.Controls.InnerCollection.length;
-    };
-
-    this.InsertBefore = function (beforeObj, newObject) {
-        this.InnerCollection.splice(this.InnerCollection.indexOf(beforeObj), 0, newObject);
-    };
-
-    this.GetByIndex = function (_index) {
-        return this.InnerCollection[_index];
-    };
-
-    this.Pop = function (_name) {
-        this.InnerCollection.pop();
-    };
-
-    this.GetByName = function (_name) {
-        var retObject = new Object();
-        this.GetByNameInner(_name, this.InnerCollection, retObject);
-        return (retObject.Value) ? retObject.Value : null;
-    };
-
-
-    this.GetByNameInner = function (_name, _collection, retObject) {
-        for (var i = 0; i < _collection.length; i++) {
-            if (_collection[i].Name === _name) {
-                retObject.Value = _collection[i];
-                break;
-            }
-            else {
-                if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0) {
-                    this.GetByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
-                }
-            }
-        }
-    };
-
-    this.DelByName = function (_name) {
-        var retObject = new Object();
-        this.DelByNameInner(_name, this.InnerCollection, retObject);
-        return retObject.Value;
-    };
-
-    this.DelByNameInner = function (_name, _collection, retObject) {
-        for (var i = 0; i < _collection.length; i++) {
-            if (_collection[i].Name === _name) {
-                _collection.splice(i, 1);
-                break;
-            }
-            else {
-                if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0)
-                    this.DelByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
-            }
-        }
-    };
-
 };
 
 var formBuilder = function (toolBoxid, formid, propGridId) {
@@ -307,9 +213,10 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
                 }
                 else {
                     console.log("no sibling ");
-                    this.Controls.AppendIn(this.movingObj)
+                    this.Controls.Append(this.movingObj)
                 }
                 this.saveObj();
+                $(el).on("focus", this.controlOnFocus.bind(this));
             }
 
         }
@@ -338,10 +245,11 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
 
                 console.log("target" + $(target).attr('id'));
 
-                if ($(target).attr("id") === "form-buider-form")
-                    this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
-                else
-                    this.Controls.GetByName($(target).attr('id')).Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+                this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+                //if ($(target).attr("id") === "form-buider-form")
+                //    this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+                //else
+                //    this.Controls.GetByName($(target).attr('id')).Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
 
                 //eval("this.Controls.GetByName($(target).attr('id')).Controls.Append(new Eb" + type + "Obj(id))");
 
@@ -373,7 +281,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
             _html = "<div class='btn btn-default'>Button</div>";
         else if (type === "TableLayout")
             _html = "<table style='width:100%'><tr><td id='" + id + "_Td0' class='tdDropable' ></td> <td id='" + id + "_Td1' class='tdDropable'></td style='min-height:20px;'> </tr></table>";
-        return _html
+        return _html;
     };
 
     this.controlCloseOnClick = function (e) {

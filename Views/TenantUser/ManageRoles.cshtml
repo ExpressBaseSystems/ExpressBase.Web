@@ -22,6 +22,15 @@
     }
 
     input[type=checkbox] {
+        margin-left: 5px;
+    }
+
+
+    .scrollable-menu {
+        margin-top: 15px;
+        border: 1px solid #eee;
+        max-height: 200px;
+        overflow-x: hidden;
     }
 </style>
 @using (Html.BeginForm(FormMethod.Post))
@@ -39,8 +48,8 @@
                         foreach (var element in List)
                         {
                             if (ViewBag.ApplicationId != element.Id.ToString())
-                            { 
-                              <option value="@element.Id">@element.Name</option>
+                            {
+                                <option value="@element.Id">@element.Name</option>
                             }
 
 
@@ -56,28 +65,58 @@
         </div>
     </div>
 
-    <div class="row" id="objlist1">
-        <div class="list-group">
-            <ul>
-                @foreach (var ObjectType in Enum.GetValues(typeof(EbObjectTypesUI)))
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#objlist1">Permissions</a></li>
+        <li><a onclick="GetSubRoles(@ViewBag.roleid,@ViewBag.ApplicationId)" data-toggle="tab" href="#rolesdiv">Sub Roles</a></li>
+        <li><a data-toggle="tab" href="#users">Users</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="row tab-pane fade in active" id="objlist1">
+            <div class="list-group">
+                <ul>
+                    @foreach (var ObjectType in Enum.GetValues(typeof(EbObjectTypesUI)))
                 {
                     var intobj = (int)ObjectType;
-                    <li>
-                        <a class="list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#objtype_@intobj" onclick="GetTable(@intobj)">@ObjectType<i class="fa fa-caret-right pull-right"></i></a>
-                        <table class="objtype table table-responsive sub-menu collapse" id="objtype_@intobj"></table>
-                    </li>
-                }
-            </ul>
+                        <li>
+                            <a class="list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#objtype_@intobj" onclick="GetTable(@intobj)">@ObjectType<i class="fa fa-caret-right pull-right"></i></a>
+                            <table class="objtype table table-responsive sub-menu collapse" id="objtype_@intobj"></table>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <input type="hidden" id="applicationid" />
+            <input type="hidden" id="roleid" name="roleid" value="@ViewBag.roleid" />
+            <input type="submit" value="Save" id="save_permission" />
         </div>
-        <input type="hidden" id="applicationid" />
-        <input type="hidden" id="roleid" name="roleid" value="@ViewBag.roleid" />
+        <div id="rolesdiv" class="tab-pane fade">
+            @*<div class="input-group pull-right">
+                    <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+                </div>*@          
+            <div id="roles" class="scrollable-menu">
+                <div class="form-inline" id="searchbar" style="width:100%">
+                    <div class="input-group pull-right">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false">Search<span class="caret"></span></button>
+                        </div>
+                        <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+
+            </div>
+            <input type="submit" value="Save" id="save_roles" />
+        </div>
+
+        <div id="users" class="tab-pane fade">
+            <h1>Users</h1>
+        </div>
+
     </div>
-    <input type="submit" value="Save" id="save_permission" />
+
                         }
 
 <script>
     $('document').ready(function () {
-       
+
         $('#applicationid').val($('#appselect').val());
 
         $('a').click(function () {
@@ -87,7 +126,7 @@
         $("#appselect").change(function () {
 
             $('#applicationid').val(this.value);
-           // $('#objlist1').show();
+            // $('#objlist1').show();
         });
 
         $("#save_permission").click(function () {
@@ -101,14 +140,30 @@
                 "RoleName": $('#role_name').val(),
                 "RoleId": $('#roleid').val(),
                 "ApplicationId": $('#applicationid').val(),
-                "Description" : $('#Description').val()
+                "Description": $('#Description').val()
 
             }, function (result) {
             });
         });
+
+        $("#save_roles").click(function () {
+            var selected = [];
+            $('#rolesdiv input:checked').each(function () {
+                selected.push($(this).attr('value'));
+            });
+            $.post("../TenantUser/SubRoles",
+            {
+                "subrolesid": selected,
+                "roleid": $('#roleid').val(),
+                
+
+            }, function (result) {
+            });
+        });
+
     })
     function GetTable(type) {
-      
+
         $.post("../TenantUser/GetRowAndColumn",
            {
 
@@ -117,10 +172,26 @@
                "RoleId": $('#roleid').val()
 
 
-           }, function (result) {              
+           }, function (result) {
                if (result) {
                    document.getElementById("objtype_" + type.toString()).innerHTML = result;
                }
            });
+    }
+
+    function GetSubRoles(roleid,applicationid)
+    {
+        $.post("../TenantUser/GetSubRoles",
+              {
+                  "roleid": roleid,
+                  "applicationid" : applicationid
+
+
+              }, function (result) {
+                  if (result) {
+                      document.getElementById("roles").innerHTML = result;
+                  }
+              });
+
     }
 </script>

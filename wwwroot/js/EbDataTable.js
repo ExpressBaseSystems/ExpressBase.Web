@@ -98,6 +98,8 @@ var EbDataTable = function (settings) {
     this.drake = null;
     this.draggedPos = null;
     this.droppedPos = null;
+    this.dragNdrop = false;
+    this.flagColumnVisible = false;
 
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
@@ -114,7 +116,7 @@ var EbDataTable = function (settings) {
         this.ebSettings = JSON.parse(data);
 
 
-        $.each(this.ebSettings.columns, this.modifyColumns.bind(this));
+        
 
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
@@ -133,12 +135,18 @@ var EbDataTable = function (settings) {
 
     };
 
-    this.modifyColumns = function (i, obj) {
-        if (obj.visible == false)
-            obj.pos = this.ebSettings.columns.length + 100;
-    };
+    //this.modifyColumns = function (i, obj) {
+    //    if (obj.visible == true && obj.name !== "serial" && obj.name !== "checkbox") {
+    //        this.flagColumnVisible = true;
+    //    }
+    //};
 
     this.Init = function () {
+        //$.each(this.ebSettings.columns, this.modifyColumns.bind(this));
+        //if (this.flagColumnVisible) {
+        //    this.ebSettings.columns[0].visible = true;
+        //    this.ebSettings.columns[1].visible = true;
+        //}
         $.event.props.push('dataTransfer');
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
@@ -370,6 +378,14 @@ var EbDataTable = function (settings) {
             this.RenderGraphModal();
             this.getColumns();
         }
+        else if (this.dragNdrop) {
+            this.ebSettings.columns.sort(this.ColumnsComparer);
+            $('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
+            var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
+            $('#' + this.tableId + 'divcont').append(table);
+            this.Init();
+            this.dragNdrop = false
+        }
         else{
             this.Api.ajax.reload();
         }
@@ -380,6 +396,11 @@ var EbDataTable = function (settings) {
         e.preventDefault();
     };
 
+    this.ColumnsComparer = function (a, b) {
+        if (a.pos < b.pos) return -1;
+        if (a.pos > b.pos) return 1;
+        if (a.pos === b.pos) return 0;
+    };
 
     this.getAgginfo = function () {
         var _ls = [];
@@ -1804,14 +1825,13 @@ var EbDataTable = function (settings) {
                 //$("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
                 
             }
-            else if ($(source).attr("id") === this.tableId + "ColumnsDispaly" && $(target).attr("id") === this.tableId + "TableColumns4Drag") {
-                
-            }
+
             $("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
-            $('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
-            var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
-            $('#' + this.tableId + 'divcont').append(table);
-            this.Init();
+
+            //$('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
+            //var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
+            //$('#' + this.tableId + 'divcont').append(table);
+            //this.Init();
             
         }
     };
@@ -1826,15 +1846,17 @@ var EbDataTable = function (settings) {
         $(e.target).parent().remove();
         $("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
         $.each(this.ebSettings.columns, this.visibleChange2False.bind(this, colobj))
-        $('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
-        var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
-        $('#' + this.tableId + 'divcont').append(table);
-        console.log(JSON.stringify(this.ebSettings.columns));
-        this.Init();
+
+        //$('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
+        //var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
+        //$('#' + this.tableId + 'divcont').append(table);
+        //console.log(JSON.stringify(this.ebSettings.columns));
+        //this.Init();
     };
 
 
     this.visibleChange2True = function (i, obj) {
+        this.dragNdrop = true;
         $.each(this.ebSettings.columns, this.changeObjectPositionToCurrent.bind(this,i, obj));
     };
 

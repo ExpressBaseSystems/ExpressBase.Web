@@ -4,7 +4,20 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-
+<style>
+.scrollable-menu {
+        height: auto;
+        max-height: 200px;
+        overflow-x: visible;
+        overflow-y: scroll;
+    }
+.loadingdiv {
+        vertical-align: middle;
+        margin: 5% 50%;
+        z-index: 1;
+        display: none;
+    }
+</style>
 @{
     string head = string.Empty;
     string html = string.Empty;
@@ -14,29 +27,71 @@
     var id = Convert.ToInt32(ViewBag.DataId);
     var dvname = ViewBag.dvname;
 
-    //var cnames = (ViewBag.EbForm38 != null) ? (ViewBag.EbForm38 as EbForm).GetControlNames() : string.Empty;
-
-    //html += string.Format("<input type='hidden' value='{0}' id='hiddenparams'/>", cnames);
-
-    EbDataGridView dgv = new EbDataGridView
-    {
-        DataSourceId = dsid,
-        dvId = dvid,
-        dvname = dvname,
-       // FilterDialogId = (ViewBag.FDialog as EbFilterDialog).Id,
-        Name = "dv" + dvid.ToString()
-    };
-
-    dgv.Token = ViewBag.token;
-    dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
+    @using Newtonsoft.Json;
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+    Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+    //Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
+    ObjDSList = ViewBag.DSList;
+    ObjDSListAll = ViewBag.DSListAll;
+    //ObjDVListAll = ViewBag.DVListAll;
+    string ObjDVListAll = JsonConvert.SerializeObject(ViewBag.DVListAll);
+    //string ObjDSList = JsonConvert.SerializeObject(ViewBag.DSList);
+    //string ObjDSListAll = JsonConvert.SerializeObject(ViewBag.DSListAll);
 
 
-    dgv.SetFilterForm(ViewBag.FDialog);
-    html += dgv.GetHtml();
-    head += dgv.GetHead();
-    // head += (ViewBag.EbForm38 as EbForm).GetHead();
+EbDataGridView dgv = new EbDataGridView
+{
+    DataSourceId = dsid,
+    DvId = dvid,
+    Dvname = dvname,
+    // FilterDialogId = (ViewBag.FDialog as EbFilterDialog).Id,
+    Name = "dv" + dvid.ToString(),
+    Login = ViewBag.wc,
+    Dvlist = ObjDVListAll
+};
+
+dgv.Token = ViewBag.token;
+dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
+
+
+dgv.SetFilterForm(ViewBag.FDialog);
+html += dgv.GetHtml();
+head += dgv.GetHead();
+// head += (ViewBag.EbForm38 as EbForm).GetHead();
 }
+<div class="well well-sm">
+    <div class='dropdown' id='datatSourceDropdown' style="display: inline-block;">
+        <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Select DataSource
+            <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu scrollable-menu'>
+            @{
+                foreach (var element in ObjDSListAll)
+                {
+                    <li data-dsid="@element.Key">
+                        <a href="#">
+                            @element.Value.Name
+                        </a>
+                    </li>
 
+                }
+            }
+        </ul>
+    </div>
+
+    <div class='dropdown' id='applicationDropdown' style="display: inline-block;">
+        <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
+            Select Application
+            <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu scrollable-menu'>
+            
+        </ul>
+    </div>
+</div>
+
+<div id='loader' class='loadingdiv'><i class='fa fa-spinner fa-pulse fa-3x fa-fw'></i></div>
 @section EbHead {
     <script>
         $(document).ready(function () {

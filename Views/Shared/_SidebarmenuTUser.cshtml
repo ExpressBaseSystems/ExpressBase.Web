@@ -111,7 +111,7 @@
     function LoadObjectListUser(type44) {       
         event.preventDefault();
         var _container = $("#layout_div");
-        $('#loader').show();
+        $.LoadingOverlay("show");
         $.ajax({
             url: "../Dev/EbObjectList",
             type: "GET",
@@ -119,7 +119,7 @@
             data: { "type": type44 },
             success: function (result) {
                 _container.html(result);
-                $('#loader').hide();              
+                $.LoadingOverlay("hide");
             }
         });
     }

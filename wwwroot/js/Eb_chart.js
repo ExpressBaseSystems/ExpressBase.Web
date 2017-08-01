@@ -215,14 +215,17 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
     this.Xax = []; this.Yax = [];
     this.tableId = tableId;
     this.sourceElement = null;
+    this.flagAppendColumns = false;
 
     this.init = function () {
         $.event.props.push('dataTransfer');
         $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
         $("#graphDropdown_tab" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
         $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
-        this.appendColumns();
-        this.appendXandYAxis();
+        if (!this.flagAppendColumns) {
+            this.appendColumns();
+            this.appendXandYAxis();
+        }
         $("#X_col_name" + this.tableId).off("drop").on("drop", this.colDrop.bind(this));
         $("#X_col_name" + this.tableId).off("dragover").on("dragover", this.colAllowDrop.bind(this));
         $("#Y_col_name" + this.tableId).off("drop").on("drop", this.colDrop.bind(this));
@@ -293,6 +296,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
 
         $("#X_col_name" + this.tableId + " div[draggable=true]").off("dragover").on("dragover", this.NocolAllowDrop.bind(this));
         $("#Y_col_name" + this.tableId + " div[draggable=true]").off("dragover").on("dragover", this.NocolAllowDrop.bind(this));
+        this.flagAppendColumns = true;
     };
 
     
@@ -395,6 +399,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         }
 
         this.columnInfo.options.type = this.type;
+        $("#graphcontainer_tab" + this.tableId).children("iframe").remove();
         $("#myChart" + this.tableId).remove();
         $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
         this.drawGraph();
@@ -560,7 +565,6 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             this.drawGeneralGraph();
         }
         else {
-            //$("#graphcontainer_tabdv336_1").children("iframe").remove()
             $("#myChart" + this.tableId).remove();
             $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
         }

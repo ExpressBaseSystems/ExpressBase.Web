@@ -44,7 +44,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#selected_Ver').off("change").on("change", this.Differ.bind(this));
         $('#fd').off("change").on("change", this.Clear_fd.bind(this));
-
+        $(".selectpicker").selectpicker();
+        $("#fdlist .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
     }
 
     this.SetValues = function () {
@@ -60,9 +61,31 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
     this.Clear_fd = function () {
         var getNav = $("#versionNav li.active a").attr("href");
         $(getNav + ' #inner_well').children().remove();
-        $('#execute').collapse('hide');
-        $('#execute').add('collapsed');
+        $('#execute').addClass('collapsed');
     };
+
+    this.Load_filter_dialog_list = function () {
+        if (!$('#fdlist .bootstrap-select').hasClass('open')) {
+            $('#fdlist #fd').children().remove();
+            $('#loader_fd').show();
+        $.ajax({
+            url: "../Dev/GetObjects",
+            type: 'post',
+            data: { obj_type: 12 },
+            success: function (data) {
+                $('#fdlist #fd').children().remove();
+                $('#fdlist #fd').append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
+                $.each(data, function (i, obj) {
+                    console.log(i + "," + JSON.stringify(obj.name));
+                    $('#fd').append("<option value=" + i + " data-tokens=" + obj + ">" + obj.name + "</option>")
+                });
+                $('#fdlist .selectpicker').selectpicker('refresh');
+                $('#loader_fd').hide();
+            }
+        });
+        
+      }
+    }
 
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");
@@ -107,7 +130,6 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
 
     this.ShowVersions = function () {
         $.each(this.Versions, this.ShowVersions_inner.bind(this));
-
     }
 
     this.ShowVersions_inner = function (i, obj) {
@@ -222,7 +244,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
     this.Execute = function () {
         if (!$('#execute').hasClass('collapsed')) { }
         else {
-            $("#loader").show();           
+            $("#loader").show();
             if (this.Parameter_Count !== 0 && $('#fd option:selected').text() === "Select Filter Dialog") {
                 alert("Please select a filter dialog");
                 $("#loader").hide();
@@ -376,12 +398,11 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
         var filter_control_list = "datefrom,dateto";
         var myarray = filter_control_list.split(',');
         for (var i = 0; i < myarray.length; i++) {
-            console.log(myarray[i]);
-            console.log($("#" + myarray[i]));
-            if (!$("#" + myarray[i]).val()) {
+            console.log($("#" + myarray[i]).val());
+            if (typeof $("#" + myarray[i]).val() === "undefined") {
                 $(this).addClass('has-error');
                 this.ValidInput = false;
-            }           
+            }
             var type = $('#' + myarray[i]).attr('data-ebtype');
             var name = $('#' + myarray[i]).attr('name');
             var value = $('#' + myarray[i]).val();
@@ -456,13 +477,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type) {
         dq.Params = this.Object_String_WithVal;
     };
 
-    
+
 
     this.Load_Fd = function () {
         $("#loader").show();
         var getNav = $("#versionNav li.active a").attr("href");
         //  $(getNav + ' #inner_well').children().remove();
-        if ($(getNav + ' #inner_well').children().length ===0) {
+        if ($(getNav + ' #inner_well').children().length === 0) {
             $.post("../Dev/GetByteaEbObjects_json", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
             function (result) {
                 $(getNav + ' #inner_well').append(result);

@@ -30,19 +30,7 @@
             $('#save').remove();
             $('#stat_his').remove();
             $('#rel_obj').remove();
-        }
-
-        $('#fd').on("loaded.bs.select",function selectMe(me){
-            if(@ViewBag.IsNew===false){
-                if( @ViewBag.FilterDialogId === 0){
-                    var val ="Select Filter Dialog";
-                }
-                else{
-                    var val = @ViewBag.FilterDialogId ;
-                }
-                $(this).selectpicker('val', val);
-            }
-        });
+        }        
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {
             $("#sample").DataTable().destroy();
@@ -64,7 +52,7 @@
     <div class="form-inline btn-group well well-sm" role="group" aria-label="First group" style="width:100%;margin-bottom:0px;">
         <div class="input-group">
             <span class="input-group-addon" aria-hidden="true"><i class="fa fa-database fa-1x"></i></span>
-            <input type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control" />
+            <input type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control" style="width: 196%;"/>
         </div>
         <div class="pull-right">
             <div class="form-group btn-group">
@@ -85,22 +73,9 @@
                 <a href="#" class="btn btn-default ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-group fa fa-history fa-1x" aria-hidden="true"> v.@ViewBag.VersionNumber</i></a>
 
 
-                <div class="dropdown fdlist btn-group">
-                    <select id="fd" name="fd" class="selectpicker show-tick align_singleLine" data-live-search="true">
-                        @{
-                            @using ExpressBase.Objects.ServiceStack_Artifacts;
-                            Dictionary
-                            <int, EbObjectWrapper>
-                                filterDialogs = new Dictionary<int, EbObjectWrapper>();
-                            filterDialogs = ViewBag.FilterDialogs;
-                            <option value="Select Filter Dialog" data-tokens="Select Filter Dialog" selected>Select Filter Dialog</option>
-                            @*<option value="" data-tokens="Auto Generate Filter Dialog">Auto Generate Filter Dialog</option>*@
-                        foreach (var filter in filterDialogs)
-                        {
-                            <option value=@filter.Value.Id data-tokens=@filter.Value.Name>@filter.Value.Name</option>
-                        }
-                        }
-                    </select>
+                <div class="dropdown fdlist btn-group" id="fdlist">
+                    <select id="fd" name="fd" class="selectpicker show-tick" data-live-search="true">
+                    </select><i class="fa fa-circle-o-notch fa-spin fa-1x fa-fw" id="loader_fd" style="display:none;color:green"></i>
                 </div>
             </div>
         </div>
@@ -118,13 +93,14 @@
     </ul>
     <div class="tab-content " id="versionTab">
         <div id="code_edit0" class="tab-pane fade in active">
-            <div class="form-inline" style="margin-bottom:0px;">
+            <div class="form-inline inner_toolbar" style="margin-bottom:0px;">
                 <div class="btn btn-group">
                     @{ if (ViewBag.IsNew == "false")
                         {
                             <div class="verlist input-group">
                                 <select id="selected_Ver0" name="selected_Ver" class="form-control selected_Ver selectpicker form-control show-tick" data-live-search="true">
-                                    @{
+                                    @{ 
+                                        @using ExpressBase.Objects.ServiceStack_Artifacts;
                                         List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
                                         Allversions = ViewBag.Allversions;
                                         <option value="Select Version" data-tokens="Select Version">Compare With</option>
@@ -397,6 +373,10 @@
 
     .verlist {
         width: 100px;
+    }
+
+    .inner_toolbar{
+        border
     }
 
     /*differ styles*/

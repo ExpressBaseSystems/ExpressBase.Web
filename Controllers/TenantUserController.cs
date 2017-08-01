@@ -61,6 +61,37 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult dv()
+        {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var rlist = resultlist.Data;
+            Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
+            foreach (var element in rlist)
+            {
+                ObjDSListAll[element.Id] = element;
+            }
+            ViewBag.DSListAll = ObjDSListAll;
+            ViewBag.DSList = ObjDSList;
+            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
+            rlist = resultlist.Data;
+            foreach (var element in rlist)
+            {
+                ObjDVListAll[element.Id] = element.Name;
+            }
+            ViewBag.DVListAll = ObjDVListAll;
+            ViewBag.Obj_id = 0;
+            ViewBag.dsid = 0;
+            ViewBag.tvpref = "{ }";
+            ViewBag.isFromuser = 0;
+
+            return View();
+        }
+
+        [HttpPost]
         public IActionResult dv(int objid)
         {
             var token = Request.Cookies["Token"];
@@ -69,16 +100,23 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.EbConfig = this.EbConfig;
 
             var redisClient = this.EbConfig.GetRedisClient();
-            var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, objid));
-            //var result = JsonConvert.DeserializeObject<Object>(tvpref);
+            //if (ViewBag.wc == "uc")
+            //{
+                var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, objid));
+                //var result = JsonConvert.DeserializeObject<Object>(tvpref);
 
-            Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
-            ViewBag.dsid = _dict["dsId"];
-            ViewBag.dvname = _dict["dvName"];
-            int fdid = Convert.ToInt32(_dict["fdId"]);
-            //var obj = GetByteaEbObjects_json(fdid);
-            ViewBag.FDialog = GetByteaEbObjects_json(fdid);  //(obj.Value as Dictionary<int, EbFilterDialog>)[fdid];
-            //ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
+                Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
+                ViewBag.dsid = _dict["dsId"];
+                ViewBag.dvname = _dict["dvName"];
+                int fdid = Convert.ToInt32(_dict["fdId"]);
+                //var obj = GetByteaEbObjects_json(fdid);
+                ViewBag.FDialog = GetByteaEbObjects_json(fdid);  //(obj.Value as Dictionary<int, EbFilterDialog>)[fdid];
+                                                                 //ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
+            //}
+            //else if(ViewBag.wc == "dc")
+            //{
+
+            //}
             return View();
         }
 

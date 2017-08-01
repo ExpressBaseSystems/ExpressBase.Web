@@ -101,6 +101,21 @@ var EbDataTable = function (settings) {
     this.dragNdrop = false;
     this.flagColumnVisible = false;
 
+    this.start = function () {
+        
+        if($("#datatSourceDropdown"))
+            alert("gjkgjkg");
+        $("#datatSourceDropdown .dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
+    };
+
+    this.setDropdownDatasource = function (e) {
+        $("#loader").show();
+        dsid = $(e.target).parent().attr("data-dsid");
+        $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
+        $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
+        $.post('../Dev/GetColumns', { dsid: this.dsid }, this.getColumnsSuccess.bind(this));
+    };
+
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
             $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify((this.filterValues !== null) ? this.filterValues : this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
@@ -109,15 +124,8 @@ var EbDataTable = function (settings) {
     };
 
     this.getColumnsSuccess = function (data) {
-        //if (this.dtsettings.directLoad !== true)
-        //    this.ebSettings = JSON.parse(data);
-        //else
-        // this.ebSettings.columns = JSON.parse(data).columns;
+        $(".tablecontainer").toggle();
         this.ebSettings = JSON.parse(data);
-
-
-        
-
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
 
@@ -1952,7 +1960,10 @@ var EbDataTable = function (settings) {
         this.getColumns();
     if (this.dtsettings.linktable)
         this.getColumns();
+    this.start();
+    
 };
+
 
 function csv(gdata) {
     //gdata = ["201607:58179.28","201608:66329.35","201609:67591.27","201610:61900.93","201611:38628.72","201612:48536.31","201701:25256.74","201702:0"];

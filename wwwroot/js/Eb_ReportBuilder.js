@@ -23,8 +23,13 @@ var pages = {
 
 var RptBuilder = function (type) {
     this.type = type;
+    this.height = pages[type].height;
+    this.width = pages[type].width;
+
     this.report = new Object();
     this.report.pagetype = type;
+    this.report.pageheight = height;
+    this.report.pagewidth = width;
 
     this.createPage = function (type) {
 

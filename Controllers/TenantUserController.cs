@@ -355,6 +355,64 @@ namespace ExpressBase.Web2.Controllers
             return return_msg;
 
         }
+
+        public string GetSubRoles(int roleid,int applicationid)
+        {
+            string html = string.Empty;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            Dictionary<string, object> Dict = new Dictionary<string, object>();
+            Dict.Add("applicationid", applicationid);
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", id =roleid, Colvalues = Dict , Token = ViewBag.token });
+
+            List<string> subroles = fr.Data["roles"].ToString().Replace("[","").Replace("]","").Split(new char[] { ',' }).ToList();
+
+            foreach (var key in fr.Data.Keys)
+            {
+                if (key != "roles")
+                {
+                    var checkedrole = subroles.Contains(key) ? "checked" : string.Empty;
+                    html += @"
+                <div class='row'>
+                    <div class='col-md-1'>
+                        <input type ='checkbox' @checkedrole name = '@roles' value = '@roleid' aria-label='...'>
+                    </div>
+
+                    <div class='col-md-8'>
+                        <h4 name = 'head4' style='color:black;'>@roles</h4>
+                        <p class='text-justify'>dsgfds dgfrdhg dfhgdrewteberyrt reyhrtu6trujhfg reyer5y54</p>
+                        <h6>
+                            <i style = 'font-style:italic;' > Created by Mr X on 12/09/2017 at 02:00 pm</i>
+                        </h6>
+                    </div>               
+                </div> ".Replace("@roles", fr.Data[key].ToString()).Replace("@roleid", key).Replace("@checkedrole", checkedrole);
+                }
+            }
+            return html;
+        }
+
+
+        public string SubRoles(int [] subrolesid, int roleid)
+        {
+            string html = string.Empty;
+            Dictionary<string, object> Dict = new Dictionary<string, object>();
+            string return_msg;
+            Dict["dependants"] = subrolesid;
+            Dict["roleid"] = roleid;           
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, Token = ViewBag.token, op = "role2role" });
+            if (res.id == 0)
+            {
+                return_msg = "Success";
+            }
+            else
+            {
+                return_msg = "Failed";
+            }
+            return return_msg;
+            return html;
+        }
+
+
     }
 }
 

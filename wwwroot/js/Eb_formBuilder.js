@@ -1,119 +1,77 @@
-﻿var EbControlCollection = function () {
-    this.InnerCollection = [];
+﻿function slideRight(leftDiv, rightDiv) {
+    var $leftDiv = $(leftDiv);
+    var $rightDiv = $(rightDiv);
 
-    this.ToArray = function () {
-        return this.InnerCollection;
-    };
-    this.PopByName = function (_name) {
-        var parentId = $("#" + _name).parent().attr("id");
-        var ele = this.GetByName(_name);
+    $stickBtn = $("<div id='stickBtnR' class='stickBtn' style='right: 0px;' onclick=\"slideRight('" + leftDiv + "', '" + rightDiv + "')\">PropertyBox</div>");
 
-        if (parentId === "form-buider-form")
-            return this.InnerCollection.pop(this.InnerCollection.indexOf(ele));
+    lW = $leftDiv.width();
+    rW = $rightDiv.width();
+    if ($rightDiv.css("display") === "inline-block") {
+        $rightDiv.animate({ width: 0 }, 300);
+        $leftDiv.animate({ width: lW + rW + "px" }, 300);
 
-        var parent = this.GetByName(parentId);
-        return parent.Controls.InnerCollection.pop(parent.Controls.InnerCollection.indexOf(ele));
-    };
-
-    this.AppendIn = function (newObject) {
-        var parentId = $("#" + newObject.Name).parent().attr("id");
-        var parent = this.GetByName(parentId);
-        return parent.Controls.InnerCollection.push(newObject);
-    };
-
-    this.Append = function (newObject) {
-        this.InnerCollection.push(newObject);
-    };
-
-    this.PopByindex = function () {
-
-    };
-
-    this.InsertAt = function (index, newObject) {
-        var parentId = $("#" + newObject.Name).parent().attr("id");
-        if (parentId === "form-buider-form") {
-            this.InnerCollection.splice(index, 0, newObject);
-            return this.InnerCollection.length;
-        }
-        var parent = this.GetByName(parentId);
-        parent.Controls.InnerCollection.splice(index, 0, newObject);
-        return parent.Controls.InnerCollection.length;
-    };
-
-    this.InsertBefore = function (beforeObj, newObject) {
-        this.InnerCollection.splice(this.InnerCollection.indexOf(beforeObj), 0, newObject);
-    };
-
-    this.GetByIndex = function (_index) {
-        return this.InnerCollection[_index];
-    };
-
-    this.Pop = function (_name) {
-        this.InnerCollection.pop();
-    };
-
-    this.GetByName = function (_name) {
-        var retObject = new Object();
-        this.GetByNameInner(_name, this.InnerCollection, retObject);
-        return (retObject.Value) ? retObject.Value : null;
-    };
-
-
-    this.GetByNameInner = function (_name, _collection, retObject) {
-        for (var i = 0; i < _collection.length; i++) {
-            if (_collection[i].Name === _name) {
-                retObject.Value = _collection[i];
-                break;
-            }
-            else {
-                if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0) {
-                    this.GetByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
-                }
-            }
-        }
-    };
-
-    this.DelByName = function (_name) {
-        var retObject = new Object();
-        this.DelByNameInner(_name, this.InnerCollection, retObject);
-        return retObject.Value;
-    };
-
-    this.DelByNameInner = function (_name, _collection, retObject) {
-        for (var i = 0; i < _collection.length; i++) {
-            if (_collection[i].Name === _name) {
-                _collection.splice(i, 1);
-                break;
-            }
-            else {
-                if (_collection[i].IsContainer && _collection[i].Controls.ToArray().length > 0)
-                    this.DelByNameInner(_name, _collection[i].Controls.InnerCollection, retObject);
-            }
-        }
-    };
-
+        setTimeout(function () {
+            $(".form-buider-cont").append($stickBtn);
+            $stickBtn.css({ "right": (0 - ($stickBtn.width() / 2)) + "px", "top": (198 + ($stickBtn.width() / 2)) });
+            $rightDiv.data("width", rW);
+            $rightDiv.hide();
+        }, 301);
+    }
+    else {
+        rW = $rightDiv.data("width");
+        $("#stickBtnR").remove();
+        $rightDiv.show();
+        $rightDiv.animate({ width: rW + "px" }, 300);
+        $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
+    }
 };
 
-var formBuilder = function (toolBoxid, formid) {
+function slideLeft(leftDiv, rightDiv) {
+    var $leftDiv = $(leftDiv);
+    var $rightDiv = $(rightDiv);
+
+    $stickBtn = $("<div id='stickBtnL' class='stickBtn' onclick=\"slideLeft('" + leftDiv + "', '" + rightDiv + "')\">ToolBox</div>");
+
+    lW = $leftDiv.width();
+    rW = $rightDiv.width();
+    if ($rightDiv.css("display") === "inline-block") {
+        $rightDiv.animate({ width: 0 }, 300);
+        $leftDiv.animate({ width: lW + rW + "px" }, 300);
+
+        setTimeout(function () {
+            $(document.body).append($stickBtn);
+            $stickBtn.css({ "left": (0 - ($stickBtn.width() / 2)) + "px", "top": (198 + ($stickBtn.width() / 2)) });
+            $rightDiv.data("width", rW);
+            $rightDiv.hide();
+        }, 301);
+    }
+    else {
+        rW = $rightDiv.data("width");
+        $("#stickBtnL").remove();
+        $rightDiv.show();
+        $rightDiv.animate({ width: rW + "px" }, 300);
+        $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
+    }
+};
+
+var formBuilder = function (toolBoxid, formid, propGridId) {
     this.Name = "form-buider-form";
     this.toolBoxid = toolBoxid;
+    this.formObj = new EbObjects.EbFormObj(formid);
     this.formid = formid;
-    //this.ComboBoxCounter = 0;
-    //this.NumericBoxCounter = 0;
-    //this.DateCounter = 0;
-    //this.ButtonCounter = 0;
-    //this.GridViewCounter = 0;
-    //this.TextBoxCounter = 0;
+    this.$propGrid = $("#" + propGridId);
+
     this.controlCounters = {
         ComboBoxCounter: 0,
         NumericCounter: 0,
         DateCounter: 0,
         ButtonCounter: 0,
         TableLayoutCounter: 0,
-        TextBoxCounter: 0
+        TextBoxCounter: 0,
+        TableTdCounter: 0
     }
+
     this.curControl = null;
-    this.Controls = new EbControlCollection();
     this.drake = null;
     this.PGobj = null;
     // need to change
@@ -128,7 +86,7 @@ var formBuilder = function (toolBoxid, formid) {
         $(".eb-loaderFixed").show();
         $.post("SaveFilterDialog", {
             "Id": 0,
-            "FilterDialogJson": JSON.stringify(this.Controls.ToArray()),
+            "FilterDialogJson": JSON.stringify(this.formObj),
             "Name": $('#save_txtBox').val(),
             "Description": "",
             "isSave": "false",
@@ -149,12 +107,11 @@ var formBuilder = function (toolBoxid, formid) {
     $("#saveformBtn").on("click", this.save.bind(this));
 
     this.CreatePG = function (control) {
+        this.$propGrid.show();
         $('#propGrid').empty();
         setTimeout(this.SetTimeOutFn.bind(this), 1);
-
-        //this.CreatePG(this.Controls.GetByName(this.curControl.attr("id")));
-
-        this.PGobj = new Eb_PropertyGrid("propGrid", this.Controls.GetByName(this.curControl.attr("id")), AllMetas.EbTextBox);
+        console.log("type = " + this.curControl.attr("eb-type"));
+        this.PGobj = new Eb_PropertyGrid("propGrid", this.formObj.Controls.GetByName(this.curControl.attr("id")), AllMetas["Eb" + this.curControl.attr("eb-type")]);
 
         $('.selectpicker').selectpicker('refresh');
 
@@ -167,7 +124,7 @@ var formBuilder = function (toolBoxid, formid) {
     this.saveObj = function () {
         this.PGobj.getvaluesFromPG();
         $('#propGrid').jqPropertyGrid('get');
-        $('#txtValues').val(JSON.stringify(this.Controls) + '\n\n');
+        $('#txtValues').val(JSON.stringify(this.formObj) + '\n\n');
     };
 
     this.SetTimeOutFn = function () {
@@ -187,6 +144,8 @@ var formBuilder = function (toolBoxid, formid) {
     };
 
     this.acceptFn = function (el, target, source, sibling) {
+        //console.log("source:" + source.id);
+        //console.log("target:" + target.id);
         // prevent tool box copy
         if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") === "form-buider-toolBox") {
             return false;
@@ -210,7 +169,7 @@ var formBuilder = function (toolBoxid, formid) {
         var id = this.curControl.attr("id");
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
-        this.CreatePG(this.Controls.GetByName(id));
+        this.CreatePG(this.formObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
         console.log("id=" + id);
         setTimeout(function () {
@@ -232,9 +191,9 @@ var formBuilder = function (toolBoxid, formid) {
 
     this.onDragFn = function (el, source) {
         //if drag start within the form
-        if (!($(source).attr("id") === "form-buider-toolBox")) {
+        if ($(source).attr("id") !== "form-buider-toolBox") {
             console.log("el poped");
-            this.movingObj = this.Controls.PopByName($(el).attr("id"));
+            this.movingObj = this.formObj.Controls.PopByName($(el).attr("id"));
         }
         else
             this.movingObj = null;
@@ -250,57 +209,53 @@ var formBuilder = function (toolBoxid, formid) {
                 if (sibling.attr("id")) {
                     console.log("sibling : " + sibling.id);
                     var idx = sibling.index() - 1;
-                    this.Controls.InsertAt(idx, this.movingObj);
+                    this.formObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
                     console.log("no sibling ");
-                    this.Controls.AppendIn(this.movingObj)
+                    this.formObj.Controls.Append(this.movingObj)
                 }
                 this.saveObj();
+                $(el).on("focus", this.controlOnFocus.bind(this));
             }
 
         }
     }
 
     this.onDropFn = function (el, target, source, sibling) {
-        //drop from toolbox to form
-        if ($(source).attr("id") === "form-buider-toolBox") {
 
-            el.className = 'controlTile';
+        if (target) {
+            //drop from toolbox to form
+            if ($(source).attr("id") === "form-buider-toolBox") {
 
-            var ctrl = $(el);
+                el.className = 'controlTile';
 
-            var type = ctrl.attr("eb-type").trim();
+                var ctrl = $(el);
 
-            var id = (type + (this.controlCounters[type + "Counter"])++);
+                var type = ctrl.attr("eb-type").trim();
 
-            ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+                var id = (type + (this.controlCounters[type + "Counter"])++);
 
-            ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+                ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
 
-            ctrl.attr("ebtype", type).attr("id", id);
+                ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
 
+                ctrl.attr("ebtype", type).attr("id", id);
 
-            console.log("target" + $(target).attr('id'));
+                this.formObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
 
-            if ($(target).attr("id") === "form-buider-form")
-                this.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+                ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
+
+                $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
+
+                $('.selectpicker').selectpicker('refresh');
+
+                ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+            }
             else
-                this.Controls.GetByName($(target).attr('id')).Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
-
-            //eval("this.Controls.GetByName($(target).attr('id')).Controls.Append(new Eb" + type + "Obj(id))");
-
-            ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
-
-            $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
-
-            $('.selectpicker').selectpicker('refresh');
-
-            ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+                console.log("ondrop else : removed");
+            this.saveObj();
         }
-        else
-            console.log("ondrop else : removed");
-        this.saveObj();
     };
 
     this.getHtml = function (el, id, type) {
@@ -317,7 +272,7 @@ var formBuilder = function (toolBoxid, formid) {
             _html = "<div class='btn btn-default'>Button</div>";
         else if (type === "TableLayout")
             _html = "<table style='width:100%'><tr><td id='" + id + "_Td0' class='tdDropable' ></td> <td id='" + id + "_Td1' class='tdDropable'></td style='min-height:20px;'> </tr></table>";
-        return _html
+        return _html;
     };
 
     this.controlCloseOnClick = function (e) {
@@ -326,7 +281,8 @@ var formBuilder = function (toolBoxid, formid) {
         $("#SelOpt" + id).remove();
         $('.selectpicker').selectpicker('refresh');
         ControlTile.remove();
-        this.Controls.DelByName(id);
+        this.formObj.Controls.DelByName(id);
+        this.$propGrid.hide();
         e.preventDefault();
         this.saveObj();
     };
@@ -365,7 +321,7 @@ var formBuilder = function (toolBoxid, formid) {
         var id = this.curControl.attr("id");
         var curTr = this.curControl.children().children().children();
         var noOfTds = curTr.children().length;
-        this.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
+        this.formObj.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
         curTr.append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'> </td>");
         this.makeTdsDropable.bind(this);
         this.CurColCount = $(e.target).val();//tmp
@@ -374,7 +330,7 @@ var formBuilder = function (toolBoxid, formid) {
     this.removeTd = function (e) {
         var id = this.curControl.attr("id");
         var noOfTds = this.curControl.children().children().children().children().length;
-        this.Controls.GetByName(id).Controls.Pop();
+        this.formObj.Controls.GetByName(id).Controls.Pop();
         this.curControl.find("tr").find("td").last().remove();
         this.makeTdsDropable.bind(this);
         this.CurColCount = $(e.target).val();//tmp
@@ -387,9 +343,9 @@ var formBuilder = function (toolBoxid, formid) {
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
             removeOnSpill: false,
-            copy: function (el, source) { return (source.className !== 'tdDropable' && source.className !== 'form-buider-form'); },
+            copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
             copySortSource: true,
-            mirrorContainer: document.getElementById('form-buider-form'),
+            //mirrorContainer: document.getElementById('form-buider-form'),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });

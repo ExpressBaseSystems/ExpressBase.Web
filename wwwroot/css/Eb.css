@@ -165,7 +165,7 @@
 }
 
 .eb-loaderFixed {
-    display:none;
+    display: none;
     position: fixed;
     width: 100%;
     margin-top: 35vh;
@@ -302,6 +302,8 @@
 
 .pgGroupRow {
     background-color: #dddddd !important;
+    border-bottom: solid 2px white;
+    border-top: solid 2px white;
 }
 
 /*.dataTables_scrollBody {

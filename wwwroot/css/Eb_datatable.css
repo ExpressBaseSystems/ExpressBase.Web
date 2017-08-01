@@ -1,19 +1,56 @@
 ﻿.tablecontainer {
-    width:100%;
-    height:auto;
-    display:inline-block;
-    padding:1px;
+    width: 100%;
+    height: auto;
+    display: inline-block;
+    padding: 1px;
 }
+
 .loadingdiv {
-    vertical-align:middle;
+    vertical-align: middle;
     margin: 5% 50%;
     display: none;
 }
-.numericcol{
-    float:right;
+
+.numericcol {
+    float: right;
 }
+
 .toolbar {
-    float:left;
+    float: left;
+}
+
+.Displaycols {
+    margin: 3px 6px;
+    border: solid 2px #dddddd;
+    padding: 1px 5px;
+    display: inline-block;
+    width: auto;
+}
+.Displaycols:focus{
+    background-color:aquamarine;
+}
+
+.colCont {
+    border: 1px solid;
+    width: 99%;
+    height: auto;
+    min-height: 30px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.Delcols {
+    margin: 3px;
+    border: solid 2px #dddddd;
+    padding: 5px 5px;
+}
+
+
+.tmp {
+    border: 1px solid;
+    width: 99%;
+    height: 50px;
+    display: inline-block;
 }
 
 #@tableId th.resizing {
@@ -21,86 +58,138 @@
 }
 
 td.resizer {
-  position: absolute;
-  top: 0;
-  right: -8px;
-  bottom: 0;
-  left: auto;
-  width: 16px;    
-  cursor: e-resize;   
-    background-color:red;    
+    position: absolute;
+    top: 0;
+    right: -8px;
+    bottom: 0;
+    left: auto;
+    width: 16px;
+    cursor: e-resize;
+    background-color: red;
 }
 
-.dataTables_scrollHead {padding-bottom: 250px; margin-bottom: -250px;}
-.dataTables_scrollFoot{padding-bottom: 250px; margin-bottom: -250px;}
-.dataTables_processing {margin-top: 30%!important;
-    z-index: 1!important;
-}
-.DTFC_LeftHeadWrapper{z-index: 150;}
-.DTFC_LeftBodyWrapper{z-index: 100;}
-.DTFC_LeftFootWrapper{z-index: 150;}
-.DTFC_RightHeadWrapper{z-index: 150;}
-.DTFC_RightBodyWrapper{z-index: 100;}
-.DTFC_RightFootWrapper{z-index: 150;}
-.linepadding{
-padding:0px!important;
+.dataTables_scrollHead {
+    padding-bottom: 250px;
+    margin-bottom: -250px;
 }
 
-.dt-right {text-align: right;}
+.dataTables_scrollFoot {
+    padding-bottom: 250px;
+    margin-bottom: -250px;
+}
+
+.dataTables_processing { /*margin-top: 30%!important;*/
+    z-index: 1 !important;
+}
+
+.DTFC_LeftHeadWrapper {
+    z-index: 150;
+}
+
+.DTFC_LeftBodyWrapper {
+    z-index: 100;
+}
+
+.DTFC_LeftFootWrapper {
+    z-index: 150;
+}
+
+.DTFC_RightHeadWrapper {
+    z-index: 150;
+}
+
+.DTFC_RightBodyWrapper {
+    z-index: 100;
+}
+
+.DTFC_RightFootWrapper {
+    z-index: 150;
+}
+
+.linepadding {
+    padding: 0px !important;
+}
+
+.dt-right {
+    text-align: right;
+}
+
 .dt-buttons {
-    visibility:hidden;
+    visibility: hidden;
     height: 9px;
 }
-th { font-size: 14px; }
-td { font-size: 12px; }
+
+th {
+    font-size: 14px;
+}
+
+td {
+    font-size: 12px;
+}
+
 .progress {
     margin-bottom: 0px !important;
 }
+
 .hideme {
-  display:none;
+    display: none;
 }
- 
-.tdheight{
-height:15px; 
-white-space: nowrap;
+
+.tdheight {
+    height: 15px;
+    white-space: nowrap;
 }
+
 table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected {
     color: #090808;
 }
+
 .eb_finput {
- width: auto !important;
+    width: auto !important;
 }
 
-.columnDrag{
+.columnDrag {
     margin: 0px 2px;
     padding: 2px 5px;
-    width: auto; 
+    width: auto;
     height: 25px;
     margin-top: 2px;
 }
 
-.noPadding{
-    padding-right: 0px!important;
-    padding-left: 0px!important;
+.noPadding {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
 }
 
-.Btnpaginate{
+.Btnpaginate {
     float: right;
 }
-.Btninfo{
+
+.Btninfo {
     margin-top: 2px;
 }
-div.dataTables_wrapper div.dataTables_length label{
+
+div.dataTables_wrapper div.dataTables_length label {
     margin-top: 2px;
 }
+
 div.dataTables_wrapper div.dataTables_length select {
-    height: 34px!important; 
-    padding-top: 7px!important;
+    height: 34px !important;
+    padding-top: 7px !important;
 }
+
 div.dataTables_wrapper div.dataTables_info {
     padding-top: 1px;
     padding-left: 3px;
     padding-right: 3px;
 }
-    
 
+div.dataTables_wrapper div.dataTables_processing {
+    margin-left: 0px;
+    margin-top: 0px;
+    position: fixed;
+}
+
+.dataTables_scrollHeadInner {
+    width: 100% !important;
+}

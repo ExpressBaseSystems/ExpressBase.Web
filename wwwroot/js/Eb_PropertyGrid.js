@@ -42,7 +42,6 @@ var Eb_PropertyGrid = function (id, props, metas) {
 
             this.PropsObj[prop] = this.getValueFuncs[prop]();
         }
-        console.log(" 4");
         return this.PropsObj;
     };
 
@@ -73,7 +72,7 @@ var Eb_PropertyGrid = function (id, props, metas) {
             valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
 
             if (this.getValueFuncs)
-                this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
+                this.getValueFuncs[name] = function () { return ($('#' + elemId).val()==="") ? "":parseInt($('#' + elemId).val()); };
 
             // If color use color picker 
         } else if (type === 3) {
@@ -99,9 +98,10 @@ var Eb_PropertyGrid = function (id, props, metas) {
         }
 
         if (meta.colspan2) {
-            return '<tr class="pgRow"><td colspan="2" class="pgCell">' + valueHTML + '</td></tr>';
+            return '<tr class="pgRow"><td colspan="2" group="' + valueHTML + '" class="pgCell">' + valueHTML + '</td></tr>';
+            this.currGroup = valueHTML;
         } else {
-            return '<tr class="pgRow"><td class="pgCell">' + name + '</td><td class="pgCell">' + valueHTML + '</td></tr>';
+            return '<tr class="pgRow" group="' + this.currGroup + '"><td class="pgCell">' + name + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
         }
     };
 
@@ -123,7 +123,8 @@ var Eb_PropertyGrid = function (id, props, metas) {
     };
 
     this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell">' + displayName + '</td></tr>';
+        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName+']\').slideToggle(250);">' + displayName
+            + '<span class="bs-caret" style="float: right;margin-right: 15px;"><span class="caret"></span></span></td></tr>';
     };
 
     this.isContains = function (obj, val) {
@@ -139,8 +140,6 @@ var Eb_PropertyGrid = function (id, props, metas) {
         // Call the post init functions 
         for (var prop in this.postCreateInitFuncs) {
             if (typeof this.postCreateInitFuncs[prop] === 'function') {
-
-                console.log("CallpostinitFns of-" + prop);
                 this.postCreateInitFuncs[prop]();
                 // just in case make sure we are not holding any reference to the functions
                 this.postCreateInitFuncs[prop] = null;
@@ -170,10 +169,7 @@ var Eb_PropertyGrid = function (id, props, metas) {
         $("#" + id + ' .selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();
             $(this).parent().siblings("input").val(selected);
-            ///////////////////////////////////////////////////////////////////////////////////////////////////
         });
-
-        console.log(" 2");
         return true;
     };
 
@@ -198,7 +194,6 @@ var Eb_PropertyGrid = function (id, props, metas) {
             this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop)], (this.Metas[this.propNames.indexOf(prop)]).options);
 
         }
-        console.log(" 1");
         return true;
     };
 

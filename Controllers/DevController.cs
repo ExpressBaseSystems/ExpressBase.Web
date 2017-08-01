@@ -18,6 +18,7 @@ using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 using System.Text;
 using ExpressBase.Objects.Objects;
+using Newtonsoft.Json;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -165,18 +166,18 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Allversions = GetVersions(obj_id);
             return View();
         }
-        
+
         public Dictionary<int, EbObjectWrapper> GetObjects(int obj_type)
         {
-            IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken); 
-                var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, Token = ViewBag.token });
-                var fdrlist = fdresultlist.Data;
-                Dictionary<int, EbObjectWrapper> objects_dict = new Dictionary<int, EbObjectWrapper>();
-                foreach (var element in fdrlist)
-                {
+            IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, Token = ViewBag.token });
+            var fdrlist = fdresultlist.Data;
+            Dictionary<int, EbObjectWrapper> objects_dict = new Dictionary<int, EbObjectWrapper>();
+            foreach (var element in fdrlist)
+            {
                 objects_dict[element.Id] = element;
-                }
-                return objects_dict;
+            }
+            return objects_dict;
         }
         public List<string> Getsqlfns(int obj_type)
         {
@@ -202,7 +203,7 @@ namespace ExpressBase.Web.Controllers
         public JsonResult CommitEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
-            var _dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
+            var _dict = ServiceStack.Text.JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectSaveOrCommitRequest();
             var bytes = Convert.FromBase64String(_dict["code"]);
@@ -223,13 +224,13 @@ namespace ExpressBase.Web.Controllers
                     Sql = code_decoded,
                     ChangeLog = ds.ChangeLog,
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
+                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
                 });
             }
 
             if (_EbObjectType == EbObjectType.SqlFunction)
             {
-               // ds.NeedRun = req["NeedRun"];
+                // ds.NeedRun = req["NeedRun"];
                 ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbSqlFunction
                 {
                     Name = _dict["name"],
@@ -237,10 +238,13 @@ namespace ExpressBase.Web.Controllers
                     Sql = code_decoded,
                     ChangeLog = ds.ChangeLog,
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(_dict["filterDialogId"])
+                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
                 });
             }
-            _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
+            if (_dict["filterDialogId"].ToString() != "Select Filter Dialog")
+            {
+                _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
+            }
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = _dict["changeLog"];
@@ -276,7 +280,8 @@ namespace ExpressBase.Web.Controllers
                     Description = req["Description"],
                     Sql = req["Code"],
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(req["FilterDialogId"])
+                    FilterDialogId = (req["FilterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(req["FilterDialogId"])
+
                 });
             }
             if (_EbObjectType == EbObjectType.SqlFunction)
@@ -288,7 +293,7 @@ namespace ExpressBase.Web.Controllers
                     Description = req["Description"],
                     Sql = req["Code"],
                     EbObjectType = _EbObjectType,
-                    FilterDialogId = Convert.ToInt32(req["FilterDialogId"])
+                    FilterDialogId = (req["FilterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(req["FilterDialogId"])
                 });
             }
 
@@ -355,30 +360,40 @@ namespace ExpressBase.Web.Controllers
             });
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
-            ds.Relations =null;
+            ds.Relations = null;
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return CurrSaveId.Id;
         }
 
-        public JsonResult GetByteaEbObjects_json()
+        public string GetByteaEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
-            foreach (var element in rlist)
+            var rlist = resultlist.Data[0];
+            string _html = "";
+            string _head = "";
+            var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
+            string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
+                filterForm.FilterDialogJson + "}";
+            try
             {
-                if (element.EbObjectType.ToString() == "FilterDialog")
+                var ControlColl = JsonConvert.DeserializeObject(xjson,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as List<EbControl>;
+                if (filterForm != null)
                 {
-                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
-                    dsobj.EbObjectType = element.EbObjectType;
-                    dsobj.Id = element.Id;
-                    ObjList[element.Id] = dsobj;
+                    _html = @"<div style='margin-top:10px;' id='filterBox'>";
+                    foreach (EbControl c in ControlColl)
+                    {
+                        _html += c.GetHtml();
+                        _head += c.GetHead();
+                    }
+                    _html += @"</div>";
                 }
             }
+            catch (Exception e) { }
+            return _html + "<script>" + _head + "</script>";
 
-            return Json(ObjList);
         }
 
         public string GetColumns4Trial(int dsid, string parameter)
@@ -527,7 +542,7 @@ namespace ExpressBase.Web.Controllers
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
-            redis.Remove(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
+            //redis.Remove(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
             DataSourceColumnsResponse columnresp = redis.Get<DataSourceColumnsResponse>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
             if (columnresp == null || columnresp.IsNull)
                 columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { Id = dsid, Token = ViewBag.token });
@@ -538,10 +553,11 @@ namespace ExpressBase.Web.Controllers
 
         private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid, int fdid, bool isPaged)
         {
+            var i = 0;
             string colDef = string.Empty;
             colDef = "{\"dsId\":" + dsid + ",\"fdId\":" + fdid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
-            colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"IsPaged\":"+ isPaged.ToString().ToLower() + ",\"columns\":[";
-            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\",\"type\":\"System.Int64\"},";
+            colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"IsPaged\":" + isPaged.ToString().ToLower() + ",\"columns\":[";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":false, \"name\":\"serial\", \"title\":\"#\",\"type\":\"System.Int64\"},";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\",\"type\":\"System.Boolean\"},";
             foreach (EbDataColumn column in __columnCollection)
             {
@@ -549,12 +565,13 @@ namespace ExpressBase.Web.Controllers
                 colDef += "\"data\": " + __columnCollection[column.ColumnName].ColumnIndex.ToString();
                 colDef += string.Format(",\"title\": \"{0}<span hidden>{0}</span>\"", column.ColumnName);
                 var vis = (column.ColumnName == "id") ? false.ToString().ToLower() : true.ToString().ToLower();
-                colDef += ",\"visible\": " + vis;
+                colDef += ",\"visible\": " + false.ToString().ToLower();
                 colDef += ",\"width\": \"100px\"";
                 colDef += ",\"name\": \"" + column.ColumnName + "\"";
                 colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
                 var cls = (column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int64") ? "dt-right tdheight" : "tdheight";
                 colDef += ",\"className\": \"" + cls + "\"";
+                colDef += ",\"pos\": \"" + ( __columnCollection.Count + 100).ToString() + "\"";
                 colDef += "},";
             }
             colDef = colDef.Substring(0, colDef.Length - 1) + "],";
@@ -577,7 +594,7 @@ namespace ExpressBase.Web.Controllers
             colext = colext.Substring(0, colext.Length - 1) + "]";
             return colDef + colext + "}";
         }
-       
+
         public JsonResult SaveSettings(int dsid, string json, int dvid)
         {
 
@@ -682,7 +699,7 @@ namespace ExpressBase.Web.Controllers
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 
 
-        var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)type, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)type, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
 
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();

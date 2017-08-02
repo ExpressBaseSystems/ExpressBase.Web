@@ -425,7 +425,7 @@ namespace ExpressBase.Web2.Controllers
                     html += @"
                 <div class='row'>
                     <div class='col-md-1'>
-                        <input type ='checkbox' @cheched name ='@users' value = '@userid' aria-label='...'>
+                        <input type ='checkbox' @checked name ='@users' value = '@userid' aria-label='...'>
                     </div>
 
                     <div class='col-md-8'>
@@ -455,7 +455,7 @@ namespace ExpressBase.Web2.Controllers
                 return_msg = "Failed";
             }
             return return_msg;
-            return html;
+           
         }
 
 

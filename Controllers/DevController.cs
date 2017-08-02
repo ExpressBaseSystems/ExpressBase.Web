@@ -86,7 +86,9 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.IsNew = "false";
                 //if (obj_type == ExpressBase.Objects.EbObjectType.DataSource)
                 //{
-                var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                //  var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                var dsobj = JsonConvert.DeserializeObject<EbDataSource>(element.Json);
+
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
                 ViewBag.Code = dsobj.Sql;
@@ -219,6 +221,15 @@ namespace ExpressBase.Web.Controllers
             if (_EbObjectType == EbObjectType.DataSource)
             {
                 ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
+                {
+                    Name = _dict["name"],
+                    Description = _dict["description"],
+                    Sql = code_decoded,
+                    ChangeLog = ds.ChangeLog,
+                    EbObjectType = _EbObjectType,
+                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
+                });
+                ds.Json = JsonConvert.SerializeObject(new EbDataSource
                 {
                     Name = _dict["name"],
                     Description = _dict["description"],

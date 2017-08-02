@@ -1,60 +1,4 @@
-﻿function slideRight(leftDiv, rightDiv) {
-    var $leftDiv = $(leftDiv);
-    var $rightDiv = $(rightDiv);
-
-    $stickBtn = $("<div id='stickBtnR' class='stickBtn' style='right: 0px;' onclick=\"slideRight('" + leftDiv + "', '" + rightDiv + "')\">PropertyBox</div>");
-
-    lW = $leftDiv.width();
-    rW = $rightDiv.width();
-    if ($rightDiv.css("display") === "inline-block") {
-        $rightDiv.animate({ width: 0 }, 300);
-        $leftDiv.animate({ width: lW + rW + "px" }, 300);
-
-        setTimeout(function () {
-            $(".form-buider-cont").append($stickBtn);
-            $stickBtn.css({ "right": (0 - ($stickBtn.width() / 2)) + "px", "top": (198 + ($stickBtn.width() / 2)) });
-            $rightDiv.data("width", rW);
-            $rightDiv.hide();
-        }, 301);
-    }
-    else {
-        rW = $rightDiv.data("width");
-        $("#stickBtnR").remove();
-        $rightDiv.show();
-        $rightDiv.animate({ width: rW + "px" }, 300);
-        $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
-    }
-};
-
-function slideLeft(leftDiv, rightDiv) {
-    var $leftDiv = $(leftDiv);
-    var $rightDiv = $(rightDiv);
-
-    $stickBtn = $("<div id='stickBtnL' class='stickBtn' onclick=\"slideLeft('" + leftDiv + "', '" + rightDiv + "')\">ToolBox</div>");
-
-    lW = $leftDiv.width();
-    rW = $rightDiv.width();
-    if ($rightDiv.css("display") === "inline-block") {
-        $rightDiv.animate({ width: 0 }, 300);
-        $leftDiv.animate({ width: lW + rW + "px" }, 300);
-
-        setTimeout(function () {
-            $(document.body).append($stickBtn);
-            $stickBtn.css({ "left": (0 - ($stickBtn.width() / 2)) + "px", "top": (198 + ($stickBtn.width() / 2)) });
-            $rightDiv.data("width", rW);
-            $rightDiv.hide();
-        }, 301);
-    }
-    else {
-        rW = $rightDiv.data("width");
-        $("#stickBtnL").remove();
-        $rightDiv.show();
-        $rightDiv.animate({ width: rW + "px" }, 300);
-        $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
-    }
-};
-
-var formBuilder = function (toolBoxid, formid, propGridId) {
+﻿var formBuilder = function (toolBoxid, formid, propGridId) {
     this.Name = "form-buider-form";
     this.toolBoxid = toolBoxid;
     this.formObj = new EbObjects.EbFormObj(formid);
@@ -83,6 +27,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
     this.save = function () {
         if ($('#save_txtBox').val().trim() === '')
             return false;
+        this.saveObj();
         $(".eb-loaderFixed").show();
         $.post("SaveFilterDialog", {
             "Id": 0,
@@ -107,35 +52,30 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
     $("#saveformBtn").on("click", this.save.bind(this));
 
     this.CreatePG = function (control) {
+
+        console.log("CreatePG called for:" + control.Name)
+
         this.$propGrid.show();
+
         $('#propGrid').empty();
-        setTimeout(this.SetTimeOutFn.bind(this), 1);
-        console.log("type = " + this.curControl.attr("eb-type"));
-        this.PGobj = new Eb_PropertyGrid("propGrid", this.formObj.Controls.GetByName(this.curControl.attr("id")), AllMetas["Eb" + this.curControl.attr("eb-type")]);
+
+        $('#form-buider-propGrid').css("visibility", "visible");
+
+        this.PGobj = new Eb_PropertyGrid("propGrid", control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
 
         $('.selectpicker').selectpicker('refresh');
 
-        $('.selectpicker').on('change', function (e) {
-            var selected = $(this).find("option:selected").val();
-            $("#" + selected).focus();
-        });
+        $('#propGrid table td').find("input").change(this.PGinputChange.bind(this));
     };
 
     this.saveObj = function () {
         this.PGobj.getvaluesFromPG();
-        $('#propGrid').jqPropertyGrid('get');
-        $('#txtValues').val(JSON.stringify(this.formObj) + '\n\n');
-    };
-
-    this.SetTimeOutFn = function () {
-        $('#form-buider-propGrid').css("visibility", "visible");
-        $('#propGrid table td').find("input").change(this.PGinputChange.bind(this));
+        // $('#propGrid').jqPropertyGrid('get');
     };
 
     this.PGinputChange = function (e) {
         this.currentProperty = $(e.target);
         this.updateHTML(e);
-        this.saveObj();
     };
 
     this.movesfn = function (el, source, handle, sibling) {
@@ -171,10 +111,7 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
         this.curControl.children('.ctrlHead').show();
         this.CreatePG(this.formObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
-        console.log("id=" + id);
-        setTimeout(function () {
-            $(".controls-dd-cont .selectpicker").selectpicker('val', id);
-        }, 10);
+        $(".controls-dd-cont .selectpicker").selectpicker('val', id);
     };
 
     this.makeTdsDropable = function () {
@@ -353,6 +290,8 @@ var formBuilder = function (toolBoxid, formid, propGridId) {
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
+
+        $('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
     };
 
     this.Init();

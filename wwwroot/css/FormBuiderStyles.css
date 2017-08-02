@@ -128,6 +128,11 @@
     transform: rotate(90deg);
 }
 
+    .stickBtn:active {
+        color: #ccc;
+        background-color: #333;
+    }
+
 
 .property-grid-cont {
     width: 20%;
@@ -146,7 +151,7 @@
     display: inline-block;
     background-color: white;
     padding: 3px;
-    overflow-y: hidden;
+    overflow-y: auto;
     border: solid 1px #dddddd;
     vertical-align: top;
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
@@ -193,8 +198,35 @@
         border: 1px solid rgba(34,36,38,.15);
     }
 
+.pgGroupCell {
+    padding: 2px;
+}
+
 .property-grid-cont .btn:first-child {
     height: 25px;
     padding: 2px;
     border: 1px solid rgba(34,36,38,.08);
+}
+
+/*rendering*/
+.form-render-table {
+    width: 100%;
+    padding: 1px;
+    table-layout: fixed;
+}
+
+.form-render-table-Td {
+    width: 100%;
+    vertical-align: top;
+    padding: 1px;
+}
+
+.Eb-ctrlContainer {
+    min-height: 66px;
+    border: 1px solid rgba(34,36,38,.08);
+}
+
+/*overriding*/
+.property-grid-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 100%;
 }

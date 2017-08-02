@@ -375,24 +375,23 @@ namespace ExpressBase.Web.Controllers
             string _html = "";
             string _head = "";
             var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
-            string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
-                filterForm.FilterDialogJson + "}";
+            //string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
+            //    filterForm.FilterDialogJson + "}";
             try
             {
-                var ControlColl = JsonConvert.DeserializeObject(xjson,
-                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as List<EbControl>;
+                var _form = JsonConvert.DeserializeObject(filterForm.FilterDialogJson,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as EbForm;
                 if (filterForm != null)
                 {
                     _html = @"<div style='margin-top:10px;' id='filterBox'>";
-                    foreach (EbControl c in ControlColl)
-                    {
-                        _html += c.GetHtml();
-                        _head += c.GetHead();
-                    }
+                    _html += _form.GetHtml();
+                    _head += _form.GetHead();
                     _html += @"</div>";
                 }
             }
-            catch (Exception e) { }
+            catch (Exception e)
+            {
+            }
             return _html + "<script>" + _head + "</script>";
 
         }

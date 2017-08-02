@@ -20,9 +20,10 @@
 <script src='~/js/Eb_formBuilder.js'></script>
 <script src='~/js/jqPropertyGrid.js'></script>
 <script src='~/js/Eb_PropertyGrid.js'></script>
+<script type="text/javascript" src="~/js/Eb_UtilityFuncions.js"></script>
 
-@{ 
-    //Layout = "~/Views/Shared/_Layout1.cshtml";
+@{
+//Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
@@ -77,9 +78,7 @@
 <style>
     /*overridding*/
 
-    .property-grid-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-        width: 100%;
-    }
+    
 
     .property-grid-cont .sp-preview {
         width: calc(100% - 15px) !important;
@@ -89,11 +88,6 @@
     .property-grid-cont .sp-replacer {
         width: 100% !important;
         padding: 2px;
-    }
-
-    .property-grid-cont .pgGroupCell {
-        padding: 2px !important;
-        font-weight: normal !important;
     }
 
     .property-grid-cont .btn:first-child {

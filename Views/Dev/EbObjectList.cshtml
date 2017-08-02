@@ -2,38 +2,38 @@
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 
 @{
-    if (ViewBag.isAjaxCall)
-    {
-        Layout = null;
-    }
-    else
-    {
-        Layout = "~/Views/Shared/_Layout1.cshtml";
-    }
-    Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
-    var ObjectType = ViewBag.EbObjectType;
-    string editor = null;
-    string whichController = null;
-    if (ObjectType == (int)EbObjectType.DataSource)
-    {
-        editor = "code_editor";
-        whichController = "Dev";
-    }
-    else if (ObjectType == (int)EbObjectType.DataVisualization)
-    {
-        if(ViewBag.wc == "dc")
-        {
-            editor = "DVEditor";
-            whichController = "Dev";
+                if (ViewBag.isAjaxCall)
+                {
+                    Layout = null;
+                }
+                else
+                {
+                    Layout = "~/Views/Shared/_Layout1.cshtml";
+                }
+                Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
+                var ObjectType = ViewBag.EbObjectType;
+                string editor = null;
+                string whichController = null;
+                if (ObjectType == (int)EbObjectType.DataSource)
+                {
+                    editor = "code_editor";
+                    whichController = "Dev";
+                }
+                else if (ObjectType == (int)EbObjectType.DataVisualization)
+                {
+                    //if(ViewBag.wc == "dc")
+                    //{
+                    //    editor = "DVEditor";
+                    //    whichController = "Dev";
 
-        }
-        else
-        {
-            editor = "dv";
-            whichController = "TenantUser";
-        }
+                    //}
+                    //else
+                    //{
+                    editor = "dv";
+                    whichController = "TenantUser";
+                //}
 
-    }
+            }
     else if (ObjectType == (int)EbObjectType.Application)
     {
         editor = "CreateApplication";
@@ -63,7 +63,7 @@
 <script>
     $('#impexp').next().css("display", "inline-block");
 </script>
-<div class="row">
+<div class="row" id="topmenu" style="">
     <div class="form-inline">
         <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
         @if (ViewBag.wc == "dc")

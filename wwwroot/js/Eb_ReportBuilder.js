@@ -21,10 +21,22 @@ var pages = {
     },
 };
 
+var sub = function (name,index,height) {
+    this.className = name;
+    this.index =index;
+    this.height =height;
+};
+
 var RptBuilder = function (type) {
     this.type = type;
+    this.height = pages[type].height;
+    this.width = pages[type].width;
+
     this.report = new Object();
     this.report.pagetype = type;
+    this.report.pageheight = height;
+    this.report.pagewidth = width;
+    this.report.sections = [];
 
     this.createPage = function (type) {
 
@@ -32,6 +44,7 @@ var RptBuilder = function (type) {
         $pageCanvas.empty();
         $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
         $pageCanvas.append("<div class='ruler'></div> <div class='rulerleft'></div><div id='PageContainer' style='margin-top:4px;'></div>");
+
         this.splitheaderBox();
 
         if (pages[type].width > "21cm") {
@@ -51,6 +64,12 @@ var RptBuilder = function (type) {
         $headersection = $("<div class='headersections' style='height:" + pages[type].height + ";'></div>");
         $("#PageContainer").append($headersection);
         $("#PageContainer").append("<div class='multiSplit' style='height:" + pages[type].height + ";'></div>");
+
+        for (var i = 0; i < 5; i++) {
+           
+            $(".multiSplit").append("<div class='multiSplitHbox' id='box" + i + "' style='width:100%'></div>");
+
+        }
         
     };
 
@@ -102,8 +121,8 @@ var RptBuilder = function (type) {
 
     this.pageSplitters = function ($pageref) {
 
-        $pageref.append("<div class='rpthead' style='width :100%'></div>");
-
+        $pageref.append("<div class='rpthead' style='width :100%'></div>");      
+        
         $pageref.append("<div class='pghead' style='width :100%'></div>");
 
         $pageref.append("<div class='pgbody' style='width :100%'></div>");
@@ -112,6 +131,10 @@ var RptBuilder = function (type) {
 
         $pageref.append("<div class='rptfooter' style='width :100%'></div>");
 
+        $pageref.children().not(".gutter").each(function () {
+            var classname = $(this).attr("class");
+            report.sections.push(new sub(classname, $(this).index(), $(this).height()));
+        });
     };
 
     this.splitButton = function () {
@@ -120,8 +143,8 @@ var RptBuilder = function (type) {
         });
 
         $('.headersections').children().children("button").off("click").on("click", function (e) {
-            var btindex = $(this).index();
-            console.log($(this).index());
+            var btindex = $(this).parent().not(".gutter").index();
+            console.log(btindex);
             //this.multiSplit(btindex);
         });
     };
@@ -139,11 +162,11 @@ var RptBuilder = function (type) {
             minSize: 0,
             gutterSize: 3,
             onDrag: function (e) {
-                $('.rptheadHbox').css("height", $('.rpthead').height());
-                $('.pgheadHbox').css("height", $('.pghead').height());
-                $('.pgbodyHbox').css("height", $('.pgbody').height());
-                $('.pgfooterHbox').css("height", $('.pgfooter').height());
-                $('.rptfooterHbox').css("height", $('.rptfooter').height());
+                $('#box0,.rptheadHbox').css("height", $('.rpthead').height());
+                $('#box1,.pgheadHbox').css("height", $('.pghead').height());
+                $('#box2,.pgbodyHbox').css("height", $('.pgbody').height());
+                $('#box3,.pgfooterHbox').css("height", $('.pgfooter').height());
+                $('#box4,.rptfooterHbox').css("height", $('.rptfooter').height());
             }
         });
 
@@ -155,6 +178,13 @@ var RptBuilder = function (type) {
             gutterSize: 3,         
         });
 
+        Split(['#box0', '#box1', '#box2', '#box3', '#box4'], {
+            direction: 'vertical',
+            cursor: 'row-resize',
+            sizes: [10, 10, 60, 10, 10],
+            minSize: 0,
+            gutterSize: 3,
+        });
     };
 
     this.init = function () {

@@ -168,7 +168,7 @@ var Split = function (ids, options) {
 
         // eslint-disable-next-line no-param-reassign
         Object.keys(style).forEach(function (prop) { return (el.style[prop] = style[prop]); });
-        console.log("size1:" + size);
+        //console.log("size1:" + size);
      
     }
     

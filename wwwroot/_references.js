@@ -21,6 +21,7 @@
 /// <reference path="js/eb_reportbuilder.js" />
 /// <reference path="js/eb_select.js" />
 /// <reference path="js/eb_selectreff.js" />
+/// <reference path="js/eb_utilityfuncions.js" />
 /// <reference path="js/eb_validations.js" />
 /// <reference path="js/ebdatatable.js" />
 /// <reference path="js/elementqueries.js" />

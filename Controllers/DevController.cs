@@ -86,7 +86,9 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.IsNew = "false";
                 //if (obj_type == ExpressBase.Objects.EbObjectType.DataSource)
                 //{
-                var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                //  var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                var dsobj = JsonConvert.DeserializeObject<EbDataSource>(element.Json);
+
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
                 ViewBag.Code = dsobj.Sql;
@@ -103,7 +105,7 @@ namespace ExpressBase.Web.Controllers
 
                 //}
             }
-            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+            //ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.Allversions = GetVersions(obj_id);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
@@ -219,6 +221,15 @@ namespace ExpressBase.Web.Controllers
             if (_EbObjectType == EbObjectType.DataSource)
             {
                 ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
+                {
+                    Name = _dict["name"],
+                    Description = _dict["description"],
+                    Sql = code_decoded,
+                    ChangeLog = ds.ChangeLog,
+                    EbObjectType = _EbObjectType,
+                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
+                });
+                ds.Json = JsonConvert.SerializeObject(new EbDataSource
                 {
                     Name = _dict["name"],
                     Description = _dict["description"],
@@ -375,24 +386,23 @@ namespace ExpressBase.Web.Controllers
             string _html = "";
             string _head = "";
             var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
-            string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
-                filterForm.FilterDialogJson + "}";
+            //string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
+            //    filterForm.FilterDialogJson + "}";
             try
             {
-                var ControlColl = JsonConvert.DeserializeObject(xjson,
-                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as List<EbControl>;
+                var _form = JsonConvert.DeserializeObject(filterForm.FilterDialogJson,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as EbForm;
                 if (filterForm != null)
                 {
                     _html = @"<div style='margin-top:10px;' id='filterBox'>";
-                    foreach (EbControl c in ControlColl)
-                    {
-                        _html += c.GetHtml();
-                        _head += c.GetHead();
-                    }
+                    _html += _form.GetHtml();
+                    _head += _form.GetHead();
                     _html += @"</div>";
                 }
             }
-            catch (Exception e) { }
+            catch (Exception e)
+            {
+            }
             return _html + "<script>" + _head + "</script>";
 
         }

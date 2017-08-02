@@ -16,6 +16,7 @@ var Eb_PropertyGrid = function (id, props, metas) {
     this.Metas = metas;
     this.PropsObj = props;
     this.$container = $("#" + id);
+    this.containerId = id;
 
     this.propNames = [];
 
@@ -31,29 +32,23 @@ var Eb_PropertyGrid = function (id, props, metas) {
     this.currGroup = null;
     this.innerHTML = '<table class="table-bordered table-hover">';
 
-    //alert("Metas:" + JSON.stringify(this.Metas));
-    //alert("PropsObj:" + JSON.stringify(this.PropsObj));
-
     this.getvaluesFromPG = function () {
-        // Create a function that will return tha values back from the property grid
+        // function that will update and return tha values back from the property grid
         for (var prop in this.getValueFuncs) {
             if (typeof this.getValueFuncs[prop] !== 'function')
                 continue;
-
             this.PropsObj[prop] = this.getValueFuncs[prop]();
         }
         return this.PropsObj;
     };
 
     this.getPropertyRowHtml = function (name, value, meta, options) {
-
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.pgId + name;
 
         // If boolean create checkbox
         if (type === 0 || typeof value === 'boolean') {
-            console.log("getValueFuncs: " + JSON.stringify(this.getValueFuncs));
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
@@ -101,21 +96,17 @@ var Eb_PropertyGrid = function (id, props, metas) {
             return '<tr class="pgRow"><td colspan="2" group="' + valueHTML + '" class="pgCell">' + valueHTML + '</td></tr>';
             this.currGroup = valueHTML;
         } else {
-            return '<tr class="pgRow" group="' + this.currGroup + '"><td class="pgCell">' + name + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
+            return '<tr class="pgRow" group="' + this.currGroup + '"><td data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '" class="pgCell">' + name + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
         }
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
-        selectedValue = selectedValue || '';
-        if (options === null)
-            return;
+        selectedValue = selectedValue || options[0];
 
         var html = "<select class='selectpicker' data-live-search='true'>";
 
         for (var i = 0; i < options.length; i++)
             html += "<option data-tokens='" + options[i] + "'>" + options[i] + "</option>";
-
-        console.log("selectedValue: " + selectedValue)
 
         html += "</select><input type='hidden' value='" + selectedValue + "' id='" + id + "'>";
 
@@ -135,18 +126,14 @@ var Eb_PropertyGrid = function (id, props, metas) {
     };
 
     this.CallpostinitFns = function () {
-
-        console.log(" 3");
         // Call the post init functions 
         for (var prop in this.postCreateInitFuncs) {
             if (typeof this.postCreateInitFuncs[prop] === 'function') {
                 this.postCreateInitFuncs[prop]();
-                // just in case make sure we are not holding any reference to the functions
-                this.postCreateInitFuncs[prop] = null;
+                this.postCreateInitFuncs[prop] = null;// just in case make sure we are not holding any reference to the functions
             }
         }
     };
-
 
     this.buildGrid = function () {
         // Now we have all the html we need, just assemble it
@@ -197,6 +184,12 @@ var Eb_PropertyGrid = function (id, props, metas) {
         return true;
     };
 
+    this.OnInputchangedFn = function () {
+        this.getvaluesFromPG();
+        var rs = this.getvaluesFromPG();
+        $('#txtValues').val(JSON.stringify(rs) + '\n\n');
+    }
+
     this.init = function () {
         for (var i = 0; i < this.Metas.length; i++)
             this.propNames.push(this.Metas[i].name);
@@ -205,11 +198,13 @@ var Eb_PropertyGrid = function (id, props, metas) {
 
         this.buildGrid();
 
-        //setTimeout(this.CallpostinitFns.bind(this), 0);
         this.CallpostinitFns();
 
         this.getvaluesFromPG();//no need
 
+        $("#" + this.containerId + " .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
+
+        $('#propGrid table td').find("input").change(this.OnInputchangedFn.bind(this));
     };
 
     this.init();

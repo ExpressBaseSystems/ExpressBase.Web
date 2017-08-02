@@ -122,9 +122,9 @@ var Split = function (ids, options) {
             }
         } else {
             style[dim] = size;
-        }
-        //console.log("size:"+size);
+        }            
         return style
+        
     });
     var gutterStyle = options.gutterStyle || (function (dim, gutSize) { return (( obj = {}, obj[dim] = (gutSize + "px"), obj ))
         var obj; });
@@ -168,9 +168,8 @@ var Split = function (ids, options) {
 
         // eslint-disable-next-line no-param-reassign
         Object.keys(style).forEach(function (prop) { return (el.style[prop] = style[prop]); });
-        console.log("size:" + size);
-        //$(el).children().css("margin-top",($(el).height() / 2) + "%");
-        //console.log("class:" + $(el).attr("id"));
+        //console.log("size1:" + size);
+     
     }
     
     function setGutterSize (gutterElement, gutSize) {

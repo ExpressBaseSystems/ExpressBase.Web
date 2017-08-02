@@ -179,6 +179,7 @@ namespace ExpressBase.Web.Controllers
             }
             return objects_dict;
         }
+
         public List<string> Getsqlfns(int obj_type)
         {
             IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -556,7 +557,7 @@ namespace ExpressBase.Web.Controllers
             string colDef = string.Empty;
             colDef = "{\"dsId\":" + dsid + ",\"fdId\":" + fdid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
             colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"IsPaged\":" + isPaged.ToString().ToLower() + ",\"columns\":[";
-            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\",\"type\":\"System.Int64\"},";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":false, \"name\":\"serial\", \"title\":\"#\",\"type\":\"System.Int64\"},";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\",\"type\":\"System.Boolean\"},";
             foreach (EbDataColumn column in __columnCollection)
             {
@@ -570,7 +571,7 @@ namespace ExpressBase.Web.Controllers
                 colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
                 var cls = (column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int64") ? "dt-right tdheight" : "tdheight";
                 colDef += ",\"className\": \"" + cls + "\"";
-                colDef += ",\"pos\": \"" + i++ + "\"";
+                colDef += ",\"pos\": \"" + ( __columnCollection.Count + 100).ToString() + "\"";
                 colDef += "},";
             }
             colDef = colDef.Substring(0, colDef.Length - 1) + "],";

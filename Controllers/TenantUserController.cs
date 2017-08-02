@@ -62,31 +62,40 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpGet]
-        public IActionResult dv()
+        public IActionResult dv(int dsid, string data)
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
-            Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
-            Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
-            foreach (var element in rlist)
+            ViewBag.dsid = dsid;
+            //if (dsid == 0)
+            //{
+                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+                var rlist = resultlist.Data;
+                //Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+                Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+                Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
+                foreach (var element in rlist)
+                {
+                    ObjDSListAll[element.Id] = element;
+                }
+                ViewBag.DSListAll = ObjDSListAll;
+                //ViewBag.DSList = ObjDSList;
+                resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
+                rlist = resultlist.Data;
+                foreach (var element in rlist)
+                {
+                    ObjDVListAll[element.Id] = element.Name;
+                }
+                ViewBag.DVListAll = ObjDVListAll;
+            //}
+            //else
+            if (dsid > 0)
             {
-                ObjDSListAll[element.Id] = element;
+                Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+                ViewBag.dsid = _dict["dsId"];
+                ViewBag.dvname = _dict["dvName"];
+                int fdid = Convert.ToInt32(_dict["fdId"]);
+                ViewBag.FDialog = GetByteaEbObjects_json(fdid);
             }
-            ViewBag.DSListAll = ObjDSListAll;
-            ViewBag.DSList = ObjDSList;
-            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
-            rlist = resultlist.Data;
-            foreach (var element in rlist)
-            {
-                ObjDVListAll[element.Id] = element.Name;
-            }
-            ViewBag.DVListAll = ObjDVListAll;
-            ViewBag.Obj_id = 0;
-            ViewBag.dsid = 0;
-            ViewBag.tvpref = "{ }";
-            ViewBag.isFromuser = 0;
 
             return View();
         }
@@ -390,7 +399,6 @@ namespace ExpressBase.Web2.Controllers
             return html;
         }
 
-
         public string SubRoles(int [] subrolesid, int roleid)
         {
             string html = string.Empty;
@@ -410,6 +418,53 @@ namespace ExpressBase.Web2.Controllers
             }
             return return_msg;
             return html;
+        }
+
+        public string GetUsers(int roleid)
+        {
+            string html = string.Empty;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);           
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "getusers",id = roleid, Token = ViewBag.token });
+            List<string> users = fr.Data["users"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList();
+            foreach (var key in fr.Data.Keys)
+            {
+                if (key != "users")
+                {
+                    var checkedrole = users.Contains(key) ? "checked" : string.Empty;
+                    html += @"
+                <div class='row'>
+                    <div class='col-md-1'>
+                        <input type ='checkbox' @checked name ='@users' value = '@userid' aria-label='...'>
+                    </div>
+
+                    <div class='col-md-8'>
+                        <h4 name = 'head4' style='color:black;'>@users</h4>                        
+                    </div>               
+                </div> ".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key).Replace("@checked", checkedrole);
+                }
+            }
+            return html;
+        }
+
+        public string Role2User(int[] users, int roleid)
+        {
+            string html = string.Empty;
+            Dictionary<string, object> Dict = new Dictionary<string, object>();
+            string return_msg;
+            Dict["users"] = users;
+            Dict["roleid"] = roleid;
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, Token = ViewBag.token, op = "role2user" });
+            if (res.id == 0)
+            {
+                return_msg = "Success";
+            }
+            else
+            {
+                return_msg = "Failed";
+            }
+            return return_msg;
+           
         }
 
 

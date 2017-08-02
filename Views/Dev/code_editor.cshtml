@@ -22,7 +22,7 @@
 <script src="~/lib/codemirror/mode/xml/xml.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        var MyDs=new DataSource(@ViewBag.Obj_id,@ViewBag.IsNew, @ViewBag.VersionNumber,'@ViewBag.cid',@ViewBag.ObjType);
+        var MyDs=new DataSource(@ViewBag.Obj_id,@ViewBag.IsNew, @ViewBag.VersionNumber,'@ViewBag.cid',@ViewBag.ObjType,@ViewBag.FilterDialogId);
         if(@ViewBag.IsNew===true){
             $('#comp').hide();
             $('#ver_his').remove();
@@ -71,13 +71,7 @@
                 @*<a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn fa fa-code-fork fa-1x" aria-hidden="true"></i></a>*@
                 <a href="#" id="stat_his" class="btn btn-default stat_his" data-toggle="tooltip" title="Status History"><i class="fa fa-line-chart fa-1x" aria-hidden="true"> @ViewBag.Status</i></a>
                 <a href="#" class="btn btn-default ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-group fa fa-history fa-1x" aria-hidden="true"> v.@ViewBag.VersionNumber</i></a>
-
-
-                <div class="dropdown fdlist btn-group" id="fdlist">
-                    <select id="fd" name="fd" class="selectpicker show-tick" data-live-search="true">
-                    </select><i class="fa fa-circle-o-notch fa-spin fa-1x fa-fw" id="loader_fd" style="display:none;color:green"></i>
-                </div>
-            </div>
+ </div>
         </div>
         @*</div>*@
     </div>
@@ -98,7 +92,7 @@
                     @{ if (ViewBag.IsNew == "false")
                         {
                             <div class="verlist input-group">
-                                <select id="selected_Ver0" name="selected_Ver" class="form-control selected_Ver selectpicker form-control show-tick" data-live-search="true">
+                                <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker show-tick" data-live-search="true">
                                     @{ 
                                         @using ExpressBase.Objects.ServiceStack_Artifacts;
                                         List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
@@ -113,11 +107,16 @@
                             </div>
                                         }
                     }
-                    <button id='run' name='run' class='run btn btn-default disabled'>Run</button>
+
+                    <div class="dropdown fdlist btn-group" id="fdlist">
+                        <select id="fd" name="fd" class="selectpicker show-tick" data-live-search="true"></select>
+                        <i class="fa fa-circle-o-notch fa-spin fa-1x fa-fw" id="loader_fd" style="display:none;color:dodgerblue;"></i>
+                    </div>    
+                    <a href="#inner_well" class="btn btn-default collapsed" id="execute" data-toggle="collapse" title="Click to open Parameter dialog"><i class="fa fa-chevron-down fa-1x" aria-hidden="true">Render</i></a>
+                    <div id="inner_well" class="collapse"></div>               
+                    <a href="" id='run' name='run' class='run btn btn-default disabled'>Run</a>
                 </div>
-                <a href="#inner_well" class="btn btn-default pull-right collapsed" id="execute" data-toggle="collapse" title="Click to open Parameter dialog"><i class="fa fa-chevron-down fa-1x" aria-hidden="true"></i></a>
-                <div id="inner_well" class="collapse">
-                </div>
+                
             </div>
 
             <div class="col-md-12" style="margin:0;padding:0;">
@@ -129,40 +128,7 @@
         </div>
     </div>
 </div>
-@*<div id="filterDialog" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Filter Dialog</h4>
-                </div>
-                <div class="modal-body filter_modal_body">
-                    <div class="fd_top_content">
-                            <span class="align_singleLine">
-                                <label class="">Filter Dialog Name</label>
-                                <input type="text" id="fdname" name="fdname" class="form-control inputBox" required />
-                            </span>
-                            <span class="align_singleLine">
-                                <label class="">Description</label>
-                                <input type="text" id="fddesc" name="fddesc" class="form-control inputBox " required />
-                            </span>
-                        </div>
-                    <div class="table-responsive table-bordered table-responsive">
-                        <table class="table fd_table">
-                            <thead class="fdthead">
-                            </thead>
-                            <tbody id="fdtbody" class="fdtbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" name="saveFilter" value="Save" class="btn-primary" id="saveFilter" />
-                    <input type="submit" name="run" value="Run" class="btn-primary" id="run" />
-                </div>
-            </div>
-        </div>
-    </div>*@
+
 <script type="text/javascript">
 
     window.onload = function() {
@@ -331,6 +297,7 @@
         //    });
     };
 </script>
+
 <style>
     .align_singleLine {
         display: inline-block;

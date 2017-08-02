@@ -1,21 +1,33 @@
 ﻿@{
-    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
     Html.RenderPartial("ExtPageHeader2");
 }
 
-<script>  
-        function moveRight() {
-            $("#float").animate({ left: "+=1000" }, 10000, moveLeft)
-        }
 
-        function moveLeft() {
-            $("#float").animate({ left: "-=1000" }, 10000, moveRight)
-        }
-
-        $(document).ready(function () {
-
-            moveRight();
-
+ 
+<div class="row" style="margin-top:90px"">
+    <div id="div1" class="col-lg-6" style="border:1px solid;width:100px; height:auto">
+        <div id="123">test1</div>
+        <div id="11">test2</div>
+        <div id="34">test3</div>
+        <div id="45">test4</div>
+        <div id="56">test5</div>
+    </div>
+    <div id="div2" class="col-lg-6" style="border:1px solid;width:100px; height:100px">
+        
+    </div>
+    <input type="text" id="abc">
+</div>
+<script>
+    $('document').ready(function () {
+        var ids = "";
+        var temp = new dragula([document.getElementById("div1"), document.getElementById("div2")], {});
+        temp.on("drop", function (el, target, source, sibling) {
+            ids += $(el).attr("id") + ",";
+            //ids = ids.substring(0, ids.length - 1);
+            $("#abc").val(ids);
         });
+    });
+   
+   
 </script>
-

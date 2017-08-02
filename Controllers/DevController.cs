@@ -103,7 +103,7 @@ namespace ExpressBase.Web.Controllers
 
                 //}
             }
-            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+            //ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.Allversions = GetVersions(obj_id);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();

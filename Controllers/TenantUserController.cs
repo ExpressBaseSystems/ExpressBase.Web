@@ -62,31 +62,40 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpGet]
-        public IActionResult dv()
+        public IActionResult dv(int dsid, string data)
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
-            Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
-            Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
-            foreach (var element in rlist)
+            ViewBag.dsid = dsid;
+            //if (dsid == 0)
+            //{
+                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+                var rlist = resultlist.Data;
+                //Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+                Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+                Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
+                foreach (var element in rlist)
+                {
+                    ObjDSListAll[element.Id] = element;
+                }
+                ViewBag.DSListAll = ObjDSListAll;
+                //ViewBag.DSList = ObjDSList;
+                resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
+                rlist = resultlist.Data;
+                foreach (var element in rlist)
+                {
+                    ObjDVListAll[element.Id] = element.Name;
+                }
+                ViewBag.DVListAll = ObjDVListAll;
+            //}
+            //else
+            if (dsid > 0)
             {
-                ObjDSListAll[element.Id] = element;
+                Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+                ViewBag.dsid = _dict["dsId"];
+                ViewBag.dvname = _dict["dvName"];
+                int fdid = Convert.ToInt32(_dict["fdId"]);
+                ViewBag.FDialog = GetByteaEbObjects_json(fdid);
             }
-            ViewBag.DSListAll = ObjDSListAll;
-            ViewBag.DSList = ObjDSList;
-            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
-            rlist = resultlist.Data;
-            foreach (var element in rlist)
-            {
-                ObjDVListAll[element.Id] = element.Name;
-            }
-            ViewBag.DVListAll = ObjDVListAll;
-            ViewBag.Obj_id = 0;
-            ViewBag.dsid = 0;
-            ViewBag.tvpref = "{ }";
-            ViewBag.isFromuser = 0;
 
             return View();
         }

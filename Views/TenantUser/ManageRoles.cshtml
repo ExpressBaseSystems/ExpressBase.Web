@@ -68,7 +68,7 @@
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#objlist1">Permissions</a></li>
         <li><a onclick="GetSubRoles(@ViewBag.roleid,@ViewBag.ApplicationId)" data-toggle="tab" href="#rolesdiv">Sub Roles</a></li>
-        <li><a data-toggle="tab" href="#users">Users</a></li>
+        <li><a onclick="GetUsers()" data-toggle="tab" href="#usersdiv">Users</a></li>
     </ul>
     <div class="tab-content">
         <div class="row tab-pane fade in active" id="objlist1">
@@ -91,7 +91,7 @@
         <div id="rolesdiv" class="tab-pane fade">
             @*<div class="input-group pull-right">
                     <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
-                </div>*@          
+                </div>*@
             <div id="roles" class="scrollable-menu">
                 <div class="form-inline" id="searchbar" style="width:100%">
                     <div class="input-group pull-right">
@@ -106,13 +106,26 @@
             <input type="submit" value="Save" id="save_roles" />
         </div>
 
-        <div id="users" class="tab-pane fade">
-            <h1>Users</h1>
+        <div id="usersdiv" class="tab-pane fade">
+
+            <div id="users" class="scrollable-menu">
+                <div class="form-inline" id="searchbar" style="width:100%">
+                    <div class="input-group pull-right">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false">Search<span class="caret"></span></button>
+                        </div>
+                        <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+
+            </div>
+            <input type="submit" value="Save" id="save_users" />
         </div>
 
-    </div>
 
-                        }
+    </div>
+                      }
+                       
 
 <script>
     $('document').ready(function () {
@@ -161,6 +174,21 @@
             });
         });
 
+        $("#save_users").click(function () {
+            var selected = [];
+            $('#usersdiv input:checked').each(function () {
+                selected.push($(this).attr('value'));
+            });
+            $.post("../TenantUser/Role2User",
+            {
+                "users": selected,
+                "roleid": $('#roleid').val(),
+                
+
+            }, function (result) {
+            });
+        });
+
     })
     function GetTable(type) {
 
@@ -190,6 +218,19 @@
               }, function (result) {
                   if (result) {
                       document.getElementById("roles").innerHTML = result;
+                  }
+              });
+
+    }
+
+    function GetUsers()
+    {
+        $.post("../TenantUser/GetUsers",
+              {
+                  "roleid": $('#roleid').val()
+              }, function (result) {
+                  if (result) {
+                      document.getElementById("users").innerHTML = result;
                   }
               });
 

@@ -271,7 +271,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             else {
                 this.SetValues();
                 this.Find_parameters();
-                this.Save(false);
+               // this.Save(false);
                 this.SelectedFdId = $('#fd option:selected').val();
                 this.Load_Fd();
             }
@@ -364,7 +364,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
 
                 this.SetValues();
-                this.FilterDId = $('#fd option:selected').val();
+                this.FilterDId = null;
                 this.GetUsedSqlFns(needRun);
             }
             else {
@@ -579,8 +579,21 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         var rel_arr = [];
         $.each(data, this.FetchUsedSqlFns_inner.bind(this, rel_arr));
         this.Rel_object = rel_arr.toString();
-        var Dswzd = new EbWizard("../Dev/ds_save", "../Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
-        Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num, this.FilterDId, this.ObjectType, this.Rel_object, needRun).DataSource;
+        //var Dswzd = new EbWizard("../Dev/ds_save", "../Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
+        //Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num, this.FilterDId, this.ObjectType, this.Rel_object, needRun).DataSource;
+        var _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogid: this.FilterDId, sql: btoa(unescape(encodeURIComponent(this.Code))) }
+        $.post("../Dev/CommitEbDataSource", {
+            "objtype":this.ObjectType,
+            "id":this.Obj_Id,
+            "name":this.Name,
+            "code": btoa(unescape(encodeURIComponent(this.Code))),            
+            "description":this.Description,
+            "filterDialogId":this.FilterDId,
+            "changeLog":"changed",
+            "json": JSON.stringify(_json),
+            "rel_obj":this.Rel_object
+        });
+
         $.LoadingOverlay("hide");
     };
 

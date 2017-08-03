@@ -16,6 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-*.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="~/js/FormBuilder/EbControlCollection.js"></script>
+<script type="text/javascript" src="~/js/vue-select.js"></script>
+<script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
 <script src='~/js/Eb_dragula.js'></script>
 <script src='~/js/Eb_formBuilder.js'></script>
 <script src='~/js/jqPropertyGrid.js'></script>
@@ -33,7 +35,7 @@
         <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-thumb-tack pin" onclick="slideLeft ('.form-save-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
 
-            @Html.Raw(new EbToolbox(BuilderType.WebFormBuilder).html)
+            @Html.Raw(new EbToolbox(BuilderType.WebForm).html)
 
         </div>
     </div>
@@ -67,11 +69,12 @@
 </div>
 <script>
     @{
-        var enu = (BuilderType)Enum.Parse(typeof(BuilderType), type+"Builder", true);
+        var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
+        var _toolBox = new EbToolbox(_builderType);
     }
-    @Html.Raw(new EbToolbox(enu).AllControlls);
-    @Html.Raw(new EbToolbox(enu).AllMetas);
-    var t = new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid");
+    @Html.Raw(_toolBox.AllControlls);
+    @Html.Raw(_toolBox.AllMetas);
+    var t = new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
     //$("#form-buider-propGrid").draggable();
     //$("#form-buider-propGrid").resizable();
 </script>

@@ -19,6 +19,7 @@ using DiffPlex.DiffBuilder.Model;
 using System.Text;
 using ExpressBase.Objects.Objects;
 using Newtonsoft.Json;
+using ExpressBase.Objects.ObjectContainers;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -84,14 +85,11 @@ namespace ExpressBase.Web.Controllers
                 List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
                 ViewBag.LifeCycle = lifeCycle;
                 ViewBag.IsNew = "false";
-                //if (obj_type == ExpressBase.Objects.EbObjectType.DataSource)
-                //{
-                //  var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
-                var dsobj = JsonConvert.DeserializeObject<EbDataSource>(element.Json);
-
+               
+                var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
-                ViewBag.Code = dsobj.Sql;
+                ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
                 ViewBag.Status = element.Status;
                 ViewBag.VersionNumber = element.VersionNumber;
                 ViewBag.EditorHint = "CodeMirror.hint.sql";
@@ -99,13 +97,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Icon = "fa fa-database";
                 ViewBag.ObjType = (int)EbObjectType.DataSource;
                 ViewBag.FilterDialogId = dsobj.FilterDialogId;
-                //}
-                //if (element.EbObjectType == ExpressBase.Objects.EbObjectType.JavascriptFunction)
-                //{
-
-                //}
             }
-            //ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.Allversions = GetVersions(obj_id);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
@@ -150,7 +142,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.IsNew = "false";
                 //if (obj_type == ExpressBase.Objects.EbObjectType.DataSource)
                 //{
-                var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbSqlFunction>(element.Bytea);
+                var dsobj = EbSerializers.Json_Deserialize<EbSqlFunction>(element.Json);
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
                 ViewBag.Code = dsobj.Sql;
@@ -206,63 +198,30 @@ namespace ExpressBase.Web.Controllers
         public JsonResult CommitEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
-            var _dict = ServiceStack.Text.JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
+           // var _dict = ServiceStack.Text.JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectSaveOrCommitRequest();
-            var bytes = Convert.FromBase64String(_dict["code"]);
-            string code_decoded = Encoding.UTF8.GetString(bytes);
+            //var bytes = Convert.FromBase64String(req["code"]);
+            //string code_decoded = Encoding.UTF8.GetString(bytes);
 
-            var _EbObjectType = (EbObjectType)Convert.ToInt32(_dict["objtype"]);
             ds.IsSave = false;
-            ds.Id = Convert.ToInt32(_dict["id"]);
-            ds.EbObjectType = Convert.ToInt32(_dict["objtype"]);
-            ds.Name = _dict["name"];
-            ds.Description = _dict["description"];
-            if (_EbObjectType == EbObjectType.DataSource)
-            {
-                ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
-                {
-                    Name = _dict["name"],
-                    Description = _dict["description"],
-                    Sql = code_decoded,
-                    ChangeLog = ds.ChangeLog,
-                    EbObjectType = _EbObjectType,
-                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
-                });
-                ds.Json = JsonConvert.SerializeObject(new EbDataSource
-                {
-                    Name = _dict["name"],
-                    Description = _dict["description"],
-                    Sql = code_decoded,
-                    ChangeLog = ds.ChangeLog,
-                    EbObjectType = _EbObjectType,
-                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
-                });
-            }
+            ds.Id = Convert.ToInt32(req["id"]);
+            ds.EbObjectType = Convert.ToInt32(req["objtype"]);
+            ds.Name = req["name"];
+            ds.Description = req["description"];
+            ds.Json = req["json"];
 
-            if (_EbObjectType == EbObjectType.SqlFunction)
-            {
-                // ds.NeedRun = req["NeedRun"];
-                ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbSqlFunction
-                {
-                    Name = _dict["name"],
-                    Description = _dict["description"],
-                    Sql = code_decoded,
-                    ChangeLog = ds.ChangeLog,
-                    EbObjectType = _EbObjectType,
-                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
-                });
-            }
-            if (_dict["filterDialogId"].ToString() != "Select Filter Dialog")
-            {
-                _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
-            }
+            string _relations = null;
+            if (req["filterDialogId"].ToString() != "Select Filter Dialog")
+                _relations = req["rel_obj"] + req["filterDialogId"].ToString();
+
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
-            ds.ChangeLog = _dict["changeLog"];
+            ds.ChangeLog = req["changeLog"];
             ds.Token = ViewBag.token;//removed tcid
-            ds.Relations = _dict["rel_obj"];
+            ds.Relations = _relations;
             ViewBag.IsNew = "false";
+
             var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return Json("Success");
         }
@@ -286,7 +245,7 @@ namespace ExpressBase.Web.Controllers
             ds.Description = req["Description"];
             if (_EbObjectType == EbObjectType.DataSource)
             {
-                ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataSource
+                ds.Json = EbSerializers.Json_Serialize(new EbDataSource
                 {
                     Name = req["Name"],
                     Description = req["Description"],
@@ -299,7 +258,7 @@ namespace ExpressBase.Web.Controllers
             if (_EbObjectType == EbObjectType.SqlFunction)
             {
                 ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
-                ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbSqlFunction
+                ds.Json = EbSerializers.Json_Serialize(new EbSqlFunction
                 {
                     Name = req["Name"],
                     Description = req["Description"],
@@ -328,12 +287,12 @@ namespace ExpressBase.Web.Controllers
             {
                 if (_EbObjectType == EbObjectType.DataSource)
                 {
-                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                    var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
                     ViewBag.Code = dsobj.Sql;
                 }
                 if (_EbObjectType == EbObjectType.SqlFunction)
                 {
-                    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbSqlFunction>(element.Bytea);
+                    var dsobj = EbSerializers.Json_Deserialize<EbSqlFunction>(element.Json);
                     ViewBag.Code = dsobj.Sql;
                 }
             }
@@ -354,22 +313,16 @@ namespace ExpressBase.Web.Controllers
 
         public int SaveFilterDialog()
         {
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var ds = new EbObjectSaveOrCommitRequest();
+          var req = this.HttpContext.Request.Form;
+           IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+          var ds = new EbObjectSaveOrCommitRequest();
 
             ds.IsSave = false;
             ds.Id = Convert.ToInt32(req["id"]);
             ds.EbObjectType = (int)EbObjectType.FilterDialog;
             ds.Name = req["name"];
             ds.Description = req["description"];
-            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbFilterDialog
-            {
-                Name = req["name"],
-                Description = req["description"],
-                FilterDialogJson = req["filterdialogjson"],
-                EbObjectType = EbObjectType.FilterDialog
-            });
+            ds.Json = req["filterdialogjson"];
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
             ds.Relations = null;
@@ -385,26 +338,16 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";
-            var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
-            //string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
-            //    filterForm.FilterDialogJson + "}";
-            try
+            var filterForm = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json);
+            if (filterForm != null)
             {
-                var _form = JsonConvert.DeserializeObject(filterForm.FilterDialogJson,
-                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as EbForm;
-                if (filterForm != null)
-                {
-                    _html = @"<div style='margin-top:10px;' id='filterBox'>";
-                    _html += _form.GetHtml();
-                    _head += _form.GetHead();
-                    _html += @"</div>";
-                }
+                _html = @"<div style='margin-top:10px;' id='filterBox'>";
+                _html += filterForm.GetHtml();
+                _head += filterForm.GetHead();
+                _html += @"</div>";
             }
-            catch (Exception e)
-            {
-            }
-            return _html + "<script>" + _head + "</script>";
 
+            return _html + "<script>" + _head + "</script>";
         }
 
         public string GetColumns4Trial(int dsid, string parameter)
@@ -599,17 +542,16 @@ namespace ExpressBase.Web.Controllers
                 //get datasource obj and get fdid
                 IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
                 var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
-                var fdid = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(resultlist.Data[0].Bytea).FilterDialogId;
+                var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogId;
 
                 //get fd obj
                 resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-                var fdObj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(resultlist.Data[0].Bytea);
 
                 //redundant - REMOVE JITH
-                var _form = JsonConvert.DeserializeObject(fdObj.FilterDialogJson, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as EbForm;
+                var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
 
-                ViewBag.HtmlHead = _form.GetHead();
-                ViewBag.HtmlBody = _form.GetHtml();
+                ViewBag.HtmlHead = _filterDialog.GetHead();
+                ViewBag.HtmlBody = _filterDialog.GetHtml();
             }
 
             return PartialView();
@@ -623,7 +565,7 @@ namespace ExpressBase.Web.Controllers
 
             //Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
 
-            var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
+            var dsobj = EbSerializers.Json_Deserialize<EbFilterDialog>(element.Json);
             dsobj.Id = element.Id;
             //dsobj.EbObjectType = element.EbObjectType;
             //dsobj.Id = element.Id;
@@ -646,7 +588,7 @@ namespace ExpressBase.Web.Controllers
             var fdid = 0;
             foreach (var element in rlist)
             {
-                var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(element.Bytea);
+                var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
                 fdid = dsobj.FilterDialogId;
             }
 
@@ -720,7 +662,7 @@ namespace ExpressBase.Web.Controllers
             ds.Name = _dict["dvName"].ToString();
             ds.Description = "abcd";
             ds.ChangeLog = "";
-            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbDataVisualization
+            ds.Json = EbSerializers.Json_Serialize(new EbDataVisualization
             {
                 Name = _dict["dvName"].ToString(),
                 settingsJson = _dict.ToString(),
@@ -855,7 +797,7 @@ namespace ExpressBase.Web.Controllers
                 List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
                 ViewBag.LifeCycle = lifeCycle;
                 ViewBag.IsNew = "false";
-                var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbApplication>(element.Bytea);
+                var dsobj = EbSerializers.Json_Deserialize<EbApplication>(element.Json);
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
                 ViewBag.ObjType = (int)EbObjectType.Application;
@@ -884,7 +826,7 @@ namespace ExpressBase.Web.Controllers
             ds.EbObjectType = (int)EbObjectType.Application;
             ds.Name = req["name"];
             ds.Description = req["description"];
-            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbApplication
+            ds.Json = EbSerializers.Json_Serialize(new EbApplication
             {
                 Name = req["name"],
                 EbObjectType = EbObjectType.Application

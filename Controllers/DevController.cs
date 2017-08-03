@@ -211,7 +211,7 @@ namespace ExpressBase.Web.Controllers
             ds.Description = req["description"];
             ds.Json = req["json"];
 
-            var _relations = string.Empty;
+            string _relations = null;
             if (req["filterDialogId"].ToString() != "Select Filter Dialog")
                 _relations = req["rel_obj"] + req["filterDialogId"].ToString();
 

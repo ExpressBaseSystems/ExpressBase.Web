@@ -19,6 +19,7 @@ using DiffPlex.DiffBuilder.Model;
 using System.Text;
 using ExpressBase.Objects.Objects;
 using Newtonsoft.Json;
+using ExpressBase.Objects.ObjectContainers;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -341,31 +342,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public int SaveFilterDialog()
-        {
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var ds = new EbObjectSaveOrCommitRequest();
-
-            ds.IsSave = false;
-            ds.Id = Convert.ToInt32(req["id"]);
-            ds.EbObjectType = (int)EbObjectType.FilterDialog;
-            ds.Name = req["name"];
-            ds.Description = req["description"];
-            ds.Bytea = EbSerializers.ProtoBuf_Serialize(new EbFilterDialog
-            {
-                Name = req["name"],
-                Description = req["description"],
-                FilterDialogJson = req["filterdialogjson"],
-                EbObjectType = EbObjectType.FilterDialog
-            });
-            ds.Status = Objects.ObjectLifeCycleStatus.Live;
-            ds.Token = ViewBag.token;
-            ds.Relations = null;
-            var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
-            return CurrSaveId.Id;
-        }
-
         public string GetByteaEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
@@ -374,26 +350,16 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";
-            var filterForm = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(rlist.Bytea);
-            //string xjson = "{\"$type\": \"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], mscorlib\", \"$values\": " +
-            //    filterForm.FilterDialogJson + "}";
-            try
+            var filterForm = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json);
+            if (filterForm != null)
             {
-                var _form = JsonConvert.DeserializeObject(filterForm.FilterDialogJson,
-                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as EbForm;
-                if (filterForm != null)
-                {
-                    _html = @"<div style='margin-top:10px;' id='filterBox'>";
-                    _html += _form.GetHtml();
-                    _head += _form.GetHead();
-                    _html += @"</div>";
-                }
+                _html = @"<div style='margin-top:10px;' id='filterBox'>";
+                _html += filterForm.GetHtml();
+                _head += filterForm.GetHead();
+                _html += @"</div>";
             }
-            catch (Exception e)
-            {
-            }
-            return _html + "<script>" + _head + "</script>";
 
+            return _html + "<script>" + _head + "</script>";
         }
 
         public string GetColumns4Trial(int dsid, string parameter)

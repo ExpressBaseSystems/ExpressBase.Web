@@ -565,17 +565,16 @@ namespace ExpressBase.Web.Controllers
                 //get datasource obj and get fdid
                 IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
                 var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
-                var fdid = EbSerializers.ProtoBuf_DeSerialize<EbDataSource>(resultlist.Data[0].Bytea).FilterDialogId;
+                var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogId;
 
                 //get fd obj
                 resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-                var fdObj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(resultlist.Data[0].Bytea);
 
                 //redundant - REMOVE JITH
-                var _form = JsonConvert.DeserializeObject(fdObj.FilterDialogJson, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) as EbForm;
+                var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
 
-                ViewBag.HtmlHead = _form.GetHead();
-                ViewBag.HtmlBody = _form.GetHtml();
+                ViewBag.HtmlHead = _filterDialog.GetHead();
+                ViewBag.HtmlBody = _filterDialog.GetHtml();
             }
 
             return PartialView();

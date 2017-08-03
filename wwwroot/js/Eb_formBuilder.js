@@ -195,7 +195,7 @@
                 this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
 
                 ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
-                    + new EbObjects["Eb" + type + "Obj"](id).getHtml());
+                    + new EbObjects["Eb" + type + "Obj"](id).Html);
 
                 $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
 

@@ -84,6 +84,10 @@
     background-color: white;
     overflow-x: auto;
 }
+.pg-table{
+    
+    min-width: 100%;
+}
 
 .pgHead {
     background-color: #ccc;

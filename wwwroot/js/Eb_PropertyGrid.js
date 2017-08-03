@@ -1,5 +1,18 @@
-﻿
+﻿this.RenderMe = function () {
+    var NewHtml = this.Html;
+    var me = this;
+    var metas = AllMetas[this.constructor.name.slice(0, -3)];
+    $.each(metas, function (i, meta) {
+        var name = meta.name;
+        if (meta.IsUIproperty) { NewHtml = NewHtml.replace('@' + name, me[name]); }
+    });
+    $('#' + id + ' .Eb-ctrlContainer').html(NewHtml);
+};
+
 var Eb_PropertyGrid = function (id, props, metas) {
+
+    props.RenderMe(props.EbSid);
+
     //params check
     {
         if (typeof props === 'string' || typeof metas === 'string') {
@@ -30,7 +43,7 @@ var Eb_PropertyGrid = function (id, props, metas) {
     this.getValueFuncs = {};
     this.pgId = 'pg' + (this.pgIdSequence++);
     this.currGroup = null;
-    this.innerHTML = '<table class="table-bordered table-hover">';
+    this.innerHTML = '<table class="table-bordered table-hover pg-table">';
 
     this.getvaluesFromPG = function () {
         // function that will update and return tha values back from the property grid

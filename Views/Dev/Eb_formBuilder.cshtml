@@ -27,6 +27,13 @@
 @{
 //Layout = "~/Views/Shared/_Layout1.cshtml";
 }
+@{
+    int typeInt = (string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
+    EbObjectType type = (EbObjectType)typeInt;
+
+    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
+    var _toolBox = new EbToolbox(_builderType);
+}
 
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
 
@@ -35,7 +42,7 @@
         <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-thumb-tack pin" onclick="slideLeft ('.form-save-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
 
-            @Html.Raw(new EbToolbox(BuilderType.WebForm).html)
+            @Html.Raw(new EbToolbox(_builderType).html)
 
         </div>
     </div>
@@ -51,10 +58,7 @@
         </div>
     </div>
 
-    @{
-        int typeInt = (string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
-        EbObjectType type = (EbObjectType)typeInt;
-    }
+   
     <input type="hidden" id="objtype" value="@type" />
 
     <div id='form-buider-propGrid' class='formB-box property-grid-cont'>
@@ -67,17 +71,13 @@
 
 
 </div>
+
 <script>
-    @{
-        var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
-        var _toolBox = new EbToolbox(_builderType);
-    }
     @Html.Raw(_toolBox.AllControlls);
     @Html.Raw(_toolBox.AllMetas);
-    var t = new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
-    //$("#form-buider-propGrid").draggable();
-    //$("#form-buider-propGrid").resizable();
+    new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
 </script>
+
 <style>
     /*overridding*/
 

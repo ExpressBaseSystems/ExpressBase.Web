@@ -89,7 +89,7 @@ namespace ExpressBase.Web.Controllers
                 var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
-                ViewBag.Code = dsobj.Sql;
+                ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
                 ViewBag.Status = element.Status;
                 ViewBag.VersionNumber = element.VersionNumber;
                 ViewBag.EditorHint = "CodeMirror.hint.sql";
@@ -198,54 +198,30 @@ namespace ExpressBase.Web.Controllers
         public JsonResult CommitEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
-            var _dict = ServiceStack.Text.JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
+           // var _dict = ServiceStack.Text.JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectSaveOrCommitRequest();
-            var bytes = Convert.FromBase64String(_dict["code"]);
-            string code_decoded = Encoding.UTF8.GetString(bytes);
+            //var bytes = Convert.FromBase64String(req["code"]);
+            //string code_decoded = Encoding.UTF8.GetString(bytes);
 
-            var _EbObjectType = (EbObjectType)Convert.ToInt32(_dict["objtype"]);
             ds.IsSave = false;
-            ds.Id = Convert.ToInt32(_dict["id"]);
-            ds.EbObjectType = Convert.ToInt32(_dict["objtype"]);
-            ds.Name = _dict["name"];
-            ds.Description = _dict["description"];
-            if (_EbObjectType == EbObjectType.DataSource)
-            {
-                ds.Json = EbSerializers.Json_Serialize(new EbDataSource
-                {
-                    Name = _dict["name"],
-                    Description = _dict["description"],
-                    Sql = code_decoded,
-                    ChangeLog = ds.ChangeLog,
-                    EbObjectType = _EbObjectType,
-                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
-                });
-            }
+            ds.Id = Convert.ToInt32(req["id"]);
+            ds.EbObjectType = Convert.ToInt32(req["objtype"]);
+            ds.Name = req["name"];
+            ds.Description = req["description"];
+            ds.Json = req["json"];
 
-            if (_EbObjectType == EbObjectType.SqlFunction)
-            {
-                // ds.NeedRun = req["NeedRun"];
-                ds.Json = EbSerializers.Json_Serialize(new EbSqlFunction
-                {
-                    Name = _dict["name"],
-                    Description = _dict["description"],
-                    Sql = code_decoded,
-                    ChangeLog = ds.ChangeLog,
-                    EbObjectType = _EbObjectType,
-                    FilterDialogId = (_dict["filterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(_dict["filterDialogId"])
-                });
-            }
-            if (_dict["filterDialogId"].ToString() != "Select Filter Dialog")
-            {
-                _dict["rel_obj"] += Convert.ToInt32(_dict["filterDialogId"]);
-            }
+            string _relations = null;
+            if (req["filterDialogId"].ToString() != "Select Filter Dialog")
+                _relations = req["rel_obj"] + req["filterDialogId"].ToString();
+
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
-            ds.ChangeLog = _dict["changeLog"];
+            ds.ChangeLog = req["changeLog"];
             ds.Token = ViewBag.token;//removed tcid
-            ds.Relations = _dict["rel_obj"];
+            ds.Relations = _relations;
             ViewBag.IsNew = "false";
+
             var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return Json("Success");
         }

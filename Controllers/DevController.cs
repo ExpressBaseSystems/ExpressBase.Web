@@ -335,6 +335,25 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public int SaveFilterDialog()
+        {
+          var req = this.HttpContext.Request.Form;
+           IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+          var ds = new EbObjectSaveOrCommitRequest();
+
+            ds.IsSave = false;
+            ds.Id = Convert.ToInt32(req["id"]);
+            ds.EbObjectType = (int)EbObjectType.FilterDialog;
+            ds.Name = req["name"];
+            ds.Description = req["description"];
+            ds.Json = req["filterdialogjson"];
+            ds.Status = Objects.ObjectLifeCycleStatus.Live;
+            ds.Token = ViewBag.token;
+            ds.Relations = null;
+            var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
+            return CurrSaveId.Id;
+        }
+
         public string GetByteaEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;

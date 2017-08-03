@@ -101,21 +101,7 @@ var EbDataTable = function (settings) {
     this.dragNdrop = false;
     this.flagColumnVisible = false;
 
-    this.start = function () {
-        
-        if($("#datatSourceDropdown"))
-            alert("gjkgjkg");
-        $("#datatSourceDropdown .dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
-    };
-
-    this.setDropdownDatasource = function (e) {
-        $("#loader").show();
-        dsid = $(e.target).parent().attr("data-dsid");
-        $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
-        $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
-        $.post('../Dev/GetColumns', { dsid: this.dsid }, this.getColumnsSuccess.bind(this));
-    };
-
+    
     this.getColumns = function () {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
             $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify((this.filterValues !== null) ? this.filterValues : this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
@@ -1960,7 +1946,7 @@ var EbDataTable = function (settings) {
         this.getColumns();
     if (this.dtsettings.linktable)
         this.getColumns();
-    this.start();
+   // this.start();
     
 };
 

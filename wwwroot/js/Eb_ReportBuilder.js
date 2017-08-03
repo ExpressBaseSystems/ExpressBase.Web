@@ -2,29 +2,30 @@
 var pages = {
     A4: {
         width: '21cm',
-        height: '29.7cm',
+        height: '29.7cm'
     },
 
     A3: {
         width: '29.7cm',
-        height: '42cm',
+        height: '42cm'
     },
 
     Letter: {
         width: '21.59cm',
-        height: '27.94cm',
+        height: '27.94cm'
     },
 
     A5: {
         width: '14.8cm',
-        height: '21cm',
-    },
+        height: '21cm'
+    }
 };
 
-var sub = function (name,index,height) {
+var sub = function (name,index,height,subsection) {
     this.className = name;
     this.index =index;
     this.height =height;
+    this.subsection = subsection;
 };
 
 var RptBuilder = function (type) {
@@ -37,7 +38,10 @@ var RptBuilder = function (type) {
     this.report.pageheight = height;
     this.report.pagewidth = width;
     this.report.sections = [];
-
+    this.subsection1 = [];
+    this.splitarray = [];
+    this.btn_indx = null;
+    
     this.createPage = function (type) {
 
         var $pageCanvas = $('#pageCanvas');
@@ -52,7 +56,7 @@ var RptBuilder = function (type) {
             $('#pageCanvas').css({ "transform": "scale(0.6)", "transform-origin": "0 0" });
 
         }
-        var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>")
+        var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
         $('#PageContainer').append($div);
         this.ruler(pages[type].width, pages[type].height);
 
@@ -75,11 +79,11 @@ var RptBuilder = function (type) {
 
     this.pageSplitHbox = function () {
         
-        $(".headersections").append("<div class='rptheadHbox' style='width :100%'><p>Rh</p></div>");
-        $(".headersections").append("<div class='pgheadHbox' style='width :100%'><p>Ph</p></div>");
-        $(".headersections").append("<div class='pgbodyHbox' style='width :100%'><p>Dtls</p></div>");
-        $(".headersections").append("<div class='pgfooterHbox' style='width :100%'><p>Pf</p></div>");
-        $(".headersections").append("<div class='rptfooterHbox' style='width :100%'><p>Rf</p></div>");
+        $(".headersections").append("<div class='rptheadHbox' data-index='0' style='width :100%'><p>Rh</p></div>");
+        $(".headersections").append("<div class='pgheadHbox' data-index='1' style='width :100%'><p>Ph</p></div>");
+        $(".headersections").append("<div class='pgbodyHbox' data-index='2' style='width :100%'><p>Dtls</p></div>");
+        $(".headersections").append("<div class='pgfooterHbox' data-index='3' style='width :100%'><p>Pf</p></div>");
+        $(".headersections").append("<div class='rptfooterHbox' data-index='4' style='width :100%'><p>Rf</p></div>");
 
         this.splitButton();
     };
@@ -89,11 +93,11 @@ var RptBuilder = function (type) {
         var $ruler = $('.ruler').css({ "width": width, "height": "25px", "margin-left": "128px" });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
             var $tick = $('<div>');
-            if (step == 0) {
+            if (step === 0) {
                 $tick.addClass('tickLabel').html(i * 5);
             } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
                 $tick.addClass('tickMinor');
-                if (step == 9) {
+                if (step === 9) {
                     step = -1;
                 }
             } else {
@@ -103,13 +107,13 @@ var RptBuilder = function (type) {
         }
 
         var $rulerleft = $('.rulerleft').css({ "width": "25px", "height": height });
-        for (var i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
-            var $tick = $('<div>');
-            if (step == 0) {
+        for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
+            $tick = $('<div>');
+            if (step === 0) {
                 $tick.addClass('tickLabel').html(i * 5);
             } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
                 $tick.addClass('tickMinor');
-                if (step == 9) {
+                if (step === 9) {
                     step = -1;
                 }
             } else {
@@ -133,24 +137,76 @@ var RptBuilder = function (type) {
 
         $pageref.children().not(".gutter").each(function () {
             var classname = $(this).attr("class");
-            report.sections.push(new sub(classname, $(this).index(), $(this).height()));
+            report.sections.push(new sub(classname, $(this).index(), $(this).height(),null));
         });
     };
 
     this.splitButton = function () {
-        $('.headersections').children().not(".gutter").each(function (i, obj) {
-            $(obj).append("<button class='btn btn-xs'><i class='fa fa-plus'></i></button>");
-        });
 
-        $('.headersections').children().children("button").off("click").on("click", function (e) {
-            var btindex = $(this).parent().not(".gutter").index();
-            console.log(btindex);
-            //this.multiSplit(btindex);
-        });
+        $('.headersections').children().not(".gutter").each(this.addButton.bind(this));
+
     };
-    
-    this.multiSplit = function (btindex) {
-        
+
+    this.addButton = function (i, obj) {
+        this.j = 2;
+        $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
+        $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
+
+    };
+
+    this.splitDiv = function (e) {     
+        this.subsection1 = [];
+        this.splitarray = [];
+        this.btn_indx = $(e.target).parent().parent().attr("data-index");
+        console.log("btn index"+this.btn_indx);
+        $.each(this.report.sections, this.splitDiv_inner.bind(this));
+
+    };
+
+    this.splitDiv_inner = function (i, obj) {
+
+        if (obj.index == this.btn_indx) {
+
+            var $sec = $("." + obj.className);           
+            if ($sec.children().length === 0) {
+
+                var s0 = $("<div class='s" + obj.index + "0'></div>");
+                var s1 = $("<div class='s" + obj.index + "1'></div>");
+                $sec.append(s0, s1);
+
+                this.subsection1.push(new sub(s0.attr("class"), s0.index(), s0.height(), null));
+                this.subsection1.push(new sub(s1.attr("class"), s1.index(), s0.height(), null));
+
+                this.splitarray.push("." + s0.attr("class") + "", "." + s1.attr("class") + "");
+
+            }
+            else if ($sec.children().length !== 0) {
+                              
+                this.$spl = $("<div class='s" + obj.index + this.j++ + "'></div>");
+                $sec.append($spl);
+
+                $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
+                $($sec).children('.gutter').remove();
+            };
+
+            if (subsection1.length > 0) {
+                this.report.sections[i].subsection = this.subsection1;
+            };
+            console.log("array"+this.splitarray);
+
+            Split(this.splitarray, {
+                direction: 'vertical',
+                cursor: 'row-resize',
+                minSize: 0,
+                gutterSize: 2
+            });
+        }
+    };
+
+    this.splitMore = function (i, obj) { 
+
+        this.splitarray.push("." + obj.className);
+
     };
 
     this.headerScaling = function () {
@@ -175,7 +231,7 @@ var RptBuilder = function (type) {
             cursor: 'row-resize',
             sizes: [10, 10, 60, 10, 10],
             minSize: 0,
-            gutterSize: 3,         
+            gutterSize: 3         
         });
 
         Split(['#box0', '#box1', '#box2', '#box3', '#box4'], {
@@ -183,7 +239,7 @@ var RptBuilder = function (type) {
             cursor: 'row-resize',
             sizes: [10, 10, 60, 10, 10],
             minSize: 0,
-            gutterSize: 3,
+            gutterSize: 3
         });
     };
 
@@ -206,7 +262,7 @@ var setBackgroud = function (input) {
 
         reader.onload = function (e) {
             $('#page').css({ 'background-image': 'url(' + e.target.result + ')', 'width': $('#page').width(), 'background-repeat': 'no-repeat' });
-        }
+        };
         reader.readAsDataURL(input.files[0]);
     }
 };

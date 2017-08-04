@@ -4,7 +4,7 @@
     border:1px solid;
 }
 .multiSplit{
-    width:50px;
+    width:30px;
     float:left;
     border:1px solid;
 }
@@ -25,7 +25,7 @@
     font-size: 12px;
     line-height: 14px;
     overflow: hidden;
-    margin-left: 25px;
+   
 }
 
     .ruler > div {
@@ -44,7 +44,7 @@
     }
 
         .ruler .tickLabel:first-of-type {
-            margin-left: 0px;
+            margin-left: 0;
         }
 
     .ruler .tickMajor {
@@ -62,13 +62,13 @@
 
 .page {
     display: block;
-    margin-left:102px;
+    margin-left:82px;
     box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
 }
 
 .rulerleft {
     position: absolute;
-    color: #000;
+    color: #000;    
 }
 
     .rulerleft > div {
@@ -82,7 +82,7 @@
     }
 
         .rulerleft .tickLabel:first-of-type {
-            margin-left: 0px;
+            margin-left: 0;
         }
 
     .rulerleft .tickMajor {

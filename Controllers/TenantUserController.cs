@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Web.Controllers;
 using ExpressBase.Common;
+using ExpressBase.Objects.ObjectContainers;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -61,91 +62,82 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult dv(int dsid, string data)
-        {
-            ViewBag.dsid = dsid;
-            //if (dsid == 0)
-            //{
-                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
-                var rlist = resultlist.Data;
-                //Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
-                Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
-                Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
-                foreach (var element in rlist)
-                {
-                    ObjDSListAll[element.Id] = element;
-                }
-                ViewBag.DSListAll = ObjDSListAll;
-                //ViewBag.DSList = ObjDSList;
-                resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
-                rlist = resultlist.Data;
-                foreach (var element in rlist)
-                {
-                    ObjDVListAll[element.Id] = element.Name;
-                }
-                ViewBag.DVListAll = ObjDVListAll;
-            //}
-            //else
-            if (dsid > 0)
-            {
-                Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-                ViewBag.dsid = _dict["dsId"];
-                ViewBag.dvname = _dict["dvName"];
-                int fdid = Convert.ToInt32(_dict["fdId"]);
-                ViewBag.FDialog = GetByteaEbObjects_json(fdid);
-            }
+        //[HttpGet]
+        //public IActionResult dv()
+        //{
+        //    IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+        //    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+        //    var rlist = resultlist.Data;
+        //    Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+        //    Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+        //    Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
+        //    foreach (var element in rlist)
+        //    {
+        //        ObjDSListAll[element.Id] = element;
+        //    }
+        //    ViewBag.DSListAll = ObjDSListAll;
+        //    ViewBag.DSList = ObjDSList;
+        //    resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
+        //    rlist = resultlist.Data;
+        //    foreach (var element in rlist)
+        //    {
+        //        ObjDVListAll[element.Id] = element.Name;
+        //    }
+        //    ViewBag.DVListAll = ObjDVListAll;
+        //    ViewBag.Obj_id = 0;
+        //    ViewBag.dsid = 0;
+        //    ViewBag.tvpref = "{ }";
+        //    ViewBag.isFromuser = 0;
 
-            return View();
-        }
+        //    return View();
+        //}
 
-        [HttpPost]
-        public IActionResult dv(int objid)
-        {
-            var token = Request.Cookies["Token"];
-            ViewBag.dvid = objid;
-            ViewBag.token = token;
-            ViewBag.EbConfig = this.EbConfig;
+        //[HttpPost]
+        //public IActionResult dv(int objid)
+        //{
+        //    var token = Request.Cookies["Token"];
+        //    ViewBag.dvid = objid;
+        //    ViewBag.token = token;
+        //    ViewBag.EbConfig = this.EbConfig;
 
-            var redisClient = this.EbConfig.GetRedisClient();
-            //if (ViewBag.wc == "uc")
-            //{
-                var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, objid));
-                //var result = JsonConvert.DeserializeObject<Object>(tvpref);
+        //    var redisClient = this.EbConfig.GetRedisClient();
+        //    //if (ViewBag.wc == "uc")
+        //    //{
+        //        var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, objid));
+        //        //var result = JsonConvert.DeserializeObject<Object>(tvpref);
 
-                Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
-                ViewBag.dsid = _dict["dsId"];
-                ViewBag.dvname = _dict["dvName"];
-                int fdid = Convert.ToInt32(_dict["fdId"]);
-                //var obj = GetByteaEbObjects_json(fdid);
-                ViewBag.FDialog = GetByteaEbObjects_json(fdid);  //(obj.Value as Dictionary<int, EbFilterDialog>)[fdid];
-                                                                 //ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
-            //}
-            //else if(ViewBag.wc == "dc")
-            //{
+        //        Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
+        //        ViewBag.dsid = _dict["dsId"];
+        //        ViewBag.dvname = _dict["dvName"];
+        //        int fdid = Convert.ToInt32(_dict["fdId"]);
+        //        //var obj = GetByteaEbObjects_json(fdid);
+        //        ViewBag.FDialog = GetByteaEbObjects_json(fdid);  //(obj.Value as Dictionary<int, EbFilterDialog>)[fdid];
+        //                                                         //ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
+        //    //}
+        //    //else if(ViewBag.wc == "dc")
+        //    //{
 
-            //}
-            return View();
-        }
+        //    //}
+        //    return View();
+        //}
 
-        public EbFilterDialog GetByteaEbObjects_json(int objId)
-        {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            var element = resultlist.Data[0];
+        //public EbFilterDialog GetByteaEbObjects_json(int objId)
+        //{
+        //    IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+        //    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+        //    var element = resultlist.Data[0];
 
-            //Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
+        //    //Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
 
-            var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
-            dsobj.Id = element.Id;
-            //dsobj.EbObjectType = element.EbObjectType;
-            //dsobj.Id = element.Id;
-            //ObjList[element.Id] = dsobj;
+        //    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
+        //    dsobj.Id = element.Id;
+        //    //dsobj.EbObjectType = element.EbObjectType;
+        //    //dsobj.Id = element.Id;
+        //    //ObjList[element.Id] = dsobj;
 
-            //return Json(ObjList);
-            return dsobj;
-        }
+        //    //return Json(ObjList);
+        //    return dsobj;
+        //}
 
         [HttpGet]
         public IActionResult UserPreferences()

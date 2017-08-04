@@ -1,9 +1,22 @@
-﻿var formBuilder = function (toolBoxid, formid, propGridId) {
+﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
     this.Name = "form-buider-form";
     this.toolBoxid = toolBoxid;
-    this.formObj = new EbObjects.EbFormObj(formid);
+    this.rootContainerObj = null;
     this.formid = formid;
     this.$propGrid = $("#" + propGridId);
+
+    //if (builderType === 0)
+    //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
+    if (builderType === 1)
+        this.rootContainerObj = new EbObjects.EbFilterDialogObj(formid);
+    else if (builderType === 2)
+        this.rootContainerObj = new EbObjects.EbFormObj(formid);
+    //else if (builderType === 3)
+    //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
+    //else if (builderType === 4)
+    //    this.rootContainerObj = new EbObjects.UserControlObj(formid);
+    //else if (builderType === 4)
+    //    this.rootContainerObj = new EbObjects.ReportObj(formid);
 
     this.controlCounters = {
         ComboBoxCounter: 0,
@@ -31,7 +44,7 @@
         $(".eb-loaderFixed").show();
         $.post("SaveFilterDialog", {
             "Id": 0,
-            "FilterDialogJson": JSON.stringify(this.formObj),
+            "FilterDialogJson": JSON.stringify(this.rootContainerObj),
             "Name": $('#save_txtBox').val(),
             "Description": "",
             "isSave": "false",
@@ -109,7 +122,7 @@
         var id = this.curControl.attr("id");
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
-        this.CreatePG(this.formObj.Controls.GetByName(id));
+        this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
         $(".controls-dd-cont .selectpicker").selectpicker('val', id);
     };
@@ -130,7 +143,7 @@
         //if drag start within the form
         if ($(source).attr("id") !== "form-buider-toolBox") {
             console.log("el poped");
-            this.movingObj = this.formObj.Controls.PopByName($(el).attr("id"));
+            this.movingObj = this.rootContainerObj.Controls.PopByName($(el).attr("id"));
         }
         else
             this.movingObj = null;
@@ -146,11 +159,11 @@
                 if (sibling.attr("id")) {
                     console.log("sibling : " + sibling.id);
                     var idx = sibling.index() - 1;
-                    this.formObj.Controls.InsertAt(idx, this.movingObj);
+                    this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
                     console.log("no sibling ");
-                    this.formObj.Controls.Append(this.movingObj)
+                    this.rootContainerObj.Controls.Append(this.movingObj)
                 }
                 this.saveObj();
                 $(el).on("focus", this.controlOnFocus.bind(this));
@@ -179,9 +192,10 @@
 
                 ctrl.attr("ebtype", type).attr("id", id);
 
-                this.formObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+                this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
 
-                ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + this.getHtml(el, id, type));
+                ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
+                    + new EbObjects["Eb" + type + "Obj"](id).Html);
 
                 $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
 
@@ -197,9 +211,9 @@
 
     this.getHtml = function (el, id, type) {
         var _html = "";
-        if (type === "TextBox")
-            _html = "<input type='text' readonly style='width:100%' />";
-        else if (type === "ComboBox")
+        //if (type === "TextBox")
+        //    _html = "<input type='text' readonly style='width:100%' />";
+        if (type === "ComboBox")
             _html = "<div role='form' data-toggle='validator' style=' width: inherit;'><input type='hidden' name='acmasteridHidden4val' data-ebtype='16' id='acmasterid'> <div id='acmasteridLbl' style='display: inline-block;'></div> <div id='acmasteridWraper' data-toggle='tooltip' title='' data-original-title=''><div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid0'><div type='button' class='dropdown-toggle clearfix' style='border-top-left-radius: 5px; border-bottom-left-radius: 5px;'> <input debounce='0' type='search'  readonly  placeholder='label0' class='form-control' id='acmaster1_xid' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid1'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' placeholder='label1' readonly class='form-control' id='acmaster1_name' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon' style='border-radius: 0px;'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div> <div style='display: inline-block; width: 33%; margin-right: -4px;'><div class='input-group'><div class='dropdown v-select searchable' id='acmasterid2'><div type='button' class='dropdown-toggle clearfix'> <input debounce='0' type='search' readonly placeholder='label2' class='form-control' id='tdebit' style='width: 100%; background-color: #fff;'> <i role='presentation' class='open-indicator' style='display: none;'></i> <div class='spinner' style='display: none;'>Loading...</div></div> <!----></div> <span class='input-group-addon'><i id='acmasteridTglBtn' aria-hidden='true' class='fa  fa-search'></i></span></div></div></div> <div id='acmasterid_loadingdiv' class='ebCombo-loader'><i id='acmasterid_loading-image' class='fa fa-spinner fa-pulse fa-2x fa-fw' style='display: none;'></i><span class='sr-only'>Loading...</span></div> <center><div id='acmasteridDDdiv' class='DDdiv expand-transition' style='width: 600px; display: none;'><table id='acmasteridtbl' class='table table-striped table-bordered' style='width: 100%;'></table></div></center></div>";
         else if (type === "Numeric")
             _html = "<div class='Eb-ctrlContainer'  style='width:100%; min-height: 12px;'><span id='nameLbl' >Amount</span><div  class='input-group'><span class='input-group-addon'>$</span><input type='text'  class='numinput' name='name'  data-toggle='tooltip' title='toolTipText' id='name' style='width:100%; display:inline-block;' /></div><span class='helpText'> helpText </span></div>";
@@ -207,8 +221,8 @@
             _html = "<div style='width:100%;' class='Eb-ctrlContainer'><span id='datefromLbl' style='background-color:#000000; color:#000000;'></span><div class='input-group' style='width:100%;'><input id='datefrom' data-ebtype='5' data-toggle='tooltip' title='' class='date' type='text' name='datefrom' autocomplete='on' value='01-01-0001 05:30:00 AM' readonly style='width:100%; height:21px; background-color:#FFFFFF; color:#000000; display:inline-block;  ' placeholder='' maxlength='10' data-original-title=''><span class='input-group-addon'> <i id='datefromTglBtn' class='fa  fa-calendar' aria-hidden='true'></i> </span></div><span class='helpText'>  </span></div>";
         else if (type === "Button")
             _html = "<div class='btn btn-default'>Button</div>";
-        else if (type === "TableLayout")
-            _html = "<table style='width:100%'><tr><td id='" + id + "_Td0' class='tdDropable' ></td> <td id='" + id + "_Td1' class='tdDropable'></td style='min-height:20px;'> </tr></table>";
+        //else if (type === "TableLayout")
+        //    _html = "<table style='width:100%'><tr><td id='" + id + "_Td0' class='tdDropable' ></td> <td id='" + id + "_Td1' class='tdDropable'></td style='min-height:20px;'> </tr></table>";
         return _html;
     };
 
@@ -218,7 +232,7 @@
         $("#SelOpt" + id).remove();
         $('.selectpicker').selectpicker('refresh');
         ControlTile.remove();
-        this.formObj.Controls.DelByName(id);
+        this.rootContainerObj.Controls.DelByName(id);
         this.$propGrid.hide();
         e.preventDefault();
         this.saveObj();
@@ -258,7 +272,7 @@
         var id = this.curControl.attr("id");
         var curTr = this.curControl.children().children().children();
         var noOfTds = curTr.children().length;
-        this.formObj.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
+        this.rootContainerObj.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
         curTr.append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'> </td>");
         this.makeTdsDropable.bind(this);
         this.CurColCount = $(e.target).val();//tmp
@@ -267,7 +281,7 @@
     this.removeTd = function (e) {
         var id = this.curControl.attr("id");
         var noOfTds = this.curControl.children().children().children().children().length;
-        this.formObj.Controls.GetByName(id).Controls.Pop();
+        this.rootContainerObj.Controls.GetByName(id).Controls.Pop();
         this.curControl.find("tr").find("td").last().remove();
         this.makeTdsDropable.bind(this);
         this.CurColCount = $(e.target).val();//tmp

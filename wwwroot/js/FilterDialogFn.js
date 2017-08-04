@@ -364,7 +364,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
 
                 this.SetValues();
-                this.FilterDId = $('#fd option:selected').val();
+                this.FilterDId = null;
                 this.GetUsedSqlFns(needRun);
             }
             else {

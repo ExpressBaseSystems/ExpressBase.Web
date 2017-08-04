@@ -426,23 +426,28 @@ namespace ExpressBase.Web2.Controllers
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);           
             var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "getusers",id = roleid, Token = ViewBag.token });
             List<string> users = fr.Data["users"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList();
+
+           
             foreach (var key in fr.Data.Keys)
             {
                 if (key != "users")
-                {
-                    var checkedrole = users.Contains(key) ? "checked" : string.Empty;
-                    html += @"
-                <div class='row'>
-                    <div class='col-md-1'>
-                        <input type ='checkbox' @checked name ='@users' value = '@userid' aria-label='...'>
-                    </div>
+                    html += "<div id ='@userid'>@users</div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);
+                //if (key != "users")
+                //{
+                //    var checkedrole = users.Contains(key) ? "checked" : string.Empty;
+                //    html += @"
+                //<div class='row'>
+                //    <div class='col-md-1'>
+                //        <input type ='checkbox' @checked name ='@users' value = '@userid' aria-label='...'>
+                //    </div>
 
-                    <div class='col-md-8'>
-                        <h4 name = 'head4' style='color:black;'>@users</h4>                        
-                    </div>               
-                </div> ".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key).Replace("@checked", checkedrole);
-                }
+                //    <div class='col-md-8'>
+                //        <h4 name = 'head4' style='color:black;'>@users</h4>                        
+                //    </div>               
+                //</div> ".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key).Replace("@checked", checkedrole);
+                //}
             }
+           
             return html;
         }
 

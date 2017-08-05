@@ -28,10 +28,11 @@ var sub = function (name, index, height, subsection) {
     this.subsection = subsection;
 };
 
-var RptBuilder = function (type) {
+var RptBuilder = function (type,toolboxid) {
     this.type = type;
     this.height = pages[type].height;
     this.width = pages[type].width;
+    this.toolboxId = toolboxid;
 
     this.report = new Object();
     this.report.pagetype = type;
@@ -47,13 +48,13 @@ var RptBuilder = function (type) {
         var $pageCanvas = $('#pageCanvas');
         $pageCanvas.empty();
         $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
-        $pageCanvas.append("<div class='ruler'></div> <div class='rulerleft'></div><div id='PageContainer' style='margin-top:4px;'></div>");
+        $pageCanvas.append("<div class='ruler'></div> <div class='rulerleft'></div><div id='PageContainer' style='margin-top:4px'></div>");
 
-        this.splitheaderBox();
+        this.createHeaderBox();
 
         if (pages[type].width > "21cm") {
 
-            $('#pageCanvas').css({ "transform": "scale(0.6)", "transform-origin": "0 0" });
+            $('#pageCanvas').css({ "transform": "scale(0.8)", "transform-origin": "0 0" });
 
         }
         var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
@@ -63,7 +64,7 @@ var RptBuilder = function (type) {
         return $div;
     };
 
-    this.splitheaderBox = function () {
+    this.createHeaderBox = function () {
 
         $headersection = $("<div class='headersections' style='height:" + pages[type].height + ";'></div>");
         $("#PageContainer").append($headersection);
@@ -71,13 +72,13 @@ var RptBuilder = function (type) {
 
         for (var i = 0; i < 5; i++) {
 
-            $(".multiSplit").append("<div class='multiSplitHbox' id='box" + i + "' data_val='"+ i +"' style='width:100%'></div>");
+            $(".multiSplit").append("<div class='multiSplitHbox' id='box" + i + "' data_val='" + i + "' style='width:100%'></div>");
 
         }
 
     };
 
-    this.pageSplitHbox = function () {
+    this.headerBox1_Split = function () {
 
         $(".headersections").append("<div class='rptheadHbox' data-index='0' style='width :100%'><p>Rh</p></div>");
         $(".headersections").append("<div class='pgheadHbox' data-index='1' style='width :100%'><p>Ph</p></div>");
@@ -150,7 +151,7 @@ var RptBuilder = function (type) {
     this.addButton = function (i, obj) {
 
         this.j = 2;
-        $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
+        $(obj).append("<button class='btn btn-xs btn-primary'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
         $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
 
     };
@@ -191,6 +192,18 @@ var RptBuilder = function (type) {
                 cursor: 'row-resize',
                 minSize: 5,
                 gutterSize: 3,
+                onDrag: function (e) {
+
+                    $('.multiSplit').children().not(".gutter").children().not(".gutter").each(function (i, obj1) {
+                        $('.page').children().not(".gutter").children().not(".gutter").each(function (j, obj2) {
+                            if ($(obj1).parent().attr("data_val") === $(obj2).parent().attr("data_val")) {
+                                if ($(obj1).index() === $(obj2).index()) {
+                                    $(obj1).css("height", $(obj2).height());
+                                }
+                            }
+                        });
+                    });
+                }
             });
             this.saveToObject($sec);
         }
@@ -198,13 +211,13 @@ var RptBuilder = function (type) {
 
     this.saveToObject = function ($sec) {
         var temp = [];
-        $sec.children().not(".gutter").each(function (i, obj) {                  
-            temp.push(new sub($(this).attr("class"), $(this).index(), $(this).height(), null));         
+        $sec.children().not(".gutter").each(function (i, obj) {
+            temp.push(new sub($(this).attr("class"), $(this).index(), $(this).height(), null));
 
             $.each(report.sections, function (i, obj) {
-               
+
                 var sec1 = $sec.attr("class");
-               
+
                 if (sec1 === this.className) {
                     report.sections[i].subsection = temp;
                 }
@@ -251,7 +264,7 @@ var RptBuilder = function (type) {
         });
     };
 
-    this.multiSplitBoxinner = function(){
+    this.multiSplitBoxinner = function () {
 
         var index = this.btn_indx;
         var temp1 = [];
@@ -260,17 +273,17 @@ var RptBuilder = function (type) {
 
         $('.multiSplit').children(".multiSplitHbox").each(function (i, obj) {
             $('.page').children().not(".gutter").each(function (j, obj2) {
-                var hLength = $(obj2).children().not(".gutter").length;                
+                var hLength = $(obj2).children().not(".gutter").length;
                 if ($(obj).attr("data_val") === $(obj2).attr("data_val") && index === $(obj).attr("data_val")) {
                     for (var k = 0; k < hLength ; k++) {
-                        $(obj).append("<div class='multiSplitHboxSub' id='subBox" + k + $(obj).attr("data_val") + "' style='width:100%;'></div>");
+                        $(obj).append("<div class='multiSplitHboxSub' id='subBox" + k + $(obj).attr("data_val") + "' style='width:100%'><p>s" + k + "</p></div>");
                         temp1.push("#subBox" + k + $(obj).attr("data_val") + "");
                     }
                     flagsuccess = true;
                     return false;
-                }               
+                }
             });
-            if(flagsuccess)
+            if (flagsuccess)
                 return false;
         });
         if (temp1 != null) {
@@ -278,19 +291,23 @@ var RptBuilder = function (type) {
             Split(temp1, {
                 direction: 'vertical',
                 cursor: 'row-resize',
-                minSize: 5,
+                minSize: 10,
                 gutterSize: 3,
             });
         }
     };
-   
+
+    this.DragDrop_DataSource = function () {
+       
+    }
     this.init = function () {
 
         $('#PageContainer').empty();
         var $pageref = this.createPage(type);
         this.pageSplitters($pageref);
-        this.pageSplitHbox();
-        this.headerScaling();      
+        this.headerBox1_Split();
+        this.headerScaling();
+        this.DragDrop_DataSource();
     };
     this.init();
 };

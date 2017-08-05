@@ -21,17 +21,18 @@ var pages = {
     }
 };
 
-var sub = function (name,index,height,subsection) {
+var sub = function (name, index, height, subsection) {
     this.className = name;
-    this.index =index;
-    this.height =height;
+    this.index = index;
+    this.height = height;
     this.subsection = subsection;
 };
 
-var RptBuilder = function (type) {
+var RptBuilder = function (type,toolboxid) {
     this.type = type;
     this.height = pages[type].height;
     this.width = pages[type].width;
+    this.toolboxId = toolboxid;
 
     this.report = new Object();
     this.report.pagetype = type;
@@ -41,19 +42,19 @@ var RptBuilder = function (type) {
     this.subsection1 = [];
     this.splitarray = [];
     this.btn_indx = null;
-    
+
     this.createPage = function (type) {
 
         var $pageCanvas = $('#pageCanvas');
         $pageCanvas.empty();
         $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
-        $pageCanvas.append("<div class='ruler'></div> <div class='rulerleft'></div><div id='PageContainer' style='margin-top:4px;'></div>");
+        $pageCanvas.append("<div class='ruler'></div> <div class='rulerleft'></div><div id='PageContainer' style='margin-top:4px'></div>");
 
-        this.splitheaderBox();
+        this.createHeaderBox();
 
         if (pages[type].width > "21cm") {
 
-            $('#pageCanvas').css({ "transform": "scale(0.6)", "transform-origin": "0 0" });
+            $('#pageCanvas').css({ "transform": "scale(0.8)", "transform-origin": "0 0" });
 
         }
         var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
@@ -63,22 +64,22 @@ var RptBuilder = function (type) {
         return $div;
     };
 
-    this.splitheaderBox = function () {
+    this.createHeaderBox = function () {
 
         $headersection = $("<div class='headersections' style='height:" + pages[type].height + ";'></div>");
         $("#PageContainer").append($headersection);
         $("#PageContainer").append("<div class='multiSplit' style='height:" + pages[type].height + ";'></div>");
 
         for (var i = 0; i < 5; i++) {
-           
-            $(".multiSplit").append("<div class='multiSplitHbox' id='box" + i + "' style='width:100%'></div>");
+
+            $(".multiSplit").append("<div class='multiSplitHbox' id='box" + i + "' data_val='" + i + "' style='width:100%'></div>");
 
         }
-        
+
     };
 
-    this.pageSplitHbox = function () {
-        
+    this.headerBox1_Split = function () {
+
         $(".headersections").append("<div class='rptheadHbox' data-index='0' style='width :100%'><p>Rh</p></div>");
         $(".headersections").append("<div class='pgheadHbox' data-index='1' style='width :100%'><p>Ph</p></div>");
         $(".headersections").append("<div class='pgbodyHbox' data-index='2' style='width :100%'><p>Dtls</p></div>");
@@ -90,7 +91,7 @@ var RptBuilder = function (type) {
 
     this.ruler = function (width, height) {
 
-        var $ruler = $('.ruler').css({ "width": width, "height": "25px", "margin-left": "128px" });
+        var $ruler = $('.ruler').css({ "width": width, "height": "25px", "margin-left": "108px" });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
             var $tick = $('<div>');
             if (step === 0) {
@@ -125,19 +126,19 @@ var RptBuilder = function (type) {
 
     this.pageSplitters = function ($pageref) {
 
-        $pageref.append("<div class='rpthead' style='width :100%'></div>");      
-        
-        $pageref.append("<div class='pghead' style='width :100%'></div>");
+        $pageref.append("<div class='rpthead' data_val='0' style='width :100%'></div>");
 
-        $pageref.append("<div class='pgbody' style='width :100%'></div>");
+        $pageref.append("<div class='pghead' data_val='1'style='width :100%'></div>");
 
-        $pageref.append("<div class='pgfooter' style='width :100%'></div>");
+        $pageref.append("<div class='pgbody' data_val='2'style='width :100%'></div>");
 
-        $pageref.append("<div class='rptfooter' style='width :100%'></div>");
+        $pageref.append("<div class='pgfooter' data_val='3'style='width :100%'></div>");
+
+        $pageref.append("<div class='rptfooter' data_val='4' style='width :100%'></div>");
 
         $pageref.children().not(".gutter").each(function () {
             var classname = $(this).attr("class");
-            report.sections.push(new sub(classname, $(this).index(), $(this).height(),null));
+            report.sections.push(new sub(classname, $(this).index(), $(this).height(), null));
         });
     };
 
@@ -148,17 +149,17 @@ var RptBuilder = function (type) {
     };
 
     this.addButton = function (i, obj) {
+
         this.j = 2;
-        $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
+        $(obj).append("<button class='btn btn-xs btn-primary'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
         $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
 
     };
 
-    this.splitDiv = function (e) {     
-        this.subsection1 = [];
+    this.splitDiv = function (e) {
+
         this.splitarray = [];
         this.btn_indx = $(e.target).parent().parent().attr("data-index");
-        console.log("btn index"+this.btn_indx);
         $.each(this.report.sections, this.splitDiv_inner.bind(this));
 
     };
@@ -166,47 +167,67 @@ var RptBuilder = function (type) {
     this.splitDiv_inner = function (i, obj) {
 
         if (obj.index == this.btn_indx) {
+            var $sec = $("." + obj.className);
 
-            var $sec = $("." + obj.className);           
             if ($sec.children().length === 0) {
 
                 var s0 = $("<div class='s" + obj.index + "0'></div>");
                 var s1 = $("<div class='s" + obj.index + "1'></div>");
                 $sec.append(s0, s1);
-
-                this.subsection1.push(new sub(s0.attr("class"), s0.index(), s0.height(), null));
-                this.subsection1.push(new sub(s1.attr("class"), s1.index(), s0.height(), null));
-
                 this.splitarray.push("." + s0.attr("class") + "", "." + s1.attr("class") + "");
 
             }
+
             else if ($sec.children().length !== 0) {
-                              
+
                 this.$spl = $("<div class='s" + obj.index + this.j++ + "'></div>");
                 $sec.append($spl);
-
                 $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
                 $($sec).children('.gutter').remove();
-            };
 
-            if (subsection1.length > 0) {
-                this.report.sections[i].subsection = this.subsection1;
             };
-            console.log("array"+this.splitarray);
 
             Split(this.splitarray, {
                 direction: 'vertical',
                 cursor: 'row-resize',
-                minSize: 0,
-                gutterSize: 2
+                minSize: 5,
+                gutterSize: 3,
+                onDrag: function (e) {
+
+                    $('.multiSplit').children().not(".gutter").children().not(".gutter").each(function (i, obj1) {
+                        $('.page').children().not(".gutter").children().not(".gutter").each(function (j, obj2) {
+                            if ($(obj1).parent().attr("data_val") === $(obj2).parent().attr("data_val")) {
+                                if ($(obj1).index() === $(obj2).index()) {
+                                    $(obj1).css("height", $(obj2).height());
+                                }
+                            }
+                        });
+                    });
+                }
             });
+            this.saveToObject($sec);
         }
     };
 
-    this.splitMore = function (i, obj) { 
+    this.saveToObject = function ($sec) {
+        var temp = [];
+        $sec.children().not(".gutter").each(function (i, obj) {
+            temp.push(new sub($(this).attr("class"), $(this).index(), $(this).height(), null));
 
+            $.each(report.sections, function (i, obj) {
+
+                var sec1 = $sec.attr("class");
+
+                if (sec1 === this.className) {
+                    report.sections[i].subsection = temp;
+                }
+            });
+        });
+        this.multiSplitBoxinner();
+    };
+
+    this.splitMore = function (i, obj) {
         this.splitarray.push("." + obj.className);
-
     };
 
     this.headerScaling = function () {
@@ -231,7 +252,7 @@ var RptBuilder = function (type) {
             cursor: 'row-resize',
             sizes: [10, 10, 60, 10, 10],
             minSize: 0,
-            gutterSize: 3         
+            gutterSize: 3
         });
 
         Split(['#box0', '#box1', '#box2', '#box3', '#box4'], {
@@ -243,14 +264,50 @@ var RptBuilder = function (type) {
         });
     };
 
+    this.multiSplitBoxinner = function () {
+
+        var index = this.btn_indx;
+        var temp1 = [];
+        var flagsuccess = false;
+        $('.multiSplit').children(".multiSplitHbox").eq(this.btn_indx).children().remove();
+
+        $('.multiSplit').children(".multiSplitHbox").each(function (i, obj) {
+            $('.page').children().not(".gutter").each(function (j, obj2) {
+                var hLength = $(obj2).children().not(".gutter").length;
+                if ($(obj).attr("data_val") === $(obj2).attr("data_val") && index === $(obj).attr("data_val")) {
+                    for (var k = 0; k < hLength ; k++) {
+                        $(obj).append("<div class='multiSplitHboxSub' id='subBox" + k + $(obj).attr("data_val") + "' style='width:100%'><p>s" + k + "</p></div>");
+                        temp1.push("#subBox" + k + $(obj).attr("data_val") + "");
+                    }
+                    flagsuccess = true;
+                    return false;
+                }
+            });
+            if (flagsuccess)
+                return false;
+        });
+        if (temp1 != null) {
+            console.log(temp1);
+            Split(temp1, {
+                direction: 'vertical',
+                cursor: 'row-resize',
+                minSize: 10,
+                gutterSize: 3,
+            });
+        }
+    };
+
+    this.DragDrop_DataSource = function () {
+       
+    }
     this.init = function () {
 
         $('#PageContainer').empty();
         var $pageref = this.createPage(type);
         this.pageSplitters($pageref);
-        this.pageSplitHbox();
+        this.headerBox1_Split();
         this.headerScaling();
-        
+        this.DragDrop_DataSource();
     };
     this.init();
 };

@@ -83,25 +83,25 @@
     var formBuilderObj = null;
     var objid =$("#objid").val();
     var objtype =$("#objtype").val();
-    var mode=0;
+    var FBid = "form-buider-form";
     var editModeFormObj = null;
+    var ToolBoxId = "form-buider-toolBox";
+    var PGid = "form-buider-propGrid";
+
     // if edit mode
     if(objid){
         $.LoadingOverlay("show");
-        mode=1;
-        editModeFormObj = {"$type":"ExpressBase.Objects.ObjectContainers.EbFilterDialog, ExpressBase.Objects","EbSid":"form-buider-form","IsContainer":true,"Controls":{"$type":"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], System.Private.CoreLib","$values":[{"$type":"ExpressBase.Objects.EbDate, ExpressBase.Objects","EbSid":"Date0","Label":"","HelpText":"","ToolTipText":"","Name":"datefrom"},{"$type":"ExpressBase.Objects.EbDate, ExpressBase.Objects","EbSid":"Date1","Label":"","HelpText":"","ToolTipText":"","Name":"dateto"}]},"Label":"","HelpText":"","ToolTipText":"","Name":"form-buider-form"};//@ViewBag.Json;
+        editModeFormObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
         $.post("../Dev/GetByteaEbObjects_json", { "ObjId": objid, "Ebobjtype": objtype },
                function (result) {
-                   $("").append(result);
                    $.LoadingOverlay("hide");
-                   //alert("result:"+result);
-                   $("#form-buider-form").html(result);
-                   formBuilderObj= new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
-                   formBuilderObj.InitEditModeCtrls();
+                   $("#" + FBid).html(result);
+                   formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
+                   formBuilderObj.InitEditModeCtrls(editModeFormObj);
                });
     }
-    formBuilderObj= new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
-
+    else
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
 </script>
 
 <style>

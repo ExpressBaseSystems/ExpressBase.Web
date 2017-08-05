@@ -232,7 +232,6 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
             if (this.currentProperty.parent().prev().text() === "Columns") {
                 this.ChangeGridColNo(e);
             }
-
         }
 
     };
@@ -282,40 +281,32 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
 
     this.initCtrl = function (el) {
 
-        var ctrl = $(el);
+        var EbCtrl = $(el);
 
-        var EbCtrlHtml = ctrl.outerHTML();
+        var ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + EbCtrl.outerHTML() + "</div>");
 
-        ctrl.replaceWith("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + EbCtrlHtml + "</div>");
-
-        var type = ctrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
+        var type = EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
 
         var id = (type + (this.controlCounters[type + "Counter"])++);
 
-        ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+        ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
 
-        ctrl.attr("ebtype", type).attr("id", id);
-
-        //this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));// replace
-
-        //ctrl.focus().parent().prepend($("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"));//replaced
-
-        alert(ctrl.outerHTML());
+        ControlTile.attr("ebtype", type).attr("id", id);
 
         $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
 
         $('.selectpicker').selectpicker('refresh');
 
-        ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+        EbCtrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+
+        EbCtrl.replaceWith(ControlTile);
     };
 
     this.InitEditModeCtrls = function (editModeFormObj) {
-            _this = this;
-            //this.rootContainerObj.Append(editModeFormObj);
-            //alert("editModeFormObj:"+JSON.stringify(editModeFormObj));
-            $(".Eb-ctrlContainer").each(function (i, el) {
-                _this.initCtrl(el);
-            });
+        _this = this;
+        //this.rootContainerObj.Append(editModeFormObj);
+        //alert("editModeFormObj:"+JSON.stringify(editModeFormObj));
+        $(".Eb-ctrlContainer").each(function (i, el) { _this.initCtrl(el); });
     };
 
     this.Init = function () {

@@ -443,14 +443,12 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 dsid: this.Obj_Id,
                 parameter: this.Object_String_WithVal
             }, this.Load_Table_Columns.bind(this));
-            $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show');
-            alert(":11");
+            $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show'); 
         }
         else {
             $.LoadingOverlay("hide");
             alert('not valid');
-        }
-        alert(":122");
+        } 
         return false;
     };
 
@@ -467,19 +465,20 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 scrollX: "100%",
                 scrollY: "300px",
-          //      "processing": true,
+                processing: true,
                 ajax: {
                     url: "https://expressbaseservicestack.azurewebsites.net/ds/data/" + this.Obj_Id,
                     type: "POST",
                     data: this.Load_tble_Data.bind(this),
                     dataSrc: function (dd) { return dd.data; },
                 }
-            });
-            $.LoadingOverlay("hide");           
+            });      
         }
+         return false;
     };
 
     this.Load_tble_Data = function (dq) {
+        alert('Load_tble_Data');
         delete dq.columns; delete dq.order; delete dq.search;
         dq.Id = this.Obj_Id;
         dq.Token = getToken();
@@ -500,10 +499,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 $.LoadingOverlay("hide");
             });
         }
+        else
+        {
         $.LoadingOverlay("hide");
         $(getNav + ' #run').removeClass('disabled');
+        }
+
         $(getNav + " #run").off("click").on("click", this.RunDs.bind(this));
-        
     };
 
     this.RunDs = function () {

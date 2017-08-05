@@ -786,10 +786,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Header = "Edit Application";
             int obj_id = Convert.ToInt32(req["objid"]);
             ViewBag.Obj_id = obj_id;
-
-
-
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = obj_id, VersionId = -1, EbObjectType = (int)EbObjectType.Application, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = obj_id/*, VersionId = null*/, EbObjectType = (int)EbObjectType.Application, Token = ViewBag.token });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {

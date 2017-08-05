@@ -29,40 +29,44 @@
 
     @using Newtonsoft.Json;
     @using ExpressBase.Objects.ServiceStack_Artifacts;
-        Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
-        Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
-        //Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
-        ObjDSList = ViewBag.DSList;
-        ObjDSListAll = ViewBag.DSListAll;
-        //ObjDVListAll = ViewBag.DVListAll;
-        string ObjDVListAll = JsonConvert.SerializeObject(ViewBag.DVListAll);
-        //string ObjDSList = JsonConvert.SerializeObject(ViewBag.DSList);
-        //string ObjDSListAll = JsonConvert.SerializeObject(ViewBag.DSListAll);
-
-        if (dsid > 0) {
-            EbDataGridView dgv = new EbDataGridView
-            {
-                DataSourceId = dsid,
-                DvId = dvid,
-                Dvname = dvname,
-                // FilterDialogId = (ViewBag.FDialog as EbFilterDialog).Id,
-                Name = "dv" + dvid.ToString(),
-                Login = ViewBag.wc,
-                Dvlist = ObjDVListAll
-            };
-
-            dgv.Token = ViewBag.token;
-            dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
+    Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
+    Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
+    //Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
+    ObjDSList = ViewBag.DSList;
+    ObjDSListAll = ViewBag.DSListAll;
+    //ObjDVListAll = ViewBag.DVListAll;
+    string ObjDVListAll = JsonConvert.SerializeObject(ViewBag.DVListAll);
+    //string ObjDSList = JsonConvert.SerializeObject(ViewBag.DSList);
+    //string ObjDSListAll = JsonConvert.SerializeObject(ViewBag.DSListAll);
+    var xxx = "";
+    //if (dsid > 0) {
 
 
-            dgv.SetFilterForm(ViewBag.FDialog);
-            html += dgv.GetHtml();
-            head += dgv.GetHead();
-        }
-        // head += (ViewBag.EbForm38 as EbForm).GetHead();
+    //    //.Replace("@tvPref4User", tvPref4User);
+
+    //    EbDataGridView dgv = new EbDataGridView
+    //    {
+    //        DataSourceId = dsid,
+    //        DvId = dvid,
+    //        Dvname = dvname,
+    //        // FilterDialogId = (ViewBag.FDialog as EbFilterDialog).Id,
+    //        Name = "dv" + dvid.ToString(),
+    //        Login = ViewBag.wc,
+    //        Dvlist = ObjDVListAll
+    //    };
+
+    //    dgv.Token = ViewBag.token;
+    //    dgv.Init4Redis(ViewBag.EbConfig.GetRedisClient(), ViewBag.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken));
+
+
+    //    //dgv.SetFilterForm(ViewBag.FDialog);
+    //    //html += dgv.GetHtml();
+    //    head += dgv.GetHead();
+    //}
+    // head += (ViewBag.EbForm38 as EbForm).GetHead();
     }
 <div class='dropdown' id='datatSourceDropdown'>
-    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
+    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Select Datasource
         <span class='caret'></span>
     </button>
     <ul class='dropdown-menu scrollable-menu'>
@@ -82,21 +86,23 @@
 
 <div id="filterDia"></div>
 
+
 @section EbHead {
     <script>
         $("#datatSourceDropdown .dropdown-menu li a").on("click", function (e) {
-            alert(100);
             dsid = $(e.target).parent().attr("data-dsid");
             $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
             $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
-            alert(dsid);
-            $.post('../Dev/FilterDialog', { dsid: dsid }, function (data) {
+            $.post('../Dev/DataVisualisation', { dsid: dsid }, function (data) {
                 $("#filterDia").html(data);
-                //alert(data);
-                //$.get('../Dev/dv', { dsid: dsid, data: dat });
-
+                //$("#filterDia").append("<button id='abc'>GO</button>");
             });
         });
+        //$(document).on("click", "#abc", function () {
+        //    $.get('../Dev/DataVisualisation', { dsid: dsid }, function (data) {
+        //        $("#table").html(data);
+        //    });
+        //});
         $(document).ready(function () {
             @Html.Raw(head)
             $('[data-toggle="tooltip"]').tooltip();
@@ -104,4 +110,4 @@
     </script>
 }
 
-@Html.Raw(html)
+@Html.Raw(xxx)

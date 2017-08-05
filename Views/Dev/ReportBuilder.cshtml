@@ -1,45 +1,65 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Html.RenderPartial("_PageheaderDev");
 }
-<div class="row">
-    <div class="reportmenu">
-        <div class="form-inline" id="options">
-            <div class="form-group">
-                <label for="sel1">Page Size</label>
-                <select class="form-control" id="pagesize">
-                    <option value="">Size</option>
-                    <option value="Letter">Letter</option>
-                    <option value="A1">A1</option>
-                    <option value="A3">A3</option>
-                    <option value="A4">A4</option>
-                    <option value="A5">A5</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="file" style="display:none" id="Rptbgimg"/>
-                <button class="btn btn-default" onclick="$('#Rptbgimg').click();"><i class="fa fa-picture-o" aria-hidden="true"></i></button>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-default"><i class="fa fa-align-left" aria-hidden="true"></i></i></button>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-default"><i class="fa fa-align-center" aria-hidden="true"></i></button>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-default"><i class="fa fa-align-right" aria-hidden="true"></i></button>
+<script type="text/javascript" src="~/js/Eb_ReportBuilder.js"></script>@*amal*@
+<script type="text/javascript" src="~/js/split.js"></script>@*amal*@
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>@*jith*@
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src='~/js/Eb_dragula.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.9/interact.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />@*amal*@
+<link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">@*amal*@
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">@*jith*@
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />@*jith*@
+<link rel="stylesheet" type="text/css" href="~/css/style.css" />@*amal*@
+<div class="container-fluid">
+    <div class="row" style="margin-top: 56px;position:fixed;">
+        <div class="reportmenu">
+            <div class="form-inline" id="options">
+                <div class="form-group">
+                    <input type="file" style="display:none" id="Rptbgimg" />
+                    <button class="btn btn-default"><i class="fa fa-file-text" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">                 
+                    <select class="form-control" id="pagesize">
+                        <option value="">Page Size</option>
+                        <option value="Letter">Letter</option>
+                        <option value="A1">A1</option>
+                        <option value="A3">A3</option>
+                        <option value="A4">A4</option>
+                        <option value="A5">A5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="file" style="display:none" id="Rptbgimg" />
+                    <button class="btn btn-default" onclick="$('#Rptbgimg').click();"><i class="fa fa-picture-o" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default"><i class="fa fa-align-left" aria-hidden="true"></i></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default"><i class="fa fa-align-center" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default"><i class="fa fa-align-right" aria-hidden="true"></i></button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row">
-    <div id="pageCanvas"></div>   
+    <div class="row pgB">
+        <div class="col-md-2 toolbox">
+            <ul style="padding:0;list-style:none;" id="toolbox1">
+                <li class="draggable"><a class="list-group-item" id="drp" href="#"><i class="fa fa-plus-circle"></i> Data Source</a></li>              
+            </ul>
+        </div>
+        <div class="col-md-9" id="pageCanvas" style="position:relative;margin-top:50px">
+        </div>
+    </div>
 </div>
 <script>
     $("#pagesize").change(function () {
-        RptBuilder($(this).val());
-    });
-
-    $("#Rptbgimg").change(function () {
-        setBackgroud(this);
+        RptBuilder($(this).val(), "toolbox1");
     });
 </script>

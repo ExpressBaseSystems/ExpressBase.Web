@@ -117,18 +117,30 @@
                         <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
+                <div class='row'>
+                    <div id='div1' class='col-lg-6 well'>
 
+                    </div>
+                    <div id='div2' class='col-lg-6 well'>
+                    </div>
+                </div>
             </div>
             <input type="submit" value="Save" id="save_users" />
         </div>
 
 
     </div>
-                      }
-                       
+                        }
+
 
 <script>
     $('document').ready(function () {
+        var ids = "";
+        var temp = new dragula([document.getElementById("div1"), document.getElementById("div2")], {});
+        temp.on("drop", function (el, target, source, sibling) {
+            ids += $(el).attr("id") + ",";
+
+        });
 
         $('#applicationid').val($('#appselect').val());
 
@@ -168,7 +180,7 @@
             {
                 "subrolesid": selected,
                 "roleid": $('#roleid').val(),
-                
+
 
             }, function (result) {
             });
@@ -183,7 +195,7 @@
             {
                 "users": selected,
                 "roleid": $('#roleid').val(),
-                
+
 
             }, function (result) {
             });
@@ -230,7 +242,7 @@
                   "roleid": $('#roleid').val()
               }, function (result) {
                   if (result) {
-                      document.getElementById("users").innerHTML = result;
+                      document.getElementById("div1").innerHTML = result;
                   }
               });
 

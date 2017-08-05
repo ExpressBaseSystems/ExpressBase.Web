@@ -23,6 +23,9 @@
 <script src='~/js/jqPropertyGrid.js'></script>
 <script src='~/js/Eb_PropertyGrid.js'></script>
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js"></script>
+<script type="text/javascript" src="~/js/"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>@*amal*@
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>@*amal*@
 
 @{
 //Layout = "~/Views/Shared/_Layout1.cshtml";
@@ -54,12 +57,13 @@
         </div>
 
         <div id="form-buider-form" class="formB-box form-buider-form">
-            <textarea id="txtValues" rows="15" cols="40"></textarea>
+            @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
         </div>
     </div>
 
-   
+
     <input type="hidden" id="objtype" value="@type" />
+    <input type="hidden" id="objid" value="@ViewBag.Objid" />
 
     <div id='form-buider-propGrid' class='formB-box property-grid-cont'>
         <div class="pgHead">Properties<i class="fa fa-times" style="float:right; cursor:default;" onclick="$(this).parent().parent().css('visibility', 'hidden')" aria-hidden="true"></i><i class="fa fa-thumb-tack pin" onclick="slideRight('.form-save-wraper', '#form-buider-propGrid')" aria-hidden="true"></i></div>
@@ -75,13 +79,35 @@
 <script>
     @Html.Raw(_toolBox.AllControlls);
     @Html.Raw(_toolBox.AllMetas);
-    new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
+
+    var formBuilderObj = null;
+    var objid =$("#objid").val();
+    var objtype =$("#objtype").val();
+    var FBid = "form-buider-form";
+    var editModeFormObj = null;
+    var ToolBoxId = "form-buider-toolBox";
+    var PGid = "form-buider-propGrid";
+
+    // if edit mode
+    if(objid){
+        $.LoadingOverlay("show");
+        editModeFormObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
+        $.post("../Dev/GetByteaEbObjects_json", { "ObjId": objid, "Ebobjtype": objtype },
+               function (result) {
+                   $.LoadingOverlay("hide");
+                   $("#" + FBid).html(result);
+                   formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
+                   formBuilderObj.InitEditModeCtrls(editModeFormObj);
+               });
+    }
+    else
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
 </script>
 
 <style>
     /*overridding*/
 
-    
+
 
     .property-grid-cont .sp-preview {
         width: calc(100% - 15px) !important;

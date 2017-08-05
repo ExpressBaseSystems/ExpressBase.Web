@@ -20,6 +20,7 @@ using System.Text;
 using ExpressBase.Objects.Objects;
 using Newtonsoft.Json;
 using ExpressBase.Objects.ObjectContainers;
+using ExpressBase.Objects.Attributes;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -299,6 +300,7 @@ namespace ExpressBase.Web.Controllers
             return ViewBag.Code;
         }
 
+        [HttpGet]
         public IActionResult Eb_formBuilder()
         {
             return View();
@@ -308,7 +310,12 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             ViewBag.Objtype = req["objtype"];
+            ViewBag.Objid = req["objid"];
+            EbObjectWrapper FormObj = GetFormObj(Convert.ToInt32( req["objid"]), Convert.ToInt32(req["objtype"]));
+            ViewBag.Json = FormObj.Json;
+            ViewBag.Name = FormObj.Name;
             return View();
+
         }
 
         public int SaveFilterDialog()
@@ -333,21 +340,31 @@ namespace ExpressBase.Web.Controllers
         public string GetByteaEbObjects_json()
         {
             var req = this.HttpContext.Request.Form;
+            var _type = req["Ebobjtype"];
+            BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), _type, true);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";
             var filterForm = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json);
             if (filterForm != null)
             {
-                _html = @"<div style='margin-top:10px;' id='filterBox'>";
+                //_html = @"<div style='margin-top:10px;' id='filterBox'>";
                 _html += filterForm.GetHtml();
                 _head += filterForm.GetHead();
-                _html += @"</div>";
+                //_html += @"</div>";
             }
 
             return _html + "<script>" + _head + "</script>";
+        }
+
+        public EbObjectWrapper GetFormObj(int objId, int objType)
+        {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue, EbObjectType = objType, Token = ViewBag.token });
+            var rlist = resultlist.Data[0];
+            return rlist;
         }
 
         public string GetColumns4Trial(int dsid, string parameter)

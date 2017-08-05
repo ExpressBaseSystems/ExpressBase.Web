@@ -23,9 +23,19 @@
 <script src='~/js/jqPropertyGrid.js'></script>
 <script src='~/js/Eb_PropertyGrid.js'></script>
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js"></script>
+<script type="text/javascript" src="~/js/"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>@*amal*@
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>@*amal*@
 
 @{
 //Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+@{
+    int typeInt = (string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
+    EbObjectType type = (EbObjectType)typeInt;
+
+    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
+    var _toolBox = new EbToolbox(_builderType);
 }
 
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
@@ -35,7 +45,7 @@
         <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-thumb-tack pin" onclick="slideLeft ('.form-save-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
 
-            @Html.Raw(new EbToolbox(BuilderType.WebForm).html)
+            @Html.Raw(new EbToolbox(_builderType).html)
 
         </div>
     </div>
@@ -47,15 +57,13 @@
         </div>
 
         <div id="form-buider-form" class="formB-box form-buider-form">
-            <textarea id="txtValues" rows="15" cols="40"></textarea>
+            @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
         </div>
     </div>
 
-    @{
-        int typeInt = (string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
-        EbObjectType type = (EbObjectType)typeInt;
-    }
+
     <input type="hidden" id="objtype" value="@type" />
+    <input type="hidden" id="objid" value="@ViewBag.Objid" />
 
     <div id='form-buider-propGrid' class='formB-box property-grid-cont'>
         <div class="pgHead">Properties<i class="fa fa-times" style="float:right; cursor:default;" onclick="$(this).parent().parent().css('visibility', 'hidden')" aria-hidden="true"></i><i class="fa fa-thumb-tack pin" onclick="slideRight('.form-save-wraper', '#form-buider-propGrid')" aria-hidden="true"></i></div>
@@ -67,21 +75,39 @@
 
 
 </div>
+
 <script>
-    @{
-        var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
-        var _toolBox = new EbToolbox(_builderType);
-    }
     @Html.Raw(_toolBox.AllControlls);
     @Html.Raw(_toolBox.AllMetas);
-    var t = new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
-    //$("#form-buider-propGrid").draggable();
-    //$("#form-buider-propGrid").resizable();
+
+    var formBuilderObj = null;
+    var objid =$("#objid").val();
+    var objtype =$("#objtype").val();
+    var mode=0;
+    var editModeFormObj = null;
+    // if edit mode
+    if(objid){
+        $.LoadingOverlay("show");
+        mode=1;
+        editModeFormObj = {"$type":"ExpressBase.Objects.ObjectContainers.EbFilterDialog, ExpressBase.Objects","EbSid":"form-buider-form","IsContainer":true,"Controls":{"$type":"System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], System.Private.CoreLib","$values":[{"$type":"ExpressBase.Objects.EbDate, ExpressBase.Objects","EbSid":"Date0","Label":"","HelpText":"","ToolTipText":"","Name":"datefrom"},{"$type":"ExpressBase.Objects.EbDate, ExpressBase.Objects","EbSid":"Date1","Label":"","HelpText":"","ToolTipText":"","Name":"dateto"}]},"Label":"","HelpText":"","ToolTipText":"","Name":"form-buider-form"};//@ViewBag.Json;
+        $.post("../Dev/GetByteaEbObjects_json", { "ObjId": objid, "Ebobjtype": objtype },
+               function (result) {
+                   $("").append(result);
+                   $.LoadingOverlay("hide");
+                   //alert("result:"+result);
+                   $("#form-buider-form").html(result);
+                   formBuilderObj= new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
+                   formBuilderObj.InitEditModeCtrls();
+               });
+    }
+    formBuilderObj= new formBuilder("form-buider-toolBox", "form-buider-form", "form-buider-propGrid", @((int)_builderType));
+
 </script>
+
 <style>
     /*overridding*/
 
-    
+
 
     .property-grid-cont .sp-preview {
         width: calc(100% - 15px) !important;

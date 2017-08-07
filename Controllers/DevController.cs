@@ -162,6 +162,22 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        //public string GetRefid(int id, string objtype)
+        //{
+        //    var _EbObjectType = (EbObjectType)Convert.ToInt32(objtype);
+        //    IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+        //    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = id, VersionId = id, EbObjectType = Convert.ToInt32(objtype), Token = ViewBag.token });
+        //    var rlist = resultlist.Data;
+        //    string refid =null;
+        //    foreach (var element in rlist)
+        //    {
+        //        if (_EbObjectType == EbObjectType.FilterDialog)
+        //        {
+        //            refid = EbSerializers.Json_Deserialize<EbDataSource>(element.RefId).ToString();
+        //        }
+        //    }
+        //    return refid;
+        //}
         public Dictionary<int, EbObjectWrapper> GetObjects(int obj_type)
         {
             IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -199,7 +215,6 @@ namespace ExpressBase.Web.Controllers
         public JsonResult CommitEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
-           // var _dict = ServiceStack.Text.JsonSerializer.DeserializeFromString<Dictionary<string, string>>(req["Colvalues"]);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectSaveOrCommitRequest();
             //var bytes = Convert.FromBase64String(req["code"]);
@@ -211,16 +226,11 @@ namespace ExpressBase.Web.Controllers
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = req["json"];
-
-            string _relations = null;
-            if (req["filterDialogId"].ToString() != "Select Filter Dialog")
-                _relations = req["rel_obj"] + req["filterDialogId"].ToString();
-
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = req["changeLog"];
             ds.Token = ViewBag.token;//removed tcid
-            ds.Relations = _relations;
+            ds.Relations = req["rel_obj"];
             ViewBag.IsNew = "false";
 
             var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
@@ -318,7 +328,7 @@ namespace ExpressBase.Web.Controllers
 
         }
 
-        public int SaveFilterDialog()
+        public string SaveFilterDialog()
         {
           var req = this.HttpContext.Request.Form;
            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -334,7 +344,7 @@ namespace ExpressBase.Web.Controllers
             ds.Token = ViewBag.token;
             ds.Relations = null;
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
-            return CurrSaveId.Id;
+            return CurrSaveId.RefId;
         }
 
         public string GetByteaEbObjects_json()

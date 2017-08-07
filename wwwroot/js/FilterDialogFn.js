@@ -46,7 +46,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('#fd').off("change").on("change", this.Clear_fd.bind(this));
         $(".selectpicker").selectpicker();
         $("#fdlist .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
-        $('#fd').off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this,this.FilterDId));
+        $('#fd').off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
     }
 
     this.SetValues = function () {
@@ -58,17 +58,12 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.Success_alert = function (result) {
         $.LoadingOverlay("hide");
     }
-    this.SetFdInit= function (me,fdId) {
-        if (this.Is_New === false) {
-            if (fdId === 0) {
-                var val = "Select Filter Dialog";
-            }
-            else {
-                var val = this.FilterDId;
-            }
-            this.Load_filter_dialog_list(val);
-          
+    this.SetFdInit = function (me, fdId) {
+        var val = "Select Filter Dialog";
+        if (this.Is_New === false && fdId !== 0) {
+            var val = this.FilterDId;
         }
+        this.Load_filter_dialog_list(val);
     }
     this.Clear_fd = function () {
         var getNav = $("#versionNav li.active a").attr("href");
@@ -89,13 +84,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                     $('#fdlist #fd').children().remove();
                     $('#fdlist #fd').append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
                     $.each(data, function (i, obj) {
-                        $('#fd').append("<option value=" + i + " data-tokens=" + obj + ">" + obj.name + "</option>")
+                        $('#fd').append("<option value=" + i + " data-tokens=" + obj.refId + ">" + obj.name + "</option>")
                     });
                     $('#fdlist .selectpicker').selectpicker('refresh');
                     $('#fdlist .selectpicker').selectpicker('val', val);
                     $('#loader_fd').hide();
                 },
-                
+
             });
 
         }
@@ -271,7 +266,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             else {
                 this.SetValues();
                 this.Find_parameters();
-               // this.Save(false);
+                // this.Save(false);
                 this.SelectedFdId = $('#fd option:selected').val();
                 this.Load_Fd();
             }
@@ -443,12 +438,12 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 dsid: this.Obj_Id,
                 parameter: this.Object_String_WithVal
             }, this.Load_Table_Columns.bind(this));
-            $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show'); 
+            $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show');
         }
         else {
             $.LoadingOverlay("hide");
             alert('not valid');
-        } 
+        }
         return false;
     };
 
@@ -472,9 +467,9 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                     data: this.Load_tble_Data.bind(this),
                     dataSrc: function (dd) { return dd.data; },
                 }
-            });      
+            });
         }
-         return false;
+        return false;
     };
 
     this.Load_tble_Data = function (dq) {
@@ -499,10 +494,9 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 $.LoadingOverlay("hide");
             });
         }
-        else
-        {
-        $.LoadingOverlay("hide");
-        $(getNav + ' #run').removeClass('disabled');
+        else {
+            $.LoadingOverlay("hide");
+            $(getNav + ' #run').removeClass('disabled');
         }
 
         $(getNav + " #run").off("click").on("click", this.RunDs.bind(this));
@@ -510,15 +504,15 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
 
     this.RunDs = function () {
         if (this.Parameter_Count === 0) {
-        this.Save(false);
-        this.ValidInput === true
-        this.Object_String_WithVal = "";
-        this.DrawTable();
+            this.Save(false);
+            this.ValidInput === true
+            this.Object_String_WithVal = "";
+            this.DrawTable();
         }
-        else{
-        this.Find_parameters();
-        this.CreateObjString();
-        this.DrawTable();
+        else {
+            this.Find_parameters();
+            this.CreateObjString();
+            this.DrawTable();
         }
     };
 
@@ -577,23 +571,34 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     };
 
     this.FetchUsedSqlFns = function (needRun, data) {
+        var getNav = $("#versionNav li.active a").attr("href");
+        var filter_dialog = $(getNav + " #fdlist #fd").val();
+        var filter_dialog_refid = $(getNav + " #fdlist #fd option:selected").attr("data-tokens");
         this.Rel_object = null;
         var rel_arr = [];
         $.each(data, this.FetchUsedSqlFns_inner.bind(this, rel_arr));
+        rel_arr.push(filter_dialog_refid);
+        //if (filter_dialog !== "Select Filter Dialog") {
+        //    $.post("../Dev/GetRefid", {
+        //        "id": this.Obj_Id,
+        //        "objtype": this.ObjectType
+        //    }).done(function () {
+        //        rel_arr.push(result);
+        //    });
+        //}
         this.Rel_object = rel_arr.toString();
-        //var Dswzd = new EbWizard("../Dev/ds_save", "../Dev/CommitEbDataSource", 400, 500, "Commit", "fa-database", "'" + this.Cid + "'");
-        //Dswzd.CustomWizFunc = new CustomCodeEditorFuncs("'" + this.Cid + "'", this.Obj_Id, this.Name, this.Description, this.Code, this.Version_num, this.FilterDId, this.ObjectType, this.Rel_object, needRun).DataSource;
-        var _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogid: this.FilterDId, sql: btoa(unescape(encodeURIComponent(this.Code))) }
+
+        var _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogid: filter_dialog, sql: btoa(unescape(encodeURIComponent(this.Code))) }
         $.post("../Dev/CommitEbDataSource", {
-            "objtype":this.ObjectType,
-            "id":this.Obj_Id,
-            "name":this.Name,
-            "code": btoa(unescape(encodeURIComponent(this.Code))),            
-            "description":this.Description,
-            "filterDialogId":this.FilterDId,
-            "changeLog":"changed",
+            "objtype": this.ObjectType,
+            "id": this.Obj_Id,
+            "name": this.Name,
+            "code": btoa(unescape(encodeURIComponent(this.Code))),
+            "description": this.Description,
+            "filterDialogId": filter_dialog,
+            "changeLog": "changed",
             "json": JSON.stringify(_json),
-            "rel_obj":this.Rel_object
+            "rel_obj": this.Rel_object
         });
 
         $.LoadingOverlay("hide");

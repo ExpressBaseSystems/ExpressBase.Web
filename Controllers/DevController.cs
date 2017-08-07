@@ -305,15 +305,20 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Eb_formBuilder(int i)
         {
             var req = this.HttpContext.Request.Form;
             ViewBag.Objtype = req["objtype"];
             ViewBag.Objid = req["objid"];
+
+            BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), ViewBag.Objtype, true);
+
             EbObjectWrapper FormObj = GetFormObj(Convert.ToInt32( req["objid"]), Convert.ToInt32(req["objtype"]));
             ViewBag.Json = FormObj.Json;
             ViewBag.Name = FormObj.Name;
+            ViewBag.html = GetHtml2Render(_EbObjectType, Convert.ToInt32(ViewBag.Objid));
             return View();
 
         }
@@ -335,6 +340,20 @@ namespace ExpressBase.Web.Controllers
             ds.Relations = null;
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return CurrSaveId.Id;
+        }
+
+        //Jith Builder related
+        private string GetHtml2Render(BuilderType type, int objid)
+        {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
+            var rlist = resultlist.Data[0];
+            string _html = string.Empty;
+            var filterForm = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json);
+            if (filterForm != null)
+                _html += filterForm.GetHtml();
+
+            return _html;
         }
 
         public string GetByteaEbObjects_json()

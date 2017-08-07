@@ -65,23 +65,29 @@
     //}
     // head += (ViewBag.EbForm38 as EbForm).GetHead();
     }
-<div class='dropdown' id='datatSourceDropdown'>
-    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Select Datasource
-        <span class='caret'></span>
-    </button>
-    <ul class='dropdown-menu scrollable-menu'>
-        @{
-            foreach (var element in ObjDSListAll)
-            {
-                <li data-dsid="@element.Key">
-                    <a href="#">
-                        @element.Value.Name
-                    </a>
-                </li>
+<div class="well well-sm">
+    <div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
+        <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
+            Select Datasource
+            <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu scrollable-menu'>
+            @{
+                foreach (var element in ObjDSListAll)
+                {
+                    <li data-dsid="@element.Key">
+                        <a href="#">
+                            @element.Value.Name
+                        </a>
+                    </li>
 
+                }
             }
-        }
-    </ul>
+        </ul>
+    </div>
+    <input id='dvnametxt' type='text' class='form-control' placeholder='dvname' style="display:none;width: auto;"/>
+    <button id='Save_btn' class='btn btn-primary' style="float: right; display:none;"> Save </button>
+
 </div>
 
 <div id="filterDia"></div>
@@ -95,14 +101,9 @@
             $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
             $.post('../Dev/DataVisualisation', { dsid: dsid }, function (data) {
                 $("#filterDia").html(data);
-                //$("#filterDia").append("<button id='abc'>GO</button>");
+                //$.LoadingOverlay("show");
             });
         });
-        //$(document).on("click", "#abc", function () {
-        //    $.get('../Dev/DataVisualisation', { dsid: dsid }, function (data) {
-        //        $("#table").html(data);
-        //    });
-        //});
         $(document).ready(function () {
             @Html.Raw(head)
             $('[data-toggle="tooltip"]').tooltip();

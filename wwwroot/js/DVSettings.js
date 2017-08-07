@@ -43,7 +43,7 @@ var DVObj = function (dsid, settings, login, dvlist) {
         }
         $("#datatSourceDropdown .dropdown-menu li a").off("click").on("click", this.setDropdownDatasource.bind(this));
         $("#graphtypeDD .dropdown-menu li a").off("click").on("click", this.setDropdownGraphType.bind(this));
-        $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
+        //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $(".eb_delete_btn").off("click").on("click", this.deleteRow.bind(this));
         $("#columnDropdown .dropdown-menu a").off("click").on("click", this.clickDropdownfunc.bind(this));
         

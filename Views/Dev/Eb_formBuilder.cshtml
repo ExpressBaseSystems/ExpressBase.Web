@@ -3,32 +3,29 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
-@*<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/ValYouW/jqPropertyGrid/9218bbd5df05bf7efe58591f434ea27ece11a045/jqPropertyGrid.css">*@
-<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />
-<link rel="stylesheet" type="text/css" href="~/css/Eb.css" />
-@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">*@
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">*@
+@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />*@
+@*<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />*@
+@*<link rel="stylesheet" type="text/css" href="~/css/Eb.css" />*@
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-*.min.js"></script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>*@
+@*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>*@
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>*@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="~/js/FormBuilder/EbControlCollection.js"></script>
-<script type="text/javascript" src="~/js/vue-select.js"></script>
-<script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
-<script src='~/js/Eb_dragula.js'></script>
-<script src='~/js/Eb_formBuilder.js'></script>
-<script src='~/js/jqPropertyGrid.js'></script>
-<script src='~/js/Eb_PropertyGrid.js'></script>
-<script type="text/javascript" src="~/js/Eb_UtilityFuncions.js"></script>
+@*<script src="~/js/FormBuilder/EbControlCollection.js"></script>*@
+@*<script type="text/javascript" src="~/js/vue-select.js"></script>*@
+@*<script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>*@
+@*<script src='~/js/Eb_dragula.js'></script>*@
+@*<script src='~/js/Eb_formBuilder.js'></script>*@
+@*<script src='~/js/jqPropertyGrid.js'></script>*@
+@*<script src='~/js/Eb_PropertyGrid.js'></script>*@
+@*<script type="text/javascript" src="~/js/Eb_UtilityFuncions.js"></script>*@
 <script type="text/javascript" src="~/js/"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>@*amal*@
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>@*amal*@
+@*<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>*@@*amal*@
+@*<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>*@@*amal*@
 
 @{
-//Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 @{
     int typeInt = (string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
@@ -58,7 +55,7 @@
 
         <div id="form-buider-form" class="formB-box form-buider-form">
             @Html.Raw(@ViewBag.html)
-            @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
+            <textarea id="txtValues" rows="15" cols="40"></textarea>
         </div>
     </div>
 

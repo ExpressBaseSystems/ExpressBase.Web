@@ -57,6 +57,7 @@
         </div>
 
         <div id="form-buider-form" class="formB-box form-buider-form">
+            @Html.Raw(@ViewBag.html)
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
         </div>
     </div>
@@ -82,7 +83,6 @@
 
     var formBuilderObj = null;
     var objid =$("#objid").val();
-    var objtype =$("#objtype").val();
     var FBid = "form-buider-form";
     var editModeFormObj = null;
     var ToolBoxId = "form-buider-toolBox";
@@ -90,18 +90,20 @@
 
     // if edit mode
     if(objid){
-        $.LoadingOverlay("show");
         editModeFormObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
-        $.post("../Dev/GetByteaEbObjects_json", { "ObjId": objid, "Ebobjtype": objtype },
-               function (result) {
-                   $.LoadingOverlay("hide");
-                   $("#" + FBid).html(result);
-                   formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
-                   formBuilderObj.InitEditModeCtrls(editModeFormObj);
-               });
+        //$.each(editModeFormObj, funcion(i, obj) {  });
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
+        formBuilderObj.InitEditModeCtrls(editModeFormObj);
     }
     else
         formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
+
+    function recur(obj)
+    {
+        if (obj.Controls)
+            obj.Controls = new EbControlCollection(obj.Controls);
+    
+    }
 </script>
 
 <style>

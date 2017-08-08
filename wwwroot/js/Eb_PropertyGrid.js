@@ -1,17 +1,17 @@
-﻿this.RenderMe = function () {
-    var NewHtml = this.Html;
-    var me = this;
-    var metas = AllMetas[this.constructor.name.slice(0, -3)];
-    $.each(metas, function (i, meta) {
-        var name = meta.name;
-        if (meta.IsUIproperty) { NewHtml = NewHtml.replace('@' + name, me[name]); }
-    });
-    $('#' + id + ' .Eb-ctrlContainer').html(NewHtml);
-};
+﻿//this.RenderMe = function () {
+//    var NewHtml = this.Html;
+//    var me = this;
+//    var metas = AllMetas[this.constructor.name.slice(0, -3)];
+//    $.each(metas, function (i, meta) {
+//        var name = meta.name;
+//        if (meta.IsUIproperty) { NewHtml = NewHtml.replace('@' + name, me[name]); }
+//    });
+//    $('#' + id + ' .Eb-ctrlContainer').html(NewHtml);
+//};
 
 var Eb_PropertyGrid = function (id, props, metas) {
 
-    props.RenderMe(props.EbSid);
+    props.RenderMe();
 
     //params check
     {
@@ -30,7 +30,6 @@ var Eb_PropertyGrid = function (id, props, metas) {
     this.PropsObj = props;
     this.$container = $("#" + id);
     this.containerId = id;
-
     this.propNames = [];
 
     this.MISC_GROUP_NAME = 'Misc';
@@ -199,9 +198,10 @@ var Eb_PropertyGrid = function (id, props, metas) {
 
     this.OnInputchangedFn = function () {
         this.getvaluesFromPG();
-        var rs = this.getvaluesFromPG();
-        $('#txtValues').val(JSON.stringify(rs) + '\n\n');
-    }
+        var res = this.getvaluesFromPG();
+        $('#txtValues').val(JSON.stringify(res) + '\n\n');
+        this.PropsObj.RenderMe();
+    };
 
     this.init = function () {
         for (var i = 0; i < this.Metas.length; i++)
@@ -221,7 +221,6 @@ var Eb_PropertyGrid = function (id, props, metas) {
     };
 
     this.init();
-
 
 
 };

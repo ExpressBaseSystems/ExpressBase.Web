@@ -315,15 +315,20 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Eb_formBuilder(int i)
         {
             var req = this.HttpContext.Request.Form;
             ViewBag.Objtype = req["objtype"];
             ViewBag.Objid = req["objid"];
+
+            BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), ViewBag.Objtype, true);
+
             EbObjectWrapper FormObj = GetFormObj(Convert.ToInt32( req["objid"]), Convert.ToInt32(req["objtype"]));
             ViewBag.Json = FormObj.Json;
             ViewBag.Name = FormObj.Name;
+            ViewBag.html = GetHtml2Render(_EbObjectType, Convert.ToInt32(ViewBag.Objid));
             return View();
 
         }
@@ -345,6 +350,20 @@ namespace ExpressBase.Web.Controllers
             ds.Relations = null;
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return CurrSaveId.RefId;
+        }
+
+        //Jith Builder related
+        private string GetHtml2Render(BuilderType type, int objid)
+        {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
+            var rlist = resultlist.Data[0];
+            string _html = string.Empty;
+            var filterForm = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json);
+            if (filterForm != null)
+                _html += filterForm.GetHtml();
+
+            return _html;
         }
 
         public string GetByteaEbObjects_json()
@@ -597,104 +616,106 @@ namespace ExpressBase.Web.Controllers
                 Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
                 ViewBag.dsid = _dict["dsId"];
                 ViewBag.dvname = _dict["dvName"];
-                //ViewBag.FDialog = GetByteaEbObjects_json4fd(fdid);
-            var xxx= @"
-    <div class='tablecontainer' style='background-color:rgb(260,260,260);'>        
-         <ul class='nav nav-tabs' id='table_tabs'>
-                <li class='nav-item active'>
-                    <a class='nav-link' href='#@tableId_tab_1' data-toggle='tab'><i class='fa fa-home' aria-hidden='true'></i>&nbsp; Home</a>
-                </li>
-         </ul></br>
-         <div class='tab-content' id='table_tabcontent'>
-             <div id='@tableId_tab_1' class='tab-pane active'>
+            //ViewBag.FDialog = GetByteaEbObjects_json4fd(fdid);
+            //            var xxx= @"
+            //    <div class='tablecontainer' style='background-color:rgb(260,260,260);'>        
+            //         <ul class='nav nav-tabs' id='table_tabs'>
+            //                <li class='nav-item active'>
+            //                    <a class='nav-link' href='#@tableId_tab_1' data-toggle='tab'><i class='fa fa-home' aria-hidden='true'></i>&nbsp; Home</a>
+            //                </li>
+            //         </ul></br>
+            //         <div class='tab-content' id='table_tabcontent'>
+            //             <div id='@tableId_tab_1' class='tab-pane active'>
 
-                 <div id='TableControls_@tableId_1' class = 'well well-sm' style='margin-bottom:5px!important;'>
-                    <label>@dvname</label>
-                    <button id='btnGo' class='btn btn-primary' style='float: right;'>Run</button>
-                    
-                </div>
-                <div id='@tableId_1container'>
-                    <div id='@tableId_1TableColumns4Drag' style='border:1px solid;display:none;height:100%;min-height: 400px;overflow-y: auto;'>
-                    </div>         
-                    <div style='width:auto;' id='@tableId_1divcont'>
-                        <div id ='@tableId_1ColumnsDispaly' style= 'display:none;'class ='colCont'></div>
-                        <table id='@tableId_1' class='table table-striped table-bordered'></table>
-                    </div>
-                    <div id='@tableId_1TableColumnsPPGrid' style='display:none;height:100%;min-height: 400px;overflow-y: auto;'></div>
-                </div>
-                <div id='graphcontainer_tab@tableId_1' style='display: none;'>
-                <div style='height: 50px;margin-bottom: 5px!important;' class='well well-sm'>
-                    <label>@dvname</label>
-                    <div id = 'btnColumnCollapse@tableId_1' class='btn btn-default' style='float: right;'>
-                        <i class='fa fa-cog' aria-hidden='true'></i>
-                     </div>
-                     <div class='dropdown' id='graphDropdown_tab@tableId_1' style='display: inline-block;padding-top: 1px;float:right'>
-                             <button class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
-                           <span class='caret'></span></button>
-                          <ul class='dropdown-menu'>
-                                <li><a href =  '#'><i class='fa fa-line-chart custom'></i> Line</a></li>
-                                <li><a href = '#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>
-                                <li><a href = '#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>
-                                <li><a href = '#'><i class='fa fa-pie-chart custom'></i> pie </a></li>
-                                <li><a href = '#'> doughnut </a></li>
-                                </ul>
-                      </div>
-                      <button id='reset_zoom@tableId_1' class='btn btn-default' style='float: right;'>Reset zoom</button>
-                       
-                </div>
-                <div id ='columns4Drag@tableId_1' style='display:none;'>
-                    <div style='display: inline-block;'>
-                        <label class='nav-header disabled'><center><strong>Columns</strong></center><center><font size='1'>Darg n Drop to X or Y Axis</font></center></label>
-                        <input id='searchColumn@tableId_1' type='text' class ='form-control' placeholder='search for column'/>
-                        <ul class='list-group' style='height: 450px; overflow-y: auto;'>
-                         </ul>  
-                    </div>
-                    <div style='display: inline-block;vertical-align: top;width: 806px;'>
-                        <div class='input-group'>
-                          <span class='input-group-addon' id='basic-addon3'>X-Axis</span>
-                          <div class='form-control' style='padding: 4px;height:33px' id ='X_col_name@tableId_1'></div>
-                        </div>
-                        <div class='input-group' style='padding-top: 1px;'>
-                          <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>
-                          <div class='form-control' style='padding: 4px;height:33px' id ='Y_col_name@tableId_1'></div>
-                        </div>
-                    </div>
-                </div>
-                <canvas id='myChart@tableId_1' width='auto' height='auto'></canvas>
-            </div>
-          </div>
-        </div>
-</div>
-<script>
-//$.post('GetTVPref4User', { dsid: @dataSourceId }, function(data){
-    var EbDataTable_@tableId = new EbDataTable({
-        ds_id: @dataSourceId, 
-       
-        ss_url: '@servicestack_url', 
-        tid: '@tableId_1' ,
-        login:'@login',
-        settings: @data,
-        //fnKeyUpCallback: 
-    });
-//});
-</script>"
-.Replace("@dataSourceId", dsid.ToString().Trim())
-.Replace("@tableId", "dv" + ViewBag.dsid.ToString())
-.Replace("@dvname", ViewBag.dvname)
-.Replace("@login", ViewBag.wc)
-.Replace("@data", data)
-//.Replace("@datasourcedd", this.getdropdownColumn())
-//.Replace("@tableViewName", ((string.IsNullOrEmpty(this.Label)) ? "&lt;ReportLabel Undefined&gt;" : this.Label))
-.Replace("@servicestack_url", "https://localhost:44377/");
-            //.Replace("@filters", this.filters)
-            //.Replace("@FilterBH", this.FilterBH.ToString())
-            //.Replace("@collapsBtn", (this.filters != null) ? @"<div id = 'btnCollapse' class='btn btn-default' data-toggle='collapse' data-target='#filterBox' aria-expanded='true' aria-controls='filterBox'>
-            //                    <i class='fa fa-chevron-down' aria-hidden='true'></i>
-            //                </div>" : string.Empty)
-            //.Replace("@data.columns", this.ColumnColletion.ToJson())
-            //.Replace("@dvId", dvid.ToString());
-            // dv_id: @dvId, 
-            ViewBag.HtmlBody = ViewBag.HtmlBody + xxx;
+            //                 <div id='TableControls_@tableId_1' class = 'well well-sm' style='margin-bottom:5px!important;'>
+            //                    <label>@dvname</label>
+            //                    <button id='btnGo' class='btn btn-primary' style='float: right;'>Run</button>
+
+            //                </div>
+            //                <div id='@tableId_1container'>
+            //                    <div id='@tableId_1TableColumns4Drag' style='border:1px solid;display:none;height:100%;min-height: 400px;overflow-y: auto;'>
+            //                    </div>         
+            //                    <div style='width:auto;' id='@tableId_1divcont'>
+            //                        <div id ='@tableId_1ColumnsDispaly' style= 'display:none;'class ='colCont'></div>
+            //                        <table id='@tableId_1' class='table table-striped table-bordered'></table>
+            //                    </div>
+            //                    <div id='@tableId_1TableColumnsPPGrid' style='display:none;height:100%;min-height: 400px;overflow-y: auto;'></div>
+            //                </div>
+            //                <div id='graphcontainer_tab@tableId_1' style='display: none;'>
+            //                <div style='height: 50px;margin-bottom: 5px!important;' class='well well-sm'>
+            //                    <label>@dvname</label>
+            //                    <div id = 'btnColumnCollapse@tableId_1' class='btn btn-default' style='float: right;'>
+            //                        <i class='fa fa-cog' aria-hidden='true'></i>
+            //                     </div>
+            //                     <div class='dropdown' id='graphDropdown_tab@tableId_1' style='display: inline-block;padding-top: 1px;float:right'>
+            //                             <button class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+            //                           <span class='caret'></span></button>
+            //                          <ul class='dropdown-menu'>
+            //                                <li><a href =  '#'><i class='fa fa-line-chart custom'></i> Line</a></li>
+            //                                <li><a href = '#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>
+            //                                <li><a href = '#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>
+            //                                <li><a href = '#'><i class='fa fa-pie-chart custom'></i> pie </a></li>
+            //                                <li><a href = '#'> doughnut </a></li>
+            //                                </ul>
+            //                      </div>
+            //                      <button id='reset_zoom@tableId_1' class='btn btn-default' style='float: right;'>Reset zoom</button>
+
+            //                </div>
+            //                <div id ='columns4Drag@tableId_1' style='display:none;'>
+            //                    <div style='display: inline-block;'>
+            //                        <label class='nav-header disabled'><center><strong>Columns</strong></center><center><font size='1'>Darg n Drop to X or Y Axis</font></center></label>
+            //                        <input id='searchColumn@tableId_1' type='text' class ='form-control' placeholder='search for column'/>
+            //                        <ul class='list-group' style='height: 450px; overflow-y: auto;'>
+            //                         </ul>  
+            //                    </div>
+            //                    <div style='display: inline-block;vertical-align: top;width: 806px;'>
+            //                        <div class='input-group'>
+            //                          <span class='input-group-addon' id='basic-addon3'>X-Axis</span>
+            //                          <div class='form-control' style='padding: 4px;height:33px' id ='X_col_name@tableId_1'></div>
+            //                        </div>
+            //                        <div class='input-group' style='padding-top: 1px;'>
+            //                          <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>
+            //                          <div class='form-control' style='padding: 4px;height:33px' id ='Y_col_name@tableId_1'></div>
+            //                        </div>
+            //                    </div>
+            //                </div>
+            //                <canvas id='myChart@tableId_1' width='auto' height='auto'></canvas>
+            //            </div>
+            //          </div>
+            //        </div>
+            //</div>
+            //<script>
+            ////$.post('GetTVPref4User', { dsid: @dataSourceId }, function(data){
+            //    var EbDataTable_@tableId = new EbDataTable({
+            //        ds_id: @dataSourceId, 
+
+            //        ss_url: '@servicestack_url', 
+            //        tid: '@tableId_1' ,
+            //        login:'@login',
+            //        settings: @data,
+            //        //fnKeyUpCallback: 
+            //    });
+            ////});
+            //</script>"
+            //.Replace("@dataSourceId", dsid.ToString().Trim())
+            //.Replace("@tableId", "dv" + ViewBag.dsid.ToString())
+            //.Replace("@dvname", ViewBag.dvname)
+            //.Replace("@login", ViewBag.wc)
+            //.Replace("@data", data)
+            ////.Replace("@datasourcedd", this.getdropdownColumn())
+            ////.Replace("@tableViewName", ((string.IsNullOrEmpty(this.Label)) ? "&lt;ReportLabel Undefined&gt;" : this.Label))
+            //.Replace("@servicestack_url", "https://localhost:44377");
+            //            //.Replace("@filters", this.filters)
+            //            //.Replace("@FilterBH", this.FilterBH.ToString())
+            //            //.Replace("@collapsBtn", (this.filters != null) ? @"<div id = 'btnCollapse' class='btn btn-default' data-toggle='collapse' data-target='#filterBox' aria-expanded='true' aria-controls='filterBox'>
+            //            //                    <i class='fa fa-chevron-down' aria-hidden='true'></i>
+            //            //                </div>" : string.Empty)
+            //            //.Replace("@data.columns", this.ColumnColletion.ToJson())
+            //            //.Replace("@dvId", dvid.ToString());
+            //            // dv_id: @dvId, 
+            //ViewBag.HtmlBody = ViewBag.HtmlBody + xxx;
+            ViewBag.tableId = "dv" + ViewBag.dsid.ToString();
+            ViewBag.data = data;
             return PartialView();
         }
 
@@ -751,7 +772,7 @@ namespace ExpressBase.Web.Controllers
             string colDef = string.Empty;
             colDef = "{\"dsId\":" + dsid + ",\"fdId\":" + fdid + ",\"dvName\": \"<Untitled>\",\"renderAs\":\"table\",\"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
             colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"IsPaged\":" + isPaged.ToString().ToLower() + ",\"columns\":[";
-            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":false, \"name\":\"serial\", \"title\":\"#\",\"type\":\"System.Int64\"},";
+            colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\",\"type\":\"System.Int64\"},";
             colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\",\"type\":\"System.Boolean\"},";
             foreach (EbDataColumn column in __columnCollection)
             {
@@ -759,7 +780,7 @@ namespace ExpressBase.Web.Controllers
                 colDef += "\"data\": " + __columnCollection[column.ColumnName].ColumnIndex.ToString();
                 colDef += string.Format(",\"title\": \"{0}<span hidden>{0}</span>\"", column.ColumnName);
                 var vis = (column.ColumnName == "id") ? false.ToString().ToLower() : true.ToString().ToLower();
-                colDef += ",\"visible\": " + false.ToString().ToLower();
+                colDef += ",\"visible\": " + true.ToString().ToLower();
                 colDef += ",\"width\": \"100px\"";
                 colDef += ",\"name\": \"" + column.ColumnName + "\"";
                 colDef += ",\"type\": \"" + column.Type.ToString() + "\"";

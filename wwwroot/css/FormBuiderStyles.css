@@ -1,4 +1,5 @@
 ﻿
+
 .settings-cont {
     position: absolute;
     width: 100vw;
@@ -227,7 +228,6 @@
 
 .Eb-ctrlContainer {
     min-height: 66px;
-    border: 1px solid rgba(34,36,38,.08);
 }
 
 /*overriding*/

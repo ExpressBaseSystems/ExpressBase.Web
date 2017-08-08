@@ -274,7 +274,7 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            
+
             if (roleid > 0)
             {
                 var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { id = roleid, restype = "getpermissions", Token = ViewBag.token });
@@ -283,8 +283,9 @@ namespace ExpressBase.Web2.Controllers
                 ViewBag.ApplicationId = fr.Data["applicationid"];
                 ViewBag.ApplicationName = fr.Data["applicationname"];
                 ViewBag.Description = fr.Data["description"];
+                ViewBag.DominantRefId = fr.Data["dominantrefid"];
             }
-                 
+
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             ViewBag.dict = resultlist.Data;
             ViewBag.roleid = req["roleid"];
@@ -293,7 +294,7 @@ namespace ExpressBase.Web2.Controllers
         }
 
 
-        public string GetRowAndColumn(int ApplicationId, int ObjectType,int RoleId)
+        public string GetRowAndColumn(string DominantRefiid, int ObjectType, int RoleId)
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             List<string> _permissionsData = new List<string>(); // FOR NEW MODE
@@ -304,7 +305,7 @@ namespace ExpressBase.Web2.Controllers
                 _permissionsData = fr.Permissions;
             }
 
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { DominantId = ApplicationId, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { DominantId = DominantRefiid, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             ViewBag.dict = resultlist.Data;
             string html = @"<thead><tr><th>@Header</th></tr></thead><tbody>@tbody</tbody>";
             string header = string.Empty;
@@ -330,22 +331,27 @@ namespace ExpressBase.Web2.Controllers
             }
 
             return html.Replace("@Header", header).Replace("@tbody", tbody);
-           
+
         }
 
-        public string SaveRoles(string[] Permissions, string RoleName,int ApplicationId,int RoleId,string Description)
+        public string SaveRoles(int RoleId, int ApplicationId,string RoleName, string Description, string users, string[] Permissions, int[] subrolesid)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
             string return_msg;
-            Dict["role_name"] = RoleName;
-            Dict["permission"] = Permissions;
-            Dict["applicationid"] = ApplicationId;
             Dict["roleid"] = RoleId;
+            Dict["applicationid"] = ApplicationId;
+            Dict["role_name"] = RoleName;
             Dict["Description"] = Description;
+            Dict["users"] = users;
+            Dict["permission"] = Permissions;               
+            Dict["dependants"] = subrolesid;
+          
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, Token = ViewBag.token, op = "saveroles" });
-            if(res.id == 0)
+            TokenRequiredUploadResponse res= null;
+            res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, Token = ViewBag.token, op = "rbac_roles" });
+
+            if (res.id == 0)
             {
                 return_msg = "Success";
             }
@@ -357,15 +363,15 @@ namespace ExpressBase.Web2.Controllers
 
         }
 
-        public string GetSubRoles(int roleid,int applicationid)
+        public string GetSubRoles(int roleid, int applicationid)
         {
             string html = string.Empty;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             Dictionary<string, object> Dict = new Dictionary<string, object>();
             Dict.Add("applicationid", applicationid);
-            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", id =roleid, Colvalues = Dict , Token = ViewBag.token });
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", id = roleid, Colvalues = Dict, Token = ViewBag.token });
 
-            List<string> subroles = fr.Data["roles"].ToString().Replace("[","").Replace("]","").Split(new char[] { ',' }).ToList();
+            List<string> subroles = fr.Data["roles"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList();
 
             foreach (var key in fr.Data.Keys)
             {
@@ -391,13 +397,13 @@ namespace ExpressBase.Web2.Controllers
             return html;
         }
 
-        public string SubRoles(int [] subrolesid, int roleid)
+        public string SubRoles(int[] subrolesid, int roleid)
         {
             string html = string.Empty;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
             string return_msg;
             Dict["dependants"] = subrolesid;
-            Dict["roleid"] = roleid;           
+            Dict["roleid"] = roleid;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, Token = ViewBag.token, op = "role2role" });
             if (res.id == 0)
@@ -412,18 +418,20 @@ namespace ExpressBase.Web2.Controllers
             return html;
         }
 
-        public string GetUsers(int roleid)
+        public string GetUsers(int roleid, string searchtext)
         {
             string html = string.Empty;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);           
-            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "getusers",id = roleid, Token = ViewBag.token });
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            Dictionary<string, object> Dict = new Dictionary<string, object>();
+            Dict["searchtext"] = searchtext;
+            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest {Colvalues = Dict, restype = "getusers", id = roleid, Token = ViewBag.token });
             List<string> users = fr.Data["users"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList();
 
-           
+
             foreach (var key in fr.Data.Keys)
             {
                 if (key != "users")
-                    html += "<div id ='@userid'>@users</div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);
+                    html += "<div id ='@userid' class='alert alert-success columnDrag'>@users</div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);
                 //if (key != "users")
                 //{
                 //    var checkedrole = users.Contains(key) ? "checked" : string.Empty;
@@ -439,15 +447,16 @@ namespace ExpressBase.Web2.Controllers
                 //</div> ".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key).Replace("@checked", checkedrole);
                 //}
             }
-           
+
             return html;
         }
 
-        public string Role2User(int[] users, int roleid)
+        public string Role2User(string users, int roleid)
         {
             string html = string.Empty;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
             string return_msg;
+          
             Dict["users"] = users;
             Dict["roleid"] = roleid;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -461,7 +470,7 @@ namespace ExpressBase.Web2.Controllers
                 return_msg = "Failed";
             }
             return return_msg;
-           
+
         }
 
 

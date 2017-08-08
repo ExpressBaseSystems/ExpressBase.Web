@@ -27,10 +27,23 @@
 
 
     .scrollable-menu {
-        margin-top: 15px;
         border: 1px solid #eee;
-        max-height: 200px;
         overflow-x: hidden;
+    }
+
+    .stylish-input-group .input-group-addon {
+        background: white !important;
+    }
+
+    .stylish-input-group .form-control {
+        border-right: 0;
+        box-shadow: 0 0 0;
+        border-color: #ccc;
+    }
+
+    .stylish-input-group button {
+        border: 0;
+        background: transparent;
     }
 </style>
 @using (Html.BeginForm(FormMethod.Post))
@@ -43,16 +56,14 @@
             <div class="form-group">
                 <select class="form-control" id="appselect">
                     @{
-                        <option selected="selected" value="@ViewBag.ApplicationId">@ViewBag.ApplicationName</option>
+                        <option selected="selected" value="@ViewBag.DominantRefId" data-applicationid="@ViewBag.ApplicationId">@ViewBag.ApplicationName</option>
 
                         foreach (var element in List)
                         {
                             if (ViewBag.ApplicationId != element.Id.ToString())
                             {
-                                <option value="@element.Id">@element.Name</option>
+                                <option value="@element.RefId" data-applicationid="@element.Id">@element.Name</option>
                             }
-
-
                         }
                     }
                 </select>
@@ -68,7 +79,7 @@
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#objlist1">Permissions</a></li>
         <li><a onclick="GetSubRoles(@ViewBag.roleid,@ViewBag.ApplicationId)" data-toggle="tab" href="#rolesdiv">Sub Roles</a></li>
-        <li><a onclick="GetUsers()" data-toggle="tab" href="#usersdiv">Users</a></li>
+        <li><a data-toggle="tab" href="#usersdiv">Users</a></li>
     </ul>
     <div class="tab-content">
         <div class="row tab-pane fade in active" id="objlist1">
@@ -85,6 +96,7 @@
                 </ul>
             </div>
             <input type="hidden" id="applicationid" />
+            <input type="hidden" id="dominantrefid" />
             <input type="hidden" id="roleid" name="roleid" value="@ViewBag.roleid" />
             <input type="submit" value="Save" id="save_permission" />
         </div>
@@ -108,97 +120,190 @@
 
         <div id="usersdiv" class="tab-pane fade">
 
-            <div id="users" class="scrollable-menu">
-                <div class="form-inline" id="searchbar" style="width:100%">
-                    <div class="input-group pull-right">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false">Search<span class="caret"></span></button>
-                        </div>
-                        <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
-                    </div>
-                </div>
-                <div class='row'>
-                    <div id='div1' class='col-lg-6 well'>
+            <div id="users">
 
+                <div class='row'>
+
+                    <div id='div2' class='col-lg-6 well' style="height:300px">
                     </div>
-                    <div id='div2' class='col-lg-6 well'>
+                    <div class='col-lg-6 well scrollable-menu' style='height:300px'>
+                        <div class="input-group stylish-input-group">
+                            <input type="text" class="form-control" id="searchuser" placeholder="Search">
+                            <span class="input-group-addon">
+                                <button type="submit">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                            
+                        </div>
+                        <div id='div1'>
+                            <div id="loading" style="display:none">
+                                <img src="~/images/745.gif" />
+                            </div>
+                        </div>
                     </div>
+                    
                 </div>
+                <input type="hidden" id="userslist" />
             </div>
             <input type="submit" value="Save" id="save_users" />
         </div>
 
 
     </div>
-                        }
+    <input type="submit" value="Submit" id="allsave"/>
+}
 
 
 <script>
     $('document').ready(function () {
         var ids = "";
-        var temp = new dragula([document.getElementById("div1"), document.getElementById("div2")], {});
+        var temp = new dragula([document.getElementById("div1"), document.getElementById("div2")], {
+            accepts: function (el, target, source, sibling) {
+                if ($(target).attr("id") === "div1") {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        });
         temp.on("drop", function (el, target, source, sibling) {
-            ids += $(el).attr("id") + ",";
-
+            $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button>")
+            ids = $(el).attr("id") + ",";
+            //ids = ids.substring(0, ids.length - 1);
+            var txt = $("#userslist").val();
+             
+            $("#userslist").val(txt + ids);
+            
+        });
+        $(document).on('click', '.close', function (e) {
+            var id = $(e.target).parent().attr("id");
+            var text = $(e.target).parent().text();
+            text = text.substring(0, text.length - 1);
+            $("#" + id).remove();
+            $("#div1").append("<div id=" + id + " class='alert alert-success columnDrag'>" + text + "</div>");
+            //var arr =$("#abc").text().split(",");
+            var txt = $("#userslist").val();
+            alert(txt);
+            txt = txt.toString().replace(id + ",", "");
+            $("#userslist").val(txt);
+           
         });
 
-        $('#applicationid').val($('#appselect').val());
+
+        $('#dominantrefid').val($('#appselect').val());
+        $('#applicationid').val($('#appselect').find('option:selected').data('applicationid'));
 
         $('a').click(function () {
             $(this).css("background-color", "#f5f5f5");
         });
 
         $("#appselect").change(function () {
-
-            $('#applicationid').val(this.value);
-            // $('#objlist1').show();
+            var selected = $(this).find('option:selected');
+            var extra = selected.data('applicationid');
+            alert(selected.val());
+            $('#dominantrefid').val(selected.val());
+            $('#applicationid').val(extra);
         });
 
-        $("#save_permission").click(function () {
+        //$("#save_permission").click(function () {
+        //    var selected = [];
+        //    $('.objtype input:checked').each(function () {
+        //        selected.push($(this).attr('value'));
+        //    });
+        //    $.post("../TenantUser/SaveRoles",
+        //    {
+        //        "Permissions": selected,
+        //        "RoleName": $('#role_name').val(),
+        //        "RoleId": $('#roleid').val(),
+        //        "ApplicationId": $('#applicationid').val(),
+        //        "DominantRefiid" : $('#dominantrefid').val(),
+        //        "Description": $('#Description').val()
+
+        //    }, function (result) {
+        //    });
+        //});
+
+        //$("#save_roles").click(function () {
+        //    var selectedroles = [];
+        //    $('#rolesdiv input:checked').each(function () {
+        //        selected.push($(this).attr('value'));
+        //    });
+        //    $.post("../TenantUser/SubRoles",
+        //    {
+        //        "subrolesid": selected,
+        //        "roleid": $('#roleid').val(),
+
+
+        //    }, function (result) {
+        //    });
+        //});
+
+        //$("#save_users").click(function () {
+        //    var txt = $("#userslist").val();
+        //    txt = txt.substring(0, txt.length - 1);
+        //    $.post("../TenantUser/Role2User",
+        //    {
+        //        "users":  txt,
+        //        "roleid": $('#roleid').val(),
+
+
+        //    }, function (result) {
+        //    });
+        //});
+        
+        var timer;
+        $('#searchuser').keyup(function () {
+           
+            clearTimeout(timer);
+            timer = setTimeout(function (event) {
+
+                var text = $('#searchuser').val();               
+                $.post("../TenantUser/GetUsers",
+                {
+                    "roleid": $('#roleid').val(),
+                    "searchtext": text
+                }, function (result) {
+                    if (result) {
+
+                        document.getElementById("div1").innerHTML = result;
+                    }
+                    else {
+                        document.getElementById("div1").innerHTML = " <div class='alert alert-info'>No such user exists!!</div>";
+                    }
+                });
+            }, 1000);
+        });
+
+        $('#allsave').click(function () {
             var selected = [];
             $('.objtype input:checked').each(function () {
                 selected.push($(this).attr('value'));
             });
+
+            var selectedroles = [];
+            $('#rolesdiv input:checked').each(function () {
+                selected.push($(this).attr('value'));
+            });
+
+            var txt = $("#userslist").val();
+            txt = txt.substring(0, txt.length - 1);
             $.post("../TenantUser/SaveRoles",
             {
                 "Permissions": selected,
                 "RoleName": $('#role_name').val(),
                 "RoleId": $('#roleid').val(),
                 "ApplicationId": $('#applicationid').val(),
-                "Description": $('#Description').val()
-
-            }, function (result) {
-            });
-        });
-
-        $("#save_roles").click(function () {
-            var selected = [];
-            $('#rolesdiv input:checked').each(function () {
-                selected.push($(this).attr('value'));
-            });
-            $.post("../TenantUser/SubRoles",
-            {
+                "DominantRefiid": $('#dominantrefid').val(),
+                "Description": $('#Description').val(),
                 "subrolesid": selected,
-                "roleid": $('#roleid').val(),
-
-
-            }, function (result) {
-            });
-        });
-
-        $("#save_users").click(function () {
-            var selected = [];
-            $('#usersdiv input:checked').each(function () {
-                selected.push($(this).attr('value'));
-            });
-            $.post("../TenantUser/Role2User",
-            {
-                "users": selected,
-                "roleid": $('#roleid').val(),
-
+                "users": txt,
 
             }, function (result) {
             });
+
+
         });
 
     })
@@ -207,7 +312,7 @@
         $.post("../TenantUser/GetRowAndColumn",
            {
 
-               "ApplicationId": $('#applicationid').val(),
+               "DominantRefiid": $('#dominantrefid').val(),
                "ObjectType": type,
                "RoleId": $('#roleid').val()
 
@@ -235,16 +340,16 @@
 
     }
 
-    function GetUsers()
-    {
-        $.post("../TenantUser/GetUsers",
-              {
-                  "roleid": $('#roleid').val()
-              }, function (result) {
-                  if (result) {
-                      document.getElementById("div1").innerHTML = result;
-                  }
-              });
+    //function GetUsers()
+    //{
+    //    $.post("../TenantUser/GetUsers",
+    //          {
+    //              "roleid": $('#roleid').val()
+    //          }, function (result) {
+    //              if (result) {
+    //                  // document.getElementById("div1").innerHTML = result;
+    //              }
+    //          });
 
-    }
+    //}
 </script>

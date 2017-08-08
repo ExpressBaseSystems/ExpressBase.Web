@@ -1,18 +1,4 @@
-﻿//this.RenderMe = function () {
-//    var NewHtml = this.Html;
-//    var me = this;
-//    var metas = AllMetas[this.constructor.name.slice(0, -3)];
-//    $.each(metas, function (i, meta) {
-//        var name = meta.name;
-//        if (meta.IsUIproperty) { NewHtml = NewHtml.replace('@' + name, me[name]); }
-//    });
-//    $('#' + id + ' .Eb-ctrlContainer').html(NewHtml);
-//};
-
-var Eb_PropertyGrid = function (id, props, metas) {
-
-    props.RenderMe();
-
+﻿var Eb_PropertyGrid = function (id, props, metas) {
     //params check
     {
         if (typeof props === 'string' || typeof metas === 'string') {
@@ -40,15 +26,14 @@ var Eb_PropertyGrid = function (id, props, metas) {
     this.groupsHeaderRowHTML = {};
     this.postCreateInitFuncs = {};
     this.getValueFuncs = {};
-    this.pgId = 'pg' + (this.pgIdSequence++);
+    this.pgId = 'pg' + this.pgIdSequence++;
     this.currGroup = null;
     this.innerHTML = '<table class="table-bordered table-hover pg-table">';
 
     this.getvaluesFromPG = function () {
         // function that will update and return tha values back from the property grid
         for (var prop in this.getValueFuncs) {
-            if (typeof this.getValueFuncs[prop] !== 'function')
-                continue;
+            if (typeof this.getValueFuncs[prop] !== 'function') continue;
             this.PropsObj[prop] = this.getValueFuncs[prop]();
         }
         return this.PropsObj;
@@ -79,7 +64,7 @@ var Eb_PropertyGrid = function (id, props, metas) {
             valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
 
             if (this.getValueFuncs)
-                this.getValueFuncs[name] = function () { return ($('#' + elemId).val()==="") ? "":parseInt($('#' + elemId).val()); };
+                this.getValueFuncs[name] = function () { return ($('#' + elemId).val() === "") ? "" : parseInt($('#' + elemId).val()); };
 
             // If color use color picker 
         } else if (type === 3) {
@@ -104,12 +89,7 @@ var Eb_PropertyGrid = function (id, props, metas) {
             this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
         }
 
-        if (meta.colspan2) {
-            return '<tr class="pgRow"><td colspan="2" group="' + valueHTML + '" class="pgCell">' + valueHTML + '</td></tr>';
-            this.currGroup = valueHTML;
-        } else {
-            return '<tr class="pgRow" group="' + this.currGroup + '"><td data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '" class="pgCell">' + name + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
-        }
+        return '<tr class="pgRow" group="' + this.currGroup + '"><td data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '" class="pgCell">' + name + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
@@ -126,7 +106,7 @@ var Eb_PropertyGrid = function (id, props, metas) {
     };
 
     this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName+']\').slideToggle(250);">' + displayName
+        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(250);">' + displayName
             + '<span class="bs-caret" style="float: right;margin-right: 15px;"><span class="caret"></span></span></td></tr>';
     };
 
@@ -218,6 +198,8 @@ var Eb_PropertyGrid = function (id, props, metas) {
         $("#" + this.containerId + " .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
 
         $('#propGrid table td').find("input").change(this.OnInputchangedFn.bind(this));
+
+        this.PropsObj.RenderMe();
     };
 
     this.init();

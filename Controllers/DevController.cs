@@ -323,17 +323,17 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Objtype = req["objtype"];
             ViewBag.Objid = req["objid"];
 
-            BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), ViewBag.Objtype, true);
+            BuilderType _BuilderType = (BuilderType)Convert.ToInt32(ViewBag.Objtype);
 
             EbObjectWrapper FormObj = GetFormObj(Convert.ToInt32( req["objid"]), Convert.ToInt32(req["objtype"]));
             ViewBag.Json = FormObj.Json;
             ViewBag.Name = FormObj.Name;
-            ViewBag.html = GetHtml2Render(_EbObjectType, Convert.ToInt32(ViewBag.Objid));
+            ViewBag.html = GetHtml2Render(_BuilderType, Convert.ToInt32(ViewBag.Objid));
             return View();
 
         }
 
-        public string SaveFilterDialog()
+        public string SaveFormBuilder()
         {
           var req = this.HttpContext.Request.Form;
            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -341,13 +341,15 @@ namespace ExpressBase.Web.Controllers
 
             ds.IsSave = false;
             ds.Id = Convert.ToInt32(req["id"]);
-            ds.EbObjectType = (int)EbObjectType.FilterDialog;
+            ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = req["filterdialogjson"];
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
-            ds.Relations = null;
+            ds.Relations = "";
+            ds.ChangeLog = "";
+            ds.NeedRun = false;
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return CurrSaveId.RefId;
         }
@@ -359,9 +361,16 @@ namespace ExpressBase.Web.Controllers
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             string _html = string.Empty;
-            var filterForm = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json);
-            if (filterForm != null)
-                _html += filterForm.GetHtml();
+
+            EbControlContainer _form = null;
+            if (type == BuilderType.FilterDialog)
+                _form = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json) as EbControlContainer;
+            else if (type == BuilderType.WebForm)
+                _form = EbSerializers.Json_Deserialize<EbForm>(rlist.Json) as EbControlContainer;
+           
+
+            if (_form != null)
+                _html += _form.GetHtml();
 
             return _html;
         }

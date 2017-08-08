@@ -45,7 +45,7 @@
         <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-thumb-tack pin" onclick="slideLeft ('.form-save-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
 
-            @Html.Raw(new EbToolbox(_builderType).html)
+            @Html.Raw(_toolBox.html)
 
         </div>
     </div>
@@ -80,6 +80,8 @@
 <script>
     @Html.Raw(_toolBox.AllControlls);
     @Html.Raw(_toolBox.AllMetas);
+    @Html.Raw(_toolBox.XXXX);
+    @Html.Raw(_toolBox.TypeRegister);
 
     var formBuilderObj = null;
     var objid =$("#objid").val();
@@ -88,21 +90,23 @@
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
 
+
+
     // if edit mode
     if(objid){
-        editModeFormObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
+        editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
         //$.each(editModeFormObj, funcion(i, obj) {  });
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
-        formBuilderObj.InitEditModeCtrls(editModeFormObj);
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
+        formBuilderObj.InitEditModeCtrls(editModeObj);
     }
     else
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType));
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
 
     function recur(obj)
     {
         if (obj.Controls)
             obj.Controls = new EbControlCollection(obj.Controls);
-    
+
     }
 </script>
 

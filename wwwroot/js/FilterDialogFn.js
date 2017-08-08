@@ -588,14 +588,14 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         //}
         this.Rel_object = rel_arr.toString();
 
-        var _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogid: filter_dialog, sql: btoa(unescape(encodeURIComponent(this.Code))) }
+        var _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogRefId: filter_dialog, sql: btoa(unescape(encodeURIComponent(this.Code))) }
         $.post("../Dev/CommitEbDataSource", {
             "objtype": this.ObjectType,
             "id": this.Obj_Id,
             "name": this.Name,
             "code": btoa(unescape(encodeURIComponent(this.Code))),
             "description": this.Description,
-            "filterDialogId": filter_dialog,
+            "filterDialogRefId": filter_dialog,
             "changeLog": "changed",
             "json": JSON.stringify(_json),
             "rel_obj": this.Rel_object

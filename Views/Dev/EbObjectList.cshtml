@@ -2,38 +2,28 @@
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 
 @{
-                if (ViewBag.isAjaxCall)
-                {
-                    Layout = null;
-                }
-                else
-                {
-                    Layout = "~/Views/Shared/_Layout1.cshtml";
-                }
-                Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
-                var ObjectType = ViewBag.EbObjectType;
-                string editor = null;
-                string whichController = null;
-                if (ObjectType == (int)EbObjectType.DataSource)
-                {
-                    editor = "code_editor";
-                    whichController = "Dev";
-                }
-                else if (ObjectType == (int)EbObjectType.DataVisualization)
-                {
-                    //if(ViewBag.wc == "dc")
-                    //{
-                    //    editor = "DVEditor";
-                    //    whichController = "Dev";
-
-                    //}
-                    //else
-                    //{
-                    editor = "dv";
-                    whichController = "Dev";
-                //}
-
-            }
+    if (ViewBag.isAjaxCall)
+    {
+        Layout = null;
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+    }
+    Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
+    var ObjectType = ViewBag.EbObjectType;
+    string editor = null;
+    string whichController = null;
+    if (ObjectType == (int)EbObjectType.DataSource)
+    {
+        editor = "code_editor";
+        whichController = "Dev";
+    }
+    else if (ObjectType == (int)EbObjectType.DataVisualization)
+    {
+        editor = "dv";
+        whichController = "DV";
+    }
     else if (ObjectType == (int)EbObjectType.Application)
     {
         editor = "CreateApplication";
@@ -124,7 +114,7 @@
                 @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
                   
                     {
-                    <input type="hidden" name="objid" value="@element.Value.Id" />
+                    <input type="hidden" name="objid" value="@element.Value.RefId" />
                     <input type="hidden" name="tacid" value="@ViewBag.cid" />
                     <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
                     <input type="submit" class="btn btn-primary fa-input" value="Open &#xf054;" style="font-family: FontAwesome;" id="btnOpen">

@@ -110,8 +110,8 @@ var EbDataTable = function (settings) {
     };
 
     this.getColumnsSuccess = function (data) {
-        $(".tablecontainer").toggle();
-        this.ebSettings = JSON.parse(data);
+        //$(".tablecontainer").toggle();
+        this.ebSettings = data;
         this.dsid = this.ebSettings.dsId;//not sure..
         this.dvName = this.ebSettings.dvName;
 
@@ -294,7 +294,7 @@ var EbDataTable = function (settings) {
         //    arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
         //    dq.TFilters = JSON.stringify(arr);
         //}
-        dq.Params = JSON.stringify((this.filterValues !== null) ? this.filterValues : this.getFilterValues());
+        dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined) ? this.filterValues : this.getFilterValues());
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (serachItems.length > 0) {
@@ -303,10 +303,9 @@ var EbDataTable = function (settings) {
         return dq;
     };
 
-
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var paramstxt = "";//$('#hiddenparams').val().trim();datefrom,dateto
+        var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
         if (paramstxt.length > 0) {
             var params = paramstxt.split(',');
             $.each(params, function (i, id) {
@@ -370,7 +369,10 @@ var EbDataTable = function (settings) {
         if (!this.isSecondTime) {
             this.isSecondTime = true;
             this.RenderGraphModal();
-            this.getColumns();
+            if (this.ebSettings !== null)
+                this.getColumnsSuccess(this.ebSettings);
+            else
+                this.getColumns();
         }
         else if (this.dragNdrop) {
             this.ebSettings.columns.sort(this.ColumnsComparer);

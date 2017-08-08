@@ -313,20 +313,25 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Eb_formBuilder(int i)
         {
             var req = this.HttpContext.Request.Form;
             ViewBag.Objtype = req["objtype"];
             ViewBag.Objid = req["objid"];
+
+            BuilderType _BuilderType = (BuilderType)Convert.ToInt32(ViewBag.Objtype);
+
             EbObjectWrapper FormObj = GetFormObj(Convert.ToInt32( req["objid"]), Convert.ToInt32(req["objtype"]));
             ViewBag.Json = FormObj.Json;
             ViewBag.Name = FormObj.Name;
+            ViewBag.html = GetHtml2Render(_BuilderType, Convert.ToInt32(ViewBag.Objid));
             return View();
 
         }
 
-        public string SaveFilterDialog()
+        public string SaveFormBuilder()
         {
           var req = this.HttpContext.Request.Form;
            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -334,15 +339,38 @@ namespace ExpressBase.Web.Controllers
 
             ds.IsSave = false;
             ds.Id = Convert.ToInt32(req["id"]);
-            ds.EbObjectType = (int)EbObjectType.FilterDialog;
+            ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = req["filterdialogjson"];
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
-            ds.Relations = null;
+            ds.Relations = "";
+            ds.ChangeLog = "";
+            ds.NeedRun = false;
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return CurrSaveId.RefId;
+        }
+
+        //Jith Builder related
+        private string GetHtml2Render(BuilderType type, int objid)
+        {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
+            var rlist = resultlist.Data[0];
+            string _html = string.Empty;
+
+            EbControlContainer _form = null;
+            if (type == BuilderType.FilterDialog)
+                _form = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json) as EbControlContainer;
+            else if (type == BuilderType.WebForm)
+                _form = EbSerializers.Json_Deserialize<EbForm>(rlist.Json) as EbControlContainer;
+           
+
+            if (_form != null)
+                _html += _form.GetHtml();
+
+            return _html;
         }
 
         public string GetByteaEbObjects_json()
@@ -649,6 +677,15 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult ReportBuilder()
         {
+            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = 2, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var rlist = resultlist.Data;
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            foreach (var element in rlist)
+            {               
+                    ObjList[element.Id] = element;
+            }
+            ViewBag.Objlist = ObjList;
             return View();
         }
     }

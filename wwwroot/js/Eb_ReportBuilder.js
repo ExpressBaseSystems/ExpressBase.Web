@@ -28,7 +28,7 @@ var sub = function (name, index, height, subsection) {
     this.subsection = subsection;
 };
 
-var RptBuilder = function (type,toolboxid) {
+var RptBuilder = function (type, toolboxid) {
     this.type = type;
     this.height = pages[type].height;
     this.width = pages[type].width;
@@ -136,10 +136,15 @@ var RptBuilder = function (type,toolboxid) {
 
         $pageref.append("<div class='rptfooter' data_val='4' style='width :100%'></div>");
 
-        $pageref.children().not(".gutter").each(function () {
-            var classname = $(this).attr("class");
-            report.sections.push(new sub(classname, $(this).index(), $(this).height(), null));
-        });
+        $pageref.children().not(".gutter").each(this.set_Dropable.bind(this));
+    };
+
+    this.set_Dropable = function (i, obj) {
+
+        var classname = $(obj).attr("class");
+        $("." + classname).droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
+        report.sections.push(new sub(classname, $(obj).index(), $(obj).height(), null));
+
     };
 
     this.splitButton = function () {
@@ -175,7 +180,7 @@ var RptBuilder = function (type,toolboxid) {
                 var s1 = $("<div class='s" + obj.index + "1'></div>");
                 $sec.append(s0, s1);
                 this.splitarray.push("." + s0.attr("class") + "", "." + s1.attr("class") + "");
-
+                s0.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
             }
 
             else if ($sec.children().length !== 0) {
@@ -184,7 +189,7 @@ var RptBuilder = function (type,toolboxid) {
                 $sec.append($spl);
                 $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
                 $($sec).children('.gutter').remove();
-
+                $spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
             };
 
             Split(this.splitarray, {
@@ -298,8 +303,55 @@ var RptBuilder = function (type,toolboxid) {
     };
 
     this.DragDrop_DataSource = function () {
-       
+
+        this.posLeft = null;
+        this.posTop = null;
+        this.dropClass = null;
+        
+        $('.draggable').draggable({
+            cancel: "a.ui-icon",
+            revert: "invalid",
+            helper: "clone",
+            cursor: "move",
+            drag: this.onDrag.bind(this),           
+        });
     }
+
+    this.onDrag = function (event, ui) {
+        
+        this.posLeft = ui.position.left;
+        this.posTop = ui.position.top;        
+        console.log(posLeft);
+        console.log(posTop);
+    };
+
+    this.onDropFn = function (event, ui) {
+        var itemToClone = $(ui.draggable);
+        $(event.target).append(itemToClone.clone().addClass("dropped").removeClass("draggable").css({
+            width: itemToClone.width(),
+            position: 'absolute',
+            left: (this.posLeft - $(event.target).offset().left + 120),
+            top: this.posTop+25
+        }));
+        $('.dropped').draggable({
+            cursor: 'move',
+           drag: this.onDrag_Dropped.bind(this)
+        }).resizable({
+            containment: "parent",
+            resize: this.resizeElement.bind(this)
+        });
+    };
+
+    this.resizeElement = function (event,ui) {
+        console.log($(event.target).text());
+        console.log(ui.size.height);
+        //$(event.target).text().css({"font-size": "20px"});
+    };
+
+    this.onDrag_Dropped = function (event, ui) {
+        
+    };
+
     this.init = function () {
 
         $('#PageContainer').empty();
@@ -308,7 +360,9 @@ var RptBuilder = function (type,toolboxid) {
         this.headerBox1_Split();
         this.headerScaling();
         this.DragDrop_DataSource();
+
     };
+
     this.init();
 };
 

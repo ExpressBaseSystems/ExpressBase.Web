@@ -412,28 +412,25 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         }
         else {
             this.SetValues();
-            this.FilterDId = $('#fd option:selected').val();
-            this.rel_arr = [];
-            rel_arr = this.GetUsedSqlFns(needRun);
-            rel_arr.push(filter_dialog_refid);
-            this.Rel_object = rel_arr.toString();
 
             var getNav = $("#versionNav li.active a").attr("href");
-            var filter_dialog = $(getNav + " #fdlist #fd").val();
-            if (filter_dialog === "Select Filter Dialog") {
-                filter_dialog = 0;
-            }
-            var filter_dialog_refid = $(getNav + " #fdlist #fd option:selected").attr("data-tokens");
+            var filter_dialog_refid = $(getNav + " #fdlist #fd  option:selected").val();          
+            this.rel_arr = [];
+            //rel_arr = this.GetUsedSqlFns(needRun);
+            this.rel_arr.push(filter_dialog_refid);
+            this.Rel_object = this.rel_arr.toString();
+
             if (filter_dialog_refid === "Select Filter Dialog") {
                 filter_dialog_refid = null;
             }
-            _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogid: filter_dialog, sql: btoa(unescape(encodeURIComponent(this.Code))) }
+          
+            _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))) }
             $.post("../CE/CommitEbDataSource", {
                 "objtype": this.ObjectType,
                 "id": this.Obj_Id,
                 "name": this.Name,
                 "description": this.Description,
-                "filterDialogId": filter_dialog,
+                "filterDialogId": filter_dialog_refid,
                 "changeLog": "changed",
                 "json": JSON.stringify(_json),
                 "rel_obj": this.Rel_object
@@ -444,6 +441,21 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     }
     this.call_commit=function()
     {
+        this.FilterDId = $('#fd option:selected').val();
+            this.rel_arr =[];
+            this.rel_arr = this.GetUsedSqlFns(needRun);
+            this.rel_arr.push(filter_dialog_refid);
+            this.Rel_object = this.rel_arr.toString();
+
+            var getNav = $("#versionNav li.active a").attr("href");
+            var filter_dialog = $(getNav + " #fdlist #fd").val();
+            if (filter_dialog === "Select Filter Dialog") {
+                filter_dialog = 0;
+            }
+            var filter_dialog_refid = $(getNav + " #fdlist #fd option:selected").attr("data-tokens");
+            if (filter_dialog_refid === "Select Filter Dialog") {
+                filter_dialog_refid = null;
+                }
         rel_array.push(filter_dialog_refid);
         this.Rel_object = rel_arr.toString();
 

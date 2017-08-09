@@ -390,15 +390,15 @@ namespace ExpressBase.Web.Controllers
             return colDef + colext + "}";
         }
 
-        public JsonResult SaveSettings(int dsid, string json, int dvid)
+        public JsonResult SaveSettings(int dsid, string json, string dvid)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectSaveOrCommitRequest();
-            if (ds.Id > 0)
+            if (!string.IsNullOrEmpty(ds.RefId))
                 ds.IsSave = true;
-            ds.Id = dvid;
+            ds.RefId = dvid;
             ds.EbObjectType = (int)EbObjectType.DataVisualization;
             ds.Name = _dict["dvName"].ToString();
             ds.Description = "abcd";

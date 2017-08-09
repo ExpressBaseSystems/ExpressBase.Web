@@ -67,10 +67,10 @@ namespace ExpressBase.Web.Controllers
 
             BuilderType _BuilderType = (BuilderType)Convert.ToInt32(ViewBag.Objtype);
 
-            EbObjectWrapper FormObj = GetFormObj(Convert.ToInt32( req["objid"]), Convert.ToInt32(req["objtype"]));
+            EbObjectWrapper FormObj = GetFormObj(req["objid"].ToString(), Convert.ToInt32(req["objtype"]));
             ViewBag.Json = FormObj.Json;
             ViewBag.Name = FormObj.Name;
-            ViewBag.html = GetHtml2Render(_BuilderType, Convert.ToInt32(ViewBag.Objid));
+            ViewBag.html = GetHtml2Render(_BuilderType, ViewBag.Objid);
             return View();
 
         }
@@ -97,10 +97,10 @@ namespace ExpressBase.Web.Controllers
         }
 
         //Jith Builder related
-        private string GetHtml2Render(BuilderType type, int objid)
+        private string GetHtml2Render(BuilderType type, string objid)
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objid, VersionId = Int32.MaxValue, EbObjectType = (int)type, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data[0];
             string _html = string.Empty;
 
@@ -123,7 +123,7 @@ namespace ExpressBase.Web.Controllers
             var _type = req["Ebobjtype"];
             BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), _type, true);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";
@@ -139,10 +139,10 @@ namespace ExpressBase.Web.Controllers
             return _html + "<script>" + _head + "</script>";
         }
 
-        public EbObjectWrapper GetFormObj(int objId, int objType)
+        public EbObjectWrapper GetFormObj(string objId, int objType)
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue, EbObjectType = objType, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objId, VersionId = Int32.MaxValue, EbObjectType = objType, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data[0];
             return rlist;
         }
@@ -154,11 +154,11 @@ namespace ExpressBase.Web.Controllers
             {
                 //get datasource obj and get fdid
                 IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
                 var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
 
                 //get fd obj
-                resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+                resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
 
                 //redundant - REMOVE JITH
                 var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);

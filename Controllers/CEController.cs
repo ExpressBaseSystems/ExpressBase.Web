@@ -266,11 +266,11 @@ namespace ExpressBase.Web.Controllers
         //for ajax call
 
         [HttpPost]
-        public string VersionCodes(int objid, int objtype)
+        public string VersionCodes(string objid, int objtype)
         {
             var _EbObjectType = (EbObjectType)objtype;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = objid, EbObjectType = objtype, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objid, VersionId = Int32.MaxValue, EbObjectType = objtype, Token = ViewBag.token });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -294,7 +294,7 @@ namespace ExpressBase.Web.Controllers
             var _type = req["Ebobjtype"];
             BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), _type, true);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = req["objid"], VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";

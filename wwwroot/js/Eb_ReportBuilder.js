@@ -306,7 +306,7 @@ var RptBuilder = function (type, toolboxid) {
 
         this.posLeft = null;
         this.posTop = null;
-        this.dropClass = null;
+       
 
         $('.draggable').draggable({
             cancel: "a.ui-icon",
@@ -319,37 +319,48 @@ var RptBuilder = function (type, toolboxid) {
 
     this.onDrag = function (event, ui) {
         
-        this.posLeft = ui.position.left;
-        this.posTop = ui.position.top;        
-        console.log(posLeft);
-        console.log(posTop);
+        this.posLeft = event.pageX;
+        this.posTop = event.pageY;
+        
     };
 
-    this.onDropFn = function (event, ui) {
+    this.onDropFn = function (event, ui) {     
+
         var itemToClone = $(ui.draggable);
         $(event.target).append(itemToClone.clone().addClass("dropped").removeClass("draggable").css({
             width: itemToClone.width(),
+            height: itemToClone.height(),
             position: 'absolute',
-            left: (this.posLeft - $(event.target).offset().left + 120),
-            top: this.posTop+25
+            left: this.posLeft - 260,
+            top: this.posTop - 159
         }));
         $('.dropped').draggable({
             cursor: 'move',
-           drag: this.onDrag_Dropped.bind(this)
-        }).resizable({
+            start: this.onDrag_Dropped.bind(this),
+            stop: this.onDrag_stop.bind(this)
+        });
+
+        $('.dropped').resizable({
             containment: "parent",
+            handles: "n, e, s, w",
+            handle: "h2",           
             resize: this.resizeElement.bind(this)
         });
     };
 
     this.resizeElement = function (event,ui) {
-        console.log($(event.target).text());
-        console.log(ui.size.height);
-        //$(event.target).text().css({"font-size": "20px"});
+      
+    };
+
+    this.onDrag_stop = function (event,ui) {
+        $(".vL").remove();
+        $(".hL").remove();
     };
 
     this.onDrag_Dropped = function (event, ui) {
-        
+        console.log($(event.target).width());
+        $(event.target).append("<div class='vL' style='width :1px;border:1px dotted;height:" + pages[type].height + ";margin-left:-13px;margin-top:-" + this.posTop + "px'></div>");
+        $(event.target).prepend("<div class='hL' style='height :1px;border:1px dotted;width:" + $(window).width() + "px;margin-top: -13px;margin-left:-" + this.posLeft + "px'></div>");
     };
 
     this.init = function () {

@@ -190,7 +190,7 @@ var RptBuilder = function (type, toolboxid) {
                 $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
                 $($sec).children('.gutter').remove();
                 $spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-            };
+            }
 
             Split(this.splitarray, {
                 direction: 'vertical',
@@ -280,7 +280,7 @@ var RptBuilder = function (type, toolboxid) {
             $('.page').children().not(".gutter").each(function (j, obj2) {
                 var hLength = $(obj2).children().not(".gutter").length;
                 if ($(obj).attr("data_val") === $(obj2).attr("data_val") && index === $(obj).attr("data_val")) {
-                    for (var k = 0; k < hLength ; k++) {
+                    for (var k = 0; k < hLength; k++){
                         $(obj).append("<div class='multiSplitHboxSub' id='subBox" + k + $(obj).attr("data_val") + "' style='width:100%'><p>s" + k + "</p></div>");
                         temp1.push("#subBox" + k + $(obj).attr("data_val") + "");
                     }
@@ -297,7 +297,7 @@ var RptBuilder = function (type, toolboxid) {
                 direction: 'vertical',
                 cursor: 'row-resize',
                 minSize: 10,
-                gutterSize: 3,
+                gutterSize: 3
             });
         }
     };
@@ -307,15 +307,15 @@ var RptBuilder = function (type, toolboxid) {
         this.posLeft = null;
         this.posTop = null;
         this.dropClass = null;
-        
+
         $('.draggable').draggable({
             cancel: "a.ui-icon",
             revert: "invalid",
             helper: "clone",
             cursor: "move",
-            drag: this.onDrag.bind(this),           
+            drag: this.onDrag.bind(this)
         });
-    }
+    };
 
     this.onDrag = function (event, ui) {
         

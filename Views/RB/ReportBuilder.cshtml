@@ -56,21 +56,24 @@
     </div>
     <div class="row pgB">
         <div class="col-md-2 toolbox">           
-            <select class="custom-select mb-2 mr-sm-2 mb-sm-0">
-                <option selected>Choose...</option>
-                <option value="1">One</option>               
-            </select>
-            <ul style="padding:0;margin-left:10px" id="toolbox1">
+           
+            <select class="selectpicker" id="selDsource" data-live-search="true">
                 @foreach (var element in Objlist)
                 {
+                <option value="@element.Value.Id">@element.Value.Name</option>   
+                }           
+            </select>
+            
+            <ul style="padding:0;margin-left:10px" id="toolbox1">
+               
                     <li>
-                        <a>@element.Value.Name</a>
+                        <a></a>
                         <ul>
                             <li class="draggable styl"><p class="textval">Sub 1</p></li>
                             <li class="draggable styl"><p class="textval">Sub 2</p></li>
                         </ul>
                     </li>
-                }
+               
             </ul>
         </div>
         <div class="col-md-9" id="pageCanvas" style="position:relative;margin-top:50px">

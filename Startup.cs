@@ -12,6 +12,7 @@ using ServiceStack;
 using Microsoft.AspNetCore.Routing.Constraints;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Http;
 
 namespace ExpressBase.Web2
 {
@@ -51,6 +52,13 @@ namespace ExpressBase.Web2
 
             // Added - Confirms that we have a home for our DemoSettings
             services.Configure<EbSetupConfig>(Configuration.GetSection("EbSetupConfig"));
+
+            //services.AddScoped(typeof(IServiceClient), ServiceClientFactory);
+            services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
+            {
+                var connectionString = Configuration["EbSetupConfig:ServiceStackUrl"];
+                return new JsonServiceClient(connectionString);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

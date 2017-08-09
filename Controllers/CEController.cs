@@ -59,7 +59,7 @@ namespace ExpressBase.Web.Controllers
 
             ViewBag.Obj_id = obj_id;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = obj_id, VersionId = -1, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = obj_id, VersionId = -1, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -114,7 +114,7 @@ namespace ExpressBase.Web.Controllers
 
             ViewBag.Obj_id = obj_id;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = obj_id, VersionId = -1, EbObjectType = (int)EbObjectType.SqlFunction, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = obj_id, VersionId = -1, EbObjectType = (int)EbObjectType.SqlFunction, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -147,7 +147,7 @@ namespace ExpressBase.Web.Controllers
         //{
         //    var _EbObjectType = (EbObjectType)Convert.ToInt32(objtype);
         //    IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-        //    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = id, VersionId = id, EbObjectType = Convert.ToInt32(objtype), Token = ViewBag.token });
+        //    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = id, VersionId = id, EbObjectType = Convert.ToInt32(objtype), TenantAccountId = ViewBag.cid });
         //    var rlist = resultlist.Data;
         //    string refid =null;
         //    foreach (var element in rlist)
@@ -162,7 +162,7 @@ namespace ExpressBase.Web.Controllers
         public Dictionary<int, EbObjectWrapper> GetObjects(int obj_type)
         {
             IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, Token = ViewBag.token });
+            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, TenantAccountId = ViewBag.cid });
             var fdrlist = fdresultlist.Data;
             Dictionary<int, EbObjectWrapper> objects_dict = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in fdrlist)
@@ -175,7 +175,7 @@ namespace ExpressBase.Web.Controllers
         public Dictionary<string, EbObjectWrapper> GetObjects_refid_dict(int obj_type)
         {
             IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, Token = ViewBag.token });
+            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, TenantAccountId = ViewBag.cid });
             var fdrlist = fdresultlist.Data;
             Dictionary<string, EbObjectWrapper> objects_dict = new Dictionary<string, EbObjectWrapper>();
             foreach (var element in fdrlist)
@@ -188,7 +188,7 @@ namespace ExpressBase.Web.Controllers
         public List<string> Getsqlfns(int obj_type)
         {
             IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, Token = ViewBag.token });
+            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, TenantAccountId = ViewBag.cid });
             var fdrlist = fdresultlist.Data;
             List<string> objects_list = new List<string>();
             foreach (var element in fdrlist)
@@ -201,7 +201,7 @@ namespace ExpressBase.Web.Controllers
         public List<EbObjectWrapper> GetVersions(string objid)
         {
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objid, VersionId = 0, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objid, VersionId = 0, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data;
             return rlist;
         }
@@ -266,11 +266,11 @@ namespace ExpressBase.Web.Controllers
         //for ajax call
 
         [HttpPost]
-        public string VersionCodes(int objid, int objtype)
+        public string VersionCodes(string objid, int objtype)
         {
             var _EbObjectType = (EbObjectType)objtype;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objid, VersionId = objid, EbObjectType = objtype, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objid, VersionId = Int32.MaxValue, EbObjectType = objtype, Token = ViewBag.token });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -294,7 +294,7 @@ namespace ExpressBase.Web.Controllers
             var _type = req["Ebobjtype"];
             BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), _type, true);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = req["objid"], VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";

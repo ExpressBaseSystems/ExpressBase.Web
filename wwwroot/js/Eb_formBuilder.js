@@ -43,7 +43,7 @@
         this.saveObj();
         $(".eb-loaderFixed").show();
         $.post("SaveFormBuilder", {
-            "Id": 0,
+            "Id": null,
             "FilterDialogJson": JSON.stringify(this.rootContainerObj),
             "Name": $('#save_txtBox').val(),
             "Description": "",

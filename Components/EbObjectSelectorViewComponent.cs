@@ -13,18 +13,24 @@ namespace ExpressBase.Web.Components
 {
     public class EbObjectSelectorViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(EbObjectType type)
-        {
-            //IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+        protected JsonServiceClient ServiceClient { get; set; }
 
-            //var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = 2, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            //var rlist = resultlist.Data;
-            //Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            //foreach (var element in rlist)
-            //{
-            //    ObjList[element.Id] = element;
-            //}
-            //ViewBag.Objlist = ObjList;
+        public EbObjectSelectorViewComponent(IServiceClient _client)
+        {
+            this.ServiceClient = _client as JsonServiceClient;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync(int type)
+        {
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = string.Empty, VersionId = Int32.MaxValue, EbObjectType = type, TenantAccountId = ViewBag.cid });
+            var rlist = resultlist.Data;
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            foreach (var element in rlist)
+            {
+                ObjList[element.Id] = element;
+            }
+            ViewBag.Objlist = ObjList;
+
             return View();
         }
     }

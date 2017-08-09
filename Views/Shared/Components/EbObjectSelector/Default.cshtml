@@ -1,0 +1,13 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<select class="selectpicker" id="selDsource" data-live-search="true">
+    @foreach (var element in ViewBag.Objlist)
+    {
+        <option value="@element.Value.Id">@element.Value.Name</option>
+    }
+</select>
+

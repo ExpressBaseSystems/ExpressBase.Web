@@ -57,12 +57,7 @@
     <div class="row pgB">
         <div class="col-md-2 toolbox">           
            
-            <select class="selectpicker" id="selDsource" data-live-search="true">
-                @foreach (var element in Objlist)
-                {
-                <option value="@element.Value.Id">@element.Value.Name</option>   
-                }           
-            </select>
+            @await Component.InvokeAsync("EbObjectSelector", new { EbObjectType = (int)EbObjectType.DataSource });
             
             <ul style="padding:0;margin-left:10px" id="toolbox1">
                

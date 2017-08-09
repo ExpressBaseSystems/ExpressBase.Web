@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.IdentityModel.Tokens.Jwt;
+using ServiceStack.Redis;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,9 +16,12 @@ namespace ExpressBase.Web.Controllers
     {
         protected JsonServiceClient ServiceClient { get; set; }
 
-        public EbBaseNewController(IServiceClient _client)
+        protected RedisClient Redis { get; set; }
+
+        public EbBaseNewController(IServiceClient _ssclient, IRedisClient _redis)
         {
-            this.ServiceClient = _client as JsonServiceClient;
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)

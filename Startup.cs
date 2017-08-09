@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Routing.Constraints;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
+using ServiceStack.Redis;
 
 namespace ExpressBase.Web2
 {
@@ -58,6 +59,14 @@ namespace ExpressBase.Web2
             {
                 var connectionString = Configuration["EbSetupConfig:ServiceStackUrl"];
                 return new JsonServiceClient(connectionString);
+            });
+
+            services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
+            {
+                var redisServer = Configuration["EbSetupConfig:RedisServer"];
+                var redisPassword = Configuration["EbSetupConfig:RedisPassword"];
+                var redisPort = Configuration["EbSetupConfig:RedisPort"];
+                return new RedisClient(string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort));
             });
         }
 

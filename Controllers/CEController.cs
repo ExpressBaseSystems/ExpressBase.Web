@@ -36,7 +36,7 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.Header = "New Datasource";
             ViewBag.VersionNumber = 1;
-            ViewBag.Obj_id = 0;
+            ViewBag.Obj_id = null;
             ViewBag.IsNew = "true";
             ViewBag.EditorHint = "CodeMirror.hint.sql";
             ViewBag.EditorMode = "text/x-sql";
@@ -90,7 +90,7 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.Header = "New Sql Function";
             ViewBag.VersionNumber = 1;
-            ViewBag.Obj_id = 0;
+            ViewBag.Obj_id = null;
             ViewBag.Code = "CREATE OR REPLACE FUNCTION function_name(p1 type, p2 type) \nRETURNS type AS \n$BODY$ \nBEGIN \n\t-- logic \nEND \n$BODY$ \nLANGUAGE language_name";
             ViewBag.IsNew = "true";
             ViewBag.EditorHint = "CodeMirror.hint.sql";

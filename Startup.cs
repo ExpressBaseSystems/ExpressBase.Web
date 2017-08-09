@@ -12,6 +12,8 @@ using ServiceStack;
 using Microsoft.AspNetCore.Routing.Constraints;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Http;
+using ServiceStack.Redis;
 
 namespace ExpressBase.Web2
 {
@@ -51,6 +53,21 @@ namespace ExpressBase.Web2
 
             // Added - Confirms that we have a home for our DemoSettings
             services.Configure<EbSetupConfig>(Configuration.GetSection("EbSetupConfig"));
+
+            //services.AddScoped(typeof(IServiceClient), ServiceClientFactory);
+            services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
+            {
+                var connectionString = Configuration["EbSetupConfig:ServiceStackUrl"];
+                return new JsonServiceClient(connectionString);
+            });
+
+            services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
+            {
+                var redisServer = Configuration["EbSetupConfig:RedisServer"];
+                var redisPassword = Configuration["EbSetupConfig:RedisPassword"];
+                var redisPort = Configuration["EbSetupConfig:RedisPort"];
+                return new RedisClient(string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

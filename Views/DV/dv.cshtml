@@ -1,0 +1,71 @@
+﻿@using ServiceStack;
+@using ExpressBase.Objects;
+@using ExpressBase.Common;
+@using Newtonsoft.Json;
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+.scrollable-menu {
+        height: auto;
+        max-height: 200px;
+        overflow-x: visible;
+        overflow-y: scroll;
+    }
+.loadingdiv {
+        vertical-align: middle;
+        margin: 5% 50%;
+        z-index: 1;
+        display: none;
+    }
+</style>
+@{
+    string head = string.Empty;
+    string html = string.Empty;
+
+    var dvid = Convert.ToInt32(ViewBag.dvid);
+    var dsid = Convert.ToInt32(ViewBag.dsid);
+    var id = Convert.ToInt32(ViewBag.DataId);
+    var dvname = (ViewBag.dvObject != null) ? ViewBag.dvObject.Name : "* Untitled *";
+}
+<div class="well well-sm">
+    <div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
+        <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
+            Select Datasource
+            <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu scrollable-menu'>
+        @{
+            foreach (var element in ViewBag.DSListAll)
+            {
+                <li data-dsid="@element.Key"><a href="#">@element.Value.Name</a></li>
+            }
+        }
+        </ul>
+    </div>
+    <input id='dvnametxt' type='text' class='form-control' placeholder='dvname' style="display:none;width: auto;"/>
+    <button id='Save_btn' class='btn btn-primary' style="float: right; display:none;"> Save </button>
+</div>
+
+<div id="filterDia">
+@if (ViewBag.dvObject != null)
+{
+    @await Component.InvokeAsync("DataVisualization", new { dsid = dsid });
+}
+</div>
+
+@section EbHead {
+    <script>
+        $("#datatSourceDropdown .dropdown-menu li a").on("click", function (e) {
+            var dsRefid = $(e.target).parent().attr("data-dsid");
+            $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
+            $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
+            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid });
+        });
+        $(document).ready(function () {
+            @Html.Raw(head)
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

@@ -1,4 +1,5 @@
 ﻿
+
 .settings-cont {
     position: absolute;
     width: 100vw;
@@ -84,8 +85,8 @@
     background-color: white;
     overflow-x: auto;
 }
+
 .pg-table{
-    
     min-width: 100%;
 }
 
@@ -93,8 +94,11 @@
     background-color: #ccc;
     padding: 5px;
     font-weight: bold;
-    cursor: move;
     width: 100%;
+}
+.ctrlHead{
+    display:none;
+    cursor: move;
 }
 
 .property-grid-cont .bs-searchbox .form-control {
@@ -227,7 +231,6 @@
 
 .Eb-ctrlContainer {
     min-height: 66px;
-    border: 1px solid rgba(34,36,38,.08);
 }
 
 /*overriding*/

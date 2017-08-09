@@ -1,29 +1,28 @@
-﻿jQuery.fn.outerHTML = function (s) {
-    return s
-        ? this.before(s).remove()
-        : jQuery("<p>").append(this.eq(0).clone()).html();
-};
-
-var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
+﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType) {
     this.Name = formid;
     this.toolBoxid = toolBoxid;
     this.rootContainerObj = null;
     this.formid = formid;
     this.$propGrid = $("#" + propGridId);
 
-    //if (builderType === 0)
+    //if (builderType === 1)
     //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
-    if (builderType === 1)
-        this.rootContainerObj = new EbObjects.EbFilterDialogObj(formid);
-    else if (builderType === 2)
+    if (builderType === 0)
         this.rootContainerObj = new EbObjects.EbFormObj(formid);
-    //else if (builderType === 3)
+    else if (builderType === 12)
+        this.rootContainerObj = new EbObjects.EbFilterDialogObj(formid);
+    //else if (builderType === 13)
     //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
-    //else if (builderType === 4)
+    //else if (builderType === 14)
     //    this.rootContainerObj = new EbObjects.UserControlObj(formid);
-    //else if (builderType === 4)
+    //else if (builderType === 3)
     //    this.rootContainerObj = new EbObjects.ReportObj(formid);
 
+    this.curControl = null;
+    this.drake = null;
+    this.PGobj = null;
+
+    // need to change
     this.controlCounters = {
         ComboBoxCounter: 0,
         NumericCounter: 0,
@@ -32,12 +31,7 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
         TableLayoutCounter: 0,
         TextBoxCounter: 0,
         TableTdCounter: 0
-    }
-
-    this.curControl = null;
-    this.drake = null;
-    this.PGobj = null;
-    // need to change
+    };
     this.currentProperty = null;
     this.CurRowCount = 2;
     this.CurColCount = 2;
@@ -48,13 +42,14 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
             return false;
         this.saveObj();
         $(".eb-loaderFixed").show();
-        $.post("SaveFilterDialog", {
+        $.post("SaveFormBuilder", {
             "Id": 0,
             "FilterDialogJson": JSON.stringify(this.rootContainerObj),
             "Name": $('#save_txtBox').val(),
             "Description": "",
             "isSave": "false",
-            "VersionNumber": "1"
+            "VersionNumber": "1",
+            "Obj_type": Eb_objType
         }, this.Save_Success.bind(this));
     };
 
@@ -68,11 +63,9 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
     "</div>");
     };
 
-    $("#saveformBtn").on("click", this.save.bind(this));
-
     this.CreatePG = function (control) {
 
-        console.log("CreatePG called for:" + control.Name)
+        console.log("CreatePG called for:" + control.Name);
 
         this.$propGrid.show();
 
@@ -89,7 +82,6 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
 
     this.saveObj = function () {
         this.PGobj.getvaluesFromPG();
-        // $('#propGrid').jqPropertyGrid('get');
     };
 
     this.PGinputChange = function (e) {
@@ -143,7 +135,7 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
                 this.drake.containers.push(document.getElementsByClassName("tdDropable")[i]);
             }
         }
-    }
+    };
 
     this.onDragFn = function (el, source) {
         //if drag start within the form
@@ -153,7 +145,7 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
         }
         else
             this.movingObj = null;
-    }// start
+    };// start
 
     this.onDragendFn = function (el) {
         var sibling = $(el).next();
@@ -169,14 +161,14 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
                 }
                 else {
                     console.log("no sibling ");
-                    this.rootContainerObj.Controls.Append(this.movingObj)
+                    this.rootContainerObj.Controls.Append(this.movingObj);
                 }
                 this.saveObj();
                 $(el).on("focus", this.controlOnFocus.bind(this));
             }
 
         }
-    }
+    };
 
     this.onDropFn = function (el, target, source, sibling) {
 
@@ -190,24 +182,27 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
 
                 var type = ctrl.attr("eb-type").trim();
 
-                var id = (type + (this.controlCounters[type + "Counter"])++);
+                var id = type + (this.controlCounters[type + "Counter"])++;
 
                 ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
 
                 ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
 
-                ctrl.attr("ebtype", type).attr("id", id);
+                //ctrl.attr("ebtype", type);
+                ctrl.attr("id", id);
 
                 this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
 
-                ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
-                    + new EbObjects["Eb" + type + "Obj"](id).Html);
+                ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
+                    + new EbObjects["Eb" + type + "Obj"](id).Html());
 
                 $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
 
                 $('.selectpicker').selectpicker('refresh');
 
                 ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+
+                ctrl.focus();
             }
             else
                 console.log("ondrop else : removed");
@@ -243,14 +238,14 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
 
         if (this.CurColCount < newVal)
             for (var i = noOfTds; i < newVal; i++) {
-                console.log("this.CurColCount < newVal  ")//
-                console.log(">  " + i)
+                console.log("this.CurColCount < newVal  ");//
+                console.log(">  " + i);
                 this.addTd(e);
             }
         else if (this.CurColCount > newVal) {
-            console.log("this.CurColCount > newVal  ")//
-            for (var i = noOfTds; i > newVal; i--) {
-                console.log(">  " + i)//
+            console.log("this.CurColCount > newVal  ");//
+            for (var j = noOfTds; j > newVal; j--) {
+                console.log(">  " + j);//
                 this.removeTd(e);
             }
         }
@@ -283,30 +278,32 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
 
         var EbCtrl = $(el);
 
-        var ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + EbCtrl.outerHTML() + "</div>");
+        var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + EbCtrl.outerHTML() + "</div>");
 
         var type = EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
 
-        var id = (type + (this.controlCounters[type + "Counter"])++);
+        var id = type + (this.controlCounters[type + "Counter"])++;
 
-        ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+        $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
 
-        ControlTile.attr("ebtype", type).attr("id", id);
+        $ControlTile.attr("eb-type", type).attr("id", id);
 
-        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
+        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
 
-        $('.selectpicker').selectpicker('refresh');
+        $('.selectpicker').selectpicker('refresh');//need to test
 
-        EbCtrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+        $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
 
-        EbCtrl.replaceWith(ControlTile);
+        EbCtrl.replaceWith($ControlTile);
     };
 
-    this.InitEditModeCtrls = function (editModeFormObj) {
+    this.InitEditModeCtrls = function (editModeObj) {
         _this = this;
-        //this.rootContainerObj.Append(editModeFormObj);
-        //alert("editModeFormObj:"+JSON.stringify(editModeFormObj));
+
         $(".Eb-ctrlContainer").each(function (i, el) { _this.initCtrl(el); });
+
+        Proc(JSON.parse(editModeObj), this.rootContainerObj);
+        
     };
 
     this.Init = function () {
@@ -322,8 +319,8 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType) {
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
+        $("#saveformBtn").on("click", this.save.bind(this));
         $('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
     };
-
     this.Init();
 };

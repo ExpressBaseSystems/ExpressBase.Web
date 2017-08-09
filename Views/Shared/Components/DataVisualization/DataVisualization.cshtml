@@ -2,8 +2,10 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
+@model ExpressBase.Web.Models.RetValObj
+
 @{
-   
+
 }
 @section EbHead {
     @Html.Raw(ViewBag.HtmlHead);
@@ -18,13 +20,14 @@
     </ul></br>
     <div class='tab-content' id='table_tabcontent'>
         <div id='@(ViewBag.tableId+"_tab_1")' class='tab-pane active'>
-           
+
             <div id='TableControls_@(ViewBag.tableId+"_1")' class='well well-sm' style='margin-bottom:5px!important;'>
                 <label class="dvname">@ViewBag.dvname</label>
                 <button id='btnGo' class='btn btn-primary' style='float: right;'>Run</button>
-                <div style='margin-top:10px;' id='filterBox'>
+                @await Component.InvokeAsync("ParameterDiv", new { dsid = ViewBag.dsid });
+                @*<div style='margin-top:10px;' id='filterBox'>
                     @Html.Raw(ViewBag.HtmlBody)
-                </div>
+                </div>*@
             </div>
             <div id='@(ViewBag.tableId+"_1container")'>
                 <div id='@(ViewBag.tableId+"_1TableColumns4Drag")' style='border:1px solid;display:none;height:100%;min-height: 400px;overflow-y: auto;'>
@@ -66,7 +69,7 @@
                         <div class='input-group'>
                             <span class='input-group-addon' id='basic-addon3'>X-Axis</span>
                             <div class='form-control' style='padding: 4px;height:33px' id='X_col_name@(ViewBag.tableId+"_1")'></div>
-                        </div> 
+                        </div>
                         <div class='input-group' style='padding-top: 1px;'>
                             <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>
                             <div class='form-control' style='padding: 4px;height:33px' id='Y_col_name@(ViewBag.tableId+"_1")'></div>
@@ -79,16 +82,17 @@
     </div>
 </div>
 <script>
-    var sett = @Html.Raw(ViewBag.data);
-    var EbDataTable_@ViewBag.tableId = new EbDataTable({
-        ds_id: @ViewBag.dsid,
+    if(@Model.DSId >0){
+        var sett = @Html.Raw(Model.Data); 
+        var ebdtable = new EbDataTable({
+            ds_id: @Model.DSId,
 
-        ss_url: 'https://localhost:44377',
-        tid: '@(ViewBag.tableId+"_1")',
-        login:'@ViewBag.wc',
-        settings:sett,
-        //fnKeyUpCallback:
-    });
+            ss_url: 'https://localhost:44377',
+            tid: '@(ViewBag.tableId+"_1")',
+            login:'@ViewBag.wc',
+            settings:sett,
+            //fnKeyUpCallback:
+        });
+    }
 </script>
 
-            

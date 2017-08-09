@@ -63,7 +63,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjType = (int)EbObjectType.DataSource;
             ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
-            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+           // ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
         }
@@ -118,7 +118,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjType = (int)EbObjectType.SqlFunction;
             ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
-            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+         //   ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
         }
@@ -156,7 +156,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.FilterDialogId = dsobj.FilterDialogId;
 
             }
-            ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+           // ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             ViewBag.Allversions = GetVersions(obj_id);
             return View();
@@ -191,6 +191,19 @@ namespace ExpressBase.Web.Controllers
             return objects_dict;
         }
 
+        public Dictionary<string, EbObjectWrapper> GetObjects_refid_dict(int obj_type)
+        {
+            IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            var fdresultlist = fdclient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = obj_type, Token = ViewBag.token });
+            var fdrlist = fdresultlist.Data;
+            Dictionary<string, EbObjectWrapper> objects_dict = new Dictionary<string, EbObjectWrapper>();
+            foreach (var element in fdrlist)
+            {
+                objects_dict[element.RefId] = element;
+            }
+            return objects_dict;
+        }
+
         public List<string> Getsqlfns(int obj_type)
         {
             IServiceClient fdclient = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -217,9 +230,6 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectSaveOrCommitRequest();
-            //var bytes = Convert.FromBase64String(req["code"]);
-            //string code_decoded = Encoding.UTF8.GetString(bytes);
-
             ds.IsSave = false;
             ds.Id = Convert.ToInt32(req["id"]);
             ds.EbObjectType = Convert.ToInt32(req["objtype"]);
@@ -256,31 +266,17 @@ namespace ExpressBase.Web.Controllers
             ds.Description = req["Description"];
             if (_EbObjectType == EbObjectType.DataSource)
             {
-                ds.Json = EbSerializers.Json_Serialize(new EbDataSource
-                {
-                    Name = req["Name"],
-                    Description = req["Description"],
-                    Sql = req["Code"],
-                    EbObjectType = _EbObjectType,
-                    FilterDialogId = (req["FilterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(req["FilterDialogId"])
-
-                });
+                ds.Json = req["json"];
             }
             if (_EbObjectType == EbObjectType.SqlFunction)
             {
                 ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
-                ds.Json = EbSerializers.Json_Serialize(new EbSqlFunction
-                {
-                    Name = req["Name"],
-                    Description = req["Description"],
-                    Sql = req["Code"],
-                    EbObjectType = _EbObjectType,
-                    FilterDialogId = (req["FilterDialogId"].ToString() == "Select Filter Dialog") ? 0 : Convert.ToInt32(req["FilterDialogId"])
-                });
+                ds.Json = req["json"];
             }
 
             ds.Token = ViewBag.token;
-
+            ds.Relations = req["rel_obj"];
+            ds.ChangeLog = "";
             ViewBag.IsNew = "false";
             var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
             return Json("Success");

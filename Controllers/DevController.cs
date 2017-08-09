@@ -89,6 +89,7 @@ namespace ExpressBase.Web.Controllers
             ds.Json = req["filterdialogjson"];
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
+            ds.TenantAccountId = ViewBag.cid;
             ds.Relations = "";
             ds.ChangeLog = "";
             ds.NeedRun = false;

@@ -343,7 +343,7 @@ namespace ExpressBase.Web2.Controllers
             Dict["applicationid"] = ApplicationId;
             Dict["role_name"] = RoleName;
             Dict["Description"] = Description;
-            Dict["users"] = users;
+            Dict["users"] = string.IsNullOrEmpty(users) ? string.Empty : users;
             Dict["permission"] = Permissions;               
             Dict["dependants"] = subrolesid;
           

@@ -54,11 +54,7 @@ namespace ExpressBase.Web.Components
             return View("Default",xxx);
         }
 
-        //public async Task<IViewComponentResult> InvokeAsync(EbDataVisualization dvObject)
-        //{
-        //    return View("Default");
-        //}
-
+        
         public string GetColumns(string dsRefid)
         {
             var redis = new RedisClient(string.Format("redis://{0}@{1}:{2}?ssl=true", "YK8GtsURARN+x9qITeLj5GikW/rK/i8Uekr1ECxscLA=", "ExpressBaseRedisCache.redis.cache.windows.net", 6380));

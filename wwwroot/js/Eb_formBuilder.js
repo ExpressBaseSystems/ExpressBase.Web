@@ -188,12 +188,12 @@
 
                 ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
 
-                ctrl.attr("ebtype", type);
+                //ctrl.attr("ebtype", type);
                 ctrl.attr("id", id);
 
                 this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
 
-                ctrl.focus().html("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
+                ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
                     + new EbObjects["Eb" + type + "Obj"](id).Html());
 
                 $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
@@ -201,6 +201,8 @@
                 $('.selectpicker').selectpicker('refresh');
 
                 ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+
+                ctrl.focus();
             }
             else
                 console.log("ondrop else : removed");

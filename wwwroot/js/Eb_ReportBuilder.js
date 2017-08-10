@@ -142,7 +142,7 @@ var RptBuilder = function (type, toolboxid) {
     this.set_Dropable = function (i, obj) {
 
         var classname = $(obj).attr("class");
-        $("." + classname).droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
+        $("." + classname).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
         report.sections.push(new sub(classname, $(obj).index(), $(obj).height(), null));
 
     };
@@ -324,26 +324,36 @@ var RptBuilder = function (type, toolboxid) {
         
     };
 
-    this.onDropFn = function (event, ui) {     
-
+    this.onDropFn = function (event, ui) {             
         var itemToClone = $(ui.draggable);
-        $(event.target).append(itemToClone.clone().addClass("dropped").removeClass("draggable").css({
-            width: itemToClone.width(),
-            height: itemToClone.height(),
-            position: 'absolute',
-            left: this.posLeft - 260,
-            top: this.posTop - 159
-        }));
+        console.log(itemToClone);
+        if (!itemToClone.hasClass("dropped")) {           
+            $(event.target).append(itemToClone.clone().addClass("dropped").removeClass("draggable").css({
+                width: itemToClone.width(),
+                height: itemToClone.height(),
+                position: 'absolute',
+                left: this.posLeft - 260,
+                top: this.posTop - 159
+            }));
+        }
+        else if (itemToClone.hasClass("dropped")) {
+            $(event.target).append(itemToClone.css({
+                width: itemToClone.width(),
+                height: itemToClone.height(),
+                position: 'absolute',               
+            }));
+        }
+
         $('.dropped').draggable({
             cursor: 'move',
+            drag: this.DragOnPage.bind(this),
             start: this.onDrag_Dropped.bind(this),
             stop: this.onDrag_stop.bind(this)
         });
 
         $('.dropped').resizable({
             containment: "parent",
-            handles: "n, e, s, w",
-            handle: "h2",           
+            handles: "n, e, s, w",                       
             resize: this.resizeElement.bind(this)
         });
     };
@@ -359,8 +369,13 @@ var RptBuilder = function (type, toolboxid) {
 
     this.onDrag_Dropped = function (event, ui) {
         console.log($(event.target).width());
-        $(event.target).append("<div class='vL' style='width :1px;border:1px dotted;height:" + pages[type].height + ";margin-left:-13px;margin-top:-" + this.posTop + "px'></div>");
-        $(event.target).prepend("<div class='hL' style='height :1px;border:1px dotted;width:" + $(window).width() + "px;margin-top: -13px;margin-left:-" + this.posLeft + "px'></div>");
+        $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:-13px;margin-top:-" + this.posTop + "px'></div>");
+        $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top: -13px;margin-left:-" + this.posLeft + "px'></div>");
+    };
+
+    this.DragOnPage = function (event, ui) {
+
+
     };
 
     this.init = function () {

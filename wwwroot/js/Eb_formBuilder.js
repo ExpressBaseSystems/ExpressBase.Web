@@ -294,16 +294,17 @@
 
         $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
 
-        EbCtrl.replaceWith($ControlTile);
+        EbCtrl.replaceWith($ControlTile); alert("outerHTML:"+EbCtrl.outerHTML());
     };
 
     this.InitEditModeCtrls = function (editModeObj) {
+        alert("editModeObj:" + editModeObj);
         _this = this;
 
         $(".Eb-ctrlContainer").each(function (i, el) { _this.initCtrl(el); });
 
         Proc(JSON.parse(editModeObj), this.rootContainerObj);
-        
+        //setTimeout(function () { alert("this.rootContainerObj:" + this.rootContainerObj);  }, 300);
     };
 
     this.Init = function () {

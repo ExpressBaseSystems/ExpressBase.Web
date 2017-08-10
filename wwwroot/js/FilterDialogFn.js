@@ -85,7 +85,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                     $('#fdlist #fd').children().remove();
                     $('#fdlist #fd').append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
                     $.each(data, function (i, obj) {
-                        $('#fd').append("<option value=" + obj.refId + " data-tokens=" + obj.refId + ">" + obj.name + "</option>")
+                        $('#fd').append("<option value='" + obj.refId + "' data-tokens='" + obj.refId + "'>" + obj.name + "</option>")
                     });
                     $('#fdlist .selectpicker').selectpicker('refresh');
                     $('#fdlist .selectpicker').selectpicker('val', val);
@@ -549,10 +549,10 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
 
         this.rel_arr = [];
         this.Rel_object = null;
-        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this,issave));
+        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this, issave, needRun));
     };
 
-    this.FetchUsedSqlFns = function (issave,data) {
+    this.FetchUsedSqlFns = function (issave, needRun,data) {
         $.each(data, this.FetchUsedSqlFns_inner.bind(this));
 
         var getNav = $("#versionNav li.active a").attr("href");
@@ -592,7 +592,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 "changeLog": "changed",
                 "json": JSON.stringify(_json),
                 "rel_obj": this.Rel_object
-            }).done(alert("Commit Success"));
+            }, alert("Commit Success"));
         }
         $.LoadingOverlay("hide");
     };

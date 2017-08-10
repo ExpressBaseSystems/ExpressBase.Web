@@ -549,10 +549,10 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
 
         this.rel_arr = [];
         this.Rel_object = null;
-        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this,issave));
+        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this, issave, needRun));
     };
 
-    this.FetchUsedSqlFns = function (issave,data) {
+    this.FetchUsedSqlFns = function (issave, needRun,data) {
         $.each(data, this.FetchUsedSqlFns_inner.bind(this));
 
         var getNav = $("#versionNav li.active a").attr("href");

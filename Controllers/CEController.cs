@@ -255,7 +255,7 @@ namespace ExpressBase.Web.Controllers
                 ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
                 ds.Json = req["json"];
             }
-
+            ds.TenantAccountId = ViewBag.cid;
             ds.Token = ViewBag.token;
             ds.Relations = req["rel_obj"];
             ds.ChangeLog = "";

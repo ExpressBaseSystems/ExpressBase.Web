@@ -221,6 +221,7 @@ namespace ExpressBase.Web.Controllers
             (ds.EbObject as EbDataSource).EbObjectType = EbObjectType.DataSource;
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
+            ds.UserId = ViewBag.UId;
             ds.ChangeLog = req["changeLog"];
             ds.Token = ViewBag.token;//removed tcid
             ds.Relations = req["rel_obj"];
@@ -246,16 +247,14 @@ namespace ExpressBase.Web.Controllers
             ds.RefId = req["Id"];
             ds.Name = req["Name"];
             ds.Description = req["Description"];
-            if (_EbObjectType == EbObjectType.DataSource)
-            {
-                ds.Json = req["json"];
-            }
+            ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
+            ds.Json = req["json"];
             if (_EbObjectType == EbObjectType.SqlFunction)
             {
                 ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
-                ds.Json = req["json"];
             }
-
+            ds.UserId = ViewBag.UId;
+            ds.TenantAccountId = ViewBag.cid;
             ds.Token = ViewBag.token;
             ds.Relations = req["rel_obj"];
             ds.ChangeLog = "";
@@ -294,7 +293,7 @@ namespace ExpressBase.Web.Controllers
             var _type = req["Ebobjtype"];
             BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), _type, true);
             IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = req["objid"], VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = req["objid"], VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token, TenantAccountId=ViewBag.cid });
             var rlist = resultlist.Data[0];
             string _html = "";
             string _head = "";
@@ -332,7 +331,7 @@ namespace ExpressBase.Web.Controllers
                 }
 
             }
-            var columnColletion = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsid.ToString(), Token = ViewBag.token, Params = paramsList });
+            var columnColletion = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsid.ToString(), Token = ViewBag.token, Params = paramsList, TenantAccountId=ViewBag.cid });
             if (columnColletion.Columns == null || columnColletion.Columns.Count == 0)
             {
                 return "";

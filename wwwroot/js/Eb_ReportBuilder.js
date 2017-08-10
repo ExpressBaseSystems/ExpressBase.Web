@@ -306,7 +306,7 @@ var RptBuilder = function (type, toolboxid) {
 
         this.posLeft = null;
         this.posTop = null;
-       
+        this.font = null;
 
         $('.draggable').draggable({
             cancel: "a.ui-icon",
@@ -332,8 +332,8 @@ var RptBuilder = function (type, toolboxid) {
                 width: itemToClone.width(),
                 height: itemToClone.height(),
                 position: 'absolute',
-                left: this.posLeft - 260,
-                top: this.posTop - 159
+                left: this.posLeft - 268,
+                top: this.posTop - 168
             }));
         }
         else if (itemToClone.hasClass("dropped")) {
@@ -353,13 +353,15 @@ var RptBuilder = function (type, toolboxid) {
 
         $('.dropped').resizable({
             containment: "parent",
-            handles: "n, e, s, w",                       
             resize: this.resizeElement.bind(this)
         });
     };
 
-    this.resizeElement = function (event,ui) {
+    this.resizeElement = function (event, ui) {
       
+        var font = parseInt($(event.target).css("height"));
+        $(event.target).css("font-size", font - 5);
+
     };
 
     this.onDrag_stop = function (event,ui) {
@@ -369,8 +371,8 @@ var RptBuilder = function (type, toolboxid) {
 
     this.onDrag_Dropped = function (event, ui) {
         console.log($(event.target).width());
-        $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:-13px;margin-top:-" + this.posTop + "px'></div>");
-        $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top: -13px;margin-left:-" + this.posLeft + "px'></div>");
+        $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:0px;margin-top:-" + this.posTop + "px'></div>");
+        $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px'></div>");
     };
 
     this.DragOnPage = function (event, ui) {
@@ -404,3 +406,52 @@ var setBackgroud = function (input) {
     }
 };
 
+//tree 
+$.fn.extend({
+    treed: function (o) {
+
+        var openedClass = 'glyphicon-minus-sign';
+        var closedClass = 'glyphicon-plus-sign';
+
+        if (typeof o != 'undefined') {
+            if (typeof o.openedClass != 'undefined') {
+                openedClass = o.openedClass;
+            }
+            if (typeof o.closedClass != 'undefined') {
+                closedClass = o.closedClass;
+            }
+        };
+        var tree = $(this);
+        tree.addClass("tree");
+        tree.find('li').has("ul").each(function () {
+            var branch = $(this);
+            branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
+            branch.addClass('branch');
+            branch.on('click', function (e) {
+                if (this == e.target) {
+                    var icon = $(this).children('i:first');
+                    icon.toggleClass(openedClass + " " + closedClass);
+                    $(this).children().children().toggle();
+                }
+            })
+            branch.children().children().toggle();
+        });
+        tree.find('.branch .indicator').each(function () {
+            $(this).on('click', function () {
+                $(this).closest('li').click();
+            });
+        });
+        tree.find('.branch>a').each(function () {
+            $(this).on('click', function (e) {
+                $(this).closest('li').click();
+                e.preventDefault();
+            });
+        });
+        tree.find('.branch>button').each(function () {
+            $(this).on('click', function (e) {
+                $(this).closest('li').click();
+                e.preventDefault();
+            });
+        });
+    }
+});

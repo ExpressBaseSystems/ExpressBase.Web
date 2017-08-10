@@ -226,14 +226,14 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             }
             else {
                 this.SetValues();
-                this.Find_parameters(false);
+                this.Find_parameters(false,false,false);
                 // this.Save(false);
                 this.SelectedFdId = $('#fd option:selected').val();
                 this.Load_Fd();
             }
             //else if ($('#fd option:selected').text() === "Auto Generate Filter Dialog") {//auto generate
             //    this.Save(false);
-            //    this.Find_parameters(false);
+            //    this.Find_parameters(false,false,false);
             //    if (this.Parameter_Count === 0) {
             //        this.ValidInput = true;
             //        this.Object_String_WithVal = "";
@@ -319,37 +319,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             if (this.ObjectType === 5) {
                 this.SetSqlFnName();
             }
-            var getNav = $("#versionNav li.active a").attr("href");
-            var filter_dialog = $(getNav + " #fdlist #fd").val();
-            if (filter_dialog === null) {
-                filter_dialog = 0;
-            }
-            var filter_dialog_refid = $(getNav + " #fdlist #fd option:selected").attr("data-tokens");
-            if (filter_dialog_refid === "Select Filter Dialog") {
-                filter_dialog_refid = null;
-            }
-           this.GetUsedSqlFns(needRun).done(this.call_save(filter_dialog, filter_dialog_refid, needRun));
+            this.Find_parameters(true, true, needRun);
         };
-    }
-
-    this.call_save = function (filter_dialog, filter_dialog_refid, needRun) {
-        this.rel_arr.push(filter_dialog_refid);
-        this.Rel_object = this.rel_arr.toString();
-        var _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogid: filter_dialog, sql: btoa(unescape(encodeURIComponent(this.Code))) }
-        $.post("../CE/SaveEbDataSource",
-            {
-                "Id": this.Obj_Id,
-                "Name": this.Name,
-                "Description": this.Description,
-                "ObjectType": this.ObjectType,
-                "Token": getToken(),
-                "isSave": "true",
-                "VersionNumber": this.Version_num,
-                "filterDialogId": filter_dialog,
-                "json": JSON.stringify(_json),
-                "NeedRun": needRun,
-                "rel_obj": this.Rel_object
-            }, this.Success_alert.bind(this));
     };
 
     this.Commit = function (needRun) {
@@ -364,7 +335,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     $(this.SaveBtn).off("click").on("click", this.Save.bind(this, false));
     $(this.CommitBtn).off("click").on("click", this.Commit.bind(this, false));
 
-    this.Find_parameters = function (iscommit,issave, needRun) {
+    this.Find_parameters = function (isCommitorSave, issave, needRun) {
         this.SetValues();
         var result = this.Code.match(/\@\w+/g);
         var filterparams = [];
@@ -386,14 +357,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         else {
             this.Parameter_Count = 0;
         }
-        if(iscommit===true)
-        {
+        if (isCommitorSave === true) {
             var _json = null;
             if (this.Parameter_Count !== 0 && ($('#fd option:selected').text() === "Select Filter Dialog")) {
                 if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
                     this.SetValues();
                     this.FilterDId = null;
-                    this.GetUsedSqlFns(needRun);
+                    this.GetUsedSqlFns(needRun, issave);
                 }
                 else {
                     $.LoadingOverlay("hide");
@@ -401,7 +371,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             }
             else {
                 this.SetValues();
-                this.GetUsedSqlFns(needRun);
+                this.GetUsedSqlFns(needRun, issave);
             }
         }
     }
@@ -519,7 +489,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             this.DrawTable();
         }
         else {
-            this.Find_parameters(false);
+            this.Find_parameters(false, false, false);
             this.CreateObjString();
             this.DrawTable();
         }
@@ -575,45 +545,62 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         }
     };
 
-    this.GetUsedSqlFns = function (needRun) {
+    this.GetUsedSqlFns = function (needRun, issave) {
 
         this.rel_arr = [];
         this.Rel_object = null;
-        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this));       
+        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this,issave));
     };
 
-    this.FetchUsedSqlFns = function (data) {
+    this.FetchUsedSqlFns = function (issave,data) {
         $.each(data, this.FetchUsedSqlFns_inner.bind(this));
 
         var getNav = $("#versionNav li.active a").attr("href");
         var filter_dialog_refid = $(getNav + " #fdlist #fd  option:selected").val();
-       
+
         if (filter_dialog_refid === "Select Filter Dialog") {
             filter_dialog_refid = null;
         }
 
         this.rel_arr.push(filter_dialog_refid);
         this.Rel_object = this.rel_arr.toString();
-
         _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))) }
-        $.post("../CE/CommitEbDataSource", {
-            "objtype": this.ObjectType,
-            "id": this.Obj_Id,
-            "name": this.Name,
-            "description": this.Description,
-            "filterDialogId": filter_dialog_refid,
-            "changeLog": "changed",
-            "json": JSON.stringify(_json),
-            "rel_obj": this.Rel_object
-        }).done(alert("Success"));
+        if (issave === true) {
+            $.post("../CE/SaveEbDataSource",
+                       {
+                           "Id": this.Obj_Id,
+                           "Name": this.Name,
+                           "Description": this.Description,
+                           "ObjectType": this.ObjectType,
+                           "Token": getToken(),
+                           "isSave": "true",
+                           "VersionNumber": this.Version_num,
+                           "filterDialogId": filter_dialog_refid,
+                           "json": JSON.stringify(_json),
+                           "NeedRun": needRun,
+                           "rel_obj": this.Rel_object
+                       }).done(alert("Save Success"));
+        }
+        else {
 
+            $.post("../CE/CommitEbDataSource", {
+                "objtype": this.ObjectType,
+                "id": this.Obj_Id,
+                "name": this.Name,
+                "description": this.Description,
+                "filterDialogId": filter_dialog_refid,
+                "changeLog": "changed",
+                "json": JSON.stringify(_json),
+                "rel_obj": this.Rel_object
+            }).done(alert("Commit Success"));
+        }
         $.LoadingOverlay("hide");
     };
-  
-    this.FetchUsedSqlFns_inner = function ( i, sqlFn) {
+
+    this.FetchUsedSqlFns_inner = function (i, sqlFn) {
         if (this.Code.indexOf(sqlFn.name) !== -1) {
-        this.rel_arr.push(i);
-      }
+            this.rel_arr.push(i);
+        }
     };
 }
 

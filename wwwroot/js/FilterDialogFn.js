@@ -148,7 +148,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                                    "<td>" + obj.changeLog + "</td> " +
                                    "<td>" + obj.commitUname + "</td> " +
                                    "<td>" + obj.commitTs + "</td> " +
-                                    "<td><input type='button' id='view_code" + this.Obj_Id + tabNum + i + "' class='view_code' value='View' data-id=" + obj.id + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
+                                    "<td><input type='button' id='view_code" + this.Obj_Id + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
                              " </tr>");
         $('#view_code' + this.Obj_Id + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
     };
@@ -203,53 +203,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         var getNav = $("#versionNav li.active a").attr("href");
         $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
         $(getNav + ' #selected_Ver' + tabNum).off("change").on("change", this.Differ.bind(this));
-        // $(getNav+' #execute').off("click").on("click", this.Execute.bind(this));
         $(getNav + ' #execute').off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this));
         $.LoadingOverlay("hide");
-        //setTimeout(function () {
-        //    window.editor.refresh();
-        //}, 500);
         $('.selectpicker').selectpicker({
-            //style: 'btn-info',
             size: 4
         });
 
     };
-
-    //this.SelectFD = function () {
-    // var selectVal = $('#fd option:selected').text();
-    //if (selectVal === "Auto Generate Filter Dialog") {
-    //    this.Find_parameters();
-    //    if (this.Parameter_Count !== 0) {
-    //        $('.fdthead').children().remove();
-    //        $('.fdthead').append(" <tr>" +
-    //                "<th>Parameter Name</th>" +
-    //                "<th>Parameter Type</th>" +
-    //        " </tr>");
-    //        $('#fdtbody').children().remove();
-    //        $.each(this.Filter_Params, function (i, obj) {
-    //            $('#fdtbody').append("<tr><td><label class='align_singleLine'>" + obj + "</label>" +
-    //                                  "  </td>" +
-    //                                   " <td>" +
-    //                                    "    <select id=" + obj + " name='fdtype' class='param_val selectpicker show-tick align_singleLine' data-live-search='true' style='display:inline-block !important'>" +
-    //                                     "       <option value='text' data-tokens='text'>text</option>' " +
-    //                                     "       <option value='integer' data-tokens='integer'>integer</option>" +
-    //                                       "     <option value='datetime' data-tokens='datetime'>datetime</option>" +
-    //                                         "   <option value='boolean' data-tokens='boolean'>boolean</option>" +
-    //                                        "</select>" +
-    //                                   " </td>" +
-    //                               " </tr>");
-    //        });
-    //        $('#filterDialog').modal('show');
-    //        $('#run').hide();
-    //        $('#saveFilter').show();
-    //    }
-    //    else {
-    //        alert("no filters ");
-    //          $.LoadingOverlay("hide");
-    //    }
-    //}
-    //  }
 
     this.Execute = function () {
         if (!$('#execute').hasClass('collapsed')) { }
@@ -266,14 +226,14 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             }
             else {
                 this.SetValues();
-                this.Find_parameters();
+                this.Find_parameters(false);
                 // this.Save(false);
                 this.SelectedFdId = $('#fd option:selected').val();
                 this.Load_Fd();
             }
             //else if ($('#fd option:selected').text() === "Auto Generate Filter Dialog") {//auto generate
             //    this.Save(false);
-            //    this.Find_parameters();
+            //    this.Find_parameters(false);
             //    if (this.Parameter_Count === 0) {
             //        this.ValidInput = true;
             //        this.Object_String_WithVal = "";
@@ -391,92 +351,20 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 "rel_obj": this.Rel_object
             }, this.Success_alert.bind(this));
     };
+
     this.Commit = function (needRun) {
         $.LoadingOverlay("show");
         this.SetValues();
         if (this.ObjectType === 5) {
             this.SetSqlFnName();
         }
-        this.Find_parameters();
-        var _json=null;
-        if (this.Parameter_Count !== 0 && ($('#fd option:selected').text() === "Select Filter Dialog")) {
-            if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
-
-                this.SetValues();
-                this.FilterDId = null;
-                this.GetUsedSqlFns(needRun).done(this.call_commit(filter_dialog, filter_dialog_refid, needRun));              
-            }
-            else {
-                $.LoadingOverlay("hide");
-            }
-        }
-        else {
-            this.SetValues();
-
-            var getNav = $("#versionNav li.active a").attr("href");
-            var filter_dialog_refid = $(getNav + " #fdlist #fd  option:selected").val();          
-            this.rel_arr = [];
-            //rel_arr = this.GetUsedSqlFns(needRun);
-            this.rel_arr.push(filter_dialog_refid);
-            this.Rel_object = this.rel_arr.toString();
-
-            if (filter_dialog_refid === "Select Filter Dialog") {
-                filter_dialog_refid = null;
-            }
-          
-            _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))) }
-            $.post("../CE/CommitEbDataSource", {
-                "objtype": this.ObjectType,
-                "id": this.Obj_Id,
-                "name": this.Name,
-                "description": this.Description,
-                "filterDialogId": filter_dialog_refid,
-                "changeLog": "changed",
-                "json": JSON.stringify(_json),
-                "rel_obj": this.Rel_object
-            }).done(alert("Success"));
-
-            $.LoadingOverlay("hide");
-        }
+        this.Find_parameters(true, false, needRun);
     }
-    this.call_commit=function()
-    {
-        this.FilterDId = $('#fd option:selected').val();
-            this.rel_arr =[];
-            this.rel_arr = this.GetUsedSqlFns(needRun);
-            this.rel_arr.push(filter_dialog_refid);
-            this.Rel_object = this.rel_arr.toString();
 
-            var getNav = $("#versionNav li.active a").attr("href");
-            var filter_dialog = $(getNav + " #fdlist #fd").val();
-            if (filter_dialog === "Select Filter Dialog") {
-                filter_dialog = 0;
-            }
-            var filter_dialog_refid = $(getNav + " #fdlist #fd option:selected").attr("data-tokens");
-            if (filter_dialog_refid === "Select Filter Dialog") {
-                filter_dialog_refid = null;
-                }
-        rel_array.push(filter_dialog_refid);
-        this.Rel_object = rel_arr.toString();
-
-        _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogid: 0, sql: btoa(unescape(encodeURIComponent(this.Code))) }
-        $.post("../CE/CommitEbDataSource", {
-            "objtype": this.ObjectType,
-            "id": this.Obj_Id,
-            "name": this.Name,
-            "description": this.Description,
-            "filterDialogId": 0,
-            "changeLog": "changed",
-            "json": JSON.stringify(_json),
-            "rel_obj": this.Rel_object
-        }).done(alert("Success"));
-
-        $.LoadingOverlay("hide");
-}
     $(this.SaveBtn).off("click").on("click", this.Save.bind(this, false));
     $(this.CommitBtn).off("click").on("click", this.Commit.bind(this, false));
 
-    this.Find_parameters = function () {
+    this.Find_parameters = function (iscommit,issave, needRun) {
         this.SetValues();
         var result = this.Code.match(/\@\w+/g);
         var filterparams = [];
@@ -494,6 +382,27 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             filterparams.sort();
             this.Filter_Params = filterparams;
             this.Parameter_Count = filterparams.length;
+        }
+        else {
+            this.Parameter_Count = 0;
+        }
+        if(iscommit===true)
+        {
+            var _json = null;
+            if (this.Parameter_Count !== 0 && ($('#fd option:selected').text() === "Select Filter Dialog")) {
+                if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
+                    this.SetValues();
+                    this.FilterDId = null;
+                    this.GetUsedSqlFns(needRun);
+                }
+                else {
+                    $.LoadingOverlay("hide");
+                }
+            }
+            else {
+                this.SetValues();
+                this.GetUsedSqlFns(needRun);
+            }
         }
     }
 
@@ -610,7 +519,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             this.DrawTable();
         }
         else {
-            this.Find_parameters();
+            this.Find_parameters(false);
             this.CreateObjString();
             this.DrawTable();
         }
@@ -667,14 +576,38 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     };
 
     this.GetUsedSqlFns = function (needRun) {
-        var r = $.Deferred();
-        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this));
-        return r;
+
+        this.rel_arr = [];
+        this.Rel_object = null;
+        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this));       
     };
 
     this.FetchUsedSqlFns = function (data) {
-        this.Rel_object = null;
         $.each(data, this.FetchUsedSqlFns_inner.bind(this));
+
+        var getNav = $("#versionNav li.active a").attr("href");
+        var filter_dialog_refid = $(getNav + " #fdlist #fd  option:selected").val();
+       
+        if (filter_dialog_refid === "Select Filter Dialog") {
+            filter_dialog_refid = null;
+        }
+
+        this.rel_arr.push(filter_dialog_refid);
+        this.Rel_object = this.rel_arr.toString();
+
+        _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))) }
+        $.post("../CE/CommitEbDataSource", {
+            "objtype": this.ObjectType,
+            "id": this.Obj_Id,
+            "name": this.Name,
+            "description": this.Description,
+            "filterDialogId": filter_dialog_refid,
+            "changeLog": "changed",
+            "json": JSON.stringify(_json),
+            "rel_obj": this.Rel_object
+        }).done(alert("Success"));
+
+        $.LoadingOverlay("hide");
     };
   
     this.FetchUsedSqlFns_inner = function ( i, sqlFn) {

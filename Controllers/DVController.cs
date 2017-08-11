@@ -123,7 +123,7 @@ namespace ExpressBase.Web.Controllers
             if (!string.IsNullOrEmpty(dvRefId))
             {
                 var dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
-                dvObject.AfterRedisGet();
+                dvObject.AfterRedisGet(this.Redis);
                 ViewBag.dvObject = dvObject;
             }
 
@@ -387,7 +387,7 @@ namespace ExpressBase.Web.Controllers
             ds.Json = EbSerializers.Json_Serialize(new EbDataVisualization
             {
                 Name = _dict["dvName"].ToString(),
-                settingsJson = _dict.ToString(),
+                //settingsJson = _dict.ToString(),
                 DataSourceRefId = dsid.ToString(),
                 EbObjectType = EbObjectType.DataVisualization
             });

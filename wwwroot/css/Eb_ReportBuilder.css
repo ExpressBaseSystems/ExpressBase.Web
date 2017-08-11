@@ -121,7 +121,7 @@
     margin-left: 26px;
 }
 
-.rptheadHbox, .pgheadHbox, .pgbodyHbox, .pgfooterHbox, .rptfooterHbox {
+.head_Box1{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -149,7 +149,7 @@
     padding: 10px;
 }
 
-.rpthead .draggable {
+#rpthead .draggable {
     position: absolute !important;
 }
 

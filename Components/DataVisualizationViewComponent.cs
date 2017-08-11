@@ -8,6 +8,7 @@ using ExpressBase.Web.Models;
 using ExpressBase.Web2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -49,16 +50,16 @@ namespace ExpressBase.Web.Components
                     ViewBag.HtmlBody = _filterDialog.GetHtml();
                 }
 
-                string data = GetColumns(dsRefid);
-                Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-                ViewBag.dsid = _dict["dsId"];
-                ViewBag.dvname = _dict["dvName"];
-                ViewBag.tableId = "dv" + ViewBag.dsid.ToString();
-                ViewBag.data = data;
-                xxx = new RetValObj { DSId = Convert.ToInt32(_dict["dsId"]), DVName = _dict["dvName"].ToString(), TableId = "dv" + _dict["dsId"].ToString(), Data = data };
+                ViewBag.data = getDVObject(dsRefid);
+                //Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+                //ViewBag.dsid = _dict["DataSourceRefId"];
+                ////ViewBag.dvname = _dict["dvName"];
+                //ViewBag.tableId = "dv" + ViewBag.dsid.ToString();
+                //ViewBag.data = data;
+                //xxx = new RetValObj { DSId = _dict["DataSourceRefId"].ToString(), DVName = _dict["Name"].ToString(), TableId = "dv" + _dict["DataSourceRefId"].ToString(), Data = data };
             }
 
-            return View("Default",xxx);
+            return View();
         }
 
         
@@ -83,6 +84,7 @@ namespace ExpressBase.Web.Components
             //var tvpref = this.GetColumn4DataTable(columnresp.Columns, dsid, fdid, columnresp.IsPaged);
             return null;
             //dv(dsid, tvpref);
+
         }
 
         private string GetColumn4DataTable(ColumnColletion __columnCollection, int dsid, int fdid, bool isPaged)
@@ -128,5 +130,26 @@ namespace ExpressBase.Web.Components
             colext = colext.Substring(0, colext.Length - 1) + "]";
             return colDef + colext + "}";
         }
+
+        private EbDataVisualization getDVObject(string dsRefid)
+        {
+            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
+            if (columnresp == null || columnresp.IsNull)
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
+            EbDataVisualization eb = new EbDataVisualization();
+            eb.DataSourceRefId = dsRefid;
+            eb.Name = "<untittled>";
+            eb.AfterRedisGet(this.Redis);
+            eb.IsPaged = columnresp.IsPaged.ToString().ToLower();
+            List<DTColumnDef> coldeflist = new List<DTColumnDef>();
+            foreach(EbDataColumn column in columnresp.Columns)
+            {
+                DTColumnDef coldef = new DTColumnDef(column.ColumnIndex,column.ColumnName);
+                coldeflist.Add(coldef);
+            }
+            eb.DTColumnDef = coldeflist;
+            return eb;
+        }
     }
+   
 }

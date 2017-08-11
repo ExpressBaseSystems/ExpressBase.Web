@@ -188,7 +188,7 @@ namespace ExpressBase.Web.Controllers
             ds.Json = EbSerializers.Json_Serialize(new EbDataVisualization
             {
                 Name = _dict["dvName"].ToString(),
-                settingsJson = _dict.ToString(),
+                //settingsJson = _dict.ToString(),
                 DataSourceRefId = dsid.ToString(),
                 EbObjectType = EbObjectType.DataVisualization
             });

@@ -226,7 +226,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             }
             else {
                 this.SetValues();
-                this.Find_parameters(false,false,false);
+                this.Find_parameters(false, false, false);
                 // this.Save(false);
                 this.SelectedFdId = $('#fd option:selected').val();
                 this.Load_Fd();
@@ -249,11 +249,6 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         if ($('#fd option:selected').text() === "Select Filter Dialog") {
             alert("Please select a filter dialog");
             $.LoadingOverlay("hide");
-        }
-        else if ($('#fd option:selected').text() === "Auto Generate Filter Dialog") {
-            this.Save(true);
-            //create fd
-            alert("create fd");
         }
         this.Save(true);
     }
@@ -414,21 +409,19 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
 
             $.post('GetColumns4Trial', {
-                dsid: this.Obj_Id,
+                ds_refid: this.Obj_Id,
                 parameter: this.Object_String_WithVal
             }, this.Load_Table_Columns.bind(this));
-            $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show');
+
         }
         else {
             $.LoadingOverlay("hide");
             alert('not valid');
         }
-        return false;
     };
 
     this.Load_Table_Columns = function (result) {
         if (result === "") {
-            // $('#filterDialog').modal('hide');
             alert('Error in Query');
         }
         else {
@@ -447,8 +440,9 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                     dataSrc: function (dd) { return dd.data; },
                 }
             });
+            $("#versionNav a[href='#vernav" + this.Name + tabNum + "']").tab('show');
+            $.LoadingOverlay("hide");
         }
-        return false;
     };
 
     this.Load_tble_Data = function (dq) {
@@ -552,7 +546,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this, issave, needRun));
     };
 
-    this.FetchUsedSqlFns = function (issave, needRun,data) {
+    this.FetchUsedSqlFns = function (issave, needRun, data) {
         $.each(data, this.FetchUsedSqlFns_inner.bind(this));
 
         var getNav = $("#versionNav li.active a").attr("href");

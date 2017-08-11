@@ -309,7 +309,7 @@ namespace ExpressBase.Web.Controllers
             return _html + "<script>" + _head + "</script>";
         }
 
-        public string GetColumns4Trial(int dsid, string parameter)
+        public string GetColumns4Trial(string ds_refid, string parameter)
         {
             var redis = this.EbConfig.GetRedisClient();
             var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -331,7 +331,7 @@ namespace ExpressBase.Web.Controllers
                 }
 
             }
-            var columnColletion = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsid.ToString(), Token = ViewBag.token, Params = paramsList, TenantAccountId=ViewBag.cid });
+            var columnColletion = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Token = ViewBag.token, Params = paramsList, TenantAccountId=ViewBag.cid });
             if (columnColletion.Columns == null || columnColletion.Columns.Count == 0)
             {
                 return "";

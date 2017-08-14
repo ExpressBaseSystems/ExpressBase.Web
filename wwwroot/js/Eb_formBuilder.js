@@ -274,37 +274,68 @@
 
     };
 
+    this.WrapControlTile = function ($el) {
+        $el.replaceWith("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
+                            + $el.outerHTML()
+                     + "</div>");
+        return $el;
+    };
+
+    //this.initCtrl = function (el) {
+
+    //    var $EbCtrl = $(el);
+
+    //    var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + $EbCtrl.outerHTML() + "</div>");
+
+    //    var type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
+
+    //    var id = type + (this.controlCounters[type + "Counter"])++;
+
+    //    $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+
+    //    $ControlTile.attr("eb-type", type).attr("id", id);
+
+    //    $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
+
+    //    $('.selectpicker').selectpicker('refresh');//need to test
+
+    //    $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
+
+    //    $EbCtrl.replaceWith($ControlTile); //alert("outerHTML:" + $ControlTile.outerHTML());
+    //}; 
+
     this.initCtrl = function (el) {
 
-        var EbCtrl = $(el);
+        var $ControlTile = this.WrapControlTile($(el));
+        var $ControlTile = this.WrapControlTile($(el));
 
-        var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + EbCtrl.outerHTML() + "</div>");
+        var $EbCtrl = $ControlTile.find(".Eb-ctrlContainer");
 
-        var type = EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
+            //var type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
 
-        var id = type + (this.controlCounters[type + "Counter"])++;
+            //var id = type + (this.controlCounters[type + "Counter"])++;
 
-        $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+            //$ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
 
-        $ControlTile.attr("eb-type", type).attr("id", id);
+            //$ControlTile.attr("eb-type", type).attr("id", id);
 
-        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
+            //$(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
 
-        $('.selectpicker').selectpicker('refresh');//need to test
+            //$('.selectpicker').selectpicker('refresh');//need to test
 
-        $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
+            //$ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
 
-        EbCtrl.replaceWith($ControlTile); alert("outerHTML:"+EbCtrl.outerHTML());
+        //$EbCtrl.replaceWith($ControlTile); //alert("outerHTML:" + $ControlTile.outerHTML());
     };
 
     this.InitEditModeCtrls = function (editModeObj) {
-        alert("editModeObj:" + editModeObj);
+        console.log("editModeObj:" + editModeObj);
         _this = this;
 
         $(".Eb-ctrlContainer").each(function (i, el) { _this.initCtrl(el); });
+        //$("table .Eb-ctrlContainer").each(function (i, el) { _this.initCtrl(el); });
 
         Proc(JSON.parse(editModeObj), this.rootContainerObj);
-        //setTimeout(function () { alert("this.rootContainerObj:" + this.rootContainerObj);  }, 300);
     };
 
     this.Init = function () {

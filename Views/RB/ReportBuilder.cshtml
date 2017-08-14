@@ -9,7 +9,7 @@
 <script type="text/javascript" src="~/js/Eb_ReportBuilder.js"></script>@*amal*@
 <script type="text/javascript" src="~/js/split.js"></script>@*amal*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-//<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.9/interact.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.9/interact.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />@*amal*@
 <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">@*amal*@
@@ -17,7 +17,7 @@
 <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">@*jith*@
 <link rel="stylesheet" type="text/css" href="~/css/style.css" />@*amal*@
 <div class="container-fluid">
-    <div class="row" style="margin-top: 56px;position:fixed;">
+    <div class="row">
         <div class="reportmenu">
             <div class="form-inline" id="options">
                 <div class="form-group">
@@ -48,22 +48,31 @@
                     <button class="btn btn-default"><i class="fa fa-align-right" aria-hidden="true"></i></button>
                 </div>
                 <div class="form-group">
-                    <input type="color" id="fontcolor" class="btn btn-default" style="display:none"/>
+                    <input type="color" id="fontcolor" class="btn btn-default" style="display:none" />
                     <button class="btn btn-default" onclick="$('#fontcolor').click();"><i class="fa fa-paint-brush" aria-hidden="true"></i> Font Color</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="row pgB">
-        <div class="col-md-2 toolbox">            
-            @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
+        <div class="col-md-2">
+            <div class="toolbox">
+                @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
+            </div>
         </div>
-        <div class="col-md-9" id="pageCanvas" style="position:relative;margin-top:50px">
+        <div class="col-md-9">
+            <div class='ruler'></div>
+            <div class='rulerleft'></div>
+            <div id="pageCanvas" style="position:relative;margin-top:93px;margin-bottom:100px">
+            </div>
         </div>
     </div>
 </div>
 <script>
-    $("#pagesize").change(function () {
-        RptBuilder($(this).val(), "toolbox1");
-    });      
+    $(document).ready(function() {
+        var myruler = new ruler();
+        $("#pagesize").change(function () {
+            RptBuilder($(this).val());
+        });
+    });
 </script>

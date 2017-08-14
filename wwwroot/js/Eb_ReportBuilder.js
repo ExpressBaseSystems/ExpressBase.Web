@@ -28,11 +28,17 @@ var sub = function (name, index, height, subsection) {
     this.subsection = subsection;
 };
 
-var RptBuilder = function (type, toolboxid) {
+var PageElements = function (value, left, top, font) {
+    this.value = value;
+    this.left = left;
+    this.top = top;
+    this.fontsize = font;
+};
+
+var RptBuilder = function (type) {
     this.type = type;
     this.height = pages[type].height;
     this.width = pages[type].width;
-    this.toolboxId = toolboxid;
 
     this.report = new Object();
     this.report.pagetype = type;
@@ -43,24 +49,20 @@ var RptBuilder = function (type, toolboxid) {
     this.splitarray = [];
     this.btn_indx = null;
 
-    this.createPage = function (type) {
+    this.createPage = function () {
 
         var $pageCanvas = $('#pageCanvas');
         $pageCanvas.empty();
         $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
-        $pageCanvas.append("<div class='ruler'></div> <div class='rulerleft'></div><div id='PageContainer' style='margin-top:4px'></div>");
+        $pageCanvas.append("<div id='PageContainer' style='margin-top:4px'></div>");
 
         this.createHeaderBox();
 
         if (pages[type].width > "21cm") {
-
             $('#pageCanvas').css({ "transform": "scale(0.8)", "transform-origin": "0 0" });
-
         }
         var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
-        $('#PageContainer').append($div);
-        this.ruler(pages[type].width, pages[type].height);
-
+        $('#PageContainer').append($div);      
         return $div;
     };
 
@@ -87,41 +89,6 @@ var RptBuilder = function (type, toolboxid) {
         $(".headersections").append("<div class='head_Box1' id='rptfooterHbox' data-index='4' style='width :100%'><p>Rf</p></div>");
 
         this.splitButton();
-    };
-
-    this.ruler = function (width, height) {
-
-        var $ruler = $('.ruler').css({ "width": width, "height": "25px", "margin-left": "108px" });
-        for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
-            var $tick = $('<div>');
-            if (step === 0) {
-                $tick.addClass('tickLabel').html(i * 5);
-            } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass('tickMinor');
-                if (step === 9) {
-                    step = -1;
-                }
-            } else {
-                $tick.addClass('tickMajor');
-            }
-            $ruler.append($tick);
-        }
-
-        var $rulerleft = $('.rulerleft').css({ "width": "25px", "height": height });
-        for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
-            $tick = $('<div>');
-            if (step === 0) {
-                $tick.addClass('tickLabel').html(i * 5);
-            } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass('tickMinor');
-                if (step === 9) {
-                    step = -1;
-                }
-            } else {
-                $tick.addClass('tickMajor');
-            }
-            $rulerleft.append($tick);
-        }
     };
 
     this.pageSplitters = function ($pageref) {
@@ -234,8 +201,7 @@ var RptBuilder = function (type, toolboxid) {
     };
 
     this.splitMore = function (i, obj) {
-        this.splitarray.push("#" + obj.id);
-        console.log(splitarray);
+        this.splitarray.push("#" + obj.id);        
     };
 
     this.headerScaling = function () {
@@ -329,15 +295,15 @@ var RptBuilder = function (type, toolboxid) {
     };
 
     this.onDropFn = function (event, ui) {             
+
         var itemToClone = $(ui.draggable);
-        
         if (!itemToClone.hasClass("dropped")) {           
             $(event.target).append(itemToClone.clone().addClass("dropped").removeClass("draggable").css({
                 width: itemToClone.width(),
                 height: itemToClone.height(),
                 position: 'absolute',
-                left: this.posLeft - 268,
-                top: this.posTop - 168
+                left: this.posLeft - 270,
+                top: this.posTop - 170
             }));
         }
         else if (itemToClone.hasClass("dropped")) {
@@ -350,14 +316,33 @@ var RptBuilder = function (type, toolboxid) {
 
         $('.dropped').draggable({
             cursor: 'move',           
-            start: this.onDrag_Dropped.bind(this),
+            start: this.onDrag_Start.bind(this),
             stop: this.onDrag_stop.bind(this)
+
         });
 
         $('.dropped').resizable({
             containment: "parent",
             resize: this.resizeElement.bind(this)
         });
+       
+        this.subsection1.push(new PageElements(itemToClone.text(), this.posLeft - 270, this.posTop - 170, itemToClone.height()));
+
+        $.each(this.report.sections, function (i, sec) {
+            if (sec.subsection != null) {
+                $.each(sec.subsection, function (k, sub) {
+                    if (sub.id == $(event.target).attr("id")) {
+                        this.report.sections.subsection[k] = this.subsection1;
+                    }
+                });
+            }
+            else {
+                if (sec.id == $(event.target).attr("id")) {
+                    report.sections.subsection[i] = subsection1;
+                }
+            }
+            });
+        console.log(subsection1);
         this.PropertyMenu();
     };
 
@@ -373,8 +358,8 @@ var RptBuilder = function (type, toolboxid) {
         $(".hL").remove();
     };
 
-    this.onDrag_Dropped = function (event, ui) {
-        
+    this.onDrag_Start = function (event, ui) {        
+
         $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:0px;margin-top:-" + this.posTop + "px'></div>");
         $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px'></div>");
 
@@ -405,13 +390,12 @@ var RptBuilder = function (type, toolboxid) {
     this.init = function () {
 
         $('#PageContainer').empty();
-        var $pageref = this.createPage(type);
+        var $pageref = this.createPage();
         this.pageSplitters($pageref);
         this.headerBox1_Split();
         this.headerScaling();
         this.DragDrop_DataSource();        
     };
-
     this.init();
 };
 //baground image
@@ -476,3 +460,37 @@ $.fn.extend({
         });
     }
 });
+
+ var ruler = function () {
+    var $ruler = $('.ruler').css({ "width":"1000px", "height": "25px" });
+    for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
+        var $tick = $('<div>');
+        if (step === 0) {
+            $tick.addClass('tickLabel').html(i * 5);
+        } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+            $tick.addClass('tickMinor');
+            if (step === 9) {
+                step = -1;
+            }
+        } else {
+            $tick.addClass('tickMajor');
+        }
+        $ruler.append($tick);
+    }
+
+    var $rulerleft = $('.rulerleft').css({ "width": "25px", "height": "1000px" });
+    for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
+        $tick = $('<div>');
+        if (step === 0) {
+            $tick.addClass('tickLabel').html(i * 5);
+        } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+            $tick.addClass('tickMinor');
+            if (step === 9) {
+                step = -1;
+            }
+        } else {
+            $tick.addClass('tickMajor');
+        }
+        $rulerleft.append($tick);
+    }
+};

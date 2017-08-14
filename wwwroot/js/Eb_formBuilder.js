@@ -40,7 +40,8 @@
     this.save = function () {
         if ($('#save_txtBox').val().trim() === '')
             return false;
-        this.saveObj();
+        if (this.PGobj)
+            this.saveObj();
         $(".eb-loaderFixed").show();
         $.post("SaveFormBuilder", {
             "Id": null,
@@ -64,19 +65,12 @@
     };
 
     this.CreatePG = function (control) {
-
         console.log("CreatePG called for:" + control.Name);
-
         this.$propGrid.show();
-
         $('#propGrid').empty();
-
         $('#form-buider-propGrid').css("visibility", "visible");
-
         this.PGobj = new Eb_PropertyGrid("propGrid", control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
-
         $('.selectpicker').selectpicker('refresh');
-
         $('#propGrid table td').find("input").change(this.PGinputChange.bind(this));
     };
 
@@ -95,9 +89,6 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        //console.log("source:" + source.id);
-        //console.log("target:" + target.id);
-        // prevent tool box copy
         if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") === "form-buider-toolBox") {
             return false;
         }
@@ -175,33 +166,20 @@
         if (target) {
             //drop from toolbox to form
             if ($(source).attr("id") === "form-buider-toolBox") {
-
                 el.className = 'controlTile';
-
                 var ctrl = $(el);
-
                 var type = ctrl.attr("eb-type").trim();
-
                 var id = type + (this.controlCounters[type + "Counter"])++;
-
                 ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-
                 ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-
-                //ctrl.attr("ebtype", type);
                 ctrl.attr("id", id);
-
                 this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
-
                 ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
                     + new EbObjects["Eb" + type + "Obj"](id).Html());
 
                 $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
-
                 $('.selectpicker').selectpicker('refresh');
-
                 ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
-
                 ctrl.focus();
             }
             else
@@ -274,67 +252,22 @@
 
     };
 
-    this.WrapControlTile = function ($el) {
-        $el.replaceWith("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
-                            + $el.outerHTML()
-                     + "</div>");
-        return $el;
-    };
-
-    //this.initCtrl = function (el) {
-
-    //    var $EbCtrl = $(el);
-
-    //    var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'><div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>" + $EbCtrl.outerHTML() + "</div>");
-
-    //    var type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
-
-    //    var id = type + (this.controlCounters[type + "Counter"])++;
-
-    //    $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-
-    //    $ControlTile.attr("eb-type", type).attr("id", id);
-
-    //    $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
-
-    //    $('.selectpicker').selectpicker('refresh');//need to test
-
-    //    $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
-
-    //    $EbCtrl.replaceWith($ControlTile); //alert("outerHTML:" + $ControlTile.outerHTML());
-    //}; 
-
     this.initCtrl = function (el) {
-
-        var $ControlTile = this.WrapControlTile($(el));
-        var $ControlTile = this.WrapControlTile($(el));
-
-        var $EbCtrl = $ControlTile.find(".Eb-ctrlContainer");
-
-            //var type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
-
-            //var id = type + (this.controlCounters[type + "Counter"])++;
-
-            //$ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-
-            //$ControlTile.attr("eb-type", type).attr("id", id);
-
-            //$(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
-
-            //$('.selectpicker').selectpicker('refresh');//need to test
-
-            //$ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
-
-        //$EbCtrl.replaceWith($ControlTile); //alert("outerHTML:" + $ControlTile.outerHTML());
+        var $EbCtrl = $(el);
+        var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
+        var type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
+        var id = type + (this.controlCounters[type + "Counter"])++;
+        $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+        $ControlTile.attr("eb-type", type).attr("id", id);
+        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
+        $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
+        $EbCtrl.wrap($ControlTile);
+        $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     };
 
     this.InitEditModeCtrls = function (editModeObj) {
-        console.log("editModeObj:" + editModeObj);
-        _this = this;
-
-        $(".Eb-ctrlContainer").each(function (i, el) { _this.initCtrl(el); });
-        //$("table .Eb-ctrlContainer").each(function (i, el) { _this.initCtrl(el); });
-
+        $(".Eb-ctrlContainer").each(function (i, el) { this.initCtrl(el); }.bind(this));
+        $('.selectpicker').selectpicker('refresh');
         Proc(JSON.parse(editModeObj), this.rootContainerObj);
     };
 

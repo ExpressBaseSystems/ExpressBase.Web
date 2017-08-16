@@ -144,7 +144,7 @@ namespace ExpressBase.Web.Controllers
         public EbObjectWrapper GetFormObj(string objId, int objType)
         {
             IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue, EbObjectType = objType, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objId, VersionId = Int32.MaxValue, EbObjectType = objType, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             return rlist;
         }

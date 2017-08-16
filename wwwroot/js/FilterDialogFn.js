@@ -27,6 +27,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.FilterDId = fd_id;
     this.Rel_object;
     this.rel_arr = [];
+    this.SavedRefid;
+    this.IsDraw = false;
 
 
     this.Init = function () {
@@ -36,7 +38,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         this.CloseTabBtn = $('.closeTab');
 
         $(this.VersionHistBtn).off("click").on("click", this.VerHistory.bind(this));
-        $(this.CloseTabBtn).off("click").on("click", this.deleteTab.bind(this));       
+        $(this.CloseTabBtn).off("click").on("click", this.deleteTab.bind(this));
         $('#execute').off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
@@ -198,7 +200,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
-       
+
         var getNav = $("#versionNav li.active a").attr("href");
         $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
         $(getNav + ' #selected_Ver' + tabNum).off("change").on("change", this.Differ.bind(this));
@@ -213,7 +215,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     };
 
     this.Execute = function () {
-        if (!$('#execute').hasClass('collapsed')) { }
+        if (!$('#execute').hasClass('collapsed')) {//
+        }
         else {
             $.LoadingOverlay("show");
             if (this.Parameter_Count !== 0 && $('#fd option:selected').text() === "Select Filter Dialog") {
@@ -369,10 +372,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                   "</div>");
             $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
 
-            $.post('GetColumns4Trial', {
-                ds_refid: this.Obj_Id,
-                parameter: this.Object_String_WithVal
-            }, this.Load_Table_Columns.bind(this));
+           //get columns for trial
 
         }
         else {
@@ -439,17 +439,18 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     };
 
     this.RunDs = function () {
+        this.IsDraw = true;
         if (this.Parameter_Count === 0) {
             this.Save(false);
             this.ValidInput === true
             this.Object_String_WithVal = "";
-            this.DrawTable();
         }
         else {
-            this.Find_parameters(false, false, false);
+            this.Find_parameters(true, true, false);
             this.CreateObjString();
-            this.DrawTable();
         }
+
+        this.DrawTable();
     };
 
     this.CallDiffer = function (selected_ver_number, data) {
@@ -536,7 +537,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                            "json": JSON.stringify(_json),
                            "NeedRun": needRun,
                            "rel_obj": this.Rel_object
-                       }).done(alert("Save Success"));
+                       }, this.Call_GetColumnsForTrial(this));
         }
         else {
 
@@ -549,10 +550,29 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 "changeLog": "changed",
                 "json": JSON.stringify(_json),
                 "rel_obj": this.Rel_object
-            }, alert("Commit Success"));
+            }, this.Call_GetColumnsForTrial(this));
         }
         $.LoadingOverlay("hide");
     };
+
+    this.Call_GetColumnsForTrial = function (result) {
+        this.SavedRefid = result.refId;
+        $.post('GetColumns4Trial', {
+            ds_refid: this.SavedRefid,
+            parameter: this.Object_String_WithVal
+        }, this.Load_Table_Columns.bind(this));
+        if (this.IsDraw === false) {
+            this.Reload_after_saveCommit(this, result);
+        }
+        else {
+            this.IsDraw = false;
+        }
+    };
+    this.Reload_after_saveCommit = function (result) {      
+        $.post("../CE/code_editor", {
+            "objid": result.refId
+        })
+    }
 
     this.FetchUsedSqlFns_inner = function (i, sqlFn) {
         if (this.Code.indexOf(sqlFn.name) !== -1) {

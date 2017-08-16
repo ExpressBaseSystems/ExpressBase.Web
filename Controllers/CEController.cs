@@ -202,7 +202,7 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
 
-        public JsonResult CommitEbDataSource()
+        public EbObjectSaveOrCommitResponse CommitEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
             var ds = new EbObjectSaveOrCommitRequest();
@@ -221,8 +221,8 @@ namespace ExpressBase.Web.Controllers
             ds.Relations = req["rel_obj"];
             ViewBag.IsNew = "false";
 
-            var res = this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
-            return Json("Success");
+            return this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
+            
         }
 
         public IActionResult ds_save()
@@ -230,7 +230,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public JsonResult SaveEbDataSource()
+        public EbObjectSaveOrCommitResponse SaveEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
             var ds = new EbObjectSaveOrCommitRequest();
@@ -252,8 +252,7 @@ namespace ExpressBase.Web.Controllers
             ds.Relations = req["rel_obj"];
             ds.ChangeLog = "";
             ViewBag.IsNew = "false";
-            var CurrSaveId = this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
-            return Json("Success");
+            return this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);             
         }
         //for ajax call
 

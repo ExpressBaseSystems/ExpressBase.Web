@@ -202,7 +202,7 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
 
-        public JsonResult CommitEbDataSource()
+        public EbObjectSaveOrCommitResponse CommitEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
             var ds = new EbObjectSaveOrCommitRequest();
@@ -221,8 +221,8 @@ namespace ExpressBase.Web.Controllers
             ds.Relations = req["rel_obj"];
             ViewBag.IsNew = "false";
 
-            var res = this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
-            return Json("Success");
+            return this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
+            
         }
 
         public IActionResult ds_save()
@@ -230,7 +230,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public JsonResult SaveEbDataSource()
+        public EbObjectSaveOrCommitResponse SaveEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
             var ds = new EbObjectSaveOrCommitRequest();
@@ -252,8 +252,7 @@ namespace ExpressBase.Web.Controllers
             ds.Relations = req["rel_obj"];
             ds.ChangeLog = "";
             ViewBag.IsNew = "false";
-            var CurrSaveId = this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
-            return Json("Success");
+            return this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);             
         }
         //for ajax call
 
@@ -268,12 +267,12 @@ namespace ExpressBase.Web.Controllers
                 if (_EbObjectType == EbObjectType.DataSource)
                 {
                     var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
-                    ViewBag.Code = dsobj.Sql;
+                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
                 }
                 if (_EbObjectType == EbObjectType.SqlFunction)
                 {
                     var dsobj = EbSerializers.Json_Deserialize<EbSqlFunction>(element.Json);
-                    ViewBag.Code = dsobj.Sql;
+                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
                 }
             }
             return ViewBag.Code;
@@ -322,18 +321,18 @@ namespace ExpressBase.Web.Controllers
                 }
 
             }
-            var columnColletion = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Token = ViewBag.token, Params = paramsList, TenantAccountId=ViewBag.cid });
-            if (columnColletion.Columns == null || columnColletion.Columns.Count == 0)
+            DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Token = ViewBag.token, Params = paramsList, TenantAccountId=ViewBag.cid });
+            if (columnresp.Columns == null || columnresp.Columns.Count == 0)
             {
                 return "";
             }
             else
             {
                 string colDef = "[";
-                foreach (EbDataColumn column in columnColletion.Columns)
+                foreach (EbDataColumn column in columnresp.Columns)
                 {
                     colDef += "{";
-                    colDef += "\"data\": " + columnColletion.Columns[column.ColumnName].ColumnIndex.ToString();
+                    colDef += "\"data\": " + columnresp.Columns[column.ColumnName].ColumnIndex.ToString();
                     colDef += ",\"title\": \"" + column.ColumnName + "\"";
                     colDef += ",\"visible\": " + true.ToString().ToLower();
                     colDef += "},";

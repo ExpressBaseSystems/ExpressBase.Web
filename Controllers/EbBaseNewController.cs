@@ -23,7 +23,7 @@ namespace ExpressBase.Web.Controllers
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-
+     
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             try

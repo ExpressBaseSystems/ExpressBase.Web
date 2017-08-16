@@ -5,11 +5,11 @@
 @*@model ExpressBase.Web.Models.RetValObj*@
 
 @{
+    @using Newtonsoft.Json;
+    @using ExpressBase.Objects;
+    var dvobj = JsonConvert.SerializeObject(ViewBag.data);
     var tableId = "dv" + ViewBag.data.DataSourceRefId;
 }
-@*@section EbHead {
-    @Html.Raw(ViewBag.HtmlHead);
-}*@
 
 
 <div class='tablecontainer' style='background-color:rgb(260,260,260);'>
@@ -22,12 +22,9 @@
         <div id='@(tableId + "_tab_1")' class='tab-pane active'>
 
             <div id='TableControls_@(tableId + "_1")' class='well well-sm' style='margin-bottom:5px!important;'>
-                <label class="dvname">@ViewBag.data.Name<label>
+                <label class="dvname">@ViewBag.data.Name</label>
                 <button id='btnGo' class='btn btn-primary' style='float: right;'>Run</button>
-                @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.DataSource.FilterDialog });
-                @*<div style='margin-top:10px;' id='filterBox'>
-                    @Html.Raw(ViewBag.HtmlBody)
-                </div>*@
+                @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
             </div>
             <div id='@(tableId+"_1container")'>
                 <div id='@(tableId+"_1TableColumns4Drag")' style='border:1px solid;display:none;height:100%;min-height: 400px;overflow-y: auto;'>
@@ -81,11 +78,17 @@
         </div>
     </div>
 </div>
-<script>
 
-    var sett = @Html.Raw(ViewBag.Data);
+@*@section EbHead {
+    <script>
+        @Html.Raw(ViewBag.HtmlHead);
+    </script>
+}*@
+<script>
+    @Html.Raw(ViewBag.HtmlHead);
+    var sett = @Html.Raw(dvobj);
     var ebdtable = new EbDataTable({
-        ds_id: @ViewBag.data.DataSourceRefId,
+        ds_id: '@ViewBag.data.DataSourceRefId',
 
         ss_url: 'https://localhost:44377',
         tid: '@(tableId+"_1")',

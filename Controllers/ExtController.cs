@@ -14,58 +14,54 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Routing;
 using ServiceStack.Auth;
 using Microsoft.AspNetCore.Http;
+using ServiceStack.Redis;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ExtController : EbBaseController
+    public class ExtController : EbBaseNewController
     {
-        public ExtController(IOptionsSnapshot<EbSetupConfig> ss_settings) : base(ss_settings) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            ViewBag.EbConfig = this.EbConfig;
+           
             return View();
         }
 
         public IActionResult DevSignIn()
         {
-            ViewBag.EbConfig = this.EbConfig;         
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 
         public IActionResult AboutUs()
         {
-            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
         public IActionResult Platform()
         {
-            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
         public IActionResult SignupSuccess(string email)
         {
-            ViewBag.SignupEmail = email;
-            //IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            //client.Post<EmailServicesResponse>(new EmailServicesRequest { To = email, Message = "XXXX", Subject = "YYYY" });
+            ViewBag.SignupEmail = email;          
             return View();
         }
 
         public IActionResult SignIn()
         {
-            ViewBag.EbConfig = this.EbConfig;
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 
         public IActionResult Pricing()
         {
-            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -73,25 +69,23 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult UsrSignIn()
         {
-            ViewBag.EbConfig = this.EbConfig;
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 
         public IActionResult SignUp()
         {
-            ViewBag.EbConfig = this.EbConfig;
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 
         public IActionResult test()
         {
-            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
         public IActionResult TenanatAcc()
         {
-            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -99,7 +93,6 @@ namespace ExpressBase.Web.Controllers
         public async Task<IActionResult> TenantExtSignup()
         {
             var req = this.HttpContext.Request.Form;
-            ViewBag.EbConfig = this.EbConfig;
             Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", req["g-recaptcha-response"]);
             if (!data.Success)
             {
@@ -130,7 +123,7 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                IServiceClient client = this.EbConfig.GetServiceStackClient();
+                IServiceClient client = this.ServiceClient;
                 try
                 {
                      var res = client.Post<RegisterResponse>(new Register { Email = req["email"], Password = req["password"] ,DisplayName = "expressbase" });
@@ -163,7 +156,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
-            ViewBag.EbConfig = this.EbConfig;
+          
            // string url = this.HttpContext.Request.Headers["HOST"];
             var host = this.HttpContext.Request.Host;
             string[] subdomain = host.Host.Split('.');
@@ -278,7 +271,7 @@ namespace ExpressBase.Web.Controllers
             {
                 try
                 {
-                    var authClient = this.EbConfig.GetServiceStackClient();
+                    var authClient = this.ServiceClient;
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
@@ -386,7 +379,7 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                var authClient = this.EbConfig.GetServiceStackClient();
+                var authClient = this.ServiceClient;
                 MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
@@ -427,10 +420,10 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult VerificationStatus()
         {
-            ViewBag.EbConfig = this.EbConfig;
+          
             var email = HttpContext.Request.Query["email"];
             var token = HttpContext.Request.Query["signup_tok"];
-            var authClient = this.EbConfig.GetServiceStackClient();
+            var authClient = this.ServiceClient;
             MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,

@@ -282,9 +282,9 @@
                 selected.push($(this).attr('value'));
             });
 
-            var selectedroles = [];
+            var selectedroles;
             $('#rolesdiv input:checked').each(function () {
-                selected.push($(this).attr('value'));
+                selectedroles += $(this).attr('value');
             });
 
             var txt = $("#userslist").val();

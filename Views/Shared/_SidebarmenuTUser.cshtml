@@ -1,17 +1,12 @@
 ﻿@{
-    @using ServiceStack;
     @using ExpressBase.Objects.ServiceStack_Artifacts;
-    @using ExpressBase.Web2;
-
-    EbSetupConfig EbConfig = ViewBag.EbConfig;
-    IServiceClient client = EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = 9, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-    List<EbObjectWrapper> responselist = resultlist.Data;
+   
+    List<EbObjectWrapper> responselist = ViewBag.resultlist;
 }
 <div class="list-group">
     <ul class="outer" style="padding-left:0;">
         @{ 
-            foreach(var element in responselist)
+            foreach (var element in responselist)
             {
         <li>
             <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown1_@element.Id">

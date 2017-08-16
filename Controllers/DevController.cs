@@ -87,6 +87,8 @@ namespace ExpressBase.Web.Controllers
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = req["filterdialogjson"];
+            ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
+            (ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;

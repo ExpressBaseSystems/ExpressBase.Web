@@ -29,7 +29,7 @@
     var id = Convert.ToInt32(ViewBag.DataId);
     var dvname = (ViewBag.dvObject != null) ? ViewBag.dvObject.Name : "* Untitled *";
 }
-<div class="well well-sm">
+<div class="well well-sm" id="devpanel">
     <div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
         <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
             Select Datasource
@@ -44,8 +44,8 @@
         }
         </ul>
     </div>
-    <input id='dvnametxt' type='text' class='form-control' placeholder='dvname' style="display:none;width: auto;"/>
-    <button id='Save_btn' class='btn btn-primary' style="float: right; display:none;"> Save </button>
+    <input id='dvnametxt' type='text' class='form-control' placeholder='dvname' style="width: auto;display: none;"/>
+    <button id='Save_btn' class='btn btn-primary' style="float: right;display:none"> Save </button>
 </div>
 
 <div id="filterDia">

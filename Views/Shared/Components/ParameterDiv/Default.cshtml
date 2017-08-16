@@ -2,7 +2,11 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
-@Html.Raw(ViewBag.HtmlHead);
+@section EbHead {
+    <script>
+    @Html.Raw(ViewBag.HtmlHead);
+        </script>
+    }
 
 <div style='margin-top:10px;' id='filterBox'>
     @Html.Raw(ViewBag.HtmlBody);

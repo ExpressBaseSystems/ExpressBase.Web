@@ -322,18 +322,18 @@ namespace ExpressBase.Web.Controllers
                 }
 
             }
-            var columnColletion = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Token = ViewBag.token, Params = paramsList, TenantAccountId=ViewBag.cid });
-            if (columnColletion.Columns == null || columnColletion.Columns.Count == 0)
+            DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Token = ViewBag.token, Params = paramsList, TenantAccountId=ViewBag.cid });
+            if (columnresp.Columns == null || columnresp.Columns.Count == 0)
             {
                 return "";
             }
             else
             {
                 string colDef = "[";
-                foreach (EbDataColumn column in columnColletion.Columns)
+                foreach (EbDataColumn column in columnresp.Columns)
                 {
                     colDef += "{";
-                    colDef += "\"data\": " + columnColletion.Columns[column.ColumnName].ColumnIndex.ToString();
+                    colDef += "\"data\": " + columnresp.Columns[column.ColumnName].ColumnIndex.ToString();
                     colDef += ",\"title\": \"" + column.ColumnName + "\"";
                     colDef += ",\"visible\": " + true.ToString().ToLower();
                     colDef += "},";

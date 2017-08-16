@@ -50,14 +50,13 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SignupSuccess(string email)
         {
-            ViewBag.SignupEmail = email;
-            //IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            //client.Post<EmailServicesResponse>(new EmailServicesRequest { To = email, Message = "XXXX", Subject = "YYYY" });
+            ViewBag.SignupEmail = email;          
             return View();
         }
 
         public IActionResult SignIn()
         {
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 
@@ -70,11 +69,13 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult UsrSignIn()
         {
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 
         public IActionResult SignUp()
         {
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 

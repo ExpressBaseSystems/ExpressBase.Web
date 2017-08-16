@@ -24,8 +24,8 @@ var pages = {
 var sub = function (name, index, height, subsection) {
     this.id = name;
     this.index = index;
-    this.height = height;
-    this.subsection = subsection;
+    this.height = height; 
+   this.subsection = subsection;
 };
 
 var PageElements = function (value, left, top, font) {
@@ -45,7 +45,7 @@ var RptBuilder = function (type) {
     this.report.pageheight = height;
     this.report.pagewidth = width;
     this.report.sections = [];
-    this.subsection1 = [];
+
     this.splitarray = [];
     this.btn_indx = null;
 
@@ -62,7 +62,7 @@ var RptBuilder = function (type) {
             $('#pageCanvas').css({ "transform": "scale(0.8)", "transform-origin": "0 0" });
         }
         var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
-        $('#PageContainer').append($div);      
+        $('#PageContainer').append($div);
         return $div;
     };
 
@@ -108,9 +108,9 @@ var RptBuilder = function (type) {
 
     this.set_Dropable = function (i, obj) {
 
-        var id = $(obj).attr("id");       
-            $("#" + id).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
-        this.report.sections.push(new sub(id, $(obj).index(), $(obj).height(), null));
+        var id = $(obj).attr("id");
+        $("#" + id).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
+        this.report.sections.push(new sub(id, $(obj).index(), $(obj).height(),[]));//hyvgyrdtyyrhdtf
 
     };
 
@@ -139,26 +139,30 @@ var RptBuilder = function (type) {
     this.splitDiv_inner = function (i, obj) {
 
         if (obj.index == this.btn_indx) {
-            var $sec = $("#" + obj.id);
-            
-            if ($sec.children().length === 0) {
-                $sec.droppable("destroy");
-                var s0 = $("<div class='subdivs' id='s" + obj.index + "0'></div>");
-                var s1 = $("<div class='subdivs' id='s" + obj.index + "1'></div>");
-                $sec.append(s0, s1);
-                this.splitarray.push("#" + s0.attr("id") + "", "#" + s1.attr("id") + "");             
-                s0.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-                s1.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-                
+            this.$sec = $("#" + obj.id);
+
+            if (this.$sec.children().length === 0) {
+
+                this.$sec.droppable("destroy");
+                this.s0 = $("<div class='subdivs' id='s" + obj.index + "0'></div>");
+                this.s1 = $("<div class='subdivs' id='s" + obj.index + "1'></div>");
+                this.$sec.append(s0, s1);
+                this.splitarray.push("#" + this.s0.attr("id") + "", "#" + this.s1.attr("id") + "");
+                this.s0.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
+                this.s1.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
+
+                $.each(this.report.sections, this.saveSubsecOnFrstSplt.bind(this));
             }
 
-            else if ($sec.children().length !== 0) {
+            else if (this.$sec.children().length !== 0) {
 
-                var $spl = $("<div class='subdivs' id='s" + obj.index + this.j++ + "'></div>");
-                $sec.append($spl);
+                this.$spl = $("<div class='subdivs' id='s" + obj.index + this.j++ + "'></div>");
+                this.$sec.append($spl);
                 $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
-                $($sec).children('.gutter').remove();
-                $spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
+                $(this.$sec).children('.gutter').remove();
+                this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
+
+                $.each(this.report.sections, this.saveSubsecOnSecSplt.bind(this));
             }
 
             Split(this.splitarray, {
@@ -179,29 +183,27 @@ var RptBuilder = function (type) {
                     });
                 }
             });
-            this.saveToObject($sec);
+            this.multiSplitBoxinner();
+        }
+    };  
+
+    this.saveSubsecOnSecSplt = function (i, obj) {
+        var sec1 = this.$sec.attr("id");
+        if (sec1 === obj.id) {
+            this.report.sections[i].subsection.push(new sub(this.$spl.attr("id"), this.$spl.index(), this.$spl.height(), []));
         }
     };
 
-    this.saveToObject = function ($sec) {
-        var temp = [];
-        $sec.children().not(".gutter").each(function (i, obj) {
-            temp.push(new sub($(this).attr("id"), $(this).index(), $(this).height(), null));
-
-            $.each(report.sections, function (i, obj) {
-
-                var sec1 = $sec.attr("id");
-
-                if (sec1 === this.id) {
-                    report.sections[i].subsection = temp;
-                }
-            });
-        });
-        this.multiSplitBoxinner();
+    this.saveSubsecOnFrstSplt = function (i, obj) {
+        var sec1 = this.$sec.attr("id");      
+        if (sec1 === obj.id) {
+            this.report.sections[i].subsection.push(new sub(this.s0.attr("id"), this.s0.index(), this.s0.height(), []));
+            this.report.sections[i].subsection.push(new sub(this.s1.attr("id"), this.s1.index(), this.s1.height(), []));
+        }
     };
 
     this.splitMore = function (i, obj) {
-        this.splitarray.push("#" + obj.id);        
+        this.splitarray.push("#" + obj.id);
     };
 
     this.headerScaling = function () {
@@ -249,7 +251,7 @@ var RptBuilder = function (type) {
             $('.page').children().not(".gutter").each(function (j, obj2) {
                 var hLength = $(obj2).children().not(".gutter").length;
                 if ($(obj).attr("data_val") === $(obj2).attr("data_val") && index === $(obj).attr("data_val")) {
-                    for (var k = 0; k < hLength; k++){
+                    for (var k = 0; k < hLength; k++) {
                         $(obj).append("<div class='multiSplitHboxSub' id='subBox" + k + $(obj).attr("data_val") + "' style='width:100%'><p>s" + k + "</p></div>");
                         temp1.push("#subBox" + k + $(obj).attr("data_val") + "");
                     }
@@ -261,7 +263,7 @@ var RptBuilder = function (type) {
                 return false;
         });
         if (temp1 != null) {
-            
+
             Split(temp1, {
                 direction: 'vertical',
                 cursor: 'row-resize',
@@ -276,7 +278,7 @@ var RptBuilder = function (type) {
         this.posLeft = null;
         this.posTop = null;
         this.font = null;
-        
+
 
         $('.draggable').draggable({
             cancel: "a.ui-icon",
@@ -288,16 +290,17 @@ var RptBuilder = function (type) {
     };
 
     this.onDrag = function (event, ui) {
-        
+
         this.posLeft = event.pageX;
         this.posTop = event.pageY;
-        
+
     };
 
-    this.onDropFn = function (event, ui) {             
-
+    this.onDropFn = function (event, ui) {
+        this.subsection1 = [];
+        this.dropLoc = $(event.target);
         var itemToClone = $(ui.draggable);
-        if (!itemToClone.hasClass("dropped")) {           
+        if (!itemToClone.hasClass("dropped")) {
             $(event.target).append(itemToClone.clone().addClass("dropped").removeClass("draggable").css({
                 width: itemToClone.width(),
                 height: itemToClone.height(),
@@ -306,16 +309,16 @@ var RptBuilder = function (type) {
                 top: this.posTop - 170
             }));
         }
-        else if (itemToClone.hasClass("dropped")) {
+        else if (itemToClone.hasClass("dropped")) {           
             $(event.target).append(itemToClone.css({
                 width: itemToClone.width(),
                 height: itemToClone.height(),
-                position: 'absolute',               
+                position: 'absolute',
             }));
         }
 
         $('.dropped').draggable({
-            cursor: 'move',           
+            cursor: 'move',
             start: this.onDrag_Start.bind(this),
             stop: this.onDrag_stop.bind(this)
 
@@ -325,60 +328,66 @@ var RptBuilder = function (type) {
             containment: "parent",
             resize: this.resizeElement.bind(this)
         });
-       
-        this.subsection1.push(new PageElements(itemToClone.text(), this.posLeft - 270, this.posTop - 170, itemToClone.height()));
+        this.subsection1.push(new PageElements(itemToClone.text(), this.posLeft - 270, this.posTop - 170, itemToClone.height()));        
+        $.each(this.report.sections, this.saveElementToObject.bind(this));
+        //this.PropertyMenu();
+    };
 
-        $.each(this.report.sections, function (i, sec) {
-            if (sec.subsection != null) {
-                $.each(sec.subsection, function (k, sub) {
-                    if (sub.id == $(event.target).attr("id")) {
-                        this.report.sections.subsection[k] = this.subsection1;
-                    }
-                });
+    this.saveElementToObject = function (i, sec) {
+        
+        if (sec.subsection.length >= 1) {           
+            $.each(sec.subsection, this.saveElementSubNotNull.bind(this, i));
+        }
+
+        else if (sec.subsection.length <= 0) {
+            if (sec.id == this.dropLoc.attr("id")) {
+                console.log(this.dropLoc);
+                this.report.sections[i].subsection.push(this.subsection1);
             }
-            else {
-                if (sec.id == $(event.target).attr("id")) {
-                    report.sections.subsection[i] = subsection1;
-                }
-            }
-            });
-        console.log(subsection1);
-        this.PropertyMenu();
+        }
+    };
+
+    this.saveElementSubNotNull = function (i, k, sub) {
+
+        if (sub.id === this.dropLoc.attr("id")) {
+            console.log(this.dropLoc);
+            this.report.sections[i].subsection[k].subsection.push(this.subsection1);
+        }
     };
 
     this.resizeElement = function (event, ui) {
-      
+
         var font = parseInt($(event.target).css("height"));
-        $(event.target).css("font-size", font - 5);
+        $(event.target).css("font-size", font-3);
 
     };
 
-    this.onDrag_stop = function (event,ui) {
+    this.onDrag_stop = function (event, ui) {
         $(".vL").remove();
         $(".hL").remove();
     };
 
-    this.onDrag_Start = function (event, ui) {        
+    this.onDrag_Start = function (event, ui) {
 
         $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:0px;margin-top:-" + this.posTop + "px'></div>");
         $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px'></div>");
 
     };
 
-    this.PropertyMenu = function () {
-        this.font_color = null;
-        $('#fontcolor').on("change", this.change_fontColor.bind(this));
-        $(".dropped").on("click", this.element_click.bind(this));                  
-       // $(".dropped").off("click",this.element_off_Click.bind(this));
+    //this.PropertyMenu = function () {
+    //    this.font_color = null;
+    //    $('#fontcolor').on("change", this.change_fontColor.bind(this));
+    //    $(".dropped").on("click", this.element_click.bind(this));
+    //    // $(".dropped").off("click",this.element_off_Click.bind(this));
 
-    };
+    //};
 
     this.change_fontColor = function (e) {
         this.font_color = $(e.target).val();
     };
 
     this.element_click = function (e) {
-       
+
         $(e.target).css("background-color", "#eee");
         $(e.target).css("color", this.font_color);
     };
@@ -394,7 +403,7 @@ var RptBuilder = function (type) {
         this.pageSplitters($pageref);
         this.headerBox1_Split();
         this.headerScaling();
-        this.DragDrop_DataSource();        
+        this.DragDrop_DataSource();
     };
     this.init();
 };
@@ -461,8 +470,8 @@ $.fn.extend({
     }
 });
 
- var ruler = function () {
-    var $ruler = $('.ruler').css({ "width":"1000px", "height": "25px" });
+var ruler = function () {
+    var $ruler = $('.ruler').css({ "width": "1000px", "height": "25px" });
     for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
         var $tick = $('<div>');
         if (step === 0) {

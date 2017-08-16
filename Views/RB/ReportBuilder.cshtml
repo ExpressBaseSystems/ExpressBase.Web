@@ -3,25 +3,21 @@
 }
 @using ExpressBase.Objects;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
-
-<script type="text/javascript" src="~/js/Eb_ReportBuilder.js"></script>@*amal*@
-<script type="text/javascript" src="~/js/split.js"></script>@*amal*@
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>@*jith*@
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src='~/js/Eb_dragula.js'></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.9/interact.min.js"></script>
+<script type="text/javascript" src="~/js/Eb_ReportBuilder.js"></script>@*amal*@
+<script type="text/javascript" src="~/js/split.js"></script>@*amal*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.9/interact.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />@*amal*@
 <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">@*amal*@
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">@*jith*@
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />@*jith*@
 <link rel="stylesheet" type="text/css" href="~/css/style.css" />@*amal*@
-@{
-    Dictionary<int, EbObjectWrapper> Objlist = ViewBag.Objlist;
-}
 <div class="container-fluid">
-    <div class="row" style="margin-top: 56px;position:fixed;">
+    <div class="row">
         <div class="reportmenu">
             <div class="form-inline" id="options">
                 <div class="form-group">
@@ -51,83 +47,32 @@
                 <div class="form-group">
                     <button class="btn btn-default"><i class="fa fa-align-right" aria-hidden="true"></i></button>
                 </div>
+                <div class="form-group">
+                    <input type="color" id="fontcolor" class="btn btn-default" style="display:none" />
+                    <button class="btn btn-default" onclick="$('#fontcolor').click();"><i class="fa fa-paint-brush" aria-hidden="true"></i> Font Color</button>
+                </div>
             </div>
         </div>
     </div>
     <div class="row pgB">
-        <div class="col-md-2 toolbox">           
-           
-            @await Component.InvokeAsync("EbObjectSelector", new { EbObjectType = (int)EbObjectType.DataSource });
-            
-            <ul style="padding:0;margin-left:10px" id="toolbox1">
-               
-                    <li>
-                        <a></a>
-                        <ul>
-                            <li class="draggable styl"><p class="textval">Sub 1</p></li>
-                            <li class="draggable styl"><p class="textval">Sub 2</p></li>
-                        </ul>
-                    </li>
-               
-            </ul>
+        <div class="col-md-2">
+            <div class="toolbox">
+                @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
+            </div>
         </div>
-        <div class="col-md-9" id="pageCanvas" style="position:relative;margin-top:50px">
+        <div class="col-md-9">
+            <div class='ruler'></div>
+            <div class='rulerleft'></div>
+            <div id="pageCanvas" style="position:relative;margin-top:93px;margin-bottom:100px">
+            </div>
         </div>
     </div>
 </div>
 <script>
-    $("#pagesize").change(function () {
-        RptBuilder($(this).val(), "toolbox1");
+    $(document).ready(function() {
+        var myruler = new ruler();
+        $("#pagesize").change(function () {
+            RptBuilder($(this).val());
+        });
     });
-
-    $.fn.extend({
-        treed: function (o) {
-
-            var openedClass = 'glyphicon-minus-sign';
-            var closedClass = 'glyphicon-plus-sign';
-
-            if (typeof o != 'undefined') {
-                if (typeof o.openedClass != 'undefined') {
-                    openedClass = o.openedClass;
-                }
-                if (typeof o.closedClass != 'undefined') {
-                    closedClass = o.closedClass;
-                }
-            };
-            var tree = $(this);
-            tree.addClass("tree");
-            tree.find('li').has("ul").each(function () {
-                var branch = $(this); 
-                branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
-                branch.addClass('branch');
-                branch.on('click', function (e) {
-                    if (this == e.target) {
-                        var icon = $(this).children('i:first');
-                        icon.toggleClass(openedClass + " " + closedClass);
-                        $(this).children().children().toggle();
-                    }
-                })
-                branch.children().children().toggle();
-            });
-           
-            tree.find('.branch .indicator').each(function () {
-                $(this).on('click', function () {
-                    $(this).closest('li').click();
-                });
-            });          
-            tree.find('.branch>a').each(function () {
-                $(this).on('click', function (e) {
-                    $(this).closest('li').click();
-                    e.preventDefault();
-                });
-            });          
-            tree.find('.branch>button').each(function () {
-                $(this).on('click', function (e) {
-                    $(this).closest('li').click();
-                    e.preventDefault();
-                });
-            });
-        }
-    });
-    $('#toolbox1').treed();
 </script>

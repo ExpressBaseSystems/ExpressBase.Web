@@ -21,23 +21,19 @@ using ExpressBase.Objects.Objects;
 using Newtonsoft.Json;
 using ExpressBase.Objects.ObjectContainers;
 using ExpressBase.Objects.Attributes;
+using ServiceStack.Redis;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class DVController : EbBaseController
+    public class DVController : EbBaseNewController
     {
+        public DVController(IServiceClient _ssclient, IRedisClient _redis): base(_ssclient, _redis) { }
 
-        public DVController(IOptionsSnapshot<EbSetupConfig> ss_settings) : base(ss_settings) { }
-
-
-        // GET: /<controller>/
- 
         [HttpGet]
         public IActionResult DVEditor()
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
             Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
@@ -48,7 +44,7 @@ namespace ExpressBase.Web.Controllers
             }
             ViewBag.DSListAll = ObjDSListAll;
             ViewBag.DSList = ObjDSList;
-            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
+            resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, TenantAccountId = ViewBag.cid });
             rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -68,8 +64,7 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.Obj_id = objid;
 
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -79,25 +74,25 @@ namespace ExpressBase.Web.Controllers
                 if (ViewBag.wc == "dc")
                 {
                     //this.EbConfig.GetRedisClient().Remove(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
-                    ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
+                    ViewBag.tvpref = this.Redis.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
                     //if (ViewBag.tvpref == null)
                     //    ViewBag.tvpref = GetColumns(dsobj.dsid);
                 }
                 else
                 {
-                    ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, objid, ViewBag.UId));
+                    ViewBag.tvpref = this.Redis.Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, objid, ViewBag.UId));
                     if (ViewBag.tvpref == null)
-                        ViewBag.tvpref = this.EbConfig.GetRedisClient().Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
+                        ViewBag.tvpref = this.Redis.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, ViewBag.Obj_id));
                 }
             }
-            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.dsid), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(ViewBag.dsid), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
             rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
                 ObjList[element.Id] = element;
             ViewBag.DSList = ObjList;
 
-            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
             rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjListAll = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
@@ -107,7 +102,7 @@ namespace ExpressBase.Web.Controllers
             ObjListAll.Remove(ObjList.Keys.First<int>());
             ViewBag.DSListAll = ObjListAll;
             Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
-            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
+            resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, TenantAccountId = ViewBag.cid });
             rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -121,17 +116,14 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult dv(string dvRefId)
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var redisClient = this.EbConfig.GetRedisClient();
-
-            FetchAllDataSources(client);
-            FetchAllDataVisualizations(client);
+            FetchAllDataSources();
+            FetchAllDataVisualizations();
 
             //Edit mode
             if (!string.IsNullOrEmpty(dvRefId))
             {
-                var dvObject = redisClient.Get<EbDataVisualization>(dvRefId);
-                dvObject.AfterRedisGet();
+                var dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
+                dvObject.AfterRedisGet(this.Redis);
                 ViewBag.dvObject = dvObject;
             }
 
@@ -144,17 +136,14 @@ namespace ExpressBase.Web.Controllers
             var token = Request.Cookies["Token"];
             ViewBag.dvid = objid;
             ViewBag.token = token;
-            ViewBag.EbConfig = this.EbConfig;
 
-            var redisClient = this.EbConfig.GetRedisClient();
-            var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, objid));
+            var tvpref = this.Redis.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, objid));
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
             ViewBag.dsid = _dict["dsId"];
             ViewBag.dvname = _dict["dvName"];
             int fdid = Convert.ToInt32(_dict["fdId"]);
 
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data;
             //Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
             Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
@@ -172,12 +161,11 @@ namespace ExpressBase.Web.Controllers
             if (dsid > 0)
             {
                 //get datasource obj and get fdid
-                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-                var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+                var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
                 var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
 
                 //get fd obj
-                resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+                resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
 
                 //redundant - REMOVE JITH
                 var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
@@ -196,13 +184,11 @@ namespace ExpressBase.Web.Controllers
 
         public PartialViewResult DataVisualisation(int dsid)
         {
-
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
             var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
 
             //get fd obj
-            resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
 
             //redundant - REMOVE JITH
             var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
@@ -319,13 +305,9 @@ namespace ExpressBase.Web.Controllers
 
         public string GetColumns(int dsid)
         {
-            var redis = this.EbConfig.GetRedisClient();
-            var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
 
-
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(dsid), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(dsid), VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data;
             var fdid = string.Empty;
             foreach (var element in rlist)
@@ -337,9 +319,9 @@ namespace ExpressBase.Web.Controllers
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
             //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", "eb_roby_dev", dsid, 1));
             //redis.Remove(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
-            DataSourceColumnsResponse columnresp = redis.Get<DataSourceColumnsResponse>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
+            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_ds_{1}_columns", ViewBag.cid, dsid));
             if (columnresp == null || columnresp.IsNull)
-                columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsid.ToString(), Token = ViewBag.token });
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsid.ToString() });
 
             //var tvpref = this.GetColumn4DataTable(columnresp.Columns, dsid, fdid, columnresp.IsPaged);
             return null;
@@ -394,7 +376,6 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var ds = new EbObjectSaveOrCommitRequest();
             if (!string.IsNullOrEmpty(ds.RefId))
                 ds.IsSave = true;
@@ -406,7 +387,7 @@ namespace ExpressBase.Web.Controllers
             ds.Json = EbSerializers.Json_Serialize(new EbDataVisualization
             {
                 Name = _dict["dvName"].ToString(),
-                settingsJson = _dict.ToString(),
+                //settingsJson = _dict.ToString(),
                 DataSourceRefId = dsid.ToString(),
                 EbObjectType = EbObjectType.DataVisualization
             });
@@ -415,21 +396,21 @@ namespace ExpressBase.Web.Controllers
             ds.TenantAccountId = ViewBag.cid;
             ds.Relations = dsid.ToString();
 
-            var result = client.Post<EbObjectSaveOrCommitResponse>(ds);
+            var result = this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
             //if (result.Id > 0)
             //    dvid = result.Id;
             if (ViewBag.wc == "dc")
-                this.EbConfig.GetRedisClient().Set(string.Format("{0}", result.RefId), json);
+                this.Redis.Set(string.Format("{0}", result.RefId), json);
             else
-                this.EbConfig.GetRedisClient().Set(string.Format("{0}_uid_{1}", result.RefId, ViewBag.UId), json);
+                this.Redis.Set(string.Format("{0}_uid_{1}", result.RefId, ViewBag.UId), json);
 
             return Json("Success");
         }
 
         // Get all DataSources
-        private void FetchAllDataSources(IServiceClient client)
+        private void FetchAllDataSources()
         {
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
 
             Dictionary<string, EbObjectWrapper> ObjDSListAll = new Dictionary<string, EbObjectWrapper>();
             foreach (var element in resultlist.Data)
@@ -439,9 +420,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         // Get All DVNames for Linking with each other -href click
-        private void FetchAllDataVisualizations(IServiceClient client)
+        private void FetchAllDataVisualizations()
         {
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, TenantAccountId = ViewBag.cid });
 
             Dictionary<string, string> ObjDVListAll = new Dictionary<string, string>();
             foreach (var element in resultlist.Data)

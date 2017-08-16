@@ -100,7 +100,7 @@
                                         <option value="Select Version" data-tokens="Select Version">Compare With</option>
                                         foreach (var version in Allversions)
                                         {
-                                            <option value=@version.Id data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                                            <option value=@version.RefId data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
                                         }
                                     }
                                 </select>
@@ -114,7 +114,7 @@
                     </div>    
                     <a href="#inner_well" class="btn btn-default collapsed" id="execute" data-toggle="collapse" title="Click to open Parameter dialog"><i class="fa fa-chevron-down fa-1x" aria-hidden="true">Render</i></a>
                     <div id="inner_well" class="collapse"></div>               
-                    <a href="" id='run' name='run' class='run btn btn-default disabled'>Run</a>
+                    <div id='run' name='run' class='run btn btn-default disabled'>Run</div>
                 </div>
                 
             </div>

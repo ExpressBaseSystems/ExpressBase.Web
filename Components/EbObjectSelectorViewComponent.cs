@@ -20,9 +20,9 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int type)
+        public async Task<IViewComponentResult> InvokeAsync(int Type)
         {
-            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = string.Empty, VersionId = Int32.MaxValue, EbObjectType = type, TenantAccountId = ViewBag.cid });
+            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = string.Empty, VersionId = Int32.MaxValue, EbObjectType = Type, TenantAccountId = ViewBag.cid });
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)

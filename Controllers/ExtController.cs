@@ -33,7 +33,8 @@ namespace ExpressBase.Web.Controllers
         }
 
         public IActionResult DevSignIn()
-        {    
+        {
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 

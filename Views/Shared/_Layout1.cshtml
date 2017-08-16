@@ -154,8 +154,8 @@
                 }
                 else
                 {
-                    Html.RenderPartial("_SidebarmenuTUser");
-
+                    //<vc:_SidebarmenuTUser></vc:_SidebarmenuTUser>
+                    @await Component.InvokeAsync("_SidebarmenuTUser");
                 }
 
             </div>

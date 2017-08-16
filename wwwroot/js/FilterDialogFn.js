@@ -170,7 +170,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.VersionCode_success = function (data) {
         $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>" + this.Name + " V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
         $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
-        $('#vernav' + this.Obj_Id + tabNum).append("<div class='form-inline well'>  " +
+        $('#vernav' + this.Obj_Id + tabNum).append("<div class='form-inline inner_toolbar' style='margin-bottom:0px;'>  " +
                    " <a href='#' id='execute'class='btn btn-default' data-toggle='tooltip' title='Execute'><i class='fa fa-play fa-1x' aria-hidden='true'></i></a>" +
                               "<div class='verlist input-group'>" +
                                   "<select id='selected_Ver" + tabNum + "' name='selected_Ver' class='selected_Ver selectpicker show-tick form-control' data-live-search='true'>" +
@@ -193,19 +193,23 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             mode: "text/x-sql",
             lineNumbers: true,
             lineWrapping: true,
+            autoRefresh: true,
             readOnly: true,
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
+       
         var getNav = $("#versionNav li.active a").attr("href");
         $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
         $(getNav + ' #selected_Ver' + tabNum).off("change").on("change", this.Differ.bind(this));
         $(getNav + ' #execute').off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this));
         $.LoadingOverlay("hide");
+        setTimeout(function () {
+            window.editor.refresh();
+        }, 500);
         $('.selectpicker').selectpicker({
             size: 4
         });
-
     };
 
     this.Execute = function () {

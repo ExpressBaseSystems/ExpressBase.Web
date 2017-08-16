@@ -268,12 +268,12 @@ namespace ExpressBase.Web.Controllers
                 if (_EbObjectType == EbObjectType.DataSource)
                 {
                     var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
-                    ViewBag.Code = dsobj.Sql;
+                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
                 }
                 if (_EbObjectType == EbObjectType.SqlFunction)
                 {
                     var dsobj = EbSerializers.Json_Deserialize<EbSqlFunction>(element.Json);
-                    ViewBag.Code = dsobj.Sql;
+                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
                 }
             }
             return ViewBag.Code;

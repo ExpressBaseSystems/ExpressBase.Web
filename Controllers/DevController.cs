@@ -21,15 +21,15 @@ using ExpressBase.Objects.Objects;
 using Newtonsoft.Json;
 using ExpressBase.Objects.ObjectContainers;
 using ExpressBase.Objects.Attributes;
+using ServiceStack.Redis;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class DevController : EbBaseController
+    public class DevController : EbBaseNewController
     {
 
-        public DevController(IOptionsSnapshot<EbSetupConfig> ss_settings) : base(ss_settings) { }
-
+        public DevController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -40,13 +40,12 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DevConsole()
         {
-            ViewBag.EbConfig = this.EbConfig;
+            
             return View();
         }
 
         public IActionResult objects()
         {
-            ViewBag.EbConfig = this.EbConfig;
             return View();
         }
 
@@ -78,7 +77,7 @@ namespace ExpressBase.Web.Controllers
         public string SaveFormBuilder()
         {
           var req = this.HttpContext.Request.Form;
-           IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+           IServiceClient client = this.ServiceClient;
           var ds = new EbObjectSaveOrCommitRequest();
 
             ds.IsSave = false;
@@ -99,7 +98,7 @@ namespace ExpressBase.Web.Controllers
         //Jith Builder related
         private string GetHtml2Render(BuilderType type, int objid)
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            IServiceClient client = this.ServiceClient;
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             string _html = string.Empty;
@@ -122,7 +121,7 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             var _type = req["Ebobjtype"];
             BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), _type, true);
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            IServiceClient client = this.ServiceClient;
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             string _html = "";
@@ -141,7 +140,7 @@ namespace ExpressBase.Web.Controllers
 
         public EbObjectWrapper GetFormObj(int objId, int objType)
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            IServiceClient client = this.ServiceClient;
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue, EbObjectType = objType, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             return rlist;
@@ -153,7 +152,7 @@ namespace ExpressBase.Web.Controllers
             if (dsid > 0)
             {
                 //get datasource obj and get fdid
-                IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+                IServiceClient client = this.ServiceClient;
                 var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
                 var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
 
@@ -175,7 +174,7 @@ namespace ExpressBase.Web.Controllers
 
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            IServiceClient client = this.ServiceClient;
             var ds = new EbObjectSaveOrCommitRequest();
             if (string.IsNullOrEmpty(ds.RefId ))
                 ds.IsSave = true;
@@ -200,9 +199,9 @@ namespace ExpressBase.Web.Controllers
             //if (result.Id > 0)
             //    dvid = result.Id;
             if (ViewBag.wc == "dc")
-                this.EbConfig.GetRedisClient().Set(string.Format("{0}", result.RefId), json);
+                this.Redis.Set(string.Format("{0}", result.RefId), json);
             else
-                this.EbConfig.GetRedisClient().Set(string.Format("{0}_uid_{1}", result.RefId, ViewBag.UId), json);
+                this.Redis.Set(string.Format("{0}_uid_{1}", result.RefId, ViewBag.UId), json);
             return Json("Success");
         }
 
@@ -211,7 +210,7 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.EbObjectType = (int)type;
 
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            IServiceClient client = this.ServiceClient;
 
 
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)type, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
@@ -244,7 +243,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
 
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            IServiceClient client = this.ServiceClient;
             ViewBag.Header = "Edit Application";
             int obj_id = Convert.ToInt32(req["objid"]);
             ViewBag.Obj_id = obj_id;
@@ -277,7 +276,7 @@ namespace ExpressBase.Web.Controllers
         public JsonResult SaveApplications()
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            IServiceClient client = this.ServiceClient;
             ViewBag.Header = "Create Application";
             var ds = new EbObjectSaveOrCommitRequest();
             ds.IsSave = false;
@@ -311,8 +310,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult DevLogout()
         {
             ViewBag.Fname = null;
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var abc = client.Post(new Authenticate { provider = "logout" });
+            IServiceClient client = this.ServiceClient;
+            var abc = client.Post(new Authenticate { provider = "logout", Meta = new Dictionary<string, string> { { "wc", ViewBag.wc }, { "cid", ViewBag.cid } } });
             HttpContext.Response.Cookies.Delete("Token");
             HttpContext.Response.Cookies.Delete("rToken");
             return RedirectToAction("DevSignIn", "Ext");
@@ -320,7 +319,7 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult ReportBuilder()
         {
-            IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            IServiceClient client = this.ServiceClient;
             var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = 2, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();

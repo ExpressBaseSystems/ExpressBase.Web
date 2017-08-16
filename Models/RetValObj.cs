@@ -7,7 +7,7 @@ namespace ExpressBase.Web.Models
 {
     public class RetValObj
     {
-        public int DSId { get; set; }
+        public string DSId { get; set; }
 
         public string DVName { get; set; }
 

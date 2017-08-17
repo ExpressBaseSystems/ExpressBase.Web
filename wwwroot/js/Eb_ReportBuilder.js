@@ -28,7 +28,8 @@ var sub = function (name, index, height, subsection) {
    this.subsection = subsection;
 };
 
-var PageElements = function (value, left, top, font) {
+var PageElements = function (id,value, left, top, font) {
+    this.id = id;
     this.value = value;
     this.left = left;
     this.top = top;
@@ -297,22 +298,22 @@ var RptBuilder = function (type) {
     };
 
     this.onDropFn = function (event, ui) {
-        this.subsection1 = [];
+       
         this.dropLoc = $(event.target);
-        var itemToClone = $(ui.draggable);
-        if (!itemToClone.hasClass("dropped")) {
-            $(event.target).append(itemToClone.clone().addClass("dropped").removeClass("draggable").css({
-                width: itemToClone.width(),
-                height: itemToClone.height(),
+        this.itemToClone = $(ui.draggable);
+        if (!this.itemToClone.hasClass("dropped")) {
+            $(event.target).append(this.itemToClone.clone().addClass("dropped").removeClass("draggable").css({
+                width: this.itemToClone.width(),
+                height: this.itemToClone.height(),
                 position: 'absolute',
                 left: this.posLeft - 270,
                 top: this.posTop - 170
             }));
         }
-        else if (itemToClone.hasClass("dropped")) {           
-            $(event.target).append(itemToClone.css({
-                width: itemToClone.width(),
-                height: itemToClone.height(),
+        else if (this.itemToClone.hasClass("dropped")) {
+            $(event.target).append(this.itemToClone.css({
+                width: this.itemToClone.width(),
+                height: this.itemToClone.height(),
                 position: 'absolute',
             }));
         }
@@ -327,10 +328,11 @@ var RptBuilder = function (type) {
         $('.dropped').resizable({
             containment: "parent",
             resize: this.resizeElement.bind(this)
-        });
-        this.subsection1.push(new PageElements(itemToClone.text(), this.posLeft - 270, this.posTop - 170, itemToClone.height()));        
+        });              
+
         $.each(this.report.sections, this.saveElementToObject.bind(this));
-        //this.PropertyMenu();
+        
+        this.PropertyMenu();
     };
 
     this.saveElementToObject = function (i, sec) {
@@ -339,10 +341,11 @@ var RptBuilder = function (type) {
             $.each(sec.subsection, this.saveElementSubNotNull.bind(this, i));
         }
 
-        else if (sec.subsection.length <= 0) {
+        if (this.dropLoc.children('div').length ==0) {
+            
             if (sec.id == this.dropLoc.attr("id")) {
                 console.log(this.dropLoc);
-                this.report.sections[i].subsection.push(this.subsection1);
+                this.report.sections[i].subsection.push(new PageElements(this.itemToClone.attr('id'), this.itemToClone.text(), this.posLeft - 270, this.posTop - 170, this.itemToClone.height()));
             }
         }
     };
@@ -351,7 +354,7 @@ var RptBuilder = function (type) {
 
         if (sub.id === this.dropLoc.attr("id")) {
             console.log(this.dropLoc);
-            this.report.sections[i].subsection[k].subsection.push(this.subsection1);
+            this.report.sections[i].subsection[k].subsection.push(new PageElements(this.itemToClone.attr('id'), this.itemToClone.text(), this.posLeft - 270, this.posTop - 170, this.itemToClone.height()));
         }
     };
 
@@ -369,18 +372,19 @@ var RptBuilder = function (type) {
 
     this.onDrag_Start = function (event, ui) {
 
-        $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:0px;margin-top:-" + this.posTop + "px'></div>");
-        $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px'></div>");
+        $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:0px;margin-top:-" + this.posTop + "px;'></div>");
+        $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px;'></div>");
 
     };
 
-    //this.PropertyMenu = function () {
-    //    this.font_color = null;
-    //    $('#fontcolor').on("change", this.change_fontColor.bind(this));
-    //    $(".dropped").on("click", this.element_click.bind(this));
-    //    // $(".dropped").off("click",this.element_off_Click.bind(this));
+    this.PropertyMenu = function () {
 
-    //};
+        this.font_color = null;
+        $('#fontcolor').on("change", this.change_fontColor.bind(this));
+        $(".dropped").on("click", this.element_click.bind(this));
+        $(".dropped").off("click",this.element_off_Click.bind(this));
+
+    };
 
     this.change_fontColor = function (e) {
         this.font_color = $(e.target).val();
@@ -388,12 +392,17 @@ var RptBuilder = function (type) {
 
     this.element_click = function (e) {
 
-        $(e.target).css("background-color", "#eee");
+        //$(e.target).css("background-color", "#eee");
         $(e.target).css("color", this.font_color);
+
     };
 
     this.element_off_Click = function () {
-        $(this).css("background-color", "");
+        $(this).css("background-color", "none");
+    };
+
+    this.propertyGrid = function () {
+        var pg = new Eb_PropertyGrid("propGrid", { ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }])
     };
 
     this.init = function () {
@@ -404,6 +413,7 @@ var RptBuilder = function (type) {
         this.headerBox1_Split();
         this.headerScaling();
         this.DragDrop_DataSource();
+        this.propertyGrid();
     };
     this.init();
 };
@@ -471,7 +481,7 @@ $.fn.extend({
 });
 
 var ruler = function () {
-    var $ruler = $('.ruler').css({ "width": "1000px", "height": "25px" });
+    var $ruler = $('.ruler').css({ "width": "900px", "height": "25px" });
     for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
         var $tick = $('<div>');
         if (step === 0) {

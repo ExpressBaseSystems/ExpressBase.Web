@@ -7,6 +7,7 @@ using ServiceStack;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.IdentityModel.Tokens.Jwt;
 using ServiceStack.Redis;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -55,6 +56,15 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
+        }
+
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            var tok = this.ServiceClient.BearerToken;
+            if (!string.IsNullOrEmpty(tok))
+                Response.Cookies.Append("Token", this.ServiceClient.BearerToken, new CookieOptions());
+
+            base.OnActionExecuted(context);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DevConsole()
         {
-            
+
             return View();
         }
 
@@ -49,7 +49,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-      
+
 
         [HttpGet]
         public IActionResult Eb_formBuilder()
@@ -76,9 +76,9 @@ namespace ExpressBase.Web.Controllers
 
         public string SaveFormBuilder()
         {
-          var req = this.HttpContext.Request.Form;
-           IServiceClient client = this.ServiceClient;
-          var ds = new EbObjectSaveOrCommitRequest();
+            var req = this.HttpContext.Request.Form;
+            IServiceClient client = this.ServiceClient;
+            var ds = new EbObjectSaveOrCommitRequest();
 
             ds.IsSave = false;
             ds.RefId = req["id"];
@@ -86,8 +86,16 @@ namespace ExpressBase.Web.Controllers
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = req["filterdialogjson"];
-            ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
-            (ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
+
+            if (ds.EbObjectType == 0)
+                ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
+            else if (ds.EbObjectType == 12)
+            {
+                ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
+                (ds.EbObject as EbForm).EbObjectType = EbObjectType.WebForm;
+            }
+
+            //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
             ds.Status = Objects.ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
@@ -102,7 +110,7 @@ namespace ExpressBase.Web.Controllers
         private string GetHtml2Render(BuilderType type, string objid)
         {
             IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(objid), VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objid, VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
             var rlist = resultlist.Data[0];
             string _html = string.Empty;
 
@@ -111,7 +119,7 @@ namespace ExpressBase.Web.Controllers
                 _form = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json) as EbControlContainer;
             else if (type == BuilderType.WebForm)
                 _form = EbSerializers.Json_Deserialize<EbForm>(rlist.Json) as EbControlContainer;
-           
+
 
             if (_form != null)
                 _html += _form.GetHtml();
@@ -149,7 +157,7 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
 
-       
+
         public PartialViewResult FilterDialog(int dsid)
         {
             if (dsid > 0)
@@ -179,7 +187,7 @@ namespace ExpressBase.Web.Controllers
             Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             IServiceClient client = this.ServiceClient;
             var ds = new EbObjectSaveOrCommitRequest();
-            if (string.IsNullOrEmpty(ds.RefId ))
+            if (string.IsNullOrEmpty(ds.RefId))
                 ds.IsSave = true;
             ds.RefId = dvid;
             ds.EbObjectType = (int)EbObjectType.DataVisualization;
@@ -208,7 +216,7 @@ namespace ExpressBase.Web.Controllers
             return Json("Success");
         }
 
-      
+
         public IActionResult EbObjectList(EbObjectType type)
         {
             ViewBag.EbObjectType = (int)type;
@@ -327,8 +335,8 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)
-            {               
-                    ObjList[element.Id] = element;
+            {
+                ObjList[element.Id] = element;
             }
             ViewBag.Objlist = ObjList;
             return View();

@@ -273,12 +273,10 @@ var EbDataTable = function (settings) {
             timeout: 180000,
             data: this.ajaxData.bind(this),
             dataSrc: this.receiveAjaxData.bind(this),
-            //xhrFields: {
-            //    withCredentials: true
-            //},
             beforeSend: function(xhr){
-                xhr.setRequestHeader("Access-Control-Allow-Origin", "http://eb_roby_dev.localhost:53431");
-                xhr.setRequestHeader("Access-Control-Allow-Credentials", "true");
+                //xhr.setRequestHeader("Access-Control-Allow-Origin", "http://expressbase.org");
+                //xhr.setRequestHeader("Access-Control-Allow-Credentials", "true");
+                xhr.setRequestHeader("Authorization", "Bearer" + getToken());
             },
             crossDomain: true
         };

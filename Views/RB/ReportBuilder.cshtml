@@ -17,7 +17,7 @@
 <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">@*jith*@
 <link rel="stylesheet" type="text/css" href="~/css/style.css" />@*amal*@
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" style="margin-top: 20px">
         <div class="reportmenu">
             <div class="form-inline" id="options">
                 <div class="form-group">
@@ -73,6 +73,9 @@
         var myruler = new ruler();
         $("#pagesize").change(function () {
             RptBuilder($(this).val());
+        });
+        $("#Rptbgimg").change(function () {
+            setBackgroud(this);          
         });
     });
 </script>

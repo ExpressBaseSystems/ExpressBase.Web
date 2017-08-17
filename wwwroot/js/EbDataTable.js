@@ -112,8 +112,8 @@ var EbDataTable = function (settings) {
     this.getColumnsSuccess = function (data) {
         //$(".tablecontainer").toggle();
         this.ebSettings = data;
-        this.dsid = this.ebSettings.dsId;//not sure..
-        this.dvName = this.ebSettings.dvName;
+        this.dsid = this.ebSettings.DataSourceRefId;//not sure..
+        this.dvName = this.ebSettings.Name;
 
         if (index !== 1)
             $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
@@ -260,7 +260,7 @@ var EbDataTable = function (settings) {
             },
             lengthMenu: "_MENU_ / Page",
         };
-        o.columns = this.ebSettings.columns;
+        o.columns = this.ebSettings.DTColumnDef;
         o.order = [];
         o.deferRender = true;
         o.filter = true;
@@ -272,7 +272,15 @@ var EbDataTable = function (settings) {
             type: 'POST',
             timeout: 180000,
             data: this.ajaxData.bind(this),
-            dataSrc: this.receiveAjaxData.bind(this)
+            dataSrc: this.receiveAjaxData.bind(this),
+            //xhrFields: {
+            //    withCredentials: true
+            //},
+            beforeSend: function(xhr){
+                xhr.setRequestHeader("Access-Control-Allow-Origin", "http://eb_roby_dev.localhost:53431");
+                xhr.setRequestHeader("Access-Control-Allow-Credentials", "true");
+            },
+            crossDomain: true
         };
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
@@ -283,11 +291,11 @@ var EbDataTable = function (settings) {
     };
 
     this.ajaxData = function (dq) {
-        
+        //alert("xxxxxx");
         delete dq.columns; delete dq.order; delete dq.search;
-        dq.Id = this.dsid;
-        dq.Token = getToken();
-        dq.rToken = getrToken();
+        dq.RefId = this.dsid;
+        //dq.Token = getToken();
+        //dq.rToken = getrToken();
         //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = JSON.stringify(serachItems);
@@ -302,6 +310,7 @@ var EbDataTable = function (settings) {
         if (serachItems.length > 0) {
             this.filterFlag = true;
         }
+
         return dq;
     };
 

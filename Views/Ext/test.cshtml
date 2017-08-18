@@ -1,59 +1,275 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
-  
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Html.RenderPartial("_PageheaderDev");
 }
+<style>
+    .dashbord {
+        background-color: #fafafa;
+        width: 100%;
+        min-height: 300px;
+        border: 1px solid #d3c9c9;
+        border-top: none;
+         font-family: Tahoma;
+    }
 
+    .box1 {
+        height: 100%;
+        padding-right: 0;
+    }
 
- 
-<div class="row" style="margin-top:90px">
-    <div id="div1" class="col-lg-6" style="border:1px solid;width:100px; height:auto">
-        <div id="123" class="alert alert-success columnDrag">test1</div>
-        <div id="11" class="alert alert-success columnDrag">test2</div>
-        <div id="34" class="alert alert-success columnDrag">test3</div>
-        <div id="45" class="alert alert-success columnDrag">test4</div>
-        <div id="56" class="alert alert-success columnDrag">test5</div>
-    </div>
-    <div id="div2" class="col-lg-6" style="border:1px solid;width:100px; height:100px">
+    .box2,.box4 {
+        height: 100%;
+        padding: 0;
+    }
+
+    .box3 {
+        padding-right: 0;
+    }
+
+    .card1 {
+        background-color: white;
+        border-radius: 4px;
+        border: 1px solid #cccccc;
+        margin-left: 15px;
+        height: 120px;
+        margin-top: 10px;
+        padding: 0;       
+        font-weight: 300;
+    }
+
+    .form1 {
+        margin-top: 10px;
+    }
+
+    .count {
+        font-size: 50px;
+    }
+
+    .head {
+        font-size: 18px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .icons {
+        margin-right: 10px;
+    }
+
+    .toolbar {
+        width: 100%;
+        height: 50px;
+    }
+
+    .txtarea {
+        width: 100%;
+        height: 183px !important;
+    }
+
+    .btn-labls {
+        background-color: white;
+    }
+
+    .toolbar {
+        background-color: #fafafa;
+        width: 100%;
+        min-height: 30px;
+        margin-top: 49px;
+        padding-top: 10px;
+    }
+
+    .toolbar2 {
+        margin-top: 5px;
+    }
+
+    .toolicons .btn-default {
+        border: none !important;
+        background-color: #fafafa !important;
+    }
+
+    .toolAlign {
+        margin-left: 35px;
+    }
+
+    .myspan {
+        width: 100%;
+        margin: 10px 0 0 0;
+    }
+
+    .userimg {
+        float: left;
+        display: inline;
         
+    }
+    .profileInfo {
+        margin-left: 35px;
+    }
+
+    .firstcommit {
+        width: 100%;
+        min-height: 60px;
+    }
+
+    .lastCommit {
+        width: 100%;
+        min-height: 60px;
+    }
+
+    .col-md-3 {
+        width: 23% !important;
+    }
+    .col-md-1 {
+    width: 9.333333% !important;
+}
+    .smallfont{
+        font-size:12px;
+    }
+    .xtrasmall{
+    font-size:10px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="toolbar">
+            <div class="col-md-3 brdCrumb">
+                <p>Home/DataSource/</p>
+            </div>
+            <div class="col-md-9">
+                <div class='toolicons form-inline pull-right'>
+                    <div class='form-group'>
+                        <button class='btn btn-default'><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+                        <button class='btn btn-default'><i class="fa fa-upload" aria-hidden="true"></i> Commit</button>
+                        <button class='btn btn-default'><i class="fa fa-files-o" aria-hidden="true"></i> Compare</button>
+                        <button class='btn btn-default' id="minmize"><i class="fa fa-caret-down" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <input type="text" id="abc">
+    <div class="row">
+        <div class="dashbord">
+            <div class="col-md-3 box1">
+                <div class="form-group form1">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-database"></i></div>
+                        <input type="text" class="form-control" id="inlineFormInputGroup">
+                    </div>
+                    <div class="form-group ">
+                        <label style="margin-top:10px;">Description</label>
+                        <textarea class="form-control txtarea"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 box2">
+
+                <div class="col-md-3 card1">
+                    <div class="head text-center">
+                        Total Versions
+                    </div>
+                    <div class="count text-center">
+                        2
+                    </div>
+                </div>
+                <div class="col-md-3 card1">
+                    <div class="head text-center">
+                        Status
+                    </div>
+                    <div style="color:#0db71b" class="count text-center">
+                        Live
+                    </div>
+                </div>
+                <div class="col-md-3 card1">
+                    <div class="head text-center">
+                        Live Version
+                    </div>
+                    <div class="count text-center">
+                        V.6
+                    </div>
+                </div>
+                <div class="col-md-3 card1">
+                    <div class="head text-center">
+                        Related Objects
+                    </div>
+                    <div class="count text-center">
+                        2
+                    </div>
+                </div>
+                <div class="col-md-3 card1">
+                    <div class="head text-center">
+                        Featured
+                    </div>
+                    <div class="count text-center">
+                        2
+                    </div>
+                </div>
+                <div class="col-md-3 card1">
+                    <div class="head text-center">
+                        Object Size
+                    </div>
+                    <div class="count text-center">
+                        12 Kb
+                    </div>
+                </div>
+                <div class="col-md-3 card1">
+                    <div class="head text-center">
+                        Object Size
+                    </div>
+                    <div class="count text-center">
+                        12 Kb
+                    </div>
+                </div>
+                <div class="col-md-3 card1">
+                    <div class="head text-center">
+                        Object Size
+                    </div>
+                    <div class="count text-center">
+                        12 Kb
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-1 box3">
+                <div class="firstcommit">
+                    <h6 class="smallfont">First Commit </h6>
+                    <div style="display:block">
+                        <div class="userimg">
+                            <img src="~/images/proimg.jpg" style="width:30px" />
+                        </div>
+                        <div class="profileInfo">
+                            <h6 class="xtrasmall">Mr X</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="myspan">Application
+                <div class="xtrasmall">appl1</div>
+                </div>
+            </div>
+            <div class="col-md-1 box4">
+                <div class="lastCommit">
+                    <h6 class="smallfont">Last Commit</h6>
+                    <div style="display:block">
+                        <div class="userimg">
+                            <img src="~/images/proimg.jpg" style="width:30px" />
+                        </div>
+                        <div class="profileInfo">
+                            <h6 class="xtrasmall">Mr X</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="myspan">
+                    Module
+                    <div class="xtrasmall">mod1</div>
+                </div>                              
+            </div>
+        </div>
+    </div>
 </div>
+
 <script>
-    $('document').ready(function () {
-        var ids = "";
-        var temp = new dragula([document.getElementById("div1"), document.getElementById("div2")], {
-            accepts: function (el, target, source, sibling) {
-                if ($(target).attr("id") === "div1") {
-                    return false;
-                }
-                else {
-                    return true;
-                }
 
-            }
+    $(function () {
+        $('#minmize').click(function () {
+            $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");
+            $('.dashbord').toggle();
+
         });
-        temp.on("drop", function (el, target, source, sibling) {
-            $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button>")
-            ids = $(el).attr("id") + ",";
-            //ids = ids.substring(0, ids.length - 1);
-            var txt = $("#abc").val();
-            $("#abc").val(txt+ids);
-        });
-        $(document).on('click', '.close', function (e) {
-            var id = $(e.target).parent().attr("id");
-            var text = $(e.target).parent().text();
-            text = text.substring(0, text.length - 1);
-            $("#" + id).remove();
-            $("#div1").append("<div id=" + id + " class='alert alert-success columnDrag'>" + text + "</div>");
-            //var arr =$("#abc").text().split(",");
-            var txt = $("#abc").val();
-            alert(txt);
-            txt = txt.toString().replace(id + ",", "");
-            $("#abc").val(txt);
-        });
-        
     });
-   
-
-
 </script>

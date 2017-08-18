@@ -282,15 +282,17 @@
                 selected.push($(this).attr('value'));
             });
 
-            var selectedroles;
+            var selectedroles = "";
             $('#rolesdiv input:checked').each(function () {
                 selectedroles += $(this).attr('value');
+               // alert(selectedroles);
             });
 
             var txt = $("#userslist").val();
             txt = txt.substring(0, txt.length - 1);
+            
             $.post("../TenantUser/SaveRoles",
-            {
+            {              
                 "Permissions": selected,
                 "RoleName": $('#role_name').val(),
                 "RoleId": $('#roleid').val(),

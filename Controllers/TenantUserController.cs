@@ -332,7 +332,7 @@ namespace ExpressBase.Web2.Controllers
 
         }
 
-        public string SaveRoles(int RoleId, int ApplicationId,string RoleName, string Description, string users, string[] Permissions, int[] subrolesid)
+        public string SaveRoles(int RoleId, int ApplicationId,string RoleName, string Description, string users, string[] Permissions, string subrolesid)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();

@@ -7,6 +7,16 @@
     border-right: 0;
 }
 
+.reportmenu .btn-default {
+    color: #333 !important;
+    border: none !important;
+    background-color: #fafafa !important;
+    
+}
+#pagesize{
+    border: none;
+    background-color: #fafafa;
+}
 .multiSplit {
     width: 30px;
     float: left;
@@ -132,10 +142,13 @@
     z-index: -1;
 }
 
-#PageContainer {
-    margin-left: 26px;
+#PageContainer {   
 }
 
+.pGreportBuilder{
+    margin-top:31px;
+    position:fixed;
+}
 .head_Box1{
     display: flex;
     justify-content: center;

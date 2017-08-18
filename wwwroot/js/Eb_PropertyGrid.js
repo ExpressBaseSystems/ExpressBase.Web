@@ -180,7 +180,8 @@
         this.getvaluesFromPG();
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
-        this.PropsObj.RenderMe();
+        if (this.PropsObj.RenderMe)
+            this.PropsObj.RenderMe();
     };
 
     this.init = function () {
@@ -199,7 +200,8 @@
 
         $('#propGrid table td').find("input").change(this.OnInputchangedFn.bind(this));
 
-        this.PropsObj.RenderMe();
+        if (this.PropsObj.RenderMe)
+            this.PropsObj.RenderMe();
     };
 
     this.init();

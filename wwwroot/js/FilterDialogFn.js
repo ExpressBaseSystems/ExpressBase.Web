@@ -40,10 +40,10 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('#execute').off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
-        $('#selected_Ver').off("change").on("change", this.Differ.bind(this));
-        $('#fd').off("change").on("change", this.Clear_fd.bind(this));
+        $('#selected_Ver').off("change").on("change", this.Differ.bind(this));      
         $(".selectpicker").selectpicker();
         $("#fdlist .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
+        $('#fd').off("change").on("change", this.Clear_fd.bind(this));
         $('#fd').off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
     }
 
@@ -171,16 +171,24 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>" + this.Name + " V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
         $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
         $('#vernav' + this.Obj_Id + tabNum).append("<div class='form-inline inner_toolbar' style='margin-bottom:0px;'>  " +
-                   " <a href='#' id='execute'class='btn btn-default' data-toggle='tooltip' title='Execute'><i class='fa fa-play fa-1x' aria-hidden='true'></i></a>" +
-                              "<div class='verlist input-group'>" +
+                  " <div class='btn btn-group'>"+
+                        "<div class='verlist input-group'>" +
                                   "<select id='selected_Ver" + tabNum + "' name='selected_Ver' class='selected_Ver selectpicker show-tick form-control' data-live-search='true'>" +
-                                  "<option value='Select Version' data-tokens='Select Version'>Compare With</option>")
-        $.each(this.Versions, this.VersionCode_drpListItem.bind(this));
+                                  "<option value='Select Version' data-tokens='Select Version'>Compare With</option>");
+                                     $.each(this.Versions, this.VersionCode_drpListItem.bind(this));
         $('#vernav' + this.Obj_Id + tabNum).append("</select>" +
-                        "</div>" +
-                        "<div id='inner_well" + tabNum + "'></div>"
-                        );
-        $('#vernav' + this.Obj_Id + tabNum).append("</div>");
+                       "</div>" +
+                    "<div class='dropdown fdlist btn-group' id='fdlist'>"+
+                         "<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true'></select>" +
+                         "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd' style='display:none;color:dodgerblue;'></i>"+
+                     "</div>"+
+                   "<a href='#inner_well' class='btn btn-default collapsed' id='execute' data-toggle='collapse' title='Click to open Parameter dialog'><i class='fa fa-chevron-down fa-1x' aria-hidden='true'>Render</i></a>"+
+                 "</div>"+ 
+           "</div>"+
+          "<div id='inner_well' class='collapse'></div>"+
+                    "<div id='run' name='run' class='run btn btn-default disabled'>Run</div>");
+        $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
+        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
         $('#vernav' + this.Obj_Id + tabNum).append(
          " <div><label class = 'label label-default codeEditLabel'>Version V." + this.HistoryVerNum + "</label>" +
             " <label class = 'label label-default codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
@@ -238,7 +246,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.RunSqlFn = function () {
         $.LoadingOverlay("show");
         this.SetValues();
-        if ($('#fd option:selected').text() === "Select Filter Dialog") {
+        if ($('.fd option:selected').text() === "Select Filter Dialog") {
             alert("Please select a filter dialog");
             $.LoadingOverlay("hide");
         }
@@ -426,7 +434,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.Load_Fd = function () {
         var getNav = $("#versionNav li.active a").attr("href");
         if ($(getNav + ' #inner_well').children().length === 0) {
-            $.post("../CE/GetByteaEbObjects_json", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
+            $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
             function (result) {
                 $(getNav + ' #inner_well').append(result);
                 $(getNav + ' #run').removeClass('disabled');
@@ -490,6 +498,14 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         $('#oldtext' + verid + tabNum).html("<div class='diffHeader'>v." + old_ver_num + "</div>" + data[0]);
         $('#newtext' + verid + tabNum).html("<div class='diffHeader'>v." + new_ver_num + "</div>" + data[1]);
+        $('.leftPane').scroll(function () {
+            $('.rightPane').scrollTop($(this).scrollTop());
+            $('.rightPane').scrollLeft($(this).scrollLeft());
+        });
+        $('.rightPane').scroll(function () {
+            $('.leftPane').scrollTop($(this).scrollTop());
+           $('.leftPane').scrollLeft($(this).scrollLeft());
+        });
         $.LoadingOverlay("hide");
     };
 

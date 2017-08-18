@@ -14,7 +14,8 @@
     }
     this.Metas = metas;
     this.PropsObj = props;
-    this.$container = $("#" + id);
+    this.$wraper = $("#" + id);
+    this.$container = null;
     this.containerId = id;
     this.propNames = [];
 
@@ -184,7 +185,42 @@
             this.PropsObj.RenderMe();
     };
 
+    this.addControl = function (name) {
+        if (this.$container.data("controls")) {
+            if (!this.$container.data("controls").contains(name))
+                this.$container.data("controls").push(name);
+
+            $(".controls-dd-cont select").append("<option id='SelOpt" + name + "'>" + name + "</option>");
+            $('.selectpicker').selectpicker('refresh');
+        }
+        else
+            this.$container.data("controls", []);
+
+    };
+
+    this.removeControl = function (name) {
+        var index = this.$container.data("controls").indexOf(name);
+            if (index > -1) {
+                this.$container.data("controls").splice(index, 1);
+
+                $("#SelOpt" + name).remove();
+                $('.selectpicker').selectpicker('refresh');
+            }
+    };
+
     this.init = function () {
+
+        if ($("#propGrid").length === 0) {
+            this.$wraper.append($("<div class='pgHead'>Properties <i class='fa fa-thumb-tack pin' aria-hidden='true'></i></div> <div class='controls-dd-cont'> <select class='selectpicker' data-live-search='true'> </select> </div>"));
+            this.$wraper.append($("<div id='propGrid' class='propgrid-table-cont'></div>"));
+            this.$container = $("#propGrid");
+        }
+        else {
+            this.$container = $("#propGrid");
+            this.$container.empty();
+        }
+
+
         for (var i = 0; i < this.Metas.length; i++)
             this.propNames.push(this.Metas[i].name);
 

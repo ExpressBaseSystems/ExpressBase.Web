@@ -30,7 +30,7 @@
             $('#save').remove();
             $('#stat_his').remove();
             $('#rel_obj').remove();
-        }        
+        }
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {
             $("#sample").DataTable().destroy();
@@ -51,7 +51,7 @@
     <div class="form-inline btn-group well well-sm" role="group" aria-label="First group" style="width:100%;margin-bottom:0px;">
         <div class="input-group">
             <span class="input-group-addon" aria-hidden="true"><i class="fa fa-database fa-1x"></i></span>
-            <input type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control" style="width: 196%;"/>
+            <input type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control" style="width: 196%;" />
         </div>
         <div class="pull-right">
             <div class="form-group btn-group">
@@ -66,11 +66,12 @@
                     </ul>
                 </div>
                 <a href="#" id="rel_obj" class="btn btn-default rel_obj" data-toggle="tooltip" title="Related Objects"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+                <a href="#" id="compare" class="btn btn-default compare" data-toggle="tooltip" title="Compare with another version"><i class="fa fa-files-o fa-1x" aria-hidden="true"></i></a>
                 <a href="#" class="btn btn-default samp_cod" data-toggle="tooltip" title="Sample Code"><i class="fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
                 @*<a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn fa fa-code-fork fa-1x" aria-hidden="true"></i></a>*@
                 <a href="#" id="stat_his" class="btn btn-default stat_his" data-toggle="tooltip" title="Status History"><i class="fa fa-line-chart fa-1x" aria-hidden="true"> @ViewBag.Status</i></a>
                 <a href="#" class="btn btn-default ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-group fa fa-history fa-1x" aria-hidden="true"> v.@ViewBag.VersionNumber</i></a>
- </div>
+            </div>
         </div>
         @*</div>*@
     </div>
@@ -78,7 +79,7 @@
         <span class="input-group-addon" aria-hidden="true">Description</span>
         <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
     </div>
-    
+
 </div>
 <div class="row">
     <ul class="nav nav-tabs versionNav" id="versionNav">
@@ -88,33 +89,14 @@
         <div id="code_edit0" class="tab-pane fade in active">
             <div class="form-inline inner_toolbar" style="margin-bottom:0px;">
                 <div class="btn btn-group">
-                    @{ if (ViewBag.IsNew == "false")
-                        {
-                            <div class="verlist input-group">
-                                <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker show-tick" data-live-search="true">
-                                    @{ 
-                                        @using ExpressBase.Objects.ServiceStack_Artifacts;
-                                        List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
-                                        Allversions = ViewBag.Allversions;
-                                        <option value="Select Version" data-tokens="Select Version">Compare With</option>
-                                        foreach (var version in Allversions)
-                                        {
-                                            <option value=@version.RefId data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                                        }
-                    }
-
                     <div class="dropdown fdlist btn-group" id="fdlist">
                         <select id="fd" name="fd" class="fd selectpicker show-tick" data-live-search="true"></select>
                         <i class="fa fa-circle-o-notch fa-spin fa-1x fa-fw" id="loader_fd" style="display:none;color:dodgerblue;"></i>
-                    </div>    
+                    </div>
                     <a href="#inner_well" class="btn btn-default collapsed" id="execute" data-toggle="collapse" title="Click to open Parameter dialog"><i class="fa fa-chevron-down fa-1x" aria-hidden="true">Render</i></a>
                 </div>
                 <div id="inner_well" class="collapse well"></div>
-                <div id='run' name='run' class='run btn btn-default disabled'>Run</div>  
+                <div id='run' name='run' class='run btn btn-default disabled'>Run</div>
             </div>
 
             <div class="col-md-12" style="margin:0;padding:0;">
@@ -127,346 +109,412 @@
     </div>
 </div>
 
-<script type="text/javascript">
 
-    window.onload = function() {
-        CodeMirror.commands.autocomplete = function(cm)
-        {
-            CodeMirror.showHint(cm, @ViewBag.EditorHint);
-        };
+<div>
+    <div class="well" style="height:150px">
+        Compare With:
+        <div>
+            <div class="col-md-3 col-md-offset-2 ">
+                <input type="radio" name="compWith" value="1" checked> Current vs Specific<br>
+                @{ if (ViewBag.IsNew == "false")
+                    {
+                        <div class="verlist input-group">
+                            <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker show-tick" data-live-search="true">
+                                @{
+                                    @using ExpressBase.Objects.ServiceStack_Artifacts;
+                                    List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
+                                    Allversions = ViewBag.Allversions;
+                                    <option value="Select Version" data-tokens="Select Version">Select version</option>
+                                    foreach (var version in Allversions)
+                                    {
+                                        <option value=@version.RefId data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                                    }
+                }
+            </div>
+            <div class="col-md-4">
+                <input type="radio" name="compWith" value="2"> Specific vs Specefic<br>
+                @{ if (ViewBag.IsNew == "false")
+                    {
+                        <div class="verlist input-group col-md-6" style="display:inline-block">
+                            <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker show-tick" data-live-search="true">
+                                @{
+                                    List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
+                                    Allversions = ViewBag.Allversions;
+                                    <option value="Select Version" data-tokens="Select Version">Select version</option>
+                                    foreach (var version in Allversions)
+                                    {
+                                        <option value=@version.RefId data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                                    }
+                                }
+                            </select>
+                        </div>
 
-        window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-            mode: "@ViewBag.EditorMode",
-            lineNumbers: true,
-            lineWrapping: false,
-            extraKeys: { "Ctrl-Space": "autocomplete" },
-            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-        var orig = CodeMirror.hint.sql;
-        CodeMirror.hint.sql = function (editor) {
-            var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
-            var SqlFnList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SqlFns));
-            $.each(SqlFnList, function (i, fdj) {
-                inner.list.push(fdj);
-            });
-            var cursor = editor.getCursor();
-            var currentLine = editor.getLine(cursor.line);
-            var start = cursor.ch;
-            var end = start;
-            while (end < currentLine.length && /[\w$]+/.test(currentLine.charAt(end))) ++end;
-            while (start && /[\w$]+/.test(currentLine.charAt(start - 1))) --start;
-            var curWord = start != end && currentLine.slice(start, end);
-            var regex = new RegExp('^' + curWord, 'i');
-            var result = {
-                list: (!curWord ? inner.list : inner.list.filter(function (item) {
-                    return item.match(regex);
-                })).sort(),
-                from: CodeMirror.Pos(cursor.line, start),
-                to: CodeMirror.Pos(cursor.line, end)
+                        <div class="verlist input-group col-md-6" style="display:inline-block ">
+                            <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker show-tick" data-live-search="true">
+                                @{
+                                    Allversions = ViewBag.Allversions;
+                                    <option value="Select Version" data-tokens="Select Version">Select version</option>
+                                    foreach (var version in Allversions)
+                                    {
+                                        <option value=@version.RefId data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                                    }
+                }
+            </div>
+        </div>
+
+        <button id="" class="compare_inner" style="margin-top: 57px;margin-left: 86px;">Comapre</button>
+    </div>
+    <div id="compare_result"></div>
+</div>
+
+    <script type="text/javascript">
+
+        window.onload = function() {
+            CodeMirror.commands.autocomplete = function(cm)
+            {
+                CodeMirror.showHint(cm, @ViewBag.EditorHint);
             };
 
-            return result;
+            window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+                mode: "@ViewBag.EditorMode",
+                lineNumbers: true,
+                lineWrapping: false,
+                extraKeys: { "Ctrl-Space": "autocomplete" },
+                foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+            });
+            var orig = CodeMirror.hint.sql;
+            CodeMirror.hint.sql = function (editor) {
+                var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
+                var SqlFnList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SqlFns));
+                $.each(SqlFnList, function (i, fdj) {
+                    inner.list.push(fdj);
+                });
+                var cursor = editor.getCursor();
+                var currentLine = editor.getLine(cursor.line);
+                var start = cursor.ch;
+                var end = start;
+                while (end < currentLine.length && /[\w$]+/.test(currentLine.charAt(end))) ++end;
+                while (start && /[\w$]+/.test(currentLine.charAt(start - 1))) --start;
+                var curWord = start != end && currentLine.slice(start, end);
+                var regex = new RegExp('^' + curWord, 'i');
+                var result = {
+                    list: (!curWord ? inner.list : inner.list.filter(function (item) {
+                        return item.match(regex);
+                    })).sort(),
+                    from: CodeMirror.Pos(cursor.line, start),
+                    to: CodeMirror.Pos(cursor.line, end)
+                };
+
+                return result;
+            };
+            //    CodeMirror.commands["selectAll"](editor);
+
+            //    function getSelectedRange() {
+            //        return { from: editor.getCursor(true), to: editor.getCursor(false) };
+            //    }
+
+            //    function autoFormatSelection() {
+            //        var range = getSelectedRange();
+            //        editor.autoFormatRange(range.from, range.to);
+            //    }
+
+            //    function commentSelection(isComment) {
+            //        var range = getSelectedRange();
+            //        alert(range);
+            //        alert(isComment);
+            //        editor.commentRange(isComment, range.from, range.to);
+            //    }
+            //    $('#comment').on('click',function(){
+            //        commentSelection(true);
+            //    })
+            //    CodeMirror.extendMode("css", {
+            //        commentStart: "/*",
+            //        commentEnd: "*/",
+            //        newlineAfterToken: function(type, content) {
+            //            return /^[;{}]$/.test(content);
+            //        }
+            //    });
+
+            //    CodeMirror.extendMode("javascript", {
+            //        commentStart: "/*",
+            //        commentEnd: "*/",
+            //        // FIXME semicolons inside of for
+            //        newlineAfterToken: function(type, content, textAfter, state) {
+            //            if (this.jsonMode) {
+            //                return /^[\[,{]$/.test(content) || /^}/.test(textAfter);
+            //            } else {
+            //                if (content == ";" && state.lexical && state.lexical.type == ")") return false;
+            //                return /^[;{}]$/.test(content) && !/^;/.test(textAfter);
+            //            }
+            //        }
+            //    });
+
+            //    CodeMirror.extendMode("xml", {
+            //        commentStart: "<!--",
+            //        commentEnd: "-->",
+            //        newlineAfterToken: function(type, content, textAfter) {
+            //            return type == "tag" && />$/.test(content) || /^</.test(textAfter);
+            //        }
+            //    });
+
+            //    // Comment/uncomment the specified range
+            //    CodeMirror.defineExtension("commentRange", function (isComment, from, to) {
+            //        var cm = this, curMode = CodeMirror.innerMode(cm.getMode(), cm.getTokenAt(from).state).mode;
+            //        cm.operation(function() {
+            //            if (isComment) { // Comment range
+            //                cm.replaceRange(curMode.commentEnd, to);
+            //                cm.replaceRange(curMode.commentStart, from);
+            //                if (from.line == to.line && from.ch == to.ch) // An empty comment inserted - put cursor inside
+            //                    cm.setCursor(from.line, from.ch + curMode.commentStart.length);
+            //            } else { // Uncomment range
+            //                var selText = cm.getRange(from, to);
+            //                var startIndex = selText.indexOf(curMode.commentStart);
+            //                var endIndex = selText.lastIndexOf(curMode.commentEnd);
+            //                if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
+            //                    // Take string till comment start
+            //                    selText = selText.substr(0, startIndex)
+            //                    // From comment start till comment end
+            //                      + selText.substring(startIndex + curMode.commentStart.length, endIndex)
+            //                    // From comment end till string end
+            //                      + selText.substr(endIndex + curMode.commentEnd.length);
+            //                }
+            //                cm.replaceRange(selText, from, to);
+            //            }
+            //        });
+            //    });
+
+            //    // Applies automatic mode-aware indentation to the specified range
+            //    CodeMirror.defineExtension("autoIndentRange", function (from, to) {
+            //        var cmInstance = this;
+            //        this.operation(function () {
+            //            for (var i = from.line; i <= to.line; i++) {
+            //                cmInstance.indentLine(i, "smart");
+            //            }
+            //        });
+            //    });
+
+            //    // Applies automatic formatting to the specified range
+            //    CodeMirror.defineExtension("autoFormatRange", function (from, to) {
+            //        var cm = this;
+            //        var outer = cm.getMode(), text = cm.getRange(from, to).split("\n");
+            //        var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
+            //        var tabSize = cm.getOption("tabSize");
+
+            //        var out = "", lines = 0, atSol = from.ch == 0;
+            //        function newline() {
+            //            out += "\n";
+            //            atSol = true;
+            //            ++lines;
+            //        }
+
+            //        for (var i = 0; i < text.length; ++i) {
+            //            var stream = new CodeMirror.StringStream(text[i], tabSize);
+            //            while (!stream.eol()) {
+            //                var inner = CodeMirror.innerMode(outer, state);
+            //                var style = outer.token(stream, state), cur = stream.current();
+            //                stream.start = stream.pos;
+            //                if (!atSol || /\S/.test(cur)) {
+            //                    out += cur;
+            //                    atSol = false;
+            //                }
+            //                if (!atSol && inner.mode.newlineAfterToken &&
+            //                    inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i+1] || "", inner.state))
+            //                    newline();
+            //            }
+            //            if (!stream.pos && outer.blankLine) outer.blankLine(state);
+            //            if (!atSol) newline();
+            //        }
+
+            //        cm.operation(function () {
+            //            cm.replaceRange(out, from, to);
+            //            for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
+            //                cm.indentLine(cur, "smart");
+            //            cm.setSelection(from, cm.getCursor(false));
+            //        });
+            //    });
         };
-        //    CodeMirror.commands["selectAll"](editor);
+    </script>
 
-        //    function getSelectedRange() {
-        //        return { from: editor.getCursor(true), to: editor.getCursor(false) };
-        //    }
+    <style>
+            .align_singleLine {
+                display: inline-block;
+                margin-right: 10px;
+                align-content: center;
+            }
 
-        //    function autoFormatSelection() {
-        //        var range = getSelectedRange();
-        //        editor.autoFormatRange(range.from, range.to);
-        //    }
+            .CodeMirror {
+                height: 500px;
+                background-color: ivory;
+            }
 
-        //    function commentSelection(isComment) {
-        //        var range = getSelectedRange();
-        //        alert(range);
-        //        alert(isComment);
-        //        editor.commentRange(isComment, range.from, range.to);
-        //    }
-        //    $('#comment').on('click',function(){
-        //        commentSelection(true);
-        //    })
-        //    CodeMirror.extendMode("css", {
-        //        commentStart: "/*",
-        //        commentEnd: "*/",
-        //        newlineAfterToken: function(type, content) {
-        //            return /^[;{}]$/.test(content);
-        //        }
-        //    });
+            .table-responsive {
+                overflow-x: inherit;
+            }
 
-        //    CodeMirror.extendMode("javascript", {
-        //        commentStart: "/*",
-        //        commentEnd: "*/",
-        //        // FIXME semicolons inside of for
-        //        newlineAfterToken: function(type, content, textAfter, state) {
-        //            if (this.jsonMode) {
-        //                return /^[\[,{]$/.test(content) || /^}/.test(textAfter);
-        //            } else {
-        //                if (content == ";" && state.lexical && state.lexical.type == ")") return false;
-        //                return /^[;{}]$/.test(content) && !/^;/.test(textAfter);
-        //            }
-        //        }
-        //    });
+            .inputBox {
+                width: 216px;
+            }
 
-        //    CodeMirror.extendMode("xml", {
-        //        commentStart: "<!--",
-        //        commentEnd: "-->",
-        //        newlineAfterToken: function(type, content, textAfter) {
-        //            return type == "tag" && />$/.test(content) || /^</.test(textAfter);
-        //        }
-        //    });
+            .controls-group {
+                overflow-y: inherit;
+            }
 
-        //    // Comment/uncomment the specified range
-        //    CodeMirror.defineExtension("commentRange", function (isComment, from, to) {
-        //        var cm = this, curMode = CodeMirror.innerMode(cm.getMode(), cm.getTokenAt(from).state).mode;
-        //        cm.operation(function() {
-        //            if (isComment) { // Comment range
-        //                cm.replaceRange(curMode.commentEnd, to);
-        //                cm.replaceRange(curMode.commentStart, from);
-        //                if (from.line == to.line && from.ch == to.ch) // An empty comment inserted - put cursor inside
-        //                    cm.setCursor(from.line, from.ch + curMode.commentStart.length);
-        //            } else { // Uncomment range
-        //                var selText = cm.getRange(from, to);
-        //                var startIndex = selText.indexOf(curMode.commentStart);
-        //                var endIndex = selText.lastIndexOf(curMode.commentEnd);
-        //                if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
-        //                    // Take string till comment start
-        //                    selText = selText.substr(0, startIndex)
-        //                    // From comment start till comment end
-        //                      + selText.substring(startIndex + curMode.commentStart.length, endIndex)
-        //                    // From comment end till string end
-        //                      + selText.substr(endIndex + curMode.commentEnd.length);
-        //                }
-        //                cm.replaceRange(selText, from, to);
-        //            }
-        //        });
-        //    });
+            .fd_top_content {
+                margin-bottom: 10px;
+            }
 
-        //    // Applies automatic mode-aware indentation to the specified range
-        //    CodeMirror.defineExtension("autoIndentRange", function (from, to) {
-        //        var cmInstance = this;
-        //        this.operation(function () {
-        //            for (var i = from.line; i <= to.line; i++) {
-        //                cmInstance.indentLine(i, "smart");
-        //            }
-        //        });
-        //    });
+            #obj_desc {
+                height: 46px;
+            }
+            /*.codeEditLabel {
+            padding-top: 9px;
+            padding-bottom: 10px;
+        }*/
+            .dropdown {
+                position: relative;
+                margin-right: -6px;
+            }
 
-        //    // Applies automatic formatting to the specified range
-        //    CodeMirror.defineExtension("autoFormatRange", function (from, to) {
-        //        var cm = this;
-        //        var outer = cm.getMode(), text = cm.getRange(from, to).split("\n");
-        //        var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
-        //        var tabSize = cm.getOption("tabSize");
+            .verlist {
+                width: 140px;
+            }
 
-        //        var out = "", lines = 0, atSol = from.ch == 0;
-        //        function newline() {
-        //            out += "\n";
-        //            atSol = true;
-        //            ++lines;
-        //        }
+            .inner_toolbar {
+                border;
+            }
 
-        //        for (var i = 0; i < text.length; ++i) {
-        //            var stream = new CodeMirror.StringStream(text[i], tabSize);
-        //            while (!stream.eol()) {
-        //                var inner = CodeMirror.innerMode(outer, state);
-        //                var style = outer.token(stream, state), cur = stream.current();
-        //                stream.start = stream.pos;
-        //                if (!atSol || /\S/.test(cur)) {
-        //                    out += cur;
-        //                    atSol = false;
-        //                }
-        //                if (!atSol && inner.mode.newlineAfterToken &&
-        //                    inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i+1] || "", inner.state))
-        //                    newline();
-        //            }
-        //            if (!stream.pos && outer.blankLine) outer.blankLine(state);
-        //            if (!atSol) newline();
-        //        }
+            /*differ styles*/
 
-        //        cm.operation(function () {
-        //            cm.replaceRange(out, from, to);
-        //            for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
-        //                cm.indentLine(cur, "smart");
-        //            cm.setSelection(from, cm.getCursor(false));
-        //        });
-        //    });
-    };
-</script>
+            #diffBar {
+                width: 3%;
+                height: 100%;
+                float: left;
+                position: relative;
+                background: #DDDDDD;
+            }
 
-<style>
-     .align_singleLine {
-        display: inline-block;
-        margin-right: 10px;
-        align-content: center;
-    }
+            .diffBarLineLeft, .diffBarLineRight {
+                width: 50%;
+                float: left;
+                height: 0px;
+                cursor: pointer;
+            }
 
-    .CodeMirror {
-        height: 500px;
-        background-color: ivory;
-    }
+            .inView {
+                background-repeat: repeat;
+            }
 
-    .table-responsive {
-        overflow-x: inherit;
-    }
-
-    .inputBox {
-        width: 216px;
-    }
-
-    .controls-group {
-        overflow-y: inherit;
-    }
-
-    .fd_top_content {
-        margin-bottom: 10px;
-    }
-
-    #obj_desc {
-        height:46px;
-    }
-    /*.codeEditLabel {
-        padding-top: 9px;
-        padding-bottom: 10px;
-    }*/
-    .dropdown {
-        position: relative;
-        margin-right: -6px;
-    }
-
-    .verlist {
-        width: 100px;
-    }
-
-    .inner_toolbar{
-        border
-    }
-
-    /*differ styles*/
-
-    #diffBar {
-        width: 3%;
-        height: 100%;
-        float: left;
-        position: relative;
-        background: #DDDDDD;
-    }
-
-    .diffBarLineLeft, .diffBarLineRight {
-        width: 50%;
-        float: left;
-        height: 0px;
-        cursor: pointer;
-    }
-
-    .inView {
-        background-repeat: repeat;
-    }
-
-    #activeBar {
-        position: absolute;
-        top: 0px;
-        background-color: #6699FF;
-        opacity: 0.5;
-        filter: alpha(opacity= '50');
-    }
+            #activeBar {
+                position: absolute;
+                top: 0px;
+                background-color: #6699FF;
+                opacity: 0.5;
+                filter: alpha(opacity= '50');
+            }
 
 
-    #diffBox {
-        margin-left: auto;
-        margin-right: auto;
-        border: solid 2px #000000;
-    }
+            #diffBox {
+                margin-left: auto;
+                margin-right: auto;
+                border: solid 2px #000000;
+            }
 
 
-    .leftPane, .rightPane {
-        float: left;
-        width: 50%;
-        font-family: monospace;
-        height: 400px;
-        color: black;
-        overflow-x: scroll;
-        resize: both;
-    }
+            .leftPane, .rightPane {
+                float: left;
+                width: 50%;
+                font-family: monospace;
+                height: 400px;
+                color: black;
+                overflow-x: scroll;
+                resize: horizontal;
+            }
 
-    .diffHeader {
-        font-weight: bold;
-        padding: 2px 0px 2px 10px;
-        background-color: #FFFFFF;
-        text-align: center;
-    }
+            .diffHeader {
+                font-weight: bold;
+                padding: 2px 0px 2px 10px;
+                background-color: #FFFFFF;
+                text-align: center;
+            }
 
-    .diffPane {
-        margin-right: 0px;
-        padding: 0px;
-        overflow-y: scroll;
-        font-family: Consolas;
-        font-size: xx-small;
-    }
+            .diffPane {
+                margin-right: 0px;
+                padding: 0px;
+                overflow-y: scroll;
+                font-family: Consolas;
+                font-size: xx-small;
+            }
 
-    .line {
-        padding-left: .2em;
-        white-space: nowrap;
-        width: 50%;
-    }
+            .line {
+                padding-left: .2em;
+                white-space: nowrap;
+                width: 50%;
+            }
 
-    .lineNumber {
-        padding: 0 .3em;
-        background-color: #FFFFFF;
-        text-align: right;
-    }
+            .lineNumber {
+                padding: 0 .3em;
+                background-color: #FFFFFF;
+                text-align: right;
+            }
 
-    .InsertedLine {
-        background-color: lightgreen;
-    }
+            .InsertedLine {
+                background-color: lightgreen;
+            }
 
-    .ModifiedLine {
-        background-color: lightyellow;
-    }
+            .ModifiedLine {
+                background-color: lightyellow;
+            }
 
-    .DeletedLine {
-        background-color: lightpink;
-    }
+            .DeletedLine {
+                background-color: lightpink;
+            }
 
-    .UnchangedLine {
-        background-color: #FFFFFF;
-    }
+            .UnchangedLine {
+                background-color: #FFFFFF;
+            }
 
-    .ImaginaryLine {
-        background-color: #C8C8C8;
-    }
+            .ImaginaryLine {
+                background-color: #C8C8C8;
+            }
 
-    .InsertedCharacter {
-        background-color: palegreen;
-    }
+            .InsertedCharacter {
+                background-color: palegreen;
+            }
 
-    .DeletedCharacter {
-        background-color: hotpink;
-    }
+            .DeletedCharacter {
+                background-color: hotpink;
+            }
 
-    .UnchangedCharacter {
-    }
+            .UnchangedCharacter {
+            }
 
-    .ImaginaryCharacter {
-    }
+            .ImaginaryCharacter {
+            }
 
-    .clear {
-        clear: both;
-    }
+            .clear {
+                clear: both;
+            }
 
-    #oldtext .diffTable {
-        width: 50%;
-        height: 50%;
-        padding-left: 0px;
-        overflow-y: scroll;
-    }
+            #oldtext .diffTable {
+                width: 50%;
+                height: 50%;
+                padding-left: 0px;
+                overflow-y: scroll;
+            }
 
-    #newtext .diffTable {
-        width: 50%;
-        height: 50%;
-        padding-right: 0px;
-        overflow-y: scroll;
-    }
-</style>
+            #newtext .diffTable {
+                width: 50%;
+                height: 50%;
+                padding-right: 0px;
+                overflow-y: scroll;
+            }
+    </style>

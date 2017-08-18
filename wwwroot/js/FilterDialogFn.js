@@ -40,11 +40,12 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('#execute').off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
-        $('#selected_Ver').off("change").on("change", this.Differ.bind(this));      
+        $('.compare_inner').off("click").on("click", this.Differ.bind(this));
         $(".selectpicker").selectpicker();
         $("#fdlist .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $('#fd').off("change").on("change", this.Clear_fd.bind(this));
         $('#fd').off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
+        $('#compare').off('click').on('click',this.Compare.bind(this));
     }
 
     this.SetValues = function () {
@@ -56,6 +57,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.Success_alert = function (result) {
         $.LoadingOverlay("hide");
     }
+
     this.SetFdInit = function (me, fdId) {
         var val = "Select Filter Dialog";
         if (this.Is_New === false && fdId !== 0) {
@@ -63,6 +65,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         }
         this.Load_filter_dialog_list(val);
     }
+
     this.Clear_fd = function () {
         var getNav = $("#versionNav li.active a").attr("href");
         $(getNav + ' #inner_well').children().remove();
@@ -258,16 +261,29 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         alert("Test");
     }
 
-    this.Differ = function () {
-        $.LoadingOverlay("show");
-        var getNav = $("#versionNav li.active a").attr("href");
-        var verid = $(getNav + ' .selected_Ver option:selected').val();
-        var ver_number = $(getNav + ' .selected_Ver option:selected').attr("data-tokens");
-        if (verid === "Select Version") {
+    this.Compare = function () {
+        tabNum++;
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
+       // $('#vernav' + tabNum).append("Compare With:");
+        $("#versionNav a[href='#vernav"+ tabNum +"']").tab('show');
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+    };
+
+    this.Differ = function () {      
+        $.LoadingOverlay("show");       
+        if (verRefid === "Select Version") {
             alert("Please Select A Version");
         }
         else {
-            $.post('../CE/VersionCodes', { "objid": verid, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, ver_number));
+            if ($('input[name=compWith]:checked').val() === 1) {
+                var verRefid = $('.selected_Ver option:selected').val();
+                var selected_ver_number = $('.selected_Ver option:selected').attr("data-tokens");
+                $.post('../CE/VersionCodes', { "objid": verRefid, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, selected_ver_number, this.Version_num));
+            }
+            else if ($('input[name=compWith]:checked').val() === 1) {
+
+            }
         }
     }
 
@@ -463,11 +479,10 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         }
     };
 
-    this.CallDiffer = function (selected_ver_number, data) {
-        var curr_ver = $("#versionNav li.active a").attr("data-verNum");// data-token
+    this.CallDiffer = function (selected_ver_number,curr_ver, data) {
         var getNav = $("#versionNav li.active a").attr("href");
-        var vername = $(getNav + ' #selected_Ver option:selected').attr("data-tokens");
-        var _code = $(getNav + " .code").text();
+       // var vername = $('#selected_Ver option:selected').attr("data-tokens");
+        var _code = $(".code").text();
         this.SetValues();
         if (selected_ver_number > curr_ver) {
             $.post("../CE/GetDiffer", {
@@ -485,19 +500,14 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
 
     this.showDiff = function (new_ver_num, old_ver_num, data) {
         var getNav = $("#versionNav li.active a").attr("href");
-        var verid = $(getNav + ' #selected_Ver option:selected').val();
-        //  var vername = $(getNav + ' #selected_Ver option:selected').attr("data-tokens");
-        tabNum++;
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + verid + tabNum + "'> v." + old_ver_num + " v/s v." + new_ver_num + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        $('#versionTab').append("<div id='vernav" + verid + tabNum + "' class='tab-pane fade'>");
-        $('#vernav' + verid + tabNum).append("<div id='oldtext" + verid + tabNum + "'class='leftPane'>" +
+      //  var verid = $(getNav + ' #selected_Ver option:selected').val();
+    
+        $('#compare_result').append("<div id='oldtext"+ tabNum + "'class='leftPane'>" +
               "</div>" +
-              "  <div id='newtext" + verid + tabNum + "' class='rightPane'>" +
+              "  <div id='newtext"+ tabNum + "' class='rightPane'>" +
               "</div>");
-        $("#versionNav a[href='#vernav" + verid + tabNum + "']").tab('show');
-        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-        $('#oldtext' + verid + tabNum).html("<div class='diffHeader'>v." + old_ver_num + "</div>" + data[0]);
-        $('#newtext' + verid + tabNum).html("<div class='diffHeader'>v." + new_ver_num + "</div>" + data[1]);
+        $('#oldtext' + tabNum).html("<div class='diffHeader'>v." + old_ver_num + "</div>" + data[0]);
+        $('#newtext' + tabNum).html("<div class='diffHeader'>v." + new_ver_num + "</div>" + data[1]);
         $('.leftPane').scroll(function () {
             $('.rightPane').scrollTop($(this).scrollTop());
             $('.rightPane').scrollLeft($(this).scrollLeft());

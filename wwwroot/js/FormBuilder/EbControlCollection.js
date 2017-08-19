@@ -18,6 +18,7 @@
     };
 
     this.Append = function (newObject) {
+        //var parentId = $("#" + newObject.Name).closest(".controlTile").closest(".controlTile").attr("id");
         var parentId = $("#" + newObject.Name).parent().attr("id");
         if (parentId === undefined)
             this.$values.push(newObject);

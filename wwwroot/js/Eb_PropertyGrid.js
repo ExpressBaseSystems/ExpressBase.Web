@@ -78,9 +78,14 @@
         } else if (type === 4) {
             valueHTML = '<label for="' + elemId + '">' + value + '</label>';
 
+            // If collection editor for object
+        } else if (type === 7) {
+            valueHTML = '<button for="' + elemId + '" class= "pgObjEditBtn" > Settings... </button>';
+
+
             // Default is textbox
         } else {
-            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></input>';
+            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
@@ -144,7 +149,35 @@
         }
 
         // Close the table and apply it to the div
-        this.innerHTML += '</table>';
+        this.innerHTML += '</table><div class="pgObjSettings-bg" onclick="$(this).hide();">'
+                                    + '<div class="pgObjSettings-Cont formB-box" onclick="event.stopPropagation();">'
+                                        + '<div class="modal-header">'
+                                            +'<button type="button" class="close" data-dismiss="modal">&times;</button>'
+                                            + '<h4 class="modal-title">Column Settings</h4>'
+                                        + '</div>'
+                                        + '<div class="modal-body">'
+                                            +'<table class="table table-bordered">'
+                                                + '<thead>'
+                                                    + '<tr>'
+                                                        + '<th>columns</th>'
+                                                        + '<th>properties</th>'
+                                                    + '</tr>'
+                                                + '</thead>'
+                                                + '<tbody>'
+                                                    + '<tr>'
+                                                        + '<td>col 1</td>'
+                                                        + '<td>PG grid</td>'
+                                                    + '</tr>'
+                                                + '</tbody>'
+                                            + '</table>'
+                                        + '</div>'
+                                        + '<div class="modal-footer">'
+                                            + '<button type="button" class="btn btn-success" data-dismiss="modal">Save</button>'
+                                            + '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'
+                                        + '</div>'
+                                    +'</div>'
+                                + '</div>';
+
         this.$container.html(this.innerHTML);
         $("#" + id + ' .selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();
@@ -212,6 +245,10 @@
         }
     };
 
+    this.pgObjEditBtnClicked = function () {
+        $(".pgObjSettings-bg").show();
+    };
+
     this.init = function () {
 
         if ($("#propGrid").length === 0) {
@@ -245,6 +282,8 @@
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
+
+        $(".pgObjEditBtn").on("click", this.pgObjEditBtnClicked.bind(this));
     };
 
     this.init();

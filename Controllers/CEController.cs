@@ -276,7 +276,7 @@ namespace ExpressBase.Web.Controllers
             return ViewBag.Code;
         }
 
-        public string GetByteaEbObjects_json()
+        public string GetFilterBody()
         {
             var req = this.HttpContext.Request.Form;
             var _type = req["Ebobjtype"];

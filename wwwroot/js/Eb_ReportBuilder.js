@@ -24,11 +24,11 @@ var pages = {
 var sub = function (name, index, height, subsection) {
     this.id = name;
     this.index = index;
-    this.height = height; 
-   this.subsection = subsection;
+    this.height = height;
+    this.subsection = subsection;
 };
 
-var PageElements = function (id,value, left, top, font) {
+var PageElements = function (id, value, left, top, font) {
     this.id = id;
     this.value = value;
     this.left = left;
@@ -36,17 +36,12 @@ var PageElements = function (id,value, left, top, font) {
     this.fontsize = font;
 };
 
-var RptBuilder = function (type) {
+var RptBuilder = function (type,saveBtnid) {
+    
+    this.savebtnid = saveBtnid;   
     this.type = type;
     this.height = pages[type].height;
-    this.width = pages[type].width;
-
-    this.report = new Object();
-    this.report.pagetype = type;
-    this.report.pageheight = height;
-    this.report.pagewidth = width;
-    this.report.sections = [];
-
+    this.width = pages[type].width;   
     this.splitarray = [];
     this.btn_indx = null;
 
@@ -62,9 +57,11 @@ var RptBuilder = function (type) {
         if (pages[type].width > "21cm") {
             $('#pageCanvas').css({ "transform": "scale(0.8)", "transform-origin": "0 0" });
         }
-        var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
+
+        this.$div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
         $('#PageContainer').append($div);
-        return $div;
+
+        this.pageSplitters(this.$div);
     };
 
     this.createHeaderBox = function () {
@@ -81,6 +78,21 @@ var RptBuilder = function (type) {
 
     };
 
+    this.pageSplitters = function () {
+
+        this.$div.append("<div class='pageHeaders' id='rpthead' data_val='0' style='width :100%'></div>");
+
+        this.$div.append("<div class='pageHeaders' id='pghead' data_val='1'style='width :100%'></div>");
+
+        this.$div.append("<div class='pageHeaders' id='pgbody' data_val='2'style='width :100%'></div>");
+
+        this.$div.append("<div class='pageHeaders' id='pgfooter' data_val='3'style='width :100%'></div>");
+
+        this.$div.append("<div class='pageHeaders' id='rptfooter' data_val='4' style='width :100%'></div>");
+
+        this.headerBox1_Split();
+    };
+
     this.headerBox1_Split = function () {
 
         $(".headersections").append("<div class='head_Box1' id='rptheadHbox' data-index='0' style='width :100%'><p>Rh</p></div>");
@@ -89,122 +101,9 @@ var RptBuilder = function (type) {
         $(".headersections").append("<div class='head_Box1' id='pgfooterHbox' data-index='3' style='width :100%'><p>Pf</p></div>");
         $(".headersections").append("<div class='head_Box1' id='rptfooterHbox' data-index='4' style='width :100%'><p>Rf</p></div>");
 
+        this.headerScaling();
+
         this.splitButton();
-    };
-
-    this.pageSplitters = function ($pageref) {
-
-        $pageref.append("<div class='pageHeaders' id='rpthead' data_val='0' style='width :100%'></div>");
-
-        $pageref.append("<div class='pageHeaders' id='pghead' data_val='1'style='width :100%'></div>");
-
-        $pageref.append("<div class='pageHeaders' id='pgbody' data_val='2'style='width :100%'></div>");
-
-        $pageref.append("<div class='pageHeaders' id='pgfooter' data_val='3'style='width :100%'></div>");
-
-        $pageref.append("<div class='pageHeaders' id='rptfooter' data_val='4' style='width :100%'></div>");
-
-        $pageref.children().not(".gutter").each(this.set_Dropable.bind(this));
-    };
-
-    this.set_Dropable = function (i, obj) {
-
-        var id = $(obj).attr("id");
-        $("#" + id).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
-        this.report.sections.push(new sub(id, $(obj).index(), $(obj).height(),[]));//hyvgyrdtyyrhdtf
-
-    };
-
-    this.splitButton = function () {
-
-        $('.headersections').children().not(".gutter").each(this.addButton.bind(this));
-
-    };
-
-    this.addButton = function (i, obj) {
-
-        this.j = 2;
-        $(obj).append("<button class='btn btn-xs btn-primary'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
-        $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
-
-    };
-
-    this.splitDiv = function (e) {
-
-        this.splitarray = [];
-        this.btn_indx = $(e.target).parent().parent().attr("data-index");
-        $.each(this.report.sections, this.splitDiv_inner.bind(this));
-
-    };
-
-    this.splitDiv_inner = function (i, obj) {
-
-        if (obj.index == this.btn_indx) {
-            this.$sec = $("#" + obj.id);
-
-            if (this.$sec.children().length === 0) {
-
-                this.$sec.droppable("destroy");
-                this.s0 = $("<div class='subdivs' id='s" + obj.index + "0'></div>");
-                this.s1 = $("<div class='subdivs' id='s" + obj.index + "1'></div>");
-                this.$sec.append(s0, s1);
-                this.splitarray.push("#" + this.s0.attr("id") + "", "#" + this.s1.attr("id") + "");
-                this.s0.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-                this.s1.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-
-                $.each(this.report.sections, this.saveSubsecOnFrstSplt.bind(this));
-            }
-
-            else if (this.$sec.children().length !== 0) {
-
-                this.$spl = $("<div class='subdivs' id='s" + obj.index + this.j++ + "'></div>");
-                this.$sec.append($spl);
-                $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
-                $(this.$sec).children('.gutter').remove();
-                this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-
-                $.each(this.report.sections, this.saveSubsecOnSecSplt.bind(this));
-            }
-
-            Split(this.splitarray, {
-                direction: 'vertical',
-                cursor: 'row-resize',
-                minSize: 5,
-                gutterSize: 3,
-                onDrag: function (e) {
-
-                    $('.multiSplit').children().not(".gutter").children().not(".gutter").each(function (i, obj1) {
-                        $('.page').children().not(".gutter").children().not(".gutter").each(function (j, obj2) {
-                            if ($(obj1).parent().attr("data_val") === $(obj2).parent().attr("data_val")) {
-                                if ($(obj1).index() === $(obj2).index()) {
-                                    $(obj1).css("height", $(obj2).height());
-                                }
-                            }
-                        });
-                    });
-                }
-            });
-            this.multiSplitBoxinner();
-        }
-    };  
-
-    this.saveSubsecOnSecSplt = function (i, obj) {
-        var sec1 = this.$sec.attr("id");
-        if (sec1 === obj.id) {
-            this.report.sections[i].subsection.push(new sub(this.$spl.attr("id"), this.$spl.index(), this.$spl.height(), []));
-        }
-    };
-
-    this.saveSubsecOnFrstSplt = function (i, obj) {
-        var sec1 = this.$sec.attr("id");      
-        if (sec1 === obj.id) {
-            this.report.sections[i].subsection.push(new sub(this.s0.attr("id"), this.s0.index(), this.s0.height(), []));
-            this.report.sections[i].subsection.push(new sub(this.s1.attr("id"), this.s1.index(), this.s1.height(), []));
-        }
-    };
-
-    this.splitMore = function (i, obj) {
-        this.splitarray.push("#" + obj.id);
     };
 
     this.headerScaling = function () {
@@ -239,6 +138,72 @@ var RptBuilder = function (type) {
             minSize: 0,
             gutterSize: 3
         });
+        this.$div.children().not(".gutter").each(this.set_Dropable.bind(this));
+    };
+
+    this.set_Dropable = function (i, obj) {
+
+        var $firstdiv = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + "0'style='height:" + $(obj).height() + "px'></div>");              
+        $(obj).append($firstdiv);
+        $firstdiv.droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
+    };
+
+    this.splitButton = function () {
+
+        $('.headersections').children().not(".gutter").each(this.addButton.bind(this));
+
+    };
+
+    this.addButton = function (i, obj) {
+
+        this.j = 1;
+        $(obj).append("<button class='btn btn-xs btn-primary'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
+        $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
+
+    };
+
+    this.splitDiv = function (e) {
+
+        this.splitarray = [];
+        this.btn_indx = $(e.target).parent().parent().attr("data-index");
+        $.each($('.page').children('.pageHeaders'), this.splitDiv_inner.bind(this));
+    };
+
+    this.splitDiv_inner = function (i, obj) {
+
+        if ($(obj).attr('data_val') === this.btn_indx) {
+
+            this.$sec = $("#" + obj.id);           
+            this.$spl = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + this.j++ + "'></div>");
+            this.$sec.append($spl);
+            $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
+            $(this.$sec).children('.gutter').remove();
+            this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });          
+
+            Split(this.splitarray, {
+                direction: 'vertical',
+                cursor: 'row-resize',
+                minSize: 5,
+                gutterSize: 3,
+                onDrag: function (e) {
+
+                    $('.multiSplit').children().not(".gutter").children().not(".gutter").each(function (i, obj1) {
+                        $('.page').children().not(".gutter").children().not(".gutter").each(function (j, obj2) {
+                            if ($(obj1).parent().attr("data_val") === $(obj2).parent().attr("data_val")) {
+                                if ($(obj1).index() === $(obj2).index()) {
+                                    $(obj1).css("height", $(obj2).height());
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+            this.multiSplitBoxinner();
+        }
+    };
+
+    this.splitMore = function (i, obj) {
+        this.splitarray.push("#" + obj.id);
     };
 
     this.multiSplitBoxinner = function () {
@@ -274,7 +239,7 @@ var RptBuilder = function (type) {
         }
     };
 
-    this.DragDrop_DataSource = function () {
+    this.DragDrop_Items = function () {
 
         this.posLeft = null;
         this.posTop = null;
@@ -298,9 +263,12 @@ var RptBuilder = function (type) {
     };
 
     this.onDropFn = function (event, ui) {
-       
+
         this.dropLoc = $(event.target);
         this.itemToClone = $(ui.draggable);
+        var minwidth = $(ui.draggable).width();
+        var minheight = $(ui.draggable).height();
+        console.log(minwidth, minheight);
         if (!this.itemToClone.hasClass("dropped")) {
             $(event.target).append(this.itemToClone.clone().addClass("dropped").removeClass("draggable").css({
                 width: this.itemToClone.width(),
@@ -327,41 +295,19 @@ var RptBuilder = function (type) {
 
         $('.dropped').resizable({
             containment: "parent",
+            handles: "se",
+            minHeight: minheight,
+            minWidth: minwidth,
             resize: this.resizeElement.bind(this)
-        });              
+        });
 
-        $.each(this.report.sections, this.saveElementToObject.bind(this));
-        
         this.PropertyMenu();
-    };
-
-    this.saveElementToObject = function (i, sec) {
-        
-        if (sec.subsection.length >= 1) {           
-            $.each(sec.subsection, this.saveElementSubNotNull.bind(this, i));
-        }
-
-        if (this.dropLoc.children('div').length ==0) {
-            
-            if (sec.id == this.dropLoc.attr("id")) {
-                console.log(this.dropLoc);
-                this.report.sections[i].subsection.push(new PageElements(this.itemToClone.attr('id'), this.itemToClone.text(), this.posLeft - 270, this.posTop - 170, this.itemToClone.height()));
-            }
-        }
-    };
-
-    this.saveElementSubNotNull = function (i, k, sub) {
-
-        if (sub.id === this.dropLoc.attr("id")) {
-            console.log(this.dropLoc);
-            this.report.sections[i].subsection[k].subsection.push(new PageElements(this.itemToClone.attr('id'), this.itemToClone.text(), this.posLeft - 270, this.posTop - 170, this.itemToClone.height()));
-        }
     };
 
     this.resizeElement = function (event, ui) {
 
         var font = parseInt($(event.target).css("height"));
-        $(event.target).css("font-size", font-3);
+        $(event.target).css("font-size", font - 5);
 
     };
 
@@ -382,7 +328,7 @@ var RptBuilder = function (type) {
         this.font_color = null;
         $('#fontcolor').on("change", this.change_fontColor.bind(this));
         $(".dropped").on("click", this.element_click.bind(this));
-        $(".dropped").off("click",this.element_off_Click.bind(this));
+        $(".dropped").off("click", this.element_off_Click.bind(this));
 
     };
 
@@ -405,16 +351,46 @@ var RptBuilder = function (type) {
         var pg = new Eb_PropertyGrid("propGrid", { ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }])
     };
 
+    this.savefile = function () {
+
+        this.report = new Object();
+        this.report.Page = this.type;
+        this.report.Height = this.height;
+        this.report.Width = this.width;
+        this.report.subsection = [];
+        this.report.subsection.subsection = [];
+
+        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
+
+    };
+
+    this.findPageSections = function (i,sections) {
+
+        this.sections = $(sections);
+        this.i = i;
+        $.each(this.sections.children().not(".gutter"), this.findPageSectionsSub.bind(this));       
+
+    };
+
+    this.findPageSectionsSub = function (j, subsec) {
+
+        this.report.subsection.push(new sub(this.sections.attr('id'), this.sections.attr('data_val'), this.sections.css('height'), []));
+        console.log(subsec);
+        this.report.subsection[this.i].subsection.push(new sub($(subsec).attr('id'), $(subsec).index(), $(subsec).css('height'), []));
+         
+    };
+
     this.init = function () {
 
         $('#PageContainer').empty();
-        var $pageref = this.createPage();
-        this.pageSplitters($pageref);
-        this.headerBox1_Split();
-        this.headerScaling();
-        this.DragDrop_DataSource();
+        this.createPage();                    
+        this.DragDrop_Items();
         this.propertyGrid();
+
+        $(this.savebtnid).on('click', this.savefile.bind(this));
+       
     };
+    
     this.init();
 };
 //baground image
@@ -480,6 +456,7 @@ $.fn.extend({
     }
 });
 
+//ruler
 var ruler = function () {
     var $ruler = $('.ruler').css({ "width": "900px", "height": "25px" });
     for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {

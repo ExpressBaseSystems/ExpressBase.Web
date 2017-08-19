@@ -67,10 +67,7 @@
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.show().css("visibility", "visible");
-        //$('#propGrid').empty();
         this.PGobj = new Eb_PropertyGrid("pgWraper", control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
-        this.PGobj.addControl(control.Name);
-        $('.selectpicker').selectpicker('refresh');
         $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
     };
 
@@ -189,10 +186,11 @@
     this.controlCloseOnClick = function (e) {
         var ControlTile = $(e.target).parent().parent();
         var id = ControlTile.attr("id");
-        this.PGobj.removeControl(this.rootContainerObj.Controls.GetByName(id).Name);
 
-        ControlTile.remove();
+        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).Name);
+
         this.rootContainerObj.Controls.DelByName(id);
+        ControlTile.remove();
         this.$propGrid.hide();
         e.preventDefault();
         this.saveObj();
@@ -265,7 +263,6 @@
 
     this.InitEditModeCtrls = function (editModeObj) {
         $(".Eb-ctrlContainer").each(function (i, el) { this.initCtrl(el); }.bind(this));
-        $('.selectpicker').selectpicker('refresh');
         setTimeout(function () {
             Proc(JSON.parse(editModeObj), this.rootContainerObj);
         }.bind(this), 1000);

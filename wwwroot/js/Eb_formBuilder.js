@@ -18,9 +18,9 @@
     //else if (builderType === 3)
     //    this.rootContainerObj = new EbObjects.ReportObj(formid);
 
+    this.PGobj = new Eb_PropertyGrid("pgWraper");
     this.curControl = null;
     this.drake = null;
-    this.PGobj = null;
 
     // need to change
     this.controlCounters = {
@@ -67,7 +67,7 @@
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.show().css("visibility", "visible");
-        this.PGobj = new Eb_PropertyGrid("pgWraper", control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
+        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
         $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
     };
 

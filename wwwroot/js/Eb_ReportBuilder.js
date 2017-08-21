@@ -36,14 +36,49 @@ var PageElements = function (id, value, left, top, font) {
     this.fontsize = font;
 };
 
-var RptBuilder = function (type,saveBtnid) {
-    
-    this.savebtnid = saveBtnid;   
+var RptBuilder = function (type, saveBtnid) {
+
+    this.savebtnid = saveBtnid;
     this.type = type;
     this.height = pages[type].height;
-    this.width = pages[type].width;   
+    this.width = pages[type].width;
     this.splitarray = [];
     this.btn_indx = null;
+
+    this.ruler = function () {
+        $('.ruler,.rulerleft').show();
+        var $ruler = $('.ruler').css({ "width": this.width });
+        for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
+            var $tick = $('<div>');
+            if (step === 0) {
+                $tick.addClass('tickLabel').html(i * 5);
+            } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+                $tick.addClass('tickMinor');
+                if (step === 9) {
+                    step = -1;
+                }
+            } else {
+                $tick.addClass('tickMajor');
+            }
+            $ruler.append($tick);
+        }
+
+        var $rulerleft = $('.rulerleft').css({ "height": this.height });
+        for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
+            $tick = $('<div>');
+            if (step === 0) {
+                $tick.addClass('tickLabel').html(i * 5);
+            } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+                $tick.addClass('tickMinor');
+                if (step === 9) {
+                    step = -1;
+                }
+            } else {
+                $tick.addClass('tickMajor');
+            }
+            $rulerleft.append($tick);
+        }
+    };
 
     this.createPage = function () {
 
@@ -143,9 +178,9 @@ var RptBuilder = function (type,saveBtnid) {
 
     this.set_Dropable = function (i, obj) {
 
-        var $firstdiv = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + "0'style='height:" + $(obj).height() + "px'></div>");              
+        var $firstdiv = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + "0'style='height:" + $(obj).height() + "px'></div>");
         $(obj).append($firstdiv);
-        $firstdiv.droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
+        $firstdiv.droppable({ accept: ".draggable,.dropped,.shapes", drop: this.onDropFn.bind(this) });
     };
 
     this.splitButton = function () {
@@ -173,12 +208,12 @@ var RptBuilder = function (type,saveBtnid) {
 
         if ($(obj).attr('data_val') === this.btn_indx) {
 
-            this.$sec = $("#" + obj.id);           
+            this.$sec = $("#" + obj.id);
             this.$spl = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + this.j++ + "'></div>");
             this.$sec.append($spl);
             $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
             $(this.$sec).children('.gutter').remove();
-            this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });          
+            this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
 
             Split(this.splitarray, {
                 direction: 'vertical',
@@ -228,7 +263,7 @@ var RptBuilder = function (type,saveBtnid) {
             if (flagsuccess)
                 return false;
         });
-        if (temp1 != null) {
+        if (temp1 !== null) {
 
             Split(temp1, {
                 direction: 'vertical',
@@ -245,6 +280,13 @@ var RptBuilder = function (type,saveBtnid) {
         this.posTop = null;
         this.font = null;
 
+        $('.shapes').draggable({
+            cancel: "a.ui-icon",
+            revert: "invalid",
+            helper: "clone",
+            cursor: "move",
+            drag: this.onDrag.bind(this)
+        });
 
         $('.draggable').draggable({
             cancel: "a.ui-icon",
@@ -268,24 +310,40 @@ var RptBuilder = function (type,saveBtnid) {
         this.itemToClone = $(ui.draggable);
         var minwidth = $(ui.draggable).width();
         var minheight = $(ui.draggable).height();
-        console.log(minwidth, minheight);
-        if (!this.itemToClone.hasClass("dropped")) {
-            $(event.target).append(this.itemToClone.clone().addClass("dropped").removeClass("draggable").css({
-                width: this.itemToClone.width(),
-                height: this.itemToClone.height(),
-                position: 'absolute',
-                left: this.posLeft - 270,
-                top: this.posTop - 170
-            }));
-        }
-        else if (this.itemToClone.hasClass("dropped")) {
-            $(event.target).append(this.itemToClone.css({
-                width: this.itemToClone.width(),
-                height: this.itemToClone.height(),
-                position: 'absolute',
-            }));
+
+        if (this.itemToClone.hasClass('shapes')) {
+            if (this.itemToClone.attr('id') === 'circle') {
+                this.createCircle();
+            }
+            else if (this.itemToClone.attr('id') === 'rectangle') {
+                this.createRectangle();
+            }
+            else if (this.itemToClone.attr('id') === 'v-line') {
+                this.createVerticalLine();
+            }
+            else if (this.itemToClone.attr('id') === 'h-line') {
+                this.createHorrizLine();
+            }
         }
 
+        else if (!this.itemToClone.hasClass('shapes')) {
+            if (!this.itemToClone.hasClass("dropped")) {
+                $(event.target).append(this.itemToClone.clone().addClass("dropped").removeClass("draggable").css({
+                    width: this.itemToClone.width(),
+                    height: this.itemToClone.height(),
+                    position: 'absolute',
+                    left: this.posLeft - 270,
+                    top: this.posTop - 170
+                }));
+            }
+            else if (this.itemToClone.hasClass("dropped")) {
+                $(event.target).append(this.itemToClone.css({
+                    width: this.itemToClone.width(),
+                    height: this.itemToClone.height(),
+                    position: 'absolute'
+                }));
+            }
+        }
         $('.dropped').draggable({
             cursor: 'move',
             start: this.onDrag_Start.bind(this),
@@ -295,13 +353,88 @@ var RptBuilder = function (type,saveBtnid) {
 
         $('.dropped').resizable({
             containment: "parent",
-            handles: "se",
+            handles: "n, e, s, w",
             minHeight: minheight,
             minWidth: minwidth,
             resize: this.resizeElement.bind(this)
         });
 
         this.PropertyMenu();
+    };
+
+    this.createCircle = function () {
+
+        var $cir = $("<div class='circle' style='border-radius:50%;border:1px solid'></div>");
+        this.dropLoc.append($cir.addClass("dropped").css({
+            width: '50px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 170
+        }));
+    };
+
+    this.createRectangle = function () {
+
+        var $rect = $("<div class='rectangle' style='border:1px solid'></div>");
+        this.dropLoc.append($rect.addClass("dropped").css({
+            width: '50px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 170
+        }));
+    };
+
+    this.createVerticalLine = function () {
+
+        var $vline = $("<div class='v-line' style='border:none;border:1px solid;cursor:move'></div>");
+        this.dropLoc.append($vline.addClass("v-line-dropped").css({
+            width: '1px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 170
+        }));
+
+        $('.v-line-dropped').draggable({
+            cursor: 'move',
+            start: this.onDrag_Start.bind(this),
+            stop: this.onDrag_stop.bind(this)
+
+        });
+
+        $('.v-line-dropped').resizable({
+            containment: "parent",
+            handles: "n, s",
+            resize: this.resizeElement.bind(this)
+        });
+
+    };
+
+    this.createHorrizLine = function () {
+
+        var $hline = $("<div class='h-line' style='border:none;border:1px solid;cursor:move'></div>");
+        this.dropLoc.append($hline.addClass("h-line-dropped").css({
+            width: '50px',
+            height: '1px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 170
+        }));
+
+        $('.h-line-dropped').draggable({
+            cursor: 'move',
+            start: this.onDrag_Start.bind(this),
+            stop: this.onDrag_stop.bind(this)
+
+        });
+
+        $('.h-line-dropped').resizable({
+            containment: "parent",
+            handles: "e,w",
+            resize: this.resizeElement.bind(this)
+        });
     };
 
     this.resizeElement = function (event, ui) {
@@ -348,7 +481,8 @@ var RptBuilder = function (type,saveBtnid) {
     };
 
     this.propertyGrid = function () {
-        var pg = new Eb_PropertyGrid("propGrid", { ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }])
+        $('#propGrid').show();
+        var pg = new Eb_PropertyGrid("propGrid", { ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }]);
     };
 
     this.savefile = function () {
@@ -364,11 +498,11 @@ var RptBuilder = function (type,saveBtnid) {
 
     };
 
-    this.findPageSections = function (i,sections) {
+    this.findPageSections = function (i, sections) {
 
         this.sections = $(sections);
         this.i = i;
-        $.each(this.sections.children().not(".gutter"), this.findPageSectionsSub.bind(this));       
+        $.each(this.sections.children().not(".gutter"), this.findPageSectionsSub.bind(this));
 
     };
 
@@ -377,20 +511,21 @@ var RptBuilder = function (type,saveBtnid) {
         this.report.subsection.push(new sub(this.sections.attr('id'), this.sections.attr('data_val'), this.sections.css('height'), []));
         console.log(subsec);
         this.report.subsection[this.i].subsection.push(new sub($(subsec).attr('id'), $(subsec).index(), $(subsec).css('height'), []));
-         
+
     };
 
     this.init = function () {
 
         $('#PageContainer').empty();
-        this.createPage();                    
+        this.ruler();
+        this.createPage();
         this.DragDrop_Items();
         this.propertyGrid();
 
         $(this.savebtnid).on('click', this.savefile.bind(this));
-       
+
     };
-    
+
     this.init();
 };
 //baground image
@@ -413,14 +548,14 @@ $.fn.extend({
         var openedClass = 'glyphicon-minus-sign';
         var closedClass = 'glyphicon-plus-sign';
 
-        if (typeof o != 'undefined') {
-            if (typeof o.openedClass != 'undefined') {
+        if (typeof o !== 'undefined') {
+            if (typeof o.openedClass !== 'undefined') {
                 openedClass = o.openedClass;
             }
-            if (typeof o.closedClass != 'undefined') {
+            if (typeof o.closedClass !== 'undefined') {
                 closedClass = o.closedClass;
             }
-        };
+        }
         var tree = $(this);
         tree.addClass("tree");
         tree.find('li').has("ul").each(function () {
@@ -428,12 +563,12 @@ $.fn.extend({
             branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
             branch.addClass('branch');
             branch.on('click', function (e) {
-                if (this == e.target) {
+                if (this === e.target) {
                     var icon = $(this).children('i:first');
                     icon.toggleClass(openedClass + " " + closedClass);
                     $(this).children().children().toggle();
                 }
-            })
+            });
             branch.children().children().toggle();
         });
         tree.find('.branch .indicator').each(function () {
@@ -456,37 +591,3 @@ $.fn.extend({
     }
 });
 
-//ruler
-var ruler = function () {
-    var $ruler = $('.ruler').css({ "width": "900px", "height": "25px" });
-    for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
-        var $tick = $('<div>');
-        if (step === 0) {
-            $tick.addClass('tickLabel').html(i * 5);
-        } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-            $tick.addClass('tickMinor');
-            if (step === 9) {
-                step = -1;
-            }
-        } else {
-            $tick.addClass('tickMajor');
-        }
-        $ruler.append($tick);
-    }
-
-    var $rulerleft = $('.rulerleft').css({ "width": "25px", "height": "1000px" });
-    for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
-        $tick = $('<div>');
-        if (step === 0) {
-            $tick.addClass('tickLabel').html(i * 5);
-        } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-            $tick.addClass('tickMinor');
-            if (step === 9) {
-                step = -1;
-            }
-        } else {
-            $tick.addClass('tickMajor');
-        }
-        $rulerleft.append($tick);
-    }
-};

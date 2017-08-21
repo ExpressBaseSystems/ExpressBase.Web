@@ -225,24 +225,26 @@
         }
         else
             this.$container.data("controls", [name]);
-        this.refreshCntrlsDD();
+        this.refreshCtrlsDD();
 
-    };
-
-    this.refreshCntrlsDD = function () {
-        $(".controls-dd-cont select").empty();
-        $.each(this.$container.data("controls"), function (i, name) {
-            $(".controls-dd-cont select").append("<option id='SelOpt" + name + "'>" + name + "</option>");
-        });
-        $('.selectpicker').selectpicker('refresh');
     };
 
     this.removeFromDD = function (name) {
         var index = this.$container.data("controls").indexOf(name);
         if (index > -1) {
             this.$container.data("controls").splice(index, 1);
-            this.refreshCntrlsDD();
+            this.refreshCtrlsDD();
         }
+    };
+
+    this.refreshCtrlsDD = function () {
+        $(".controls-dd-cont select").empty();
+        $.each(this.$container.data("controls"), function (i, name) {
+            $(".controls-dd-cont select").append("<option id='SelOpt" + name + "'>" + name + "</option>");
+        });
+        $('.selectpicker').selectpicker('refresh');
+        $(".controls-dd-cont .selectpicker").selectpicker('val', this.PropsObj.Name);
+        //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
     };
 
     this.pgObjEditBtnClicked = function () {

@@ -146,6 +146,7 @@
     width: 20%;
     height: 95vh;
     visibility: hidden;
+    overflow-y: hidden!important;
 }
 
 .pin {
@@ -215,7 +216,23 @@
     padding: 2px;
     border: 1px solid rgba(34,36,38,.08);
     margin-left: 0 !important;
+    box-shadow: none;
+    border-bottom: none;
+    border-top: none;
     border-radius: 0px !important;
+}
+
+.pgTdval .dropdown-toggle {
+    padding: 0px 12px;
+    border-radius: 0px;
+    height: 26px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    border: 1px solid rgba(34,36,38,.15);
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
 }
 
 .pgObjSettings-Cont .btn {
@@ -223,7 +240,7 @@
 }
 
 .pgObjSettings-Cont .modal-body {
-    height:50vh;
+    height: 50vh;
 }
 
 /*rendering*/

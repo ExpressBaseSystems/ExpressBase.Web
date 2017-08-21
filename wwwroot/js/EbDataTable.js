@@ -142,7 +142,7 @@ var EbDataTable = function (settings) {
         //    this.ebSettings.columns[1].visible = true;
         //}
         $.event.props.push('dataTransfer');
-        this.updateRenderFunc();
+        //this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         this.collapseFilter();
@@ -208,7 +208,7 @@ var EbDataTable = function (settings) {
             return sum / data.length;
         });
 
-        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        //this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
         //new ResizeSensor(jQuery('#@tableId_container'), function() {
         //    if ( $.fn.dataTable.isDataTable( '#@tableId' ) )
@@ -229,12 +229,13 @@ var EbDataTable = function (settings) {
 
     this.createTblObject = function () {
         var o = new Object();
-        o.scrollY = this.ebSettings.scrollY;
+        //o.scrollY = this.ebSettings.scrollY;
+        o.scrollY = "300px";
         o.scrollX = "100%";
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
             if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
                 o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
-            o.lengthMenu = this.ebSettings.lengthMenu;
+            //o.lengthMenu = this.ebSettings.lengthMenu;
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
             if (!this.ebSettings.isPaged) {
 
@@ -260,7 +261,7 @@ var EbDataTable = function (settings) {
             },
             lengthMenu: "_MENU_ / Page",
         };
-        o.columns = this.ebSettings.DTColumnDef;
+        o.columns = this.ebSettings.columns;
         o.order = [];
         o.deferRender = true;
         o.filter = true;
@@ -273,11 +274,10 @@ var EbDataTable = function (settings) {
             timeout: 180000,
             data: this.ajaxData.bind(this),
             dataSrc: this.receiveAjaxData.bind(this),
-            beforeSend: function(xhr){
-                //xhr.setRequestHeader("Access-Control-Allow-Origin", "http://expressbase.org");
-                //xhr.setRequestHeader("Access-Control-Allow-Credentials", "true");
-                xhr.setRequestHeader("Authorization", "Bearer" + getToken());
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + getToken());
             },
+            
             crossDomain: true
         };
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
@@ -348,10 +348,10 @@ var EbDataTable = function (settings) {
 
     this.receiveAjaxData = function (dd) { 
         this.MainData = dd.data;
-        if (!dd.isPaged) {
-            this.Api.paging = dd.isPaged;
-            this.Api.lengthChange = false;
-        }
+        //if (!dd.isPaged) {
+        //    this.Api.paging = dd.isPaged;
+        //    this.Api.lengthChange = false;
+        //}
         return dd.data;
     };
 
@@ -504,7 +504,7 @@ var EbDataTable = function (settings) {
         //},500);
         //if (this.ebSettings.renderAs == "both") {
             $("#graphcontainer_tab"+this.tableId).show();
-            this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
+            //this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
             //$("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         //}
         //else{
@@ -688,19 +688,19 @@ var EbDataTable = function (settings) {
         var fc_lh_tbl = $('#' + tableid + '_wrapper .DTFC_LeftHeadWrapper table');
         var fc_rh_tbl = $('#' + tableid + '_wrapper .DTFC_RightHeadWrapper table');
 
-        if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
-            this.GetFiltersFromSettingsTbl(50);
-            if (fc_lh_tbl !== null) {
-                fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = 0; j < this.ebSettings.leftFixedColumns; j++)
-                    $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
-            }
-            if (fc_rh_tbl !== null) {
-                fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.rightFixedColumns; j < this.eb_filter_controls_4fc.length; j++)
-                    $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
-            }
-        }
+        //if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
+        //    this.GetFiltersFromSettingsTbl(50);
+        //    if (fc_lh_tbl !== null) {
+        //        fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+        //        for (var j = 0; j < this.ebSettings.leftFixedColumns; j++)
+        //            $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
+        //    }
+        //    if (fc_rh_tbl !== null) {
+        //        fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+        //        for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.rightFixedColumns; j < this.eb_filter_controls_4fc.length; j++)
+        //            $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
+        //    }
+        //}
 
         var sc_h_tbl = $('#' + tableid + '_wrapper .dataTables_scrollHeadInner table');
         if (sc_h_tbl !== null) {

@@ -85,7 +85,7 @@
     overflow-x: auto;
 }
 
-.pg-table{
+.pg-table {
     min-width: 100%;
 }
 
@@ -95,8 +95,9 @@
     font-weight: bold;
     width: 100%;
 }
-.ctrlHead{
-    display:none;
+
+.ctrlHead {
+    display: none;
     cursor: move;
 }
 
@@ -145,6 +146,7 @@
     width: 20%;
     height: 95vh;
     visibility: hidden;
+    overflow-y: hidden!important;
 }
 
 .pin {
@@ -209,10 +211,36 @@
     padding: 2px;
 }
 
-.property-grid-cont .btn:first-child {
+.controls-dd-cont .dropdown-toggle {
     height: 25px;
     padding: 2px;
     border: 1px solid rgba(34,36,38,.08);
+    margin-left: 0 !important;
+    box-shadow: none;
+    border-bottom: none;
+    border-top: none;
+    border-radius: 0px !important;
+}
+
+.pgTdval .dropdown-toggle {
+    padding: 0px 12px;
+    border-radius: 0px;
+    height: 26px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    border: 1px solid rgba(34,36,38,.15);
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+.pgObjSettings-Cont .btn {
+    border-radius: 1px !important;
+}
+
+.pgObjSettings-Cont .modal-body {
+    height: 50vh;
 }
 
 /*rendering*/
@@ -235,4 +263,37 @@
 /*overriding*/
 .property-grid-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
     width: 100%;
+}
+
+.pgObjEditBtn {
+    height: 25px;
+    width: 100%;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    border: 1px solid rgba(34,36,38,.15);
+    padding: 3px;
+    font-size: 13px;
+    text-align: center;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+}
+
+.pgObjSettings-Cont {
+    width: 50%;
+    height: 70VH;
+    position: fixed;
+    border: solid 1px #a2a2a0 !important;
+    left: 25%; /* half width*/
+    top: 15vh; /* half height*/
+}
+
+.pgObjSettings-bg {
+    display: none;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 100;
+    background-color: rgba(33, 33, 33, 0.065);
 }

@@ -144,10 +144,30 @@ namespace ExpressBase.Web.Components
             List<DTColumnDef> coldeflist = new List<DTColumnDef>();
             foreach(EbDataColumn column in columnresp.Columns)
             {
-                DTColumnDef coldef = new DTColumnDef(column.ColumnIndex,column.ColumnName,column.Type.ToString());
+                DTColumnDef coldef = null;
+                if (column.ColumnName == "id")
+                    coldef = new DTColumnDef(column.ColumnIndex, column.ColumnName, column.Type.ToString(), true, column.ColumnName, "100px", -1);
+                else
+                    coldef = new DTColumnDef(column.ColumnIndex, column.ColumnName, column.Type.ToString(), true, column.ColumnName, "100px", (columnresp.Columns.Count+100));
                 coldeflist.Add(coldef);
             }
             eb.columns = coldeflist;
+            List<DTColumnExtPpty> colextppty= new List<DTColumnExtPpty>();
+            foreach (EbDataColumn column in columnresp.Columns)
+            {
+                DTColumnExtPpty colext = null;
+
+                if ((column.ColumnName == "id" || column.ColumnName == "serial" || column.ColumnName == "checkbox") && (column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64"))
+                {
+                    colext = new DTColumnExtPpty(column.ColumnName, true, 2, "Default", -1);
+                }
+                else if(column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64")
+                    colext = new DTColumnExtPpty(column.ColumnName, true, 2, "Default", (columnresp.Columns.Count + 100));
+                else
+                    colext = new DTColumnExtPpty((columnresp.Columns.Count + 100));
+                colextppty.Add(colext);
+            }
+            eb.columnsext = colextppty;
             return eb;
         }
     }

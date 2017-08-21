@@ -144,10 +144,10 @@ namespace ExpressBase.Web.Components
             List<DTColumnDef> coldeflist = new List<DTColumnDef>();
             foreach(EbDataColumn column in columnresp.Columns)
             {
-                DTColumnDef coldef = new DTColumnDef(column.ColumnIndex,column.ColumnName);
+                DTColumnDef coldef = new DTColumnDef(column.ColumnIndex,column.ColumnName,column.Type.ToString());
                 coldeflist.Add(coldef);
             }
-            eb.DTColumnDef = coldeflist;
+            eb.columns = coldeflist;
             return eb;
         }
     }

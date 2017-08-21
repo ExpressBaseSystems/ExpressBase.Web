@@ -14,7 +14,8 @@
     }
     this.Metas = metas;
     this.PropsObj = props;
-    this.$container = $("#" + id);
+    this.$wraper = $("#" + id);
+    this.$container = null;
     this.containerId = id;
     this.propNames = [];
 
@@ -77,9 +78,14 @@
         } else if (type === 4) {
             valueHTML = '<label for="' + elemId + '">' + value + '</label>';
 
+            // If collection editor for object
+        } else if (type === 7) {
+            valueHTML = '<button for="' + elemId + '" class= "pgObjEditBtn" > Settings... </button>';
+
+
             // Default is textbox
         } else {
-            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></input>';
+            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
@@ -106,8 +112,8 @@
     };
 
     this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(250);">' + displayName
-            + '<span class="bs-caret" style="float: right;margin-right: 15px;"><span class="caret"></span></span></td></tr>';
+        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">' + displayName
+            + '<span class="bs-caret" style="float: right;margin-right: 10px;"><span class="caret"></span></span></td></tr>';
     };
 
     this.isContains = function (obj, val) {
@@ -143,7 +149,35 @@
         }
 
         // Close the table and apply it to the div
-        this.innerHTML += '</table>';
+        this.innerHTML += '</table><div class="pgObjSettings-bg" onclick="$(this).hide();">'
+                                    + '<div class="pgObjSettings-Cont formB-box" onclick="event.stopPropagation();">'
+                                        + '<div class="modal-header">'
+                                            +'<button type="button" class="close" data-dismiss="modal">&times;</button>'
+                                            + '<h4 class="modal-title">Column Settings</h4>'
+                                        + '</div>'
+                                        + '<div class="modal-body">'
+                                            +'<table class="table table-bordered">'
+                                                + '<thead>'
+                                                    + '<tr>'
+                                                        + '<th>columns</th>'
+                                                        + '<th>properties</th>'
+                                                    + '</tr>'
+                                                + '</thead>'
+                                                + '<tbody>'
+                                                    + '<tr>'
+                                                        + '<td>col 1</td>'
+                                                        + '<td>PG grid</td>'
+                                                    + '</tr>'
+                                                + '</tbody>'
+                                            + '</table>'
+                                        + '</div>'
+                                        + '<div class="modal-footer">'
+                                            + '<button type="button" class="btn btn-success" data-dismiss="modal">Save</button>'
+                                            + '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'
+                                        + '</div>'
+                                    +'</div>'
+                                + '</div>';
+
         this.$container.html(this.innerHTML);
         $("#" + id + ' .selectpicker').on('change', function (e) {
             var selected = $(this).find("option:selected").val();
@@ -180,10 +214,54 @@
         this.getvaluesFromPG();
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
-        this.PropsObj.RenderMe();
+        if (this.PropsObj.RenderMe)
+            this.PropsObj.RenderMe();
+    };
+
+    this.addToDD = function (name) {
+        if (this.$container.data("controls")) {
+            if (!this.$container.data("controls").contains(name))
+                this.$container.data("controls").push(name);
+        }
+        else
+            this.$container.data("controls", [name]);
+        this.refreshCntrlsDD();
+
+    };
+
+    this.refreshCntrlsDD = function () {
+        $(".controls-dd-cont select").empty();
+        $.each(this.$container.data("controls"), function (i, name) {
+            $(".controls-dd-cont select").append("<option id='SelOpt" + name + "'>" + name + "</option>");
+        });
+        $('.selectpicker').selectpicker('refresh');
+    };
+
+    this.removeFromDD = function (name) {
+        var index = this.$container.data("controls").indexOf(name);
+        if (index > -1) {
+            this.$container.data("controls").splice(index, 1);
+            this.refreshCntrlsDD();
+        }
+    };
+
+    this.pgObjEditBtnClicked = function () {
+        $(".pgObjSettings-bg").show();
     };
 
     this.init = function () {
+
+        if ($("#propGrid").length === 0) {
+            this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
+            this.$wraper.append($("<div id='propGrid' class='propgrid-table-cont'></div>"));
+            this.$container = $("#propGrid");
+        }
+        else {
+            this.$container = $("#propGrid");
+            this.$container.empty();
+        }
+
+
         for (var i = 0; i < this.Metas.length; i++)
             this.propNames.push(this.Metas[i].name);
 
@@ -199,7 +277,13 @@
 
         $('#propGrid table td').find("input").change(this.OnInputchangedFn.bind(this));
 
-        this.PropsObj.RenderMe();
+
+        this.addToDD(this.PropsObj.Name);
+
+        if (this.PropsObj.RenderMe)
+            this.PropsObj.RenderMe();
+
+        $(".pgObjEditBtn").on("click", this.pgObjEditBtnClicked.bind(this));
     };
 
     this.init();

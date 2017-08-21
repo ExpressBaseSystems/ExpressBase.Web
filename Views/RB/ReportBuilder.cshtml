@@ -8,6 +8,8 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>@*jith*@
 <script type="text/javascript" src="~/js/Eb_ReportBuilder.js"></script>@*amal*@
 <script type="text/javascript" src="~/js/split.js"></script>@*amal*@
+<script type="text/javascript" src='~/js/Eb_formBuilder.js'></script>@*jith*@
+<script type="text/javascript" src="~/js/Eb_PropertyGrid.js"></script>@*jith*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.9/interact.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
@@ -15,14 +17,18 @@
 <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">@*amal*@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">@*jith*@
+<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />@*jith*@
 <link rel="stylesheet" type="text/css" href="~/css/style.css" />@*amal*@
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
         <div class="reportmenu">
-            <div class="form-inline" id="options">
+            <div class="form-inline" id="options">              
                 <div class="form-group">
                     <input type="file" style="display:none" id="Rptbgimg" />
-                    <button class="btn btn-default"><i class="fa fa-file-text" aria-hidden="true"></i></button>
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="New Page"><i class="fa fa-file-text" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">                    
+                    <button class="btn btn-default" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
                 </div>
                 <div class="form-group">
                     <select class="form-control" id="pagesize">
@@ -36,21 +42,27 @@
                 </div>
                 <div class="form-group">
                     <input type="file" style="display:none" id="Rptbgimg" />
-                    <button class="btn btn-default" onclick="$('#Rptbgimg').click();"><i class="fa fa-picture-o" aria-hidden="true"></i></button>
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Background Image" onclick="$('#Rptbgimg').click();"><i class="fa fa-picture-o" aria-hidden="true"></i></button>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-default"><i class="fa fa-align-left" aria-hidden="true"></i></button>
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Align Left"><i class="fa fa-align-left" aria-hidden="true"></i></button>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-default"><i class="fa fa-align-center" aria-hidden="true"></i></button>
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Align Center"><i class="fa fa-align-center" aria-hidden="true"></i></button>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-default"><i class="fa fa-align-right" aria-hidden="true"></i></button>
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Align Right"><i class="fa fa-align-right" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Align Justify"><i class="fa fa-align-justify" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Trash"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 </div>
                 <div class="form-group">
                     <input type="color" id="fontcolor" class="btn btn-default" style="display:none" />
                     <button class="btn btn-default" onclick="$('#fontcolor').click();"><i class="fa fa-paint-brush" aria-hidden="true"></i> Font Color</button>
-                </div>
+                </div>               
             </div>
         </div>
     </div>
@@ -60,10 +72,15 @@
                 @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
             <div class='ruler'></div>
             <div class='rulerleft'></div>
-            <div id="pageCanvas" style="position:relative;margin-top:93px;margin-bottom:100px">
+            <div id="pageCanvas" style="position:relative;margin-top:74px;margin-bottom:100px">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="formB-box pGreportBuilder" id="propGrid">
+
             </div>
         </div>
     </div>
@@ -72,10 +89,10 @@
     $(document).ready(function() {
         var myruler = new ruler();
         $("#pagesize").change(function () {
-            RptBuilder($(this).val());
+            RptBuilder($(this).val(),save);
         });
         $("#Rptbgimg").change(function () {
             setBackgroud(this);          
-        });
+        });       
     });
 </script>

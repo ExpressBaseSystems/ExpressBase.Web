@@ -66,12 +66,9 @@
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
-        this.$propGrid.show();
-        $('#propGrid').empty();
-        $('#form-buider-propGrid').css("visibility", "visible");
-        this.PGobj = new Eb_PropertyGrid("propGrid", control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
-        $('.selectpicker').selectpicker('refresh');
-        $('#propGrid table td').find("input").change(this.PGinputChange.bind(this));
+        this.$propGrid.show().css("visibility", "visible");
+        this.PGobj = new Eb_PropertyGrid("pgWraper", control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
+        $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
     };
 
     this.saveObj = function () {
@@ -177,8 +174,6 @@
                 ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
                     + new EbObjects["Eb" + type + "Obj"](id).Html());
 
-                $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");
-                $('.selectpicker').selectpicker('refresh');
                 ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
                 ctrl.focus();
             }
@@ -191,10 +186,11 @@
     this.controlCloseOnClick = function (e) {
         var ControlTile = $(e.target).parent().parent();
         var id = ControlTile.attr("id");
-        $("#SelOpt" + id).remove();
-        $('.selectpicker').selectpicker('refresh');
-        ControlTile.remove();
+
+        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).Name);
+
         this.rootContainerObj.Controls.DelByName(id);
+        ControlTile.remove();
         this.$propGrid.hide();
         e.preventDefault();
         this.saveObj();
@@ -267,8 +263,10 @@
 
     this.InitEditModeCtrls = function (editModeObj) {
         $(".Eb-ctrlContainer").each(function (i, el) { this.initCtrl(el); }.bind(this));
-        $('.selectpicker').selectpicker('refresh');
-        Proc(JSON.parse(editModeObj), this.rootContainerObj);
+        setTimeout(function () {
+            Proc(JSON.parse(editModeObj), this.rootContainerObj);
+        }.bind(this), 1000);
+       
     };
 
     this.Init = function () {

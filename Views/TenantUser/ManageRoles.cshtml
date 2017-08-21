@@ -75,10 +75,13 @@
             </div>
         </div>
     </div>
+                         
+                            var roleid = (Convert.ToInt32(ViewBag.roleid) != null) ? ViewBag.roleid : 0;
+                        
 
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#objlist1">Permissions</a></li>
-        <li><a onclick="GetSubRoles(@ViewBag.roleid,@ViewBag.ApplicationId)" data-toggle="tab" href="#rolesdiv">Sub Roles</a></li>
+        <li><a onclick="GetSubRoles(@roleid)" data-toggle="tab" href="#rolesdiv">Sub Roles</a></li>
         <li><a data-toggle="tab" href="#usersdiv">Users</a></li>
     </ul>
     <div class="tab-content">
@@ -98,7 +101,7 @@
             <input type="hidden" id="applicationid" />
             <input type="hidden" id="dominantrefid" />
             <input type="hidden" id="roleid" name="roleid" value="@ViewBag.roleid" />
-            <input type="submit" value="Save" id="save_permission" />
+            
         </div>
         <div id="rolesdiv" class="tab-pane fade">
             @*<div class="input-group pull-right">
@@ -115,7 +118,7 @@
                 </div>
 
             </div>
-            <input type="submit" value="Save" id="save_roles" />
+         
         </div>
 
         <div id="usersdiv" class="tab-pane fade">
@@ -136,17 +139,14 @@
                             </span>
                             
                         </div>
-                        <div id='div1'>
-                            <div id="loading" style="display:none">
-                                <img src="~/images/745.gif" />
-                            </div>
+                        <div id='div1'>                     
                         </div>
                     </div>
                     
                 </div>
                 <input type="hidden" id="userslist" />
             </div>
-            <input type="submit" value="Save" id="save_users" />
+          
         </div>
 
 
@@ -157,6 +157,7 @@
 
 <script>
     $('document').ready(function () {
+        
         var ids = "";
         var temp = new dragula([document.getElementById("div1"), document.getElementById("div2")], {
             accepts: function (el, target, source, sibling) {
@@ -182,10 +183,8 @@
             var text = $(e.target).parent().text();
             text = text.substring(0, text.length - 1);
             $("#" + id).remove();
-            $("#div1").append("<div id=" + id + " class='alert alert-success columnDrag'>" + text + "</div>");
-            //var arr =$("#abc").text().split(",");
+            $("#div1").append("<div id=" + id + " class='alert alert-success columnDrag'>" + text + "</div>");          
             var txt = $("#userslist").val();
-            alert(txt);
             txt = txt.toString().replace(id + ",", "");
             $("#userslist").val(txt);
            
@@ -205,54 +204,7 @@
             alert(selected.val());
             $('#dominantrefid').val(selected.val());
             $('#applicationid').val(extra);
-        });
-
-        //$("#save_permission").click(function () {
-        //    var selected = [];
-        //    $('.objtype input:checked').each(function () {
-        //        selected.push($(this).attr('value'));
-        //    });
-        //    $.post("../TenantUser/SaveRoles",
-        //    {
-        //        "Permissions": selected,
-        //        "RoleName": $('#role_name').val(),
-        //        "RoleId": $('#roleid').val(),
-        //        "ApplicationId": $('#applicationid').val(),
-        //        "DominantRefiid" : $('#dominantrefid').val(),
-        //        "Description": $('#Description').val()
-
-        //    }, function (result) {
-        //    });
-        //});
-
-        //$("#save_roles").click(function () {
-        //    var selectedroles = [];
-        //    $('#rolesdiv input:checked').each(function () {
-        //        selected.push($(this).attr('value'));
-        //    });
-        //    $.post("../TenantUser/SubRoles",
-        //    {
-        //        "subrolesid": selected,
-        //        "roleid": $('#roleid').val(),
-
-
-        //    }, function (result) {
-        //    });
-        //});
-
-        //$("#save_users").click(function () {
-        //    var txt = $("#userslist").val();
-        //    txt = txt.substring(0, txt.length - 1);
-        //    $.post("../TenantUser/Role2User",
-        //    {
-        //        "users":  txt,
-        //        "roleid": $('#roleid').val(),
-
-
-        //    }, function (result) {
-        //    });
-        //});
-        
+        });  
         var timer;
         $('#searchuser').keyup(function () {
            
@@ -265,9 +217,10 @@
                     "roleid": $('#roleid').val(),
                     "searchtext": text
                 }, function (result) {
+                  
                     if (result) {
-
-                        document.getElementById("div1").innerHTML = result;
+                        document.getElementById("div1").innerHTML = result.Users;
+                        document.getElementById("div2").innerHTML = result.Seluser;
                     }
                     else {
                         document.getElementById("div1").innerHTML = " <div class='alert alert-info'>No such user exists!!</div>";
@@ -277,27 +230,29 @@
         });
 
         $('#allsave').click(function () {
-            var selected = [];
+            var selected = "";
             $('.objtype input:checked').each(function () {
-                selected.push($(this).attr('value'));
+                selected += $(this).attr('value')+",";
             });
 
-            var selectedroles;
+            var selectedroles = "";
             $('#rolesdiv input:checked').each(function () {
-                selectedroles += $(this).attr('value');
+                selectedroles += $(this).attr('value')+",";
+              
             });
 
             var txt = $("#userslist").val();
             txt = txt.substring(0, txt.length - 1);
+            
             $.post("../TenantUser/SaveRoles",
-            {
-                "Permissions": selected,
+            {              
+                "Permissions": selected.substring(0, selected.length - 1),
                 "RoleName": $('#role_name').val(),
                 "RoleId": $('#roleid').val(),
                 "ApplicationId": $('#applicationid').val(),
                 "DominantRefiid": $('#dominantrefid').val(),
                 "Description": $('#Description').val(),
-                "subrolesid": selectedroles,
+                "subrolesid": selectedroles.substring(0, selectedroles.length - 1),
                 "users": txt,
 
             }, function (result) {
@@ -305,7 +260,6 @@
 
 
         });
-
     })
     function GetTable(type) {
 
@@ -324,12 +278,13 @@
            });
     }
 
-    function GetSubRoles(roleid,applicationid)
+    function GetSubRoles(roleid)
     {
+        alert("dfsdfs"+roleid+applicationid);
         $.post("../TenantUser/GetSubRoles",
               {
                   "roleid": roleid,
-                  "applicationid" : applicationid
+                  "applicationid" :  $('#applicationid').val()
 
 
               }, function (result) {
@@ -339,17 +294,5 @@
               });
 
     }
-
-    //function GetUsers()
-    //{
-    //    $.post("../TenantUser/GetUsers",
-    //          {
-    //              "roleid": $('#roleid').val()
-    //          }, function (result) {
-    //              if (result) {
-    //                  // document.getElementById("div1").innerHTML = result;
-    //              }
-    //          });
-
-    //}
+  
 </script>

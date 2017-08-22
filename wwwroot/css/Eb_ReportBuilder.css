@@ -49,7 +49,7 @@
     border-left: 0; 
     background-color:#fbf7f7;
     position: fixed;
-    z-index:1;
+    z-index:100;
     height: 20px;
 }
 
@@ -167,7 +167,8 @@
     margin-top: 30px;
     padding: 0 !important;
     box-shadow: 0 6px 12px rgba(0,0,0,.175) !important;
-    width:15%    
+    width:15%;
+    /*overflow-y:auto;*/    
 }
 
 .pgB {
@@ -214,14 +215,14 @@
     background-color: green !important;
 }
 .h-line .ui-resizable-handle {
-   width: 10px !important;
-    height: 10px !important;
-    top: -5px!important;
+   width: 7px;
+    height: 7px;
+    top: -4px!important;
     background-color: green !important;
 }
 .v-line .ui-resizable-handle {
    background-color: green;
-    width: 10px;
-    height: 10px;
-    left: -6px;
+    width: 7px;
+    height: 7px;
+    left: -4px;
 }

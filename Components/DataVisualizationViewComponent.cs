@@ -2,6 +2,7 @@
 using ExpressBase.Data;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ObjectContainers;
+using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Filters;
 using ExpressBase.Web.Models;
@@ -13,6 +14,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -136,38 +138,38 @@ namespace ExpressBase.Web.Components
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
             if (columnresp == null || columnresp.IsNull)
                 columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
-            EbDataVisualization eb = new EbDataVisualization();
-            eb.DataSourceRefId = dsRefid;
-            eb.Name = "<untittled>";
-            eb.AfterRedisGet(this.Redis);
-            eb.IsPaged = columnresp.IsPaged.ToString().ToLower();
-            List<DTColumnDef> coldeflist = new List<DTColumnDef>();
-            foreach(EbDataColumn column in columnresp.Columns)
+
+            EbDataVisualization eb = new EbDataVisualization()
             {
-                DTColumnDef coldef = null;
-                if (column.ColumnName == "id")
-                    coldef = new DTColumnDef(column.ColumnIndex, column.ColumnName, column.Type.ToString(), true, column.ColumnName, "100px", -1);
-                else
-                    coldef = new DTColumnDef(column.ColumnIndex, column.ColumnName, column.Type.ToString(), true, column.ColumnName, "100px", (columnresp.Columns.Count+100));
-                coldeflist.Add(coldef);
-            }
-            eb.columns = coldeflist;
-            List<DTColumnExtPpty> colextppty= new List<DTColumnExtPpty>();
+                DataSourceRefId = dsRefid,
+                Name = "<Untitled>",
+                IsPaged = columnresp.IsPaged.ToString().ToLower(),
+                Columns = new DVColumnCollection()
+            };
+            eb.AfterRedisGet(this.Redis);
+
+            int _pos = columnresp.Columns.Count;
+
+            // Add Serial & Checkbox
+            eb.Columns.Add(new DVNumericColumn { Name = "serial", Title = "#", Type = DbType.Int64, Visible = true, Width = 10, Pos = -2 });
+            eb.Columns.Add(new DVBooleanColumn { Name = "checkbox", Type = DbType.Boolean, Visible = false, Width = 10, Pos = -1 });
+
             foreach (EbDataColumn column in columnresp.Columns)
             {
-                DTColumnExtPpty colext = null;
+                DVBaseColumn _col = null;
 
-                if ((column.ColumnName == "id" || column.ColumnName == "serial" || column.ColumnName == "checkbox") && (column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64"))
-                {
-                    colext = new DTColumnExtPpty(column.ColumnName, true, 2, "Default", -1);
-                }
-                else if(column.Type.ToString() == "System.Double" || column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64")
-                    colext = new DTColumnExtPpty(column.ColumnName, true, 2, "Default", (columnresp.Columns.Count + 100));
-                else
-                    colext = new DTColumnExtPpty((columnresp.Columns.Count + 100));
-                colextppty.Add(colext);
+                if (column.Type == DbType.String)
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                else if (column.Type == DbType.Int16 || column.Type == DbType.Int32 || column.Type == DbType.Int64 || column.Type == DbType.Double || column.Type == DbType.Decimal || column.Type == DbType.VarNumeric)
+                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                else if (column.Type == DbType.Boolean)
+                    _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                else if (column.Type == DbType.DateTime || column.Type == DbType.Date || column.Type == DbType.Time)
+                    _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+
+                eb.Columns.Add(_col);
             }
-            eb.columnsext = colextppty;
+
             return eb;
         }
     }

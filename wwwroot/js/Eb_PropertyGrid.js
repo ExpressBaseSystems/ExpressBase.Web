@@ -195,6 +195,20 @@
         $('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
     };
 
+    this.pgObjEditAddFn = function () {
+        var tile = '<div class="colTile" tabindex="1" onclick="$(this).focus()">'
+                        + 'col 1 '
+                        + '<button type="button" class="close">&times;</button>'
+                    + '</div>';
+        $("#colsCont").append(tile);
+
+    };
+
+    this.colTileCloseFn = function (e) {
+        $(e.target).parent().remove();
+    };
+    
+
     this.InitPG = function () {
         this.propNames = [];
 
@@ -212,28 +226,32 @@
         this.innerHTML = '</table><div class="pgObjSettings-bg" onclick="$(this).hide();">'
                                     + '<div class="pgObjSettings-Cont formB-box" onclick="event.stopPropagation();">'
                                         + '<div class="modal-header">'
-                                            + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
+                                            + '<button type="button" class="close" onclick="$(\'.pgObjSettings-bg\').hide();" >&times;</button>'
                                             + '<h4 class="modal-title">Column Settings</h4>'
                                         + '</div>'
                                         + '<div class="modal-body">'
-                                            + '<table class="table table-bordered">'
-                                                + '<thead>'
+                                            + '<table class="table table-bordered editTbl">'
+                                               
+                                               + '<tbody>'
                                                     + '<tr>'
-                                                        + '<th>columns</th>'
-                                                        + '<th>properties</th>'
-                                                    + '</tr>'
-                                                + '</thead>'
-                                                + '<tbody>'
-                                                    + '<tr>'
-                                                        + '<td>col 1</td>'
+                                                        + '<td style="padding: 0px;">'
+
+                                                            + '<div style="background-color: #dddddd;"><div class="editObj-head" >Columns </div>'
+                                                                + '<button type="button" id="editObj_add" class="editObj-add pull-right" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
+                                                            + '</div>'
+
+                                                            + '<div id="colsCont">'
+                                                            + '</div>'
+
+                                                        + '</td>'
                                                         + '<td>PG grid</td>'
                                                     + '</tr>'
                                                 + '</tbody>'
                                             + '</table>'
                                         + '</div>'
                                         + '<div class="modal-footer">'
-                                            + '<button type="button" class="btn btn-success" data-dismiss="modal">Save</button>'
-                                            + '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'
+                                            + '<button type="button" class="btn btn-default" >Save</button>'
+                                            + '<button type="button" class="btn"  onclick="$(\'.pgObjSettings-bg\').hide();">Cancel</button>'
                                         + '</div>'
                                     + '</div>'
                                 + '</div>';
@@ -256,7 +274,6 @@
 
         $('#propGrid table td').find("input").change(this.OnInputchangedFn.bind(this));
 
-
         this.addToDD();
 
         if (this.PropsObj.RenderMe)
@@ -269,9 +286,12 @@
             $(".controls-dd-cont .selectpicker").selectpicker('refresh');
         }.bind(this));
 
+        $("#editObj_add").on("click", this.pgObjEditAddFn.bind(this));
 
+        $("#colsCont").on("click", ".close", this.colTileCloseFn.bind(this));
 
-
+        new dragula([document.getElementById("colsCont")]);
+        
     };
 
     this.setObject = function (props, metas) {

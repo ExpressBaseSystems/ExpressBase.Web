@@ -3,6 +3,7 @@
     this.containerId = id;
     this.$controlsDD = $(".controls-dd-cont select");
     this.objects = [];
+    this.PropsObj = null;
 
     this.getvaluesFromPG = function () {
         // function that will update and return tha values back from the property grid
@@ -186,13 +187,49 @@
 
     this.pgObjEditBtnClicked = function () {
         $(".pgObjSettings-bg").show();
+
+        $("#OEctrlsCont").empty().append(this.getOEhtml());
     };
 
     this.init = function () {
         this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
-        this.$wraper.append($("<div id='propGrid' class='propgrid-table-cont'></div>"));
-        this.$container = $("#propGrid");
+        this.$wraper.append($("<div id='" + this.containerId + "_propGrid' class='propgrid-table-cont'></div>"));
+        this.$container = $("#" + this.containerId + "_propGrid");
         $('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
+
+        var OEHTML = '<div class="pgObjSettings-bg" onclick="$(this).hide();">'
+                                            + '<div class="pgObjSettings-Cont formB-box" onclick="event.stopPropagation();">'
+                                                + '<div class="modal-header">'
+                                                    + '<button type="button" class="close" onclick="$(\'.pgObjSettings-bg\').hide();" >&times;</button>'
+                                                    + '<h4 class="modal-title">Column Settings</h4>'
+                                                + '</div>'
+                                                + '<div class="modal-body">'
+                                                    + '<table class="table table-bordered editTbl">'
+
+                                                       + '<tbody>'
+                                                            + '<tr>'
+                                                                + '<td style="padding: 0px;">'
+
+                                                                    + '<div style="background-color: #dddddd;"><div class="editObj-head" >Columns </div>'
+                                                                        + '<button type="button" id="editObj_add" class="editObj-add pull-right" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
+                                                                    + '</div>'
+
+                                                                    + '<div id="OEctrlsCont">'
+                                                                    + '</div>'
+
+                                                                + '</td>'
+                                                                + '<td><div id="' + this.containerId + 'innerPG' + '"><div></td>'
+                                                            + '</tr>'
+                                                        + '</tbody>'
+                                                    + '</table>'
+                                                + '</div>'
+                                                + '<div class="modal-footer">'
+                                                    + '<button type="button" class="btn btn-default" >Save</button>'
+                                                    + '<button type="button" class="btn"  onclick="$(\'.pgObjSettings-bg\').hide();">Cancel</button>'
+                                                + '</div>'
+                                            + '</div>'
+                                        + '</div>';
+        $(document.body).append(OEHTML);
     };
 
     this.pgObjEditAddFn = function () {
@@ -200,12 +237,25 @@
                         + 'col 1 '
                         + '<button type="button" class="close">&times;</button>'
                     + '</div>';
-        $("#colsCont").append(tile);
+        $("#OEctrlsCont").append(tile);
 
     };
 
     this.colTileCloseFn = function (e) {
         $(e.target).parent().remove();
+    };
+
+    this.getOEhtml = function () {
+        var _html = "";
+        $.each(this.PropsObj.Controls.$values, function (i , control) {
+            _html += '<div class="colTile" tabindex="1" onclick="$(this).focus()">'
+                        + control.Name
+                        + '<button type="button" class="close">&times;</button>'
+                    + '</div>';
+        })
+        var OEPGobj = new Eb_PropertyGrid(this.containerId + "innerPG");
+        OEPGobj.setObject(this.PropsObj.Controls.$values[0], AllMetas["EbTableTd"]);
+        return _html;
     };
     
 
@@ -221,41 +271,10 @@
         this.postCreateInitFuncs = {};
         this.getValueFuncs = {};
 
-        this.pgId = 'pg' + this.pgIdSequence++;
+        this.pgId = this.containerId + this.pgIdSequence++;
         this.currGroup = null;
-        this.innerHTML = '</table><div class="pgObjSettings-bg" onclick="$(this).hide();">'
-                                    + '<div class="pgObjSettings-Cont formB-box" onclick="event.stopPropagation();">'
-                                        + '<div class="modal-header">'
-                                            + '<button type="button" class="close" onclick="$(\'.pgObjSettings-bg\').hide();" >&times;</button>'
-                                            + '<h4 class="modal-title">Column Settings</h4>'
-                                        + '</div>'
-                                        + '<div class="modal-body">'
-                                            + '<table class="table table-bordered editTbl">'
-                                               
-                                               + '<tbody>'
-                                                    + '<tr>'
-                                                        + '<td style="padding: 0px;">'
-
-                                                            + '<div style="background-color: #dddddd;"><div class="editObj-head" >Columns </div>'
-                                                                + '<button type="button" id="editObj_add" class="editObj-add pull-right" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
-                                                            + '</div>'
-
-                                                            + '<div id="colsCont">'
-                                                            + '</div>'
-
-                                                        + '</td>'
-                                                        + '<td>PG grid</td>'
-                                                    + '</tr>'
-                                                + '</tbody>'
-                                            + '</table>'
-                                        + '</div>'
-                                        + '<div class="modal-footer">'
-                                            + '<button type="button" class="btn btn-default" >Save</button>'
-                                            + '<button type="button" class="btn"  onclick="$(\'.pgObjSettings-bg\').hide();">Cancel</button>'
-                                        + '</div>'
-                                    + '</div>'
-                                + '</div>';
-        this.innerHTML += '<table class="table-bordered table-hover pg-table">';
+        
+        this.innerHTML = '<table class="table-bordered table-hover pg-table">';
 
         this.$container.empty();
 
@@ -272,7 +291,7 @@
 
         $("#" + this.containerId + " .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
 
-        $('#propGrid table td').find("input").change(this.OnInputchangedFn.bind(this));
+        $('#' + this.containerId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
 
         this.addToDD();
 
@@ -288,9 +307,9 @@
 
         $("#editObj_add").on("click", this.pgObjEditAddFn.bind(this));
 
-        $("#colsCont").on("click", ".close", this.colTileCloseFn.bind(this));
+        $("#OEctrlsCont").on("click", ".close", this.colTileCloseFn.bind(this));
 
-        new dragula([document.getElementById("colsCont")]);
+        new dragula([document.getElementById("OEctrlsCont")]);
         
     };
 

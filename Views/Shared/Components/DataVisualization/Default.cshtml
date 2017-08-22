@@ -27,6 +27,7 @@
                 @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
             </div>
             <div id='@(tableId+"_1container")'>
+                @*@await Component.InvokeAsync("DragNDropColumns", new { dsRefid = ViewBag.data.DataSourceRefId });*@
                 <div id='@(tableId+"_1TableColumns4Drag")' style='border:1px solid;display:none;height:100%;min-height: 400px;overflow-y: auto;'>
                 </div>
                 <div style='width:auto;' id='@(tableId+"_1divcont")'>

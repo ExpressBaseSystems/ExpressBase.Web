@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Data;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -33,16 +34,24 @@ namespace ExpressBase.Web.Components
 
         private string GetTreeData(ColumnColletion columns)
         {
+            List<string> CNodes = new List<string>();
+            //Dictionary<string, List<string>> tree = new Dictionary<string, List<string>>();
+            TreeData td = new TreeData();
+            td.text = "sxxxx";
             foreach(EbDataColumn column in columns)
             {
-
+                td.nodes.Add(column.ColumnName);
             }
-            return null;
+            //tree.Add("xxxx", CNodes);
+            var xx =  JsonConvert.SerializeObject(td);
+            return xx;
         }
     }
 
     public class TreeData
     {
         public string text;
+
+        public List<string> nodes;
     }
 }

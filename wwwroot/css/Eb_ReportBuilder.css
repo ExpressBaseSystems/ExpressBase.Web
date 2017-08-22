@@ -196,7 +196,7 @@
     width: 100%;
 }
 
-reportmenu .btn-group > .btn:first-child {
+.reportmenu .btn-group > .btn:first-child {
     margin-left: 5px !important;
 }
 .side-toolbar{

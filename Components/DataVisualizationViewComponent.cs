@@ -22,7 +22,7 @@ namespace ExpressBase.Web.Components
 {
     public class DataVisualizationViewComponent : ViewComponent
     {
-        protected IServiceClient ServiceClient { get; set; }
+        protected JsonServiceClient ServiceClient { get; set; }
 
         protected RedisClient Redis { get; set; }
 
@@ -34,23 +34,24 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string dsRefid)
         {
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             RetValObj xxx = null;
             if (!string.IsNullOrEmpty(dsRefid))
             {
-                var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = dsRefid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
-                var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
+                //var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = dsRefid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
+                //var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
 
-                if (!string.IsNullOrEmpty(fdid))
-                {
-                    //get fd obj
-                    resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
+                //if (!string.IsNullOrEmpty(fdid))
+                //{
+                //    //get fd obj
+                //    resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
 
-                    //redundant - REMOVE JITH
-                    var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
+                //    //redundant - REMOVE JITH
+                //    var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
 
-                    ViewBag.HtmlHead = _filterDialog.GetHead();
-                    ViewBag.HtmlBody = _filterDialog.GetHtml();
-                }
+                //    ViewBag.HtmlHead = _filterDialog.GetHead();
+                //    ViewBag.HtmlBody = _filterDialog.GetHtml();
+                //}
 
                 ViewBag.data = getDVObject(dsRefid);
                 //Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
@@ -152,7 +153,7 @@ namespace ExpressBase.Web.Components
 
             // Add Serial & Checkbox
             eb.Columns.Add(new DVNumericColumn { Name = "serial", Title = "#", Type = DbType.Int64, Visible = true, Width = 10, Pos = -2 });
-            eb.Columns.Add(new DVBooleanColumn { Name = "checkbox", Type = DbType.Boolean, Visible = false, Width = 10, Pos = -1 });
+            eb.Columns.Add(new DVBooleanColumn { Name = "checkbox", Title = "checkbox", Type = DbType.Boolean, Visible = false, Width = 10, Pos = -1 });
 
             foreach (EbDataColumn column in columnresp.Columns)
             {

@@ -90,8 +90,7 @@
     var sett = @Html.Raw(dvobj);
     var ebdtable = new EbDataTable({
         ds_id: '@ViewBag.data.DataSourceRefId',
-
-        ss_url: 'https://expressbaseservicestack.azurewebsites.net',
+        ss_url: '@ViewBag.ServiceUrl',
         tid: '@(tableId+"_1")',
         login:'@ViewBag.wc',
         settings:sett,

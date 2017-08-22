@@ -196,32 +196,6 @@
     width: 100%;
 }
 
-reportmenu .btn-group > .btn:first-child {
+.btn-group > .btn:first-child {
     margin-left: 5px !important;
-}
-.side-toolbar{
-       min-height: 1000px;
-    padding-left: 10px;
-}
-.PGgrid{
-    min-height: 1000px;
-    padding:0;
-}
-.line .ui-resizable-handle {
-   width: 10px !important;
-    height: 10px !important;
-    top: -5px!important;
-    background-color: green !important;
-}
-.h-line .ui-resizable-handle {
-   width: 10px !important;
-    height: 10px !important;
-    top: -5px!important;
-    background-color: green !important;
-}
-.v-line .ui-resizable-handle {
-   background-color: green;
-    width: 10px;
-    height: 10px;
-    left: -6px;
 }

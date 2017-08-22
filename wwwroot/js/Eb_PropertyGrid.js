@@ -163,8 +163,8 @@
     };
 
     this.addToDD = function () {
-        if ($("#SelOpt" + this.propsObj.Name).length === 0) {
-            $(".controls-dd-cont select").append("<option data-name = '" + this.propsObj.Name + "'id='SelOpt" + this.propsObj.Name + "'>" + this.propsObj.Name + "</option>");
+        if ($("#SelOpt" + this.PropsObj.EbSid).length === 0) {
+            $(".controls-dd-cont select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + "'>" + this.PropsObj.Name + "</option>");
             $(".controls-dd-cont .selectpicker").selectpicker('refresh');
         }
         $(".controls-dd-cont .selectpicker").selectpicker('val', this.PropsObj.Name);
@@ -192,7 +192,7 @@
         this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='propGrid' class='propgrid-table-cont'></div>"));
         this.$container = $("#propGrid");
-        $('.controls-dd-cont .selectpicker').on('change', function (e) { alert("#" + $(this).find("option:selected").attr("data-name")); $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
+        $('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
     };
 
     this.InitPG = function () {
@@ -266,6 +266,7 @@
 
         $(".pgRow:contains(Name)").find("input").on("change", function (e) {
             $("#SelOpt" + this.PropsObj.EbSid).text(e.target.value);
+            $(".controls-dd-cont .selectpicker").selectpicker('refresh');
         }.bind(this));
 
 

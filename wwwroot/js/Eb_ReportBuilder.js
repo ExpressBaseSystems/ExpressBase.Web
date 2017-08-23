@@ -36,12 +36,19 @@ var PageElements = function (id, value, left, top, font) {
     this.fontsize = font;
 };
 
-var RptBuilder = function (type, saveBtnid) {
-
+var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
     this.savebtnid = saveBtnid;
     this.type = type;
-    this.height = pages[type].height;
-    this.width = pages[type].width;
+    if (this.type === 'custom-size') {
+        this.height = custHeight + custunit;
+        this.width = custWidth + custunit;
+    }
+    else if (this.type !== 'custom-size') {
+        this.height = pages[type].height;
+        this.width = pages[type].width;
+        $('#custom-size').hide();
+    } 
+
     this.splitarray = [];
     this.btn_indx = null;
 
@@ -94,7 +101,7 @@ var RptBuilder = function (type, saveBtnid) {
         }
 
         this.$div = $("<div class='page' id='page' style='width :" + this.width + "; height:" + this.height + ";'></div>");
-        $('#PageContainer').append($div);
+        $('#PageContainer').append(this.$div);
         $('.title').show();
         this.pageSplitters(this.$div);
     };
@@ -210,8 +217,8 @@ var RptBuilder = function (type, saveBtnid) {
 
             this.$sec = $("#" + obj.id);
             this.$spl = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + this.j++ + "'></div>");
-            this.$sec.append($spl);
-            $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
+            this.$sec.append(this.$spl);
+            $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
             $(this.$sec).children('.gutter').remove();
             this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
 
@@ -338,14 +345,14 @@ var RptBuilder = function (type, saveBtnid) {
             }
 
         }
-            
+
         else if (this.itemToClone.hasClass('special-field')) {
 
-            if (this.itemToClone.attr('id') ==="date-time") {
+            if (this.itemToClone.attr('id') === "date-time") {
                 this.addCurrentDateTime();
             }
         }
-        else if (this.itemToClone.hasClass('qr-Br-img-btn')) {            
+        else if (this.itemToClone.hasClass('qr-Br-img-btn')) {
 
             if (this.itemToClone.attr('id') === 'pg-img') {
                 this.addImageOnPage();
@@ -374,7 +381,7 @@ var RptBuilder = function (type, saveBtnid) {
                     position: 'absolute'
                 }));
 
-            }           
+            }
         }
         $('.dropped').draggable({
             cursor: 'move',
@@ -390,14 +397,14 @@ var RptBuilder = function (type, saveBtnid) {
             minWidth: minwidth,
             resize: this.resizeElement.bind(this)
         });
+        $('.image-reSize').resizable();
 
         this.PropertyMenu();
     };
-    
+
     this.addImageOnPage = function () {
-        this.i = 1;       
-        this.$img = $("<div class='img-container' id='img" + i++ + "' ><input type='file' style='display:none' id='file" + i++ + "'/><button class='btn btn-default upload-btn' id='btn" + this.i++ + "'><i class='fa fa-picture-o fa-2x' aria-hidden='true' disabled></i></button></div>");
-        console.log(this.$img.attr('id'));
+        this.i = 1;
+        this.$img = $("<div class='img-container' id='img" + this.i++ + "' ><input type='file' class='file' style='display:none' id='file" + this.i++ + "'/><button class='btn btn-default upload-btn' id='btn" + this.i++ + "'><i class='fa fa-picture-o fa-2x' aria-hidden='true' disabled></i></button></div>");      
         this.dropLoc.append(this.$img.addClass("dropped").css({
             width: '100px',
             height: '100px',
@@ -406,23 +413,25 @@ var RptBuilder = function (type, saveBtnid) {
             top: this.posTop - 150
         }));
         $('.upload-btn ').on('click', this.uploadImage.bind(this));
+       
     };
 
-    this.uploadImage = function (e) {       
+    this.uploadImage = function (e) {
 
         var $file = $(e.target).siblings().attr('id');
         $('#' + $file).click();
-        var img = this.$img;
+        var imgDiv = this.$img;
 
         $('#' + $file).change(function () {
             var input = this;
-           
+
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    console.log(img);
-                    img.css({ 'background-image': 'url(' + e.target.result + ')', 'width': img.width(), 'background-repeat': 'no-repeat' });
-                    img.children().not('.ui-resizable-handle').remove();
+
+                    var img = $("<img id='demo' src='" + e.target.result + "' style='width:100px'/>");                   
+                    imgDiv.append(img.addClass('image-reSize'));                   
+                    imgDiv.children('.file,button,.ui-resizable-handle').remove();
                 };
                 reader.readAsDataURL(input.files[0]);
             }
@@ -441,7 +450,7 @@ var RptBuilder = function (type, saveBtnid) {
     };
 
     this.addCurrentDateTime = function () {
-        
+
         var currentdate = new Date();
         var time = currentdate.getDate() + "/"
                 + (currentdate.getMonth() + 1) + "/"
@@ -453,7 +462,7 @@ var RptBuilder = function (type, saveBtnid) {
         var $DateTime = $("<div class='date-time' style='border:1px solid'>" + time + "</div>");
         this.dropLoc.append($DateTime.addClass("dropped").css({
             width: '150px',
-            height:'20px',
+            height: '20px',
             position: 'absolute',
             left: this.posLeft - 270,
             top: this.posTop - 150
@@ -535,8 +544,8 @@ var RptBuilder = function (type, saveBtnid) {
         });
     };
 
-    this.resizeElement = function (event, ui) {
-
+    this.resizeElement = function (event, ui) {       
+              
         var font = parseInt($(event.target).css("height"));
         //$(event.target).css("font-size", font - 5);
 
@@ -638,54 +647,4 @@ var setBackgroud = function (input) {
         reader.readAsDataURL(input.files[0]);
     }
 };
-
-//tree 
-$.fn.extend({
-    treed: function (o) {
-
-        var openedClass = 'glyphicon-minus-sign';
-        var closedClass = 'glyphicon-plus-sign';
-
-        if (typeof o !== 'undefined') {
-            if (typeof o.openedClass !== 'undefined') {
-                openedClass = o.openedClass;
-            }
-            if (typeof o.closedClass !== 'undefined') {
-                closedClass = o.closedClass;
-            }
-        }
-        var tree = $(this);
-        tree.addClass("tree");
-        tree.find('li').has("ul").each(function () {
-            var branch = $(this);
-            branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
-            branch.addClass('branch');
-            branch.on('click', function (e) {
-                if (this === e.target) {
-                    var icon = $(this).children('i:first');
-                    icon.toggleClass(openedClass + " " + closedClass);
-                    $(this).children().children().toggle();
-                }
-            });
-            branch.children().children().toggle();
-        });
-        tree.find('.branch .indicator').each(function () {
-            $(this).on('click', function () {
-                $(this).closest('li').click();
-            });
-        });
-        tree.find('.branch>a').each(function () {
-            $(this).on('click', function (e) {
-                $(this).closest('li').click();
-                e.preventDefault();
-            });
-        });
-        tree.find('.branch>button').each(function () {
-            $(this).on('click', function (e) {
-                $(this).closest('li').click();
-                e.preventDefault();
-            });
-        });
-    }
-});
 

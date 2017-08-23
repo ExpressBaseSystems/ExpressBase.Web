@@ -20,11 +20,18 @@
 }
 
 .Displaycols {
-    margin: 3px 6px;
+    margin: 0px 1px;
+    padding: 2px 1px;
+    width: auto;
+    height: 25px;
+    margin-top: 2px;
+    display: inline-block;
+    font-size: 11px;
+    /*margin: 3px 6px;
     border: solid 2px #dddddd;
     padding: 1px 5px;
     display: inline-block;
-    width: auto;
+    width: auto;*/
 }
 .Displaycols:focus{
     background-color:aquamarine;
@@ -69,13 +76,13 @@ td.resizer {
 }
 
 .dataTables_scrollHead {
-    padding-bottom: 250px;
-    margin-bottom: -250px;
+    padding-bottom: 1px;
+    margin-bottom: -1px;
 }
 
 .dataTables_scrollFoot {
-    padding-bottom: 250px;
-    margin-bottom: -250px;
+    padding-bottom: 1px;
+    margin-bottom: -1px;
 }
 
 .dataTables_processing { /*margin-top: 30%!important;*/

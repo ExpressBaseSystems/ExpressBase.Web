@@ -61,7 +61,11 @@
             var dsRefid = $(e.target).parent().attr("data-dsid");
             $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
             $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
-            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid });
+            $.LoadingOverlay("show");
+            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid }, function () {
+                $.LoadingOverlay("hide");
+            });
+            
         });
         $(document).ready(function () {
             @Html.Raw(head)

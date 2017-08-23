@@ -164,8 +164,8 @@
     };
 
     this.addToDD = function () {
-        if ($("#SelOpt" + this.PropsObj.EbSid).length === 0) {
-            $(".controls-dd-cont select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + "'>" + this.PropsObj.Name + "</option>");
+        if ($("#SelOpt" + this.PropsObj.EbSid + this.containerId).length === 0) {
+            $(".controls-dd-cont select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.containerId + "'>" + this.PropsObj.Name + "</option>");
             $(".controls-dd-cont .selectpicker").selectpicker('refresh');
         }
         $(".controls-dd-cont .selectpicker").selectpicker('val', this.PropsObj.Name);
@@ -173,8 +173,8 @@
     };
 
     this.removeFromDD = function (name) {
-        if ($("#SelOpt" + name)) {
-            $("#SelOpt" + name).remove();
+        if ($("#SelOpt" + name + this.containerId)) {
+            $("#SelOpt" + name + this.containerId).remove();
             $(".controls-dd-cont .selectpicker").selectpicker('refresh');
         }
     };
@@ -301,7 +301,7 @@
         $(".pgObjEditBtn").on("click", this.pgObjEditBtnClicked.bind(this));
 
         $(".pgRow:contains(Name)").find("input").on("change", function (e) {
-            $("#SelOpt" + this.PropsObj.EbSid).text(e.target.value);
+            $("#SelOpt" + this.PropsObj.EbSid + this.containerId).text(e.target.value);
             $(".controls-dd-cont .selectpicker").selectpicker('refresh');
         }.bind(this));
 

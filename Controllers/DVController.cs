@@ -20,8 +20,9 @@ using System.Text;
 using ExpressBase.Objects.Objects;
 using Newtonsoft.Json;
 using ExpressBase.Objects.ObjectContainers;
-using ExpressBase.Objects.Attributes;
+using ExpressBase.Common.Objects.Attributes;
 using ServiceStack.Redis;
+using ExpressBase.Common.Objects;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -391,7 +392,7 @@ namespace ExpressBase.Web.Controllers
                 DataSourceRefId = dsid.ToString(),
                 EbObjectType = EbObjectType.DataVisualization
             });
-            ds.Status = Objects.ObjectLifeCycleStatus.Live;
+            ds.Status = ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
             ds.Relations = dsid.ToString();

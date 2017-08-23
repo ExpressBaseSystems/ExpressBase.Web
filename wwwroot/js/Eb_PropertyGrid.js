@@ -192,6 +192,7 @@
     };
 
     this.init = function () {
+        this.$wraper.empty();
         this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.containerId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$container = $("#" + this.containerId + "_propGrid");

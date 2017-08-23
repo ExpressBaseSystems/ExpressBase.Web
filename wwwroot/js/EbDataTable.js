@@ -1807,7 +1807,7 @@ var EbDataTable = function (settings) {
                 $("#" + id + "ColumnsDispaly").append("<div class ='alert alert-success Displaycols' tabIndex='0' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
         });
         $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-
+        $("#" + this.tableId + "ColumnsDispaly div").off("onfocus").on("onfocus", this.createPG.bind(this));
         this.drake = new dragula([document.getElementById(id + "TableColumns4Drag"), document.getElementById(id + "ColumnsDispaly")], {
             accepts: this.acceptDrop.bind(this)
         });
@@ -1890,6 +1890,10 @@ var EbDataTable = function (settings) {
         //$('#' + this.tableId + 'divcont').append(table);
         //console.log(JSON.stringify(this.ebSettings.columns));
         //this.Init();
+    };
+
+    this.createPG = function () {
+        var pg= new Eb_PropertyGrid(this.tableId + "TableColumnsPPGrid")
     };
 
 

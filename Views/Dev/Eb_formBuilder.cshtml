@@ -1,5 +1,6 @@
-﻿@using ExpressBase.Objects;
-@using ExpressBase.Objects.Attributes;
+﻿@using ExpressBase.Common.Objects;
+@using ExpressBase.Objects;
+@using ExpressBase.Common.Objects.Attributes;
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
@@ -36,14 +37,11 @@
 }
 
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
-
 <div id="con" class="form-buider-cont">
     <div id="toolbox_cont" class='formB-box toolbox-cont'>
         <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-thumb-tack pin" onclick="slideLeft ('.form-save-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
-
             @Html.Raw(_toolBox.html)
-
         </div>
     </div>
     <div class="form-save-wraper">
@@ -58,20 +56,11 @@
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
         </div>
     </div>
-
-
     <input type="hidden" id="objtype" value="@type" />
     <input type="hidden" id="objid" value="@ViewBag.Objid" />
-
     <div id='form-buider-propGrid' class='formB-box property-grid-cont'>
-        <div class="pgHead">Properties<i class="fa fa-times" style="float:right; cursor:default;" onclick="$(this).parent().parent().css('visibility', 'hidden')" aria-hidden="true"></i><i class="fa fa-thumb-tack pin" onclick="slideRight('.form-save-wraper', '#form-buider-propGrid')" aria-hidden="true"></i></div>
-        <div class="controls-dd-cont">
-            <select class="selectpicker" data-live-search="true"> </select>
-        </div>
-        <div id='propGrid' class="propgrid-table-cont"></div>
+        <div id='pgWraper'></div>
     </div>
-
-
 </div>
 
 <script>
@@ -86,9 +75,6 @@
     var editModeFormObj = null;
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
-
-
-
     // if edit mode
     if(objid){
         editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
@@ -99,12 +85,11 @@
     else
         formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
 
-    function recur(obj)
-    {
-        if (obj.Controls)
-            obj.Controls = new EbControlCollection(obj.Controls);
-
-    }
+    //function recur(obj)
+    //{
+    //    if (obj.Controls)
+    //        obj.Controls = new EbControlCollection(obj.Controls);
+    //}
 </script>
 
 <style>
@@ -120,11 +105,6 @@
     .property-grid-cont .sp-replacer {
         width: 100% !important;
         padding: 2px;
-    }
-
-    .property-grid-cont .btn:first-child {
-        margin-left: 0 !important;
-        border-radius: 0px !important;
     }
 
     .form-buider-form .btn {

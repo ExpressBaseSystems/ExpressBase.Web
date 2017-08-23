@@ -20,84 +20,15 @@
                 </li>
             }
         }
-        @*<li>
-                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown2">
-                    <i class="fa fa-money"></i> Financial Accounts<i class="fa fa-caret-down pull-right"></i>
-                </a>
-                <ul class="sub-menu collapse" id="dropdown2">
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
-                    <li><a class="list-group-item" href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-caret-right"></i> Data visualizations</a></li>
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Reports</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown3">
-                    <i class="fa fa-comment-o"></i> General<i class="fa fa-caret-down pull-right"></i>
-                </a>
-                <ul class="sub-menu collapse" id="dropdown3">
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
-                    <li><a class="list-group-item" href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-caret-right"></i> Data visualizations</a></li>
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Reports</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown4">
-                    <i class="fa fa-comment-o"></i> Operations-Van Sales<i class="fa fa-caret-down pull-right"></i>
-                </a>
-                <ul class="sub-menu collapse" id="dropdown4">
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
-                    <li><a class="list-group-item" href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-caret-right"></i> Data visualizations</a></li>
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Reports</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown5">
-                    <i class="fa fa-comment-o"></i>Payroll Management<i class="fa fa-caret-down pull-right"></i>
-                </a>
-                <ul class="sub-menu collapse" id="dropdown5">
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
-                    <li><a class="list-group-item" href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-caret-right"></i> Data visualizations</a></li>
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Reports</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown6">
-                    <i class="fa fa-comment-o"></i>Procurement Management<i class="fa fa-caret-down pull-right"></i>
-                </a>
-                <ul class="sub-menu collapse" id="dropdown6">
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
-                    <li><a class="list-group-item" href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-caret-right"></i> Data visualizations</a></li>
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i>Reports</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown7">
-                    <i class="fa fa-comment-o"></i>Production<i class="fa fa-caret-down pull-right"></i>
-                </a>
-                <ul class="sub-menu collapse" id="dropdown7">
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
-                    <li><a class="list-group-item" href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-caret-right"></i> Data visualizations</a></li>
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Reports</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown8">
-                    <i class="fa fa-comment-o"></i>Vehicle Fleet Management<i class="fa fa-caret-down pull-right"></i>
-                </a>
-                <ul class="sub-menu collapse" id="dropdown8">
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
-                    <li><a class="list-group-item" href="DataVisualizations?id=@ViewBag.UId"><i class="fa fa-caret-right"></i> Data visualizations</a></li>
-                    <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Reports</a></li>
-                </ul>
-            </li>*@
+      
         <li>
             <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown9">
                 <i class="fa fa-lock"></i>Security<i class="fa fa-caret-down pull-right"></i>
             </a>
             <ul class="sub-menu collapse" id="dropdown9">
-                <li><a class="list-group-item" href="CreateUser"><i class="fa fa-caret-right"></i> Users</a></li>
-                <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> User Groups</a></li>
-                <li><a class="list-group-item" href="EbRoles"><i class="fa fa-caret-right"></i> Roles</a></li>
+                <li><a class="list-group-item" onclick="LoadCommonList('user')" href="CommonList?type='user'"><i class="fa fa-caret-right"></i> Users</a></li>
+                <li><a class="list-group-item" onclick="LoadCommonList('usergroup')" href="CommonList?type='usergroup'"><i class="fa fa-caret-right"></i> User Groups</a></li>
+                <li><a class="list-group-item" onclick="LoadCommonList('roles')" href="CommonList?type='roles'"><i class="fa fa-caret-right"></i> Roles</a></li>
             </ul>
         </li>
     </ul>
@@ -112,6 +43,22 @@
             type: "GET",
             cache: false,
             data: { "type": type44 },
+            success: function (result) {
+                _container.html(result);
+                $.LoadingOverlay("hide");
+            }
+        });
+    }
+
+    function LoadCommonList(type) {
+        event.preventDefault();
+        var _container = $("#layout_div");
+        $.LoadingOverlay("show");
+        $.ajax({
+            url: "../TenantUser/CommonList",
+            type: "GET",
+            cache: false,
+            data: { "type": type },
             success: function (result) {
                 _container.html(result);
                 $.LoadingOverlay("hide");

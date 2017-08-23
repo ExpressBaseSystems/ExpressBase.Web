@@ -1,34 +1,9 @@
-﻿var Eb_PropertyGrid = function (id, props, metas) {
-    //params check
-    {
-        if (typeof props === 'string' || typeof metas === 'string') {
-            console.error('Eb_PropertyGrid got "string" parameter instead of "object"');
-            return null;
-        } else if (typeof id === 'object') {
-            console.error('Eb_PropertyGrid got "object" parameter instead of "string"');
-            return;
-        } else if (typeof props !== 'object' || props === null || typeof metas !== 'object' || metas === null) {
-            console.error('Eb_PropertyGrid must get an object in order to initialize the grid.');
-            return;
-        }
-    }
-    this.Metas = metas;
-    this.PropsObj = props;
-    this.$container = $("#" + id);
+﻿var Eb_PropertyGrid = function (id) {
+    this.$wraper = $("#" + id);
     this.containerId = id;
-    this.propNames = [];
-
-    this.MISC_GROUP_NAME = 'Misc';
-    this.GET_VALS_FUNC_KEY = 'pg.getValues';
-    this.pgIdSequence = 0;
-
-    this.propertyRowsHTML = { 'Misc': '' };
-    this.groupsHeaderRowHTML = {};
-    this.postCreateInitFuncs = {};
-    this.getValueFuncs = {};
-    this.pgId = 'pg' + this.pgIdSequence++;
-    this.currGroup = null;
-    this.innerHTML = '<table class="table-bordered table-hover pg-table">';
+    this.$controlsDD = $(".controls-dd-cont select");
+    this.objects = [];
+    this.PropsObj = null;
 
     this.getvaluesFromPG = function () {
         // function that will update and return tha values back from the property grid
@@ -77,9 +52,14 @@
         } else if (type === 4) {
             valueHTML = '<label for="' + elemId + '">' + value + '</label>';
 
+            // If collection editor for object
+        } else if (type === 7) {
+            valueHTML = '<button for="' + elemId + '" class= "pgObjEditBtn" > Settings... </button>';
+
+
             // Default is textbox
         } else {
-            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></input>';
+            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
@@ -106,8 +86,8 @@
     };
 
     this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(250);">' + displayName
-            + '<span class="bs-caret" style="float: right;margin-right: 15px;"><span class="caret"></span></span></td></tr>';
+        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">' + displayName
+            + '<span class="bs-caret" style="float: right;margin-right: 10px;"><span class="caret"></span></span></td></tr>';
     };
 
     this.isContains = function (obj, val) {
@@ -143,12 +123,10 @@
         }
 
         // Close the table and apply it to the div
-        this.innerHTML += '</table>';
         this.$container.html(this.innerHTML);
-        $("#" + id + ' .selectpicker').on('change', function (e) {
-            var selected = $(this).find("option:selected").val();
-            $(this).parent().siblings("input").val(selected);
-        });
+
+        $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").val()); });
+
         return true;
     };
 
@@ -180,11 +158,126 @@
         this.getvaluesFromPG();
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
+
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
     };
 
+    this.addToDD = function () {
+        if ($("#SelOpt" + this.PropsObj.EbSid + this.containerId).length === 0) {
+            $(".controls-dd-cont select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.containerId + "'>" + this.PropsObj.Name + "</option>");
+            $(".controls-dd-cont .selectpicker").selectpicker('refresh');
+        }
+        $(".controls-dd-cont .selectpicker").selectpicker('val', this.PropsObj.Name);
+
+    };
+
+    this.removeFromDD = function (name) {
+        if ($("#SelOpt" + name + this.containerId)) {
+            $("#SelOpt" + name + this.containerId).remove();
+            $(".controls-dd-cont .selectpicker").selectpicker('refresh');
+        }
+    };
+
+
+    this.refreshCtrlsDD = function () {
+        $('.selectpicker').selectpicker('refresh');
+        $(".controls-dd-cont .selectpicker").selectpicker('val', this.PropsObj.Name);
+    };
+
+    this.pgObjEditBtnClicked = function () {
+        $(".pgObjSettings-bg").show();
+
+        $("#OEctrlsCont").empty().append(this.getOEhtml());
+    };
+
     this.init = function () {
+        this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
+        this.$wraper.append($("<div id='" + this.containerId + "_propGrid' class='propgrid-table-cont'></div>"));
+        this.$container = $("#" + this.containerId + "_propGrid");
+        $('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
+
+        var OEHTML = '<div class="pgObjSettings-bg" onclick="$(this).hide();">'
+                                            + '<div class="pgObjSettings-Cont formB-box" onclick="event.stopPropagation();">'
+                                                + '<div class="modal-header">'
+                                                    + '<button type="button" class="close" onclick="$(\'.pgObjSettings-bg\').hide();" >&times;</button>'
+                                                    + '<h4 class="modal-title">Column Settings</h4>'
+                                                + '</div>'
+                                                + '<div class="modal-body">'
+                                                    + '<table class="table table-bordered editTbl">'
+
+                                                       + '<tbody>'
+                                                            + '<tr>'
+                                                                + '<td style="padding: 0px;">'
+
+                                                                    + '<div style="background-color: #dddddd;"><div class="editObj-head" >Columns </div>'
+                                                                        + '<button type="button" id="editObj_add" class="editObj-add pull-right" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
+                                                                    + '</div>'
+
+                                                                    + '<div id="OEctrlsCont">'
+                                                                    + '</div>'
+
+                                                                + '</td>'
+                                                                + '<td><div id="' + this.containerId + 'innerPG' + '"><div></td>'
+                                                            + '</tr>'
+                                                        + '</tbody>'
+                                                    + '</table>'
+                                                + '</div>'
+                                                + '<div class="modal-footer">'
+                                                    + '<button type="button" class="btn btn-default" >Save</button>'
+                                                    + '<button type="button" class="btn"  onclick="$(\'.pgObjSettings-bg\').hide();">Cancel</button>'
+                                                + '</div>'
+                                            + '</div>'
+                                        + '</div>';
+        $(document.body).append(OEHTML);
+    };
+
+    this.pgObjEditAddFn = function () {
+        var tile = '<div class="colTile" tabindex="1" onclick="$(this).focus()">'
+                        + 'col 1 '
+                        + '<button type="button" class="close">&times;</button>'
+                    + '</div>';
+        $("#OEctrlsCont").append(tile);
+
+    };
+
+    this.colTileCloseFn = function (e) {
+        $(e.target).parent().remove();
+    };
+
+    this.getOEhtml = function () {
+        var _html = "";
+        $.each(this.PropsObj.Controls.$values, function (i , control) {
+            _html += '<div class="colTile" tabindex="1" onclick="$(this).focus()">'
+                        + control.Name
+                        + '<button type="button" class="close">&times;</button>'
+                    + '</div>';
+        })
+        var OEPGobj = new Eb_PropertyGrid(this.containerId + "innerPG");
+        OEPGobj.setObject(this.PropsObj.Controls.$values[0], AllMetas["EbTableTd"]);
+        return _html;
+    };
+    
+
+    this.InitPG = function () {
+        this.propNames = [];
+
+        this.MISC_GROUP_NAME = 'Misc';
+        this.GET_VALS_FUNC_KEY = 'pg.getValues';
+        this.pgIdSequence = 0;
+
+        this.propertyRowsHTML = { 'Misc': '' };
+        this.groupsHeaderRowHTML = {};
+        this.postCreateInitFuncs = {};
+        this.getValueFuncs = {};
+
+        this.pgId = this.containerId + this.pgIdSequence++;
+        this.currGroup = null;
+        
+        this.innerHTML = '<table class="table-bordered table-hover pg-table">';
+
+        this.$container.empty();
+
         for (var i = 0; i < this.Metas.length; i++)
             this.propNames.push(this.Metas[i].name);
 
@@ -198,15 +291,48 @@
 
         $("#" + this.containerId + " .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
 
-        $('#propGrid table td').find("input").change(this.OnInputchangedFn.bind(this));
+        $('#' + this.containerId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
+
+        this.addToDD();
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
+
+        $(".pgObjEditBtn").on("click", this.pgObjEditBtnClicked.bind(this));
+
+        $(".pgRow:contains(Name)").find("input").on("change", function (e) {
+            $("#SelOpt" + this.PropsObj.EbSid + this.containerId).text(e.target.value);
+            $(".controls-dd-cont .selectpicker").selectpicker('refresh');
+        }.bind(this));
+
+        $("#editObj_add").on("click", this.pgObjEditAddFn.bind(this));
+
+        $("#OEctrlsCont").on("click", ".close", this.colTileCloseFn.bind(this));
+
+        new dragula([document.getElementById("OEctrlsCont")]);
+        
+    };
+
+    this.setObject = function (props, metas) {
+        //params check
+        {
+            if (typeof props === 'string' || typeof metas === 'string') {
+                console.error('Eb_PropertyGrid got "string" parameter instead of "object"');
+                return null;
+            } else if (typeof id === 'object') {
+                console.error('Eb_PropertyGrid got "object" parameter instead of "string"');
+                return;
+            } else if (typeof props !== 'object' || props === null || typeof metas !== 'object' || metas === null) {
+                console.error('Eb_PropertyGrid must get an object in order to initialize the grid.');
+                return;
+            }
+        }
+        this.Metas = metas;
+        this.PropsObj = props;
+        this.InitPG();
     };
 
     this.init();
-
-
 };
 
 

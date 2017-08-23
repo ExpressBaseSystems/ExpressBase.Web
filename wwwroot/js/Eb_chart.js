@@ -255,7 +255,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         }
         else
         {
-            colsAll_XY = this.columnInfo.columns.sort(function (a, b) {
+            colsAll_XY = this.columnInfo.Columns.sort(function (a, b) {
                 return a.name.localeCompare(b.name);
             });
         }

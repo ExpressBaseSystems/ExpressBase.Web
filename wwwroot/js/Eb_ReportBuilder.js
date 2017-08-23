@@ -24,11 +24,11 @@ var pages = {
 var sub = function (name, index, height, subsection) {
     this.id = name;
     this.index = index;
-    this.height = height; 
-   this.subsection = subsection;
+    this.height = height;
+    this.subsection = subsection;
 };
 
-var PageElements = function (id,value, left, top, font) {
+var PageElements = function (id, value, left, top, font) {
     this.id = id;
     this.value = value;
     this.left = left;
@@ -36,42 +36,74 @@ var PageElements = function (id,value, left, top, font) {
     this.fontsize = font;
 };
 
-var RptBuilder = function (type) {
+var RptBuilder = function (type, saveBtnid) {
+
+    this.savebtnid = saveBtnid;
     this.type = type;
     this.height = pages[type].height;
     this.width = pages[type].width;
-
-    this.report = new Object();
-    this.report.pagetype = type;
-    this.report.pageheight = height;
-    this.report.pagewidth = width;
-    this.report.sections = [];
-
     this.splitarray = [];
     this.btn_indx = null;
+
+    this.ruler = function () {
+        $('.ruler,.rulerleft').show();
+        var $ruler = $('.ruler').css({ "width": this.width });
+        for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
+            var $tick = $('<div>');
+            if (step === 0) {
+                $tick.addClass('tickLabel').html(i * 5);
+            } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+                $tick.addClass('tickMinor');
+                if (step === 9) {
+                    step = -1;
+                }
+            } else {
+                $tick.addClass('tickMajor');
+            }
+            $ruler.append($tick);
+        }
+
+        var $rulerleft = $('.rulerleft').css({ "height": this.height });
+        for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
+            $tick = $('<div>');
+            if (step === 0) {
+                $tick.addClass('tickLabel').html(i * 5);
+            } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+                $tick.addClass('tickMinor');
+                if (step === 9) {
+                    step = -1;
+                }
+            } else {
+                $tick.addClass('tickMajor');
+            }
+            $rulerleft.append($tick);
+        }
+    };
 
     this.createPage = function () {
 
         var $pageCanvas = $('#pageCanvas');
         $pageCanvas.empty();
         $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
-        $pageCanvas.append("<div id='PageContainer' style='margin-top:4px'></div>");
+        $pageCanvas.append("<div id='PageContainer'></div>");
 
         this.createHeaderBox();
 
-        if (pages[type].width > "21cm") {
+        if (this.width > "21cm") {
             $('#pageCanvas').css({ "transform": "scale(0.8)", "transform-origin": "0 0" });
         }
-        var $div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
+
+        this.$div = $("<div class='page' id='page' style='width :" + this.width + "; height:" + this.height + ";'></div>");
         $('#PageContainer').append($div);
-        return $div;
+        $('.title').show();
+        this.pageSplitters(this.$div);
     };
 
     this.createHeaderBox = function () {
 
-        $headersection = $("<div class='headersections' style='height:" + pages[type].height + ";'></div>");
+        $headersection = $("<div class='headersections' style='height:" + this.height + ";'></div>");
         $("#PageContainer").append($headersection);
-        $("#PageContainer").append("<div class='multiSplit' style='height:" + pages[type].height + ";'></div>");
+        $("#PageContainer").append("<div class='multiSplit' style='height:" + this.height + ";'></div>");
 
         for (var i = 0; i < 5; i++) {
 
@@ -79,6 +111,21 @@ var RptBuilder = function (type) {
 
         }
 
+    };
+
+    this.pageSplitters = function () {
+
+        this.$div.append("<div class='pageHeaders' id='rpthead' data_val='0' style='width :100%'></div>");
+
+        this.$div.append("<div class='pageHeaders' id='pghead' data_val='1'style='width :100%'></div>");
+
+        this.$div.append("<div class='pageHeaders' id='pgbody' data_val='2'style='width :100%'></div>");
+
+        this.$div.append("<div class='pageHeaders' id='pgfooter' data_val='3'style='width :100%'></div>");
+
+        this.$div.append("<div class='pageHeaders' id='rptfooter' data_val='4' style='width :100%'></div>");
+
+        this.headerBox1_Split();
     };
 
     this.headerBox1_Split = function () {
@@ -89,30 +136,51 @@ var RptBuilder = function (type) {
         $(".headersections").append("<div class='head_Box1' id='pgfooterHbox' data-index='3' style='width :100%'><p>Pf</p></div>");
         $(".headersections").append("<div class='head_Box1' id='rptfooterHbox' data-index='4' style='width :100%'><p>Rf</p></div>");
 
+        this.headerScaling();
+
         this.splitButton();
     };
 
-    this.pageSplitters = function ($pageref) {
+    this.headerScaling = function () {
 
-        $pageref.append("<div class='pageHeaders' id='rpthead' data_val='0' style='width :100%'></div>");
+        Split(['#rpthead', '#pghead', '#pgbody', '#pgfooter', '#rptfooter'], {
+            direction: 'vertical',
+            cursor: 'row-resize',
+            sizes: [20, 20, 20, 20, 20],
+            minSize: 0,
+            gutterSize: 3,
+            onDrag: function (e) {
+                $('#box0,#rptheadHbox').css("height", $('#rpthead').height());
+                $('#box1,#pgheadHbox').css("height", $('#pghead').height());
+                $('#box2,#pgbodyHbox').css("height", $('#pgbody').height());
+                $('#box3,#pgfooterHbox').css("height", $('#pgfooter').height());
+                $('#box4,#rptfooterHbox').css("height", $('#rptfooter').height());
+            }
+        });
 
-        $pageref.append("<div class='pageHeaders' id='pghead' data_val='1'style='width :100%'></div>");
+        Split(['#rptheadHbox', '#pgheadHbox', '#pgbodyHbox', '#pgfooterHbox', '#rptfooterHbox'], {
+            direction: 'vertical',
+            cursor: 'row-resize',
+            sizes: [20, 20, 20, 20, 20],
+            minSize: 0,
+            gutterSize: 3
+        });
 
-        $pageref.append("<div class='pageHeaders' id='pgbody' data_val='2'style='width :100%'></div>");
-
-        $pageref.append("<div class='pageHeaders' id='pgfooter' data_val='3'style='width :100%'></div>");
-
-        $pageref.append("<div class='pageHeaders' id='rptfooter' data_val='4' style='width :100%'></div>");
-
-        $pageref.children().not(".gutter").each(this.set_Dropable.bind(this));
+        Split(['#box0', '#box1', '#box2', '#box3', '#box4'], {
+            direction: 'vertical',
+            cursor: 'row-resize',
+            sizes: [20, 20, 20, 20, 20],
+            minSize: 0,
+            gutterSize: 3
+        });
+        this.$div.children().not(".gutter").each(this.set_Dropable.bind(this));
     };
 
     this.set_Dropable = function (i, obj) {
 
-        var id = $(obj).attr("id");
-        $("#" + id).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
-        this.report.sections.push(new sub(id, $(obj).index(), $(obj).height(),[]));//hyvgyrdtyyrhdtf
-
+        var $firstdiv = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + "0'style='height:" + $(obj).height() + "px'></div>");
+        $(obj).append($firstdiv);
+        $firstdiv.droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
     };
 
     this.splitButton = function () {
@@ -123,7 +191,7 @@ var RptBuilder = function (type) {
 
     this.addButton = function (i, obj) {
 
-        this.j = 2;
+        this.j = 1;
         $(obj).append("<button class='btn btn-xs btn-primary'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
         $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
 
@@ -133,38 +201,19 @@ var RptBuilder = function (type) {
 
         this.splitarray = [];
         this.btn_indx = $(e.target).parent().parent().attr("data-index");
-        $.each(this.report.sections, this.splitDiv_inner.bind(this));
-
+        $.each($('.page').children('.pageHeaders'), this.splitDiv_inner.bind(this));
     };
 
     this.splitDiv_inner = function (i, obj) {
 
-        if (obj.index == this.btn_indx) {
+        if ($(obj).attr('data_val') === this.btn_indx) {
+
             this.$sec = $("#" + obj.id);
-
-            if (this.$sec.children().length === 0) {
-
-                this.$sec.droppable("destroy");
-                this.s0 = $("<div class='subdivs' id='s" + obj.index + "0'></div>");
-                this.s1 = $("<div class='subdivs' id='s" + obj.index + "1'></div>");
-                this.$sec.append(s0, s1);
-                this.splitarray.push("#" + this.s0.attr("id") + "", "#" + this.s1.attr("id") + "");
-                this.s0.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-                this.s1.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-
-                $.each(this.report.sections, this.saveSubsecOnFrstSplt.bind(this));
-            }
-
-            else if (this.$sec.children().length !== 0) {
-
-                this.$spl = $("<div class='subdivs' id='s" + obj.index + this.j++ + "'></div>");
-                this.$sec.append($spl);
-                $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
-                $(this.$sec).children('.gutter').remove();
-                this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
-
-                $.each(this.report.sections, this.saveSubsecOnSecSplt.bind(this));
-            }
+            this.$spl = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + this.j++ + "'></div>");
+            this.$sec.append($spl);
+            $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
+            $(this.$sec).children('.gutter').remove();
+            this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
 
             Split(this.splitarray, {
                 direction: 'vertical',
@@ -186,59 +235,10 @@ var RptBuilder = function (type) {
             });
             this.multiSplitBoxinner();
         }
-    };  
-
-    this.saveSubsecOnSecSplt = function (i, obj) {
-        var sec1 = this.$sec.attr("id");
-        if (sec1 === obj.id) {
-            this.report.sections[i].subsection.push(new sub(this.$spl.attr("id"), this.$spl.index(), this.$spl.height(), []));
-        }
-    };
-
-    this.saveSubsecOnFrstSplt = function (i, obj) {
-        var sec1 = this.$sec.attr("id");      
-        if (sec1 === obj.id) {
-            this.report.sections[i].subsection.push(new sub(this.s0.attr("id"), this.s0.index(), this.s0.height(), []));
-            this.report.sections[i].subsection.push(new sub(this.s1.attr("id"), this.s1.index(), this.s1.height(), []));
-        }
     };
 
     this.splitMore = function (i, obj) {
         this.splitarray.push("#" + obj.id);
-    };
-
-    this.headerScaling = function () {
-
-        Split(['#rpthead', '#pghead', '#pgbody', '#pgfooter', '#rptfooter'], {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [10, 10, 60, 10, 10],
-            minSize: 0,
-            gutterSize: 3,
-            onDrag: function (e) {
-                $('#box0,#rptheadHbox').css("height", $('#rpthead').height());
-                $('#box1,#pgheadHbox').css("height", $('#pghead').height());
-                $('#box2,#pgbodyHbox').css("height", $('#pgbody').height());
-                $('#box3,#pgfooterHbox').css("height", $('#pgfooter').height());
-                $('#box4,#rptfooterHbox').css("height", $('#rptfooter').height());
-            }
-        });
-
-        Split(['#rptheadHbox', '#pgheadHbox', '#pgbodyHbox', '#pgfooterHbox', '#rptfooterHbox'], {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [10, 10, 60, 10, 10],
-            minSize: 0,
-            gutterSize: 3
-        });
-
-        Split(['#box0', '#box1', '#box2', '#box3', '#box4'], {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [10, 10, 60, 10, 10],
-            minSize: 0,
-            gutterSize: 3
-        });
     };
 
     this.multiSplitBoxinner = function () {
@@ -263,7 +263,7 @@ var RptBuilder = function (type) {
             if (flagsuccess)
                 return false;
         });
-        if (temp1 != null) {
+        if (temp1 !== null) {
 
             Split(temp1, {
                 direction: 'vertical',
@@ -274,12 +274,27 @@ var RptBuilder = function (type) {
         }
     };
 
-    this.DragDrop_DataSource = function () {
+    this.DragDrop_Items = function () {
 
         this.posLeft = null;
         this.posTop = null;
         this.font = null;
 
+        $('.shapes').draggable({
+            cancel: "a.ui-icon",
+            revert: "invalid",
+            helper: "clone",
+            cursor: "move",
+            drag: this.onDrag.bind(this)
+        });
+
+        $('.special-field').draggable({
+            cancel: "a.ui-icon",
+            revert: "invalid",
+            helper: "clone",
+            cursor: "move",
+            drag: this.onDrag.bind(this)
+        });
 
         $('.draggable').draggable({
             cancel: "a.ui-icon",
@@ -294,30 +309,73 @@ var RptBuilder = function (type) {
 
         this.posLeft = event.pageX;
         this.posTop = event.pageY;
-
+        console.log('left' + this.posLeft, 'top' + this.posTop);
     };
 
     this.onDropFn = function (event, ui) {
-       
+
         this.dropLoc = $(event.target);
         this.itemToClone = $(ui.draggable);
-        if (!this.itemToClone.hasClass("dropped")) {
-            $(event.target).append(this.itemToClone.clone().addClass("dropped").removeClass("draggable").css({
-                width: this.itemToClone.width(),
-                height: this.itemToClone.height(),
-                position: 'absolute',
-                left: this.posLeft - 270,
-                top: this.posTop - 170
-            }));
+        var minwidth = $(ui.draggable).width();
+        var minheight = $(ui.draggable).height();
+
+        if (this.itemToClone.hasClass('shapes')) {
+
+            if (this.itemToClone.attr('id') === 'circle') {
+                this.createCircle();
+            }
+            else if (this.itemToClone.attr('id') === 'rectangle') {
+                this.createRectangle();
+            }
+            else if (this.itemToClone.attr('id') === 'v-line') {
+                this.createVerticalLine();
+            }
+            else if (this.itemToClone.attr('id') === 'h-line') {
+                this.createHorrizLine();
+            }
+            else if (this.itemToClone.attr('id') === 'arrow') {
+                this.createArrow();
+            }
+
         }
-        else if (this.itemToClone.hasClass("dropped")) {
-            $(event.target).append(this.itemToClone.css({
-                width: this.itemToClone.width(),
-                height: this.itemToClone.height(),
-                position: 'absolute',
-            }));
+            
+        else if (this.itemToClone.hasClass('special-field')) {
+
+            if (this.itemToClone.attr('id') ==="date-time") {
+                this.addCurrentDateTime();
+            }
+        }
+        else if (this.itemToClone.hasClass('qr-Br-img-btn')) {            
+
+            if (this.itemToClone.attr('id') === 'pg-img') {
+                this.addImageOnPage();
+            }
+
         }
 
+        else if (!this.itemToClone.hasClass('shapes')) {
+
+            if (!this.itemToClone.hasClass("dropped")) {
+
+                $(event.target).append(this.itemToClone.clone().addClass("dropped").removeClass("draggable").css({
+                    width: this.itemToClone.width(),
+                    height: this.itemToClone.height(),
+                    position: 'absolute',
+                    left: this.posLeft - 270,
+                    top: this.posTop - 150
+                }));
+
+            }
+            else if (this.itemToClone.hasClass("dropped")) {
+
+                $(event.target).append(this.itemToClone.css({
+                    width: this.itemToClone.width(),
+                    height: this.itemToClone.height(),
+                    position: 'absolute'
+                }));
+
+            }           
+        }
         $('.dropped').draggable({
             cursor: 'move',
             start: this.onDrag_Start.bind(this),
@@ -327,41 +385,160 @@ var RptBuilder = function (type) {
 
         $('.dropped').resizable({
             containment: "parent",
+            handles: "n, e, s, w",
+            minHeight: minheight,
+            minWidth: minwidth,
             resize: this.resizeElement.bind(this)
-        });              
+        });
 
-        $.each(this.report.sections, this.saveElementToObject.bind(this));
-        
         this.PropertyMenu();
     };
-
-    this.saveElementToObject = function (i, sec) {
-        
-        if (sec.subsection.length >= 1) {           
-            $.each(sec.subsection, this.saveElementSubNotNull.bind(this, i));
-        }
-
-        if (this.dropLoc.children('div').length ==0) {
-            
-            if (sec.id == this.dropLoc.attr("id")) {
-                console.log(this.dropLoc);
-                this.report.sections[i].subsection.push(new PageElements(this.itemToClone.attr('id'), this.itemToClone.text(), this.posLeft - 270, this.posTop - 170, this.itemToClone.height()));
-            }
-        }
+    
+    this.addImageOnPage = function () {
+        this.i = 1;       
+        this.$img = $("<div class='img-container' id='img" + i++ + "' ><input type='file' style='display:none' id='file" + i++ + "'/><button class='btn btn-default upload-btn' id='btn" + this.i++ + "'><i class='fa fa-picture-o fa-2x' aria-hidden='true' disabled></i></button></div>");
+        console.log(this.$img.attr('id'));
+        this.dropLoc.append(this.$img.addClass("dropped").css({
+            width: '100px',
+            height: '100px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+        $('.upload-btn ').on('click', this.uploadImage.bind(this));
     };
 
-    this.saveElementSubNotNull = function (i, k, sub) {
+    this.uploadImage = function (e) {       
 
-        if (sub.id === this.dropLoc.attr("id")) {
-            console.log(this.dropLoc);
-            this.report.sections[i].subsection[k].subsection.push(new PageElements(this.itemToClone.attr('id'), this.itemToClone.text(), this.posLeft - 270, this.posTop - 170, this.itemToClone.height()));
-        }
+        var $file = $(e.target).siblings().attr('id');
+        $('#' + $file).click();
+        var img = this.$img;
+
+        $('#' + $file).change(function () {
+            var input = this;
+           
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    console.log(img);
+                    img.css({ 'background-image': 'url(' + e.target.result + ')', 'width': img.width(), 'background-repeat': 'no-repeat' });
+                    img.children().not('.ui-resizable-handle').remove();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    };
+
+    this.createArrow = function () {
+        var $arrow = $("<div class='arrow' style='border:1px solid'>></div>");
+        this.dropLoc.append($arrow.addClass("dropped").css({
+            width: '50px',
+            height: '1px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+    };
+
+    this.addCurrentDateTime = function () {
+        
+        var currentdate = new Date();
+        var time = currentdate.getDate() + "/"
+                + (currentdate.getMonth() + 1) + "/"
+                + currentdate.getFullYear() + " @ "
+                + currentdate.getHours() + ":"
+                + currentdate.getMinutes() + ":"
+                + currentdate.getSeconds();
+
+        var $DateTime = $("<div class='date-time' style='border:1px solid'>" + time + "</div>");
+        this.dropLoc.append($DateTime.addClass("dropped").css({
+            width: '150px',
+            height:'20px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+    };
+
+    this.createCircle = function () {
+
+        var $cir = $("<div class='circle' style='border-radius:50%;border:1px solid'></div>");
+        this.dropLoc.append($cir.addClass("dropped").css({
+            width: '50px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+    };
+
+    this.createRectangle = function () {
+
+        var $rect = $("<div class='rectangle' style='border:1px solid'></div>");
+        this.dropLoc.append($rect.addClass("dropped").css({
+            width: '50px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+    };
+
+    this.createVerticalLine = function () {
+
+        var $vline = $("<div class='v-line' style='border:none;border:1px solid;cursor:move'></div>");
+        this.dropLoc.append($vline.addClass("v-line-dropped").css({
+            width: '1px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+
+        $('.v-line-dropped').draggable({
+            cursor: 'move',
+            start: this.onDrag_Start.bind(this),
+            stop: this.onDrag_stop.bind(this)
+
+        });
+
+        $('.v-line-dropped').resizable({
+            containment: "parent",
+            handles: "n, s",
+            resize: this.resizeElement.bind(this)
+        });
+
+    };
+
+    this.createHorrizLine = function () {
+
+        var $hline = $("<div class='h-line' style='border:none;border:1px solid;cursor:move'></div>");
+        this.dropLoc.append($hline.addClass("h-line-dropped").css({
+            width: '50px',
+            height: '1px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+
+        $('.h-line-dropped').draggable({
+            cursor: 'move',
+            start: this.onDrag_Start.bind(this),
+            stop: this.onDrag_stop.bind(this)
+
+        });
+
+        $('.h-line-dropped').resizable({
+            containment: "parent",
+            handles: "e,w",
+            resize: this.resizeElement.bind(this)
+        });
     };
 
     this.resizeElement = function (event, ui) {
 
         var font = parseInt($(event.target).css("height"));
-        $(event.target).css("font-size", font-3);
+        //$(event.target).css("font-size", font - 5);
 
     };
 
@@ -382,7 +559,7 @@ var RptBuilder = function (type) {
         this.font_color = null;
         $('#fontcolor').on("change", this.change_fontColor.bind(this));
         $(".dropped").on("click", this.element_click.bind(this));
-        $(".dropped").off("click",this.element_off_Click.bind(this));
+        $(".dropped").off("click", this.element_off_Click.bind(this));
 
     };
 
@@ -402,24 +579,56 @@ var RptBuilder = function (type) {
     };
 
     this.propertyGrid = function () {
-        var pg = new Eb_PropertyGrid("propGrid", { ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }])
+        $('#propGrid').show();
+        var pg = new Eb_PropertyGrid("propGrid", { ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }]);
+    };
+
+    this.savefile = function () {
+
+        this.report = new Object();
+        this.report.Page = this.type;
+        this.report.Height = this.height;
+        this.report.Width = this.width;
+        this.report.subsection = [];
+        this.report.subsection.subsection = [];
+
+        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
+
+    };
+
+    this.findPageSections = function (i, sections) {
+
+        this.sections = $(sections);
+        this.i = i;
+        $.each(this.sections.children().not(".gutter"), this.findPageSectionsSub.bind(this));
+
+    };
+
+    this.findPageSectionsSub = function (j, subsec) {
+
+        this.report.subsection.push(new sub(this.sections.attr('id'), this.sections.attr('data_val'), this.sections.css('height'), []));
+        console.log(subsec);
+        this.report.subsection[this.i].subsection.push(new sub($(subsec).attr('id'), $(subsec).index(), $(subsec).css('height'), []));
+
     };
 
     this.init = function () {
 
         $('#PageContainer').empty();
-        var $pageref = this.createPage();
-        this.pageSplitters($pageref);
-        this.headerBox1_Split();
-        this.headerScaling();
-        this.DragDrop_DataSource();
+        this.ruler();
+        this.createPage();
+        this.DragDrop_Items();
         this.propertyGrid();
+
+        $(this.savebtnid).on('click', this.savefile.bind(this));
+
     };
+
     this.init();
 };
 //baground image
 var setBackgroud = function (input) {
-
+    console.log(input);
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
@@ -437,14 +646,14 @@ $.fn.extend({
         var openedClass = 'glyphicon-minus-sign';
         var closedClass = 'glyphicon-plus-sign';
 
-        if (typeof o != 'undefined') {
-            if (typeof o.openedClass != 'undefined') {
+        if (typeof o !== 'undefined') {
+            if (typeof o.openedClass !== 'undefined') {
                 openedClass = o.openedClass;
             }
-            if (typeof o.closedClass != 'undefined') {
+            if (typeof o.closedClass !== 'undefined') {
                 closedClass = o.closedClass;
             }
-        };
+        }
         var tree = $(this);
         tree.addClass("tree");
         tree.find('li').has("ul").each(function () {
@@ -452,12 +661,12 @@ $.fn.extend({
             branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
             branch.addClass('branch');
             branch.on('click', function (e) {
-                if (this == e.target) {
+                if (this === e.target) {
                     var icon = $(this).children('i:first');
                     icon.toggleClass(openedClass + " " + closedClass);
                     $(this).children().children().toggle();
                 }
-            })
+            });
             branch.children().children().toggle();
         });
         tree.find('.branch .indicator').each(function () {
@@ -480,36 +689,3 @@ $.fn.extend({
     }
 });
 
-var ruler = function () {
-    var $ruler = $('.ruler').css({ "width": "900px", "height": "25px" });
-    for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
-        var $tick = $('<div>');
-        if (step === 0) {
-            $tick.addClass('tickLabel').html(i * 5);
-        } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-            $tick.addClass('tickMinor');
-            if (step === 9) {
-                step = -1;
-            }
-        } else {
-            $tick.addClass('tickMajor');
-        }
-        $ruler.append($tick);
-    }
-
-    var $rulerleft = $('.rulerleft').css({ "width": "25px", "height": "1000px" });
-    for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
-        $tick = $('<div>');
-        if (step === 0) {
-            $tick.addClass('tickLabel').html(i * 5);
-        } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-            $tick.addClass('tickMinor');
-            if (step === 9) {
-                step = -1;
-            }
-        } else {
-            $tick.addClass('tickMajor');
-        }
-        $rulerleft.append($tick);
-    }
-};

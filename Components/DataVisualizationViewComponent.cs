@@ -2,6 +2,7 @@
 using ExpressBase.Data;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ObjectContainers;
+using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Filters;
 using ExpressBase.Web.Models;
@@ -13,6 +14,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +22,7 @@ namespace ExpressBase.Web.Components
 {
     public class DataVisualizationViewComponent : ViewComponent
     {
-        protected IServiceClient ServiceClient { get; set; }
+        protected JsonServiceClient ServiceClient { get; set; }
 
         protected RedisClient Redis { get; set; }
 
@@ -32,23 +34,24 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string dsRefid)
         {
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             RetValObj xxx = null;
             if (!string.IsNullOrEmpty(dsRefid))
             {
-                var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = dsRefid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
-                var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
+                //var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = dsRefid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
+                //var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
 
-                if (!string.IsNullOrEmpty(fdid))
-                {
-                    //get fd obj
-                    resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
+                //if (!string.IsNullOrEmpty(fdid))
+                //{
+                //    //get fd obj
+                //    resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
 
-                    //redundant - REMOVE JITH
-                    var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
+                //    //redundant - REMOVE JITH
+                //    var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
 
-                    ViewBag.HtmlHead = _filterDialog.GetHead();
-                    ViewBag.HtmlBody = _filterDialog.GetHtml();
-                }
+                //    ViewBag.HtmlHead = _filterDialog.GetHead();
+                //    ViewBag.HtmlBody = _filterDialog.GetHtml();
+                //}
 
                 ViewBag.data = getDVObject(dsRefid);
                 //Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
@@ -136,18 +139,38 @@ namespace ExpressBase.Web.Components
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
             if (columnresp == null || columnresp.IsNull)
                 columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
-            EbDataVisualization eb = new EbDataVisualization();
-            eb.DataSourceRefId = dsRefid;
-            eb.Name = "<untittled>";
-            eb.AfterRedisGet(this.Redis);
-            eb.IsPaged = columnresp.IsPaged.ToString().ToLower();
-            List<DTColumnDef> coldeflist = new List<DTColumnDef>();
-            foreach(EbDataColumn column in columnresp.Columns)
+
+            EbDataVisualization eb = new EbDataVisualization()
             {
-                DTColumnDef coldef = new DTColumnDef(column.ColumnIndex,column.ColumnName);
-                coldeflist.Add(coldef);
+                DataSourceRefId = dsRefid,
+                Name = "<Untitled>",
+                IsPaged = columnresp.IsPaged.ToString().ToLower(),
+                Columns = new DVColumnCollection()
+            };
+            eb.AfterRedisGet(this.Redis);
+
+            int _pos = columnresp.Columns.Count;
+
+            // Add Serial & Checkbox
+            eb.Columns.Add(new DVNumericColumn { Name = "serial", Title = "#", Type = DbType.Int64, Visible = true, Width = 10, Pos = -2 });
+            eb.Columns.Add(new DVBooleanColumn { Name = "checkbox", Title = "checkbox", Type = DbType.Boolean, Visible = false, Width = 10, Pos = -1 });
+
+            foreach (EbDataColumn column in columnresp.Columns)
+            {
+                DVBaseColumn _col = null;
+
+                if (column.Type == DbType.String)
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                else if (column.Type == DbType.Int16 || column.Type == DbType.Int32 || column.Type == DbType.Int64 || column.Type == DbType.Double || column.Type == DbType.Decimal || column.Type == DbType.VarNumeric)
+                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                else if (column.Type == DbType.Boolean)
+                    _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                else if (column.Type == DbType.DateTime || column.Type == DbType.Date || column.Type == DbType.Time)
+                    _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+
+                eb.Columns.Add(_col);
             }
-            eb.DTColumnDef = coldeflist;
+
             return eb;
         }
     }

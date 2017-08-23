@@ -529,7 +529,7 @@ var EbDataTable = function (settings) {
         //},500);
         //if (this.ebSettings.renderAs == "both") {
             $("#graphcontainer_tab"+this.tableId).show();
-            //this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
+            this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
             //$("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         //}
         //else{
@@ -550,10 +550,10 @@ var EbDataTable = function (settings) {
         this.summarize2();
         this.addFilterEventListeners();
         this.Api.columns.adjust();
-        if (this.ebSettings.renderAs == "both") {
+        //if (this.ebSettings.renderAs == "both") {
             if (this.chartJs !== null)
                 this.chartJs.drawGraphHelper(this.Api.data());
-        }
+        //}
         this.btnGo.attr("disabled", false);
     };
 
@@ -1804,10 +1804,10 @@ var EbDataTable = function (settings) {
             if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === false && obj.name !== "id")
                 $("#" + id + "TableColumns4Drag").append("<div class ='Delcols' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "</div>")
             else if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === true && obj.name !== "id")
-                $("#" + id + "ColumnsDispaly").append("<div class ='Displaycols' tabIndex='0' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
+                $("#" + id + "ColumnsDispaly").append("<div class ='alert alert-success Displaycols' tabIndex='0' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
         });
         $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-
+        $("#" + this.tableId + "ColumnsDispaly div").off("onfocus").on("onfocus", this.createPG.bind(this));
         this.drake = new dragula([document.getElementById(id + "TableColumns4Drag"), document.getElementById(id + "ColumnsDispaly")], {
             accepts: this.acceptDrop.bind(this)
         });
@@ -1890,6 +1890,10 @@ var EbDataTable = function (settings) {
         //$('#' + this.tableId + 'divcont').append(table);
         //console.log(JSON.stringify(this.ebSettings.columns));
         //this.Init();
+    };
+
+    this.createPG = function () {
+        var pg= new Eb_PropertyGrid(this.tableId + "TableColumnsPPGrid")
     };
 
 

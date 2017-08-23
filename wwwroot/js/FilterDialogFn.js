@@ -40,12 +40,11 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('#execute').off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
-        $('.compare_inner').off("click").on("click", this.Differ.bind(this));
         $(".selectpicker").selectpicker();
         $("#fdlist .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $('#fd').off("change").on("change", this.Clear_fd.bind(this));
         $('#fd').off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
-        $('#compare').off('click').on('click',this.Compare.bind(this));
+        $('#compare').off('click').on('click', this.Compare.bind(this));       
     }
 
     this.SetValues = function () {
@@ -90,8 +89,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                     $('#fdlist .selectpicker').selectpicker('refresh');
                     $('#fdlist .selectpicker').selectpicker('val', val);
                     $('#loader_fd').hide();
-                },
-
+                }
             });
 
         }
@@ -178,7 +176,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                         "<div class='verlist input-group'>" +
                                   "<select id='selected_Ver" + tabNum + "' name='selected_Ver' class='selected_Ver selectpicker show-tick form-control' data-live-search='true'>" +
                                   "<option value='Select Version' data-tokens='Select Version'>Compare With</option>");
-                                     $.each(this.Versions, this.VersionCode_drpListItem.bind(this));
+        $.each(this.Versions, this.VersionCode_drpListItem.bind(this));
         $('#vernav' + this.Obj_Id + tabNum).append("</select>" +
                        "</div>" +
                     "<div class='dropdown fdlist btn-group' id='fdlist'>"+
@@ -261,335 +259,412 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         alert("Test");
     }
 
+    this.Load_version_list = function(){
+        $.post('../CE/GetVersions', { objid: this.Obj_Id },
+          function (data) {
+              $("#selected_Ver").append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
+              $("#selected_Ver_1").append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
+              $("#selected_Ver_2").append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
+              $.each(data, function (i, obj) {
+                  $('#selected_Ver').append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
+                  $('#selected_Ver_1').append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
+                  $('#selected_Ver_2').append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
+              });
+              $('.selectpicker').selectpicker({
+                  size: 4
+              });
+          })
+        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        };
+
+    this.Compare_radioBtn_change=function()
+    {
+        if ($('input[name=compWith]:checked').val() === "1") {
+            $('#selected_Ver').removeAttr('disabled');
+            $('#selected_Ver_1').attr('disabled', 'disabled');
+            $('#selected_Ver_2').attr('disabled', 'disabled');
+        }
+        else {
+            $('#selected_Ver').attr('disabled', 'disabled');
+            $('#selected_Ver_1').removeAttr('disabled');
+            $('#selected_Ver_2').removeAttr('disabled');
+        }
+        $('.selectpicker').selectpicker('refresh');
+}
+  
     this.Compare = function () {
         tabNum++;
         $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
         $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
-       // $('#vernav' + tabNum).append("Compare With:");
-        $("#versionNav a[href='#vernav"+ tabNum +"']").tab('show');
-        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        $('#vernav' + tabNum).append("<div>"+
+            "<div class='well' style='height:150px'>"+
+                "Compare With:"+
+               " <div>"+
+                    "<div class='col-md-3 col-md-offset-2 '>"+
+                        "<input type='radio' name='compWith' value='1' checked> Current vs Specific<br>"+
+                                "<div class='verlist input-group'>"+ 
+                                   " <select id='selected_Ver' name='selected_Ver' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
+                                    "</select>"+
+                                "</div>"+
+                    "</div>"+
+                   " <div class='col-md-4'>"+
+                        "<input type='radio' name='compWith' value='2'> Specific vs Specefic<br>"+                     
+                                "<div class='verlist input-group col-md-6' style='display:inline-block'>"+
+                                    "<select id='selected_Ver_1' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true' disabled>" +
+                                    "</select>"+
+                                "</div>"+
+                                "<div class='verlist input-group col-md-6' style='display:inline-block '>"+
+                                    "<select id='selected_Ver_2' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true' disabled>"+
+                                   "</select>"+
+                                "</div>" +     
+                    "</div>"+
+               " </div>"+
+                "<button id='compare_inner' class='compare_inner' style='margin-top: 57px;margin-left: 86px;'>Comapre</button>"+
+            "</div>"+
+            "<div id='compare_result'></div>"+
+       " </div>");
+        $('input[type=radio][name=compWith]').off('change').on('change', this.Compare_radioBtn_change.bind(this));
+        $('#compare_inner').off("click").on("click", this.Differ.bind(this));
+        this.Load_version_list();
+      
+       
     };
 
-    this.Differ = function () {      
-        $.LoadingOverlay("show");       
-        if (verRefid === "Select Version") {
-            alert("Please Select A Version");
-        }
-        else {
-            if ($('input[name=compWith]:checked').val() === 1) {
-                var verRefid = $('.selected_Ver option:selected').val();
-                var selected_ver_number = $('.selected_Ver option:selected').attr("data-tokens");
-                $.post('../CE/VersionCodes', { "objid": verRefid, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, selected_ver_number, this.Version_num));
+    this.Differ = function () {
+        $.LoadingOverlay("show");
+        if ($('input[name=compWith]:checked').val() === "1") {
+            var verRefid = $('#selected_Ver option:selected').val();
+            if (verRefid === "Select Version") {
+                alert("Please Select A Version");
             }
-            else if ($('input[name=compWith]:checked').val() === 1) {
-
+            else {
+                var selected_ver_number = $('#selected_Ver option:selected').attr("data-tokens");
+                var _code = $('#code_edit0 .code').text();
+                $.post('../CE/VersionCodes', { "objid": verRefid, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, _code, selected_ver_number, this.Version_num));
+            }
+        }
+        if ($('input[name=compWith]:checked').val() === "2") {
+            var verRefid1 = $('#selected_Ver_1 option:selected').val();
+            var verRefid2 = $('#selected_Ver_2 option:selected').val();
+            if (verRefid1 === "Select Version" || verRefid2 === "Select Version") {
+                alert("Please Select A Version");
+            }
+            else {              
+                var data_1;
+                $.post('../CE/VersionCodes', { "objid": verRefid1, "objtype": this.ObjectType }, this.getSecondVersionCode.bind(this, verRefid2));
             }
         }
     }
 
-    this.Init();
+    this.getSecondVersionCode = function (verRefid2, result) {
+        var selected_ver_number_1 = $('#selected_Ver_1 option:selected').attr("data-tokens");
+        var selected_ver_number_2 = $('#selected_Ver_2 option:selected').attr("data-tokens");
+        $.post('../CE/VersionCodes', { "objid": verRefid2, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, result, selected_ver_number_1, selected_ver_number_2));
+    }
 
-    this.Save = function (needRun) {
-        $.LoadingOverlay("show");
-        this.SetValues();
-        if (this.Is_New === true) {
-            this.Commit(needRun);
-        }
-        else {
+        this.Init();
+
+        this.Save = function (needRun) {
+            $.LoadingOverlay("show");
+            this.SetValues();
+            if (this.Is_New === true) {
+                this.Commit(needRun);
+            }
+            else {
+                if (this.ObjectType === 5) {
+                    this.SetSqlFnName();
+                }
+                this.Find_parameters(true, true, needRun);
+            };
+        };
+
+        this.Commit = function (needRun) {
+            $.LoadingOverlay("show");
+            this.SetValues();
             if (this.ObjectType === 5) {
                 this.SetSqlFnName();
             }
-            this.Find_parameters(true, true, needRun);
-        };
-    };
-
-    this.Commit = function (needRun) {
-        $.LoadingOverlay("show");
-        this.SetValues();
-        if (this.ObjectType === 5) {
-            this.SetSqlFnName();
+            this.Find_parameters(true, false, needRun);
         }
-        this.Find_parameters(true, false, needRun);
-    }
 
-    $(this.SaveBtn).off("click").on("click", this.Save.bind(this, false));
-    $(this.CommitBtn).off("click").on("click", this.Commit.bind(this, false));
+        $(this.SaveBtn).off("click").on("click", this.Save.bind(this, false));
+        $(this.CommitBtn).off("click").on("click", this.Commit.bind(this, false));
 
-    this.Find_parameters = function (isCommitorSave, issave, needRun) {
-        this.SetValues();
-        var result = this.Code.match(/\@\w+/g);
-        var filterparams = [];
-        if (result !== null) {
-            for (var i = 0; i < result.length; i++) {
-                result[i] = result[i].substr(1);
-                if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby") {
-                    //
+        this.Find_parameters = function (isCommitorSave, issave, needRun) {
+            this.SetValues();
+            var result = this.Code.match(/\@\w+/g);
+            var filterparams = [];
+            if (result !== null) {
+                for (var i = 0; i < result.length; i++) {
+                    result[i] = result[i].substr(1);
+                    if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby") {
+                        //
+                    }
+                    else {
+                        if ($.inArray(result[i], filterparams) === -1)
+                            filterparams.push(result[i]);
+                    }
                 }
-                else {
-                    if ($.inArray(result[i], filterparams) === -1)
-                        filterparams.push(result[i]);
-                }
-            }
-            filterparams.sort();
-            this.Filter_Params = filterparams;
-            this.Parameter_Count = filterparams.length;
-        }
-        else {
-            this.Parameter_Count = 0;
-        }
-        if (isCommitorSave === true) {
-            var _json = null;
-            if (this.Parameter_Count !== 0 && ($('#fd option:selected').text() === "Select Filter Dialog")) {
-                if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
-                    this.SetValues();
-                    this.FilterDId = null;
-                    this.GetUsedSqlFns(needRun, issave);
-                }
-                else {
-                    $.LoadingOverlay("hide");
-                }
+                filterparams.sort();
+                this.Filter_Params = filterparams;
+                this.Parameter_Count = filterparams.length;
             }
             else {
-                this.SetValues();
-                this.GetUsedSqlFns(needRun, issave);
+                this.Parameter_Count = 0;
             }
-        }
-    }
-
-    this.CreateObjString = function () {
-        this.ValidInput = true;
-        var ObjString = "[";
-        var filter_control_list = "datefrom,dateto";
-        var myarray = filter_control_list.split(',');
-        for (var i = 0; i < myarray.length; i++) {
-            console.log($("#" + myarray[i]).val());
-            if (typeof $("#" + myarray[i]).val() === "undefined") {
-                $(this).addClass('has-error');
-                this.ValidInput = false;
-            }
-            var type = $('#' + myarray[i]).attr('data-ebtype');
-            var name = $('#' + myarray[i]).attr('name');
-            var value = $('#' + myarray[i]).val();
-            if (type === '6')
-                value = value.substring(0, 10);
-
-            ObjString += '{\"name\":\"' + name + '\",';
-            ObjString += '\"type\":\"' + type + '\",';
-            ObjString += '\"value\":\"' + value + '\"},';
-        }
-        ObjString = ObjString.slice(0, -1) + ']';
-        this.Object_String_WithVal = ObjString;
-        console.log("Object_String_WithVal" + this.Object_String_WithVal);
-    }
-
-    this.DrawTable = function () {
-        $.LoadingOverlay("show");
-        if (this.ValidInput === true) {
-            tabNum++;
-            $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-            $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
-            $('#vernav' + this.Obj_Id + tabNum).append("  <div class=' filter_modal_body'>" +
-                      "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
-                  "</div>");
-            $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-
-            $.post('GetColumns4Trial', {
-                ds_refid: this.Obj_Id,
-                parameter: this.Object_String_WithVal
-            }, this.Load_Table_Columns.bind(this));
-
-        }
-        else {
-            $.LoadingOverlay("hide");
-            alert('not valid');
-        }
-    };
-
-    this.Load_Table_Columns = function (result) {
-        if (result === "") {
-            alert('Error in Query');
-        }
-        else {
-            var cols = JSON.parse(result);
-            $("#sample" + tabNum).dataTable({
-                columns: cols,
-                serverSide: true,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                scrollX: "100%",
-                scrollY: "300px",
-                processing: true,
-                ajax: {
-                    url: "https://localhost:44377/ds/data/" + this.Obj_Id,
-                    type: "POST",
-                    data: this.Load_tble_Data.bind(this),
-                    crossDomain: true,
-                    //xhrFields: { withCredentials: true },
-
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                    },
-                    dataSrc: function (dd) { return dd.data; },
+            if (isCommitorSave === true) {
+                var _json = null;
+                if (this.Parameter_Count !== 0 && ($('#fd option:selected').text() === "Select Filter Dialog")) {
+                    if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
+                        this.SetValues();
+                        this.FilterDId = null;
+                        this.GetUsedSqlFns(needRun, issave);
+                    }
+                    else {
+                        $.LoadingOverlay("hide");
+                    }
                 }
-            });
-
-            $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
-            $.LoadingOverlay("hide");
+                else {
+                    this.SetValues();
+                    this.GetUsedSqlFns(needRun, issave);
+                }
+            }
         }
-    };
 
-    this.Load_tble_Data = function (dq) {
-        delete dq.columns; delete dq.order; delete dq.search;
-        dq.RefId = this.Obj_Id;
-        //dq.Token = getToken();
-        //dq.rToken = getrToken();
-        dq.TFilters = [];
-        dq.Params = this.Object_String_WithVal;
-        return dq;
-    };
+        this.CreateObjString = function () {
+            this.ValidInput = true;
+            var ObjString = "[";
+            var filter_control_list = "datefrom,dateto";
+            var myarray = filter_control_list.split(',');
+            for (var i = 0; i < myarray.length; i++) {
+                console.log($("#" + myarray[i]).val());
+                if (typeof $("#" + myarray[i]).val() === "undefined") {
+                    $(this).addClass('has-error');
+                    this.ValidInput = false;
+                }
+                var type = $('#' + myarray[i]).attr('data-ebtype');
+                var name = $('#' + myarray[i]).attr('name');
+                var value = $('#' + myarray[i]).val();
+                if (type === '6')
+                    value = value.substring(0, 10);
 
-    this.Load_Fd = function () {
-        var getNav = $("#versionNav li.active a").attr("href");
-        if ($(getNav + ' #inner_well').children().length === 0) {
-            $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
-            function (result) {
-                $(getNav + ' #inner_well').append(result);
-                $(getNav + ' #run').removeClass('disabled');
+                ObjString += '{\"name\":\"' + name + '\",';
+                ObjString += '\"type\":\"' + type + '\",';
+                ObjString += '\"value\":\"' + value + '\"},';
+            }
+            ObjString = ObjString.slice(0, -1) + ']';
+            this.Object_String_WithVal = ObjString;
+            console.log("Object_String_WithVal" + this.Object_String_WithVal);
+        }
+
+        this.DrawTable = function () {
+            $.LoadingOverlay("show");
+            if (this.ValidInput === true) {
+                tabNum++;
+                $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+                $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
+                $('#vernav' + this.Obj_Id + tabNum).append("  <div class=' filter_modal_body'>" +
+                          "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
+                      "</div>");
+                $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+
+                $.post('GetColumns4Trial', {
+                    ds_refid: this.Obj_Id,
+                    parameter: this.Object_String_WithVal
+                }, this.Load_Table_Columns.bind(this));
+
+            }
+            else {
                 $.LoadingOverlay("hide");
-            });
-        }
-        else {
-            $.LoadingOverlay("hide");
-            $(getNav + ' #run').removeClass('disabled');
-        }
+                alert('not valid');
+            }
+        };
 
-        $(getNav + " #run").off("click").on("click", this.RunDs.bind(this));
-    };
+        this.Load_Table_Columns = function (result) {
+            if (result === "") {
+                alert('Error in Query');
+            }
+            else {
+                var cols = JSON.parse(result);
+                $("#sample" + tabNum).dataTable({
+                    columns: cols,
+                    serverSide: true,
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    scrollX: "100%",
+                    scrollY: "300px",
+                    processing: true,
+                    ajax: {
+                        url: "https://localhost:44377/ds/data/" + this.Obj_Id,
+                        type: "POST",
+                        data: this.Load_tble_Data.bind(this),
+                        crossDomain: true,
+                        //xhrFields: { withCredentials: true },
 
-    this.RunDs = function () {
-        if (this.Parameter_Count === 0) {
-            this.Save(false);
-            this.ValidInput === true
-            this.Object_String_WithVal = "";
-            this.DrawTable();
-        }
-        else {
-            this.Find_parameters(false, false, false);
-            this.CreateObjString();
-            this.DrawTable();
-        }
-    };
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+                        },
+                        dataSrc: function (dd) { return dd.data; },
+                    }
+                });
 
-    this.CallDiffer = function (selected_ver_number,curr_ver, data) {
-        var getNav = $("#versionNav li.active a").attr("href");
-       // var vername = $('#selected_Ver option:selected').attr("data-tokens");
-        var _code = $(".code").text();
-        this.SetValues();
-        if (selected_ver_number > curr_ver) {
-            $.post("../CE/GetDiffer", {
-                NewText: data, OldText: _code
-            })
-       .done(this.showDiff.bind(selected_ver_number, curr_ver, this));
-        }
-        else {
-            $.post("../CE/GetDiffer", {
-                NewText: _code, OldText: data
-            })
-       .done(this.showDiff.bind(this, curr_ver, selected_ver_number));
-        }
-    };
+                $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
+                $.LoadingOverlay("hide");
+            }
+        };
 
-    this.showDiff = function (new_ver_num, old_ver_num, data) {
-        var getNav = $("#versionNav li.active a").attr("href");
-      //  var verid = $(getNav + ' #selected_Ver option:selected').val();
-    
-        $('#compare_result').append("<div id='oldtext"+ tabNum + "'class='leftPane'>" +
-              "</div>" +
-              "  <div id='newtext"+ tabNum + "' class='rightPane'>" +
-              "</div>");
-        $('#oldtext' + tabNum).html("<div class='diffHeader'>v." + old_ver_num + "</div>" + data[0]);
-        $('#newtext' + tabNum).html("<div class='diffHeader'>v." + new_ver_num + "</div>" + data[1]);
-        $('.leftPane').scroll(function () {
-            $('.rightPane').scrollTop($(this).scrollTop());
-            $('.rightPane').scrollLeft($(this).scrollLeft());
-        });
-        $('.rightPane').scroll(function () {
-            $('.leftPane').scrollTop($(this).scrollTop());
-           $('.leftPane').scrollLeft($(this).scrollLeft());
-        });
-        $.LoadingOverlay("hide");
-    };
+        this.Load_tble_Data = function (dq) {
+            delete dq.columns; delete dq.order; delete dq.search;
+            dq.RefId = this.Obj_Id;
+            //dq.Token = getToken();
+            //dq.rToken = getrToken();
+            dq.TFilters = [];
+            dq.Params = this.Object_String_WithVal;
+            return dq;
+        };
 
-    this.SetSqlFnName = function () {
-        var result = this.Code.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
-        if (result.length > 0) {
-            var fnName = result[1].replace(/\s\s+/g, ' ');
-            var x = fnName.replace('(', "_v" + this.Version_num + '(');
-            var v = this.Code.replace(result[1], x);
-            $('#obj_name').val(x);
-            $('#code').val(v);
-            editor.setValue(v);
-        }
-    };
+        this.Load_Fd = function () {
+            var getNav = $("#versionNav li.active a").attr("href");
+            if ($(getNav + ' #inner_well').children().length === 0) {
+                $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
+                function (result) {
+                    $(getNav + ' #inner_well').append(result);
+                    $(getNav + ' #run').removeClass('disabled');
+                    $.LoadingOverlay("hide");
+                });
+            }
+            else {
+                $.LoadingOverlay("hide");
+                $(getNav + ' #run').removeClass('disabled');
+            }
 
-    this.GetUsedSqlFns = function (needRun, issave) {
+            $(getNav + " #run").off("click").on("click", this.RunDs.bind(this));
+        };
 
-        this.rel_arr = [];
-        this.Rel_object = null;
-        $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this, issave, needRun));
-    };
+        this.RunDs = function () {
+            if (this.Parameter_Count === 0) {
+                this.Save(false);
+                this.ValidInput === true
+                this.Object_String_WithVal = "";
+                this.DrawTable();
+            }
+            else {
+                this.Find_parameters(false, false, false);
+                this.CreateObjString();
+                this.DrawTable();
+            }
+        };
 
-    this.FetchUsedSqlFns = function (issave, needRun, data) {
-        $.each(data, this.FetchUsedSqlFns_inner.bind(this));
-
-        var getNav = $("#versionNav li.active a").attr("href");
-        var filter_dialog_refid = $(getNav + " #fdlist #fd  option:selected").val();
-
-        if (filter_dialog_refid === "Select Filter Dialog") {
-            filter_dialog_refid = null;
-        }
-
-        this.rel_arr.push(filter_dialog_refid);
-        this.Rel_object = this.rel_arr.toString();
-        _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))) }
-        if (issave === true) {
-            $.post("../CE/SaveEbDataSource",
-                       {
-                           "Id": this.Obj_Id,
-                           "Name": this.Name,
-                           "Description": this.Description,
-                           "ObjectType": this.ObjectType,
-                           "Token": getToken(),
-                           "isSave": "true",
-                           "VersionNumber": this.Version_num,
-                           "filterDialogId": filter_dialog_refid,
-                           "json": JSON.stringify(_json),
-                           "NeedRun": needRun,
-                           "rel_obj": this.Rel_object
-                       }).done(alert("Save Success"));
-        }
-        else {
-
-            $.post("../CE/CommitEbDataSource", {
-                "objtype": this.ObjectType,
-                "id": this.Obj_Id,
-                "name": this.Name,
-                "description": this.Description,
-                "filterDialogId": filter_dialog_refid,
-                "changeLog": "changed",
-                "json": JSON.stringify(_json),
-                "rel_obj": this.Rel_object
-            }, function (result) {
-                $.post("../CE/code_editor", {
-                    "objid": result.refId
+        this.CallDiffer = function (data_1,selected_ver_number, curr_ver, data_2) {
+            var getNav = $("#versionNav li.active a").attr("href");
+            // var vername = $('#selected_Ver option:selected').attr("data-tokens");
+            this.SetValues();
+            if (selected_ver_number > curr_ver) {
+                $.post("../CE/GetDiffer", {
+                    NewText: data_1, OldText: data_2
                 })
-            });
-        }
-        $.LoadingOverlay("hide");
-    };
+           .done(this.showDiff.bind(this,selected_ver_number, curr_ver));
+            }
+            else {
+                $.post("../CE/GetDiffer", {
+                    NewText: data_2, OldText: data_1
+                })
+           .done(this.showDiff.bind(this, curr_ver, selected_ver_number));
+            }
+        };
 
-    this.FetchUsedSqlFns_inner = function (i, sqlFn) {
-        if (this.Code.indexOf(sqlFn.name) !== -1) {
-            this.rel_arr.push(i);
-        }
-    };
-}
+        this.showDiff = function (new_ver_num, old_ver_num, data) {
+            var getNav = $("#versionNav li.active a").attr("href");
+            //  var verid = $(getNav + ' #selected_Ver option:selected').val();
+    
+            $('#compare_result').append("<div id='oldtext"+ tabNum + "'class='leftPane'>" +
+                  "</div>" +
+                  "  <div id='newtext"+ tabNum + "' class='rightPane'>" +
+                  "</div>");
+            $('#oldtext' + tabNum).html("<div class='diffHeader'>v." + old_ver_num + "</div>" + data[0]);
+            $('#newtext' + tabNum).html("<div class='diffHeader'>v." + new_ver_num + "</div>" + data[1]);
+            $('.leftPane').scroll(function () {
+                $('.rightPane').scrollTop($(this).scrollTop());
+                $('.rightPane').scrollLeft($(this).scrollLeft());
+            });
+            $('.rightPane').scroll(function () {
+                $('.leftPane').scrollTop($(this).scrollTop());
+                $('.leftPane').scrollLeft($(this).scrollLeft());
+            });
+            $.LoadingOverlay("hide");
+        };
+
+        this.SetSqlFnName = function () {
+            var result = this.Code.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
+            if (result.length > 0) {
+                var fnName = result[1].replace(/\s\s+/g, ' ');
+                var x = fnName.replace('(', "_v" + this.Version_num + '(');
+                var v = this.Code.replace(result[1], x);
+                $('#obj_name').val(x);
+                $('#code').val(v);
+                editor.setValue(v);
+            }
+        };
+
+        this.GetUsedSqlFns = function (needRun, issave) {
+
+            this.rel_arr = [];
+            this.Rel_object = null;
+            $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this, issave, needRun));
+        };
+
+        this.FetchUsedSqlFns = function (issave, needRun, data) {
+            $.each(data, this.FetchUsedSqlFns_inner.bind(this));
+
+            var getNav = $("#versionNav li.active a").attr("href");
+            var filter_dialog_refid = $(getNav + " #fdlist #fd  option:selected").val();
+
+            if (filter_dialog_refid === "Select Filter Dialog") {
+                filter_dialog_refid = null;
+            }
+
+            this.rel_arr.push(filter_dialog_refid);
+            this.Rel_object = this.rel_arr.toString();
+            _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))) }
+            if (issave === true) {
+                $.post("../CE/SaveEbDataSource",
+                           {
+                               "Id": this.Obj_Id,
+                               "Name": this.Name,
+                               "Description": this.Description,
+                               "ObjectType": this.ObjectType,
+                               "Token": getToken(),
+                               "isSave": "true",
+                               "VersionNumber": this.Version_num,
+                               "filterDialogId": filter_dialog_refid,
+                               "json": JSON.stringify(_json),
+                               "NeedRun": needRun,
+                               "rel_obj": this.Rel_object
+                           }).done(alert("Save Success"));
+            }
+            else {
+
+                $.post("../CE/CommitEbDataSource", {
+                    "objtype": this.ObjectType,
+                    "id": this.Obj_Id,
+                    "name": this.Name,
+                    "description": this.Description,
+                    "filterDialogId": filter_dialog_refid,
+                    "changeLog": "changed",
+                    "json": JSON.stringify(_json),
+                    "rel_obj": this.Rel_object
+                }, function (result) {
+                    $.post("../CE/code_editor", {
+                        "objid": result.refId
+                    })
+                });
+            }
+            $.LoadingOverlay("hide");
+        };
+
+        this.FetchUsedSqlFns_inner = function (i, sqlFn) {
+            if (this.Code.indexOf(sqlFn.name) !== -1) {
+                this.rel_arr.push(i);
+            }
+        };
+    }

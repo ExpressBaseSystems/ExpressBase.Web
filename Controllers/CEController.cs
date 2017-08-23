@@ -82,7 +82,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.ObjType = (int)EbObjectType.DataSource;
                 ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
             }
-            ViewBag.Allversions = GetVersions(obj_id);
+         //   ViewBag.Allversions = GetVersions(obj_id);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
         }
@@ -140,7 +140,7 @@ namespace ExpressBase.Web.Controllers
             }
             // ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
-            ViewBag.Allversions = GetVersions(obj_id);
+           // ViewBag.Allversions = GetVersions(obj_id);
             return View();
         }
 

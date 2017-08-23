@@ -85,25 +85,25 @@ var RptBuilder = function (type, saveBtnid) {
         var $pageCanvas = $('#pageCanvas');
         $pageCanvas.empty();
         $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
-        $pageCanvas.append("<div id='PageContainer' style='margin-top:4px'></div>");
+        $pageCanvas.append("<div id='PageContainer'></div>");
 
         this.createHeaderBox();
 
-        if (pages[type].width > "21cm") {
+        if (this.width > "21cm") {
             $('#pageCanvas').css({ "transform": "scale(0.8)", "transform-origin": "0 0" });
         }
 
-        this.$div = $("<div class='page' id='page' style='width :" + pages[type].width + "; height:" + pages[type].height + ";'></div>");
+        this.$div = $("<div class='page' id='page' style='width :" + this.width + "; height:" + this.height + ";'></div>");
         $('#PageContainer').append($div);
-
+        $('.title').show();
         this.pageSplitters(this.$div);
     };
 
     this.createHeaderBox = function () {
 
-        $headersection = $("<div class='headersections' style='height:" + pages[type].height + ";'></div>");
+        $headersection = $("<div class='headersections' style='height:" + this.height + ";'></div>");
         $("#PageContainer").append($headersection);
-        $("#PageContainer").append("<div class='multiSplit' style='height:" + pages[type].height + ";'></div>");
+        $("#PageContainer").append("<div class='multiSplit' style='height:" + this.height + ";'></div>");
 
         for (var i = 0; i < 5; i++) {
 

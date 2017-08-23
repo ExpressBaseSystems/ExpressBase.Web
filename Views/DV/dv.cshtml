@@ -62,10 +62,11 @@
             $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
             $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
             $.LoadingOverlay("show");
-            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid }, function () {
-                $.LoadingOverlay("hide");
-            });
             
+            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid, Meta: JSON.stringify( @Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length-11))) )}, function () {
+                $.LoadingOverlay("hide");
+                });
+
         });
         $(document).ready(function () {
             @Html.Raw(head)

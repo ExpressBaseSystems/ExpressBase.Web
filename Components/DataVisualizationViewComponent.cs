@@ -32,7 +32,7 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dsRefid)
+        public async Task<IViewComponentResult> InvokeAsync(string dsRefid, string Meta)
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             RetValObj xxx = null;
@@ -61,7 +61,7 @@ namespace ExpressBase.Web.Components
                 //ViewBag.data = data;
                 //xxx = new RetValObj { DSId = _dict["DataSourceRefId"].ToString(), DVName = _dict["Name"].ToString(), TableId = "dv" + _dict["DataSourceRefId"].ToString(), Data = data };
             }
-
+            ViewBag.Meta = Meta;
             return View();
         }
 

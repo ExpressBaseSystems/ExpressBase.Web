@@ -92,7 +92,7 @@
 
     this.isContains = function (obj, val) {
         for (var i = 0; i < obj.length; i++)
-            if (obj[i].name === val)
+            if (obj[i].name.toLowerCase() === val.toLowerCase())
                 return true;
         return false;
     };
@@ -138,7 +138,7 @@
                 continue;
 
             // Check what is the group of the current property or use the default 'Other' group
-            this.currGroup = (this.Metas[this.propNames.indexOf(prop)]).group || this.MISC_GROUP_NAME;
+            this.currGroup = (this.Metas[this.propNames.indexOf(prop.toLowerCase())]).group || this.MISC_GROUP_NAME;
 
             // If this is the first time we run into this group create the group row
             if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup])
@@ -148,7 +148,7 @@
             this.propertyRowsHTML[this.currGroup] = this.propertyRowsHTML[this.currGroup] || '';
 
             // Append the current cell html into the group html
-            this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop)], (this.Metas[this.propNames.indexOf(prop)]).options);
+            this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop.toLowerCase())], (this.Metas[this.propNames.indexOf(prop.toLowerCase())]).options);
 
         }
         return true;
@@ -279,7 +279,7 @@
         this.$container.empty();
 
         for (var i = 0; i < this.Metas.length; i++)
-            this.propNames.push(this.Metas[i].name);
+            this.propNames.push(this.Metas[i].name.toLowerCase());
 
         this.buildRows();
 
@@ -329,6 +329,9 @@
         }
         this.Metas = metas;
         this.PropsObj = props;
+        console.log(JSON.stringify(props));
+        console.log(JSON.stringify(metas));
+
         this.InitPG();
     };
 

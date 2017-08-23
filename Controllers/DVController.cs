@@ -186,9 +186,9 @@ namespace ExpressBase.Web.Controllers
             return PartialView();
         }
 
-        public IActionResult dvCommon(string dsRefId)
+        public IActionResult dvCommon(string dsRefId, string Meta)
         {
-            return ViewComponent("DataVisualization", new { dsRefid = dsRefId });
+            return ViewComponent("DataVisualization", new { dsRefid = dsRefId, Meta = Meta });
         }
 
         public PartialViewResult DataVisualisation(int dsid)

@@ -88,12 +88,14 @@
 <script>
     @Html.Raw(ViewBag.HtmlHead);
     var sett = @Html.Raw(dvobj);
+    var meta = @Html.Raw(ViewBag.meta);
     var ebdtable = new EbDataTable({
         ds_id: '@ViewBag.data.DataSourceRefId',
         ss_url: '@ViewBag.ServiceUrl',
         tid: '@(tableId+"_1")',
         login:'@ViewBag.wc',
         settings:sett,
+        meta:meta,
         //fnKeyUpCallback:
     });
 </script>

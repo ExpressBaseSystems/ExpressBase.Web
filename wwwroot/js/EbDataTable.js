@@ -47,6 +47,7 @@ var isSettingsSaved = false;
 //ds_id, dv_id, ss_url, tid, setting
 var EbDataTable = function (settings) {
     this.dtsettings = settings;
+    this.meta = this.dtsettings.meta;
     this.dsid = this.dtsettings.ds_id;
     this.dvid = this.dtsettings.dv_id;
     this.dvName = null;
@@ -101,9 +102,9 @@ var EbDataTable = function (settings) {
     this.dragNdrop = false;
     this.flagColumnVisible = false;
 
-    
+
     this.getColumns = function () {
-        if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) 
+        if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false)
             $.post('GetTVPref4User', { dvid: this.dvid, parameters: JSON.stringify((this.filterValues !== null) ? this.filterValues : this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
         else
             $.post('../Dev/GetColumns', { dsid: this.dsid, parameters: JSON.stringify((this.filterValues !== null) ? this.filterValues : this.getFilterValues()) }, this.getColumnsSuccess.bind(this));
@@ -160,8 +161,8 @@ var EbDataTable = function (settings) {
         //if(index == 1)
         //    $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
         //else
-        
-       
+
+
         $.each(this.ebSettings.columns, this.CheckforColumnID.bind(this));
         this.eb_agginfo = this.getAgginfo();
         if (this.dtsettings.directLoad !== true)
@@ -269,7 +270,7 @@ var EbDataTable = function (settings) {
             //o.lengthMenu = [[-1], ["All"]];
             o.dom = "rti";
         }
-        
+
         //o.paging = false;
         //o.rowReorder = true;
         o.autowidth = false;
@@ -298,7 +299,7 @@ var EbDataTable = function (settings) {
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + getToken());
             },
-            
+
             crossDomain: true
         };
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
@@ -357,17 +358,17 @@ var EbDataTable = function (settings) {
     };
 
     this.rowObj2filter = function (fltr_collection, i, data) {
-        var type = this.Api.settings().init().columns[i+2].type;
-        if (type === "System.Int32" || type === "System.Int16" )
+        var type = this.Api.settings().init().columns[i + 2].type;
+        if (type === "System.Int32" || type === "System.Int16")
             type = 12;
         else if (type === "System.Decimal" || type === "System.Double" || type === "System.Int64")
             type = 7;
         else if (type === "System.String")
             type = 16;
-        fltr_collection.push(new fltr_obj(type, this.Api.settings().init().columns[i+2].name, data));
+        fltr_collection.push(new fltr_obj(type, this.Api.settings().init().columns[i + 2].name, data));
     };
 
-    this.receiveAjaxData = function (dd) { 
+    this.receiveAjaxData = function (dd) {
         this.MainData = dd.data;
         //if (!dd.IsPaged) {
         //    this.Api.paging = dd.IsPaged;
@@ -393,7 +394,7 @@ var EbDataTable = function (settings) {
 
     this.btnGoClick = function (e) {
         var controlIds = ["datefrom", "dateto"];// temp
-        
+
         //if (isValid(controlIds)) {
         this.btnGo.attr("disabled", true);
         if (!this.isSecondTime) {
@@ -413,7 +414,7 @@ var EbDataTable = function (settings) {
             this.Init();
             this.dragNdrop = false
         }
-        else{
+        else {
             this.Api.ajax.reload();
         }
         e.preventDefault();
@@ -510,7 +511,7 @@ var EbDataTable = function (settings) {
 
     this.initCompleteFunc = function (settings, json) {
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
-            if(!this.flagAppendColumns)
+            if (!this.flagAppendColumns)
                 this.GenerateButtons();
         }
         this.createFilterRowHeader();
@@ -528,9 +529,9 @@ var EbDataTable = function (settings) {
         //    $(".dataTables_scrollFoot table:eq(0)").css("width",wid);
         //},500);
         //if (this.ebSettings.renderAs == "both") {
-            $("#graphcontainer_tab"+this.tableId).show();
-            this.chartJs =  new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
-            //$("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
+        $("#graphcontainer_tab" + this.tableId).show();
+        this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
+        //$("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         //}
         //else{
         //    $("#showgraphbtn" + this.tableId).hide();
@@ -540,7 +541,7 @@ var EbDataTable = function (settings) {
             //this.appendDisplayColumns();
         }
         $("#dvnametxt").show();
-        $("#dvnametxt").css("display","inline-block");
+        $("#dvnametxt").css("display", "inline-block");
         this.Api.columns.adjust();
     }
 
@@ -551,8 +552,8 @@ var EbDataTable = function (settings) {
         this.addFilterEventListeners();
         this.Api.columns.adjust();
         //if (this.ebSettings.renderAs == "both") {
-            if (this.chartJs !== null)
-                this.chartJs.drawGraphHelper(this.Api.data());
+        if (this.chartJs !== null)
+            this.chartJs.drawGraphHelper(this.Api.data());
         //}
         this.btnGo.attr("disabled", false);
     };
@@ -791,10 +792,10 @@ var EbDataTable = function (settings) {
         $("#dvnametxt").off("keyup").on("keyup", this.ModifyDvname.bind(this));
     };
 
-    
+
     this.GenerateButtons = function () {
         $("#TableControls_" + this.tableId).prepend("<div style='display: inline;float: right;'>" +
-            "<a id='showgraphbtn"+this.tableId+"' class='btn btn-default' href='#graphcontainer_tab"+this.tableId+"'><i class='fa fa-line-chart'></i></a>" +
+            "<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
             "<button type='button' id='" + this.tableId + "_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
              "<div class='btn-group'>" +
@@ -815,8 +816,8 @@ var EbDataTable = function (settings) {
             "</div>" +
             "<a id='" + this.tableId + "_btnSettings' class='btn btn-default' data-toggle='modal'  data-target='#settingsmodal'><i class='fa fa-cog' aria-hidden='true'></i></a>" +
             "<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
-                   " <i class='fa fa-chevron-down' aria-hidden='true'></i>"+
-               " </div>"+
+                   " <i class='fa fa-chevron-down' aria-hidden='true'></i>" +
+               " </div>" +
          "</div>");
     };
 
@@ -1074,9 +1075,9 @@ var EbDataTable = function (settings) {
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         //if (this.FlagPresentId) {
-            var idpos = $.grep(this.ebSettings.columns, function (e) { return e.name === "id"; })[0].data;
-            this.rowId = meta.row; //do not remove - for updateAlSlct
-            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+        var idpos = $.grep(this.ebSettings.columns, function (e) { return e.name === "id"; })[0].data;
+        this.rowId = meta.row; //do not remove - for updateAlSlct
+        return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
         //}
         //else
         //    return "<input type='checkbox'";
@@ -1139,39 +1140,39 @@ var EbDataTable = function (settings) {
               "  <div style='height: 50px;margin-bottom: 5px!important;>" +
               "    <label id='dvName_lbldv" + this.linkDV + "_" + index + "'></label>" +
                "      <div class='dropdown' id='graphDropdown_tabdv" + this.linkDV + "_" + index + "' style='display: inline-block;padding-top: 1px;float:right'>" +
-                "             <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>"+
-                 "          <span class='caret'></span></button>"+
-                  "        <ul class='dropdown-menu'>"+
-                      "          <li><a href =  '#'><i class='fa fa-line-chart custom'></i> Line</a></li>"+
-                      "          <li><a href = '#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>"+
-                       "         <li><a href = '#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>"+
-                        "        <li><a href = '#'><i class='fa fa-pie-chart custom'></i> pie </a></li>"+
-                         "       <li><a href = '#'> doughnut </a></li>"+
-                        "        </ul>"+
-                      "</div>"+
+                "             <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>" +
+                 "          <span class='caret'></span></button>" +
+                  "        <ul class='dropdown-menu'>" +
+                      "          <li><a href =  '#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
+                      "          <li><a href = '#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
+                       "         <li><a href = '#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
+                        "        <li><a href = '#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
+                         "       <li><a href = '#'> doughnut </a></li>" +
+                        "        </ul>" +
+                      "</div>" +
                       "<button id='reset_zoomdv" + this.linkDV + "_" + index + "' class='btn btn-default' style='float: right;'>Reset zoom</button>" +
                       "<div id = 'btnColumnCollapsedv" + this.linkDV + "_" + index + "' class='btn btn-default' style='float: right;'>" +
                        "     <i class='fa fa-cog' aria-hidden='true'></i>" +
-                      "</div>"+
-                "</div>"+
+                      "</div>" +
+                "</div>" +
                 "<div id ='columns4Dragdv" + this.linkDV + "_" + index + "' style='display:none;'>" +
                  "   <div style='display: inline-block;'>" +
                          " <label class='nav-header disabled'><center><strong>Columns</strong></center><center><font size='1'>Darg n Drop to X or Y Axis</font></center></label>" +
                       "  <input id='searchColumndv" + this.linkDV + "_" + index + "' type='text' class ='form-control' placeholder='search for column'/>" +
-                  "      <ul class='list-group'  style='height: 470px; overflow-y: auto;'>"+
-                   "     </ul>  "+
-                   " </div>"+
-                    "<div style='display: inline-block;vertical-align: top;width: 806px;'>"+
-                    " <div class='input-group'>"+
-                      "    <span class='input-group-addon' id='basic-addon3'>X-Axis</span>"+
+                  "      <ul class='list-group'  style='height: 470px; overflow-y: auto;'>" +
+                   "     </ul>  " +
+                   " </div>" +
+                    "<div style='display: inline-block;vertical-align: top;width: 806px;'>" +
+                    " <div class='input-group'>" +
+                      "    <span class='input-group-addon' id='basic-addon3'>X-Axis</span>" +
                       "    <div class='form-control' style='padding: 4px;height:33px' id ='X_col_namedv" + this.linkDV + "_" + index + "'></div>" +
-                      "  </div>"+
-                       " <div class='input-group' style='padding-top: 1px;'>"+
-                       "   <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>"+
+                      "  </div>" +
+                       " <div class='input-group' style='padding-top: 1px;'>" +
+                       "   <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>" +
                         "  <div class='form-control' style='padding: 4px;height:33px' id ='Y_col_namedv" + this.linkDV + "_" + index + "'></div>" +
                        " </div>" +
-                    "</div>"+
-                "</div>"+
+                    "</div>" +
+                "</div>" +
                 "<canvas id='myChartdv" + this.linkDV + "_" + index + "' width='auto' height='auto'></canvas>" +
             "</div>" +
              "</div>");
@@ -1342,7 +1343,7 @@ var EbDataTable = function (settings) {
             this.Api.columns.adjust();
             $("#" + this.tableId + "ColumnsDispaly").css("display", "none");
             //$("#" + this.tableId + "ColumnsDispaly").parent().removeClass("form-save-wraper");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("display","none");
+            $("#" + this.tableId + "TableColumnsPPGrid").css("display", "none");
         }
         else {
             $("#" + this.tableId + "divcont").css("width", "55%");
@@ -1356,7 +1357,7 @@ var EbDataTable = function (settings) {
             //$("#" + this.tableId + "ColumnsDispalyCont").css("display", "inline-block");
             $("#" + this.tableId + "ColumnsDispaly").css("display", "inline-block");
             $("#" + this.tableId + "ColumnsDispaly").css("height", "auto");
-            $("#" + this.tableId + "ColumnsDispaly").css( "width", "99%");
+            $("#" + this.tableId + "ColumnsDispaly").css("width", "99%");
             $("#" + this.tableId + "TableColumnsPPGrid").css("display", "inline-block");
             $("#" + this.tableId + "TableColumnsPPGrid").css("border", "1px solid");
             $("#" + this.tableId + "TableColumnsPPGrid").css("height", "500px");
@@ -1642,13 +1643,13 @@ var EbDataTable = function (settings) {
         }
     };
 
-    
+
     this.updateRenderFunc = function () {
         $.each(this.ebSettings.columns, this.updateRenderFunc_Inner.bind(this));
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
-        if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64" ) {
+        if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
             if (this.ebSettings.columnsext[i].RenderAs === "Progressbar") {
                 this.ebSettings.columns[i].render = this.renderProgressCol;
             }
@@ -1804,10 +1805,10 @@ var EbDataTable = function (settings) {
             if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === false && obj.name !== "id")
                 $("#" + id + "TableColumns4Drag").append("<div class ='Delcols' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "</div>")
             else if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === true && obj.name !== "id")
-                $("#" + id + "ColumnsDispaly").append("<div class ='alert alert-success Displaycols' tabIndex='0' id='div_" + obj.name + "' data-obj='" + JSON.stringify(obj) + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
+                $("#" + id + "ColumnsDispaly").append('<div class ="alert alert-success Displaycols" onclick="$(this).focus();" tabIndex="0" id="div_' + obj.name + '" data-obj="' + JSON.stringify(obj) + '">' + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
         });
         $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-        $("#" + this.tableId + "ColumnsDispaly div").off("onfocus").on("onfocus", this.createPG.bind(this));
+        $("#" + this.tableId + "ColumnsDispaly").on("focus", "div", this.createPG.bind(this));
         this.drake = new dragula([document.getElementById(id + "TableColumns4Drag"), document.getElementById(id + "ColumnsDispaly")], {
             accepts: this.acceptDrop.bind(this)
         });
@@ -1840,10 +1841,10 @@ var EbDataTable = function (settings) {
 
     this.colDrop = function (el, target, source, sibling) {
         if (target) {
-        //    if (sibling)
-        //        this.droppedPos = $(sibling).index() - 1;
-        //    else
-        //        this.droppedPos = $(target).children().length - 1;
+            //    if (sibling)
+            //        this.droppedPos = $(sibling).index() - 1;
+            //    else
+            //        this.droppedPos = $(target).children().length - 1;
             if ($(source).attr("id") === this.tableId + "TableColumns4Drag") {
                 $(el).removeClass("Delcols");
                 $(el).addClass("Displaycols");
@@ -1855,7 +1856,7 @@ var EbDataTable = function (settings) {
                 $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
                 //$.each(this.ebSettings.columns, this.visibleChange2True.bind(this, colobj));
                 //$("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
-                
+
             }
 
             $("#" + this.tableId + "TableColumns4Drag").css("height", $("#" + this.tableId + "divcont").css("height"))
@@ -1867,18 +1868,18 @@ var EbDataTable = function (settings) {
             //var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
             //$('#' + this.tableId + 'divcont').append(table);
             //this.Init();
-           
+
         }
     };
 
     this.RemoveAndAddToColumns = function (e) {
-        
+
         var str = $(e.target).parent().text();
-        var colobj =JSON.parse($(e.target).parent().attr("data-obj"));
+        var colobj = JSON.parse($(e.target).parent().attr("data-obj"));
         colobj["visible"] = false;
         colobj["bVisible"] = false;
         $("#" + this.tableId + "TableColumns4Drag").append("<div class ='Delcols' id='" + $(e.target).parent().attr("id") + "' data-obj='" + JSON.stringify(colobj) + "'>" + str.substring(0, str.length - 1).trim() + "</div>")
-        
+
         $(e.target).parent().remove();
         $("#" + this.tableId + "TableColumns4Drag").css("height", $("#" + this.tableId + "divcont").css("height"))
         $("#" + this.tableId + "TableColumnsPPGrid").css("height", $("#" + this.tableId + "divcont").css("height"))
@@ -1893,13 +1894,16 @@ var EbDataTable = function (settings) {
     };
 
     this.createPG = function () {
-        var pg= new Eb_PropertyGrid(this.tableId + "TableColumnsPPGrid")
+        console.log(JSON.stringify(this.ebSettings.Columns[0]));
+        var pg = new Eb_PropertyGrid(this.tableId + "TableColumnsPPGrid")
+        pg.setObject(this.ebSettings.Columns[0], this.meta.DVBaseColumn);
+        //pg.setObject(TextFn , metFn);
     };
 
 
     this.visibleChange2True = function (i, obj) {
         this.dragNdrop = true;
-        $.each(this.ebSettings.Columns, this.changeObjectPositionToCurrent.bind(this,i, obj));
+        $.each(this.ebSettings.Columns, this.changeObjectPositionToCurrent.bind(this, i, obj));
     };
 
     this.visibleChange2False = function (colobj, i, obj) {
@@ -1913,7 +1917,7 @@ var EbDataTable = function (settings) {
     };
 
     this.changeObjectPositionToCurrent = function (indx, colobj, i, obj) {
-        var o=JSON.parse($(colobj).attr("data-obj"));
+        var o = JSON.parse($(colobj).attr("data-obj"));
         if (o.name == obj.name) {
             this.ebSettings.Columns[i].visible = true;
             this.ebSettings.Columns[i].bVisible = true;
@@ -2009,7 +2013,7 @@ var EbDataTable = function (settings) {
         this.ebSettings.dvName = $("#dvnametxt").val();
         $("label.dvname").text(this.ebSettings.dvName);
     }
-    
+
 };
 
 

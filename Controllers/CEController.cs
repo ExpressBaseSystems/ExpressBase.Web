@@ -17,6 +17,7 @@ using ExpressBase.Data;
 using DiffPlex;
 using System.Text;
 using ServiceStack.Redis;
+using ExpressBase.Common.Objects;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -214,7 +215,7 @@ namespace ExpressBase.Web.Controllers
             ds.Json = req["json"];
             ds.EbObject = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
             (ds.EbObject as EbDataSource).EbObjectType = EbObjectType.DataSource;
-            ds.Status = Objects.ObjectLifeCycleStatus.Live;
+            ds.Status = ObjectLifeCycleStatus.Live;
             ds.UserId = ViewBag.UId;
             ds.ChangeLog = req["changeLog"];
             ds.Relations = req["rel_obj"];

@@ -109,412 +109,344 @@
     </div>
 </div>
 
+<script type="text/javascript">
 
-<div>
-    <div class="well" style="height:150px">
-        Compare With:
-        <div>
-            <div class="col-md-3 col-md-offset-2 ">
-                <input type="radio" name="compWith" value="1" checked> Current vs Specific<br>
-                @{ if (ViewBag.IsNew == "false")
-                    {
-                        <div class="verlist input-group">
-                            <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker show-tick" data-live-search="true">
-                                @{
-                                    @using ExpressBase.Objects.ServiceStack_Artifacts;
-                                    List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
-                                    Allversions = ViewBag.Allversions;
-                                    <option value="Select Version" data-tokens="Select Version">Select version</option>
-                                    foreach (var version in Allversions)
-                                    {
-                                        <option value=@version.RefId data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
-                                    }
-                                }
-                            </select>
-                        </div>
-                                    }
-                }
-            </div>
-            <div class="col-md-4">
-                <input type="radio" name="compWith" value="2"> Specific vs Specefic<br>
-                @{ if (ViewBag.IsNew == "false")
-                    {
-                        <div class="verlist input-group col-md-6" style="display:inline-block">
-                            <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker show-tick" data-live-search="true">
-                                @{
-                                    List<EbObjectWrapper> Allversions = new List<EbObjectWrapper>();
-                                    Allversions = ViewBag.Allversions;
-                                    <option value="Select Version" data-tokens="Select Version">Select version</option>
-                                    foreach (var version in Allversions)
-                                    {
-                                        <option value=@version.RefId data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
-                                    }
-                                }
-                            </select>
-                        </div>
-
-                        <div class="verlist input-group col-md-6" style="display:inline-block ">
-                            <select id="selected_Ver" name="selected_Ver" class="form-control selected_Ver selectpicker show-tick" data-live-search="true">
-                                @{
-                                    Allversions = ViewBag.Allversions;
-                                    <option value="Select Version" data-tokens="Select Version">Select version</option>
-                                    foreach (var version in Allversions)
-                                    {
-                                        <option value=@version.RefId data-tokens=@version.VersionNumber> Version @version.VersionNumber </option>
-                                    }
-                                }
-                            </select>
-                        </div>
-                                    }
-                }
-            </div>
-        </div>
-
-        <button id="" class="compare_inner" style="margin-top: 57px;margin-left: 86px;">Comapre</button>
-    </div>
-    <div id="compare_result"></div>
-</div>
-
-    <script type="text/javascript">
-
-        window.onload = function() {
-            CodeMirror.commands.autocomplete = function(cm)
-            {
-                CodeMirror.showHint(cm, @ViewBag.EditorHint);
-            };
-
-            window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-                mode: "@ViewBag.EditorMode",
-                lineNumbers: true,
-                lineWrapping: false,
-                extraKeys: { "Ctrl-Space": "autocomplete" },
-                foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-            });
-            var orig = CodeMirror.hint.sql;
-            CodeMirror.hint.sql = function (editor) {
-                var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
-                var SqlFnList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SqlFns));
-                $.each(SqlFnList, function (i, fdj) {
-                    inner.list.push(fdj);
-                });
-                var cursor = editor.getCursor();
-                var currentLine = editor.getLine(cursor.line);
-                var start = cursor.ch;
-                var end = start;
-                while (end < currentLine.length && /[\w$]+/.test(currentLine.charAt(end))) ++end;
-                while (start && /[\w$]+/.test(currentLine.charAt(start - 1))) --start;
-                var curWord = start != end && currentLine.slice(start, end);
-                var regex = new RegExp('^' + curWord, 'i');
-                var result = {
-                    list: (!curWord ? inner.list : inner.list.filter(function (item) {
-                        return item.match(regex);
-                    })).sort(),
-                    from: CodeMirror.Pos(cursor.line, start),
-                    to: CodeMirror.Pos(cursor.line, end)
-                };
-
-                return result;
-            };
-            //    CodeMirror.commands["selectAll"](editor);
-
-            //    function getSelectedRange() {
-            //        return { from: editor.getCursor(true), to: editor.getCursor(false) };
-            //    }
-
-            //    function autoFormatSelection() {
-            //        var range = getSelectedRange();
-            //        editor.autoFormatRange(range.from, range.to);
-            //    }
-
-            //    function commentSelection(isComment) {
-            //        var range = getSelectedRange();
-            //        alert(range);
-            //        alert(isComment);
-            //        editor.commentRange(isComment, range.from, range.to);
-            //    }
-            //    $('#comment').on('click',function(){
-            //        commentSelection(true);
-            //    })
-            //    CodeMirror.extendMode("css", {
-            //        commentStart: "/*",
-            //        commentEnd: "*/",
-            //        newlineAfterToken: function(type, content) {
-            //            return /^[;{}]$/.test(content);
-            //        }
-            //    });
-
-            //    CodeMirror.extendMode("javascript", {
-            //        commentStart: "/*",
-            //        commentEnd: "*/",
-            //        // FIXME semicolons inside of for
-            //        newlineAfterToken: function(type, content, textAfter, state) {
-            //            if (this.jsonMode) {
-            //                return /^[\[,{]$/.test(content) || /^}/.test(textAfter);
-            //            } else {
-            //                if (content == ";" && state.lexical && state.lexical.type == ")") return false;
-            //                return /^[;{}]$/.test(content) && !/^;/.test(textAfter);
-            //            }
-            //        }
-            //    });
-
-            //    CodeMirror.extendMode("xml", {
-            //        commentStart: "<!--",
-            //        commentEnd: "-->",
-            //        newlineAfterToken: function(type, content, textAfter) {
-            //            return type == "tag" && />$/.test(content) || /^</.test(textAfter);
-            //        }
-            //    });
-
-            //    // Comment/uncomment the specified range
-            //    CodeMirror.defineExtension("commentRange", function (isComment, from, to) {
-            //        var cm = this, curMode = CodeMirror.innerMode(cm.getMode(), cm.getTokenAt(from).state).mode;
-            //        cm.operation(function() {
-            //            if (isComment) { // Comment range
-            //                cm.replaceRange(curMode.commentEnd, to);
-            //                cm.replaceRange(curMode.commentStart, from);
-            //                if (from.line == to.line && from.ch == to.ch) // An empty comment inserted - put cursor inside
-            //                    cm.setCursor(from.line, from.ch + curMode.commentStart.length);
-            //            } else { // Uncomment range
-            //                var selText = cm.getRange(from, to);
-            //                var startIndex = selText.indexOf(curMode.commentStart);
-            //                var endIndex = selText.lastIndexOf(curMode.commentEnd);
-            //                if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
-            //                    // Take string till comment start
-            //                    selText = selText.substr(0, startIndex)
-            //                    // From comment start till comment end
-            //                      + selText.substring(startIndex + curMode.commentStart.length, endIndex)
-            //                    // From comment end till string end
-            //                      + selText.substr(endIndex + curMode.commentEnd.length);
-            //                }
-            //                cm.replaceRange(selText, from, to);
-            //            }
-            //        });
-            //    });
-
-            //    // Applies automatic mode-aware indentation to the specified range
-            //    CodeMirror.defineExtension("autoIndentRange", function (from, to) {
-            //        var cmInstance = this;
-            //        this.operation(function () {
-            //            for (var i = from.line; i <= to.line; i++) {
-            //                cmInstance.indentLine(i, "smart");
-            //            }
-            //        });
-            //    });
-
-            //    // Applies automatic formatting to the specified range
-            //    CodeMirror.defineExtension("autoFormatRange", function (from, to) {
-            //        var cm = this;
-            //        var outer = cm.getMode(), text = cm.getRange(from, to).split("\n");
-            //        var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
-            //        var tabSize = cm.getOption("tabSize");
-
-            //        var out = "", lines = 0, atSol = from.ch == 0;
-            //        function newline() {
-            //            out += "\n";
-            //            atSol = true;
-            //            ++lines;
-            //        }
-
-            //        for (var i = 0; i < text.length; ++i) {
-            //            var stream = new CodeMirror.StringStream(text[i], tabSize);
-            //            while (!stream.eol()) {
-            //                var inner = CodeMirror.innerMode(outer, state);
-            //                var style = outer.token(stream, state), cur = stream.current();
-            //                stream.start = stream.pos;
-            //                if (!atSol || /\S/.test(cur)) {
-            //                    out += cur;
-            //                    atSol = false;
-            //                }
-            //                if (!atSol && inner.mode.newlineAfterToken &&
-            //                    inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i+1] || "", inner.state))
-            //                    newline();
-            //            }
-            //            if (!stream.pos && outer.blankLine) outer.blankLine(state);
-            //            if (!atSol) newline();
-            //        }
-
-            //        cm.operation(function () {
-            //            cm.replaceRange(out, from, to);
-            //            for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
-            //                cm.indentLine(cur, "smart");
-            //            cm.setSelection(from, cm.getCursor(false));
-            //        });
-            //    });
+    window.onload = function() {
+        CodeMirror.commands.autocomplete = function(cm)
+        {
+            CodeMirror.showHint(cm, @ViewBag.EditorHint);
         };
-    </script>
 
-    <style>
-            .align_singleLine {
-                display: inline-block;
-                margin-right: 10px;
-                align-content: center;
-            }
+        window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            mode: "@ViewBag.EditorMode",
+            lineNumbers: true,
+            lineWrapping: false,
+            extraKeys: { "Ctrl-Space": "autocomplete" },
+            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+        var orig = CodeMirror.hint.sql;
+        CodeMirror.hint.sql = function (editor) {
+            var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
+            var SqlFnList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SqlFns));
+            $.each(SqlFnList, function (i, fdj) {
+                inner.list.push(fdj);
+            });
+            var cursor = editor.getCursor();
+            var currentLine = editor.getLine(cursor.line);
+            var start = cursor.ch;
+            var end = start;
+            while (end < currentLine.length && /[\w$]+/.test(currentLine.charAt(end))) ++end;
+            while (start && /[\w$]+/.test(currentLine.charAt(start - 1))) --start;
+            var curWord = start != end && currentLine.slice(start, end);
+            var regex = new RegExp('^' + curWord, 'i');
+            var result = {
+                list: (!curWord ? inner.list : inner.list.filter(function (item) {
+                    return item.match(regex);
+                })).sort(),
+                from: CodeMirror.Pos(cursor.line, start),
+                to: CodeMirror.Pos(cursor.line, end)
+            };
 
-            .CodeMirror {
-                height: 500px;
-                background-color: ivory;
-            }
+            return result;
+        };
+        //    CodeMirror.commands["selectAll"](editor);
 
-            .table-responsive {
-                overflow-x: inherit;
-            }
+        //    function getSelectedRange() {
+        //        return { from: editor.getCursor(true), to: editor.getCursor(false) };
+        //    }
 
-            .inputBox {
-                width: 216px;
-            }
+        //    function autoFormatSelection() {
+        //        var range = getSelectedRange();
+        //        editor.autoFormatRange(range.from, range.to);
+        //    }
 
-            .controls-group {
-                overflow-y: inherit;
-            }
+        //    function commentSelection(isComment) {
+        //        var range = getSelectedRange();
+        //        alert(range);
+        //        alert(isComment);
+        //        editor.commentRange(isComment, range.from, range.to);
+        //    }
+        //    $('#comment').on('click',function(){
+        //        commentSelection(true);
+        //    })
+        //    CodeMirror.extendMode("css", {
+        //        commentStart: "/*",
+        //        commentEnd: "*/",
+        //        newlineAfterToken: function(type, content) {
+        //            return /^[;{}]$/.test(content);
+        //        }
+        //    });
 
-            .fd_top_content {
-                margin-bottom: 10px;
-            }
+        //    CodeMirror.extendMode("javascript", {
+        //        commentStart: "/*",
+        //        commentEnd: "*/",
+        //        // FIXME semicolons inside of for
+        //        newlineAfterToken: function(type, content, textAfter, state) {
+        //            if (this.jsonMode) {
+        //                return /^[\[,{]$/.test(content) || /^}/.test(textAfter);
+        //            } else {
+        //                if (content == ";" && state.lexical && state.lexical.type == ")") return false;
+        //                return /^[;{}]$/.test(content) && !/^;/.test(textAfter);
+        //            }
+        //        }
+        //    });
 
-            #obj_desc {
-                height: 46px;
-            }
-            /*.codeEditLabel {
+        //    CodeMirror.extendMode("xml", {
+        //        commentStart: "<!--",
+        //        commentEnd: "-->",
+        //        newlineAfterToken: function(type, content, textAfter) {
+        //            return type == "tag" && />$/.test(content) || /^</.test(textAfter);
+        //        }
+        //    });
+
+        //    // Comment/uncomment the specified range
+        //    CodeMirror.defineExtension("commentRange", function (isComment, from, to) {
+        //        var cm = this, curMode = CodeMirror.innerMode(cm.getMode(), cm.getTokenAt(from).state).mode;
+        //        cm.operation(function() {
+        //            if (isComment) { // Comment range
+        //                cm.replaceRange(curMode.commentEnd, to);
+        //                cm.replaceRange(curMode.commentStart, from);
+        //                if (from.line == to.line && from.ch == to.ch) // An empty comment inserted - put cursor inside
+        //                    cm.setCursor(from.line, from.ch + curMode.commentStart.length);
+        //            } else { // Uncomment range
+        //                var selText = cm.getRange(from, to);
+        //                var startIndex = selText.indexOf(curMode.commentStart);
+        //                var endIndex = selText.lastIndexOf(curMode.commentEnd);
+        //                if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
+        //                    // Take string till comment start
+        //                    selText = selText.substr(0, startIndex)
+        //                    // From comment start till comment end
+        //                      + selText.substring(startIndex + curMode.commentStart.length, endIndex)
+        //                    // From comment end till string end
+        //                      + selText.substr(endIndex + curMode.commentEnd.length);
+        //                }
+        //                cm.replaceRange(selText, from, to);
+        //            }
+        //        });
+        //    });
+
+        //    // Applies automatic mode-aware indentation to the specified range
+        //    CodeMirror.defineExtension("autoIndentRange", function (from, to) {
+        //        var cmInstance = this;
+        //        this.operation(function () {
+        //            for (var i = from.line; i <= to.line; i++) {
+        //                cmInstance.indentLine(i, "smart");
+        //            }
+        //        });
+        //    });
+
+        //    // Applies automatic formatting to the specified range
+        //    CodeMirror.defineExtension("autoFormatRange", function (from, to) {
+        //        var cm = this;
+        //        var outer = cm.getMode(), text = cm.getRange(from, to).split("\n");
+        //        var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
+        //        var tabSize = cm.getOption("tabSize");
+
+        //        var out = "", lines = 0, atSol = from.ch == 0;
+        //        function newline() {
+        //            out += "\n";
+        //            atSol = true;
+        //            ++lines;
+        //        }
+
+        //        for (var i = 0; i < text.length; ++i) {
+        //            var stream = new CodeMirror.StringStream(text[i], tabSize);
+        //            while (!stream.eol()) {
+        //                var inner = CodeMirror.innerMode(outer, state);
+        //                var style = outer.token(stream, state), cur = stream.current();
+        //                stream.start = stream.pos;
+        //                if (!atSol || /\S/.test(cur)) {
+        //                    out += cur;
+        //                    atSol = false;
+        //                }
+        //                if (!atSol && inner.mode.newlineAfterToken &&
+        //                    inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i+1] || "", inner.state))
+        //                    newline();
+        //            }
+        //            if (!stream.pos && outer.blankLine) outer.blankLine(state);
+        //            if (!atSol) newline();
+        //        }
+
+        //        cm.operation(function () {
+        //            cm.replaceRange(out, from, to);
+        //            for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
+        //                cm.indentLine(cur, "smart");
+        //            cm.setSelection(from, cm.getCursor(false));
+        //        });
+        //    });
+    };
+</script>
+
+<style>
+    .btn-group > .btn:first-child {
+        margin-left: 0px !important;
+    }
+
+    .CodeMirror {
+        height: 500px;
+        background-color: ivory;
+    }
+
+    .table-responsive {
+        overflow-x: inherit;
+    }
+
+    .inputBox {
+        width: 216px;
+    }
+
+    .controls-group {
+        overflow-y: inherit;
+    }
+
+    .fd_top_content {
+        margin-bottom: 10px;
+    }
+
+    #obj_desc {
+        height: 46px;
+    }
+    /*.codeEditLabel {
             padding-top: 9px;
             padding-bottom: 10px;
         }*/
-            .dropdown {
-                position: relative;
-                margin-right: -6px;
-            }
+    .dropdown {
+        position: relative;
+        margin-right: -6px;
+    }
 
-            .verlist {
-                width: 140px;
-            }
+    .verlist {
+        width: 140px;
+    }
 
-            .inner_toolbar {
-                border;
-            }
+    .inner_toolbar {
+        border;
+    }
 
-            /*differ styles*/
+    /*differ styles*/
 
-            #diffBar {
-                width: 3%;
-                height: 100%;
-                float: left;
-                position: relative;
-                background: #DDDDDD;
-            }
+    #diffBar {
+        width: 3%;
+        height: 100%;
+        float: left;
+        position: relative;
+        background: #DDDDDD;
+    }
 
-            .diffBarLineLeft, .diffBarLineRight {
-                width: 50%;
-                float: left;
-                height: 0px;
-                cursor: pointer;
-            }
+    .diffBarLineLeft, .diffBarLineRight {
+        width: 50%;
+        float: left;
+        height: 0px;
+        cursor: pointer;
+    }
 
-            .inView {
-                background-repeat: repeat;
-            }
+    .inView {
+        background-repeat: repeat;
+    }
 
-            #activeBar {
-                position: absolute;
-                top: 0px;
-                background-color: #6699FF;
-                opacity: 0.5;
-                filter: alpha(opacity= '50');
-            }
-
-
-            #diffBox {
-                margin-left: auto;
-                margin-right: auto;
-                border: solid 2px #000000;
-            }
+    #activeBar {
+        position: absolute;
+        top: 0px;
+        background-color: #6699FF;
+        opacity: 0.5;
+        filter: alpha(opacity= '50');
+    }
 
 
-            .leftPane, .rightPane {
-                float: left;
-                width: 50%;
-                font-family: monospace;
-                height: 400px;
-                color: black;
-                overflow-x: scroll;
-                resize: horizontal;
-            }
+    #diffBox {
+        margin-left: auto;
+        margin-right: auto;
+        border: solid 2px #000000;
+    }
 
-            .diffHeader {
-                font-weight: bold;
-                padding: 2px 0px 2px 10px;
-                background-color: #FFFFFF;
-                text-align: center;
-            }
 
-            .diffPane {
-                margin-right: 0px;
-                padding: 0px;
-                overflow-y: scroll;
-                font-family: Consolas;
-                font-size: xx-small;
-            }
+    .leftPane, .rightPane {
+        float: left;
+        width: 50%;
+        font-family: monospace;
+        height: 400px;
+        color: black;
+        overflow-x: scroll;
+        resize: horizontal;
+    }
 
-            .line {
-                padding-left: .2em;
-                white-space: nowrap;
-                width: 50%;
-            }
+    .diffHeader {
+        font-weight: bold;
+        padding: 2px 0px 2px 10px;
+        background-color: #FFFFFF;
+        text-align: center;
+    }
 
-            .lineNumber {
-                padding: 0 .3em;
-                background-color: #FFFFFF;
-                text-align: right;
-            }
+    .diffPane {
+        margin-right: 0px;
+        padding: 0px;
+        overflow-y: scroll;
+        font-family: Consolas;
+        font-size: xx-small;
+    }
 
-            .InsertedLine {
-                background-color: lightgreen;
-            }
+    .line {
+        padding-left: .2em;
+        white-space: nowrap;
+        width: 50%;
+    }
 
-            .ModifiedLine {
-                background-color: lightyellow;
-            }
+    .lineNumber {
+        padding: 0 .3em;
+        background-color: #FFFFFF;
+        text-align: right;
+    }
 
-            .DeletedLine {
-                background-color: lightpink;
-            }
+    .InsertedLine {
+        background-color: lightgreen;
+    }
 
-            .UnchangedLine {
-                background-color: #FFFFFF;
-            }
+    .ModifiedLine {
+        background-color: lightyellow;
+    }
 
-            .ImaginaryLine {
-                background-color: #C8C8C8;
-            }
+    .DeletedLine {
+        background-color: lightpink;
+    }
 
-            .InsertedCharacter {
-                background-color: palegreen;
-            }
+    .UnchangedLine {
+        background-color: #FFFFFF;
+    }
 
-            .DeletedCharacter {
-                background-color: hotpink;
-            }
+    .ImaginaryLine {
+        background-color: #C8C8C8;
+    }
 
-            .UnchangedCharacter {
-            }
+    .InsertedCharacter {
+        background-color: palegreen;
+    }
 
-            .ImaginaryCharacter {
-            }
+    .DeletedCharacter {
+        background-color: hotpink;
+    }
 
-            .clear {
-                clear: both;
-            }
+    .UnchangedCharacter {
+    }
 
-            #oldtext .diffTable {
-                width: 50%;
-                height: 50%;
-                padding-left: 0px;
-                overflow-y: scroll;
-            }
+    .ImaginaryCharacter {
+    }
 
-            #newtext .diffTable {
-                width: 50%;
-                height: 50%;
-                padding-right: 0px;
-                overflow-y: scroll;
-            }
-    </style>
+    .clear {
+        clear: both;
+    }
+
+    #oldtext .diffTable {
+        width: 50%;
+        height: 50%;
+        padding-left: 0px;
+        overflow-y: scroll;
+    }
+
+    #newtext .diffTable {
+        width: 50%;
+        height: 50%;
+        padding-right: 0px;
+        overflow-y: scroll;
+    }
+</style>

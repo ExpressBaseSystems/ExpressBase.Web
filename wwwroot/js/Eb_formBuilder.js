@@ -18,9 +18,9 @@
     //else if (builderType === 3)
     //    this.rootContainerObj = new EbObjects.ReportObj(formid);
 
+    this.PGobj = new Eb_PropertyGrid("pgWraper");
     this.curControl = null;
     this.drake = null;
-    this.PGobj = null;
 
     // need to change
     this.controlCounters = {
@@ -67,7 +67,7 @@
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.show().css("visibility", "visible");
-        this.PGobj = new Eb_PropertyGrid("pgWraper", control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
+        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
         $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
     };
 
@@ -110,7 +110,6 @@
         this.curControl.children('.ctrlHead').show();
         this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
-        $(".controls-dd-cont .selectpicker").selectpicker('val', id);
     };
 
     this.makeTdsDropable = function () {
@@ -283,7 +282,7 @@
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
         $("#saveformBtn").on("click", this.save.bind(this));
-        $('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
+        //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
     };
     this.Init();
 };

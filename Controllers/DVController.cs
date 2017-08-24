@@ -20,8 +20,11 @@ using System.Text;
 using ExpressBase.Objects.Objects;
 using Newtonsoft.Json;
 using ExpressBase.Objects.ObjectContainers;
-using ExpressBase.Objects.Attributes;
+using ExpressBase.Common.Objects.Attributes;
 using ServiceStack.Redis;
+using ExpressBase.Common.Objects;
+using System.Reflection;
+using ExpressBase.Objects.Objects.DVRelated;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -119,6 +122,12 @@ namespace ExpressBase.Web.Controllers
             FetchAllDataSources();
             FetchAllDataVisualizations();
 
+            var typeArray = typeof(DVBaseColumn).GetTypeInfo().Assembly.GetTypes();
+
+            var _jsResult = CSharpToJs.GenerateJs<EbObject>(BuilderType.DVBuilder, typeArray);
+
+            ViewBag.Meta = _jsResult.Meta;
+
             //Edit mode
             if (!string.IsNullOrEmpty(dvRefId))
             {
@@ -177,9 +186,9 @@ namespace ExpressBase.Web.Controllers
             return PartialView();
         }
 
-        public IActionResult dvCommon(string dsRefId)
+        public IActionResult dvCommon(string dsRefId, string Meta)
         {
-            return ViewComponent("DataVisualization", new { dsRefid = dsRefId });
+            return ViewComponent("DataVisualization", new { dsRefid = dsRefId, Meta = Meta });
         }
 
         public PartialViewResult DataVisualisation(int dsid)
@@ -391,7 +400,7 @@ namespace ExpressBase.Web.Controllers
                 DataSourceRefId = dsid.ToString(),
                 EbObjectType = EbObjectType.DataVisualization
             });
-            ds.Status = Objects.ObjectLifeCycleStatus.Live;
+            ds.Status = ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
             ds.Relations = dsid.ToString();

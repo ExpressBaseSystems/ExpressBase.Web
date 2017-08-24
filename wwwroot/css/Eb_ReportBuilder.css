@@ -13,9 +13,9 @@
     background-color: #fafafa !important;
     
 }
-#pagesize{
-    border: none;
-    background-color: #fafafa;
+#pagesize{       
+     height: 28px;
+     border-color: #dedede;
 }
 .multiSplit {
     width: 30px;
@@ -38,18 +38,19 @@
 }
 
 .ruler {
-    margin-top: 28px;
+    margin-top: 30px;
     color: #000;
     font-family: arial;
     font-size: 10px;
     line-height: 14px;
     overflow: hidden;
-    border:1px solid;
-        margin-left: -21px !important;
-    border-left: 0; 
-    background-color:#fbf7f7;
+    border: 1px solid #aaa;
+    margin-left: 82px !important;
+    border-left: 0;
+    background-color: #fbf7f7;
     position: fixed;
-    z-index:1;
+    z-index: 100;
+    height: 20px;
 }
 
     .ruler > div {
@@ -59,20 +60,20 @@
 
     .ruler .tickLabel {
         position: relative;
-        top: -10px;
+        top: -7px;
         margin-left: 4px;
         width: 1px;
         height: 100%;
         text-indent: 1px;
-        line-height: 20px;
+        line-height: 16px;
     }
 
         .ruler .tickLabel:first-of-type {
-            margin-left: 0;
+            margin-left: 0;           
         }
 
     .ruler .tickMajor {
-        margin-top: 19px;
+        margin-top: 12px;
         margin-left: 4px;
         width: 1px;
         height: 6px;
@@ -93,12 +94,13 @@
 .rulerleft {
     position: fixed;
     color: #000;
-    border:1px solid;
-    padding-top:20px;   
-    font-size:10px;
-    background-color:#fbf7f7;
-    margin-left: -45px;
-    margin-top: 28px;
+    border: 1px solid #aaa;
+    font-size: 10px;
+    background-color: #fbf7f7;
+    margin-left: -21px;
+    margin-top: 49px;
+    width: 20px;
+    z-index:100;
 }
 
     .rulerleft > div {
@@ -113,20 +115,21 @@
 
         .rulerleft .tickLabel:first-of-type {
             margin-left: 0;
+            margin-top:-1px;
         }
 
     .rulerleft .tickMajor {
         margin-top: 4px;
         width: 6px;
         height: 1px;
-        margin-left: 18px;
+        margin-left: 13px;
     }
 
     .rulerleft .tickMinor {
         margin-top: 4px;
         width: 4px;
         height: 1px;
-        margin-left: 20px;
+        margin-left: 14px;
     }
 
 .reportmenu {
@@ -149,8 +152,9 @@
 }
 
 .pGreportBuilder{
-    margin-top:31px;
-    position:fixed;
+    margin-top: 31px;
+    position: fixed;
+    margin-right: 10px;
 }
 .head_Box1{
     display: flex;
@@ -163,7 +167,9 @@
     position: fixed;
     margin-top: 30px;
     padding: 0 !important;
-    box-shadow: 0 6px 12px rgba(0,0,0,.175) !important;    
+    box-shadow: 0 6px 12px rgba(0,0,0,.175) !important;
+    width:15%;
+    background-color:white;    
 }
 
 .pgB {
@@ -192,6 +198,61 @@
     width: 100%;
 }
 
-.btn-group > .btn:first-child {
+.reportmenu .btn-group > .btn:first-child {
     margin-left: 5px !important;
+}
+.side-toolbar{
+       min-height: 1000px;
+    padding-left: 10px;
+    background-color:white;
+    z-index:1;
+}
+.PGgrid{
+    min-height: 1000px;
+    padding:0;
+}
+.line .ui-resizable-handle {
+   width: 10px !important;
+    height: 10px !important;
+    top: -5px!important;
+    background-color: green !important;
+}
+.h-line .ui-resizable-handle {
+   width: 7px;
+    height: 7px;
+    top: -4px!important;
+    background-color: green !important;
+}
+.v-line .ui-resizable-handle {
+   background-color: green;
+    width: 7px;
+    height: 7px;
+    left: -4px;
+}
+.title{
+    width: 104px;
+    height: 20px;
+    background-color: #fbf7f7;
+    position: fixed;
+    top: 105px;
+    left: 219px;   
+    border: 1px solid #aaaaaa;
+    z-index: 200;
+}
+.measurement{
+    height: 28px;  
+    border-left: 0;
+    border-color: #dedede;
+    padding-bottom: 2px;  
+}
+.custom-size{
+    width: 60px;
+    border: 1px solid #dedede;
+    height: 28px;
+    padding-bottom: 3px;
+}
+#createCustom{
+    background-color: #fafafa;
+    border: 1px solid #dedede;
+    height: 28px;
 }

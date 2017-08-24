@@ -1,7 +1,9 @@
 ﻿var Eb_PropertyGrid = function (id) {
     this.$wraper = $("#" + id);
-    this.containerId = id;
+    this.wraperId = id;
     this.$controlsDD = $(".controls-dd-cont select");
+    this.OEctrlsContId = this.wraperId + "_OEctrlsCont";
+    this.controlsDDContSelec = "#" + this.wraperId + " .controls-dd-cont";
     this.objects = [];
     this.PropsObj = null;
 
@@ -92,7 +94,7 @@
 
     this.isContains = function (obj, val) {
         for (var i = 0; i < obj.length; i++)
-            if (obj[i].name === val)
+            if (obj[i].name.toLowerCase() === val.toLowerCase())
                 return true;
         return false;
     };
@@ -123,7 +125,7 @@
         }
 
         // Close the table and apply it to the div
-        this.$container.html(this.innerHTML);
+        this.$PGcontainer.html(this.innerHTML);
 
         $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").val()); });
 
@@ -138,7 +140,7 @@
                 continue;
 
             // Check what is the group of the current property or use the default 'Other' group
-            this.currGroup = (this.Metas[this.propNames.indexOf(prop)]).group || this.MISC_GROUP_NAME;
+            this.currGroup = (this.Metas[this.propNames.indexOf(prop.toLowerCase())]).group || this.MISC_GROUP_NAME;
 
             // If this is the first time we run into this group create the group row
             if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup])
@@ -148,7 +150,7 @@
             this.propertyRowsHTML[this.currGroup] = this.propertyRowsHTML[this.currGroup] || '';
 
             // Append the current cell html into the group html
-            this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop)], (this.Metas[this.propNames.indexOf(prop)]).options);
+            this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop.toLowerCase())], (this.Metas[this.propNames.indexOf(prop.toLowerCase())]).options);
 
         }
         return true;
@@ -164,43 +166,38 @@
     };
 
     this.addToDD = function () {
-        if ($("#SelOpt" + this.PropsObj.EbSid + this.containerId).length === 0) {
-            $(".controls-dd-cont select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.containerId + "'>" + this.PropsObj.Name + "</option>");
-            $(".controls-dd-cont .selectpicker").selectpicker('refresh');
+        if ($("#SelOpt" + this.PropsObj.EbSid + this.wraperId).length === 0) {
+            $(this.controlsDDContSelec + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
+            $(this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
         }
-        $(".controls-dd-cont .selectpicker").selectpicker('val', this.PropsObj.Name);
+        $(this.controlsDDContSelec + " .selectpicker").selectpicker('val', this.PropsObj.Name);
 
     };
 
     this.removeFromDD = function (name) {
-        if ($("#SelOpt" + name + this.containerId)) {
-            $("#SelOpt" + name + this.containerId).remove();
-            $(".controls-dd-cont .selectpicker").selectpicker('refresh');
+        if ($("#SelOpt" + name + this.wraperId)) {
+            $("#SelOpt" + name + this.wraperId).remove();
+            $(this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
         }
     };
 
-
-    this.refreshCtrlsDD = function () {
-        $('.selectpicker').selectpicker('refresh');
-        $(".controls-dd-cont .selectpicker").selectpicker('val', this.PropsObj.Name);
-    };
-
     this.pgObjEditBtnClicked = function () {
-        $(".pgObjSettings-bg").show();
+        $("#" + this.wraperId + " .pgObjSettings-bg").show();
 
-        $("#OEctrlsCont").empty().append(this.getOEhtml());
+        $("#" + this.OEctrlsContId).empty().append(this.getOEhtml());
     };
 
     this.init = function () {
+        this.$wraper.empty();
         this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
-        this.$wraper.append($("<div id='" + this.containerId + "_propGrid' class='propgrid-table-cont'></div>"));
-        this.$container = $("#" + this.containerId + "_propGrid");
-        $('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
+        this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
+        this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
+        $(this.controlsDDContSelec + " .selectpicker").on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
 
         var OEHTML = '<div class="pgObjSettings-bg" onclick="$(this).hide();">'
-                                            + '<div class="pgObjSettings-Cont formB-box" onclick="event.stopPropagation();">'
+                                            + '<div class="pgObjSettings-Cont" onclick="event.stopPropagation();">'
                                                 + '<div class="modal-header">'
-                                                    + '<button type="button" class="close" onclick="$(\'.pgObjSettings-bg\').hide();" >&times;</button>'
+                                                    + '<button type="button" class="close" onclick="$(\'#' + this.wraperId + ' .pgObjSettings-bg\').hide();" >&times;</button>'
                                                     + '<h4 class="modal-title">Column Settings</h4>'
                                                 + '</div>'
                                                 + '<div class="modal-body">'
@@ -214,22 +211,26 @@
                                                                         + '<button type="button" id="editObj_add" class="editObj-add pull-right" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
                                                                     + '</div>'
 
-                                                                    + '<div id="OEctrlsCont">'
+                                                                    + '<div id="'  + this.OEctrlsContId + '" class="OEctrlsCont">'
                                                                     + '</div>'
 
                                                                 + '</td>'
-                                                                + '<td><div id="' + this.containerId + 'innerPG' + '"><div></td>'
+                                                                + '<td><div id="' + this.wraperId + '_InnerPG' + '"><div></td>'
                                                             + '</tr>'
                                                         + '</tbody>'
                                                     + '</table>'
                                                 + '</div>'
                                                 + '<div class="modal-footer">'
                                                     + '<button type="button" class="btn btn-default" >Save</button>'
-                                                    + '<button type="button" class="btn"  onclick="$(\'.pgObjSettings-bg\').hide();">Cancel</button>'
+                                                    + '<button type="button" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgObjSettings-bg\').hide();">Cancel</button>'
                                                 + '</div>'
                                             + '</div>'
                                         + '</div>';
-        $(document.body).append(OEHTML);
+        $(this.$wraper).append(OEHTML);
+
+        $("#" + this.wraperId + " .pgObjSettings-Cont").on("click", ".editObj-add", this.pgObjEditAddFn.bind(this));
+
+        $("#" + this.OEctrlsContId).on("click", ".close", this.colTileCloseFn.bind(this));
     };
 
     this.pgObjEditAddFn = function () {
@@ -237,8 +238,7 @@
                         + 'col 1 '
                         + '<button type="button" class="close">&times;</button>'
                     + '</div>';
-        $("#OEctrlsCont").append(tile);
-
+        $("#" + this.OEctrlsContId).append(tile);
     };
 
     this.colTileCloseFn = function (e) {
@@ -253,7 +253,7 @@
                         + '<button type="button" class="close">&times;</button>'
                     + '</div>';
         })
-        var OEPGobj = new Eb_PropertyGrid(this.containerId + "innerPG");
+        var OEPGobj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
         OEPGobj.setObject(this.PropsObj.Controls.$values[0], AllMetas["EbTableTd"]);
         return _html;
     };
@@ -271,15 +271,15 @@
         this.postCreateInitFuncs = {};
         this.getValueFuncs = {};
 
-        this.pgId = this.containerId + this.pgIdSequence++;
+        this.pgId = this.wraperId + this.pgIdSequence++;
         this.currGroup = null;
         
         this.innerHTML = '<table class="table-bordered table-hover pg-table">';
 
-        this.$container.empty();
+        this.$PGcontainer.empty();
 
         for (var i = 0; i < this.Metas.length; i++)
-            this.propNames.push(this.Metas[i].name);
+            this.propNames.push(this.Metas[i].name.toLowerCase());
 
         this.buildRows();
 
@@ -289,27 +289,23 @@
 
         this.getvaluesFromPG();//no need
 
-        $("#" + this.containerId + " .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
+        $("#" + this.wraperId + " .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
 
-        $('#' + this.containerId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
+        $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
 
         this.addToDD();
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
 
-        $(".pgObjEditBtn").on("click", this.pgObjEditBtnClicked.bind(this));
+        $("#" + this.wraperId + " .pgObjEditBtn").on("click", this.pgObjEditBtnClicked.bind(this));
 
-        $(".pgRow:contains(Name)").find("input").on("change", function (e) {
-            $("#SelOpt" + this.PropsObj.EbSid + this.containerId).text(e.target.value);
-            $(".controls-dd-cont .selectpicker").selectpicker('refresh');
+        $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", function (e) {
+            $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(e.target.value);
+            $( this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
         }.bind(this));
 
-        $("#editObj_add").on("click", this.pgObjEditAddFn.bind(this));
-
-        $("#OEctrlsCont").on("click", ".close", this.colTileCloseFn.bind(this));
-
-        new dragula([document.getElementById("OEctrlsCont")]);
+        new dragula([document.getElementById( this.OEctrlsContId )]);
         
     };
 
@@ -329,6 +325,9 @@
         }
         this.Metas = metas;
         this.PropsObj = props;
+        console.log(JSON.stringify(props));
+        console.log(JSON.stringify(metas));
+
         this.InitPG();
     };
 

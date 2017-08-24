@@ -6,6 +6,7 @@
 /// <reference path="js/custom.js" />
 /// <reference path="js/datatables.colresize.js" />
 /// <reference path="js/datatables.min.js" />
+/// <reference path="js/dvbuilder.js" />
 /// <reference path="js/dvsettings.js" />
 /// <reference path="js/dygraphplotters.js" />
 /// <reference path="js/eb_basic_datatable.js" />

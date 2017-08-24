@@ -223,9 +223,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult CreateUser()
         {
-           // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", TenantAccountId = ViewBag.cid });
-            ViewBag.dict = fr.Data;
+           
             return View();
         }
 
@@ -278,7 +276,7 @@ namespace ExpressBase.Web2.Controllers
 
             var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid});
             ViewBag.dict = resultlist.Data;
-            ViewBag.roleid = req["roleid"];
+            ViewBag.roleid = itemid;
 
             return View();
         }
@@ -354,49 +352,7 @@ namespace ExpressBase.Web2.Controllers
                 }
             }
             return html;
-        }
-
-        public Dictionary<string, string> GetUsers(int roleid, string searchtext)
-        {
-            string html = string.Empty;
-            string seluser = string.Empty;
-            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            Dictionary<string, object> Dict = new Dictionary<string, object>();
-            Dict["searchtext"] = searchtext;
-            var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Colvalues = Dict, restype = "getusers", id = roleid, TenantAccountId = ViewBag.cid });
-            List<string> users = fr.Data.ContainsKey("users") ? fr.Data["users"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : null;
-
-
-            foreach (var key in fr.Data.Keys)
-            {
-                if (key == "users")
-                {
-                    string uid = fr.Data["users"].ToString().Replace("[", "").Replace("]", "");
-                    seluser += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[uid].ToString()).Replace("@userid", fr.Data["users"].ToString());
-                }
-                else
-
-                    html += "<div id ='@userid' class='alert alert-success columnDrag'>@users</div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);
-                //if (key != "users")
-                //{
-                //    var checkedrole = users.Contains(key) ? "checked" : string.Empty;
-                //    html += @"
-                //<div class='row'>
-                //    <div class='col-md-1'>
-                //        <input type ='checkbox' @checked name ='@users' value = '@userid' aria-label='...'>
-                //    </div>
-
-                //    <div class='col-md-8'>
-                //        <h4 name = 'head4' style='color:black;'>@users</h4>                        
-                //    </div>               
-                //</div> ".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key).Replace("@checked", checkedrole);
-                //}
-            }
-            var result = new Dictionary<string, string>();
-            result.Add("Seluser", seluser);
-            result.Add("Users", html);
-            return result;
-        }
+        }       
 
         public string SaveRoles(int RoleId, int ApplicationId,string RoleName, string Description, string users, string Permissions, string subrolesid)
         {
@@ -439,7 +395,8 @@ namespace ExpressBase.Web2.Controllers
             }
             else if(type == "usergroup")
             {
-                // get user groups
+                var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "usergroup", TenantAccountId = ViewBag.cid });
+                ViewBag.dict = fr.Data;
             }
             else
             {
@@ -452,30 +409,84 @@ namespace ExpressBase.Web2.Controllers
                 return View();
         }
 
-        public IActionResult EbObjectList(EbObjectType type)
+        public string GetRoles()
         {
-            ViewBag.EbObjectType = (int)type;
+            string html = string.Empty;
+            var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", TenantAccountId = ViewBag.cid });      
+            List<string> subroles = fr.Data.ContainsKey("roles") ? fr.Data["roles"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : new List<string>();
 
-            IServiceClient client = this.ServiceClient;
-
-
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = null, VersionId = Int32.MaxValue, EbObjectType = (int)type, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            var rlist = resultlist.Data;
-
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-
-            foreach (var element in rlist)
+            foreach (var key in fr.Data.Keys)
             {
-                if (element.EbObjectType == type)
-                    ObjList[element.Id] = element;
+                if (key != "roles")
+                {
+                    var checkedrole = subroles.Contains(key) ? "checked" : string.Empty;
+                    html += @"
+                <div class='row'>
+                    <div class='col-md-1'>
+                        <input type ='checkbox' @checkedrole name = '@roles' value = '@roleid' aria-label='...'>
+                    </div>
+
+                    <div class='col-md-8'>
+                        <h4 name = 'head4' style='color:black;'>@roles</h4>
+                        <p class='text-justify'>dsgfds dgfrdhg dfhgdrewteberyrt reyhrtu6trujhfg reyer5y54</p>
+                        <h6>
+                            <i style = 'font-style:italic;' > Created by Mr X on 12/09/2017 at 02:00 pm</i>
+                        </h6>
+                    </div>               
+                </div> ".Replace("@roles", fr.Data[key].ToString()).Replace("@roleid", key).Replace("@checkedrole", checkedrole);
+                }
             }
+            return html;
+        }
 
-            ViewBag.Objlist = ObjList;
+        public string GetRoleUsers(int roleid)
+        {
+           
+            string html = string.Empty;
+            var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest {  restype = "getroleusers", id = roleid, TenantAccountId = ViewBag.cid });
 
-            if (ViewBag.isAjaxCall)
-                return PartialView();
+            foreach (var key in fr.Data.Keys)
+            {
+                html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);              
+            }
+            return html;
+        }
+
+        [HttpGet]
+        public IActionResult UserGroups()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult UserGroups(int itemid)
+        {
+            var req = this.HttpContext.Request.Form;
+            if(itemid > 0)
+            {
+                var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "usergroupedit",id = itemid,TenantAccountId = ViewBag.cid });
+                List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[","").Replace("]","").Split(',').Select(int.Parse).ToList(): new List<int>();
+                ViewBag.UGName = fr.Data["name"];
+                ViewBag.UGDescription = fr.Data["description"];
+                ViewBag.itemid = itemid;
+                string html = "";
+                if (fr.Data.ContainsKey("userslist"))
+                {
+                    foreach(var element in userlist)
+                    {
+                        html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[element.ToString()].ToString()).Replace("@userid", element.ToString());
+                    }
+                    
+                }
+                ViewBag.UserList = html;
+
+            }
             else
-                return View();
+            {
+                int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
+                TokenRequiredUploadResponse res = this.ServiceClient.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),Id = groupid, op = "usergroups" });
+            }          
+            return View();
         }
 
 

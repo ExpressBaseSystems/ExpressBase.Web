@@ -265,7 +265,7 @@
 }
 
 /*overriding*/
-.property-grid-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+.controls-dd-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
     width: 100%;
 }
 
@@ -286,10 +286,17 @@
     width: 50%;
     height: 70VH;
     position: fixed;
-    border: solid 1px #a2a2a0 !important;
     left: 25%;
     top: 15vh;
+    border: solid 1px #a2a2a0 !important;
+    background-color: white;
+    padding: 3px;
 }
+
+    .pgObjSettings-Cont .propgrid-table-cont {
+        height: 36vh;
+        border-bottom: solid 1px #ddd;
+    }
 
 .pgObjSettings-bg {
     display: none;
@@ -327,6 +334,12 @@
         background-color: #eee;
     }
 
+    .editObj-add:focus {
+        outline: none;
+        border: solid 1px #cdcdcd;
+    }
+
+
 .colTile {
     padding: 5px;
     background-color: rgb(238, 238, 238);
@@ -347,4 +360,13 @@
 .editTbl {
     table-layout: fixed;
     height: 45.7vh;
+}
+
+.OEctrlsCont {
+    overflow-y: auto;
+    height: 40vh;
+}
+
+.editTbl td:nth-child(2) {
+    padding: 5px;
 }

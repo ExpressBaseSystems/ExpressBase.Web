@@ -166,13 +166,13 @@ margin-left:5px;
     }
 </select>
 <ul id="data-table-list" class="tool-box-items">
-    <li>
+    @*<li>
         <a>Data Table1</a>
         <ul>
             <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
             <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
         </ul>
-    </li>
+    </li>*@
 </ul>
 <ul id="running-summary" class="tool-box-items">
     <li>
@@ -242,20 +242,31 @@ margin-left:5px;
 <script type="text/javascript">
 
     $(".slectDs").select2();
-    $('#data-table-list').treed();
+    
     $('#running-summary').treed();
     $('#calculated-fields').treed();
     $('#special-fields').treed();
     $('#other-fields').treed();
     $('#selDsource').on('change', function(){
         $.ajax({
-            url: "EbObjectList",
-            type: "GET",
+            url: "../RB/GetColumns",
+            type: "POST",
             cache: false,
-            data: { "type": $(this).val() },
-            success: function (result) {                            
+            data: { refID: $(this).val() },
+            success: function (result) {
+                console.log(result);
+                DrawColumnTree(result)
             }
         });
-    });   
+    });
+    function DrawColumnTree(result) {
+            $.each(result.columns, function (i, columnCollection) {
+                $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
+                $.each(columnCollection, function (j, obj) {
+                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div id='" + j + "' class='draggable textval'> " + obj.columnName + "</div></li>");
+                });
+            });
+            $('#data-table-list').treed();
+        }
 
 </script>

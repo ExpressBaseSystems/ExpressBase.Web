@@ -59,7 +59,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
 
     this.SetFdInit = function (me, fdId) {
         var val = "Select Filter Dialog";
-        if (this.Is_New === false && fdId !== 0) {
+        if (this.Is_New === false && fdId !== "") {
             val = this.FilterDId;
         }
         this.Load_filter_dialog_list(val);
@@ -222,7 +222,10 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     };
 
     this.Execute = function () {
-        if (!$('#execute').hasClass('collapsed')) { }
+        if (!$('#execute').hasClass('collapsed'))
+        {
+            //dasdsd
+        }
         else {
             this.Find_parameters(false,false,false);
             $.LoadingOverlay("show");
@@ -365,8 +368,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             else{
                 $.LoadingOverlay("show");
                 var data_1;
-                var v1 = $('#selected_Ver_1' + tabNum + '  option:selected').attr("data-tokens");
-                var v2 = $('#selected_Ver_2' + tabNum + '  option:selected').attr("data-tokens");
+                v1 = $('#selected_Ver_1' + tabNum + '  option:selected').attr("data-tokens");
+                v2 = $('#selected_Ver_2' + tabNum + '  option:selected').attr("data-tokens");
                 $.post('../CE/VersionCodes', { "objid": verRefid1, "objtype": this.ObjectType }, this.getSecondVersionCode.bind(this, verRefid2,v1,v2));
             }
       //  }

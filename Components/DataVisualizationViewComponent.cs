@@ -149,7 +149,7 @@ namespace ExpressBase.Web.Components
             };
             eb.AfterRedisGet(this.Redis);
 
-            int _pos = columnresp.Columns.Count;
+            int _pos = columnresp.Columns.Count+100;
 
             // Add Serial & Checkbox
             eb.Columns.Add(new DVNumericColumn { Name = "serial", Title = "#", Type = DbType.Int64, Visible = true, Width = 10, Pos = -2 });
@@ -161,13 +161,13 @@ namespace ExpressBase.Web.Components
                 DVBaseColumn _col = null;
 
                 if (column.Type == DbType.String)
-                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = _pos };
                 else if (column.Type == DbType.Int16 || column.Type == DbType.Int32 || column.Type == DbType.Int64 || column.Type == DbType.Double || column.Type == DbType.Decimal || column.Type == DbType.VarNumeric)
-                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = _pos };
                 else if (column.Type == DbType.Boolean)
-                    _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                    _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = _pos };
                 else if (column.Type == DbType.DateTime || column.Type == DbType.Date || column.Type == DbType.Time)
-                    _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = ++_pos };
+                    _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = _pos };
 
                 eb.Columns.Add(_col);
             }

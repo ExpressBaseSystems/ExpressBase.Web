@@ -17,16 +17,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult ReportBuilder()
         {
-            //var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = 2, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-            //var rlist = resultlist.Data;
-            //Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            //foreach (var element in rlist)
-            //{
-            //    ObjList[element.Id] = element;
-            //}
-
-            //ViewBag.Objlist = ObjList;
             return View();
         }
-    }
+        }
 }

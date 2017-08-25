@@ -245,11 +245,17 @@
     top: -4px!important;
     background-color: green !important;
 }
+.h-line .ui-resizable-e{
+    margin-top:0;
+}
 .v-line .ui-resizable-handle {
    background-color: green;
     width: 7px;
     height: 7px;
     left: -4px;
+}
+.v-line .ui-resizable-e{
+    margin-right:0;
 }
 .arrow-right {
   width: 0; 
@@ -321,4 +327,58 @@ background-color: green;
 }
 .arrow-d-draggable .ui-resizable-s{
 margin-bottom: -4px;
+}
+.arrow-By-dir-v-t{
+    width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;  
+  margin-left: -5px;
+  align-self: flex-start;
+}
+.arrow-By-dir-v-b{
+    width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;  
+  margin-left: -10px;
+  align-self: flex-end;
+}
+.arrow-by-d-v-draggable .ui-resizable-handle{
+    background-color: green;
+    width: 7px;
+    height: 7px;
+    margin-left: -3px;
+}
+.arrow-by-d-v-draggable .ui-resizable-s,.ui-resizable-n{
+margin: -4px;
+}
+.arrow-By-dir-h-r{
+ width: 0; 
+  height: 0; 
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;  
+  border-left: 5px solid black;
+  float: right;
+  margin-top: -5px;
+}
+.arrow-By-dir-h-l{
+     width: 0; 
+  height: 0; 
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent; 
+  border-right:5px solid black;
+  float: left;
+  margin-top: -5px;
+}
+.arrow-by-d-h-draggable .ui-resizable-handle{
+    background-color: green;
+    width: 7px;
+    height: 7px;
+    margin-top: -4px;
+}
+.arrow-by-d-h-draggable .ui-resizable-w,.ui-resizable-e{
+margin: -4px;
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using ExpressBase.Objects;
 using ServiceStack;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ServiceStack.Redis;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,11 +14,15 @@ namespace ExpressBase.Web.Components
 {
     public class EbObjectSelectorViewComponent : ViewComponent
     {
+    
         protected JsonServiceClient ServiceClient { get; set; }
 
-        public EbObjectSelectorViewComponent(IServiceClient _client)
+        protected IRedisClient redis { get; set; }
+
+        public EbObjectSelectorViewComponent(IServiceClient _client, IRedisClient _redis)
         {
             this.ServiceClient = _client as JsonServiceClient;
+            this.redis = _redis;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(int Type)
@@ -32,6 +37,11 @@ namespace ExpressBase.Web.Components
             ViewBag.Objlist = ObjList;
 
             return View();
+        }
+        public IActionResult GetColumns()
+        {
+            DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
+            cresp = this.redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", "eb_roby_dev-eb_roby_dev-2-546-1072"));
         }
     }
 }

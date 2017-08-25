@@ -11,6 +11,7 @@ using iTextSharp.text.pdf;
 using System.IO;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ServiceStack.Redis;
+using ExpressBase.Common;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -293,7 +294,7 @@ namespace ExpressBase.Web.Controllers
             cntrl1.Width = 50;
             cntrl1.Top = 20;
             cntrl1.Height = 20;
-            cntrl1.HAlign = 0;
+           // cntrl1.HAlign = 0;
 
             cntrl5.Name = "grossamt";
             cntrl5.Title = "Gross Amount";
@@ -303,7 +304,7 @@ namespace ExpressBase.Web.Controllers
             cntrl5.Height = 20;
             //cntrl5.Sum = true;
             //cntrl5.DecimalPlaces = 3;
-            cntrl5.HAlign = 0;
+            //cntrl5.HAlign = 0;
 
             cntrl2.Name = "sys_submitted_ts";
             cntrl2.Title = "Sys Submitted Ts";
@@ -311,7 +312,7 @@ namespace ExpressBase.Web.Controllers
             cntrl2.Width = 100;
             cntrl2.Top = 20;
             cntrl2.Height = 20;
-            cntrl2.HAlign = 0;
+           // cntrl2.HAlign = 0;
             
             cntrl3.Name = "sys_submitter_uid";
             cntrl3.Title = "Sys Submitter Uid";
@@ -319,7 +320,7 @@ namespace ExpressBase.Web.Controllers
             cntrl3.Width = 100;
             cntrl3.Top = 20;
             cntrl3.Height = 20;
-            cntrl3.HAlign = 0;
+           // cntrl3.HAlign = 0;
             
             cntrl4.Name = "acmaster1_xid";
             cntrl4.Title = "AcMaster1 XID";
@@ -327,7 +328,7 @@ namespace ExpressBase.Web.Controllers
             cntrl4.Width = 100;
             cntrl4.Top = 20;
             cntrl4.Height = 20;
-            cntrl4.HAlign = 0;
+            //cntrl4.HAlign = 0;
             
            
             
@@ -339,7 +340,7 @@ namespace ExpressBase.Web.Controllers
             cntrl6.Height = 20;
            // cntrl6.Sum = true;
            // cntrl6.DecimalPlaces = 4;
-            cntrl6.HAlign =0;
+           // cntrl6.HAlign =0;
 
             //repdef.ReportHeaders.AddSection();
             foreach (EbReportSection s in repdef.ReportHeaders)

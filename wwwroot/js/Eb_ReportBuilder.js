@@ -28,18 +28,20 @@ var sub = function (name, index, height, subsection) {
     this.subsection = subsection;
 };
 
-var PageElements = function (id, left, top,width,height) {
-    this.id = id;    
+var PageElements = function (id, left, top, width, height) {
+    this.id = id;
     this.left = left;
     this.top = top;
     this.width = width;
     this.height = height;
 };
 
-var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
+var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, custunit) {
     this.savebtnid = saveBtnid;
+    this.newPage = newPage;
     this.incrId = 0;
     this.type = type;
+
     if (this.type === 'custom-size') {
         this.height = custHeight + custunit;
         this.width = custWidth + custunit;
@@ -48,7 +50,7 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
         this.height = pages[type].height;
         this.width = pages[type].width;
         $('#custom-size').hide();
-    } 
+    }
 
     this.splitarray = [];
     this.btn_indx = null;
@@ -88,21 +90,26 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
         }
     };
 
-    this.createPage = function () {
+    this.createPagecontainer = function () {
 
         var $pageCanvas = $('#pageCanvas');
         $pageCanvas.empty();
         $('#pageCanvas').css({ "transform": "", "transform-origin": "" });
-        $pageCanvas.append("<div id='PageContainer'></div>");
+        var PageContainer = $("<div id='PageContainer'></div>");
+        $pageCanvas.append(PageContainer);
 
         this.createHeaderBox();
 
         if (this.width > "21cm") {
             $('#pageCanvas').css({ "transform": "scale(0.8)", "transform-origin": "0 0" });
         }
+        return PageContainer;
+    };
+
+    this.createPage = function (PageContainer) {
 
         this.$div = $("<div class='page' id='page' style='width :" + this.width + "; height:" + this.height + ";'></div>");
-        $('#PageContainer').append(this.$div);
+        PageContainer.append(this.$div);
         $('.title').show();
         this.pageSplitters(this.$div);
     };
@@ -353,13 +360,19 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
             else if (this.itemToClone.attr('id') === 'arrow-down') {
                 this.createArrowDown();
             }
+            else if (this.itemToClone.attr('id') === 'by-dir-arrow-v') {
+                this.createByDirArrowHori();
+            }
+            else if (this.itemToClone.attr('id') === 'by-dir-arrow-h') {
+                this.createByDirArrowVertcal();
+            }
         }
 
         else if (this.itemToClone.hasClass('special-field')) {
 
             if (this.itemToClone.attr('id') === "date-time") {
                 this.addCurrentDateTime();
-            }            
+            }
         }
         else if (this.itemToClone.hasClass('qr-Br-img-btn')) {
 
@@ -400,7 +413,7 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
 
         });
 
-        $('.image-reSize').resizable({ containment: "parent"});
+        $('.image-reSize').resizable({ containment: "parent" });
 
         $('.dropped').resizable({
             containment: "parent",
@@ -409,7 +422,7 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
             minWidth: minwidth,
             resize: this.resizeElement.bind(this)
         });
-       
+
         this.PropertyMenu();
     };
 
@@ -458,8 +471,38 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
 
     };
 
+    this.createByDirArrowVertcal = function () {
+
+        var $arrowByDirVert = $("<div class='arrow' id='arrow-by-dir-v" + this.incrId++ + "' style='display: flex;border:1px solid'><div class='arrow-By-dir-v-t'></div><div class='arrow-By-dir-v-b'></div></div>");
+        this.dropLoc.append($arrowByDirVert.addClass("arrow-by-d-v-draggable").css({
+            width: '1px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+        $('.arrow-by-d-v-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
+        $('.arrow-by-d-v-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
+
+    };
+
+    this.createByDirArrowHori = function () {
+
+        var $arrowByDirHori = $("<div class='arrow' id='arrow-by-dir-h" + this.incrId++ + "' style='border:1px solid'><div class='arrow-By-dir-h-l'></div><div class='arrow-By-dir-h-r'></div></div>");
+        this.dropLoc.append($arrowByDirHori.addClass("arrow-by-d-h-draggable").css({
+            width: '50px',
+            height: '1px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+        $('.arrow-by-d-h-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
+        $('.arrow-by-d-h-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
+
+    };
+
     this.addImageOnPage = function () {
-        this.$img = $("<div class='img-container'><input type='file' class='file' style='display:none'/><button class='btn btn-default upload-btn'><i class='fa fa-picture-o fa-2x' aria-hidden='true' disabled></i></button></div>");      
+        this.$img = $("<div class='img-container'><input type='file' class='file' style='display:none'/><button class='btn btn-default upload-btn'><i class='fa fa-picture-o fa-2x' aria-hidden='true' disabled></i></button></div>");
         this.dropLoc.append(this.$img.addClass("dropped").css({
             width: '100px',
             height: '100px',
@@ -468,7 +511,7 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
             top: this.posTop - 150
         }));
         $('.upload-btn ').on('click', this.uploadImage.bind(this));
-       
+
     };
 
     this.uploadImage = function (e) {
@@ -485,13 +528,13 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
                 reader.onload = function (e) {
 
                     var img = $("<img id='demo' src='" + e.target.result + "' style='width:100px'/>");
-                    imgDiv.append(img.addClass('image-reSize'));                   
+                    imgDiv.append(img.addClass('image-reSize'));
                     imgDiv.children('.file,button,.ui-resizable-handle').remove();
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         });
-    };   
+    };
 
     this.createArrowRight = function () {
 
@@ -504,7 +547,7 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
             top: this.posTop - 150
         }));
         $('.arrow-r-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
-        $('.arrow-r-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this)});
+        $('.arrow-r-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
 
     };
 
@@ -529,7 +572,7 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
     };
 
     this.createCircle = function () {
-        
+
         var $cir = $("<div class='circle' id='circle" + this.incrId++ + "' style='border-radius:50%;border:1px solid'></div>");
         this.dropLoc.append($cir.addClass("dropped").css({
             width: '50px',
@@ -603,8 +646,8 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
         });
     };
 
-    this.resizeElement = function (event, ui) {       
-              
+    this.resizeElement = function (event, ui) {
+
         var font = parseInt($(event.target).css("height"));
         //$(event.target).css("font-size", font - 5);
 
@@ -678,26 +721,32 @@ var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
 
         this.subsec = $(subsec);
         this.j = j;
-        this.report.subsection[this.i].subsection.push(new sub(this.subsec.attr('id'), this.subsec.index(), this.subsec.css('height'), []));     
+        this.report.subsection[this.i].subsection.push(new sub(this.subsec.attr('id'), this.subsec.index(), this.subsec.css('height'), []));
         $.each(this.subsec.children(), this.findPageElements.bind(this));
 
     };
 
     this.findPageElements = function (k, elements) {
-        this.elements = $(elements);      
-        this.report.subsection[this.i].subsection[this.j].subsection.push(new PageElements(this.elements.attr('id'), this.elements.css('left'), this.elements.css('top'), this.elements.css('width'), this.elements.css('height')));              
+        this.elements = $(elements);
+        this.report.subsection[this.i].subsection[this.j].subsection.push(new PageElements(this.elements.attr('id'), this.elements.css('left'), this.elements.css('top'), this.elements.css('width'), this.elements.css('height')));
+    };
+
+    this.createNewPage = function () {
+        console.log(this.pgC);
+        //this.createPage(this.pgC);
     };
 
     this.init = function () {
 
         $('#PageContainer').empty();
         this.ruler();
-        this.createPage();
+        this.pgC = this.createPagecontainer();
+        this.createPage(this.pgC);
         this.DragDrop_Items();
         this.propertyGrid();
 
         $(this.savebtnid).on('click', this.savefile.bind(this));
-
+        $(this.newPage).on('click', this.createNewPage.bind(this));
     };
 
     this.init();

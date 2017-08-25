@@ -216,9 +216,9 @@ margin-left:5px;
     
     <button class="btn btn-default btn-xs shapes" id="arrow-down" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-down fa-lg" aria-hidden="true"></i></button>
     
-    <button class="btn btn-default btn-xs shapes" id="by-dir-arrow-v" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button>
+    <button class="btn btn-default btn-xs shapes" id="by-dir-arrow-h" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button>
     
-    <button class="btn btn-default btn-xs shapes" id="by-dir-arrow-h" data-toggle="tooltip" data-placement="bottom" title="By directional Arrow"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button>
+    <button class="btn btn-default btn-xs shapes" id="by-dir-arrow-v" data-toggle="tooltip" data-placement="bottom" title="By directional Arrow"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button>
     
     <button class="btn btn-default btn-xs shapes" id="h-line" data-toggle="tooltip" data-placement="bottom" title="Horrizontal Line"><i> __ </i></button>
     
@@ -247,5 +247,15 @@ margin-left:5px;
     $('#calculated-fields').treed();
     $('#special-fields').treed();
     $('#other-fields').treed();
-   
+    $('#selDsource').on('change', function(){
+        $.ajax({
+            url: "EbObjectList",
+            type: "GET",
+            cache: false,
+            data: { "type": $(this).val() },
+            success: function (result) {                            
+            }
+        });
+    });   
+
 </script>

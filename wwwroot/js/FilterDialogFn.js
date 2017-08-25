@@ -675,7 +675,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 }, function (result) {
                     $.post("../CE/code_editor", {
                         "objid": result.refId
-                    })
+                    }, function () { return false;})
                 });
             }
             $.LoadingOverlay("hide");

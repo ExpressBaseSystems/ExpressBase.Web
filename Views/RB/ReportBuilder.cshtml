@@ -2,6 +2,7 @@
     Html.RenderPartial("_PageheaderDev");
 }
 @using ExpressBase.Objects;
+@using ExpressBase.Common.Objects;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -42,25 +43,20 @@
                         <option value="custom-size">Custom</option>
                     </select>
                 </div>           
-                <div class="form-group" id="custom-size">
+                <div class="form-group" id="custom-size" style="display:none">
                     <div class="input-group">
-                        <input type="number" class="custom-size" />                          
-                        <select class="measurement">
-                            <option value="cm">Cm</option>
-                            <option value="mm">mm</option>
-                            <option value="inch">inch</option>
-                            <option value="px">pixel</option>                         
-                        </select>
-                    </div>
+                        <input type="text" class="custom-size" id="customHeight" placeholder="Height"/>                          
                     X
-                    <div class="input-group">
-                        <input type="number" class="custom-size"/>
-                        <select class="measurement">
+                        <input type="text" class="custom-size" id="customWidth" placeholder="Width"/>
+                        <select class="measurement" id="custome-unit">
                             <option value="cm">Cm</option>
                             <option value="mm">mm</option>
                             <option value="inch">inch</option>
                             <option value="px">pixel</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <button id="createCustom" data-toggle="tooltip" data-placement="bottom" title="Align Left">Go</button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -99,10 +95,10 @@
             </div>
         </div>
         <div class="col-md-8" style="padding-right:0">
-            <div class="title text-center" style="display:none"><h5>Untitled.</h5></div>
+            <div class="title text-center" style="display:none"></div>
             <div class='ruler' style="display:none"></div>
             <div class='rulerleft' style="display:none"></div>
-            <div id="pageCanvas" style="position:relative;margin-top:62px;margin-bottom:50px">
+            <div id="pageCanvas" style="position:relative;margin-top:51px;margin-bottom:50px">
             </div>
         </div>
         <div class="col-md-2 PGgrid">
@@ -113,11 +109,29 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
-        //var myruler = new ruler();
+    $(document).ready(function() {       
         $("#pagesize").change(function () {
-            RptBuilder($(this).val(),save);
+            var type = $(this).val();
+            if (type === 'custom-size') {
+                getCustomSize(type);
+            }
+            else if (type !== 'custom-size') {
+            var report =new RptBuilder(type, save);          
+            }          
         });
+
+        getCustomSize = function (type) {
+            $('#custom-size').show();
+
+            $('#createCustom').on('click', function () {
+                var custHeight = $('#customHeight').val();
+                var custWidth = $('#customWidth').val();
+                var custunit = $('#custome-unit').val();
+
+                var report = new RptBuilder(type, save, custHeight, custWidth, custunit);
+            })
+        };
+
         $("#Rptbgimg").change(function () {
             setBackgroud(this);          
         });       

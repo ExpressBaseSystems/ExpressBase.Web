@@ -28,20 +28,28 @@ var sub = function (name, index, height, subsection) {
     this.subsection = subsection;
 };
 
-var PageElements = function (id, value, left, top, font) {
-    this.id = id;
-    this.value = value;
+var PageElements = function (id, left, top,width,height) {
+    this.id = id;    
     this.left = left;
     this.top = top;
-    this.fontsize = font;
+    this.width = width;
+    this.height = height;
 };
 
-var RptBuilder = function (type, saveBtnid) {
-
+var RptBuilder = function (type, saveBtnid, custHeight, custWidth, custunit) {
     this.savebtnid = saveBtnid;
+    this.incrId = 0;
     this.type = type;
-    this.height = pages[type].height;
-    this.width = pages[type].width;
+    if (this.type === 'custom-size') {
+        this.height = custHeight + custunit;
+        this.width = custWidth + custunit;
+    }
+    else if (this.type !== 'custom-size') {
+        this.height = pages[type].height;
+        this.width = pages[type].width;
+        $('#custom-size').hide();
+    } 
+
     this.splitarray = [];
     this.btn_indx = null;
 
@@ -94,7 +102,7 @@ var RptBuilder = function (type, saveBtnid) {
         }
 
         this.$div = $("<div class='page' id='page' style='width :" + this.width + "; height:" + this.height + ";'></div>");
-        $('#PageContainer').append($div);
+        $('#PageContainer').append(this.$div);
         $('.title').show();
         this.pageSplitters(this.$div);
     };
@@ -210,8 +218,8 @@ var RptBuilder = function (type, saveBtnid) {
 
             this.$sec = $("#" + obj.id);
             this.$spl = $("<div class='subdivs' id='s" + $(obj).attr('data_val') + this.j++ + "'></div>");
-            this.$sec.append($spl);
-            $.each($sec.children().not(".gutter"), this.splitMore.bind(this));
+            this.$sec.append(this.$spl);
+            $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
             $(this.$sec).children('.gutter').remove();
             this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
 
@@ -333,19 +341,27 @@ var RptBuilder = function (type, saveBtnid) {
             else if (this.itemToClone.attr('id') === 'h-line') {
                 this.createHorrizLine();
             }
-            else if (this.itemToClone.attr('id') === 'arrow') {
-                this.createArrow();
+            else if (this.itemToClone.attr('id') === 'arrow-right') {
+                this.createArrowRight();
             }
-
+            else if (this.itemToClone.attr('id') === 'arrow-left') {
+                this.createArrowLeft();
+            }
+            else if (this.itemToClone.attr('id') === 'arrow-up') {
+                this.createArrowUp();
+            }
+            else if (this.itemToClone.attr('id') === 'arrow-down') {
+                this.createArrowDown();
+            }
         }
-            
+
         else if (this.itemToClone.hasClass('special-field')) {
 
-            if (this.itemToClone.attr('id') ==="date-time") {
+            if (this.itemToClone.attr('id') === "date-time") {
                 this.addCurrentDateTime();
-            }
+            }            
         }
-        else if (this.itemToClone.hasClass('qr-Br-img-btn')) {            
+        else if (this.itemToClone.hasClass('qr-Br-img-btn')) {
 
             if (this.itemToClone.attr('id') === 'pg-img') {
                 this.addImageOnPage();
@@ -374,14 +390,17 @@ var RptBuilder = function (type, saveBtnid) {
                     position: 'absolute'
                 }));
 
-            }           
+            }
         }
+
         $('.dropped').draggable({
             cursor: 'move',
             start: this.onDrag_Start.bind(this),
             stop: this.onDrag_stop.bind(this)
 
         });
+
+        $('.image-reSize').resizable({ containment: "parent"});
 
         $('.dropped').resizable({
             containment: "parent",
@@ -390,14 +409,57 @@ var RptBuilder = function (type, saveBtnid) {
             minWidth: minwidth,
             resize: this.resizeElement.bind(this)
         });
-
+       
         this.PropertyMenu();
     };
-    
+
+    this.createArrowLeft = function () {
+
+        var $arrowL = $("<div class='arrow' id='arrow-left" + this.incrId++ + "' style='border:1px solid'><div class='arrow-left'></div></div>");
+        this.dropLoc.append($arrowL.addClass("arrow-l-draggable").css({
+            width: '50px',
+            height: '1px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+        $('.arrow-l-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
+        $('.arrow-l-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
+
+    };
+
+    this.createArrowUp = function () {
+
+        var $arrowU = $("<div class='arrow' id='arrow-up" + this.incrId++ + "' style='border:1px solid'><div class='arrow-up'></div></div>");
+        this.dropLoc.append($arrowU.addClass("arrow-u-draggable").css({
+            width: '1px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+        $('.arrow-u-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
+        $('.arrow-u-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
+
+    };
+
+    this.createArrowDown = function () {
+
+        var $arrowD = $("<div class='arrow' id='arrow-down" + this.incrId++ + "' style='display: flex;border:1px solid'><div class='arrow-down'></div></div>");
+        this.dropLoc.append($arrowD.addClass("arrow-d-draggable").css({
+            width: '1px',
+            height: '50px',
+            position: 'absolute',
+            left: this.posLeft - 270,
+            top: this.posTop - 150
+        }));
+        $('.arrow-d-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
+        $('.arrow-d-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
+
+    };
+
     this.addImageOnPage = function () {
-        this.i = 1;       
-        this.$img = $("<div class='img-container' id='img" + i++ + "' ><input type='file' style='display:none' id='file" + i++ + "'/><button class='btn btn-default upload-btn' id='btn" + this.i++ + "'><i class='fa fa-picture-o fa-2x' aria-hidden='true' disabled></i></button></div>");
-        console.log(this.$img.attr('id'));
+        this.$img = $("<div class='img-container'><input type='file' class='file' style='display:none'/><button class='btn btn-default upload-btn'><i class='fa fa-picture-o fa-2x' aria-hidden='true' disabled></i></button></div>");      
         this.dropLoc.append(this.$img.addClass("dropped").css({
             width: '100px',
             height: '100px',
@@ -406,42 +468,48 @@ var RptBuilder = function (type, saveBtnid) {
             top: this.posTop - 150
         }));
         $('.upload-btn ').on('click', this.uploadImage.bind(this));
+       
     };
 
-    this.uploadImage = function (e) {       
+    this.uploadImage = function (e) {
 
-        var $file = $(e.target).siblings().attr('id');
-        $('#' + $file).click();
-        var img = this.$img;
+        var $file = $(e.target).siblings().attr('class');
+        $('.' + $file).click();
+        var imgDiv = this.$img;
 
-        $('#' + $file).change(function () {
+        $('.' + $file).change(function () {
             var input = this;
-           
+
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    console.log(img);
-                    img.css({ 'background-image': 'url(' + e.target.result + ')', 'width': img.width(), 'background-repeat': 'no-repeat' });
-                    img.children().not('.ui-resizable-handle').remove();
+
+                    var img = $("<img id='demo' src='" + e.target.result + "' style='width:100px'/>");
+                    imgDiv.append(img.addClass('image-reSize'));                   
+                    imgDiv.children('.file,button,.ui-resizable-handle').remove();
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         });
-    };
+    };   
 
-    this.createArrow = function () {
-        var $arrow = $("<div class='arrow' style='border:1px solid'>></div>");
-        this.dropLoc.append($arrow.addClass("dropped").css({
+    this.createArrowRight = function () {
+
+        var $arrowR = $("<div class='arrow' id='arrow-right" + this.incrId++ + "' style='border:1px solid'><div class='arrow-right'></div></div>");
+        this.dropLoc.append($arrowR.addClass("arrow-r-draggable").css({
             width: '50px',
             height: '1px',
             position: 'absolute',
             left: this.posLeft - 270,
             top: this.posTop - 150
         }));
+        $('.arrow-r-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
+        $('.arrow-r-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this)});
+
     };
 
     this.addCurrentDateTime = function () {
-        
+
         var currentdate = new Date();
         var time = currentdate.getDate() + "/"
                 + (currentdate.getMonth() + 1) + "/"
@@ -453,7 +521,7 @@ var RptBuilder = function (type, saveBtnid) {
         var $DateTime = $("<div class='date-time' style='border:1px solid'>" + time + "</div>");
         this.dropLoc.append($DateTime.addClass("dropped").css({
             width: '150px',
-            height:'20px',
+            height: '20px',
             position: 'absolute',
             left: this.posLeft - 270,
             top: this.posTop - 150
@@ -461,8 +529,8 @@ var RptBuilder = function (type, saveBtnid) {
     };
 
     this.createCircle = function () {
-
-        var $cir = $("<div class='circle' style='border-radius:50%;border:1px solid'></div>");
+        
+        var $cir = $("<div class='circle' id='circle" + this.incrId++ + "' style='border-radius:50%;border:1px solid'></div>");
         this.dropLoc.append($cir.addClass("dropped").css({
             width: '50px',
             height: '50px',
@@ -474,7 +542,7 @@ var RptBuilder = function (type, saveBtnid) {
 
     this.createRectangle = function () {
 
-        var $rect = $("<div class='rectangle' style='border:1px solid'></div>");
+        var $rect = $("<div class='rectangle' id='rect" + this.incrId++ + "' style='border:1px solid'></div>");
         this.dropLoc.append($rect.addClass("dropped").css({
             width: '50px',
             height: '50px',
@@ -486,7 +554,7 @@ var RptBuilder = function (type, saveBtnid) {
 
     this.createVerticalLine = function () {
 
-        var $vline = $("<div class='v-line' style='border:none;border:1px solid;cursor:move'></div>");
+        var $vline = $("<div class='v-line' id='v-line" + this.incrId++ + "' style='border:none;border:1px solid;cursor:move'></div>");
         this.dropLoc.append($vline.addClass("v-line-dropped").css({
             width: '1px',
             height: '50px',
@@ -512,7 +580,7 @@ var RptBuilder = function (type, saveBtnid) {
 
     this.createHorrizLine = function () {
 
-        var $hline = $("<div class='h-line' style='border:none;border:1px solid;cursor:move'></div>");
+        var $hline = $("<div class='h-line' id='h-line" + this.incrId++ + "' style='border:none;border:1px solid;cursor:move'></div>");
         this.dropLoc.append($hline.addClass("h-line-dropped").css({
             width: '50px',
             height: '1px',
@@ -535,8 +603,8 @@ var RptBuilder = function (type, saveBtnid) {
         });
     };
 
-    this.resizeElement = function (event, ui) {
-
+    this.resizeElement = function (event, ui) {       
+              
         var font = parseInt($(event.target).css("height"));
         //$(event.target).css("font-size", font - 5);
 
@@ -591,25 +659,33 @@ var RptBuilder = function (type, saveBtnid) {
         this.report.Width = this.width;
         this.report.subsection = [];
         this.report.subsection.subsection = [];
-
+        this.report.subsection.subsection.subesection = [];
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
 
+        console.log(JSON.stringify(this.report));
     };
 
     this.findPageSections = function (i, sections) {
 
         this.sections = $(sections);
         this.i = i;
+        this.report.subsection.push(new sub(this.sections.attr('id'), this.sections.attr('data_val'), this.sections.css('height'), []));
         $.each(this.sections.children().not(".gutter"), this.findPageSectionsSub.bind(this));
 
     };
 
     this.findPageSectionsSub = function (j, subsec) {
 
-        this.report.subsection.push(new sub(this.sections.attr('id'), this.sections.attr('data_val'), this.sections.css('height'), []));
-        console.log(subsec);
-        this.report.subsection[this.i].subsection.push(new sub($(subsec).attr('id'), $(subsec).index(), $(subsec).css('height'), []));
+        this.subsec = $(subsec);
+        this.j = j;
+        this.report.subsection[this.i].subsection.push(new sub(this.subsec.attr('id'), this.subsec.index(), this.subsec.css('height'), []));     
+        $.each(this.subsec.children(), this.findPageElements.bind(this));
 
+    };
+
+    this.findPageElements = function (k, elements) {
+        this.elements = $(elements);      
+        this.report.subsection[this.i].subsection[this.j].subsection.push(new PageElements(this.elements.attr('id'), this.elements.css('left'), this.elements.css('top'), this.elements.css('width'), this.elements.css('height')));              
     };
 
     this.init = function () {
@@ -626,7 +702,7 @@ var RptBuilder = function (type, saveBtnid) {
 
     this.init();
 };
-//baground image
+//background image
 var setBackgroud = function (input) {
     console.log(input);
     if (input.files && input.files[0]) {
@@ -638,54 +714,4 @@ var setBackgroud = function (input) {
         reader.readAsDataURL(input.files[0]);
     }
 };
-
-//tree 
-$.fn.extend({
-    treed: function (o) {
-
-        var openedClass = 'glyphicon-minus-sign';
-        var closedClass = 'glyphicon-plus-sign';
-
-        if (typeof o !== 'undefined') {
-            if (typeof o.openedClass !== 'undefined') {
-                openedClass = o.openedClass;
-            }
-            if (typeof o.closedClass !== 'undefined') {
-                closedClass = o.closedClass;
-            }
-        }
-        var tree = $(this);
-        tree.addClass("tree");
-        tree.find('li').has("ul").each(function () {
-            var branch = $(this);
-            branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
-            branch.addClass('branch');
-            branch.on('click', function (e) {
-                if (this === e.target) {
-                    var icon = $(this).children('i:first');
-                    icon.toggleClass(openedClass + " " + closedClass);
-                    $(this).children().children().toggle();
-                }
-            });
-            branch.children().children().toggle();
-        });
-        tree.find('.branch .indicator').each(function () {
-            $(this).on('click', function () {
-                $(this).closest('li').click();
-            });
-        });
-        tree.find('.branch>a').each(function () {
-            $(this).on('click', function (e) {
-                $(this).closest('li').click();
-                e.preventDefault();
-            });
-        });
-        tree.find('.branch>button').each(function () {
-            $(this).on('click', function (e) {
-                $(this).closest('li').click();
-                e.preventDefault();
-            });
-        });
-    }
-});
 

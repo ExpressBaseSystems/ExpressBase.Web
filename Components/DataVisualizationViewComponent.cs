@@ -155,7 +155,8 @@ namespace ExpressBase.Web.Components
             eb.Columns.Add(new DVNumericColumn { Name = "serial", Title = "#", Type = DbType.Int64, Visible = true, Width = 10, Pos = -2 });
             eb.Columns.Add(new DVBooleanColumn { Name = "checkbox", Title = "checkbox", Type = DbType.Boolean, Visible = false, Width = 10, Pos = -1 });
 
-            foreach (EbDataColumn column in columnresp.Columns)
+            var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+            foreach (EbDataColumn column in __columns)
             {
                 DVBaseColumn _col = null;
 

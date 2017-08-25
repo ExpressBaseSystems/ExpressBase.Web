@@ -93,7 +93,7 @@ namespace ExpressBase.Web.Controllers
             else if (ds.EbObjectType == 12)
             {
                 ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
-                (ds.EbObject as EbForm).EbObjectType = EbObjectType.WebForm;
+                //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
             }
 
             //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;

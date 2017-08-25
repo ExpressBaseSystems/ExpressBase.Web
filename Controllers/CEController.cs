@@ -328,10 +328,11 @@ namespace ExpressBase.Web.Controllers
             else
             {
                 string colDef = "[";
-                foreach (EbDataColumn column in columnresp.Columns)
+                var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+                foreach (EbDataColumn column in __columns)
                 {
                     colDef += "{";
-                    colDef += "\"data\": " + columnresp.Columns[column.ColumnName].ColumnIndex.ToString();
+                    colDef += "\"data\": " + __columns[column.ColumnName].ColumnIndex.ToString();
                     colDef += ",\"title\": \"" + column.ColumnName + "\"";
                     colDef += ",\"visible\": " + true.ToString().ToLower();
                     colDef += "},";

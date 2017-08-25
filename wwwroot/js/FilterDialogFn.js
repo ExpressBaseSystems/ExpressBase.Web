@@ -59,7 +59,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
 
     this.SetFdInit = function (me, fdId) {
         var val = "Select Filter Dialog";
-        if (this.Is_New === false && fdId !== 0) {
+        if (this.Is_New === false && fdId !== "") {
             val = this.FilterDId;
         }
         this.Load_filter_dialog_list(val);
@@ -222,8 +222,12 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     };
 
     this.Execute = function () {
-        if (!$('#execute').hasClass('collapsed')) { }
+        if (!$('#execute').hasClass('collapsed'))
+        {
+            //dasdsd
+        }
         else {
+            this.Find_parameters(false,false,false);
             $.LoadingOverlay("show");
             if (this.Parameter_Count !== 0 && $('#fd option:selected').text() === "Select Filter Dialog") {
                 alert("Please select a filter dialog");
@@ -231,6 +235,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             }
             else if (this.Parameter_Count === 0) {
                 $.LoadingOverlay("hide");
+                var getNav = $("#versionNav li.active a").attr("href");
                 $(getNav + " #run").removeClass('disabled');
                 $(getNav + " #run").off("click").on("click", this.RunDs.bind(this));
             }
@@ -262,13 +267,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.Load_version_list = function(){
         $.post('../CE/GetVersions', { objid: this.Obj_Id },
           function (data) {
-              $("#selected_Ver").append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
-              $("#selected_Ver_1").append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
-              $("#selected_Ver_2").append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
+            //  $("#selected_Ver").append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
+              $('#selected_Ver_1' + tabNum).append("<option value='Current' data-tokens='Select Version'>Current</option>");
+              $('#selected_Ver_2' + tabNum).append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
               $.each(data, function (i, obj) {
-                  $('#selected_Ver').append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
-                  $('#selected_Ver_1').append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
-                  $('#selected_Ver_2').append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
+                 // $('#selected_Ver').append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
+                  $('#selected_Ver_1' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
+                  $('#selected_Ver_2' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
               });
               $('.selectpicker').selectpicker({
                   size: 4
@@ -278,20 +283,20 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         };
 
-    this.Compare_radioBtn_change=function()
-    {
-        if ($('input[name=compWith]:checked').val() === "1") {
-            $('#selected_Ver').removeAttr('disabled');
-            $('#selected_Ver_1').attr('disabled', 'disabled');
-            $('#selected_Ver_2').attr('disabled', 'disabled');
-        }
-        else {
-            $('#selected_Ver').attr('disabled', 'disabled');
-            $('#selected_Ver_1').removeAttr('disabled');
-            $('#selected_Ver_2').removeAttr('disabled');
-        }
-        $('.selectpicker').selectpicker('refresh');
-}
+//    this.Compare_radioBtn_change=function()
+//    {
+//        if ($('input[name=compWith]:checked').val() === "1") {
+//            $('#selected_Ver').removeAttr('disabled');
+//            $('#selected_Ver_1').attr('disabled', 'disabled');
+//            $('#selected_Ver_2').attr('disabled', 'disabled');
+//        }
+//        else {
+//            $('#selected_Ver').attr('disabled', 'disabled');
+//            $('#selected_Ver_1').removeAttr('disabled');
+//            $('#selected_Ver_2').removeAttr('disabled');
+//        }
+//        $('.selectpicker').selectpicker('refresh');
+//}
   
     this.Compare = function () {
         tabNum++;
@@ -299,67 +304,78 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
         $('#vernav' + tabNum).append("<div>"+
             "<div class='well' style='height:150px'>"+
-                "Compare With:"+
                " <div>"+
-                    "<div class='col-md-3 col-md-offset-2 '>"+
-                        "<input type='radio' name='compWith' value='1' checked> Current vs Specific<br>"+
-                                "<div class='verlist input-group'>"+ 
-                                   " <select id='selected_Ver' name='selected_Ver' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
-                                    "</select>"+
-                                "</div>"+
-                    "</div>"+
+                    //"<div class='col-md-3 col-md-offset-2 '>"+
+                    //    "<input type='radio' name='compWith' value='1' checked> Current vs Specific<br>"+
+                    //            "<div class='verlist input-group'>"+ 
+                    //               " <select id='selected_Ver' name='selected_Ver' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
+                    //                "</select>"+
+                    //            "</div>"+
+                    //"</div>"+
                    " <div class='col-md-4'>"+
-                        "<input type='radio' name='compWith' value='2'> Specific vs Specefic<br>"+                     
+                        //"<input type='radio' name='compWith' value='2'> Specific vs Specefic<br>"+                     
                                 "<div class='verlist input-group col-md-6' style='display:inline-block'>"+
-                                    "<select id='selected_Ver_1' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true' disabled>" +
+                                    "<select id='selected_Ver_1" + tabNum + "' class='selected_Ver_1' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
                                     "</select>"+
                                 "</div>"+
                                 "<div class='verlist input-group col-md-6' style='display:inline-block '>"+
-                                    "<select id='selected_Ver_2' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true' disabled>"+
+                                    "<select id='selected_Ver_2" + tabNum + "' class='selected_Ver_2' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
                                    "</select>"+
                                 "</div>" +     
                     "</div>"+
                " </div>"+
-                "<button id='compare_inner' class='compare_inner' style='margin-top: 57px;margin-left: 86px;'>Comapre</button>"+
+                "<button id='compare_inner"+ tabNum +"' class='compare_inner' style='margin-top: 57px;margin-left: 86px;'>Comapre</button>" +
             "</div>"+
-            "<div id='compare_result'></div>"+
+            "<div id='compare_result"+ tabNum+"'></div>" +
        " </div>");
-        $('input[type=radio][name=compWith]').off('change').on('change', this.Compare_radioBtn_change.bind(this));
-        $('#compare_inner').off("click").on("click", this.Differ.bind(this));
+      //  $('input[type=radio][name=compWith]').off('change').on('change', this.Compare_radioBtn_change.bind(this));
+        $('#compare_inner' + tabNum).off("click").on("click", this.Differ.bind(this));
         this.Load_version_list();
       
        
     };
 
-    this.Differ = function () {
-        $.LoadingOverlay("show");
-        if ($('input[name=compWith]:checked').val() === "1") {
-            var verRefid = $('#selected_Ver option:selected').val();
-            if (verRefid === "Select Version") {
+    this.Differ = function () {     
+      //  if ($('input[name=compWith]:checked').val() === "1") {
+           // var verRefid = $('#selected_Ver option:selected').val();
+            //if (verRefid === "Select Version") {
+            //    alert("Please Select A Version");
+            //    $.LoadingOverlay("hide");
+            //}
+           // else {
+              //  $.LoadingOverlay("show");
+            //    var selected_ver_number = $('#selected_Ver option:selected').attr("data-tokens");
+              //  var _code = $('#code_edit0 .code').text();
+             //   $.post('../CE/VersionCodes', { "objid": verRefid, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, _code, selected_ver_number, this.Version_num));
+           // }
+       // }
+        //   if ($('input[name=compWith]:checked').val() === "2") {
+
+        var verRefid1 = $('#selected_Ver_1' + tabNum +' option:selected').val();
+        var verRefid2 = $('#selected_Ver_2' + tabNum + '  option:selected').val();
+            if ( verRefid2 === "Select Version") {
                 alert("Please Select A Version");
+                $.LoadingOverlay("hide");
             }
-            else {
-                var selected_ver_number = $('#selected_Ver option:selected').attr("data-tokens");
+            else if (verRefid1 === "Current") {
                 var _code = $('#code_edit0 .code').text();
-                $.post('../CE/VersionCodes', { "objid": verRefid, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, _code, selected_ver_number, this.Version_num));
+                $.LoadingOverlay("show");
+                var v1 = this.Version_num;
+                var v2 = $('#selected_Ver_2' + tabNum + ' option:selected').attr("data-tokens");
+                this.getSecondVersionCode(verRefid2, v1, v2, _code);
+
             }
-        }
-        if ($('input[name=compWith]:checked').val() === "2") {
-            var verRefid1 = $('#selected_Ver_1 option:selected').val();
-            var verRefid2 = $('#selected_Ver_2 option:selected').val();
-            if (verRefid1 === "Select Version" || verRefid2 === "Select Version") {
-                alert("Please Select A Version");
-            }
-            else {              
+            else{
+                $.LoadingOverlay("show");
                 var data_1;
-                $.post('../CE/VersionCodes', { "objid": verRefid1, "objtype": this.ObjectType }, this.getSecondVersionCode.bind(this, verRefid2));
+                v1 = $('#selected_Ver_1' + tabNum + '  option:selected').attr("data-tokens");
+                v2 = $('#selected_Ver_2' + tabNum + '  option:selected').attr("data-tokens");
+                $.post('../CE/VersionCodes', { "objid": verRefid1, "objtype": this.ObjectType }, this.getSecondVersionCode.bind(this, verRefid2,v1,v2));
             }
-        }
+      //  }
     }
 
-    this.getSecondVersionCode = function (verRefid2, result) {
-        var selected_ver_number_1 = $('#selected_Ver_1 option:selected').attr("data-tokens");
-        var selected_ver_number_2 = $('#selected_Ver_2 option:selected').attr("data-tokens");
+    this.getSecondVersionCode = function (verRefid2,selected_ver_number_1,selected_ver_number_2, result) {      
         $.post('../CE/VersionCodes', { "objid": verRefid2, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, result, selected_ver_number_1, selected_ver_number_2));
     }
 
@@ -576,8 +592,11 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         this.showDiff = function (new_ver_num, old_ver_num, data) {
             var getNav = $("#versionNav li.active a").attr("href");
             //  var verid = $(getNav + ' #selected_Ver option:selected').val();
-    
-            $('#compare_result').append("<div id='oldtext"+ tabNum + "'class='leftPane'>" +
+           
+            $('#versionNav li.active a').text().replace('compare',"v." + old_ver_num + " v/s v." + new_ver_num);
+
+            $('#compare_result' + tabNum).empty();
+            $('#compare_result' + tabNum).append("<div id='oldtext" + tabNum + "'class='leftPane'>" +
                   "</div>" +
                   "  <div id='newtext"+ tabNum + "' class='rightPane'>" +
                   "</div>");

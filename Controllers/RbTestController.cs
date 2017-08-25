@@ -45,6 +45,8 @@ namespace ExpressBase.Web.Controllers
         public RowColletion dt;
         DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
         DataSourceDataResponse dresp = new DataSourceDataResponse();
+        ColumnColletion __columns = null;
+
         EbReport repdef = new EbReport();
         Font f = FontFactory.GetFont(FontFactory.HELVETICA, 7);
 
@@ -62,9 +64,12 @@ namespace ExpressBase.Web.Controllers
         {
 
             cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", "eb_roby_dev-eb_roby_dev-2-546-1072"));
-            if (cresp.IsNull)
+            if (cresp.IsNull) 
                 cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = "eb_roby_dev-eb_roby_dev-2-546-1072" });
-            dresp= this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = "eb_roby_dev-eb_roby_dev-2-546-1072" ,Draw=1, Start=0, Length=100});
+
+            __columns = (cresp.Columns.Count > 1) ? cresp.Columns[1] : cresp.Columns[0];
+
+            dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = "eb_roby_dev-eb_roby_dev-2-546-1072" ,Draw=1, Start=0, Length=100});
             dt = dresp.Data;
             repDefInitialize();
             repfldInitialize();
@@ -110,7 +115,7 @@ namespace ExpressBase.Web.Controllers
         {
             foreach (EbReportField c in s.Fields)
             {
-                foreach (var col in cresp.Columns)
+                foreach (var col in __columns)
                 {
                     if (col.ColumnName == c.Name)
                     {
@@ -129,7 +134,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField c in s.Fields)
                 {
-                    foreach (var col in cresp.Columns)
+                    foreach (var col in __columns)
                     {
                         if (col.ColumnName == c.Name)
                         {
@@ -143,7 +148,7 @@ namespace ExpressBase.Web.Controllers
                            // CalculateTotalAndRounding(cb, s, drow, col);
                             string data = drow[col.ColumnIndex].ToString();
                             ColumnText ct = new ColumnText(cb);
-                            ct.SetSimpleColumn(new Phrase(data), c.Left+100, repdef.PaperSize.Height - (c.Top + c.Height) + 100, c.Left + c.Width + 100, c.Top + 100, 15, Element.ALIGN_LEFT);
+                            ct.SetSimpleColumn(new Phrase(data), c.Left, sTop - c.Height, c.Left + c.Width, c.Top, 15, Element.ALIGN_LEFT);
                             ct.Go();
                         }
                     }
@@ -215,7 +220,7 @@ namespace ExpressBase.Web.Controllers
             string totval;
             foreach (EbReportField c in s.Fields)
             {
-                foreach (var col in cresp.Columns)
+                foreach (var col in __columns)
                 {
                     if (col.ColumnName == c.Name)
                     {
@@ -249,7 +254,7 @@ namespace ExpressBase.Web.Controllers
             double[] dd = totalOfColumn.Values.Select(i => i).ToArray();
             foreach (EbReportField c in s.Fields)
             {
-                foreach (var col in cresp.Columns)
+                foreach (var col in __columns)
                 {
                     if (col.ColumnName == c.Name)
                     {
@@ -297,7 +302,7 @@ namespace ExpressBase.Web.Controllers
 
             cntrl5.Name = "grossamt";
             cntrl5.Title = "Gross Amount";
-            cntrl5.Left = 371;
+            cntrl5.Left = 471;
             cntrl5.Width = 70;
             cntrl5.Top = 20;
             cntrl5.Height = 20;
@@ -308,14 +313,14 @@ namespace ExpressBase.Web.Controllers
             cntrl2.Name = "sys_submitted_ts";
             cntrl2.Title = "Sys Submitted Ts";
             cntrl2.Left = 71;
-            cntrl2.Width = 100;
+            cntrl2.Width = 200;
             cntrl2.Top = 20;
             cntrl2.Height = 20;
             cntrl2.HAlign = 0;
             
             cntrl3.Name = "sys_submitter_uid";
             cntrl3.Title = "Sys Submitter Uid";
-            cntrl3.Left = 171;
+            cntrl3.Left = 271;
             cntrl3.Width = 100;
             cntrl3.Top = 20;
             cntrl3.Height = 20;
@@ -323,7 +328,7 @@ namespace ExpressBase.Web.Controllers
             
             cntrl4.Name = "acmaster1_xid";
             cntrl4.Title = "AcMaster1 XID";
-            cntrl4.Left = 271;
+            cntrl4.Left = 371;
             cntrl4.Width = 100;
             cntrl4.Top = 20;
             cntrl4.Height = 20;
@@ -333,7 +338,7 @@ namespace ExpressBase.Web.Controllers
             
             cntrl6.Name = "netamt";
             cntrl6.Title = "Net Amount";
-            cntrl6.Left = 471;
+            cntrl6.Left = 571;
             cntrl6.Width = 100;
             cntrl6.Top = 20;
             cntrl6.Height = 20;

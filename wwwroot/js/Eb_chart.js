@@ -255,9 +255,10 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         }
         else
         {
-            colsAll_XY = this.columnInfo.Columns.sort(function (a, b) {
-                return a.name.localeCompare(b.name);
-            });
+            //colsAll_XY = this.columnInfo.Columns.sort(function (a, b) {
+            //    return a.name.localeCompare(b.name);
+            //});
+            colsAll_XY = this.columnInfo.Columns;
         }
         $.each(colsAll_XY, function (i, obj) {
             if (obj.data != undefined) {

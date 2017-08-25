@@ -47,9 +47,12 @@
 }
 
 .Delcols {
-    margin: 3px;
+    /*margin: 3px;
     border: solid 2px #dddddd;
-    padding: 5px 5px;
+    padding: 5px 5px;*/
+    margin: 2px;
+    padding: 0px 2px;
+    font-size: 12px;
 }
 
 

@@ -1,4 +1,16 @@
-﻿.headersections {
+﻿.pgB .nav-tabs {
+    margin-left: 10px;      
+}
+.tab-menu{
+    width:100%;
+    height:50px;
+    background-color:#fafafa;
+    margin-left:10px;
+}
+.tab-section{
+    position:fixed;
+}
+.headersections {
     width: 50px;
     float: left;
     border: 1px solid #cccccc;
@@ -92,7 +104,7 @@
 }
 
 .rulerleft {
-    position: fixed;
+    position: absolute;
     color: #000;
     border: 1px solid #aaa;
     font-size: 10px;
@@ -173,7 +185,7 @@
 }
 
 .pgB {
-    margin-top: 55px;
+    margin-top: 90px;
 }
 
 .toolbox li {
@@ -189,7 +201,7 @@
     position: absolute !important;
 }
 
-.page p{    
+.page .textval{    
     margin:0;
     border:1px solid #cccccc;
 }
@@ -210,24 +222,6 @@
 .PGgrid{
     min-height: 1000px;
     padding:0;
-}
-.line .ui-resizable-handle {
-   width: 10px !important;
-    height: 10px !important;
-    top: -5px!important;
-    background-color: green !important;
-}
-.h-line .ui-resizable-handle {
-   width: 7px;
-    height: 7px;
-    top: -4px!important;
-    background-color: green !important;
-}
-.v-line .ui-resizable-handle {
-   background-color: green;
-    width: 7px;
-    height: 7px;
-    left: -4px;
 }
 .title{
     width: 104px;
@@ -255,4 +249,148 @@
     background-color: #fafafa;
     border: 1px solid #dedede;
     height: 28px;
+}
+/*shapes*/
+.h-line .ui-resizable-handle {
+   width: 7px;
+    height: 7px;
+    top: -4px!important;
+    background-color: green !important;
+}
+.h-line .ui-resizable-e{
+    margin-top:0;
+}
+.v-line .ui-resizable-handle {
+   background-color: green;
+    width: 7px;
+    height: 7px;
+    left: -4px;
+}
+.v-line .ui-resizable-e{
+    margin-right:0;
+}
+.arrow-right {
+  width: 0; 
+  height: 0; 
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;  
+  border-left: 5px solid black;
+  float: right;
+  margin-top: -5px;
+}
+.arrow-r-draggable .ui-resizable-handle{
+background-color: green;
+    width: 7px;
+    height: 7px;
+    margin-top: -4px;
+}
+.arrow-r-draggable .ui-resizable-e {
+    margin-right: -6px;
+}
+.arrow-left {
+ width: 0; 
+  height: 0; 
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent; 
+  border-right:5px solid black;
+  float: left;
+  margin-top: -5px;
+}
+.arrow-l-draggable .ui-resizable-handle{
+background-color: green;
+    width: 7px;
+    height: 7px;
+    margin-top: -4px;
+}
+.arrow-l-draggable .ui-resizable-w {
+    margin-left: -3px;
+}
+.arrow-up {
+ width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;  
+  margin-left: -5px;
+}
+.arrow-u-draggable .ui-resizable-handle{
+background-color: green;
+    width: 7px;
+    height: 7px;
+    margin-left: -3px;
+}
+.arrow-u-draggable .ui-resizable-n{
+margin-top: -4px;
+}
+.arrow-down {
+ width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;  
+  margin-left: -5px;
+  align-self: flex-end;
+}
+.arrow-d-draggable .ui-resizable-handle{
+background-color: green;
+    width: 7px;
+    height: 7px;
+     margin-left: -3px;
+}
+.arrow-d-draggable .ui-resizable-s{
+margin-bottom: -4px;
+}
+.arrow-By-dir-v-t{
+    width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;  
+  margin-left: -5px;
+  align-self: flex-start;
+}
+.arrow-By-dir-v-b{
+    width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;  
+  margin-left: -10px;
+  align-self: flex-end;
+}
+.arrow-by-d-v-draggable .ui-resizable-handle{
+    background-color: green;
+    width: 7px;
+    height: 7px;
+    margin-left: -3px;
+}
+.arrow-by-d-v-draggable .ui-resizable-s,.ui-resizable-n{
+margin: -4px;
+}
+.arrow-By-dir-h-r{
+ width: 0; 
+  height: 0; 
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;  
+  border-left: 5px solid black;
+  float: right;
+  margin-top: -5px;
+}
+.arrow-By-dir-h-l{
+     width: 0; 
+  height: 0; 
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent; 
+  border-right:5px solid black;
+  float: left;
+  margin-top: -5px;
+}
+.arrow-by-d-h-draggable .ui-resizable-handle{
+    background-color: green;
+    width: 7px;
+    height: 7px;
+    margin-top: -4px;
+}
+.arrow-by-d-h-draggable .ui-resizable-w,.ui-resizable-e{
+margin: -4px;
 }

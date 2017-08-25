@@ -1,4 +1,5 @@
-﻿using ExpressBase.Data;
+﻿using ExpressBase.Common;
+using ExpressBase.Data;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -25,10 +26,10 @@ namespace ExpressBase.Web.Components
         }
         public async Task<IViewComponentResult> InvokeAsync(string dsRefid)
         {
-            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
-            if (columnresp == null || columnresp.IsNull)
-                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
-            ViewBag.data = GetTreeData(columnresp.Columns);
+            //DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
+            //if (columnresp == null || columnresp.IsNull)
+            //    columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
+            //ViewBag.data = GetTreeData(columnresp.Columns);
             return View();
         }
 

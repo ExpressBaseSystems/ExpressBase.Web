@@ -98,23 +98,29 @@
                     <a class="nav-link" data-toggle="tab" href="#home" role="tab">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#profile" role="tab">Profile</a>
+                    <a class="nav-link" data-toggle="tab" href="#Preview" role="tab">Preview</a>
                 </li>
             </ul>
         </div>
         <div class="tab-content">
-            <div class="tab-menu"></div>
             <div class="tab-pane active" id="home" role="tabpanel">
+                <div class="tab-menu">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <button class="btn btn-default"><i class="fa fa-cubes" aria-hidden="true"></i> Shapes</button>
+                        </div>
+                        </div>
+                    </div>
                 <div class="col-md-2 side-toolbar">
                     <div class="toolbox">
                         @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
                     </div>
                 </div>
-                <div class="col-md-8" style="padding-right:0">
+                <div class="col-md-8" style="padding-right:0;margin-top:91px">
                     <div class="title text-center" style="display:none"></div>
                     <div class='ruler' style="display:none"></div>
                     <div class='rulerleft' style="display:none"></div>
-                    <div id="pageCanvas" style="position:relative;margin-top:51px;margin-bottom:50px">
+                    <div id="pageCanvas" style="position:relative;margin-top:24px;margin-bottom:50px">
                     </div>
                 </div>
                 <div class="col-md-2 PGgrid">
@@ -123,6 +129,7 @@
                     </div>
                 </div>
             </div>
+            <div class="tab-pane" id="Preview" role="tabpanel">...</div>
         </div>
     </div>
     <script>

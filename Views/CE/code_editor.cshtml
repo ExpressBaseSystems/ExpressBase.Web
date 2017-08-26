@@ -48,6 +48,9 @@
 </script>
 <div class="row">
     @*<div class="">*@
+    <div>
+        @await Component.InvokeAsync("ObjectDashboard", new { @*Type = (int)EbObjectType.DataSource*@ });
+    </div>
     <div class="form-inline btn-group well well-sm" role="group" aria-label="First group" style="width:100%;margin-bottom:0px;">
         <div class="input-group">
             <span class="input-group-addon" aria-hidden="true"><i class="fa fa-database fa-1x"></i></span>

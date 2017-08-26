@@ -241,6 +241,7 @@
     border-bottom: none;
     border-top: none;
     border-radius: 0px !important;
+    border-bottom: var(--sild1pxDDD);
 }
 
 .pgObjEditor-Cont .open, .pgObjEditor-Cont .caret {
@@ -297,9 +298,9 @@
     width: 100%;
 }
 
-.controls-dd-cont {
+/*.controls-dd-cont {
     border-bottom: var(--sild1pxDDD);
-}
+}*/
 
 .pgObjEditBtn {
     width: 100%;
@@ -339,8 +340,8 @@
     background-color: rgba(33, 33, 33, 0.065);
 }
 
-.ObjEditor-controls-head {
-    padding: 11px;
+.ObjEditor-controls-head, .inner-PG-Cont .pgHead {
+    padding: 9px;
     font-weight: bold;
     background-color: var(--colorDDD);
 }
@@ -348,7 +349,7 @@
 .colTile {
     padding: 5px;
     background-color: rgb(238, 238, 238);
-    margin: 3px;
+    margin: 3px 1px;
     font-size: 13px;
     border-left: solid 1px #c7c2c2;
     cursor: pointer;
@@ -387,10 +388,10 @@
         display: none;
     }
 
-    .inner-PG-Cont .pgHead {
+/*.inner-PG-Cont .pgHead {
         background-color: var(--colorDDD);
         padding: 11px;
-    }
+    }*/
 
 .editObj-add {
     display: inline-block;

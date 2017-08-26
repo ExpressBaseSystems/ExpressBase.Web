@@ -23,10 +23,13 @@
     margin: 0px 1px;
     padding: 2px 1px;
     width: auto;
-    height: 25px;
+    height: 20px;
     margin-top: 2px;
     display: inline-block;
     font-size: 11px;
+    background-color: rgb(204, 204, 204);
+    border-radius: 3px;
+
     /*margin: 3px 6px;
     border: solid 2px #dddddd;
     padding: 1px 5px;
@@ -53,6 +56,8 @@
     margin: 2px;
     padding: 0px 2px;
     font-size: 12px;
+    background-color: #ddd;
+    border-radius: 2px;
 }
 
 

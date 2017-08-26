@@ -38,6 +38,6 @@ namespace ExpressBase.Web.Components
             ViewBag.Objlist = ObjList;
 
             return View();
-        }       
+        }
     }
 }

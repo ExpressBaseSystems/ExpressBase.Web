@@ -1,4 +1,4 @@
-﻿function gettype(num) {
+﻿function gettypefromNumber(num) {
     if (num == 16)
         return "String";
     else if(num == 6)
@@ -7,6 +7,21 @@
         return "Boolean";
     else if (num == 8 || num == 7 || num == 11)
         return "Numeric";
+}
+
+function gettypefromString(str) {
+    if (str == "String")
+        return "16";
+    else if (str == "DateTime")
+        return "6";
+    else if (str == "Boolean")
+        return "3";
+    else if (str == "Int32")
+        return "11";
+    else if (str == "Decimal")
+        return "7";
+    else if (str == "Double")
+        return "8";
 }
 
 if (!String.prototype.splice) {
@@ -443,18 +458,18 @@ var EbDataTable = function (settings) {
 
     this.getAgginfo = function () {
         var _ls = [];
-        $.each(this.ebSettings.columns, this.getAgginfo_inner.bind(this, _ls));
+        $.each(this.ebSettings.Columns, this.getAgginfo_inner.bind(this, _ls));
         return _ls;
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.visible && (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int64" || col.type === "System.Double") && col.name !== "serial")
-            _ls.push(new Agginfo(col.name, this.ebSettings.columnsext[i].DecimalPlace));
+        if (col.visible && (col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial")
+            _ls.push(new Agginfo(col.name, this.ebSettings.Columns[i].DecimalPlaces));
     };
 
     this.getFooterFromSettingsTbl = function () {
         var ftr_part = "";
-        $.each(this.ebSettings.columns, function (i, col) {
+        $.each(this.ebSettings.Columns, function (i, col) {
             if (col.visible)
                 ftr_part += "<th style=\"padding: 0px; margin: 0px\"></th>";
             else
@@ -656,20 +671,20 @@ var EbDataTable = function (settings) {
         var ScrollY = this.ebSettings.scrollY;
         var ResArray = [];
         var tableId = this.tableId;
-        $.each(this.ebSettings.columns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        $.each(this.ebSettings.Columns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
         return ResArray;
     };
 
     this.GetAggregateControls_inner = function (ResArray, footer_id, zidx, i, col) {
         var _ls;
         if (col.visible) {
-            if ((col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64" || col.type === "System.Double") && col.name !== "serial") {
+            if ((col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial") {
                 var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = this.tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
                 var data_table = "data-table=" + this.tableId;
                 var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
-                var data_decip = "data-decip=" + this.ebSettings.columnsext[i].DecimalPlace;
+                var data_decip = "data-decip=" + this.ebSettings.Columns[i].DecimalPlaces;
 
                 _ls = "<div class='input-group input-group-sm'>" +
                 "<div class='input-group-btn'>" +
@@ -864,7 +879,7 @@ var EbDataTable = function (settings) {
         else if (this.zindex === 1)
             this.eb_filter_controls_4sb = [];
 
-        $.each(this.ebSettings.columns, this.GetFiltersFromSettingsTbl_inner.bind(this));
+        $.each(this.ebSettings.Columns, this.GetFiltersFromSettingsTbl_inner.bind(this));
     };
 
     this.GetFiltersFromSettingsTbl_inner = function (i, col) {
@@ -887,17 +902,17 @@ var EbDataTable = function (settings) {
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
             }
             else {
-                if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64" || col.type === "System.Double")
+                if (col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double")))
                     _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
-                else if (col.type === "System.String") {
+                else if (col.Type == parseInt( gettypefromString("String"))) {
                     //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
                     _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                     //else
                     //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
                 }
-                else if (col.type === "System.DateTime")
+                else if (col.Type ==parseInt( gettypefromString("DateTime")))
                     _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
-                else if (col.type === "System.Boolean")
+                else if (col.Type ==parseInt( gettypefromString("Boolean")))
                     _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
                 else
                     _ls += (span);
@@ -1088,7 +1103,7 @@ var EbDataTable = function (settings) {
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         //if (this.FlagPresentId) {
-        var idpos = $.grep(this.ebSettings.columns, function (e) { return e.name === "id"; })[0].data;
+        var idpos = $.grep(this.ebSettings.Columns, function (e) { return e.name === "id"; })[0].data;
         this.rowId = meta.row; //do not remove - for updateAlSlct
         return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
         //}
@@ -1659,42 +1674,42 @@ var EbDataTable = function (settings) {
 
 
     this.updateRenderFunc = function () {
-        $.each(this.ebSettings.columns, this.updateRenderFunc_Inner.bind(this));
+        $.each(this.ebSettings.Columns, this.updateRenderFunc_Inner.bind(this));
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
-        if (col.type === "System.Int32" || col.type === "System.Decimal" || col.type === "System.Int16" || col.type === "System.Int64") {
-            if (this.ebSettings.columnsext[i].RenderAs === "Progressbar") {
-                this.ebSettings.columns[i].render = this.renderProgressCol;
+        if (col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64"))) {
+            if (this.ebSettings.Columns[i].RenderAs === "Progressbar") {
+                this.ebSettings.Columns[i].render = this.renderProgressCol;
             }
-            if (this.ebSettings.columnsext[i].DecimalPlace > 0) {
-                var deci = this.ebSettings.columnsext[i].DecimalPlace;
-                this.ebSettings.columns[i].render = function (data, type, row, meta) {
+            if (this.ebSettings.Columns[i].DecimalPlaces > 0) {
+                var deci = this.ebSettings.Columns[i].DecimalPlaces;
+                this.ebSettings.Columns[i].render = function (data, type, row, meta) {
                     return parseFloat(data).toFixed(deci);
                 }
             }
         }
-        if (col.type === "System.Boolean") {
-            if (this.ebSettings.columnsext[i].name === "sys_locked" || this.ebSettings.columnsext[i].name === "sys_cancelled") {
-                this.ebSettings.columns[i].render = (this.ebSettings.columnsext[i].name === "sys_locked") ? this.renderLockCol : this.renderEbVoidCol;
+        if (col.Type ==parseInt( gettypefromString("Boolean"))) {
+            if (this.ebSettings.Columns[i].name === "sys_locked" || this.ebSettings.Columns[i].name === "sys_cancelled") {
+                this.ebSettings.Columns[i].render = (this.ebSettings.Columns[i].name === "sys_locked") ? this.renderLockCol : this.renderEbVoidCol;
             }
             else {
-                if (this.ebSettings.columnsext[i].IsEditable) {
-                    this.ebSettings.columns[i].render = this.renderEditableCol;
+                if (this.ebSettings.Columns[i].IsEditable) {
+                    this.ebSettings.Columns[i].render = this.renderEditableCol;
                 }
-                if (this.ebSettings.columnsext[i].RenderAs === "Icon") {
-                    this.ebSettings.columns[i].render = this.renderIconCol;
+                if (this.ebSettings.Columns[i].RenderAs === "Icon") {
+                    this.ebSettings.Columns[i].render = this.renderIconCol;
                 }
             }
         }
-        if (col.type === "System.String" || col.type === "System.Double") {
-            if (this.ebSettings.columnsext[i].RenderAs === "Link") {
-                this.linkDV = this.ebSettings.columnsext[i].linkDv;
-                this.ebSettings.columns[i].render = this.renderlink4NewTable.bind(this);
+        if (col.Type ==parseInt( gettypefromString("String")) || col.Type ==parseInt( gettypefromString("Double"))) {
+            if (this.ebSettings.Columns[i].RenderAs === "Link") {
+                this.linkDV = this.ebSettings.Columns[i].linkDv;
+                this.ebSettings.Columns[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);
             }
-            if (this.ebSettings.columnsext[i].RenderAs === "Graph") {
-                this.ebSettings.columns[i].render = this.lineGraphDiv.bind(this);
+            if (this.ebSettings.Columns[i].RenderAs === "Graph") {
+                this.ebSettings.Columns[i].render = this.lineGraphDiv.bind(this);
             }
         }
     };
@@ -1728,7 +1743,7 @@ var EbDataTable = function (settings) {
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-        $.each(this.ebSettings.columns, function (i, value) {
+        $.each(this.ebSettings.Columns, function (i, value) {
             var rgb = '';
             var fl = '';
             if (value.name === 'sys_row_color') {
@@ -1818,9 +1833,9 @@ var EbDataTable = function (settings) {
         $("#" + id + "TableColumns4Drag").append("<div style='background-color: #ccc;padding: 5px;font-weight: bold;'>Columns</div>")
         $.each(this.ebSettings.Columns, function (i, obj) {
             if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === false && obj.name !== "id")
-                $("#" + id + "TableColumns4Drag").append("<div class ='alert alert-success Delcols' id='div_" + obj.name + "' name = '" + obj.name + "' data-type="+obj.Type+">" + obj.name + "</div>")
+                $("#" + id + "TableColumns4Drag").append("<div class ='Delcols' id='div_" + obj.name + "' name = '" + obj.name + "' data-type="+obj.Type+">" + obj.name + "</div>")
             else if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === true && obj.name !== "id")
-                $("#" + id + "ColumnsDispaly").append('<div class ="alert alert-success Displaycols" onclick="$(this).focus();" tabIndex="0" name ="' + obj.name + '" id="div_' + obj.name + '" data-type='+obj.Type+'>' + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>")
+                $("#" + id + "ColumnsDispaly").append('<div class ="Displaycols" onclick="$(this).focus();" tabIndex="0" name ="' + obj.name + '" id="div_' + obj.name + '" data-type=' + obj.Type + '>' + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 0px 0 0 4px;color: black !important;' >x</button></div>")
         });
         $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         $("#" + this.tableId + "ColumnsDispaly").on("focus", "div", this.createPG.bind(this));
@@ -1832,6 +1847,10 @@ var EbDataTable = function (settings) {
         this.drake.on("drop", this.colDrop.bind(this));
         this.drake.on("drag", this.colDrag.bind(this));
         this.flagAppendColumns = true;
+        //$("#" + this.tableId + "TableColumns4Drag").resizable();
+        $("#" + this.tableId + "TableColumns4Drag").resizable({
+            handles: "e"
+        });
     };
 
     //this.appendDisplayColumns = function () {
@@ -1862,15 +1881,15 @@ var EbDataTable = function (settings) {
             //    else
             //        this.droppedPos = $(target).children().length - 1;
             if ($(source).attr("id") === this.tableId + "TableColumns4Drag") {
-                $(el).removeClass("alert alert-success Delcols");
-                $(el).addClass("alert alert-success Displaycols");
+                $(el).removeClass("Delcols");
+                $(el).addClass("Displaycols");
                 //var colobj = JSON.parse($(el).attr("data-obj"));
                 //colobj["visible"] = true;
                 //colobj["bVisible"] = true;
                 //$(el).attr("data-obj", JSON.stringify(colobj));
                 $(el).attr("tabIndex", "0");
                 $(el).attr("onclick", "$(this).focus();");
-                $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button>");
+                $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 0px 0 0 4px;color: black !important;' >x</button>");
                 $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
                 //$.each(this.ebSettings.columns, this.visibleChange2True.bind(this, colobj));
                 //$("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
@@ -1898,14 +1917,14 @@ var EbDataTable = function (settings) {
         //var colobj = JSON.parse($(e.target).parent().attr("data-obj")); 
         //colobj["visible"] = false;
         //colobj["bVisible"] = false;
-        $("#" + this.tableId + "TableColumns4Drag").append("<div class ='alert alert-success Delcols' name ='" + curName + "' id='" + $(e.target).parent().attr("id") + "' data-type=" + curType + ">" + str.substring(0, str.length - 1).trim() + "</div>")
+        $("#" + this.tableId + "TableColumns4Drag").append("<div class ='Delcols' name ='" + curName + "' id='" + $(e.target).parent().attr("id") + "' data-type=" + curType + ">" + str.substring(0, str.length - 1).trim() + "</div>")
 
         $(e.target).parent().remove();
         $("#" + this.tableId + "TableColumns4Drag").css("height", $("#" + this.tableId + "divcont").css("height"))
         $("#" + this.tableId + "TableColumnsPPGrid").css("height", $("#" + this.tableId + "divcont").css("height"))
         $("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
-        $.each(this.ebSettings.Columns, this.visibleChange2False.bind(this, curName))
-
+        $.each(this.ebSettings.Columns, this.visibleChange2False.bind(this, curName));
+        $("#" + this.tableId + "ColumnsDispaly").children("div:eq(0)").focus();
         //$('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
         //var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
         //$('#' + this.tableId + 'divcont').append(table);
@@ -1917,7 +1936,7 @@ var EbDataTable = function (settings) {
         this.dragNdrop = true;
         curName = $(e.target).attr("name");
         curType = $(e.target).attr("data-type");
-        curObjcet = gettype(curType);
+        curObjcet = gettypefromNumber(curType);
         $.each(this.ebSettings.Columns, this.createPG_inner.bind(this, curName, curObjcet));
     };
 

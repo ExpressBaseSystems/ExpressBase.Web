@@ -1,4 +1,16 @@
-﻿.headersections {
+﻿.pgB .nav-tabs {
+    margin-left: 10px;      
+}
+.tab-menu{
+    width:100%;
+    height:50px;
+    background-color:#fafafa;
+    margin-left:10px;
+}
+.tab-section{
+    position:fixed;
+}
+.headersections {
     width: 50px;
     float: left;
     border: 1px solid #cccccc;
@@ -173,7 +185,7 @@
 }
 
 .pgB {
-    margin-top: 55px;
+    margin-top: 90px;
 }
 
 .toolbox li {

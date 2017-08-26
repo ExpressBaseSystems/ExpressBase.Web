@@ -300,11 +300,6 @@
     width: 1015px;
 }
 
-.pgGroupRow {
-    background-color: #dddddd !important;
-    border-bottom: solid 2px white;
-    border-top: solid 2px white;
-}
 
 /*.dataTables_scrollBody {
     border-bottom: solid 1px #dddddd;

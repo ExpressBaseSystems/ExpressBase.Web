@@ -151,7 +151,7 @@
                 <div class="form-group form1">
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-database"></i></div>
-                        <input type="text" class="form-control" id="inlineFormInputGroup">
+                        <input type="text" class="form-control" id="inlineFormInputGroup" value="@ViewBag.ObjName">
                     </div>
                     <div class="form-group ">
                         <label style="margin-top:10px;">Description</label>
@@ -166,7 +166,7 @@
                         Total Versions
                     </div>
                     <div class="count text-center">
-                        2
+                        @ViewBag.TotalVersions
                     </div>
                 </div>
                 <div class="col-md-3 card1">
@@ -174,7 +174,7 @@
                         Status
                     </div>
                     <div style="color:#0db71b" class="count text-center">
-                        Live
+                       @ViewBag.Status
                     </div>
                 </div>
                 <div class="col-md-3 card1">

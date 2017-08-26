@@ -49,7 +49,7 @@
 <div class="row">
     @*<div class="">*@
     <div>
-        @await Component.InvokeAsync("ObjectDashboard", new { @*Type = (int)EbObjectType.DataSource*@ });
+        @await Component.InvokeAsync("ObjectDashboard", new {objid = @ViewBag.Obj_id ,objname =@ViewBag.ObjectName, totVer =@ViewBag.VersionNumber, status=@ViewBag.Status});
     </div>
     <div class="form-inline btn-group well well-sm" role="group" aria-label="First group" style="width:100%;margin-bottom:0px;">
         <div class="input-group">

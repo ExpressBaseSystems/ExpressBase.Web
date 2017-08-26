@@ -38,10 +38,5 @@ namespace ExpressBase.Web.Components
 
             return View();
         }
-        public IActionResult GetColumns()
-        {
-            DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
-            cresp = this.redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", "eb_roby_dev-eb_roby_dev-2-546-1072"));
-        }
     }
 }

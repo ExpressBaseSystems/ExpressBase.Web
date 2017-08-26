@@ -1,14 +1,22 @@
 ﻿.pgB .nav-tabs {
     margin-left: 10px;      
 }
+
 .tab-menu{
     width:100%;
     height:50px;
     background-color:#fafafa;
     margin-left:10px;
+    margin-top: 41px;
+    position:fixed;
+    z-index: 100;
 }
 .tab-section{
-    position:fixed;
+    position: fixed;
+    z-index: 100;
+    background-color: white;
+    width: 100%;
+    padding-top: 10px;
 }
 .headersections {
     width: 50px;
@@ -25,7 +33,12 @@
     background-color: #fafafa !important;
     
 }
-#pagesize{       
+.tab-menu .btn-default{
+    color: #333 !important;
+    border: none !important;
+    background-color: #fafafa !important;
+}
+ #pagesize{       
      height: 28px;
      border-color: #dedede;
 }
@@ -50,7 +63,7 @@
 }
 
 .ruler {
-    margin-top: 30px;
+    margin-top: 3px;
     color: #000;
     font-family: arial;
     font-size: 10px;
@@ -110,9 +123,9 @@
     font-size: 10px;
     background-color: #fbf7f7;
     margin-left: -21px;
-    margin-top: 49px;
+    margin-top: 22px;
     width: 20px;
-    z-index:100;
+    z-index:50;
 }
 
     .rulerleft > div {
@@ -164,7 +177,7 @@
 }
 
 .pGreportBuilder{
-    margin-top: 31px;
+    margin-top: 3px;
     position: fixed;
     margin-right: 10px;
 }
@@ -177,7 +190,7 @@
 .toolbox {
     height: 100%;
     position: fixed;
-    margin-top: 30px;
+    margin-top: 3px;
     padding: 0 !important;
     box-shadow: 0 6px 12px rgba(0,0,0,.175) !important;
     width:15%;
@@ -185,7 +198,7 @@
 }
 
 .pgB {
-    margin-top: 90px;
+    margin-top: 80px;
 }
 
 .toolbox li {
@@ -218,17 +231,19 @@
     padding-left: 10px;
     background-color:white;
     z-index:1;
+    margin-top:91px;
 }
 .PGgrid{
     min-height: 1000px;
     padding:0;
+    margin-top:91px;
 }
 .title{
     width: 104px;
     height: 20px;
     background-color: #fbf7f7;
     position: fixed;
-    top: 105px;
+    top: 194px;
     left: 219px;   
     border: 1px solid #aaaaaa;
     z-index: 200;

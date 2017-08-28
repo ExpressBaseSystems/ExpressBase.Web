@@ -47,42 +47,39 @@
 
 </script>
 <div class="row">
-    @*<div class="">*@
     <div>
-        @await Component.InvokeAsync("ObjectDashboard", new {objid = @ViewBag.Obj_id ,objname =@ViewBag.ObjectName, totVer =@ViewBag.VersionNumber, status=@ViewBag.Status});
+        @await Component.InvokeAsync("ObjectDashboard", new { objid = @ViewBag.Obj_id, objname = @ViewBag.ObjectName, totVer = @ViewBag.VersionNumber, status = @ViewBag.Status, desc = @ViewBag.ObjectDesc })
     </div>
-    <div class="form-inline btn-group well well-sm" role="group" aria-label="First group" style="width:100%;margin-bottom:0px;">
-        <div class="input-group">
-            <span class="input-group-addon" aria-hidden="true"><i class="fa fa-database fa-1x"></i></span>
-            <input type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control" style="width: 196%;" />
-        </div>
-        <div class="pull-right">
-            <div class="form-group btn-group">
-                <div class="dropdown btn-group">
-                    <button class="btn  btn-default dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-clock-o  fa-1x" aria-hidden="true"></i>
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="save" id="save" data-toggle="tooltip" title="Save">Save (Ctrl+S)</a></li>
-                        <li><a class="commit" id="commit" data-toggle="tooltip" title="Commit">Commit</a></li>
-                    </ul>
+    @* <div class="form-inline btn-group well well-sm" role="group" aria-label="First group" style="width:100%;margin-bottom:0px;">
+                <div class="input-group">
+                    <span class="input-group-addon" aria-hidden="true"><i class="fa fa-database fa-1x"></i></span>
+                    <input type="text" required="required" id="obj_name" value="@ViewBag.ObjectName" class="form-control" style="width: 196%;" />
                 </div>
-                <a href="#" id="rel_obj" class="btn btn-default rel_obj" data-toggle="tooltip" title="Related Objects"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-                <a href="#" id="compare" class="btn btn-default compare" data-toggle="tooltip" title="Compare with another version"><i class="fa fa-files-o fa-1x" aria-hidden="true"></i></a>
-                <a href="#" class="btn btn-default samp_cod" data-toggle="tooltip" title="Sample Code"><i class="fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
-                @*<a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn fa fa-code-fork fa-1x" aria-hidden="true"></i></a>*@
-                <a href="#" id="stat_his" class="btn btn-default stat_his" data-toggle="tooltip" title="Status History"><i class="fa fa-line-chart fa-1x" aria-hidden="true"> @ViewBag.Status</i></a>
-                <a href="#" class="btn btn-default ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-group fa fa-history fa-1x" aria-hidden="true"> v.@ViewBag.VersionNumber</i></a>
+                <div class="pull-right">
+                    <div class="form-group btn-group">
+                        <div class="dropdown btn-group">
+                            <button class="btn  btn-default dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-clock-o  fa-1x" aria-hidden="true"></i>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="save" id="save" data-toggle="tooltip" title="Save">Save (Ctrl+S)</a></li>
+                                <li><a class="commit" id="commit" data-toggle="tooltip" title="Commit">Commit</a></li>
+                            </ul>
+                        </div>
+                        <a href="#" id="rel_obj" class="btn btn-default rel_obj" data-toggle="tooltip" title="Related Objects"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+                        <a href="#" id="compare" class="btn btn-default compare" data-toggle="tooltip" title="Compare with another version"><i class="fa fa-files-o fa-1x" aria-hidden="true"></i></a>
+                        <a href="#" class="btn btn-default samp_cod" data-toggle="tooltip" title="Sample Code"><i class="fa fa-file-code-o fa-1x" aria-hidden="true"></i></a>
+                        <a href="#" class="fork" data-toggle="tooltip" title="Fork"><i class="btn-default btn fa fa-code-fork fa-1x" aria-hidden="true"></i></a>
+                        <a href="#" id="stat_his" class="btn btn-default stat_his" data-toggle="tooltip" title="Status History"><i class="fa fa-line-chart fa-1x" aria-hidden="true"> @ViewBag.Status</i></a>
+                        <a href="#" class="btn btn-default ver_his" id="ver_his" data-toggle="tooltip" title="Version History"><i class="btn-group fa fa-history fa-1x" aria-hidden="true"> v.@ViewBag.VersionNumber</i></a>
+                    </div>
+                </div>
             </div>
-        </div>
-        @*</div>*@
-    </div>
-    <div class="input-group">
-        <span class="input-group-addon" aria-hidden="true">Description</span>
-        <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
-    </div>
-
+        <div class="input-group">
+            <span class="input-group-addon" aria-hidden="true">Description</span>
+            <textarea required="required" class="form-control" id="obj_desc">@ViewBag.ObjectDesc</textarea>
+        </div>*@
 </div>
 <div class="row">
     <ul class="nav nav-tabs versionNav" id="versionNav">

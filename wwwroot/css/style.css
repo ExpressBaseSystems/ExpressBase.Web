@@ -541,6 +541,7 @@ footer {
     height: 100%;
     position: fixed;
     padding-right: 10px;
+    z-index: 100;
 }
 
 .list-group .list-group-item {

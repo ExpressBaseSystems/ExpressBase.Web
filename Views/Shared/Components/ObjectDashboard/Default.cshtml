@@ -1,15 +1,13 @@
-﻿@{
-    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    Html.RenderPartial("_PageheaderDev");
-}
+﻿
 <style>
     .dashbord {
         background-color: white;
         width: 100%;
-        min-height: 300px;
+        min-height: 270px;
         border: 1px solid #d3c9c9;
         border-top: none;
         font-family: Tahoma;
+        margin-top: 98px;
     }
 
     .box1 {
@@ -42,7 +40,7 @@
     }
 
     .count {
-        font-size: 50px;
+        font-size: 29px;
     }
 
     .head {
@@ -52,11 +50,6 @@
 
     .icons {
         margin-right: 10px;
-    }
-
-    .toolbar {
-        width: 100%;
-        height: 50px;
     }
 
     .txtarea {
@@ -71,17 +64,22 @@
     .toolbar {
         background-color: white;
         width: 100%;
-        min-height: 30px;
-        margin-top: 49px;
+        min-height: 50px;
+        margin-top: 48px;
         padding-top: 10px;
+        position: fixed;
+        z-index: 50;
+        border-bottom: 1px solid #ccc;
     }
 
     .toolbar2 {
         margin-top: 5px;
     }
 
-    .toolicons .btn-default {
+    .toolicons .btn {
         border: none !important;
+        background-color: white !important;
+        color: black;
     }
 
     .toolAlign {
@@ -127,139 +125,139 @@
         font-size: 10px;
     }
 </style>
-<div class="container-fluid">
-    <div class="row">
-        <div class="toolbar">
-            <div class="col-md-3 brdCrumb">
-                <p>Home/DataSource/</p>
-            </div>
-            <div class="col-md-9">
-                <div class='toolicons form-inline pull-right'>
-                    <div class='form-group'>
-                        <button class='btn btn-default' data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-                        <button class='btn btn-default' data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
-                        <button class='btn btn-default' data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
-                        <button class='btn btn-default' id="minmize"><i class="fa fa-caret-down" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
-                    </div>
+<div class="row">
+    <div class="toolbar">
+        <div class="col-md-4 brdCrumb">
+            <a href="#"> Home/</a>
+        </div>
+        <div class="col-md-8">
+            <div class='toolicons form-inline pull-right'>
+                <div class='form-group'>
+                    <button class='btn save' id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                    <button class='btn commit' id="commit" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                    <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+                    <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
+                    <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"> v.@ViewBag.VersionNumber</i></button>
+                    <button class='btn' id="minmize"><i class="fa fa-caret-down" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="dashbord">
-            <div class="col-md-3 box1">
-                <div class="form-group form1">
-                    <div class="input-group">
-                        <div class="input-group-addon"><i class="fa fa-database"></i></div>
-                        <input type="text" class="form-control" id="inlineFormInputGroup" value="@ViewBag.ObjName">
-                    </div>
-                    <div class="form-group ">
-                        <label style="margin-top:10px;">Description</label>
-                        <textarea class="form-control txtarea"></textarea>
-                    </div>
+</div>
+<div class="row">
+    <div class="dashbord">
+        <div class="col-md-3 box1">
+            <div class="form-group form1">
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="fa fa-database"></i></div>
+                    <input type="text" class="form-control" id="obj_name" value="@ViewBag.ObjName">
+                </div>
+                <div class="form-group ">
+                    <label style="margin-top:10px;">Description</label>
+                    <textarea class="form-control txtarea" id="obj_desc">@ViewBag.description</textarea>
                 </div>
             </div>
-            <div class="col-md-7 box2">
+        </div>
+        <div class="col-md-7 box2">
 
-                <div class="col-md-3 card1">
-                    <div class="head text-center">
-                        Total Versions
-                    </div>
-                    <div class="count text-center">
-                        @ViewBag.TotalVersions
-                    </div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Total Versions
                 </div>
-                <div class="col-md-3 card1">
-                    <div class="head text-center">
-                        Status
-                    </div>
-                    <div style="color:#0db71b" class="count text-center">
-                       @ViewBag.Status
-                    </div>
-                </div>
-                <div class="col-md-3 card1">
-                    <div class="head text-center">
-                        Live Version
-                    </div>
-                    <div class="count text-center">
-                        V.6
-                    </div>
-                </div>
-                <div class="col-md-3 card1">
-                    <div class="head text-center">
-                        Related Objects
-                    </div>
-                    <div class="count text-center">
-                        2
-                    </div>
-                </div>
-                <div class="col-md-3 card1">
-                    <div class="head text-center">
-                        Featured
-                    </div>
-                    <div class="count text-center">
-                        2
-                    </div>
-                </div>
-                <div class="col-md-3 card1">
-                    <div class="head text-center">
-                        Object Size
-                    </div>
-                    <div class="count text-center">
-                        12 Kb
-                    </div>
-                </div>
-                <div class="col-md-3 card1">
-                    <div class="head text-center">
-                        Object Size
-                    </div>
-                    <div class="count text-center">
-                        12 Kb
-                    </div>
-                </div>
-                <div class="col-md-3 card1">
-                    <div class="head text-center">
-                        Object Size
-                    </div>
-                    <div class="count text-center">
-                        12 Kb
-                    </div>
+                <div class="count text-center">
+                    @ViewBag.TotalVersions
                 </div>
             </div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Status
+                </div>
+                <div style="color:#0db71b" class="count text-center">
+                    @ViewBag.Status
+                </div>
+            </div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Live Version
+                </div>
+                <div class="count text-center">
+                    V.6
+                </div>
+            </div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Related Objects
+                </div>
+                <div class="count text-center">
+                    2
+                </div>
+            </div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Featured
+                </div>
+                <div class="count text-center">
+                    2
+                </div>
+            </div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Object Size
+                </div>
+                <div class="count text-center">
+                    12 Kb
+                </div>
+            </div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Object Size
+                </div>
+                <div class="count text-center">
+                    12 Kb
+                </div>
+            </div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Object Size
+                </div>
+                <div class="count text-center">
+                    12 Kb
+                </div>
+            </div>
+        </div>
 
-            <div class="col-md-1 box3">
-                <div class="firstcommit">
-                    <h6 class="smallfont">First Commit </h6>
-                    <div style="display:block">
-                        <div class="userimg">
-                            <img src="~/images/proimg.jpg" style="width:30px" />
-                        </div>
-                        <div class="profileInfo">
-                            <h6 class="xtrasmall">Mr X</h6>
-                        </div>
+        <div class="col-md-1 box3">
+            <div class="firstcommit">
+                <h6 class="smallfont">First Commit </h6>
+                <div style="display:block">
+                    <div class="userimg">
+                        <img src="~/images/proimg.jpg" style="width:30px" />
                     </div>
-                </div>
-                <div class="xtrasmall">
-                    Application
-                    <div class="med-font ">appl1</div>
+                    <div class="profileInfo">
+                        <h6 class="xtrasmall">Mr X</h6>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-1 box4">
-                <div class="lastCommit">
-                    <h6 class="smallfont">Last Commit</h6>
-                    <div style="display:block">
-                        <div class="userimg">
-                            <img src="~/images/proimg.jpg" style="width:30px" />
-                        </div>
-                        <div class="profileInfo">
-                            <h6 class="smallfont">Mr X</h6>
-                        </div>
+            <div class="xtrasmall">
+                Application
+                <div class="med-font ">appl1</div>
+            </div>
+        </div>
+        <div class="col-md-1 box4">
+            <div class="lastCommit">
+                <h6 class="smallfont">Last Commit</h6>
+                <div style="display:block">
+                    <div class="userimg">
+                        <img src="~/images/proimg.jpg" style="width:30px" />
+                    </div>
+                    <div class="profileInfo">
+                        <h6 class="smallfont">Mr X</h6>
                     </div>
                 </div>
-                <div class="xtrasmall">
-                    Module
-                    <div class="med-font ">mod1</div>
-                </div>
+            </div>
+            <div class="xtrasmall">
+                Module
+                <div class="med-font ">mod1</div>
             </div>
         </div>
     </div>

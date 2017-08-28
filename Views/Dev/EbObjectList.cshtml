@@ -53,7 +53,7 @@
 <script>
     $('#impexp').next().css("display", "inline-block");
 </script>
-<div class="row" id="topmenu" style="">
+<div class="row" id="topmenu" style="margin-top:69px;">
     <div class="form-inline">
         <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
         @if (ViewBag.wc == "dc")
@@ -63,10 +63,10 @@
                     <button class="btn btn-default"><i class="fa fa-download" aria-hidden="true"></i> Import</button>
                     <button class="btn btn-default"><i class="fa fa-upload" aria-hidden="true"></i> Export</button>
                 </div>
-            </div>           
-            @using (Html.BeginForm(editor,whichController , FormMethod.Get, new { target = "_blank" }))
-            {              
-                <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;"/>
+            </div>
+            @using (Html.BeginForm(editor, whichController, FormMethod.Get, new { target = "_blank" }))
+            {
+                <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;" />
                 <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
             }
         }
@@ -91,7 +91,7 @@
         <div class="row objitems bg-white" name="objBox" id="searchid+@element.Value.Name">
             <div class="col-md-1">
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input">                  
+                    <input type="checkbox" class="form-check-input">
                 </div>
             </div>
             <div class="col-md-8">
@@ -102,7 +102,8 @@
                     <a style="margin-left:10px;" id="labels">
                         <span name="Status" class="label label-primary">Status</span>
                         <span name="Version" class="label label-default">v @element.Value.VersionNumber</span>
-                        @if(ViewBag.wc == "dc") {
+                        @if (ViewBag.wc == "dc")
+                        {
                             <span class="label label-success">Dependency</span>
                         }
                         <span name="Application" class="label label-danger">Application</span>
@@ -112,8 +113,8 @@
             </div>
             <div class="col-md-2 pull-right">
                 @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
-                  
-                    {
+
+                {
                     <input type="hidden" name="objid" value="@element.Value.RefId" />
                     <input type="hidden" name="tacid" value="@ViewBag.cid" />
                     <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />

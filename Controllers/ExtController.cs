@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.Routing;
 using ServiceStack.Auth;
 using Microsoft.AspNetCore.Http;
 using ServiceStack.Redis;
+using ServiceStack.Messaging;
+using ExpressBase.Objects.Objects.MQRelated;
+using ServiceStack.Messaging.Redis;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,7 +26,8 @@ namespace ExpressBase.Web.Controllers
 {
     public class ExtController : EbBaseNewController
     {
-        public ExtController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis, IMessageQueueClient _mqFactory, IMessageProducer _mqProducer) 
+            : base(_client, _redis, _mqFactory, _mqProducer) { }
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -65,8 +69,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-       
-
         public IActionResult UsrSignIn()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -76,6 +78,23 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SignUp()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+            return View();
+        }
+
+        public IActionResult SendMail()
+        {           
+            var emailMessage = new Message<EmailRequest>(new EmailRequest
+            {
+                FromAdressTitle = "Message Queue",
+                ToAddress = "ahammedunni@expressbase.com",
+                ToAdressTitle = "Ahammed Unni",
+                Subject = "Message Queue Success ",
+                BodyContent = "Mail Sent from Web Controller via Message Queue",
+            });
+
+            base.RedisMessageQueueClient.Publish((QueueNames<EmailRequest>.In), emailMessage);
+            base.RedisMessageProducer.Publish((QueueNames<EmailRequest>.In), emailMessage);
+
             return View();
         }
 

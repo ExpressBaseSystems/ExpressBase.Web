@@ -1,5 +1,5 @@
 ﻿function slideRight(leftDiv, rightDiv) {
-    $stickBtn = $("<div id='stickBtnR' class='stickBtn' style='right: 0px;' onclick=\"slideRight('" + leftDiv + "', '" + rightDiv + "')\">PropertyBox</div>");
+    $stickBtn = $("<div id='stickBtnR' class='stickBtn' onclick=\"slideRight('" + leftDiv + "', '" + rightDiv + "')\">PropertyBox</div>");
     slide("right", leftDiv, rightDiv, $stickBtn);
 };
 
@@ -22,7 +22,7 @@ function slide(dir, leftDiv, rightDiv, $stickBtn) {
 
         setTimeout(function () {
             $(document.body).append($stickBtn);
-            $stickBtn.css({ dir: (0 - ($stickBtn.width() / 2)) + "px", "top": (198 + ($stickBtn.width() / 2)) });
+            $stickBtn.css("top", (198 + ($stickBtn.width() / 2)) + "px").css(dir, (0 - ($stickBtn.width() / 2)) + "px");
             $rightDiv.hide();
         }, 301);
     }

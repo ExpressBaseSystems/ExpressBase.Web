@@ -66,12 +66,12 @@
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
 
-        if (typeof meta.description === 'string' && meta.description &&
-			(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
-            this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
-        }
+   //     if (typeof meta.description === 'string' && meta.description &&
+			//(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
+   //         this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
+   //     }
 
-        return '<tr class="pgRow" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + name + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
+        return '<tr class="pgRow" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
@@ -197,7 +197,7 @@
     };
 
     this.init = function () {
-        this.$wraper.empty();
+        this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
@@ -334,7 +334,7 @@
         this.PropsObj = props;
         console.log(JSON.stringify(props));
         console.log(JSON.stringify(metas));
-
+        
         this.InitPG();
     };
 

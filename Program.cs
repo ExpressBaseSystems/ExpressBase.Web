@@ -15,7 +15,7 @@ namespace ExpressBase.Web2
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
-                .UseUrls(urls: "http://localhost:5000/")
+                .UseUrls(urls: "http://localhost:80/")
                 .UseStartup<Startup>()
                 .Build();
 

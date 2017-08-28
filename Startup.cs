@@ -14,6 +14,9 @@ using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
 using ServiceStack.Redis;
+using ExpressBase.Objects.Objects.MQRelated;
+using ServiceStack.Messaging.Redis;
+using ServiceStack.Messaging;
 
 namespace ExpressBase.Web2
 {
@@ -61,12 +64,35 @@ namespace ExpressBase.Web2
                 return new JsonServiceClient(connectionString);
             });
 
+            var redisServer = Configuration["EbSetupConfig:RedisServer"];
+            var redisPassword = Configuration["EbSetupConfig:RedisPassword"];
+            var redisPort = Configuration["EbSetupConfig:RedisPort"];
+
             services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
             {
-                var redisServer = Configuration["EbSetupConfig:RedisServer"];
-                var redisPassword = Configuration["EbSetupConfig:RedisPassword"];
-                var redisPort = Configuration["EbSetupConfig:RedisPort"];
                 return new RedisClient(string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort));
+            });
+
+            services.AddScoped<IMessageQueueClient, RedisMessageQueueClient>(serviceProvider =>
+            {
+                var redisConnectionStringMq = string.Format("redis://{0}@{1}:{2}?ssl=true&db=1",
+                    redisPassword, redisServer, redisPort);
+
+                var redisFactory = new PooledRedisClientManager(redisConnectionStringMq);
+                var mqHost = new RedisMqServer(redisFactory, retryCount: 2);
+
+                return mqHost.CreateMessageQueueClient() as RedisMessageQueueClient;
+            });
+
+            services.AddScoped<IMessageProducer, RedisMessageProducer>(serviceProvider =>
+            {
+                var redisConnectionStringMq = string.Format("redis://{0}@{1}:{2}?ssl=true&db=1",
+                    redisPassword, redisServer, redisPort);
+
+                var redisFactory = new PooledRedisClientManager(redisConnectionStringMq);
+                var mqHost = new RedisMqServer(redisFactory, retryCount: 2);
+
+                return mqHost.CreateMessageProducer() as RedisMessageProducer;
             });
         }
 
@@ -106,6 +132,8 @@ namespace ExpressBase.Web2
                     template: "{controller=Ext}/{action=Index}");
 
             });
+
+          
         }
     }
 }

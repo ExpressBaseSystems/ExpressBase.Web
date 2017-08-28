@@ -66,7 +66,7 @@
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
-        this.$propGrid.show().css("visibility", "visible");
+        //this.$propGrid.show().css("visibility", "visible");
         this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
         $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
     };

@@ -9,12 +9,13 @@ namespace ExpressBase.Web.Components
 {
     public class ObjectDashboardViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(string objid,string objname,int totVer,ObjectLifeCycleStatus status)
+        public async Task<IViewComponentResult> InvokeAsync(string objid, string objname, int totVer, ObjectLifeCycleStatus status, string desc)
         {
             ViewBag.ObjName = objname;
-            ViewBag.TotalVersions= totVer;
+            ViewBag.TotalVersions = totVer;
             ViewBag.Status = status;
-             return View();
+            ViewBag.description = desc;
+            return View();
 
         }
     }

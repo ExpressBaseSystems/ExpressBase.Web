@@ -1,12 +1,9 @@
-﻿.pgB .nav-tabs {
-    margin-left: 10px;      
-}
+﻿
 
 .tab-menu{
     width:100%;
-    height:50px;
+    height:34px;
     background-color:#fafafa;
-    margin-left:10px;
     margin-top: 41px;
     position:fixed;
     z-index: 100;
@@ -27,17 +24,29 @@
     border-right: 0;
 }
 
-.reportmenu .btn-default {
+.reportmenu .btn{
     color: #333 !important;
     border: none !important;
     background-color: #fafafa !important;
     
 }
-.tab-menu .btn-default{
+.tab-menu .btn{
     color: #333 !important;
     border: none !important;
     background-color: #fafafa !important;
 }
+.shapes-tank {
+    width: 200px;
+    height: 60px;
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+    border-radius: 4px;
+    margin-left: 0px;
+}
+    .shapes-tank .btn{
+        background-color: white;
+        border: none;
+    }
  #pagesize{       
      height: 28px;
      border-color: #dedede;
@@ -50,11 +59,12 @@
     color: #000000;
 }
 
-.headersections button {
+.headersections .btn {
     align-self: flex-end;
     border:none;
     background-color:#fafafa;
     color:#333;
+
 }
 
 .gutter.gutter-vertical {
@@ -228,23 +238,23 @@
 }
 .side-toolbar{
        min-height: 1000px;
-    padding-left: 10px;
+    padding-left: 0;
     background-color:white;
     z-index:1;
-    margin-top:91px;
+    margin-top:73px;
 }
 .PGgrid{
     min-height: 1000px;
     padding:0;
-    margin-top:91px;
+    margin-top:73px;
 }
-.title{
+.title {
     width: 104px;
     height: 20px;
     background-color: #fbf7f7;
     position: fixed;
-    top: 194px;
-    left: 219px;   
+    top: 176px;
+    left: 225px;
     border: 1px solid #aaaaaa;
     z-index: 200;
 }

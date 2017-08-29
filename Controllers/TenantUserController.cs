@@ -38,17 +38,17 @@ namespace ExpressBase.Web2.Controllers
 
         public IActionResult DataVisualizations()
         {
-            List<EbObjectWrapper> dvlist = new List<EbObjectWrapper>();
-            EbObjectResponse fr = null;
-            var EbConfig = ViewBag.EbConfig;
-           // IServiceClient client = EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            fr = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, TenantAccountId = ViewBag.cid });
-            foreach (var element in fr.Data)
-                //if (element.EbObjectType==EbObjectType.DataVisualization)
-                //    {
-                dvlist.Add(element);
-            //    }
-            ViewBag.dvlist = dvlist;
+            //List<EbObjectWrapper> dvlist = new List<EbObjectWrapper>();
+            //EbObjectResponse fr = null;
+            //var EbConfig = ViewBag.EbConfig;
+            //// IServiceClient client = EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            //fr = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, TenantAccountId = ViewBag.cid });
+            //foreach (var element in fr.Data)
+            //    //if (element.EbObjectType==EbObjectType.DataVisualization)
+            //    //    {
+            //    dvlist.Add(element);
+            ////    }
+            //ViewBag.dvlist = dvlist;
             return View();
         }
 

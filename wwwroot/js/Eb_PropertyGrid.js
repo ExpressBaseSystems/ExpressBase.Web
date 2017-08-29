@@ -108,9 +108,9 @@
             }
         }
         // call OnChangeExec functions
-        for (var prop in this.OnChangeExec) {
+        for (var prop1 in this.OnChangeExec) {
 
-            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input", this.OnChangeExec[prop].bind(this.PropsObj, this));
+            $("#" + this.wraperId + " [name=" + prop1 + "Tr]").on("change", "input", this.OnChangeExec[prop1].bind(this.PropsObj, this));
 
                 //if (this.OnChangeExec[prop].bind(this.PropsObj, this)() === false)
         }

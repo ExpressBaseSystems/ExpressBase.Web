@@ -212,7 +212,7 @@ margin-left:5px;
             $.each(result.columns, function (i, columnCollection) {
                 $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
                 $.each(columnCollection, function (j, obj) {
-                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div name='EbDataTableColoums' id='col" + j + "' class='coloums draggable textval'> " + obj.columnName + "</div></li>");                
+                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div eb-type='EbColoums' id='col" + j + "' class='coloums draggable textval'> " + obj.columnName + "</div></li>");                
                 });
             });
             $('#data-table-list').treed();

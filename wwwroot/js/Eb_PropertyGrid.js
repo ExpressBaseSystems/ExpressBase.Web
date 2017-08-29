@@ -6,6 +6,7 @@
     this.controlsDDContSelec = "#" + this.wraperId + " .controls-dd-cont";
     this.objects = [];
     this.PropsObj = null;
+    this.$hiddenProps = {};
 
     this.getvaluesFromPG = function () {
         // function that will update and return tha values back from the property grid
@@ -64,7 +65,7 @@
         }
 
         if (meta.OnChangeExec)
-        this.OnChangeExec[name] = meta.OnChangeExec;
+            this.OnChangeExec[name] = meta.OnChangeExec;
 
         //     if (typeof meta.description === 'string' && meta.description &&
         //(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
@@ -88,7 +89,7 @@
     };
 
     this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">' + displayName
+        return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">' + displayName
             + '<span class="bs-caret" style="float: right;margin-right: 10px;"><span class="caret"></span></span></td></tr>';
     };
 
@@ -109,10 +110,9 @@
         }
         // call OnChangeExec functions
         for (var prop in this.OnChangeExec) {
-
-            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input", this.OnChangeExec[prop].bind(this.PropsObj, this));
-
-                //if (this.OnChangeExec[prop].bind(this.PropsObj, this)() === false)
+            var func = this.OnChangeExec[prop].bind(this.PropsObj, this);
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input, select", func);
+            func();
         }
     };
 
@@ -120,8 +120,25 @@
         $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
     };
 
-    this.MakeReadWrite= function (prop) {
+    this.MakeReadWrite = function (prop) {
         $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false);
+    };
+
+    this.HideProperty = function (prop) {
+        if (this.$hiddenProps[prop])
+            return;
+        var $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
+        this.$hiddenProps[prop] = { "$Tr": $Tr, "g": $Tr.attr("group") };
+        $Tr.remove();
+    };
+
+    this.ShowProperty = function (prop) {
+        if (!this.$hiddenProps[prop])
+            return;
+        var $Tr = this.$hiddenProps[prop].$Tr;
+        var g = this.$hiddenProps[prop].g;
+        $Tr.insertAfter($("#" + this.wraperId + " [group-h=" + g + "]"));
+        this.$hiddenProps[prop] = null;
     };
 
     this.buildGrid = function () {

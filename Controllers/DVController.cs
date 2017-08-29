@@ -116,8 +116,8 @@ namespace ExpressBase.Web.Controllers
         //}
 
 
-        [HttpGet]
-        public IActionResult dv(string dvRefId)
+        [HttpGet][HttpPost]
+        public IActionResult dv(string objid)
         {
             FetchAllDataSources();
             FetchAllDataVisualizations();
@@ -129,13 +129,13 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Meta = _jsResult.Meta;
 
             //Edit mode
-            if (!string.IsNullOrEmpty(dvRefId))
+            if (!string.IsNullOrEmpty(objid))
             {
-                var dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
+                var dvObject = this.Redis.Get<EbDataVisualization>(objid);
                 dvObject.AfterRedisGet(this.Redis);
                 ViewBag.dvObject = dvObject;
             }
-
+            ViewBag.dvRefId = objid;
             return View();
         }
 
@@ -165,9 +165,9 @@ namespace ExpressBase.Web.Controllers
         //    return View();
         //}
         
-        public IActionResult dvCommon(string dsRefId, string Meta)
+        public IActionResult dvCommon(string dsRefId, string Meta, string dvRefId)
         {
-            return ViewComponent("DataVisualization", new { dsRefid = dsRefId, Meta = Meta });
+            return ViewComponent("DataVisualization", new { dsRefid = dsRefId, Meta = Meta , dvRefId = dvRefId });
         }
 
         //public PartialViewResult DataVisualisation(int dsid)
@@ -293,37 +293,45 @@ namespace ExpressBase.Web.Controllers
 
      
 
-        public JsonResult SaveSettings(int dsid, string json, string dvid)
+        public JsonResult SaveSettings(string json, string RefId)
         {
             var req = this.HttpContext.Request.Form;
-            Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-            var ds = new EbObjectSaveOrCommitRequest();
-            if (!string.IsNullOrEmpty(ds.RefId))
-                ds.IsSave = true;
-            ds.RefId = dvid;
-            ds.EbObjectType = (int)EbObjectType.DataVisualization;
-            ds.Name = _dict["dvName"].ToString();
-            ds.Description = "abcd";
-            ds.ChangeLog = "";
-            ds.Json = EbSerializers.Json_Serialize(new EbDataVisualization
+            //Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+            string SaveId;
+            if (string.IsNullOrEmpty(RefId))
             {
-                Name = _dict["dvName"].ToString(),
-                //settingsJson = _dict.ToString(),
-                DataSourceRefId = dsid.ToString(),
-                EbObjectType = EbObjectType.DataVisualization
-            });
-            ds.Status = ObjectLifeCycleStatus.Live;
-            ds.Token = ViewBag.token;
-            ds.TenantAccountId = ViewBag.cid;
-            ds.Relations = dsid.ToString();
-
-            var result = this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
-            //if (result.Id > 0)
-            //    dvid = result.Id;
-            if (ViewBag.wc == "dc")
-                this.Redis.Set(string.Format("{0}", result.RefId), json);
+                var ds = new EbObjectFirstCommitRequest();
+                ds.EbObjectType = (int)EbObjectType.DataVisualization;
+                //ds.Name = _dict["dvName"].ToString();
+                ds.Json = json;
+                //ds.Description = "abcd";
+                //ds.EbObject = EbSerializers.Json_Deserialize<EbDataVisualization>(json);
+                //ds.EbObject = JsonConvert.DeserializeObject<EbDataVisualization>(json);
+                //(ds.EbObject as EbDataVisualization).EbObjectType = EbObjectType.DataVisualization;
+                ds.Status = ObjectLifeCycleStatus.Live;
+                ds.Relations = "aaa";
+                var result = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
+                SaveId = result.RefId;
+            }
             else
-                this.Redis.Set(string.Format("{0}_uid_{1}", result.RefId, ViewBag.UId), json);
+            {
+                var ds = new EbObjectSubsequentCommitRequest();
+                ds.EbObjectType = (int)EbObjectType.DataVisualization;
+                //ds.Name = _dict["dvName"].ToString();
+                //ds.Description = "abcd";
+                ds.Json = json;
+                //ds.EbObject = EbSerializers.Json_Deserialize<EbDataVisualization>(json);
+                //(ds.EbObject as EbDataVisualization).EbObjectType = EbObjectType.DataVisualization;
+                ds.Status = ObjectLifeCycleStatus.Live;
+                ds.UserId = ViewBag.UId;
+                ds.Relations = req["rel_obj"];
+                ViewBag.IsNew = "false";
+                ds.IsSave = false;
+                ds.RefId = RefId;
+                ds.ChangeLog = req["changeLog"];
+                var result = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
+                SaveId = result.RefId;
+            }
 
             return Json("Success");
         }

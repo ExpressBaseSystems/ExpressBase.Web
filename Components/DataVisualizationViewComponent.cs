@@ -32,36 +32,22 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dsRefid, string Meta)
+        public async Task<IViewComponentResult> InvokeAsync(string dsRefid, string Meta, string dvRefId)
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
-            RetValObj xxx = null;
             if (!string.IsNullOrEmpty(dsRefid))
             {
-                //var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = dsRefid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
-                //var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
-
-                //if (!string.IsNullOrEmpty(fdid))
-                //{
-                //    //get fd obj
-                //    resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
-
-                //    //redundant - REMOVE JITH
-                //    var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
-
-                //    ViewBag.HtmlHead = _filterDialog.GetHead();
-                //    ViewBag.HtmlBody = _filterDialog.GetHtml();
-                //}
-
-                ViewBag.data = getDVObject(dsRefid);
-                //Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-                //ViewBag.dsid = _dict["DataSourceRefId"];
-                ////ViewBag.dvname = _dict["dvName"];
-                //ViewBag.tableId = "dv" + ViewBag.dsid.ToString();
-                //ViewBag.data = data;
-                //xxx = new RetValObj { DSId = _dict["DataSourceRefId"].ToString(), DVName = _dict["Name"].ToString(), TableId = "dv" + _dict["DataSourceRefId"].ToString(), Data = data };
+                if (!string.IsNullOrEmpty(dvRefId))
+                {
+                    var dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
+                    dvObject.AfterRedisGet(this.Redis);
+                    ViewBag.data = dvObject;
+                }
+                else
+                    ViewBag.data = getDVObject(dsRefid);
             }
             ViewBag.Meta = Meta;
+            ViewBag.dvRefId = dvRefId;
             return View();
         }
 

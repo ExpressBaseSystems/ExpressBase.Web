@@ -23,10 +23,8 @@
 @{
     string head = string.Empty;
     string html = string.Empty;
-
-    var dvid = Convert.ToInt32(ViewBag.dvid);
-    var dsid = Convert.ToInt32(ViewBag.dsid);
-    var id = Convert.ToInt32(ViewBag.DataId);
+    
+    var dvRefId = ViewBag.dvRefId;
     var dvname = (ViewBag.dvObject != null) ? ViewBag.dvObject.Name : "* Untitled *";
 }
 <div class="well well-sm" id="devpanel" style="margin-top:60px;">
@@ -58,7 +56,7 @@
 <div id="filterDia">
 @if (ViewBag.dvObject != null)
 {
-    @await Component.InvokeAsync("DataVisualization", new { dsid = dsid });
+    @await Component.InvokeAsync("DataVisualization", new { dsRefid = ViewBag.dvObject.DataSourceRefId, Meta = JsonConvert.SerializeObject(Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length - 11)))), dvRefId = ViewBag.dvRefId });
 }
 </div>
 
@@ -70,7 +68,7 @@
             $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
             $.LoadingOverlay("show");
             
-            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid, Meta: JSON.stringify( @Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length-11))) )}, function () {
+            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid, Meta: JSON.stringify( @Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length-11))) ), dvRefId: null }, function () {
                 $.LoadingOverlay("hide");
                 });
 

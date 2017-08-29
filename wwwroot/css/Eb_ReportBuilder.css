@@ -183,13 +183,11 @@
     z-index: -1;
 }
 
-#PageContainer {   
-}
-
 .pGreportBuilder{
     margin-top: 3px;
     position: fixed;
     margin-right: 10px;
+    margin-left:10px;
 }
 .head_Box1{
     display: flex;

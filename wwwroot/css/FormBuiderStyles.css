@@ -271,7 +271,7 @@
 }
 
     .pgTdval .dropdown-toggle:hover {
-        background-color:transparent;
+        background-color: transparent;
     }
 
 .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
@@ -458,3 +458,13 @@
     flex-flow: column;
     height: 100%;
 }
+
+.icon-cont {
+    display: inline-block;
+    padding: 0px 4px;
+}
+
+    .icon-cont:hover {
+        color: black;
+        background-color: #aaaaaa;
+    }

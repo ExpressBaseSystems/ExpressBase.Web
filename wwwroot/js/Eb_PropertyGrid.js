@@ -6,9 +6,10 @@
     this.controlsDDContSelec = "#" + this.wraperId + " .controls-dd-cont";
     this.objects = [];
     this.PropsObj = null;
+    this.$hiddenProps = {};
 
     this.getvaluesFromPG = function () {
-        // function that will update and return tha values back from the property grid
+        // function that will update and return the values back from the property grid
         for (var prop in this.getValueFuncs) {
             if (typeof this.getValueFuncs[prop] !== 'function') continue;
             this.PropsObj[prop] = this.getValueFuncs[prop]();
@@ -64,7 +65,7 @@
         }
 
         if (meta.OnChangeExec)
-        this.OnChangeExec[name] = meta.OnChangeExec;
+            this.OnChangeExec[name] = meta.OnChangeExec;
 
         //     if (typeof meta.description === 'string' && meta.description &&
         //(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
@@ -88,8 +89,9 @@
     };
 
     this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">' + displayName
-            + '<span class="bs-caret" style="float: right;margin-right: 10px;"><span class="caret"></span></span></td></tr>';
+        return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">'
+            + '<span class="bs-caret" style= "margin-right: 5px;" > <span class="caret"></span></span > ' + displayName
+            + '</td></tr > ';
     };
 
     this.isContains = function (obj, val) {
@@ -99,7 +101,7 @@
         return false;
     };
 
-    this.CallpostinitFns = function () {
+    this.CallpostInitFns = function () {
         // Call the post init functions 
         for (var prop in this.postCreateInitFuncs) {
             if (typeof this.postCreateInitFuncs[prop] === 'function') {
@@ -109,10 +111,9 @@
         }
         // call OnChangeExec functions
         for (var prop in this.OnChangeExec) {
-
-            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input", this.OnChangeExec[prop].bind(this.PropsObj, this));
-
-                //if (this.OnChangeExec[prop].bind(this.PropsObj, this)() === false)
+            var func = this.OnChangeExec[prop].bind(this.PropsObj, this);
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input, select", func);
+            func();
         }
     };
 
@@ -120,8 +121,25 @@
         $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
     };
 
-    this.MakeReadWrite= function (prop) {
+    this.MakeReadWrite = function (prop) {
         $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false);
+    };
+
+    this.HideProperty = function (prop) {
+        if (this.$hiddenProps[prop])
+            return;
+        var $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
+        this.$hiddenProps[prop] = { "$Tr": $Tr, "g": $Tr.attr("group") };
+        $Tr.remove();
+    };
+
+    this.ShowProperty = function (prop) {
+        if (!this.$hiddenProps[prop])
+            return;
+        var $Tr = this.$hiddenProps[prop].$Tr;
+        var g = this.$hiddenProps[prop].g;
+        $Tr.insertAfter($("#" + this.wraperId + " [group-h=" + g + "]"));
+        this.$hiddenProps[prop] = null;
     };
 
     this.buildGrid = function () {
@@ -149,7 +167,14 @@
 
     this.buildRows = function () {
 
-        for (var prop in this.PropsObj) {
+        var propArray = [];
+        for (var prop in this.PropsObj) { propArray.push(prop); }
+        propArray.sort();
+        var prop = null;
+
+        for (var i in propArray) {
+
+            prop = propArray[i];
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
             if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop))
                 continue;
@@ -213,7 +238,7 @@
 
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
-        this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
+        this.$wraper.append($('<div class="pgHead"><div class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.controlsDDContSelec + " .selectpicker").on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
@@ -308,7 +333,7 @@
 
         this.buildGrid();
 
-        this.CallpostinitFns();
+        this.CallpostInitFns();
 
         this.getvaluesFromPG();//no need
 

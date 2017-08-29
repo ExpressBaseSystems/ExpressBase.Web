@@ -1,5 +1,4 @@
-﻿
-var pages = {
+﻿var pages = {
     A4: {
         width: '21cm',
         height: '29.7cm'
@@ -57,6 +56,11 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
 
     this.splitarray = [];
     this.btn_indx = null;
+
+    $('#propGrid').show();
+    var pg = new Eb_PropertyGrid("propGrid");
+    pg.setObject({ ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }]);
+
 
     this.ruler = function () {
         $('.ruler,.rulerleft').show();
@@ -693,11 +697,6 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         $(this).css("background-color", "none");
     };
 
-    this.propertyGrid = function () {
-        $('#propGrid').show();
-        var pg = new Eb_PropertyGrid("propGrid", { ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }]);
-    };
-
     this.savefile = function () {
 
         this.report = new Object();
@@ -709,6 +708,7 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.report.subsection.subsection.subesection = [];
 
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
+        console.log(JSON.stringify(this.report));
         return this.report;
     };
 
@@ -745,7 +745,7 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
     this.Commit = function () {
         var _json = this.savefile();
         alert(_json);
-        if (this.IsNew = "true") {
+        if (this.IsNew === "true") {
             var Obj_Id = null;
         }
         var Name = $('#RptName').val();
@@ -769,7 +769,7 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.pgC = this.createPagecontainer();
         this.createPage(this.pgC);
         this.DragDrop_Items();
-        this.propertyGrid();
+
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.newPage).on('click', this.createNewPage.bind(this));
         $(this.Commitbtnid).on('click', this.Commit.bind(this));

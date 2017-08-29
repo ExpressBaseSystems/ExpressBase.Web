@@ -84,12 +84,12 @@
                 <div class="form-group">
                     <button class="btn" data-toggle="tooltip" data-placement="bottom" title="Trash"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 </div>
-                <div class="form-group">
+                @*<div class="form-group">
                     <input type="text" id="RptName">
                 </div>
                 <div class="form-group">
                     <textarea  id="RptDesc"></textarea>
-                </div>
+                </div>*@
                 <div class="form-group">
                     <button class="btn" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
                 </div>
@@ -154,7 +154,7 @@
                         @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
                     </div>
                 </div>
-                <div class="col-md-8" style="padding-right:0;margin-top:73px">
+                <div class="col-md-8" style="padding-right:0;margin-top:84px">
                     <div class="title text-center" style="display:none"></div>
                     <div class='ruler' style="display:none"></div>
                     <div class='rulerleft' style="display:none"></div>

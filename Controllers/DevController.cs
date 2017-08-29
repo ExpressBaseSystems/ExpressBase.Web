@@ -111,7 +111,7 @@ namespace ExpressBase.Web.Controllers
         private string GetHtml2Render(BuilderType type, string objid)
         {
             IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objid, VersionId = Int32.MaxValue, EbObjectType = (int)type, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectLatestCommitedResponse>(new EbObjectLatestCommitedRequest { RefId = objid});
             var rlist = resultlist.Data[0];
             string _html = string.Empty;
 
@@ -128,32 +128,10 @@ namespace ExpressBase.Web.Controllers
             return _html;
         }
 
-        public string GetByteaEbObjects_json()
-        {
-            var req = this.HttpContext.Request.Form;
-            var _type = req["Ebobjtype"];
-            BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), _type, true);
-            IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = Convert.ToInt32(req["objid"]), VersionId = Int32.MaxValue, EbObjectType = (int)_EbObjectType, Token = ViewBag.token });
-            var rlist = resultlist.Data[0];
-            string _html = "";
-            string _head = "";
-            var filterForm = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json);
-            if (filterForm != null)
-            {
-                //_html = @"<div style='margin-top:10px;' id='filterBox'>";
-                _html += filterForm.GetHtml();
-                _head += filterForm.GetHead();
-                //_html += @"</div>";
-            }
-
-            return _html + "<script>" + _head + "</script>";
-        }
-
         public EbObjectWrapper GetFormObj(string objId, int objType)
         {
             IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = objId, VersionId = Int32.MaxValue, EbObjectType = objType, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectLatestCommitedResponse>(new EbObjectLatestCommitedRequest { RefId = objId});
             var rlist = resultlist.Data[0];
             return rlist;
         }
@@ -224,8 +202,7 @@ namespace ExpressBase.Web.Controllers
 
             IServiceClient client = this.ServiceClient;
 
-
-            var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { RefId = null, VersionId = Int32.MaxValue, EbObjectType = (int)type, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+            var resultlist = client.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = (int)type});
             var rlist = resultlist.Data;
 
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();

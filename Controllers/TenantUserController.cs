@@ -253,7 +253,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult ManageRoles()
         {
             //IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid});
+            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = (int)EbObjectType.Application});
             ViewBag.dict = resultlist.Data;
             return View();
         }
@@ -275,7 +275,7 @@ namespace ExpressBase.Web2.Controllers
                 ViewBag.DominantRefId = fr.Data["dominantrefid"];
             }
 
-            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.Application, TenantAccountId = ViewBag.cid});
+            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {EbObjectType = (int)EbObjectType.Application});
             ViewBag.dict = resultlist.Data;
             ViewBag.roleid = itemid;
 
@@ -293,7 +293,7 @@ namespace ExpressBase.Web2.Controllers
                 _permissionsData = fr.Permissions;
             }
 
-            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { DominantId = DominantRefiid, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid });
+            var resultlist = this.ServiceClient.Get<EbObjectRelationsResponse>(new EbObjectRelationsRequest { DominantId = DominantRefiid, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid });
             ViewBag.dict = resultlist.Data;
             string html = @"<thead><tr><th>@Header</th></tr></thead><tbody>@tbody</tbody>";
             string header = string.Empty;

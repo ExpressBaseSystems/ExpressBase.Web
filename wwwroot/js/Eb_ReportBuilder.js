@@ -231,7 +231,7 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
             this.$sec.append(this.$spl);
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
             $(this.$sec).children('.gutter').remove();
-            this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
+            this.$spl.droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
 
             Split(this.splitarray, {
                 direction: 'vertical',
@@ -746,7 +746,7 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         var _json = this.savefile();
         alert(_json);
         if (this.IsNew = "true") {
-            var Obj_Id =null;
+            var Obj_Id = null;
         }
         var Name = $('#RptName').val();
         var Description = $('#RptDesc').val();
@@ -772,7 +772,7 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.propertyGrid();
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.newPage).on('click', this.createNewPage.bind(this));
-        $(this.Commitbtnid).on('click', this.Commit.bind(this))
+        $(this.Commitbtnid).on('click', this.Commit.bind(this));
 
     };
 

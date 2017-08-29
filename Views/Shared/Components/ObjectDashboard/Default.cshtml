@@ -269,6 +269,11 @@
         $('#minmize').click(function () {
             $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");
             var t = $('.dashbord').toggle();
+            if ($('.dashbord').css("display") === "none")
+                $('.codedit').css("margin-top", "102px");
+            else
+                $('.codedit').css("margin-top", "0px");       
+
             console.log(t);
         });
     });

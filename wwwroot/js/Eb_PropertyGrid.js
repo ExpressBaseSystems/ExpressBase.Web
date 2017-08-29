@@ -30,11 +30,8 @@
             // If options create drop-down list
         } else if (type === 1 && Array.isArray(meta.options)) {
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.options);
-            if (this.getValueFuncs)
-                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
-
-            if (this.postCreateInitFuncs)
-                this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', value); };
+            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+            this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', value); };
 
             // If number 
         } else if (type === 2) {
@@ -66,12 +63,15 @@
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
 
-        if (typeof meta.description === 'string' && meta.description &&
-			(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
-            this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
-        }
+        if (meta.OnChangeExec)
+        this.OnChangeExec[name] = meta.OnChangeExec;
 
-        return '<tr class="pgRow" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + name + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
+        //     if (typeof meta.description === 'string' && meta.description &&
+        //(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
+        //         this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
+        //     }
+
+        return '<tr class="pgRow" name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
@@ -107,6 +107,21 @@
                 this.postCreateInitFuncs[prop] = null;// just in case make sure we are not holding any reference to the functions
             }
         }
+        // call OnChangeExec functions
+        for (var prop in this.OnChangeExec) {
+
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input", this.OnChangeExec[prop].bind(this.PropsObj, this));
+
+                //if (this.OnChangeExec[prop].bind(this.PropsObj, this)() === false)
+        }
+    };
+
+    this.MakeReadOnly = function (prop) {
+        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
+    };
+
+    this.MakeReadWrite= function (prop) {
+        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false);
     };
 
     this.buildGrid = function () {
@@ -192,48 +207,48 @@
         $("#" + this.OEctrlsContId).empty().append(this.getOEhtml());
 
         this.OE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
-        
+
         $("#" + this.wraperId + " .pgObjEditor-Cont").on("click", ".colTile", this.colTileFocusFn.bind(this));
     };
 
     this.init = function () {
-        this.$wraper.empty();
+        this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead">Properties <i class="fa fa-thumb-tack pin" onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')" aria-hidden="true"></i></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.controlsDDContSelec + " .selectpicker").on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
 
         var OEHTML = '<div class="pgObjEditor-bg">'
-                                            + '<div class="pgObjEditor-Cont">'
-                                                + '<div class="modal-header">'
-                                                    + '<button type="button" class="close" onclick="$(\'#' + this.wraperId + ' .pgObjEditor-bg\').hide();" >&times;</button>'
-                                                    + '<h4 class="modal-title">Column Settings</h4>'
-                                                + '</div>'
-                                                + '<div class="modal-body">'
-                                                    + '<table class="table table-bordered editTbl">'
+            + '<div class="pgObjEditor-Cont">'
+            + '<div class="modal-header">'
+            + '<button type="button" class="close" onclick="$(\'#' + this.wraperId + ' .pgObjEditor-bg\').hide();" >&times;</button>'
+            + '<h4 class="modal-title">Column Settings</h4>'
+            + '</div>'
+            + '<div class="modal-body">'
+            + '<table class="table table-bordered editTbl">'
 
-                                                       + '<tbody>'
-                                                            + '<tr>'
-                                                                + '<td style="padding: 0px;">'
-                                                                    + '<div class="ObjEditor-controls-head" >Controls </div>'
-                                                                    + '<div id="' + this.OEctrlsContId + '" class="OEctrlsCont"></div>'
-                                                                + '</td>'
-                                                                + '<td style="padding: 0px;"><div id="' + this.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>'
-                                                            + '</tr>'
-                                                        + '</tbody>'
-                                                    + '</table>'
-                                                + '</div>'
-                                                + '<div class="modal-footer">'
+            + '<tbody>'
+            + '<tr>'
+            + '<td style="padding: 0px;">'
+            + '<div class="ObjEditor-controls-head" >Controls </div>'
+            + '<div id="' + this.OEctrlsContId + '" class="OEctrlsCont"></div>'
+            + '</td>'
+            + '<td style="padding: 0px;"><div id="' + this.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>'
+            + '</tr>'
+            + '</tbody>'
+            + '</table>'
+            + '</div>'
+            + '<div class="modal-footer">'
 
-                                                                        + '<div class="sub-controls-DD-cont pull-left">'
-                                                                            + '<select class="selectpicker" data-live-search="true"><option>Td</option> </select>'
-                                                                            + '<button type="button" id="editObj_add" class="editObj-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
-                                                                        + '</div>'
+            + '<div class="sub-controls-DD-cont pull-left">'
+            + '<select class="selectpicker" data-live-search="true"><option>Td</option> </select>'
+            + '<button type="button" id="editObj_add" class="editObj-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
+            + '</div>'
 
-                                                    + '<button type="button" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgObjEditor-bg\').hide();">Close</button>'
-                                                + '</div>'
-                                            + '</div>'
-                                        + '</div>';
+            + '<button type="button" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgObjEditor-bg\').hide();">Close</button>'
+            + '</div>'
+            + '</div>'
+            + '</div>';
         $(this.$wraper).append(OEHTML);
 
         $("#" + this.wraperId + " .pgObjEditor-Cont").on("click", ".editObj-add", this.pgObjEditAddFn.bind(this));
@@ -243,9 +258,9 @@
 
     this.pgObjEditAddFn = function () {
         var tile = '<div class="colTile" id="' + "" + '" tabindex="1" onclick="$(this).focus()">'
-                        + 'Td 1 '
-                        + '<button type="button" class="close">&times;</button>'
-                    + '</div>';
+            + 'Td 1 '
+            + '<button type="button" class="close">&times;</button>'
+            + '</div>';
         $("#" + this.OEctrlsContId).append(tile);
     };
 
@@ -258,13 +273,13 @@
         $.each(this.PropsObj.Controls.$values, function (i, control) {
             var type = control.$type.split(",")[0].split(".")[2];
             _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()">'
-                        + control.Name
-                        + '<button type="button" class="close">&times;</button>'
-                    + '</div>';
+                + control.Name
+                + '<button type="button" class="close">&times;</button>'
+                + '</div>';
         })
         return _html;
     };
-    
+
 
     this.InitPG = function () {
         this.propNames = [];
@@ -276,11 +291,12 @@
         this.propertyRowsHTML = { 'Misc': '' };
         this.groupsHeaderRowHTML = {};
         this.postCreateInitFuncs = {};
+        this.OnChangeExec = {};
         this.getValueFuncs = {};
 
         this.pgId = this.wraperId + this.pgIdSequence++;
         this.currGroup = null;
-        
+
         this.innerHTML = '<table class="table-bordered table-hover pg-table">';
 
         this.$PGcontainer.empty();
@@ -309,11 +325,11 @@
 
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", function (e) {
             $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(e.target.value);
-            $( this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
+            $(this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
         }.bind(this));
 
-        new dragula([document.getElementById( this.OEctrlsContId )]);
-        
+        new dragula([document.getElementById(this.OEctrlsContId)]);
+
     };
 
     this.setObject = function (props, metas) {

@@ -84,20 +84,6 @@
         outline: 0;
     }
 
-    .shapes-tank {
-        width: 95%;
-        height: 50px;
-        border: 1px solid #eee;
-        background-color: #fafafa;
-        margin: 2%;
-        border-radius: 4px;
-    }
-
-        .shapes-tank .btn {
-            background-color: #fafafa;
-            border: none;
-        }
-
     .select2-container {
         width: 100% !important;
     }
@@ -201,44 +187,6 @@ margin-left:5px;
         </ul>
     </li>
 </ul>
-<div style="margin-left:2%">Shapes</div>
-
-<div class="shapes-tank">
-    <button class="btn btn-default btn-xs shapes" id="circle" data-toggle="tooltip" data-placement="bottom" title="Circle"><i class="fa fa-circle-thin fa-lg" aria-hidden="true"></i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="rectangle" data-toggle="tooltip" data-placement="bottom" title="Rectangle"><i class="fa fa-square-o fa-lg" aria-hidden="true"></i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="arrow-right" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-right fa-lg" aria-hidden="true"></i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="arrow-left" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-left fa-lg" aria-hidden="true"></i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="arrow-up" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-up fa-lg" aria-hidden="true"></i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="arrow-down" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-down fa-lg" aria-hidden="true"></i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="by-dir-arrow-h" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="by-dir-arrow-v" data-toggle="tooltip" data-placement="bottom" title="By directional Arrow"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="h-line" data-toggle="tooltip" data-placement="bottom" title="Horrizontal Line"><i> __ </i></button>
-    
-    <button class="btn btn-default btn-xs shapes" id="v-line" data-toggle="tooltip" data-placement="bottom" title="Vertical Line"><i> | </i></button>
-</div>
-
-<div style="margin-left:8%;margin-top: 8%;">
-    <div class="form-inline">
-        <div class="form-group">            
-            <button class="btn btn-default btn-sm qr-Br-img-btn draggable" id="pg-img" data-toggle="tooltip" data-placement="bottom" title="Add image"><i class="fa fa-picture-o fa-2x" aria-hidden="true"></i></button>
-        </div>
-        <div class="form-group">
-            <button class="btn btn-default btn-sm qr-Br-img-btn draggable" id="Br-code" data-toggle="tooltip" data-placement="bottom" title="Bar code"><i class="fa fa-barcode fa-2x" aria-hidden="true"></i></button>
-        </div>
-        <div class="form-group">
-            <button class="btn btn-default btn-sm qr-Br-img-btn draggable" id="Qr" data-toggle="tooltip" data-placement="bottom" title="Qr Code"><i class="fa fa-qrcode fa-2x" aria-hidden="true"></i></button>
-        </div>
-    </div>
-</div>
-
 <script type="text/javascript">
 
     $(".slectDs").select2();
@@ -258,15 +206,22 @@ margin-left:5px;
                 DrawColumnTree(result)
             }
         });
+        
     });
     function DrawColumnTree(result) {
             $.each(result.columns, function (i, columnCollection) {
                 $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
                 $.each(columnCollection, function (j, obj) {
-                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div id='" + j + "' class='draggable textval'> " + obj.columnName + "</div></li>");
+                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div name='EbDataTableColoums' id='col" + j + "' class='coloums draggable textval'> " + obj.columnName + "</div></li>");                
                 });
             });
             $('#data-table-list').treed();
+            $('.draggable').draggable({
+                cancel: "a.ui-icon",
+                revert: "invalid",
+                helper: "clone",
+                cursor: "move",
+            });
         }
 
 </script>

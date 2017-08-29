@@ -36,11 +36,14 @@ var PageElements = function (id, left, top, width, height) {
     this.height = height;
 };
 
-var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, custunit) {
+var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, custWidth, custunit) {
     this.savebtnid = saveBtnid;
     this.newPage = newPage;
     this.incrId = 0;
     this.type = type;
+    this.Commitbtnid = commit;
+    this.IsNew = Isnew;
+    this.Rel_object;
 
     if (this.type === 'custom-size') {
         this.height = custHeight + custunit;
@@ -58,7 +61,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
     this.ruler = function () {
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": this.width });
-        for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++, step++) {
+        for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++ , step++) {
             var $tick = $('<div>');
             if (step === 0) {
                 $tick.addClass('tickLabel').html(i * 5);
@@ -74,7 +77,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
         }
 
         var $rulerleft = $('.rulerleft').css({ "height": this.height });
-        for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++, step++) {
+        for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++ , step++) {
             $tick = $('<div>');
             if (step === 0) {
                 $tick.addClass('tickLabel').html(i * 5);
@@ -207,7 +210,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
     this.addButton = function (i, obj) {
 
         this.j = 1;
-        $(obj).append("<button class='btn btn-xs btn-primary'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
+        $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
         $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
 
     };
@@ -228,7 +231,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             this.$sec.append(this.$spl);
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
             $(this.$sec).children('.gutter').remove();
-            this.$spl.droppable({ accept: ".draggable", drop: this.onDropFn.bind(this) });
+            this.$spl.droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
 
             Split(this.splitarray, {
                 direction: 'vertical',
@@ -295,6 +298,13 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
         this.posTop = null;
         this.font = null;
 
+        $('.draggable').draggable({
+            cancel: "a.ui-icon",
+            revert: "invalid",
+            helper: "clone",
+            cursor: "move",
+            drag: this.onDrag.bind(this)
+        });
         $('.shapes').draggable({
             cancel: "a.ui-icon",
             revert: "invalid",
@@ -310,25 +320,19 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             cursor: "move",
             drag: this.onDrag.bind(this)
         });
-
-        $('.draggable').draggable({
-            cancel: "a.ui-icon",
-            revert: "invalid",
-            helper: "clone",
-            cursor: "move",
-            drag: this.onDrag.bind(this)
-        });
     };
 
     this.onDrag = function (event, ui) {
 
-        this.posLeft = event.pageX;
-        this.posTop = event.pageY;
-        console.log('left' + this.posLeft, 'top' + this.posTop);
+        //this.posLeft = event.pageX;
+        //this.posTop = event.pageY;
+        //console.log('left' + this.posLeft, 'top' + this.posTop);
     };
 
     this.onDropFn = function (event, ui) {
 
+        this.posLeft = event.pageX;
+        this.posTop = event.pageY;
         this.dropLoc = $(event.target);
         this.itemToClone = $(ui.draggable);
         var minwidth = $(ui.draggable).width();
@@ -382,7 +386,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
 
         }
 
-        else if (!this.itemToClone.hasClass('shapes')) {
+        else if (this.itemToClone.hasClass('coloums')) {
 
             if (!this.itemToClone.hasClass("dropped")) {
 
@@ -391,7 +395,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
                     height: this.itemToClone.height(),
                     position: 'absolute',
                     left: this.posLeft - 270,
-                    top: this.posTop - 150
+                    top: this.posTop - 200
                 }));
 
             }
@@ -434,7 +438,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '1px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
         $('.arrow-l-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
         $('.arrow-l-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
@@ -449,7 +453,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '50px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
         $('.arrow-u-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
         $('.arrow-u-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
@@ -464,7 +468,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '50px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
         $('.arrow-d-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
         $('.arrow-d-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
@@ -479,7 +483,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '50px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
         $('.arrow-by-d-v-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
         $('.arrow-by-d-v-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
@@ -494,7 +498,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '1px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
         $('.arrow-by-d-h-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
         $('.arrow-by-d-h-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
@@ -508,7 +512,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '100px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
         $('.upload-btn ').on('click', this.uploadImage.bind(this));
 
@@ -544,7 +548,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '1px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
         $('.arrow-r-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
         $('.arrow-r-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
@@ -555,11 +559,11 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
 
         var currentdate = new Date();
         var time = currentdate.getDate() + "/"
-                + (currentdate.getMonth() + 1) + "/"
-                + currentdate.getFullYear() + " @ "
-                + currentdate.getHours() + ":"
-                + currentdate.getMinutes() + ":"
-                + currentdate.getSeconds();
+            + (currentdate.getMonth() + 1) + "/"
+            + currentdate.getFullYear() + " @ "
+            + currentdate.getHours() + ":"
+            + currentdate.getMinutes() + ":"
+            + currentdate.getSeconds();
 
         var $DateTime = $("<div class='date-time' style='border:1px solid'>" + time + "</div>");
         this.dropLoc.append($DateTime.addClass("dropped").css({
@@ -567,7 +571,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '20px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
     };
 
@@ -579,7 +583,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '50px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
     };
 
@@ -591,7 +595,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '50px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
     };
 
@@ -603,7 +607,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '50px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
 
         $('.v-line-dropped').draggable({
@@ -629,7 +633,7 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
             height: '1px',
             position: 'absolute',
             left: this.posLeft - 270,
-            top: this.posTop - 150
+            top: this.posTop - 200
         }));
 
         $('.h-line-dropped').draggable({
@@ -703,9 +707,9 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
         this.report.subsection = [];
         this.report.subsection.subsection = [];
         this.report.subsection.subsection.subesection = [];
-        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
 
-        console.log(JSON.stringify(this.report));
+        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
+        return this.report;
     };
 
     this.findPageSections = function (i, sections) {
@@ -728,12 +732,34 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
 
     this.findPageElements = function (k, elements) {
         this.elements = $(elements);
-        this.report.subsection[this.i].subsection[this.j].subsection.push(new PageElements(this.elements.attr('id'), this.elements.css('left'), this.elements.css('top'), this.elements.css('width'), this.elements.css('height')));
+        console.log(this.elements.offset());
+        console.log(this.elements.position().left);
+        this.report.subsection[this.i].subsection[this.j].subsection.push(new PageElements(this.elements.attr('id'), this.elements.position().left - 83 + 'px', this.elements.position().top + 'px', this.elements.css('width'), this.elements.css('height')));
     };
 
     this.createNewPage = function () {
         console.log(this.pgC);
         //this.createPage(this.pgC);
+    };
+
+    this.Commit = function () {
+        var _json = this.savefile();
+        alert(_json);
+        if (this.IsNew = "true") {
+            var Obj_Id = null;
+        }
+        var Name = $('#RptName').val();
+        var Description = $('#RptDesc').val();
+        this.Rel_object = "";
+
+        $.post("../RB/CommitReport", {
+            "id": Obj_Id,
+            "name": Name,
+            "description": Description,
+            "changeLog": "changed",
+            "json": JSON.stringify(_json),
+            "rel_obj": this.Rel_object
+        });
     };
 
     this.init = function () {
@@ -744,12 +770,14 @@ var RptBuilder = function (type, saveBtnid, newPage, custHeight, custWidth, cust
         this.createPage(this.pgC);
         this.DragDrop_Items();
         this.propertyGrid();
-
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.newPage).on('click', this.createNewPage.bind(this));
+        $(this.Commitbtnid).on('click', this.Commit.bind(this));
+
     };
 
     this.init();
+
 };
 //background image
 var setBackgroud = function (input) {

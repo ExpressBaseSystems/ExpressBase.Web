@@ -598,13 +598,12 @@ list-group-item:first-child {
 
 .objitems {
     border: 1px solid rgba(0,0,0,.15);
-    border-left: none !important;
-    border-right: none !important;
     margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-top: 20px;
-    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    background-color: #fafafa;
+    border-radius: 4px;
 }
 
 .bottpadd {

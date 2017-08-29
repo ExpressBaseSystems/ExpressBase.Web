@@ -9,6 +9,8 @@ using ServiceStack.Redis;
 using ExpressBase.Common;
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
+using ExpressBase.Objects.ReportRelated;
+using System.Reflection;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,6 +23,13 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult ReportBuilder()
         {
+            var typeArray = typeof(EbReportField).GetTypeInfo().Assembly.GetTypes();
+
+            var _jsResult = CSharpToJs.GenerateJs<EbReportField>(BuilderType.Report, typeArray);
+
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+
             ViewBag.IsNew = "true";
             return View();
         }

@@ -20,7 +20,7 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync()
         {
            
-            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { VersionId = Int32.MaxValue, EbObjectType = 9, TenantAccountId = ViewBag.cid});
+            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {EbObjectType = 9});
             ViewBag.resultlist = resultlist.Data;
            
             return View();

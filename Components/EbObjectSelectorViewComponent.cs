@@ -28,7 +28,7 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync(int Type)
         {
-            var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = string.Empty, VersionId = Int32.MaxValue, EbObjectType = Type, TenantAccountId = ViewBag.cid });
+            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = Type});
             var rlist = resultlist.Data;
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
             foreach (var element in rlist)

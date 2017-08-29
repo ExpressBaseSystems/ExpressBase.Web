@@ -109,13 +109,10 @@
         }
         // call OnChangeExec functions
         for (var prop in this.OnChangeExec) {
-            if (typeof this.OnChangeExec[prop] === 'function') {
-                if (this.OnChangeExec[prop].bind(this.PropsObj, this)() === false)
-                    $("#" + this.wraperId + " [name=" + prop + "Tr]").css("display", "none");
-                this.OnChangeExec[prop] = null;// just in case make sure we are not holding any reference to the functions
-            }
-            else
-                console.error("render condition of " + prop + " is not a function type");
+
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input", this.OnChangeExec[prop].bind(this.PropsObj, this));
+
+                //if (this.OnChangeExec[prop].bind(this.PropsObj, this)() === false)
         }
     };
 

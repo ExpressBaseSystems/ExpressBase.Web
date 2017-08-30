@@ -98,26 +98,26 @@
         });
        var Ids = userid.substring(0, userid.length - 1);
        $('#userslist').val(Ids);
-        $.post("../TenantUser/GetRoles",
-                 {
+        //$.post("../TenantUser/GetRoles",
+        //         {
 
-                 }, function (result) {
-                     if (result) {
-                         document.getElementById("userroles").innerHTML = result;
-                     }
-                 });
-            $('#sendmail').change(function () {
-                if (!this.checked)
-                    $('#pw').fadeIn();
-                else
-                    $('#pw').fadeOut();
-            });
-            var f = true;
-            $('.selectpicker').on('rendered.bs.select', function (e) {
-                if (f)
-                    $("#roleSel").find("span:eq(0)").text("Select Role")
-                f = false;
-            });
+        //         }, function (result) {
+        //             if (result) {
+        //                 document.getElementById("userroles").innerHTML = result;
+        //             }
+        //         });
+        //    $('#sendmail').change(function () {
+        //        if (!this.checked)
+        //            $('#pw').fadeIn();
+        //        else
+        //            $('#pw').fadeOut();
+        //    });
+        //    var f = true;
+        //    $('.selectpicker').on('rendered.bs.select', function (e) {
+        //        if (f)
+        //            $("#roleSel").find("span:eq(0)").text("Select Role")
+        //        f = false;
+        //    });
         });
    
 </script>

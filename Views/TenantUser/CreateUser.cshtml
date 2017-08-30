@@ -9,16 +9,16 @@
 
 @using (Html.BeginForm(FormMethod.Post))
 {
-
+   
 
     <div class="row">
         <div class="col-md-6">
             <h3 class="text-center">Create User</h3>
             <div class="form-group">
-                <input type="text" class="form-control" name="firstname" placeholder="Name" />
+                <input type="text" class="form-control" id="firstname" name="firstname" value="@ViewBag.Name" placeholder="Name" />
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" name="email" placeholder="Email" />
+                <input type="text" class="form-control" id="email" name="email" value="@ViewBag.email" placeholder="Email" />
             </div>
             <div class="form-group">
                 <input type="text" class="form-control" id="pw" name="pwd" placeholder="Password" />
@@ -30,7 +30,7 @@
     </div>
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#roles">Roles</a></li>
-        <li><a data-toggle="tab" href="#usergroup">User Groups</a></li>
+        <li><a onclick="Getusergroups()" data-toggle="tab" href="#usergroup">User Groups</a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane fade in active" id="roles">
@@ -49,21 +49,23 @@
         </div>
         
         <div id="usergroup" class="tab-pane fade">
-            <div id="users">
-                <div class='row'>
-                    <div id='div2' class='col-lg-6 well' style="height:300px">
+            <div id="usergrouplist" class="scrollable-menu">
+                <div class="form-inline" id="searchbar" style="width:100%">
+                    <div class="input-group pull-right">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false">Search<span class="caret"></span></button>
+                        </div>
+                        <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
                     </div>
-                    @await Component.InvokeAsync("SearchUser", new { targetDivId = "div2" });   
                 </div>
-                <input type="hidden" id="userslist" />
+
             </div>
 
         </div>
-
-
     </div>
     <div class="form-group">
-        <input type="submit" class="btn btn-primary" value="Create" />
+        <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
+        <input type="submit" class="btn btn-primary" id="save" value="Create" />
     </div>
     }
 
@@ -114,8 +116,8 @@
     $('document').ready(function () {
    
         $.post("../TenantUser/GetRoles",
-                 {
-
+            {
+                "userid": $('#userid').val()
                  }, function (result) {
                      if (result) {
                          document.getElementById("userroles").innerHTML = result;
@@ -133,27 +135,51 @@
                     $("#roleSel").find("span:eq(0)").text("Select Role")
                 f = false;
             });
-        });
-        //function GetRoles() {
+
+            $('#save').click(function () {
+                var selectedroles = "";
+                $('#userroles input:checked').each(function () {
+                    selectedroles += $(this).attr('value') + ",";
+
+                });
+
+                var selectedusergroups = "";
+                $('#usergrouplist input:checked').each(function () {
+                    selectedusergroups += $(this).attr('value') + ",";
+
+                });
+                $.post("../TenantUser/SaveUser",
+                    {
+                      
+                        "userid": $('#userid').val(),
+                        "roles": selectedroles.substring(0, selectedroles.length - 1),
+                        "usergroups": selectedusergroups.substring(0, selectedusergroups.length - 1),
+                        "firstname": $('#firstname').val(),
+                        "email": $('#email').val(),
+                        "Pwd":$('#pw').val()
+
+                    }, function (result) {
+                        if (result) {
+                            document.getElementById("usergrouplist").innerHTML = result;
+                        }
+                    });
+
+            });
            
 
-        //}
+    });
 
-        //function GetAllUsers(userid) {
-           
-        //    $.post("../TenantUser/GetAllUsers",
-        //          {
-        //              "userid": userid,
+    function Getusergroups() {
 
-        //          }, function (result) {
-        //              if (result) {
-        //                  document.getElementById("div1").innerHTML = result.Users;
-        //                  document.getElementById("div2").innerHTML = result.Seluser;
-        //              }
-        //              else {
-        //                  document.getElementById("div1").innerHTML = " <div class='alert alert-info'>No such user exists!!</div>";
-        //              }
-        //          });
+        $.post("../TenantUser/GetUserGroups",
+            {
+                "userid": $('#userid').val(),
 
-        //}
+            }, function (result) {
+                if (result) {
+                    document.getElementById("usergrouplist").innerHTML = result;
+                }
+            });
+
+    }
     </script>

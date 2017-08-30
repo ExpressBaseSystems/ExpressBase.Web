@@ -75,7 +75,7 @@ var EbDataTable = function (settings) {
     this.dtsettings = settings;
     this.meta = this.dtsettings.meta;
     this.dsid = this.dtsettings.ds_id;
-    this.dvid = this.dtsettings.dv_id;
+    this.dvid = this.dtsettings.dvRefId;
     this.dvName = null;
     this.ssurl = this.dtsettings.ss_url;
     this.ebSettings = this.dtsettings.settings;
@@ -128,6 +128,8 @@ var EbDataTable = function (settings) {
     this.dragNdrop = false;
     this.flagColumnVisible = false;
     this.pg = null;
+    this.ppgridChildren = null;
+    this.columnDefDuplicate = null;
 
 
     this.getColumns = function () {
@@ -143,7 +145,8 @@ var EbDataTable = function (settings) {
         this.ebSettings = data;
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
         this.dvName = this.ebSettings.Name;
-
+        if (this.ebSettings.scrollY == null || this.ebSettings.scrollY == undefined)
+            this.ebSettings.scrollY = "300";
         if (index !== 1)
             $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
         $("#dvName_lbl" + this.tableId).text(this.dvName);
@@ -172,10 +175,10 @@ var EbDataTable = function (settings) {
         //    this.ebSettings.columns[1].visible = true;
         //}
         $.event.props.push('dataTransfer');
-        //this.updateRenderFunc();
+        this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
-        this.collapseFilter();
+        //this.collapseFilter();
         this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
@@ -189,8 +192,8 @@ var EbDataTable = function (settings) {
         //    $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
         //else
 
+        $.each(this.ebSettings.Columns.$values, this.CheckforColumnID.bind(this));
 
-        $.each(this.ebSettings.columns, this.CheckforColumnID.bind(this));
         this.eb_agginfo = this.getAgginfo();
         if (this.dtsettings.directLoad !== true)
             this.table_jQO.append($(this.getFooterFromSettingsTbl()));
@@ -270,16 +273,18 @@ var EbDataTable = function (settings) {
     this.CheckforColumnID = function (i, col) {
         if (col.name === "id") {
             //this.FlagPresentId = true;
-            this.ebSettings.columns[1].visible = true;
-            this.ebSettings.columns[2].visible = false;
+            this.ebSettings.Columns.$values[i].bVisible = false;
+            this.ebSettings.Columns.$values[1].bVisible = true;
+            this.ebSettings.Columns.$values[1].sTitle = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
+            this.ebSettings.Columns.$values[1].render = this.renderCheckBoxCol.bind(this);
             return false;
         }
     };
 
     this.createTblObject = function () {
         var o = new Object();
-        //o.scrollY = this.ebSettings.scrollY;
-        o.scrollY = "300px";
+        o.scrollY = this.ebSettings.scrollY+"px";
+        //o.scrollY = "300px";
         o.scrollX = "100%";
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
             if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
@@ -301,7 +306,8 @@ var EbDataTable = function (settings) {
         //o.paging = false;
         //o.rowReorder = true;
         o.order = [[8, "asc"]];
-        o.autowidth = false;
+        //o.bAutoWidth = false;
+        //o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
         o.language = {
@@ -311,7 +317,7 @@ var EbDataTable = function (settings) {
             },
             lengthMenu: "_MENU_ / Page",
         };
-        o.columns = this.ebSettings.Columns;
+        o.aoColumns = this.ebSettings.Columns.$values;
         o.order = [];
         o.deferRender = true;
         o.filter = true;
@@ -425,6 +431,10 @@ var EbDataTable = function (settings) {
 
         //if (isValid(controlIds)) {
         this.btnGo.attr("disabled", true);
+        if (this.columnDefDuplicate !== JSON.stringify(this.ebSettings.Columns.$values)) {
+            this.dragNdrop = true;
+            this.columnDefDuplicate = JSON.stringify(this.ebSettings.Columns.$values);
+        }
         if (!this.isSecondTime) {
             this.isSecondTime = true;
             this.RenderGraphModal();
@@ -434,7 +444,7 @@ var EbDataTable = function (settings) {
                 this.getColumns();
         }
         else if (this.dragNdrop) {
-            this.ebSettings.Columns.sort(this.ColumnsComparer);
+            this.ebSettings.Columns.$values.sort(this.ColumnsComparer);
             //this.ebSettings.columnsext.sort(this.ColumnsComparer);
             $('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
             var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
@@ -451,26 +461,26 @@ var EbDataTable = function (settings) {
     this.ColumnsComparer = function (a, b) {
         //var a1 = parseInt(a.pos);
         //var b1 = parseInt(b.pos);
-        if (a.pos < b.pos) return -1;
-        if (a.pos > b.pos) return 1;
-        if (a.pos === b.pos) return 0;
+        if (a.Pos < b.Pos) return -1;
+        if (a.Pos > b.Pos) return 1;
+        if (a.Pos === b.Pos) return 0;
     };
 
     this.getAgginfo = function () {
         var _ls = [];
-        $.each(this.ebSettings.Columns, this.getAgginfo_inner.bind(this, _ls));
+        $.each(this.ebSettings.Columns.$values, this.getAgginfo_inner.bind(this, _ls));
         return _ls;
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.visible && (col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial")
-            _ls.push(new Agginfo(col.name, this.ebSettings.Columns[i].DecimalPlaces));
+        if (col.bVisible && (col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial")
+            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces));
     };
 
     this.getFooterFromSettingsTbl = function () {
         var ftr_part = "";
-        $.each(this.ebSettings.Columns, function (i, col) {
-            if (col.visible)
+        $.each(this.ebSettings.Columns.$values, function (i, col) {
+            if (col.bVisible)
                 ftr_part += "<th style=\"padding: 0px; margin: 0px\"></th>";
             else
                 ftr_part += "<th style=\"display:none;\"></th>";
@@ -558,7 +568,10 @@ var EbDataTable = function (settings) {
         //},500);
         //if (this.ebSettings.renderAs == "both") {
         $("#graphcontainer_tab" + this.tableId).show();
-        this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
+        if (this.chartJs == null)
+            this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
+        else
+            this.chartJs.drawGraphHelper(this.Api.data());
         //$("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         //}
         //else{
@@ -569,7 +582,13 @@ var EbDataTable = function (settings) {
             //this.appendDisplayColumns();
         }
         $("#dvnametxt").show();
-        $("#dvnametxt").css("display", "inline-block");
+        $("#dvnametxt").css("display", "inline-block"); 
+        $("#TableHeighttxt").show();
+        $("#TableHeighttxt").css("display", "inline-block");
+        //$("#renderOption").show();
+        //$("#renderOption").css("display", "inline-flex");
+        if (this.filterBox.css("display") !== "none") 
+            this.collapseFilter();
         this.Api.columns.adjust();
     }
 
@@ -671,20 +690,20 @@ var EbDataTable = function (settings) {
         var ScrollY = this.ebSettings.scrollY;
         var ResArray = [];
         var tableId = this.tableId;
-        $.each(this.ebSettings.Columns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        $.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
         return ResArray;
     };
 
     this.GetAggregateControls_inner = function (ResArray, footer_id, zidx, i, col) {
         var _ls;
-        if (col.visible) {
+        if (col.bVisible) {
             if ((col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial") {
                 var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = this.tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
                 var data_table = "data-table=" + this.tableId;
                 var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
-                var data_decip = "data-decip=" + this.ebSettings.Columns[i].DecimalPlaces;
+                var data_decip = "data-decip=" + this.ebSettings.Columns.$values[i].DecimalPlaces;
 
                 _ls = "<div class='input-group input-group-sm'>" +
                 "<div class='input-group-btn'>" +
@@ -742,19 +761,19 @@ var EbDataTable = function (settings) {
         var fc_lh_tbl = $('#' + tableid + '_wrapper .DTFC_LeftHeadWrapper table');
         var fc_rh_tbl = $('#' + tableid + '_wrapper .DTFC_RightHeadWrapper table');
 
-        //if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
-        //    this.GetFiltersFromSettingsTbl(50);
-        //    if (fc_lh_tbl !== null) {
-        //        fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-        //        for (var j = 0; j < this.ebSettings.leftFixedColumns; j++)
-        //            $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
-        //    }
-        //    if (fc_rh_tbl !== null) {
-        //        fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-        //        for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.rightFixedColumns; j < this.eb_filter_controls_4fc.length; j++)
-        //            $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
-        //    }
-        //}
+        if (fc_lh_tbl !== null || fc_rh_tbl !== null) {
+            this.GetFiltersFromSettingsTbl(50);
+            if (fc_lh_tbl !== null) {
+                fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+                for (var j = 0; j < this.ebSettings.leftFixedColumns; j++)
+                    $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
+            }
+            if (fc_rh_tbl !== null) {
+                fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
+                for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.rightFixedColumns; j < this.eb_filter_controls_4fc.length; j++)
+                    $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
+            }
+        }
 
         var sc_h_tbl = $('#' + tableid + '_wrapper .dataTables_scrollHeadInner table');
         if (sc_h_tbl !== null) {
@@ -818,6 +837,8 @@ var EbDataTable = function (settings) {
         //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
         $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#dvnametxt").off("keyup").on("keyup", this.ModifyDvname.bind(this));
+        $("#TableHeighttxt").off("keyup").on("keyup", this.ModifyTableHeight.bind(this));
+        //$("input[name=renderAs]").off("click").on("click", this.graphSettings.bind(this));
     };
 
 
@@ -879,12 +900,12 @@ var EbDataTable = function (settings) {
         else if (this.zindex === 1)
             this.eb_filter_controls_4sb = [];
 
-        $.each(this.ebSettings.Columns, this.GetFiltersFromSettingsTbl_inner.bind(this));
+        $.each(this.ebSettings.Columns.$values, this.GetFiltersFromSettingsTbl_inner.bind(this));
     };
 
     this.GetFiltersFromSettingsTbl_inner = function (i, col) {
         var _ls = "";
-        if (col.visible === true) {
+        if (col.bVisible === true) {
             var span = "<span hidden>" + col.name + "</span>";
             //var span = "";
 
@@ -912,7 +933,7 @@ var EbDataTable = function (settings) {
                 }
                 else if (col.Type ==parseInt( gettypefromString("DateTime")))
                     _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
-                else if (col.Type ==parseInt( gettypefromString("Boolean")))
+                else if (col.Type == parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
                     _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
                 else
                     _ls += (span);
@@ -1103,7 +1124,7 @@ var EbDataTable = function (settings) {
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         //if (this.FlagPresentId) {
-        var idpos = $.grep(this.ebSettings.Columns, function (e) { return e.name === "id"; })[0].data;
+        var idpos = $.grep(this.ebSettings.Columns.$values, function (e) { return e.name === "id"; })[0].data;
         this.rowId = meta.row; //do not remove - for updateAlSlct
         return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
         //}
@@ -1372,6 +1393,7 @@ var EbDataTable = function (settings) {
             $("#" + this.tableId + "ColumnsDispaly").css("display", "none");
             //$("#" + this.tableId + "ColumnsDispaly").parent().removeClass("form-save-wraper");
             $("#" + this.tableId + "TableColumnsPPGrid").css("display", "none");
+            $("#" + this.tableId + "ColumnsOrder").css("display", "none");
         }
         else {
             $("#" + this.tableId + "divcont").css("width", "55%");
@@ -1440,74 +1462,13 @@ var EbDataTable = function (settings) {
         //    return selcol;
         //};
 
-        //this.saveSettings = function () {
+        this.saveSettings = function () {
+            $.post('../DV/SaveSettings', { json: JSON.stringify(this.ebSettings), dvid: this.dvid }, this.saveSuccess.bind(this));
+        };
 
-        //    //this.isSettingsSaved = true;
-        //    //var ct = 0; var objcols = [];
-        //    //var api = $('#Table_Settings').DataTable();
-        //    //var n, d, t, v, w, ty, cls;
-        //    //objcols.push(this.getColobj("id"));
-        //    //$.each(api.$('input[name!=font],div[class=font-select]'), function (i, obj) {
-        //    //    ct++;
-
-        //    //    if (obj.type === 'text' && obj.name === 'name')
-        //    //        n = obj.value;
-        //    //    else if (obj.type === 'text' && obj.name === 'index')
-        //    //        d = obj.value;
-        //    //    else if (obj.type === 'hidden' && obj.name === 'title')
-        //    //        t = obj.value + '<span hidden>' + n + '</span>';
-        //    //    else if (obj.type === 'checkbox')
-        //    //        v = obj.checked;
-        //    //    else if (obj.type === 'text' && obj.name === 'width')
-        //    //        w = obj.value;
-        //    //    else if (obj.type === 'text' && obj.name === 'type')
-        //    //        ty = obj.value;
-        //    //    else if (obj.className === 'font-select') {
-        //    //        if (!($(this).children('a').children('span').attr('style') === undefined)) {
-        //    //            var style = document.createElement('style');
-        //    //            style.type = 'text/css';
-        //    //            var fontName = $(this).children('a').children('span').css('font-family');
-        //    //            var replacedName = fontName.replace(/ /g, "_");
-        //    //            style.innerHTML = '.font_' + replacedName + ' {font-family: ' + fontName + '; }';
-        //    //            document.getElementsByTagName('head')[0].appendChild(style);
-        //    //            cls = 'font_' + replacedName + ' tdheight';
-        //    //        }
-        //    //        else
-        //    //            cls = 'tdheight';
-        //    //    }
-        //    //    if (ct === api.columns().count() - 2) { ct = 0; objcols.push(new coldef(d, t, v, w, n, ty, cls)); n = ''; d = ''; t = ''; v = ''; w = ''; ty = ''; cls = ''; }
-        //    //});
-        //    ////alert(console.log(objcols));
-        //    //this.ebSettingsCopy.hideSerial = $("#serial_check").prop("checked");
-        //    //this.ebSettingsCopy.hideCheckbox = $("#select_check").prop("checked");
-        //    //this.ebSettingsCopy.lengthMenu = this.GetLengthOption($("#pageLength_text").val());
-        //    //this.ebSettingsCopy.scrollY = $("#scrollY_text").val();
-        //    //this.ebSettingsCopy.rowGrouping = $("#rowGrouping_text").val();
-        //    //this.ebSettingsCopy.leftFixedColumns = $("#leftFixedColumns_text").val();
-        //    //this.ebSettingsCopy.rightFixedColumns = $("#rightFixedColumns_text").val();
-        //    //this.ebSettingsCopy.dvName = $("#dvName_txt").val();
-        //    //this.ebSettingsCopy.columns = objcols;
-
-        //    ////console.log(JSON.stringify(this.ebSettings.columnsext));
-        //    //console.log(JSON.stringify(this.ebSettings.columnsdel));
-        //    //console.log(JSON.stringify(this.ebSettings.columnsextdel));
-        //    //this.ebSettingsCopy.columnsext = this.ebSettings.columnsext;
-        //    //this.ebSettingsCopy.columnsdel = this.ebSettings.columnsdel;
-        //    //this.ebSettingsCopy.columnsextdel = this.ebSettings.columnsextdel;
-        //    //this.AddSerialAndOrCheckBoxColumns(this.ebSettingsCopy.columns);
-        //    //this.updateRenderFunc();
-        //    //if (this.ebSettingsCopy.rowGrouping.length > 0) {
-        //    //    var groupcols = $.grep(this.ebSettingsCopy.columns, function (e) { return e.name === this.ebSettingsCopy.rowGrouping });
-        //    //    groupcols[0].visible = false;
-        //    //}
-        //    //console.log(JSON.stringify(this.ebSettingsCopy));
-        //    //$.post('TVPref4User', { tvid: this.dvid, json: JSON.stringify(this.ebSettingsCopy) }, this.reinitDataTable.bind(this));
-        //};
-
-        //this.reinitDataTable = function () {
-        //    $("#settingsmodal").modal('hide');
-        //};
-
+        this.saveSuccess = function () {
+            alert("Success!!!!!!!");
+        }
 
 
         //this.callPost4SettingsTable = function () {
@@ -1674,42 +1635,42 @@ var EbDataTable = function (settings) {
 
 
     this.updateRenderFunc = function () {
-        $.each(this.ebSettings.Columns, this.updateRenderFunc_Inner.bind(this));
+        $.each(this.ebSettings.Columns.$values, this.updateRenderFunc_Inner.bind(this));
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64"))) {
-            if (this.ebSettings.Columns[i].RenderAs === "Progressbar") {
-                this.ebSettings.Columns[i].render = this.renderProgressCol;
+            if (this.ebSettings.Columns.$values[i].RenderAs === "Progressbar") {
+                this.ebSettings.Columns.$values[i].render = this.renderProgressCol;
             }
-            if (this.ebSettings.Columns[i].DecimalPlaces > 0) {
-                var deci = this.ebSettings.Columns[i].DecimalPlaces;
-                this.ebSettings.Columns[i].render = function (data, type, row, meta) {
+            if (this.ebSettings.Columns.$values[i].DecimalPlaces > 0) {
+                var deci = this.ebSettings.Columns.$values[i].DecimalPlaces;
+                this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) {
                     return parseFloat(data).toFixed(deci);
                 }
             }
         }
         if (col.Type ==parseInt( gettypefromString("Boolean"))) {
-            if (this.ebSettings.Columns[i].name === "sys_locked" || this.ebSettings.Columns[i].name === "sys_cancelled") {
-                this.ebSettings.Columns[i].render = (this.ebSettings.Columns[i].name === "sys_locked") ? this.renderLockCol : this.renderEbVoidCol;
+            if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
+                this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol : this.renderEbVoidCol;
             }
             else {
-                if (this.ebSettings.Columns[i].IsEditable) {
-                    this.ebSettings.Columns[i].render = this.renderEditableCol;
+                if (this.ebSettings.Columns.$values[i].IsEditable) {
+                    this.ebSettings.Columns.$values[i].render = this.renderEditableCol;
                 }
-                if (this.ebSettings.Columns[i].RenderAs === "Icon") {
-                    this.ebSettings.Columns[i].render = this.renderIconCol;
+                if (this.ebSettings.Columns.$values[i].RenderAs === "Icon") {
+                    this.ebSettings.Columns.$values[i].render = this.renderIconCol;
                 }
             }
         }
         if (col.Type ==parseInt( gettypefromString("String")) || col.Type ==parseInt( gettypefromString("Double"))) {
-            if (this.ebSettings.Columns[i].RenderAs === "Link") {
-                this.linkDV = this.ebSettings.Columns[i].linkDv;
-                this.ebSettings.Columns[i].render = this.renderlink4NewTable.bind(this);
+            if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
+                this.linkDV = this.ebSettings.Columns.$values[i].linkDv;
+                this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);
             }
-            if (this.ebSettings.Columns[i].RenderAs === "Graph") {
-                this.ebSettings.Columns[i].render = this.lineGraphDiv.bind(this);
+            if (this.ebSettings.Columns.$values[i].RenderAs === "Graph") {
+                this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
             }
         }
     };
@@ -1743,7 +1704,7 @@ var EbDataTable = function (settings) {
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-        $.each(this.ebSettings.Columns, function (i, value) {
+        $.each(this.ebSettings.Columns.$values, function (i, value) {
             var rgb = '';
             var fl = '';
             if (value.name === 'sys_row_color') {
@@ -1831,11 +1792,12 @@ var EbDataTable = function (settings) {
         var id = this.tableId;
         var pid = id + "TableColumnsPPGrid";
         $("#" + id + "TableColumns4Drag").append("<div style='background-color: #ccc;padding: 5px;font-weight: bold;'>Columns</div>")
-        $.each(this.ebSettings.Columns, function (i, obj) {
-            if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === false && obj.name !== "id")
-                $("#" + id + "TableColumns4Drag").append("<div class ='Delcols' id='div_" + obj.name + "' name = '" + obj.name + "' data-type="+obj.Type+">" + obj.name + "</div>")
-            else if (obj.name !== "serial" && obj.name !== "checkbox" && obj.visible === true && obj.name !== "id")
-                $("#" + id + "ColumnsDispaly").append('<div class ="Displaycols" onclick="$(this).focus();" tabIndex="0" name ="' + obj.name + '" id="div_' + obj.name + '" data-type=' + obj.Type + '>' + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 0px 0 0 4px;color: black !important;' >x</button></div>")
+        //$("#" + id + "TableColumns4Drag")
+        $.each(this.ebSettings.Columns.$values, function (i, obj) {
+            if (obj.name !== "serial" && obj.name !== "checkbox" && obj.bVisible === false && obj.name !== "id")
+                $("#" + id + "TableColumns4Drag").append("<div class ='alert alert-success Delcols' id='div_" + obj.name + "' name = '" + obj.name + "' data-type="+obj.Type+">" + obj.name + "</div>")
+            else if (obj.name !== "serial" && obj.name !== "checkbox" && obj.bVisible === true && obj.name !== "id")
+                $("#" + id + "ColumnsDispaly").append('<div class =" alert alert-success Displaycols" onclick="$(this).focus();" tabIndex="0" name ="' + obj.name + '" id="div_' + obj.name + '" data-type=' + obj.Type + '>' + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 0px 0 0 4px;color: black !important;' >x</button></div>")
         });
         $("#" + this.tableId + "ColumnsDispaly button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         $("#" + this.tableId + "ColumnsDispaly").on("focus", "div", this.createPG.bind(this));
@@ -1881,8 +1843,8 @@ var EbDataTable = function (settings) {
             //    else
             //        this.droppedPos = $(target).children().length - 1;
             if ($(source).attr("id") === this.tableId + "TableColumns4Drag") {
-                $(el).removeClass("Delcols");
-                $(el).addClass("Displaycols");
+                $(el).removeClass("alert alert-success Delcols");
+                $(el).addClass("alert alert-success Displaycols");
                 //var colobj = JSON.parse($(el).attr("data-obj"));
                 //colobj["visible"] = true;
                 //colobj["bVisible"] = true;
@@ -1917,13 +1879,13 @@ var EbDataTable = function (settings) {
         //var colobj = JSON.parse($(e.target).parent().attr("data-obj")); 
         //colobj["visible"] = false;
         //colobj["bVisible"] = false;
-        $("#" + this.tableId + "TableColumns4Drag").append("<div class ='Delcols' name ='" + curName + "' id='" + $(e.target).parent().attr("id") + "' data-type=" + curType + ">" + str.substring(0, str.length - 1).trim() + "</div>")
+        $("#" + this.tableId + "TableColumns4Drag").append("<div class ='alert alert-success Delcols' name ='" + curName + "' id='" + $(e.target).parent().attr("id") + "' data-type=" + curType + ">" + str.substring(0, str.length - 1).trim() + "</div>")
 
         $(e.target).parent().remove();
         $("#" + this.tableId + "TableColumns4Drag").css("height", $("#" + this.tableId + "divcont").css("height"))
         $("#" + this.tableId + "TableColumnsPPGrid").css("height", $("#" + this.tableId + "divcont").css("height"))
         $("#" + this.tableId + "ColumnsDispaly").children("div").each(this.visibleChange2True.bind(this));
-        $.each(this.ebSettings.Columns, this.visibleChange2False.bind(this, curName));
+        $.each(this.ebSettings.Columns.$values, this.visibleChange2False.bind(this, curName));
         $("#" + this.tableId + "ColumnsDispaly").children("div:eq(0)").focus();
         //$('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
         //var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
@@ -1933,30 +1895,30 @@ var EbDataTable = function (settings) {
     };
 
     this.createPG = function (e) {
-        this.dragNdrop = true;
         curName = $(e.target).attr("name");
         curType = $(e.target).attr("data-type");
         curObjcet = gettypefromNumber(curType);
-        $.each(this.ebSettings.Columns, this.createPG_inner.bind(this, curName, curObjcet));
+        $.each(this.ebSettings.Columns.$values, this.createPG_inner.bind(this, curName, curObjcet));
     };
 
     this.createPG_inner = function (curName, curObjcet, i, obj) {
         if (curName === obj.name) {
-            console.log(JSON.stringify(this.ebSettings.Columns[i]));
-            this.pg.setObject(this.ebSettings.Columns[i], this.meta["DV" + curObjcet + "Column"]);
+            console.log(JSON.stringify(this.ebSettings.Columns.$values[i]));
+            this.pg.setObject(this.ebSettings.Columns.$values[i], this.meta["DV" + curObjcet + "Column"]);
         }
 
     };
+
     this.visibleChange2True = function (i, obj) {
         this.dragNdrop = true;
-        $.each(this.ebSettings.Columns, this.changeObjectPositionToCurrent.bind(this, i, obj));
+        $.each(this.ebSettings.Columns.$values, this.changeObjectPositionToCurrent.bind(this, i, obj));
     };
 
     this.visibleChange2False = function (curName, i, obj) {
         if (curName == obj.name) {
-            this.ebSettings.Columns[i].visible = false;
-            this.ebSettings.Columns[i].bVisible = false;
-            this.ebSettings.Columns[i].pos = this.ebSettings.Columns.length + 100;
+            //this.ebSettings.Columns[i].visible = false;
+            this.ebSettings.Columns.$values[i].bVisible = false;
+            this.ebSettings.Columns.$values[i].Pos = this.ebSettings.Columns.$values.length + 100;
             //$(colobj).attr("data-obj", JSON.stringify(this.ebSettings.Columns[i]));
             //this.ebSettings.columnsext[i].pos = this.ebSettings.columns.length +100;
         }
@@ -1965,9 +1927,9 @@ var EbDataTable = function (settings) {
     this.changeObjectPositionToCurrent = function (indx, colobj, i, obj) {
         var curName = $(colobj).attr("name");
         if (curName == obj.name) {
-            this.ebSettings.Columns[i].visible = true;
-            this.ebSettings.Columns[i].bVisible = true;
-            this.ebSettings.Columns[i].pos = indx;
+            //this.ebSettings.Columns[i].visible = true;
+            this.ebSettings.Columns.$values[i].bVisible = true;
+            this.ebSettings.Columns.$values[i].Pos = indx;
             //$(colobj).attr("data-obj", JSON.stringify(this.ebSettings.Columns[i]));
             //this.ebSettings.columnsext[i].pos = indx
         }
@@ -1999,7 +1961,7 @@ var EbDataTable = function (settings) {
             return false;
     };
 
-
+    
     {
         //this.deleteRow = function (e) {
         //    var idx = this.settings_tbl.row($(e.target).parent().parent()).index();
@@ -2053,19 +2015,19 @@ var EbDataTable = function (settings) {
         this.getColumns();
     if (this.dtsettings.linktable)
         this.getColumns();
-    this.saveSettings = function () {
-        $.post('../Dev/SaveSettings', { dsid: this.dsid, json: JSON.stringify(this.ebSettings), dvid: this.dvid }, this.saveSuccess.bind(this));
-    }
 
-    this.saveSuccess = function () {
-        alert("saved.......");
-    }
-
+    
     this.ModifyDvname = function () {
         $("#Save_btn").show();
-        this.ebSettings.dvName = $("#dvnametxt").val();
-        $("label.dvname").text(this.ebSettings.dvName);
-    }
+        this.ebSettings.Name = $("#dvnametxt").val();
+        $("label.dvname").text(this.ebSettings.Name);
+    };
+
+    this.ModifyTableHeight = function () {
+        this.ebSettings.scrollY = $("#TableHeighttxt").val();
+        this.ebSettings.scrollY = (this.ebSettings.scrollY < 100) ? "300" : this.ebSettings.scrollY;
+    };
+
 
 };
 

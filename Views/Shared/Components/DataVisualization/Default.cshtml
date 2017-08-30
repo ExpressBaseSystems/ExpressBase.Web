@@ -6,8 +6,10 @@
 
 @{
     @using Newtonsoft.Json;
+    @using ExpressBase.Common;
     @using ExpressBase.Objects;
-    var dvobj = JsonConvert.SerializeObject(ViewBag.data);
+    var dvobj = EbSerializers.Json_Serialize(ViewBag.data);
+    //var dvobj = JsonConvert.SerializeObject(ViewBag.data);
     var tableId = "dv" + ViewBag.data.DataSourceRefId;
 }
 
@@ -96,7 +98,8 @@
         tid: '@(tableId+"_1")',
         login:'@ViewBag.wc',
         settings:sett,
-        meta:meta,
+        meta: meta,
+        dvRefId:'@ViewBag.dvRefId'
         //fnKeyUpCallback:
     });
 </script>

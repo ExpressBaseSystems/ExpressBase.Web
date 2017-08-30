@@ -32,36 +32,22 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dsRefid, string Meta)
+        public async Task<IViewComponentResult> InvokeAsync(string dsRefid, string Meta, string dvRefId)
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
-            RetValObj xxx = null;
             if (!string.IsNullOrEmpty(dsRefid))
             {
-                //var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = dsRefid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });
-                //var fdid = EbSerializers.Json_Deserialize<EbDataSource>(resultlist.Data[0].Json).FilterDialogRefId;
-
-                //if (!string.IsNullOrEmpty(fdid))
-                //{
-                //    //get fd obj
-                //    resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { RefId = fdid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid });
-
-                //    //redundant - REMOVE JITH
-                //    var _filterDialog = EbSerializers.Json_Deserialize<EbFilterDialog>(resultlist.Data[0].Json);
-
-                //    ViewBag.HtmlHead = _filterDialog.GetHead();
-                //    ViewBag.HtmlBody = _filterDialog.GetHtml();
-                //}
-
-                ViewBag.data = getDVObject(dsRefid);
-                //Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-                //ViewBag.dsid = _dict["DataSourceRefId"];
-                ////ViewBag.dvname = _dict["dvName"];
-                //ViewBag.tableId = "dv" + ViewBag.dsid.ToString();
-                //ViewBag.data = data;
-                //xxx = new RetValObj { DSId = _dict["DataSourceRefId"].ToString(), DVName = _dict["Name"].ToString(), TableId = "dv" + _dict["DataSourceRefId"].ToString(), Data = data };
+                if (!string.IsNullOrEmpty(dvRefId))
+                {
+                    var dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
+                    dvObject.AfterRedisGet(this.Redis);
+                    ViewBag.data = dvObject;
+                }
+                else
+                    ViewBag.data = getDVObject(dsRefid);
             }
             ViewBag.Meta = Meta;
+            ViewBag.dvRefId = dvRefId;
             return View();
         }
 
@@ -153,8 +139,8 @@ namespace ExpressBase.Web.Components
             int _pos = __columns.Count+100;
 
             // Add Serial & Checkbox
-            eb.Columns.Add(new DVNumericColumn { Name = "serial", Title = "#", Type = DbType.Int64, Visible = true, Width = 10, Pos = -2 });
-            eb.Columns.Add(new DVBooleanColumn { Name = "checkbox", Title = "checkbox", Type = DbType.Boolean, Visible = false, Width = 10, Pos = -1 });
+            eb.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
+            eb.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
 
            
             foreach (EbDataColumn column in __columns)
@@ -162,13 +148,13 @@ namespace ExpressBase.Web.Components
                 DVBaseColumn _col = null;
 
                 if (column.Type == DbType.String)
-                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = _pos , ClassName = "tdheight" };
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos , ClassName = "tdheight" };
                 else if (column.Type == DbType.Int16 || column.Type == DbType.Int32 || column.Type == DbType.Int64 || column.Type == DbType.Double || column.Type == DbType.Decimal || column.Type == DbType.VarNumeric)
-                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = _pos, ClassName = "tdheight" };
+                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
                 else if (column.Type == DbType.Boolean)
-                    _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = _pos, ClassName = "tdheight" };
+                    _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
                 else if (column.Type == DbType.DateTime || column.Type == DbType.Date || column.Type == DbType.Time)
-                    _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, Title = column.ColumnName, Type = column.Type, Visible = true, Width = 100, Pos = _pos, ClassName = "tdheight" };
+                    _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
 
                 eb.Columns.Add(_col);
             }

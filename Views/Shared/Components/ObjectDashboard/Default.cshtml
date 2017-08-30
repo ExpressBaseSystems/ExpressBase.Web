@@ -124,6 +124,29 @@
     .xtrasmall {
         font-size: 10px;
     }
+
+    .changlogTxtArea {
+        height: 200px !important;
+        width: 94%;
+    }
+
+    .changelogPopup {
+        display: none;
+        position: fixed;
+        padding: 10px;
+        width: 500px;
+        left: 50%;
+        margin-left: -237px;
+        padding-left: 35px;
+        height: 300px;
+        top: 50%;
+        margin-top: -100px;
+        background: #FFF;
+        z-index: 20;
+        -webkit-box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
+        box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
+    }
+
 </style>
 <div class="row">
     <div class="toolbar">
@@ -134,7 +157,7 @@
             <div class='toolicons form-inline pull-right'>
                 <div class='form-group'>
                     <button class='btn save' id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-                    <button class='btn commit' id="commit" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                    <button class='btn commit_outer' id="commit_outer" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
                     <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
                     <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
                     <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"> v.@ViewBag.VersionNumber</i></button>
@@ -262,9 +285,28 @@
         </div>
     </div>
 </div>
+<div id="changelogPopup" class="changelogPopup">
+    <div class="popup">
+        <a class="close" href="#" style="color:indianred">&times;</a>
+        <h4>Change Log</h4>
+        <div class="content">
+         <textarea class="form-control changlogTxtArea" id="obj_changelog"></textarea>
+        </div>
+        <button id="commit" class="btn btn-primary pull-right">Commit</button>
+    </div>
+</div>
+
 
 <script>
 
+    $(document).ready(function(){
+        $('#commit_outer').on('click', function () {
+            $('#changelogPopup').show();
+        });
+        $('.close').on('click', function () {
+            $('#changelogPopup').css("display", "none");
+        })
+    });
     $(function () {
         $('#minmize').click(function () {
             $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");
@@ -272,7 +314,7 @@
             if ($('.dashbord').css("display") === "none")
                 $('.codedit').css("margin-top", "102px");
             else
-                $('.codedit').css("margin-top", "0px");       
+                $('.codedit').css("margin-top", "0px");
 
             console.log(t);
         });

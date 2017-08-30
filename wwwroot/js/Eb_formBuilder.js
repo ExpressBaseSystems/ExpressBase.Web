@@ -8,9 +8,9 @@
     //if (builderType === 1)
     //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
     if (builderType === 0)
-        this.rootContainerObj = new EbObjects.EbFormObj(formid);
+        this.rootContainerObj = new EbObjects.EbForm(formid);
     else if (builderType === 12)
-        this.rootContainerObj = new EbObjects.EbFilterDialogObj(formid);
+        this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
     //else if (builderType === 13)
     //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
     //else if (builderType === 14)
@@ -169,9 +169,9 @@
                 ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
                 ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
                 ctrl.attr("id", id);
-                this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type + "Obj"](id));
+                this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
                 ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
-                    + new EbObjects["Eb" + type + "Obj"](id).Html());
+                    + new EbObjects["Eb" + type](id).Html());
 
                 ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
                 ctrl.focus();

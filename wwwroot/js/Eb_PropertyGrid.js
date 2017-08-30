@@ -7,6 +7,7 @@
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
+    this.IsSortByGroup = true;
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -89,9 +90,13 @@
     };
 
     this.getGroupHeaderRowHtml = function (displayName) {
-        return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">'
-            + '<span class="bs-caret" style= "margin-right: 5px;" > <span class="caret"></span></span > ' + displayName
-            + '</td></tr > ';
+        if (this.IsSortByGroup)
+            return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">'
+                + '<span class="bs-caret" style= "margin-right: 5px;" > <span class="caret"></span></span > ' + displayName
+                + '</td></tr > ';
+        else
+            return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell"> &nbsp ' + displayName
+                + '</td></tr > ';
     };
 
     this.isContains = function (obj, val) {
@@ -178,9 +183,12 @@
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
             if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop))
                 continue;
-
-            // Check what is the group of the current property or use the default 'Other' group
-            this.currGroup = (this.Metas[this.propNames.indexOf(prop.toLowerCase())]).group || this.MISC_GROUP_NAME;
+            if (this.IsSortByGroup) {
+                // Check what is the group of the current property or use the default 'Other' group
+                this.currGroup = (this.Metas[this.propNames.indexOf(prop.toLowerCase())]).group || this.MISC_GROUP_NAME;
+            }
+            else
+                this.currGroup = "All";
 
             // If this is the first time we run into this group create the group row
             if (this.currGroup !== this.MISC_GROUP_NAME && !this.groupsHeaderRowHTML[this.currGroup])
@@ -238,7 +246,7 @@
 
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
-        this.$wraper.append($('<div class="pgHead"><div class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
+        this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.controlsDDContSelec + " .selectpicker").on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
@@ -279,6 +287,17 @@
         $("#" + this.wraperId + " .pgObjEditor-Cont").on("click", ".editObj-add", this.pgObjEditAddFn.bind(this));
 
         $("#" + this.OEctrlsContId).on("click", ".close", this.colTileCloseFn.bind(this));
+
+        $("#" + this.wraperId).on("click", "[name=sort]", this.SortFn.bind(this));
+
+        $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
+
+    };
+
+    this.SortFn = function (e) {
+        this.IsSortByGroup = !this.IsSortByGroup;
+        this.InitPG();
+        $("#" + this.wraperId + " [name=sort]").toggle();
     };
 
     this.pgObjEditAddFn = function () {
@@ -378,7 +397,6 @@
 
         this.InitPG();
     };
-
     this.init();
 };
 

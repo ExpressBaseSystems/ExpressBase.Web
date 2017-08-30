@@ -7,13 +7,14 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <style>
-.scrollable-menu {
+    .scrollable-menu {
         height: auto;
         max-height: 200px;
         overflow-x: visible;
         overflow-y: scroll;
     }
-.loadingdiv {
+
+    .loadingdiv {
         vertical-align: middle;
         margin: 5% 50%;
         z-index: 1;
@@ -23,56 +24,105 @@
 @{
     string head = string.Empty;
     string html = string.Empty;
-    
+
     var dvRefId = ViewBag.dvRefId;
     var dvname = (ViewBag.dvObject != null) ? ViewBag.dvObject.Name : "* Untitled *";
 }
 <div class="well well-sm" id="devpanel" style="margin-top:60px;">
+    @*<div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
+            <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
+                Select Datasource
+                <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu scrollable-menu'>
+            @{
+                foreach (var element in ViewBag.DSListAll)
+                {
+                    <li data-dsid="@element.Key"><a href="#">@element.Value.Name</a></li>
+                }
+            }
+            </ul>
+        </div>*@
     <div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
-        <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
-            Select Datasource
-            <span class='caret'></span>
-        </button>
-        <ul class='dropdown-menu scrollable-menu'>
-        @{
+        <select class="selectpicker" data-live-search="true">
+            @{
+            //var cls = string.Empty;
+            //if (ViewBag.dvObject != null)
+            //{
+            //    cls = "selected";
+
+            //}
+            if (ViewBag.dvObject == null)
+            {
+        <option data-tokens="Select Datasource" data-dsid="Select Datasource" selected>Select Datasource</option>
+            }
             foreach (var element in ViewBag.DSListAll)
             {
-                <li data-dsid="@element.Key"><a href="#">@element.Value.Name</a></li>
+                if (ViewBag.dvObject != null && element.Key == ViewBag.dvObject.DataSourceRefId)
+                {
+        <option data-tokens="@element.Key" data-dsid="@element.Key" selected>@element.Value.Name</option>
+                }
+                else
+                {
+        <option data-tokens="@element.Key" data-dsid="@element.Key">@element.Value.Name</option>
+                }
             }
-        }
-        </ul>
+            }
+        </select>
     </div>
-    <input id='dvnametxt' type='text' class='form-control' placeholder='dvname' style="width: auto;display: none;"/>
-    <input id='TableHeighttxt' type='number' class='form-control' placeholder='table height' style="width: auto;display: none;" />
-    @*<div style="display: none;" id="renderOption">
-        <input type="radio" name="renderAs" value="table" checked> Table<br>
-        <input type="radio" name="renderAs" value="graph"> Graph<br>
-        <input type="radio" name="renderAs" value="both"> Both  
-    </div>*@
-    
-    <button id='Save_btn' class='btn btn-primary' style="float: right;display:none"> Save </button>
-</div>
+
+        <input id='dvnametxt' type='text' class='form-control' placeholder='dvname' style="width: auto;display: none;" />
+        <input id='TableHeighttxt' type='number' class='form-control' placeholder='table height' style="width: auto;display: none;" />
+        @*<div style="display: none;" id="renderOption">
+                <input type="radio" name="renderAs" value="table" checked> Table<br>
+                <input type="radio" name="renderAs" value="graph"> Graph<br>
+                <input type="radio" name="renderAs" value="both"> Both
+            </div>*@
+
+        <button id='Save_btn' class='btn btn-primary' style="float: right;display:none"> Save </button>
+    </div>
 
 <div id="filterDia">
-@if (ViewBag.dvObject != null)
-{
-    @await Component.InvokeAsync("DataVisualization", new { dsRefid = ViewBag.dvObject.DataSourceRefId, Meta = JsonConvert.SerializeObject(Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length - 11)))), dvRefId = ViewBag.dvRefId });
-}
+    @if (ViewBag.dvObject != null)
+    {
+        @await Component.InvokeAsync("DataVisualization", new { dsRefid = ViewBag.dvObject.DataSourceRefId, Meta = JsonConvert.SerializeObject(Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length - 11)))), dvRefId = ViewBag.dvRefId });
+    }
 </div>
 
 @section EbHead {
     <script>
-        $("#datatSourceDropdown .dropdown-menu li a").on("click", function (e) {
+        @*$("#datatSourceDropdown bootstrap-select").on("click", function (e) {
+            alert("hjh");
             var dsRefid = $(e.target).parent().attr("data-dsid");
             $("#datatSourceDropdown .btn:first-child").text($(e.target).text());
             $("#datatSourceDropdown .btn:first-child").val($(e.target).text());
             $.LoadingOverlay("show");
-            
+
             $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid, Meta: JSON.stringify( @Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length-11))) ), dvRefId: null }, function () {
                 $.LoadingOverlay("hide");
                 });
 
+        });*@
+        $("#datatSourceDropdown select").on("changed.bs.select", function (e, clickedIndex, newValue, oldValue) {
+            var dsRefid = $(this).find('option').eq(clickedIndex).attr("data-dsid");
+            $.LoadingOverlay("show");
+            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid, Meta: JSON.stringify( @Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length-11))) ), dvRefId: null }, function () {
+                $.LoadingOverlay("hide");
+                });
         });
+        $('#datatSourceDropdown select').off("loaded.bs.select").on("loaded.bs.select", function () {
+              $('.selectpicker').selectpicker({
+                style: 'btn-info',
+                size: 4
+            });
+            //console.log(ViewBag.dvObject.DataSourceRefId);
+            @*if (@ViewBag.dvRefId == null)
+                $('#datatSourceDropdown').selectpicker('val', "Select Datasource");
+            else
+                $('#datatSourceDropdown').selectpicker('val', @ViewBag.dvObject.DataSourceRefId);*@
+            $('#datatSourceDropdown').selectpicker('refresh');
+
+         });
         $(document).ready(function () {
             @Html.Raw(head)
             $('[data-toggle="tooltip"]').tooltip();

@@ -150,7 +150,8 @@ var EbDataTable = function (settings) {
         if (index !== 1)
             $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
         $("#dvName_lbl" + this.tableId).text(this.dvName);
-
+        if (this.dvName != "<Untitled>")
+            $("#dvnametxt").val(this.dvName);
         //if (this.ebSettings.renderAs == "graph") {
         //    $("#graphcontainer_tab" + this.tableId).show();
         //    new eb_chart(this.ebSettings, this.ssurl, false, this.tableId);
@@ -585,6 +586,7 @@ var EbDataTable = function (settings) {
         $("#dvnametxt").css("display", "inline-block"); 
         $("#TableHeighttxt").show();
         $("#TableHeighttxt").css("display", "inline-block");
+        $("#Save_btn").show();
         //$("#renderOption").show();
         //$("#renderOption").css("display", "inline-flex");
         if (this.filterBox.css("display") !== "none") 
@@ -1463,7 +1465,7 @@ var EbDataTable = function (settings) {
         //};
 
         this.saveSettings = function () {
-            $.post('../DV/SaveSettings', { json: JSON.stringify(this.ebSettings), dvid: this.dvid }, this.saveSuccess.bind(this));
+            $.post('../DV/SaveSettings', { json: JSON.stringify(this.ebSettings), RefId: this.dvid }, this.saveSuccess.bind(this));
         };
 
         this.saveSuccess = function () {
@@ -2018,7 +2020,6 @@ var EbDataTable = function (settings) {
 
     
     this.ModifyDvname = function () {
-        $("#Save_btn").show();
         this.ebSettings.Name = $("#dvnametxt").val();
         $("label.dvname").text(this.ebSettings.Name);
     };

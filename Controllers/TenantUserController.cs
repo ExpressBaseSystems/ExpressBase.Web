@@ -150,7 +150,7 @@ namespace ExpressBase.Web2.Controllers
         {
             var req = this.HttpContext.Request.Form;
            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var res = this.ServiceClient.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), TenantAccountId = ViewBag.cid });
+            var res = this.ServiceClient.Post<UserPreferenceResponse>(new UserPreferenceRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), TenantAccountId = ViewBag.cid });
             return View();
         }
 
@@ -221,20 +221,7 @@ namespace ExpressBase.Web2.Controllers
         //    return colDef + colext + "}";
         //}
 
-        [HttpGet]
-        public IActionResult CreateUser()
-        {
-           
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult CreateUser(int itemid)
-        {
-            var req = this.HttpContext.Request.Form;
-            var res = this.ServiceClient.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), TenantAccountId = ViewBag.cid, op = "createuser" });
-            return View();
-        }
+       
 
         public IActionResult UserLogout()
         {
@@ -266,7 +253,7 @@ namespace ExpressBase.Web2.Controllers
 
             if (itemid > 0)
             {
-                var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { id = itemid, restype = "getpermissions", TenantAccountId = ViewBag.cid });
+                var fr = this.ServiceClient.Get<GetPermissionsResponse>(new GetPermissionsRequest { id = itemid, TenantAccountId = ViewBag.cid });
                 //ViewBag.permissions = fr.Permissions;
                 ViewBag.RoleName = fr.Data["rolename"];
                 ViewBag.ApplicationId = fr.Data["applicationid"];
@@ -289,7 +276,7 @@ namespace ExpressBase.Web2.Controllers
 
             if (RoleId > 0)
             {
-                var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { id = RoleId, restype = "getpermissions", TenantAccountId = ViewBag.cid });
+                var fr = this.ServiceClient.Get<GetPermissionsResponse>(new GetPermissionsRequest { id = RoleId, TenantAccountId = ViewBag.cid });
                 _permissionsData = fr.Permissions;
             }
 
@@ -327,7 +314,7 @@ namespace ExpressBase.Web2.Controllers
             // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             Dictionary<string, object> Dict = new Dictionary<string, object>();
             Dict.Add("applicationid", applicationid);
-            var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "subroles", id = roleid, Colvalues = Dict, TenantAccountId = ViewBag.cid });
+            var fr = this.ServiceClient.Get<GetSubRolesResponse>(new GetSubRolesRequest { id = roleid, Colvalues = Dict, TenantAccountId = ViewBag.cid });
 
             List<string> subroles = fr.Data.ContainsKey("roles") ? fr.Data["roles"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : new List<string>();
 
@@ -355,7 +342,7 @@ namespace ExpressBase.Web2.Controllers
             return html;
         }       
 
-        public string SaveRoles(int RoleId, int ApplicationId,string RoleName, string Description, string users, string Permissions, string subrolesid)
+        public string SaveRoles(int RoleId, int ApplicationId,string RoleName, string Description, string users, string Permissions, string subrolesid) 
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
@@ -367,10 +354,10 @@ namespace ExpressBase.Web2.Controllers
             Dict["users"] = string.IsNullOrEmpty(users) ? string.Empty : users;
             Dict["permission"] = string.IsNullOrEmpty(Permissions) ? string.Empty : Permissions;
             Dict["dependants"] = string.IsNullOrEmpty(subrolesid) ? string.Empty : subrolesid;
-          
-          //  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            TokenRequiredUploadResponse res= null;
-            res = this.ServiceClient.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = Dict, op = "rbac_roles" });
+
+            //  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+
+            RBACRolesResponse res = this.ServiceClient.Post<RBACRolesResponse>(new RBACRolesRequest { Colvalues = Dict });
 
             if (res.id == 0)
             {
@@ -390,18 +377,18 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.ListType = type;
             if (type== "user")
             {
-                var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "users", TenantAccountId = ViewBag.cid });
+                var fr = this.ServiceClient.Get<GetUsersResponse>(new GetUsersRequest());
                 ViewBag.dict = fr.Data;
                
             }
             else if(type == "usergroup")
             {
-                var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "usergroup", TenantAccountId = ViewBag.cid });
+                var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
                 ViewBag.dict = fr.Data;
             }
             else
             {
-                var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", TenantAccountId = ViewBag.cid });
+                var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
                 ViewBag.dict = fr.Data;
             }
             if (ViewBag.isAjaxCall)
@@ -444,7 +431,7 @@ namespace ExpressBase.Web2.Controllers
         {
            
             string html = string.Empty;
-            var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest {  restype = "getroleusers", id = roleid, TenantAccountId = ViewBag.cid });
+            var fr = this.ServiceClient.Get<GetUsersRoleResponse>(new GetUsersRoleRequest {id = roleid, TenantAccountId = ViewBag.cid });
 
             foreach (var key in fr.Data.Keys)
             {
@@ -465,7 +452,7 @@ namespace ExpressBase.Web2.Controllers
             var req = this.HttpContext.Request.Form;
             if(itemid > 0)
             {
-                var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "usergroupedit",id = itemid,TenantAccountId = ViewBag.cid });
+                var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest { id = itemid,TenantAccountId = ViewBag.cid });
                 List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[","").Replace("]","").Split(',').Select(int.Parse).ToList(): new List<int>();
                 ViewBag.UGName = fr.Data["name"];
                 ViewBag.UGDescription = fr.Data["description"];
@@ -485,11 +472,52 @@ namespace ExpressBase.Web2.Controllers
             else
             {
                 int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
-                TokenRequiredUploadResponse res = this.ServiceClient.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),Id = groupid, op = "usergroups" });
+                CreateUserGroupResponse res = this.ServiceClient.Post<CreateUserGroupResponse>(new CreateUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),Id = groupid });
             }          
             return View();
         }
 
+        public string GetUserGroups(int userid)
+        {
+            string html = string.Empty;
+            var fr = this.ServiceClient.Get<GetUser2UserGroupResponse>(new GetUser2UserGroupRequest {id= userid, TenantAccountId = ViewBag.cid });
+            List<string> usergrouplist = fr.Data.ContainsKey("usergroups") ? fr.Data["usergroups"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : new List<string>();
+
+            foreach (var key in fr.Data.Keys)
+            {
+                if (key != "usergroups")
+                {
+                    var checkedrole = usergrouplist.Contains(key) ? "checked" : string.Empty;
+                    html += @"
+                <div class='row'>
+                    <div class='col-md-1'>
+                        <input type ='checkbox' @checkedrole name = '@usergroup' value = '@id' aria-label='...'>
+                    </div>
+
+                    <div class='col-md-8'>
+                        <h4 name = 'head4' style='color:black;'>@usergroup</h4>
+                        <p class='text-justify'>dsgfds dgfrdhg dfhgdrewteberyrt reyhrtu6trujhfg reyer5y54</p>
+                        <h6>
+                            <i style = 'font-style:italic;' > Created by Mr X on 12/09/2017 at 02:00 pm</i>
+                        </h6>
+                    </div>               
+                </div> ".Replace("@usergroup", fr.Data[key].ToString()).Replace("@id", key).Replace("@checkedrole", checkedrole);
+                }
+            }
+            return html;
+        }
+
+        [HttpGet]
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+      
+        public void SaveUser(int userid,string roles,string usergroups)
+        {
+            var req = this.HttpContext.Request.Form;
+           
+        }
 
     }
 }

@@ -121,7 +121,7 @@
             <div id="users">
                 <div id='div2' class='col-lg-6 well' style="height:300px">
                 </div>
-                @await Component.InvokeAsync("SearchUser", new { targetDivId = "div2" });    
+                @await Component.InvokeAsync("SearchUser", new { targetDivId = "div2" })  
                    
             </div>         
         </div>
@@ -162,10 +162,10 @@
                 selectedroles += $(this).attr('value')+",";
               
             });
-
+          
             var txt = $("#userslist").val();
-            txt = txt.substring(0, txt.length - 1);
-            
+          
+          
             $.post("../TenantUser/SaveRoles",
             {              
                 "Permissions": selected.substring(0, selected.length - 1),

@@ -22,7 +22,7 @@
 <script src="~/lib/codemirror/mode/xml/xml.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        var MyDs=new DataSource('@ViewBag.Obj_id',@ViewBag.IsNew, @ViewBag.VersionNumber,'@ViewBag.cid',@ViewBag.ObjType,'@ViewBag.FilterDialogId');
+        var MyDs=new DataSource('@ViewBag.Obj_id',@ViewBag.IsNew, @ViewBag.VersionNumber,@ViewBag.ObjType,'@ViewBag.FilterDialogId');
         if(@ViewBag.IsNew===true){
             $('#comp').hide();
             $('#ver_his').remove();

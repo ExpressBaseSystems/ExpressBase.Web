@@ -54,6 +54,11 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         $('#custom-size').hide();
     }
 
+    this.idCounter = {
+        EbColCounter: 0,
+        EbCircleCounter: 0,
+    };
+
     this.splitarray = [];
     this.btn_indx = null;
 
@@ -338,76 +343,83 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.posLeft = event.pageX;
         this.posTop = event.pageY;
         this.dropLoc = $(event.target);
-        this.itemToClone = $(ui.draggable);
+        this.col = $(ui.draggable);
+        var type = this.col.attr('eb-type').trim();
+        var id = type + (this.idCounter["Eb" + type + "Counter"])++;
         var minwidth = $(ui.draggable).width();
         var minheight = $(ui.draggable).height();
 
-        if (this.itemToClone.hasClass('shapes')) {
 
-            if (this.itemToClone.attr('id') === 'circle') {
-                this.createCircle();
+        //this.dropLoc.append(new EbObjects["Eb" + type + "Obj"](id));        
+
+
+        if (this.col.hasClass('shapes')) {
+
+            if (this.col.attr('id') === 'circle') {
+                this.createCircle(new EbObjects["Eb" + type + "Obj"](id).Html() );
             }
-            else if (this.itemToClone.attr('id') === 'rectangle') {
+            else if (this.col.attr('id') === 'rectangle') {
                 this.createRectangle();
             }
-            else if (this.itemToClone.attr('id') === 'v-line') {
+            else if (this.col.attr('id') === 'v-line') {
                 this.createVerticalLine();
             }
-            else if (this.itemToClone.attr('id') === 'h-line') {
+            else if (this.col.attr('id') === 'h-line') {
                 this.createHorrizLine();
             }
-            else if (this.itemToClone.attr('id') === 'arrow-right') {
+            else if (this.col.attr('id') === 'arrow-right') {
                 this.createArrowRight();
             }
-            else if (this.itemToClone.attr('id') === 'arrow-left') {
+            else if (this.col.attr('id') === 'arrow-left') {
                 this.createArrowLeft();
             }
-            else if (this.itemToClone.attr('id') === 'arrow-up') {
+            else if (this.col.attr('id') === 'arrow-up') {
                 this.createArrowUp();
             }
-            else if (this.itemToClone.attr('id') === 'arrow-down') {
+            else if (this.col.attr('id') === 'arrow-down') {
                 this.createArrowDown();
             }
-            else if (this.itemToClone.attr('id') === 'by-dir-arrow-v') {
+            else if (this.col.attr('id') === 'by-dir-arrow-v') {
                 this.createByDirArrowHori();
             }
-            else if (this.itemToClone.attr('id') === 'by-dir-arrow-h') {
+            else if (this.col.attr('id') === 'by-dir-arrow-h') {
                 this.createByDirArrowVertcal();
             }
         }
 
-        else if (this.itemToClone.hasClass('special-field')) {
+        else if (this.col.hasClass('special-field')) {
 
-            if (this.itemToClone.attr('id') === "date-time") {
+            if (this.col.attr('id') === "date-time") {
                 this.addCurrentDateTime();
             }
         }
-        else if (this.itemToClone.hasClass('qr-Br-img-btn')) {
+        else if (this.col.hasClass('qr-Br-img-btn')) {
 
-            if (this.itemToClone.attr('id') === 'pg-img') {
+            if (this.col.attr('id') === 'pg-img') {
                 this.addImageOnPage();
             }
 
         }
 
-        else if (this.itemToClone.hasClass('coloums')) {
+        else if (this.col.hasClass('coloums')) {
 
-            if (!this.itemToClone.hasClass("dropped")) {
+            if (!this.col.hasClass("dropped")) {
 
-                $(event.target).append(this.itemToClone.clone().addClass("dropped").removeClass("draggable").css({
-                    width: this.itemToClone.width(),
-                    height: this.itemToClone.height(),
+
+                $(event.target).append(this.col.clone().addClass("dropped").removeClass("draggable").attr('id', id).css({
+                    width: this.col.width(),
+                    height: this.col.height(),
                     position: 'absolute',
                     left: this.posLeft - 270,
                     top: this.posTop - 200
                 }));
 
             }
-            else if (this.itemToClone.hasClass("dropped")) {
+            else if (this.col.hasClass("dropped")) {
 
-                $(event.target).append(this.itemToClone.css({
-                    width: this.itemToClone.width(),
-                    height: this.itemToClone.height(),
+                $(event.target).append(this.col.css({
+                    width: this.col.width(),
+                    height: this.col.height(),
                     position: 'absolute'
                 }));
 
@@ -579,16 +591,12 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         }));
     };
 
-    this.createCircle = function () {
+    this.createCircle = function (_html) {
 
-        var $cir = $("<div class='circle' id='circle" + this.incrId++ + "' style='border-radius:50%;border:1px solid'></div>");
-        this.dropLoc.append($cir.addClass("dropped").css({
-            width: '50px',
-            height: '50px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
+        var $cir =  $(_html.replace("@id", this.incrId++)
+                            .replace("@left", this.posLeft - 270)
+                            .replace("@top", this.posTop - 200));
+        this.dropLoc.append($cir.addClass("dropped"));
     };
 
     this.createRectangle = function () {

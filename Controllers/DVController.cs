@@ -328,7 +328,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.IsNew = "false";
                 ds.IsSave = false;
                 ds.RefId = RefId;
-                ds.ChangeLog = req["changeLog"];
+                ds.ChangeLog = "changelog";
                 var result = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
                 SaveId = result.RefId;
             }

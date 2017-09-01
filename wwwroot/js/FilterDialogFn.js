@@ -1,5 +1,5 @@
 ﻿var tabNum = 0;
-var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
+var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     this.Obj_Id = obj_id;
     this.Name;
     this.Description;
@@ -7,12 +7,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.ObjectType = type;
     this.Is_New = is_new;
     this.Version_num = ver_num;
-    this.Cid = cid;
     this.CommitBtn;
     this.SaveBtn;
-    this.Fd_DropDown;
-    this.VersionHistBtn;
-    this.CloseTabBtn;
     this.Versions;
     this.var_id;
     this.HistoryVerNum;
@@ -32,11 +28,9 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
     this.Init = function () {
         this.SaveBtn = $('#save');
         this.CommitBtn = $('#commit');
-        this.VersionHistBtn = $('#ver_his');
-        this.CloseTabBtn = $('.closeTab');
 
-        $(this.VersionHistBtn).off("click").on("click", this.VerHistory.bind(this));
-        $(this.CloseTabBtn).off("click").on("click", this.deleteTab.bind(this));
+        $('#ver_his').off("click").on("click", this.VerHistory.bind(this));
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         $('#execute').off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
@@ -51,6 +45,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         this.Code = window.editor.getValue();
         this.Name = $('#obj_name').val();
         this.Description = $('#obj_desc').val();
+        this.changeLog=$('#obj_changelog').val();
     }
 
     this.Success_alert = function (result) {
@@ -132,6 +127,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             "</div>");
         $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        var scrollPos = $('#versionTab').offset().top;
+        $(window).scrollTop(scrollPos);
 
         this.ShowVersions();
     }
@@ -173,11 +170,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
         $('#vernav' + this.Obj_Id + tabNum).append("<div class='form-inline inner_toolbar' style='margin-bottom:0px;'>  " +
             " <div class='btn btn-group'>" +
-            "<div class='verlist input-group'>" +
-            "<select id='selected_Ver" + tabNum + "' name='selected_Ver' class='selected_Ver selectpicker show-tick form-control' data-live-search='true'>" +
-            "<option value='Select Version' data-tokens='Select Version'>Compare With</option>");
-        $.each(this.Versions, this.VersionCode_drpListItem.bind(this));
-        $('#vernav' + this.Obj_Id + tabNum).append("</select>" +
+            "<div class='verlist input-group'>"+
             "</div>" +
             "<div class='dropdown fdlist btn-group' id='fdlist'>" +
             "<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true'></select>" +
@@ -275,6 +268,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 $('.selectpicker').selectpicker({
                     size: 4
                 });
+               // $('.selectpicker').selectpicker('refresh');
             })
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
@@ -287,23 +281,23 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
         $('#vernav' + tabNum).append("<div>" +
             "<div class='well'>" +
             " <div>" +
-            " <div class='col-md-4'>" +
+            " <div class='col-md-4 col-md-offset-3'>" +
             "<div class='verlist input-group col-md-6' style='display:inline-block'>" +
-            "<select id='selected_Ver_1" + tabNum + "' class='selected_Ver_1' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
+            "<select id='selected_Ver_1" + tabNum + "' class='selectpicker' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
             "</select>" +
             "</div>" +
             "<div class='verlist input-group col-md-6' style='display:inline-block '>" +
-            "<select id='selected_Ver_2" + tabNum + "' class='selected_Ver_2' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
+            "<select id='selected_Ver_2" + tabNum + "' class='selectpicker' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
             "</select>" +
             "</div>" +
             "</div>" +
             " </div>" +
-            "<button id='compare_inner" + tabNum + "' class='compare_inner'>Comapre</button>" +
+            "<button id='compare_inner" + tabNum + "' class='compare_inner btn btn-primary'>Comapre</button>" +
             "</div>" +
             "<div id='compare_result" + tabNum + "'></div>" +
             " </div>");
         $('#compare_inner' + tabNum).off("click").on("click", this.Differ.bind(this));
-        this.Load_version_list();
+        this.Load_version_list();  
         $('.selectpicker').selectpicker({
             size: 4
         });
@@ -444,6 +438,8 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
                 "</div>");
             $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+            var scrollPos = $('#sample').offset().top;
+            $(window).scrollTop(scrollPos);
 
             $.post('GetColumns4Trial', {
                 ds_refid: this.Obj_Id,
@@ -570,11 +566,13 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
             $('.leftPane').scrollTop($(this).scrollTop());
             $('.leftPane').scrollLeft($(this).scrollLeft());
         });
-        Split(['.leftPane', '.rightPane'], {
-            sizes: [50, 50],
-            minSize: 0,
-            gutterSize: 3
-        });
+        //Split(['.leftPane', '.rightPane'], {
+        //    sizes: [50, 50],
+        //    minSize: 0,
+        //    gutterSize: 3
+        //});
+        var scrollPos = $('#compare_result' + tabNum).offset().top;
+        $(window).scrollTop(scrollPos);
         $.LoadingOverlay("hide");
     };
 
@@ -633,7 +631,7 @@ var DataSource = function (obj_id, is_new, ver_num, cid, type, fd_id) {
                 "name": this.Name,
                 "description": this.Description,
                 "filterDialogId": filter_dialog_refid,
-                "changeLog": "changed",
+                "changeLog": this.changeLog,
                 "json": JSON.stringify(_json),
                 "rel_obj": this.Rel_object
             }, function (result) {

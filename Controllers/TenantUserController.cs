@@ -397,10 +397,10 @@ namespace ExpressBase.Web2.Controllers
                 return View();
         }
 
-        public string GetRoles()
+        public string GetRoles(int userid)
         {
             string html = string.Empty;
-            var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { restype = "roles", TenantAccountId = ViewBag.cid });      
+            var fr = this.ServiceClient.Get<GetUserRolesResponse>(new GetUserRolesRequest { id = userid, TenantAccountId = ViewBag.cid });      
             List<string> subroles = fr.Data.ContainsKey("roles") ? fr.Data["roles"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : new List<string>();
 
             foreach (var key in fr.Data.Keys)
@@ -512,11 +512,35 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-      
+
+        [HttpPost]
+        public IActionResult CreateUser(int itemid)
+        {
+            if(itemid > 0)
+            {
+                var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = itemid, TenantAccountId = ViewBag.cid });
+                ViewBag.Name = fr.Data["name"];
+                ViewBag.email = fr.Data["email"];
+                ViewBag.itemid = itemid;
+            }
+            return View();
+        }
+
         public void SaveUser(int userid,string roles,string usergroups)
         {
             var req = this.HttpContext.Request.Form;
-           
+            Dictionary<string, object> Dict = new Dictionary<string, object>();
+          
+            Dict["firstname"] = req["firstname"];
+            Dict["email"] = req["email"];
+            Dict["pwd"] = req["pwd"];
+            Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
+            Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
+
+            //  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+
+            CreateUserResponse res = this.ServiceClient.Post<CreateUserResponse>(new CreateUserRequest {Id = userid, Colvalues = Dict });
+
         }
 
     }

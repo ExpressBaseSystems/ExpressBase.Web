@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Objects;
 using ExpressBase.Data;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ObjectContainers;
@@ -39,14 +40,16 @@ namespace ExpressBase.Web.Components
             {
                 if (!string.IsNullOrEmpty(dvRefId))
                 {
-                    var dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
+                    var dvObject = (ViewBag.wc == "dc") ? this.Redis.Get<EbDataVisualization>(dvRefId) : this.Redis.Get<EbDataVisualization>(dvRefId + ViewBag.UId);
+                    if (dvObject == null)
+                        dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
                     dvObject.AfterRedisGet(this.Redis);
                     ViewBag.data = dvObject;
                 }
                 else
                     ViewBag.data = getDVObject(dsRefid);
             }
-            ViewBag.Meta = Meta;
+            ViewBag.Meta = Meta.Replace("\\r\\n", string.Empty);
             ViewBag.dvRefId = dvRefId;
             return View();
         }

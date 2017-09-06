@@ -582,11 +582,11 @@ var EbDataTable = function (settings) {
             this.appendColumns();
             //this.appendDisplayColumns();
         }
-        $("#dvnametxt").show();
-        $("#dvnametxt").css("display", "inline-block"); 
-        $("#TableHeighttxt").show();
-        $("#TableHeighttxt").css("display", "inline-block");
-        $("#Save_btn").show();
+        //$("#dvnametxt").show();
+        //$("#dvnametxt").css("display", "inline-block"); 
+        //$("#TableHeighttxt").show();
+        //$("#TableHeighttxt").css("display", "inline-block");
+        //$("#Save_btn").show();
         //$("#renderOption").show();
         //$("#renderOption").css("display", "inline-flex");
         if (this.filterBox.css("display") !== "none") 

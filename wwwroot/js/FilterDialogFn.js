@@ -438,8 +438,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
                 "</div>");
             $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-            var scrollPos = $('#sample').offset().top;
-            $(window).scrollTop(scrollPos);
+           
 
             $.post('GetColumns4Trial', {
                 ds_refid: this.Obj_Id,

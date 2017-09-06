@@ -23,14 +23,6 @@
 <script type="text/javascript">
     $(document).ready(function(){
         var MyDs=new DataSource('@ViewBag.Obj_id',@ViewBag.IsNew, @ViewBag.VersionNumber,@ViewBag.ObjType,'@ViewBag.FilterDialogId');
-        if(@ViewBag.IsNew===true){
-            $('#comp').hide();
-            $('#ver_his').remove();
-            $('#statusLabel').remove();
-            $('#save').remove();
-            $('#stat_his').remove();
-            $('#rel_obj').remove();
-        }
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {
             $("#sample").DataTable().destroy();
@@ -48,10 +40,14 @@
 </script>
 <div class="row dshbrd">
     <div>
-     
-        @await Component.InvokeAsync("ObjectDashboard", new { objid = @ViewBag.Obj_id, objname = @ViewBag.ObjectName, totVer = @ViewBag.VersionNumber, status = @ViewBag.Status, desc = @ViewBag.ObjectDesc })
-       
-       
+      @{ 
+          if (ViewBag.IsNew =="true") {
+              @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
+          }
+          else {
+              @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+              }
+          }
     </div>
 </div>
 <div class="row codedit">
@@ -256,7 +252,7 @@
     }
 
     .CodeMirror {
-        width:1339px;
+        width: 1339px;
         height: 413px;
         background-color: ivory;
     }

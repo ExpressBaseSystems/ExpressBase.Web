@@ -40,14 +40,16 @@
 </script>
 <div class="row dshbrd">
     <div>
-      @{ 
-          if (ViewBag.IsNew =="true") {
-              @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
-          }
-          else {
-              @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
-              }
-          }
+        @{
+            if (ViewBag.IsNew == "true")
+            {
+                @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
+            }
+            else
+            {
+                @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+            }
+        }
     </div>
 </div>
 <div class="row codedit">
@@ -63,9 +65,10 @@
                         <i class="fa fa-circle-o-notch fa-spin fa-1x fa-fw" id="loader_fd" style="display:none;color:dodgerblue;"></i>
                     </div>
                     <a href="#inner_well" class="btn btn-default collapsed" id="execute" data-toggle="collapse" title="Click to open Parameter dialog"><i class="fa fa-chevron-down fa-1x" aria-hidden="true">Render</i></a>
+                    <div id='run' name='run' class='run btn btn-default disabled'>Run</div>
                 </div>
                 <div id="inner_well" class="collapse well"></div>
-                <div id='run' name='run' class='run btn btn-default disabled'>Run</div>
+
             </div>
 
             <div class="col-md-12" style="margin:0;padding:0;">

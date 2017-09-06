@@ -170,7 +170,7 @@ namespace ExpressBase.Web.Controllers
 
         public JsonResult CommitEbDataSource()
         {
-            var req = this.HttpContext.Request.Form;            
+            var req = this.HttpContext.Request.Form;
             if (req["id"] == "null")
             {
                 var ds = new EbObjectFirstCommitRequest();
@@ -183,7 +183,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Status = ObjectLifeCycleStatus.Live;
                 ds.UserId = ViewBag.UId;
                 ds.Relations = req["rel_obj"];
-                
+
                 ServiceClient.Post<EbObjectFirstCommitResponse>(ds);
             }
             else
@@ -259,23 +259,11 @@ namespace ExpressBase.Web.Controllers
             return ViewBag.Code;
         }
 
-        public string GetFilterBody()
+        public IActionResult GetFilterBody()
         {
             var req = this.HttpContext.Request.Form;
-            var _type = req["Ebobjtype"];
-            BuilderType _EbObjectType = (BuilderType)Enum.Parse(typeof(BuilderType), _type, true);
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = req["objid"] });
-            var rlist = resultlist.Data[0];
-            string _html = "";
-            string _head = "";
-            var filterForm = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json);
-            if (filterForm != null)
-            {
-                _html += filterForm.GetHtml();
-                _head += filterForm.GetHead();
-            }
-
-            return _html + "<script>" + _head + "</script>";
+            var filterForm = this.Redis.Get<EbFilterDialog>(req["objid"]);
+            return ViewComponent("ParameterDiv", new { paramDiv = filterForm });
         }
 
         public string GetColumns4Trial(string ds_refid, string parameter)
@@ -338,7 +326,7 @@ namespace ExpressBase.Web.Controllers
             string spaceValue = "\u00B7";
             string tabValue = "\u00B7\u00B7";
             string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
-          
+
             foreach (var diffLine in text.Lines)
             {
                 html += "<tr>";

@@ -438,8 +438,6 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
                 "</div>");
             $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-           
-
             $.post('GetColumns4Trial', {
                 ds_refid: this.Obj_Id,
                 parameter: this.Object_String_WithVal
@@ -497,7 +495,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     this.Load_Fd = function () {
         var getNav = $("#versionNav li.active a").attr("href");
         if ($(getNav + ' #inner_well').children().length === 0) {
-            $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId, "Ebobjtype": "FilterDialog" },
+            $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId},
                 function (result) {
                     $(getNav + ' #inner_well').append(result);
                     $(getNav + ' #run').removeClass('disabled');

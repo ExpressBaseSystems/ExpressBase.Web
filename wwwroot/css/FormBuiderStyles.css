@@ -300,7 +300,7 @@
 }
 
 .Eb-ctrlContainer {
-    min-height: 66px;
+    min-height: 28.18px;
 }
 
 /*overriding*/
@@ -462,6 +462,7 @@
 .icon-cont {
     display: inline-block;
     padding: 0px 4px;
+    width:20.99px;
 }
 
     .icon-cont:hover {

@@ -103,9 +103,9 @@
 
                     <button class="btn btn-xs shapes" eb-type="ArrD" id="arrow-down" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-down fa-lg" aria-hidden="true"></i></button>
 
-                    <button class="btn btn-xs shapes" eb-type="ByArrH" id="by-dir-arrow-h" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button>
+                    <button class="btn btn-xs shapes" eb-type="ByArrH" id="by-dir-arrow-h" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button>
 
-                    <button class="btn btn-xs shapes" eb-type="ByArrV" id="by-dir-arrow-v" data-toggle="tooltip" data-placement="bottom" title="By directional Arrow"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button>
+                    <button class="btn btn-xs shapes" eb-type="ByArrV" id="by-dir-arrow-v" data-toggle="tooltip" data-placement="bottom" title="By directional Arrow"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button>
 
                     <button class="btn btn-xs shapes" eb-type="Hl" id="h-line" data-toggle="tooltip" data-placement="bottom" title="Horrizontal Line"><i> __ </i></button>
 
@@ -149,14 +149,12 @@
     </div>
     <div class="tab-content">
         <div class="tab-pane active" id="home" role="tabpanel">
-            <div class="tab-menu">
-            </div>
             <div class="col-md-2 side-toolbar">
                 <div class="toolbox">
                     @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
                 </div>
             </div>
-            <div class="col-md-8" style="padding-right:0;margin-top:84px">
+            <div class="col-md-8" style="padding-right:0;margin-top:50px">
                 <div class="title text-center" style="display:none"></div>
                 <div class='ruler' style="display:none"></div>
                 <div class='rulerleft' style="display:none"></div>

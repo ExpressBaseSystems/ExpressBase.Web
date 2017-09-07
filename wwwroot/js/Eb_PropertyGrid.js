@@ -7,6 +7,7 @@
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
+    this.PropertyChanged = null;
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -24,7 +25,7 @@
 
         // If boolean create checkbox
         if (type === 0 || typeof value === 'boolean') {
-            valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
+            valueHTML = '<input type="checkbox" for="' + name + '" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
 
@@ -200,6 +201,7 @@
         this.getvaluesFromPG();
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
+        this.PropertyChanged(this.PropsObj, );
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();

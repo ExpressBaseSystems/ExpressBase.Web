@@ -10,20 +10,46 @@ using Microsoft.AspNetCore.Http;
 using ExpressBase.Data;
 using ExpressBase.Web.Filters;
 using Microsoft.Extensions.Options;
+using ExpressBase.Objects.Objects.TenantConnectionsRelated;
+using ExpressBase.Web.Controllers;
+using ExpressBase.Common.Connections;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ExpressBase.Web2.Models
+namespace ExpressBase.Web2.Controllers
 {
-    public class SampleController : EbBaseController
+    public class SampleController : EbBaseNewController
     {
-        public SampleController(IOptionsSnapshot<EbSetupConfig> ss_settings) : base(ss_settings) { }
+        public SampleController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+
 
         // GET: /<controller>/
         public IActionResult Index()
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult AddEmailAccount()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddEmailAccount(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            SMTPConnection smtpcon = new SMTPConnection();
+            smtpcon.NickName = req["nickname"];
+            smtpcon.Smtp = req["smtp"];
+            smtpcon.Port = req["port"];
+            smtpcon.EmailAddress = req["email"];
+            smtpcon.Password = req["pwd"];
+            var r = this.ServiceClient.Post<bool>(new AddSMTPConnectionRequest { SMTPConnection = smtpcon });
+            Console.WriteLine(req.ToString());
+            return View();
+        }
+
         public IActionResult dragNdrop()
         {
             return View();

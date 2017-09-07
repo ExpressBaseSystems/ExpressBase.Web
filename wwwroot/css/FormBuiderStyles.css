@@ -246,7 +246,7 @@
     border-bottom: var(--sild1pxDDD);
 }
 
-.pgObjEditor-Cont .open, .pgObjEditor-Cont .caret {
+.pgCollEditor-Cont .open, .pgCollEditor-Cont .caret {
     display: none !important;
 }
 
@@ -278,11 +278,11 @@
     width: 100%;
 }
 
-.pgObjEditor-Cont .btn {
+.pgCollEditor-Cont .btn {
     border-radius: 1px !important;
 }
 
-.pgObjEditor-Cont .modal-body {
+.pgCollEditor-Cont .modal-body {
     height: 51vh;
 }
 
@@ -312,8 +312,10 @@
     border-bottom: var(--sild1pxDDD);
 }*/
 
-.pgObjEditBtn {
-    width: 100%;
+.pgCX-Editor-Btn {
+    width: 20px;
+    padding: 1px 4px;
+    float: right;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
     border: 1px solid rgba(34,36,38,.15);
@@ -324,7 +326,7 @@
     transition: box-shadow .1s ease,border-color .1s ease;
 }
 
-.pgObjEditor-Cont {
+.pgCollEditor-Cont {
     width: 50%;
     height: 70VH;
     position: fixed;
@@ -335,22 +337,26 @@
     padding: 3px;
 }
 
-    .pgObjEditor-Cont .propgrid-table-cont {
+    .pgCollEditor-Cont .propgrid-table-cont {
         height: 36.2vh;
     }
 
-.pgObjEditor-bg {
+    .pgCollEditor-Cont .CodeMirror {
+        height: 46vh;
+    }
+
+.pgCollEditor-bg {
     display: none;
     height: 100vh;
     width: 100%;
     position: fixed;
     top: 0px;
     left: 0px;
-    z-index: 100;
+    z-index: 10;
     background-color: rgba(33, 33, 33, 0.065);
 }
 
-.ObjEditor-controls-head, .inner-PG-Cont .pgHead {
+.CE-controls-head, .inner-PG-Cont .pgHead {
     padding: 9px;
     font-weight: bold;
     background-color: var(--colorDDD);
@@ -379,12 +385,12 @@
     height: 46.7vh;
 }
 
-.OEctrlsCont {
+.CEctrlsCont {
     overflow-y: auto;
     height: 40vh;
 }
 
-.pgObjEditor-Cont .modal-footer {
+.pgCollEditor-Cont .modal-footer {
     padding: 10px 15px;
     text-align: right;
     border-top: 1px solid #e5e5e5;
@@ -403,7 +409,7 @@
         padding: 11px;
     }*/
 
-.editObj-add {
+.CE-add {
     display: inline-block;
     padding: 5px 10px;
     margin-bottom: 0;
@@ -418,11 +424,11 @@
     border-left: none !important;
 }
 
-    .editObj-add:hover {
+    .CE-add:hover {
         background-color: #eee;
     }
 
-    .editObj-add:focus {
+    .CE-add:focus {
         outline: none;
         /*border: solid 1px #cdcdcd;*/
     }
@@ -449,6 +455,7 @@
 }
 
 .sub-controls-DD-cont {
+    display: none;
     background-color: white;
     border: var(--sild1pxDDD);
 }
@@ -462,7 +469,7 @@
 .icon-cont {
     display: inline-block;
     padding: 0px 4px;
-    width:20.99px;
+    width: 20.99px;
 }
 
     .icon-cont:hover {

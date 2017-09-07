@@ -446,6 +446,18 @@ var EbDataTable = function (settings) {
         }
         else if (this.dragNdrop) {
             this.ebSettings.Columns.$values.sort(this.ColumnsComparer);
+            $.each(this.ebSettings.Columns.$values, function (i, obj) {
+                if (obj.fontfamily != 0){
+                    var style = document.createElement('style');
+                    style.type = 'text/css';
+                    var fontName = obj.fontfamily.replace(/_/g, " ");
+                    var replacedName = obj.fontfamily;
+                    style.innerHTML = '.font_' + replacedName + '{font-family: ' + fontName + ';}';
+                    document.getElementsByTagName('body')[0].appendChild(style);
+                    obj.className = "font_" + replacedName+" tdheight";
+                    obj.sClass = "font_" + replacedName + " tdheight";
+                }
+                });
             //this.ebSettings.columnsext.sort(this.ColumnsComparer);
             $('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
             var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
@@ -833,14 +845,14 @@ var EbDataTable = function (settings) {
         this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
-        //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
-        $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsModal.bind(this));
+        $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsWindow.bind(this));
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
         //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
         $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#dvnametxt").off("keyup").on("keyup", this.ModifyDvname.bind(this));
         $("#TableHeighttxt").off("keyup").on("keyup", this.ModifyTableHeight.bind(this));
         //$("input[name=renderAs]").off("click").on("click", this.graphSettings.bind(this));
+        //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
     };
 
 
@@ -1359,34 +1371,7 @@ var EbDataTable = function (settings) {
     //        $(this.OuterModalDiv).modal('show');
     //    };
 
-    this.GetSettingsModal = function (e) {
-        //$(document.body).append("<div id='settingsmodal' class='modal fade in' style='display: block;'>" +
-        //   " <div class='modal-dialog modal-lg' style='width: 1100px;'>" +
-        //        "<div class='modal-content' style='width: 1100px;'>" +
-        //            "<div class='modal-header'>" +
-        //              "  <button class='close' data-dismiss='modal'>x</button>" +
-        //             "   <h4 class='modal-title'>" + this.ebSettings.dvName + ": SettingsTable</h4>" +
-        //            "</div>" +
-        //            "<div class='modal-body' style='padding-bottom: 40px;'>" +
-        //              "  <div id='loader' class='loadingdiv'><i class='fa fa-spinner fa-pulse fa-3x fa-fw'></i></div>" +
-
-        //        "    </div>" +
-
-        //     "   </div>" +
-        //   " </div>" +
-        //"</div>");
-        //$("#loader").show();
-        //$.ajax({
-        //    url: "../Dev/DVEditor",
-        //    type: "POST",
-        //    data: { objid: this.dvid },
-        //    success: function (data) {
-        //        $("#settingsmodal .modal-body").html(data);
-        //        $("#loader").hide();
-        //    }
-        //});
-        //$("#settingsmodal").on('hidden.bs.modal', this.hideModalFunc.bind(this));
-        //$("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
+    this.GetSettingsWindow = function (e) {
         $("#" + this.tableId + "TableColumns4Drag").toggle();
         if ($("#" + this.tableId + "TableColumns4Drag").css("display") === "none") {
             $("#" + this.tableId + "divcont").css("width", "100%");
@@ -1418,6 +1403,45 @@ var EbDataTable = function (settings) {
             $("#" + this.tableId + "TableColumns4Drag").css("height", $("#" + this.tableId + "divcont").css("height"))
             $("#" + this.tableId + "TableColumnsPPGrid").css("height", $("#" + this.tableId + "divcont").css("height"))
         }
+    };
+
+    this.getdvWindow = function () {
+        $(document.body).append("<div id='settingsmodal' class='modal fade in' style='display: block;'>" +
+           " <div class='modal-dialog modal-sm'>" +
+                "<div class='modal-content' style='width: 1100px;'>" +
+                    "<div class='modal-header'>" +
+                      "  <button class='close' data-dismiss='modal'>x</button>" +
+                     "   <h4 class='modal-title'>" + this.ebSettings.dvName + ": SettingsTable</h4>" +
+                    "</div>" +
+                    "<div class='modal-body' style='padding-bottom: 40px;'>" +
+                        "<div class='dropdown' id='dvdropdown'>" +
+                             "<button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"+
+                                " Dropdown button" +
+                             "</button>" +
+                             "< div class='dropdown-menu' aria- labelledby='dropdownMenuButton'> " +
+                                 "<a class='dropdown-item' href= '#' > dv</a> " +
+                                 "<a class='dropdown-item' href= '#' > Report</a> " +
+                             " </div > " +
+                        " </div > " +
+                "    </div>" +
+
+             "   </div>" +
+           " </div>" +
+            "</div>");
+        $('#dvdropdown a').on('click', function () {
+            $.ajax({
+                url: "../DV/DVEditor",
+                type: "POST",
+                data: { objid: this.dvid },
+                success: function (data) {
+                    $("#settingsmodal .modal-body").html(data);
+                    $("#loader").hide();
+                }
+            });
+        });
+        
+        $("#settingsmodal").on('hidden.bs.modal', this.hideModalFunc.bind(this));
+        //$("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
     };
 
     this.hideModalFunc = function (e) {

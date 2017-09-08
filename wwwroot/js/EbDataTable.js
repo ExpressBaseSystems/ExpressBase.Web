@@ -852,7 +852,8 @@ var EbDataTable = function (settings) {
         $("#dvnametxt").off("keyup").on("keyup", this.ModifyDvname.bind(this));
         $("#TableHeighttxt").off("keyup").on("keyup", this.ModifyTableHeight.bind(this));
         //$("input[name=renderAs]").off("click").on("click", this.graphSettings.bind(this));
-        //this.settingsbtn.off("click").on("click", this.GetSettingsModal.bind(this));
+        //$("#settingsbtn").off("click").on("click", this.getdvWindow.bind(this));
+        $('#dvdropdown li a').on('click', this.showdvList.bind(this));
     };
 
 
@@ -877,11 +878,36 @@ var EbDataTable = function (settings) {
                 "<div id='btnCopy" + this.tableId + "' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></div>" +
             "</div>" +
             "</div>" +
-            "<a id='" + this.tableId + "_btnSettings' class='btn btn-default' data-toggle='modal'  data-target='#settingsmodal'><i class='fa fa-cog' aria-hidden='true'></i></a>" +
+            "<a id='" + this.tableId + "_btnSettings' class='btn btn-default'><i class='fa fa-cog' aria-hidden='true'></i></a>" +
             "<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
                    " <i class='fa fa-chevron-down' aria-hidden='true'></i>" +
                " </div>" +
-         "</div>");
+            "</div>");
+        $(document.body).append("<div id='settingsmodal' class='modal fade'>" +
+            " <div class='modal-dialog modal-sm'>" +
+                "<div class='modal-content'>" +
+                    "<div class='modal-header'>" +
+                    "  <button class='close' data-dismiss='modal'>&times;</button>" +
+                    "   <h4 class='modal-title'>xxxxxxxx</h4>" +
+                    "</div>" +
+                    "<div class='modal-body' style='padding-bottom: 40px;'>" +
+                        "<div class='dropdown' id='dvdropdown'>" +
+                            "<button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown'>" +
+                            " Dropdown button" +
+                            "</button>" +
+                            "<ul class='dropdown-menu'>" +
+                            "   <li><a href='#'>DataVisualization</a></li>" +
+                            "  <li><a href='#'>Report</a></li>" +
+                            "</ul>" +
+                        " </div > " +
+                        "<div id ='objList'>" +
+                            "<ul class='list-group'>" +
+                            "</ul>" +
+                        "</div>" +
+                    "</div>" +
+                "</div>" +
+            " </div>" +
+            "</div>");
     };
 
 
@@ -1301,75 +1327,79 @@ var EbDataTable = function (settings) {
         $('#' + this.tableId + '_wrapper').find('.buttons-print')[0].click();
     };
 
-    //    this.GetSettingsModal = function (e) {
-    //        this.OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
-    //        var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
-    //        var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
-    //        var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
-    //        var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
-    //        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.dvName + ": SettingsTable");
-    //        var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
-    //        var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
-    //        var ModalBodyDropDown = $(document.createElement("select")).attr("id", "columnDropdown");
-    //        var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
-    //        var ModalBodyAnchorCol = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#2a").text("Columns");
-    //        var ModalBodyliGen = $(document.createElement("li")).attr("class", "nav-item");
-    //        var ModalBodyAnchorGen = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#1a").text("General");
-    //        var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
-    //        var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
-    //        var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
-    //        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane active").attr("id", "1a");
-    //        var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
-    //        var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
+    {
 
-    //        ModalFooterDiv.append(FooterButton);
-    //        ModalBodyTabPaneGenDiv.append("<div class='table-responsive'>" +
-    //    "<table class='table table-bordered table-hover'>" +
-    //        "<tbody>" +
-    //	        "<tr> <td>Hide Serial</td>           <td><input type='checkbox' id='serial_check'></td> </tr>" +
-    //	        "<tr> <td>Hide Chechbox</td>         <td><input type='checkbox' id='select_check'></td> </tr>" +
-    //	        "<tr> <td>Page Length</td>           <td><input type='numeric' id='pageLength_text' value='100'></td> </tr>" +
-    //	        "<tr> <td>Table Height</td>          <td><input type='numeric' id='scrollY_text' value='300'></td> </tr>" +
-    //	        "<tr> <td>Row Grouping</td>          <td><input type='numeric' id='rowGrouping_text'></td> </tr>" +
-    //	        "<tr> <td>Left Fixed Columns         </td><td><input type='numeric' id='leftFixedColumns_text' value='0'></td> </tr>" +
-    //	        "<tr> <td>Right Fixed Columns</td>   <td><input type='numeric' id='rightFixedColumns_text' value='0'></td> </tr>" +
-    //            "<tr> <td>Data Visualization Name</td>   <td><input type='text' id='dvName_txt'></td> </tr>" +
-    //        "</tbody>" +
-    //    "</table>" +
-    //"</div>");
-    //        ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
-    //        ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
-    //     "                                        <div id='propHead'></div><div id='propGrid'></div>" +
-    //                                             "<div>" +
-    //                                                 "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
-    //                                                 "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
-    //                                             "</div>" +
-    //     "</div>");
+        //    this.GetSettingsModal = function (e) {
+        //        this.OuterModalDiv = $(document.createElement("div")).attr("id", "settingsmodal").attr("class", "modal fade");
+        //        var ModalSizeDiv = $(document.createElement("div")).attr("class", "modal-dialog modal-lg").css("width", "1100px");
+        //        var ModalContentDiv = $(document.createElement("div")).attr("class", "modal-content").css("width", "1100px");
+        //        var ModalHeaderDiv = $(document.createElement("div")).attr("class", "modal-header");
+        //        var headerButton = $(document.createElement("button")).attr("class", "close").attr("data-dismiss", 'modal').text("x");
+        //        var title = $(document.createElement('h4')).attr("class", "modal-title").text(this.ebSettings.dvName + ": SettingsTable");
+        //        var ModalBodyDiv = $(document.createElement("div")).attr("class", "modal-body");
+        //        var ModalBodyUl = $(document.createElement("ul")).attr("class", "nav nav-tabs");
+        //        var ModalBodyDropDown = $(document.createElement("select")).attr("id", "columnDropdown");
+        //        var ModalBodyliCol = $(document.createElement("li")).attr("class", "nav-item");
+        //        var ModalBodyAnchorCol = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#2a").text("Columns");
+        //        var ModalBodyliGen = $(document.createElement("li")).attr("class", "nav-item");
+        //        var ModalBodyAnchorGen = $(document.createElement("a")).attr("class", "nav-link").attr("data-toggle", "tab").attr("href", "#1a").text("General");
+        //        var ModalBodyTabDiv = $(document.createElement("div")).attr("class", "tab-content");
+        //        var ModalBodyTabPaneColDiv = $(document.createElement("div")).attr("class", "tab-pane").attr("id", "2a");
+        //        var ModalBodyColSettingsTable = $(document.createElement("table")).attr("class", "table table-striped table-bordered").attr("id", "Table_Settings");
+        //        var ModalBodyTabPaneGenDiv = $(document.createElement("div")).attr("class", "tab-pane active").attr("id", "1a");
+        //        var ModalFooterDiv = $(document.createElement("div")).attr("class", "modal-footer");
+        //        var FooterButton = $(document.createElement("button")).attr("class", "btn btn-primary").attr("id", 'Save_btn').text("Save Changes");
 
-    //        ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
-    //        ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
-    //        ModalBodyliGen.append(ModalBodyAnchorGen);
-    //        ModalBodyliCol.append(ModalBodyAnchorCol);
-    //        ModalBodyUl.append(ModalBodyliGen);
-    //        ModalBodyUl.append(ModalBodyliCol);
-    //        ModalBodyDiv.append(ModalBodyUl);
-    //        ModalBodyDiv.append(ModalBodyDropDown);
-    //        ModalBodyDiv.append(ModalBodyTabDiv);
-    //        ModalHeaderDiv.append(headerButton);
-    //        ModalHeaderDiv.append(title);
-    //        ModalContentDiv.append(ModalHeaderDiv);
-    //        ModalContentDiv.append(ModalBodyDiv);
-    //        ModalContentDiv.append(ModalFooterDiv);
-    //        ModalSizeDiv.append(ModalContentDiv);
-    //        this.OuterModalDiv.append(ModalSizeDiv);
+        //        ModalFooterDiv.append(FooterButton);
+        //        ModalBodyTabPaneGenDiv.append("<div class='table-responsive'>" +
+        //    "<table class='table table-bordered table-hover'>" +
+        //        "<tbody>" +
+        //	        "<tr> <td>Hide Serial</td>           <td><input type='checkbox' id='serial_check'></td> </tr>" +
+        //	        "<tr> <td>Hide Chechbox</td>         <td><input type='checkbox' id='select_check'></td> </tr>" +
+        //	        "<tr> <td>Page Length</td>           <td><input type='numeric' id='pageLength_text' value='100'></td> </tr>" +
+        //	        "<tr> <td>Table Height</td>          <td><input type='numeric' id='scrollY_text' value='300'></td> </tr>" +
+        //	        "<tr> <td>Row Grouping</td>          <td><input type='numeric' id='rowGrouping_text'></td> </tr>" +
+        //	        "<tr> <td>Left Fixed Columns         </td><td><input type='numeric' id='leftFixedColumns_text' value='0'></td> </tr>" +
+        //	        "<tr> <td>Right Fixed Columns</td>   <td><input type='numeric' id='rightFixedColumns_text' value='0'></td> </tr>" +
+        //            "<tr> <td>Data Visualization Name</td>   <td><input type='text' id='dvName_txt'></td> </tr>" +
+        //        "</tbody>" +
+        //    "</table>" +
+        //"</div>");
+        //        ModalBodyTabPaneColDiv.append(ModalBodyColSettingsTable);
+        //        ModalBodyTabPaneColDiv.append("<div id='propCont' class='prop-grid-cont'>" +
+        //     "                                        <div id='propHead'></div><div id='propGrid'></div>" +
+        //                                             "<div>" +
+        //                                                 "<textarea id='txtValues' hidden rows='4' cols='30'></textarea>" +
+        //                                                 "<br><input hidden id='btnGetValues' type='button' value='Get values'/>" +
+        //                                             "</div>" +
+        //     "</div>");
 
-    //        $(FooterButton).click(this.saveSettings.bind(this));
-    //        $(this.OuterModalDiv).on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
-    //        $(this.OuterModalDiv).on('hidden.bs.modal', this.hideModalFunc.bind(this));
-    //        $("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
+        //        ModalBodyTabDiv.append(ModalBodyTabPaneGenDiv);
+        //        ModalBodyTabDiv.append(ModalBodyTabPaneColDiv);
+        //        ModalBodyliGen.append(ModalBodyAnchorGen);
+        //        ModalBodyliCol.append(ModalBodyAnchorCol);
+        //        ModalBodyUl.append(ModalBodyliGen);
+        //        ModalBodyUl.append(ModalBodyliCol);
+        //        ModalBodyDiv.append(ModalBodyUl);
+        //        ModalBodyDiv.append(ModalBodyDropDown);
+        //        ModalBodyDiv.append(ModalBodyTabDiv);
+        //        ModalHeaderDiv.append(headerButton);
+        //        ModalHeaderDiv.append(title);
+        //        ModalContentDiv.append(ModalHeaderDiv);
+        //        ModalContentDiv.append(ModalBodyDiv);
+        //        ModalContentDiv.append(ModalFooterDiv);
+        //        ModalSizeDiv.append(ModalContentDiv);
+        //        this.OuterModalDiv.append(ModalSizeDiv);
 
-    //        $(this.OuterModalDiv).modal('show');
-    //    };
+        //        $(FooterButton).click(this.saveSettings.bind(this));
+        //        $(this.OuterModalDiv).on('shown.bs.modal', this.callPost4SettingsTable.bind(this));
+        //        $(this.OuterModalDiv).on('hidden.bs.modal', this.hideModalFunc.bind(this));
+        //        $("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
+
+        //        $(this.OuterModalDiv).modal('show');
+        //    };
+
+    }
 
     this.GetSettingsWindow = function (e) {
         $("#" + this.tableId + "TableColumns4Drag").toggle();
@@ -1406,22 +1436,22 @@ var EbDataTable = function (settings) {
     };
 
     this.getdvWindow = function () {
-        $(document.body).append("<div id='settingsmodal' class='modal fade in' style='display: block;'>" +
+        $(document.body).append("<div id='settingsmodal' class='modal fade'>" +
            " <div class='modal-dialog modal-sm'>" +
-                "<div class='modal-content' style='width: 1100px;'>" +
+                "<div class='modal-content'>" +
                     "<div class='modal-header'>" +
-                      "  <button class='close' data-dismiss='modal'>x</button>" +
-                     "   <h4 class='modal-title'>" + this.ebSettings.dvName + ": SettingsTable</h4>" +
+                      "  <button class='close' data-dismiss='modal'>&times;</button>" +
+                     "   <h4 class='modal-title'>xxxxxxxx</h4>" +
                     "</div>" +
                     "<div class='modal-body' style='padding-bottom: 40px;'>" +
                         "<div class='dropdown' id='dvdropdown'>" +
-                             "<button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"+
+                             "<button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown'>"+
                                 " Dropdown button" +
-                             "</button>" +
-                             "< div class='dropdown-menu' aria- labelledby='dropdownMenuButton'> " +
-                                 "<a class='dropdown-item' href= '#' > dv</a> " +
-                                 "<a class='dropdown-item' href= '#' > Report</a> " +
-                             " </div > " +
+                              "</button>" +
+                                "<ul class='dropdown-menu'>" +
+                                "   <li><a href='#'>DataVisualization</a></li>" +
+                                "  <li><a href='#'>Report</a></li>" +
+                                "</ul>" +
                         " </div > " +
                 "    </div>" +
 
@@ -1429,19 +1459,45 @@ var EbDataTable = function (settings) {
            " </div>" +
             "</div>");
         $('#dvdropdown a').on('click', function () {
-            $.ajax({
-                url: "../DV/DVEditor",
-                type: "POST",
-                data: { objid: this.dvid },
-                success: function (data) {
-                    $("#settingsmodal .modal-body").html(data);
-                    $("#loader").hide();
-                }
-            });
+            alert($(this).text());
+            //$.ajax({
+            //    url: "../DV/DVEditor",
+            //    type: "POST",
+            //    data: { objid: this.dvid },
+            //    success: function (data) {
+            //        $("#settingsmodal .modal-body").html(data);
+            //        $("#loader").hide();
+            //    }
+            //});
         });
         
         $("#settingsmodal").on('hidden.bs.modal', this.hideModalFunc.bind(this));
         //$("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
+    };
+
+    this.showdvList = function (e) {
+        
+        $("#objList .list-group li").remove();
+            $.ajax({
+                url: "../DV/FetchAllDataVisualizations",
+                type: "POST",
+                data: { type: $(e.target).parent().text() },
+                success: this.appendtoModal.bind(this)
+        });
+            $("#objList .list-group").addClass("objlist");
+    }
+
+    this.appendtoModal = function (data) {
+        $.each(data, function (refid, name) {
+            $("#objList .list-group").append("<li class='list-group-item' data-refid='" + refid + "' style='border: 1px solid;padding: 0px 0px;'>" + name + "</li>");
+        });
+        $("#objList .list-group-item").off("click").on("click", this.AddCsstoLi.bind(this));
+    };
+
+    this.AddCsstoLi = function (e) {
+        //$(e.target).addClass("active");
+        $('#settingsmodal').modal('toggle');
+        alert($(e.target).attr("data-refid"));
     };
 
     this.hideModalFunc = function (e) {
@@ -1476,6 +1532,14 @@ var EbDataTable = function (settings) {
         this.Init();
     };
 
+    this.saveSettings = function () {
+        $.post('../DV/SaveSettings', { json: JSON.stringify(this.ebSettings), RefId: this.dvid }, this.saveSuccess.bind(this));
+    };
+
+    this.saveSuccess = function () {
+        alert("Success!!!!!!!");
+    }
+
     {
         //this.getColobj = function (col_name) {
         //    var selcol = null;
@@ -1488,13 +1552,7 @@ var EbDataTable = function (settings) {
         //    return selcol;
         //};
 
-        this.saveSettings = function () {
-            $.post('../DV/SaveSettings', { json: JSON.stringify(this.ebSettings), RefId: this.dvid }, this.saveSuccess.bind(this));
-        };
-
-        this.saveSuccess = function () {
-            alert("Success!!!!!!!");
-        }
+       
 
 
         //this.callPost4SettingsTable = function () {

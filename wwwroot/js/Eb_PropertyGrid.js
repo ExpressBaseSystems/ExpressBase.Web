@@ -54,7 +54,7 @@
             valueHTML = '<label for="' + elemId + '" editor="' + type + '">' + value + '</label>';
 
             // If collection editor for object || If JS editor
-        } else if (type === 7 || type === 8) {
+        } else if (type > 6) {
             valueHTML = '<button for="' + name + '" editor="' + type + '" class= "pgCX-Editor-Btn" >... </button>';
 
             // Default is textbox
@@ -78,7 +78,7 @@
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
         selectedValue = selectedValue || options[0];
 
-        var html = "<select class='selectpicker' data-live-search='true'>";
+        var html = "<select class='selectpicker' >";
 
         for (var i = 0; i < options.length; i++)
             html += "<option data-tokens='" + options[i] + "'>" + options[i] + "</option>";
@@ -276,17 +276,32 @@
             },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
-        $("#" + this.wraperId + " .pgCollEditor-Cont .sub-controls-DD-cont").hide();
     };
 
+    this.initOSE = function () {
+
+        var OSEbody = '<div class="dropdown" id="dvdropdown">'
+            + '<select class="selectpicker">'
+            + '<option> DataVisualization </option>'
+            + '<option> Report </option>'
+            + '</select>'
+            + '</div>';
+        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Object Selector");
+        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(OSEbody);
+
+        this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
+    };
     this.pgCXE_BtnClicked = function (e) {
         $("#" + this.wraperId + " .pgCollEditor-bg").show();
         this.CurProp = e.target.getAttribute("for");
         var editor = e.target.getAttribute("editor");
+        $("#" + this.wraperId + " .pgCollEditor-Cont .sub-controls-DD-cont").hide();
         if (editor === "7")
             this.initCE();
         if (editor === "8")
             this.initJE();
+        if (editor === "10")
+            this.initOSE();
 
 
         this.setColTiles();
@@ -294,6 +309,34 @@
         $("#" + this.wraperId + " .pgCollEditor-Cont").on("click", ".colTile", this.colTileFocusFn.bind(this));
         new dragula([document.getElementById(this.CEctrlsContId)]);
     };
+
+
+    ////////////////////////////////////////////////////
+    this.showdvList = function (e) {
+
+        $("#objList .list-group li").remove();
+        $.ajax({
+            url: "../DV/FetchAllDataVisualizations",
+            type: "POST",
+            data: { type: $(e.target).parent().text() },
+            success: this.appendtoModal.bind(this)
+        });
+        $("#objList .list-group").addClass("objlist");
+    }
+
+    this.appendtoModal = function (data) {
+        $.each(data, function (refid, name) {
+            $("#objList .list-group").append("<li class='list-group-item' data-refid='" + refid + "' style='border: 1px solid;padding: 0px 0px;'>" + name + "</li>");
+        });
+        $("#objList .list-group-item").off("click").on("click", this.AddCsstoLi.bind(this));
+    };
+
+    this.AddCsstoLi = function (e) {
+        //$(e.target).addClass("active");
+        $('#settingsmodal').modal('toggle');
+        alert($(e.target).attr("data-refid"));
+    };
+    ///////////////////////////////////////////////////
 
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
@@ -314,7 +357,7 @@
 
             + '<div class="modal-footer">'
             + '<div class="sub-controls-DD-cont pull-left">'
-            + '<select class="selectpicker" data-live-search="true"> </select>'
+            + '<select class="selectpicker"> </select>'
             + '<button type="button" id="CE_add" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
             + '</div>'
             + '<button type="button" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>'
@@ -343,9 +386,9 @@
     this.pgCE_AddFn = function () {
         var SelType = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-footer .sub-controls-DD-cont").find("option:selected").val();
         if (this.CurProp === "Controls")
-            this.PropsObj.Controls.$values.push(new EbObjects[SelType](this.PropsObj.EbSid + "_"+  SelType + this.PropsObj.Controls.$values.length));
+            this.PropsObj.Controls.$values.push(new EbObjects[SelType](this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length));
         else
-            this.PropsObj[this.CurProp].push(new EbObjects[SelType](this.PropsObj.EbSid + "_"  + SelType + this.PropsObj[this.CurProp].length));
+            this.PropsObj[this.CurProp].push(new EbObjects[SelType](this.PropsObj.EbSid + "_" + SelType + this.PropsObj[this.CurProp].length));
         this.setColTiles();
     };
 

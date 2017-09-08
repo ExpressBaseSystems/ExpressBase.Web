@@ -853,7 +853,6 @@ var EbDataTable = function (settings) {
         $("#TableHeighttxt").off("keyup").on("keyup", this.ModifyTableHeight.bind(this));
         //$("input[name=renderAs]").off("click").on("click", this.graphSettings.bind(this));
         //$("#settingsbtn").off("click").on("click", this.getdvWindow.bind(this));
-        $('#dvdropdown li a').on('click', this.showdvList.bind(this));
     };
 
 
@@ -882,31 +881,6 @@ var EbDataTable = function (settings) {
             "<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
                    " <i class='fa fa-chevron-down' aria-hidden='true'></i>" +
                " </div>" +
-            "</div>");
-        $(document.body).append("<div id='settingsmodal' class='modal fade'>" +
-            " <div class='modal-dialog modal-sm'>" +
-                "<div class='modal-content'>" +
-                    "<div class='modal-header'>" +
-                    "  <button class='close' data-dismiss='modal'>&times;</button>" +
-                    "   <h4 class='modal-title'>xxxxxxxx</h4>" +
-                    "</div>" +
-                    "<div class='modal-body' style='padding-bottom: 40px;'>" +
-                        "<div class='dropdown' id='dvdropdown'>" +
-                            "<button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown'>" +
-                            " Dropdown button" +
-                            "</button>" +
-                            "<ul class='dropdown-menu'>" +
-                            "   <li><a href='#'>DataVisualization</a></li>" +
-                            "  <li><a href='#'>Report</a></li>" +
-                            "</ul>" +
-                        " </div > " +
-                        "<div id ='objList'>" +
-                            "<ul class='list-group'>" +
-                            "</ul>" +
-                        "</div>" +
-                    "</div>" +
-                "</div>" +
-            " </div>" +
             "</div>");
     };
 
@@ -1473,31 +1447,6 @@ var EbDataTable = function (settings) {
         
         $("#settingsmodal").on('hidden.bs.modal', this.hideModalFunc.bind(this));
         //$("#graphmodal").on('hidden.bs.modal', function (e) { $("#graphdiv").empty(); });
-    };
-
-    this.showdvList = function (e) {
-        
-        $("#objList .list-group li").remove();
-            $.ajax({
-                url: "../DV/FetchAllDataVisualizations",
-                type: "POST",
-                data: { type: $(e.target).parent().text() },
-                success: this.appendtoModal.bind(this)
-        });
-            $("#objList .list-group").addClass("objlist");
-    }
-
-    this.appendtoModal = function (data) {
-        $.each(data, function (refid, name) {
-            $("#objList .list-group").append("<li class='list-group-item' data-refid='" + refid + "' style='border: 1px solid;padding: 0px 0px;'>" + name + "</li>");
-        });
-        $("#objList .list-group-item").off("click").on("click", this.AddCsstoLi.bind(this));
-    };
-
-    this.AddCsstoLi = function (e) {
-        //$(e.target).addClass("active");
-        $('#settingsmodal').modal('toggle');
-        alert($(e.target).attr("data-refid"));
     };
 
     this.hideModalFunc = function (e) {

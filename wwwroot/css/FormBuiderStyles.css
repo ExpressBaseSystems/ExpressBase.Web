@@ -246,8 +246,14 @@
     border-bottom: var(--sild1pxDDD);
 }
 
-.pgCollEditor-Cont .open, .pgCollEditor-Cont .caret {
+.pgCollEditor-Cont .controls-dd-cont .open, .pgCollEditor-Cont .controls-dd-cont .caret {
     display: none !important;
+    outline: none !important;
+    
+}
+
+.pgCollEditor-Cont .controls-dd-cont button:focus {
+    background-color: white !important;
 }
 
 

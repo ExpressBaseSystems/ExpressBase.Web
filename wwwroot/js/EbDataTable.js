@@ -900,6 +900,7 @@ var EbDataTable = function (settings) {
                             "  <li><a href='#'>Report</a></li>" +
                             "</ul>" +
                         " </div > " +
+                        " <div id='loader' class='loadingdiv'><i class='fa fa-spinner fa-pulse fa-3x fa-fw'></i></div>"+
                         "<div id ='objList'>" +
                             "<ul class='list-group'>" +
                             "</ul>" +
@@ -1476,8 +1477,8 @@ var EbDataTable = function (settings) {
     };
 
     this.showdvList = function (e) {
-        
         $("#objList .list-group li").remove();
+        $("#loader").show();
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",
                 type: "POST",
@@ -1485,6 +1486,7 @@ var EbDataTable = function (settings) {
                 success: this.appendtoModal.bind(this)
         });
             $("#objList .list-group").addClass("objlist");
+            $("#loader").hide();
     }
 
     this.appendtoModal = function (data) {
@@ -1724,7 +1726,7 @@ var EbDataTable = function (settings) {
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs === "Progressbar") {
+            if (this.ebSettings.Columns.$values[i].RenderAs === "ProgressBar") {
                 this.ebSettings.Columns.$values[i].render = this.renderProgressCol;
             }
             if (this.ebSettings.Columns.$values[i].DecimalPlaces > 0) {

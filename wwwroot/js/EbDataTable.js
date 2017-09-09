@@ -292,7 +292,7 @@ var EbDataTable = function (settings) {
                 o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
             //o.lengthMenu = this.ebSettings.lengthMenu;
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
-            if (!this.ebSettings.IsPaged) {
+            if (this.ebSettings.IsPaged == "false") {
 
                 o.dom = "<'col-md-12 noPadding'B>rt";
             }
@@ -405,10 +405,10 @@ var EbDataTable = function (settings) {
 
     this.receiveAjaxData = function (dd) {
         this.MainData = dd.data;
-        //if (!dd.IsPaged) {
-        //    this.Api.paging = dd.IsPaged;
-        //    this.Api.lengthChange = false;
-        //}
+        if (!dd.IsPaged) {
+            this.Api.paging = dd.IsPaged;
+            this.Api.lengthChange = false;
+        }
         return dd.data;
     };
 
@@ -1702,7 +1702,7 @@ var EbDataTable = function (settings) {
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);
             }
-            if (this.ebSettings.Columns.$values[i].RenderAs === "Graph") {
+            if (this.ebSettings.Columns.$values[i].RenderAs === "Chart") {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
             }
         }

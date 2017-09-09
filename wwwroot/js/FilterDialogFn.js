@@ -10,7 +10,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     this.CommitBtn;
     this.SaveBtn;
     this.Versions;
-    this.var_id;
+    this.ver_Refid;
     this.HistoryVerNum;
     this.changeLog;
     this.commitUname;
@@ -23,6 +23,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     this.FilterDId = fd_id;
     this.Rel_object;
     this.rel_arr = [];
+    this.runver_Refid;
 
 
     this.Init = function () {
@@ -67,22 +68,23 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     };
 
     this.Load_filter_dialog_list = function (val) {
-        if (!$('#fdlist .bootstrap-select').hasClass('open')) {
-            $('#fdlist #fd').children().remove();
-            $('#fdlist .selectpicker').selectpicker('refresh');
+        var getNav = $("#versionNav li.active a").attr("href");
+        if (!$(getNav+' #fdlist .bootstrap-select').hasClass('open')) {
+            $(getNav+' #fdlist #fd').children().remove();
+            $(getNav+' #fdlist .selectpicker').selectpicker('refresh');
             $('#loader_fd').show();
             $.ajax({
                 url: "../CE/GetObjects_refid_dict",
                 type: 'post',
                 data: { obj_type: 12 },
                 success: function (data) {
-                    $('#fdlist #fd').children().remove();
-                    $('#fdlist #fd').append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
+                    $(getNav+' #fdlist #fd').children().remove();
+                    $(getNav+' #fdlist #fd').append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
                     $.each(data, function (i, obj) {
-                        $('#fd').append("<option value='" + obj.refId + "' data-tokens='" + obj.refId + "'>" + obj.name + "</option>")
+                        $(getNav+' #fd').append("<option value='" + obj.refId + "' data-tokens='" + obj.refId + "'>" + obj.name + "</option>")
                     });
-                    $('#fdlist .selectpicker').selectpicker('refresh');
-                    $('#fdlist .selectpicker').selectpicker('val', val);
+                    $(getNav +' #fdlist .selectpicker').selectpicker('refresh');
+                    $(getNav +' #fdlist .selectpicker').selectpicker('val', val);
                     $('#loader_fd').hide();
                 }
             });
@@ -110,7 +112,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         this.SetValues();
         this.Versions = result;
         tabNum++;
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "'>Version History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
         $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>" +
             "<table class='table table-striped table-bordered col-md-12' id='versions" + this.Obj_Id + tabNum + "'>" +
             "<thead class='verthead" + this.Obj_Id + tabNum + "'>" +
@@ -151,12 +153,12 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     this.OpenPrevVer = function (e) {
         $.LoadingOverlay("show");
         tabNum++;
-        this.var_id = $(e.target).attr("data-id");
+        this.ver_Refid = $(e.target).attr("data-id");
         this.HistoryVerNum = $(e.target).attr("data-verNum");
         this.changeLog = $(e.target).attr("data-changeLog");
         this.commitUname = $(e.target).attr("data-commitUname");
         this.commitTs = $(e.target).attr("data-commitTs");
-        $.post('../CE/VersionCodes', { objid: this.var_id, objtype: this.ObjectType })
+        $.post('../CE/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
             .done(this.VersionCode_success.bind(this));
     }
 
@@ -166,13 +168,13 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     };
 
     this.VersionCode_success = function (data) {
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>" + this.Name + " V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">");
         $('#vernav' + this.Obj_Id + tabNum).append("<div class='form-inline inner_toolbar' style='margin-bottom:0px;'>  " +
             " <div class='btn btn-group'>" +
             "<div class='verlist input-group'>"+
             "</div>" +
-            "<div class='dropdown fdlist btn-group' id='fdlist'>" +
+            "<div class='dropdown fdlist btn-group' id='fdlist" + tabNum + "'>" +
             "<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true'></select>" +
             "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd' style='display:none;color:dodgerblue;'></i>" +
             "</div>" +
@@ -183,6 +185,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             "<div id='run' name='run' class='run btn btn-default disabled'>Run</div>");
         $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
         $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
+        $("#fdlist" + tabNum + " .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $('#vernav' + this.Obj_Id + tabNum).append(
             " <div><label class = 'label label-default codeEditLabel'>Version V." + this.HistoryVerNum + "</label>" +
             " <label class = 'label label-default codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
@@ -191,7 +194,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + data + "</textarea>" +
             "</div>");
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-        window.editor = CodeMirror.fromTextArea(document.getElementById("vercode" + tabNum), {
+        window.editor1 = CodeMirror.fromTextArea(document.getElementById("vercode" + tabNum), {
             mode: "text/x-sql",
             lineNumbers: true,
             lineWrapping: true,
@@ -203,15 +206,16 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
         var getNav = $("#versionNav li.active a").attr("href");
         $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
-        $(getNav + ' #selected_Ver' + tabNum).off("change").on("change", this.Differ.bind(this));
         $(getNav + ' #execute').off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this));
         $.LoadingOverlay("hide");
         setTimeout(function () {
-            window.editor.refresh();
+            window.editor1.refresh();
         }, 500);
         $('.selectpicker').selectpicker({
             size: 4
         });
+
+        $('.selectpicker').selectpicker('refresh');
     };
 
     this.Execute = function () {
@@ -268,7 +272,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 $('.selectpicker').selectpicker({
                     size: 4
                 });
-               // $('.selectpicker').selectpicker('refresh');
+               $('.selectpicker').selectpicker('refresh');
             })
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
@@ -337,16 +341,11 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
     this.Save = function (needRun) {
         $.LoadingOverlay("show");
-        this.SetValues();
-        if (this.Is_New === true) {
-            this.Commit(needRun);
-        }
-        else {
+        this.SetValues();       
             if (this.ObjectType === 5) {
                 this.SetSqlFnName();
             }
-            this.Find_parameters(true, true, needRun);
-        };
+            this.Find_parameters(true, true, needRun);      
     };
 
     this.Commit = function (needRun) {
@@ -439,7 +438,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 "</div>");
             $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
             $.post('GetColumns4Trial', {
-                ds_refid: this.Obj_Id,
+                ds_refid:this.runver_Refid,
                 parameter: this.Object_String_WithVal
             }, this.Load_Table_Columns.bind(this));
 
@@ -464,12 +463,10 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 scrollY: "300px",
                 processing: true,
                 ajax: {
-                    url: "https://localhost:44377/ds/data/" + this.Obj_Id,
+                    url: "http://localhost:8000/ds/data/" + this.Obj_Id,
                     type: "POST",
                     data: this.Load_tble_Data.bind(this),
                     crossDomain: true,
-                    //xhrFields: { withCredentials: true },
-
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("Authorization", "Bearer " + getToken());
                     },
@@ -485,8 +482,6 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     this.Load_tble_Data = function (dq) {
         delete dq.columns; delete dq.order; delete dq.search;
         dq.RefId = this.Obj_Id;
-        //dq.Token = getToken();
-        //dq.rToken = getrToken();
         dq.TFilters = [];
         dq.Params = this.Object_String_WithVal;
         return dq;
@@ -513,14 +508,12 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     this.RunDs = function () {
         if (this.Parameter_Count === 0) {
             this.Save(false);
-            this.ValidInput === true
+            this.ValidInput === true;
             this.Object_String_WithVal = "";
-            this.DrawTable();
+           // this.DrawTable();
         }
         else {
-            this.Find_parameters(false, false, false);
-            this.CreateObjString();
-            this.DrawTable();
+            this.Find_parameters(true, true, true);
         }
     };
 
@@ -604,7 +597,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         this.SetValues();
         this.rel_arr.push(filter_dialog_refid);
         this.Rel_object = this.rel_arr.toString();
-        _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))) }
+        _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))), name: this.Name }
         if (issave === true) {
             $.post("../CE/SaveEbDataSource",
                 {
@@ -619,9 +612,10 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                     "json": JSON.stringify(_json),
                     "NeedRun": needRun,
                     "rel_obj": this.Rel_object
-                }).done(alert("Save Success"));
+                }, this.CallDrawTable.bind(this, needRun));
         }
         else {
+            
             $.post("../CE/CommitEbDataSource", {
                 "objtype": this.ObjectType,
                 "id": this.Obj_Id,
@@ -631,11 +625,20 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 "changeLog": this.changeLog,
                 "json": JSON.stringify(_json),
                 "rel_obj": this.Rel_object
-            }, function (result) {
-                $.post("../CE/code_editor", {
-                    "objid": result.refId
-                }, function () { return false; })
-            });
+            }, this.CallDrawTable.bind(this, needRun));
+        }
+
+    };
+    this.CallDrawTable = function (needRun, result) {
+        if (needRun === true) {
+        var getNav = $("#versionNav li.active a").attr("href");
+        this.runver_Refid = $(getNav).attr("data-id");
+        if (this.runver_Refid === "new") {
+            this.runver_Refid = result.refId;
+            alert(this.runver_Refid);
+        }
+            this.CreateObjString();
+            this.DrawTable();
         }
         $.LoadingOverlay("hide");
     };

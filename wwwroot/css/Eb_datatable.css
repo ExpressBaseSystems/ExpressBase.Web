@@ -208,3 +208,13 @@ div.dataTables_wrapper div.dataTables_processing {
 .dataTables_scrollHeadInner {
     width: 100% !important;
 }
+
+.objlist {
+    width:150px;
+    height: 300px;
+    overflow-x: scroll; 
+    border-style: solid;
+    border-width: 1px;
+    display:inline-block;
+}
+

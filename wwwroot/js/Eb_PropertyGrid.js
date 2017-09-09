@@ -54,9 +54,9 @@
             valueHTML = '<label for="' + elemId + '" editor="' + type + '">' + value + '</label>';
 
             // If collection editor for object || If JS editor
-        } else if (type === 7 || type === 8) {
+        } else if (type > 6) {
             valueHTML = '<button for="' + name + '" editor="' + type + '" class= "pgCX-Editor-Btn" >... </button>';
-            
+
             // Default is textbox
         } else {
             valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
@@ -78,7 +78,7 @@
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
         selectedValue = selectedValue || options[0];
 
-        var html = "<select class='selectpicker' data-live-search='true'>";
+        var html = "<select class='selectpicker' >";
 
         for (var i = 0; i < options.length; i++)
             html += "<option data-tokens='" + options[i] + "'>" + options[i] + "</option>";
@@ -222,8 +222,15 @@
     };
 
     this.colTileFocusFn = function (e) {
-        var id = $(e.target).attr("id");
-        this.CE_PGObj.setObject(this.PropsObj.Controls.GetByName(id), AllMetas[$(e.target).attr("eb-type")]);
+        var $e = $(e.target);
+        var id = $e.attr("id");
+        var obj = null;
+        if (this.CurProp === "Controls")
+            obj = this.PropsObj.Controls.GetByName(id);
+        else
+            obj = this.PropsObj[this.CurProp].filter(function (obj) { return obj.EbSid == e.target.getAttribute("id"); })[0];
+        this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
+
     };
 
     this.removeFromDD = function (name) {
@@ -233,13 +240,13 @@
         }
     };
 
-    this.initCE = function (property) {
+    this.initCE = function () {
 
         var CEbody = '<table class="table table-bordered editTbl">'
             + '<tbody>'
             + '<tr>'
             + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head" >' + property + ' </div>'
+            + '<div class="CE-controls-head" >' + (this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].alias || this.CurProp) + ' </div>'
             + '<div id="' + this.CEctrlsContId + '" class="CEctrlsCont"></div>'
             + '</td>'
             + '<td style="padding: 0px;"><div id="' + this.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>'
@@ -253,7 +260,7 @@
         this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
     };
 
-    this.initJE = function (property) {
+    this.initJE = function () {
 
         var CEbody = '<textarea id="code" name="code" rows="12" cols="40" ></textarea>'
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Javascript Editor");
@@ -269,23 +276,67 @@
             },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
-        $("#" + this.wraperId + " .pgCollEditor-Cont .sub-controls-DD-cont").hide();
     };
 
+    this.initOSE = function () {
+
+        var OSEbody = '<div class="dropdown" id="dvdropdown">'
+            + '<select class="selectpicker">'
+            + '<option> DataVisualization </option>'
+            + '<option> Report </option>'
+            + '</select>'
+            + '</div>';
+        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Object Selector");
+        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(OSEbody);
+
+        this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
+    };
     this.pgCXE_BtnClicked = function (e) {
         $("#" + this.wraperId + " .pgCollEditor-bg").show();
-        var property = e.target.getAttribute("for");
+        this.CurProp = e.target.getAttribute("for");
         var editor = e.target.getAttribute("editor");
-        //var type = typeof this.PropsObj[property];
+        $("#" + this.wraperId + " .pgCollEditor-Cont .sub-controls-DD-cont").hide();
         if (editor === "7")
-            this.initCE(property);
+            this.initCE();
         if (editor === "8")
-            this.initJE(property);
+            this.initJE();
+        if (editor === "10")
+            this.initOSE();
 
-      //  $("#" + this.CEctrlsContId).empty().append(this.getCE_HTML());
+
+        this.setColTiles();
 
         $("#" + this.wraperId + " .pgCollEditor-Cont").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        new dragula([document.getElementById(this.CEctrlsContId)]);
     };
+
+
+    ////////////////////////////////////////////////////
+    this.showdvList = function (e) {
+
+        $("#objList .list-group li").remove();
+        $.ajax({
+            url: "../DV/FetchAllDataVisualizations",
+            type: "POST",
+            data: { type: $(e.target).parent().text() },
+            success: this.appendtoModal.bind(this)
+        });
+        $("#objList .list-group").addClass("objlist");
+    }
+
+    this.appendtoModal = function (data) {
+        $.each(data, function (refid, name) {
+            $("#objList .list-group").append("<li class='list-group-item' data-refid='" + refid + "' style='border: 1px solid;padding: 0px 0px;'>" + name + "</li>");
+        });
+        $("#objList .list-group-item").off("click").on("click", this.AddCsstoLi.bind(this));
+    };
+
+    this.AddCsstoLi = function (e) {
+        //$(e.target).addClass("active");
+        $('#settingsmodal').modal('toggle');
+        alert($(e.target).attr("data-refid"));
+    };
+    ///////////////////////////////////////////////////
 
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
@@ -302,16 +353,14 @@
             + '<h4 class="modal-title"> </h4>'
             + '</div>'
 
-            + '<div class="modal-body">'
-           
-            + '</div>'
+            + '<div class="modal-body"> </div>'
 
             + '<div class="modal-footer">'
             + '<div class="sub-controls-DD-cont pull-left">'
-            + '<select class="selectpicker" data-live-search="true"><option>Td</option> </select>'
+            + '<select class="selectpicker"> </select>'
             + '<button type="button" id="CE_add" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
             + '</div>'
-            + '<button type="button" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">Close</button>'
+            + '<button type="button" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>'
             + '</div>'
 
             + '</div>'
@@ -335,27 +384,44 @@
     };
 
     this.pgCE_AddFn = function () {
-        var tile = '<div class="colTile" id="' + "" + '" tabindex="1" onclick="$(this).focus()">'
-            + 'Td 1 '
-            + '<button type="button" class="close">&times;</button>'
-            + '</div>';
-        $("#" + this.CEctrlsContId).append(tile);
+        var SelType = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-footer .sub-controls-DD-cont").find("option:selected").val();
+        if (this.CurProp === "Controls")
+            this.PropsObj.Controls.$values.push(new EbObjects[SelType](this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length));
+        else
+            this.PropsObj[this.CurProp].push(new EbObjects[SelType](this.PropsObj.EbSid + "_" + SelType + this.PropsObj[this.CurProp].length));
+        this.setColTiles();
     };
 
     this.colTileCloseFn = function (e) {
         $(e.target).parent().remove();
     };
 
-    this.getCE_HTML = function () {
+    this.setColTiles = function () {
+        if (this.CurProp === "Controls")
+            var values = this.PropsObj.Controls.$values;
+        else
+            var values = this.PropsObj[this.CurProp];
+
         var _html = "";
-        $.each(this.PropsObj.Controls.$values, function (i, control) {
+        var options = "";
+        var typesArr = [];
+        $.each(values, function (i, control) {
             var type = control.$type.split(",")[0].split(".")[2];
             _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()">'
                 + control.Name
                 + '<button type="button" class="close">&times;</button>'
                 + '</div>';
+            if (!typesArr.includes(type))
+                typesArr.push(type);
         })
-        return _html;
+
+        for (var i = 0; i < typesArr.length; i++) {
+            options += '<option>' + typesArr[i] + '</option>'
+        }
+
+        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
+
+        $("#" + this.CEctrlsContId).empty().append(_html);
     };
 
 
@@ -374,6 +440,7 @@
 
         this.pgId = this.wraperId + this.pgIdSequence++;
         this.currGroup = null;
+        this.CurProp = null;
 
         this.innerHTML = '<table class="table-bordered table-hover pg-table">';
 
@@ -405,8 +472,6 @@
             $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(e.target.value);
             $(this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
         }.bind(this));
-
-        new dragula([document.getElementById(this.CEctrlsContId)]);
 
     };
 

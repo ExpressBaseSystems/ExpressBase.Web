@@ -29,7 +29,7 @@
     var dvRefId = ViewBag.dvRefId;
     var dvname = (ViewBag.dvObject != null) ? ViewBag.dvObject.Name : "* Untitled *";
 }
-<div class="well well-sm" id="devpanel" style="margin-top:60px;">
+<div class="well well-sm" id="devpanel">
     <div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
         <select class="selectpicker" data-live-search="true">
             @{
@@ -61,6 +61,7 @@
             </div>*@
 
         <button id='Save_btn' class='btn btn-primary' style="float: right;display:inline-block"> Save </button>
+        
     </div>
 
 <div id="filterDia">

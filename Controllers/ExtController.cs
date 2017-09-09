@@ -332,7 +332,7 @@ namespace ExpressBase.Web.Controllers
 
                     if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
                     {
-                        if (subdomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole() && whichconsole=="dc")
+                        if (subdomain.Length == 3 && authResponse.User.HasSystemRole() && whichconsole=="dc")
                             return RedirectToAction("DevConsole", "Dev");
 
                         else if (subdomain.Length == 3 && whichconsole == "uc") // USER CONSOLE
@@ -346,7 +346,7 @@ namespace ExpressBase.Web.Controllers
 
                     else if (host.Host.EndsWith("localhost"))
                     {
-                        if (subdomain.Length == 2 && authResponse.User.RoleCollection.HasSystemRole() && whichconsole == "dc")
+                        if (subdomain.Length == 2 && authResponse.User.HasSystemRole() && whichconsole == "dc")
                             return RedirectToAction("DevConsole", "Dev");
 
                         else if (subdomain.Length == 2 && whichconsole == "uc") // USER CONSOLE
@@ -359,7 +359,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     else if (host.Host.EndsWith("nip.io") || host.Host.EndsWith("xip.io"))
                     {
-                        if (subdomain.Length == 7 && authResponse.User.RoleCollection.HasSystemRole() && whichconsole == "dc")
+                        if (subdomain.Length == 7 && authResponse.User.HasSystemRole() && whichconsole == "dc")
                             return RedirectToAction("DevConsole", "Dev");
 
                         else if (subdomain.Length == 7 && whichconsole == "uc") // USER CONSOLE

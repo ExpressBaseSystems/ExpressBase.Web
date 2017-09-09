@@ -280,16 +280,21 @@
 
     this.initOSE = function () {
 
-        var OSEbody = '<div class="dropdown" id="dvdropdown">'
+        var OSEbody = '<div class="OSE-body">'
+            + '<div class="OSE-DD-cont" > '
             + '<select class="selectpicker">'
             + '<option> DataVisualization </option>'
             + '<option> Report </option>'
             + '</select>'
+            + '</div>'
+            + '<div id="pgWraper_CEctrlsCont" class="CEctrlsCont">'
+            + '</div>'
             + '</div>';
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Object Selector");
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(OSEbody);
-
+        $("#pgWraper .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.showdvList.bind(this));
         this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
+
     };
     this.pgCXE_BtnClicked = function (e) {
         $("#" + this.wraperId + " .pgCollEditor-bg").show();
@@ -313,22 +318,21 @@
 
     ////////////////////////////////////////////////////
     this.showdvList = function (e) {
-
-        $("#objList .list-group li").remove();
         $.ajax({
             url: "../DV/FetchAllDataVisualizations",
             type: "POST",
-            data: { type: $(e.target).parent().text() },
-            success: this.appendtoModal.bind(this)
+            data: { type: $(e.target).find("option:selected").text() },
+            success: this.biuldObjList.bind(this)
         });
         $("#objList .list-group").addClass("objlist");
     }
 
-    this.appendtoModal = function (data) {
+    this.biuldObjList = function (data) {
+        $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").empty();
         $.each(data, function (refid, name) {
-            $("#objList .list-group").append("<li class='list-group-item' data-refid='" + refid + "' style='border: 1px solid;padding: 0px 0px;'>" + name + "</li>");
-        });
-        $("#objList .list-group-item").off("click").on("click", this.AddCsstoLi.bind(this));
+            $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").append("<div class='colTile' data-refid='" + refid + "'>" + name + "</div>");
+        }.bind(this));
+        $("#" + this.wraperId + " .pgCollEditor-Cont .OSE-body .colTile").off("click").on("click", this.AddCsstoLi.bind(this));
     };
 
     this.AddCsstoLi = function (e) {

@@ -68,7 +68,6 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     };
 
     this.Load_filter_dialog_list = function (val) {
-        alert(tabNum);
         var getNav = $("#versionNav li.active a").attr("href");
         if (!$(getNav + ' #fdlist' + tabNum+ ' .bootstrap-select').hasClass('open')) {
             $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
@@ -176,7 +175,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             "<div class='verlist input-group'>"+
             "</div>" +
             "<div class='dropdown fdlist btn-group' id='fdlist" + tabNum + "'>" +
-            "<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true'></select>" +
+            "Parameter Div Name<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true' disabled></select>" +
             "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd"+tabNum+"' style='display:none;color:dodgerblue;'></i>" +
             "</div>" +
             "<a href='#inner_well" + tabNum + "' class='btn collapsed' id='execute" + tabNum + "' data-toggle='collapse' title='Click to open Parameter dialog'><i class='fa fa-chevron-down fa-1x' aria-hidden='true'>Render</i></a>" +
@@ -402,34 +401,39 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     }
 
     this.CreateObjString = function () {
-        this.ValidInput = true;
-        var ObjString = "[";
-        var filter_control_list = "datefrom,dateto";
-        var myarray = filter_control_list.split(',');
-        for (var i = 0; i < myarray.length; i++) {
-            console.log($("#" + myarray[i]).val());
-            if (typeof $("#" + myarray[i]).val() === "undefined") {
-                $(this).addClass('has-error');
-                this.ValidInput = false;
-            }
-            var type = $('#' + myarray[i]).attr('data-ebtype');
-            var name = $('#' + myarray[i]).attr('name');
-            var value = $('#' + myarray[i]).val();
-            if (type === '6')
-                value = value.substring(0, 10);
+       // this.ValidInput = true;
+        if (this.Parameter_Count != 0) {
+            var ObjString = "[";
+            var filter_control_list = "datefrom,dateto";
+            var myarray = filter_control_list.split(',');
+            for (var i = 0; i < myarray.length; i++) {
+                console.log($("#" + myarray[i]).val());
+                //if (typeof $("#" + myarray[i]).val() === "undefined") {
+                //    $(this).addClass('has-error');
+                //    this.ValidInput = false;
+                //}
+                var type = $('#' + myarray[i]).attr('data-ebtype');
+                var name = $('#' + myarray[i]).attr('name');
+                var value = $('#' + myarray[i]).val();
+                if (type === '6')
+                    value = value.substring(0, 10);
 
-            ObjString += '{\"name\":\"' + name + '\",';
-            ObjString += '\"type\":\"' + type + '\",';
-            ObjString += '\"value\":\"' + value + '\"},';
+                ObjString += '{\"name\":\"' + name + '\",';
+                ObjString += '\"type\":\"' + type + '\",';
+                ObjString += '\"value\":\"' + value + '\"},';
+            }
+            ObjString = ObjString.slice(0, -1) + ']';
+            this.Object_String_WithVal = ObjString;
         }
-        ObjString = ObjString.slice(0, -1) + ']';
-        this.Object_String_WithVal = ObjString;
+        else {
+            this.Object_String_WithVal = null;
+        }
         console.log("Object_String_WithVal" + this.Object_String_WithVal);
     }
 
     this.DrawTable = function () {
         $.LoadingOverlay("show");
-        if (this.ValidInput === true) {
+       // if (this.ValidInput === true) {
             tabNum++;
             $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
             $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
@@ -442,11 +446,11 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 parameter: this.Object_String_WithVal
             }, this.Load_Table_Columns.bind(this));
 
-        }
-        else {
-            $.LoadingOverlay("hide");
-            alert('not valid');
-        }
+        //}
+        //else {
+        //    $.LoadingOverlay("hide");
+        //    alert('not valid');
+        //}
     };
 
     this.Load_Table_Columns = function (result) {
@@ -505,7 +509,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         $.LoadingOverlay("show");
         if (this.Parameter_Count === 0) {
             this.Save(false);
-            this.ValidInput = true;
+          //  this.ValidInput = true;
             this.Object_String_WithVal = "";
            // this.DrawTable();
         }

@@ -120,7 +120,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult dv(string objid)
         {
             FetchAllDataSources();
-            FetchAllDataVisualizations();
+            //FetchAllDataVisualizations();
 
             var typeArray = typeof(DVBaseColumn).GetTypeInfo().Assembly.GetTypes();
 
@@ -355,15 +355,16 @@ namespace ExpressBase.Web.Controllers
         }
 
         // Get All DVNames for Linking with each other -href click
-        private void FetchAllDataVisualizations()
+        public Dictionary<string, string> FetchAllDataVisualizations(EbObjectType type)
         {
-            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {  EbObjectType = (int)EbObjectType.DataVisualization});
+            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {  EbObjectType = (int)type});
 
             Dictionary<string, string> ObjDVListAll = new Dictionary<string, string>();
             foreach (var element in resultlist.Data)
                 ObjDVListAll[element.RefId] = element.Name;
 
-            ViewBag.DVListAll = ObjDVListAll;
+            //ViewBag.DVListAll = ObjDVListAll;
+            return ObjDVListAll;
         }
      }
 }

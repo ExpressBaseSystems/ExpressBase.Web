@@ -126,7 +126,7 @@ namespace ExpressBase.Web.Components
         private EbDataVisualization getDVObject(string dsRefid)
         {
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
-            if (columnresp == null || columnresp.IsNull)
+            if (columnresp == null || columnresp.Columns.Count == 0)
                 columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
 
             EbDataVisualization eb = new EbDataVisualization()

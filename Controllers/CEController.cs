@@ -168,10 +168,11 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
 
-        public JsonResult CommitEbDataSource()
+        public string CommitEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
-            if (req["id"] == "null")
+            string refid;
+            if ( string.IsNullOrEmpty( req["id"]))
             {
                 var ds = new EbObjectFirstCommitRequest();
                 ds.EbObjectType = (int)EbObjectType.DataSource;
@@ -184,7 +185,9 @@ namespace ExpressBase.Web.Controllers
                 ds.UserId = ViewBag.UId;
                 ds.Relations = req["rel_obj"];
 
-                ServiceClient.Post<EbObjectFirstCommitResponse>(ds);
+                var res  = ServiceClient.Post<EbObjectFirstCommitResponse>(ds);
+                refid = res.RefId;
+             
             }
             else
             {
@@ -202,10 +205,11 @@ namespace ExpressBase.Web.Controllers
                 ds.IsSave = false;
                 ds.RefId = req["id"];
                 ds.ChangeLog = req["changeLog"];
-                ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
+                var res = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
+                refid = res.RefId;
             }
-            return Json("Success");
 
+            return refid;
         }
 
         public IActionResult ds_save()

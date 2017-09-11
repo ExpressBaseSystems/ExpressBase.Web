@@ -242,6 +242,13 @@
         }
     };
 
+    this.refreshDD = function () {
+        var $selectedOpt = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+        var ObjType = $selectedOpt.attr("obj-type");
+        this.OSElist[ObjType] = null;
+        this.getOSElist.bind(this)();
+    };
+
     this.initCE = function () {
 
         var CEbody = '<div class="CE-body">'
@@ -301,18 +308,19 @@
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(OSEbody);
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
 
-        this.getOSElist.bind();
+        this.getOSElist.bind(this)();
 
     };
     ////////////////////////////////////////////////////
-    this.getOSElist = function (e) {
-        var ObjType = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").find("option:selected").attr("obj-type");
+    this.getOSElist = function () {
+        var $selectedOpt = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+        var ObjType = $selectedOpt.attr("obj-type");
         if (!this.OSElist[ObjType]) {
             $.LoadingOverlay("show");
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",
                 type: "POST",
-                data: { type: $(e.target).find("option:selected").text() },
+                data: { type: $selectedOpt.text() },
                 success: this.biuldObjList
             });
         }
@@ -325,7 +333,8 @@
         var _refid = null;
         $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").empty();
         $.each(data, function (refid, name) {
-            $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").append('<div class="colTile" tabindex="1" data-refid="' + refid + '" onclick="$(this).focus()">' + name + '</div>');
+            $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").append('<div class="colTile" tabindex="1" data-refid="' + refid + '">' + name
+                + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
             _refid = refid;
         }.bind(this));
 
@@ -333,13 +342,24 @@
         this.OSElist[ObjType] = data;
         console.log(JSON.stringify(this.OSElist));
 
-        $("#" + this.wraperId + " .pgCollEditor-Cont .OSE-body .colTile").off("click").on("click", this.AddCsstoLi.bind(this));
+        $("#" + this.wraperId + " .pgCollEditor-Cont .OSE-body .colTile").on("click", this.OTileClick.bind(this));
+
+        if ($("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .filter-option .fa-refresh").length===0) {
+            var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
+            $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .filter-option").append($refresh);
+        }
+
     }.bind(this);
 
-    this.AddCsstoLi = function (e) {
-        //$(e.target).addClass("active");
-        $('#settingsmodal').modal('toggle');
+    this.OTileClick = function (e) {
+        $(this).focus();
+        $("#" + this.wraperId + " .pgCollEditor-Cont .OSE-body .colTile").attr("is-selected", false).find(".fa-check").hide();
+        $(e.target).attr("is-selected", true).find(".fa-check").show();
     };
+
+    //this.OTileBlur = function (e) {
+    //    $(e.target).attr("is-selected", true).find(".fa-check").hide();
+    //};
     /////////////////////////////////////////////////
 
     this.pgCXE_BtnClicked = function (e) {
@@ -431,7 +451,7 @@
         var typesArr = [];
         $.each(values, function (i, control) {
             var type = control.$type.split(",")[0].split(".")[2];
-            _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()">'
+            _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
                 + control.Name
                 + '<button type="button" class="close">&times;</button>'
                 + '</div>';

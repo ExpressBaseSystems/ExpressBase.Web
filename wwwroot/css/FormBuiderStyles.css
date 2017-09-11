@@ -249,7 +249,6 @@
 .pgCollEditor-Cont .controls-dd-cont .open, .pgCollEditor-Cont .controls-dd-cont .caret {
     display: none !important;
     outline: none !important;
-    
 }
 
 .pgCollEditor-Cont .controls-dd-cont button:focus {
@@ -381,10 +380,14 @@
         background-color: var(--colorDDD);
     }
 
-    .colTile:focus {
-        outline: none;
-        background-color: #c2c8ce;
-    }
+.colTile:focus {
+    outline: none;
+}
+
+
+.CE-body .colTile:focus {
+    background-color: #c2c8ce;
+}
 
 .editTbl {
     table-layout: fixed;
@@ -482,3 +485,9 @@
         color: black;
         background-color: #aaaaaa;
     }
+
+.DD-refresh {
+    margin-right: 10px;
+    margin-top: 2.4px;
+    float: right;
+}

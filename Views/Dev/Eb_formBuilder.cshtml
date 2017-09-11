@@ -3,29 +3,20 @@
 @using ExpressBase.Common.Objects.Attributes;
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
-@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">*@
-@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />*@
-@*<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />*@
-@*<link rel="stylesheet" type="text/css" href="~/css/Eb.css" />*@
-
-@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>*@
-@*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>*@
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>*@
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-@*<script src="~/js/FormBuilder/EbControlCollection.js"></script>*@
-@*<script type="text/javascript" src="~/js/vue-select.js"></script>*@
-@*<script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>*@
-@*<script src='~/js/Eb_dragula.js'></script>*@
-@*<script src='~/js/Eb_formBuilder.js'></script>*@
-@*<script src='~/js/jqPropertyGrid.js'></script>*@
-@*<script src='~/js/Eb_PropertyGrid.js'></script>*@
-@*<script type="text/javascript" src="~/js/Eb_UtilityFuncions.js"></script>*@
 <script type="text/javascript" src="~/js/"></script>
-@*<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>*@@*amal*@
-@*<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>*@@*amal*@
-
-@{
+<link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css">
+<link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
+<script src="~/lib/codemirror/lib/codemirror.js"></script>
+<script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
+<script src="~/lib/codemirror/addon/hint/javascript-hint.js"></script>
+<script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
+<script src="~/lib/codemirror/addon/fold/foldcode.js"></script>
+<script src="~/lib/codemirror/addon/fold/foldgutter.js"></script>
+<script src="~/lib/codemirror/addon/fold/brace-fold.js"></script>
+<script src="~/lib/codemirror/addon/fold/xml-fold.js"></script>
+<script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
+<script src="~/lib/codemirror/mode/xml/xml.js"></script>@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 @{
@@ -54,6 +45,7 @@
         <div id="form-buider-form" class="formB-box form-buider-form">
             @Html.Raw(@ViewBag.html)
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
+            @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
         </div>
     </div>
     <input type="hidden" id="objtype" value="@type" />
@@ -83,14 +75,9 @@
         formBuilderObj.InitEditModeCtrls(editModeObj);
     }
     else
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
-
-    //function recur(obj)
-    //{
-    //    if (obj.Controls)
-    //        obj.Controls = new EbControlCollection(obj.Controls);
-    //}
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);            
 </script>
+
 
 <style>
     /*overridding*/

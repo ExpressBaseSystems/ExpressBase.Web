@@ -120,7 +120,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult dv(string objid)
         {
             FetchAllDataSources();
-            FetchAllDataVisualizations();
+            //FetchAllDataVisualizations();
 
             var typeArray = typeof(DVBaseColumn).GetTypeInfo().Assembly.GetTypes();
 
@@ -131,7 +131,9 @@ namespace ExpressBase.Web.Controllers
             //Edit mode
             if (!string.IsNullOrEmpty(objid))
             {
-                var dvObject = this.Redis.Get<EbDataVisualization>(objid);
+                var dvObject = (ViewBag.wc == "dc") ? this.Redis.Get<EbDataVisualization>(objid) : this.Redis.Get<EbDataVisualization>(objid + ViewBag.UId);
+                if(dvObject == null)
+                    dvObject = this.Redis.Get<EbDataVisualization>(objid);
                 dvObject.AfterRedisGet(this.Redis);
                 ViewBag.dvObject = dvObject;
             }
@@ -298,41 +300,45 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             //Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             string SaveId;
-            if (string.IsNullOrEmpty(RefId))
+            if (ViewBag.wc == "dc")
             {
-                var ds = new EbObjectFirstCommitRequest();
-                ds.EbObjectType = (int)EbObjectType.DataVisualization;
-                //ds.Name = _dict["dvName"].ToString();
-                ds.Json = json;
-                //ds.Description = "abcd";
-                //ds.EbObject = EbSerializers.Json_Deserialize<EbDataVisualization>(json);
-                //ds.EbObject = JsonConvert.DeserializeObject<EbDataVisualization>(json);
-                //(ds.EbObject as EbDataVisualization).EbObjectType = EbObjectType.DataVisualization;
-                ds.Status = ObjectLifeCycleStatus.Live;
-                ds.Relations = "aaa";
-                var result = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
-                SaveId = result.RefId;
+                if (string.IsNullOrEmpty(RefId))
+                {
+                    var ds = new EbObjectFirstCommitRequest();
+                    ds.EbObjectType = (int)EbObjectType.DataVisualization;
+                    //ds.Name = _dict["dvName"].ToString();
+                    ds.Json = json;
+                    //ds.Description = "abcd";
+                    //ds.EbObject = EbSerializers.Json_Deserialize<EbDataVisualization>(json);
+                    //ds.EbObject = JsonConvert.DeserializeObject<EbDataVisualization>(json);
+                    //(ds.EbObject as EbDataVisualization).EbObjectType = EbObjectType.DataVisualization;
+                    ds.Status = ObjectLifeCycleStatus.Live;
+                    ds.Relations = "aaa";
+                    var result = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
+                    SaveId = result.RefId;
+                }
+                else
+                {
+                    var ds = new EbObjectSubsequentCommitRequest();
+                    ds.EbObjectType = (int)EbObjectType.DataVisualization;
+                    //ds.Name = _dict["dvName"].ToString();
+                    //ds.Description = "abcd";
+                    ds.Json = json;
+                    //ds.EbObject = EbSerializers.Json_Deserialize<EbDataVisualization>(json);
+                    //(ds.EbObject as EbDataVisualization).EbObjectType = EbObjectType.DataVisualization;
+                    ds.Status = ObjectLifeCycleStatus.Live;
+                    ds.UserId = ViewBag.UId;
+                    ds.Relations = req["rel_obj"];
+                    ViewBag.IsNew = "false";
+                    ds.IsSave = false;
+                    ds.RefId = RefId;
+                    ds.ChangeLog = "changelog";
+                    var result = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
+                    SaveId = result.RefId;
+                }
             }
-            else
-            {
-                var ds = new EbObjectSubsequentCommitRequest();
-                ds.EbObjectType = (int)EbObjectType.DataVisualization;
-                //ds.Name = _dict["dvName"].ToString();
-                //ds.Description = "abcd";
-                ds.Json = json;
-                //ds.EbObject = EbSerializers.Json_Deserialize<EbDataVisualization>(json);
-                //(ds.EbObject as EbDataVisualization).EbObjectType = EbObjectType.DataVisualization;
-                ds.Status = ObjectLifeCycleStatus.Live;
-                ds.UserId = ViewBag.UId;
-                ds.Relations = req["rel_obj"];
-                ViewBag.IsNew = "false";
-                ds.IsSave = false;
-                ds.RefId = RefId;
-                ds.ChangeLog = req["changeLog"];
-                var result = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
-                SaveId = result.RefId;
-            }
-
+            if (ViewBag.wc == "uc")
+                this.Redis.Set<EbDataVisualization>(RefId + ViewBag.UId, EbSerializers.Json_Deserialize<EbDataVisualization>(json));
             return Json("Success");
         }
 
@@ -349,15 +355,16 @@ namespace ExpressBase.Web.Controllers
         }
 
         // Get All DVNames for Linking with each other -href click
-        private void FetchAllDataVisualizations()
+        public Dictionary<string, string> FetchAllDataVisualizations(EbObjectType type)
         {
-            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {  EbObjectType = (int)EbObjectType.DataVisualization});
+            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {  EbObjectType = (int)type});
 
             Dictionary<string, string> ObjDVListAll = new Dictionary<string, string>();
             foreach (var element in resultlist.Data)
                 ObjDVListAll[element.RefId] = element.Name;
 
-            ViewBag.DVListAll = ObjDVListAll;
+            //ViewBag.DVListAll = ObjDVListAll;
+            return ObjDVListAll;
         }
      }
 }

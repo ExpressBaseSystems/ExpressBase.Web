@@ -26,7 +26,12 @@
             <div id='TableControls_@(tableId + "_1")' class='well well-sm' style='margin-bottom:5px!important;'>
                 <label class="dvname">@ViewBag.data.Name</label>
                 <button id='btnGo' class='btn btn-primary' style='float: right;'>Run</button>
-                @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
+                @{ 
+                    if (ViewBag.data.EbDataSource.FilterDialog != null)
+                    {
+                        @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
+                    }
+                }
             </div>
             <div id='@(tableId+"_1container")'>
                 @*@await Component.InvokeAsync("DragNDropColumns", new { dsRefid = ViewBag.data.DataSourceRefId });*@
@@ -89,7 +94,7 @@
     </script>
 }*@
 <script>
-    @Html.Raw(ViewBag.HtmlHead);
+    @Html.Raw(ViewBag.HtmlHead)
     var sett = @Html.Raw(dvobj);
     var meta = @Html.Raw(ViewBag.meta);
     var ebdtable = new EbDataTable({

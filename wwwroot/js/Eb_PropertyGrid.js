@@ -7,6 +7,7 @@
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
+    this.PropertyChanged = null;
     this.IsSortByGroup = true;
 
     this.getvaluesFromPG = function () {
@@ -207,6 +208,7 @@
         this.getvaluesFromPG();
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
+        this.PropertyChanged(this.PropsObj, );
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
@@ -242,7 +244,8 @@
 
     this.initCE = function () {
 
-        var CEbody = '<table class="table table-bordered editTbl">'
+        var CEbody = '<div class="CE-body">'
+            + '<table class="table table-bordered editTbl">'
             + '<tbody>'
             + '<tr>'
             + '<td style="padding: 0px;">'
@@ -253,11 +256,13 @@
             + '</tr>'
             + '</tbody>'
             + '</table>'
+            + '</div>'
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Collection Editor");
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(CEbody);
         $("#" + this.wraperId + " .pgCollEditor-Cont .sub-controls-DD-cont").show();
 
         this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
+        this.setColTiles();
     };
 
     this.initJE = function () {
@@ -276,6 +281,8 @@
             },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
+
+        this.setColTiles();
     };
 
     this.initOSE = function () {
@@ -283,8 +290,8 @@
         var OSEbody = '<div class="OSE-body">'
             + '<div class="OSE-DD-cont" > '
             + '<select class="selectpicker">'
-            + '<option> DataVisualization </option>'
-            + '<option> Report </option>'
+            + '<option obj-type="11"> DataVisualization </option>'
+            + '<option obj-type="3"> Report </option>'
             + '</select>'
             + '</div>'
             + '<div id="pgWraper_CEctrlsCont" class="CEctrlsCont">'
@@ -292,55 +299,68 @@
             + '</div>';
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Object Selector");
         $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(OSEbody);
-        $("#pgWraper .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.showdvList.bind(this));
-        this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
+        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
+
+        this.getOSElist.bind();
 
     };
+    ////////////////////////////////////////////////////
+    this.getOSElist = function (e) {
+        var ObjType = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").find("option:selected").attr("obj-type");
+        if (!this.OSElist[ObjType]) {
+            $.LoadingOverlay("show");
+            $.ajax({
+                url: "../DV/FetchAllDataVisualizations",
+                type: "POST",
+                data: { type: $(e.target).find("option:selected").text() },
+                success: this.biuldObjList
+            });
+        }
+        else
+            this.biuldObjList(this.OSElist[ObjType]);
+    }
+
+    this.biuldObjList = function (data) {
+        $.LoadingOverlay("hide");
+        var _refid = null;
+        $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").empty();
+        $.each(data, function (refid, name) {
+            $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").append('<div class="colTile" tabindex="1" data-refid="' + refid + '" onclick="$(this).focus()">' + name + '</div>');
+            _refid = refid;
+        }.bind(this));
+
+        var ObjType = _refid.split("-")[2];
+        this.OSElist[ObjType] = data;
+        console.log(JSON.stringify(this.OSElist));
+
+        $("#" + this.wraperId + " .pgCollEditor-Cont .OSE-body .colTile").off("click").on("click", this.AddCsstoLi.bind(this));
+    }.bind(this);
+
+    this.AddCsstoLi = function (e) {
+        //$(e.target).addClass("active");
+        $('#settingsmodal').modal('toggle');
+    };
+    /////////////////////////////////////////////////
+
     this.pgCXE_BtnClicked = function (e) {
         $("#" + this.wraperId + " .pgCollEditor-bg").show();
         this.CurProp = e.target.getAttribute("for");
         var editor = e.target.getAttribute("editor");
         $("#" + this.wraperId + " .pgCollEditor-Cont .sub-controls-DD-cont").hide();
-        if (editor === "7")
+        if (editor === "7") {
             this.initCE();
-        if (editor === "8")
+        }
+        if (editor === "8") {
             this.initJE();
+        }
         if (editor === "10")
             this.initOSE();
 
 
-        this.setColTiles();
 
-        $("#" + this.wraperId + " .pgCollEditor-Cont").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        $("#" + this.wraperId + " .CE-body").on("click", ".colTile", this.colTileFocusFn.bind(this));
         new dragula([document.getElementById(this.CEctrlsContId)]);
     };
-
-
-    ////////////////////////////////////////////////////
-    this.showdvList = function (e) {
-        $.ajax({
-            url: "../DV/FetchAllDataVisualizations",
-            type: "POST",
-            data: { type: $(e.target).find("option:selected").text() },
-            success: this.biuldObjList.bind(this)
-        });
-        $("#objList .list-group").addClass("objlist");
-    }
-
-    this.biuldObjList = function (data) {
-        $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").empty();
-        $.each(data, function (refid, name) {
-            $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").append("<div class='colTile' data-refid='" + refid + "'>" + name + "</div>");
-        }.bind(this));
-        $("#" + this.wraperId + " .pgCollEditor-Cont .OSE-body .colTile").off("click").on("click", this.AddCsstoLi.bind(this));
-    };
-
-    this.AddCsstoLi = function (e) {
-        //$(e.target).addClass("active");
-        $('#settingsmodal').modal('toggle');
-        alert($(e.target).attr("data-refid"));
-    };
-    ///////////////////////////////////////////////////
 
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
@@ -445,6 +465,7 @@
         this.pgId = this.wraperId + this.pgIdSequence++;
         this.currGroup = null;
         this.CurProp = null;
+        this.OSElist = {};
 
         this.innerHTML = '<table class="table-bordered table-hover pg-table">';
 

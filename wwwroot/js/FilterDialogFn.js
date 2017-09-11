@@ -32,13 +32,13 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
         $('#ver_his').off("click").on("click", this.VerHistory.bind(this));
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-        $('#execute').off("click").on("click", this.Execute.bind(this));
+        $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
-        $('#fd').off("change").on("change", this.Clear_fd.bind(this));
+        $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
+        $("#fdlist" + tabNum + " .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $(".selectpicker").selectpicker();
-        $("#fdlist .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
-        $('#fd').off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
+        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));        
         $('#compare').off('click').on('click', this.Compare.bind(this));
     }
 
@@ -63,29 +63,29 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
     this.Clear_fd = function () {
         var getNav = $("#versionNav li.active a").attr("href");
-        $(getNav + ' #inner_well').children().remove();
-        $('#execute').addClass('collapsed');
+        $(getNav + ' #inner_well' + tabNum).children().remove();
+        $('#execute' + tabNum).addClass('collapsed');
     };
 
     this.Load_filter_dialog_list = function (val) {
         var getNav = $("#versionNav li.active a").attr("href");
-        if (!$(getNav+' #fdlist .bootstrap-select').hasClass('open')) {
-            $(getNav+' #fdlist #fd').children().remove();
-            $(getNav+' #fdlist .selectpicker').selectpicker('refresh');
-            $('#loader_fd').show();
+        if (!$(getNav + ' #fdlist' + tabNum+ ' .bootstrap-select').hasClass('open')) {
+            $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
+            $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
+            $('#loader_fd' + tabNum ).show();
             $.ajax({
                 url: "../CE/GetObjects_refid_dict",
                 type: 'post',
                 data: { obj_type: 12 },
                 success: function (data) {
-                    $(getNav+' #fdlist #fd').children().remove();
-                    $(getNav+' #fdlist #fd').append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
+                    $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
+                    $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
                     $.each(data, function (i, obj) {
-                        $(getNav+' #fd').append("<option value='" + obj.refId + "' data-tokens='" + obj.refId + "'>" + obj.name + "</option>")
+                        $(getNav + ' #fd' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.refId + "'>" + obj.name + "</option>")
                     });
-                    $(getNav +' #fdlist .selectpicker').selectpicker('refresh');
-                    $(getNav +' #fdlist .selectpicker').selectpicker('val', val);
-                    $('#loader_fd').hide();
+                    $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
+                    $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('val', val);
+                    $('#loader_fd' + tabNum ).hide();
                 }
             });
 
@@ -145,9 +145,9 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             "<td>" + obj.changeLog + "</td> " +
             "<td>" + obj.commitUname + "</td> " +
             "<td>" + obj.commitTs + "</td> " +
-            "<td><input type='button' id='view_code" + this.Obj_Id + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
+            "<td><input type='button' id='view_code" + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
             " </tr>");
-        $('#view_code' + this.Obj_Id + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
+        $('#view_code' + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
     };
 
     this.OpenPrevVer = function (e) {
@@ -175,17 +175,13 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             "<div class='verlist input-group'>"+
             "</div>" +
             "<div class='dropdown fdlist btn-group' id='fdlist" + tabNum + "'>" +
-            "<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true'></select>" +
-            "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd' style='display:none;color:dodgerblue;'></i>" +
+            "Parameter Div Name<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true' disabled></select>" +
+            "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd"+tabNum+"' style='display:none;color:dodgerblue;'></i>" +
             "</div>" +
-            "<a href='#inner_well' class='btn btn-default collapsed' id='execute' data-toggle='collapse' title='Click to open Parameter dialog'><i class='fa fa-chevron-down fa-1x' aria-hidden='true'>Render</i></a>" +
+            "<a href='#inner_well" + tabNum + "' class='btn collapsed' id='execute" + tabNum + "' data-toggle='collapse' title='Click to open Parameter dialog'><i class='fa fa-chevron-down fa-1x' aria-hidden='true'>Render</i></a>" +
             "</div>" +
             "</div>" +
-            "<div id='inner_well' class='collapse'></div>" +
-            "<div id='run' name='run' class='run btn btn-default disabled'>Run</div>");
-        $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
-        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
-        $("#fdlist" + tabNum + " .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
+            "<div id='inner_well" + tabNum + "' class='collapse'></div>" );       
         $('#vernav' + this.Obj_Id + tabNum).append(
             " <div><label class = 'label label-default codeEditLabel'>Version V." + this.HistoryVerNum + "</label>" +
             " <label class = 'label label-default codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
@@ -206,7 +202,12 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
         var getNav = $("#versionNav li.active a").attr("href");
         $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
-        $(getNav + ' #execute').off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this));
+     //   $(getNav + ' #execute' + tabNum).off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this)); 
+        $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
+        $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
+        $("#fdlist" + tabNum + " .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
+        $(".selectpicker").selectpicker();
+        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));        
         $.LoadingOverlay("hide");
         setTimeout(function () {
             window.editor1.refresh();
@@ -219,27 +220,25 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     };
 
     this.Execute = function () {
-        if (!$('#execute').hasClass('collapsed')) {
+        if (!$('#execute' + tabNum).hasClass('collapsed')) {
             //dasdsd
         }
         else {
             this.Find_parameters(false, false, false);
             $.LoadingOverlay("show");
-            if (this.Parameter_Count !== 0 && $('#fd option:selected').text() === "Select Filter Dialog") {
+            if (this.Parameter_Count !== 0 && $('#fd' + tabNum + ' option:selected').text() === "Select Filter Dialog") {
                 alert("Please select a filter dialog");
                 $.LoadingOverlay("hide");
             }
             else if (this.Parameter_Count === 0) {
                 $.LoadingOverlay("hide");
                 var getNav = $("#versionNav li.active a").attr("href");
-                $(getNav + " #run").removeClass('disabled');
-                $(getNav + " #run").off("click").on("click", this.RunDs.bind(this));
             }
             else {
                 this.SetValues();
                 this.Find_parameters(false, false, false);
                 // this.Save(false);
-                this.SelectedFdId = $('#fd option:selected').val();
+                this.SelectedFdId = $('#fd' + tabNum + ' option:selected').val();
                 this.Load_Fd();
             }
         }
@@ -310,7 +309,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
     this.Differ = function () {
         var verRefid1 = $('#selected_Ver_1' + tabNum + ' option:selected').val();
-        var verRefid2 = $('#selected_Ver_2' + tabNum + '  option:selected').val();
+        var verRefid2 = $('#selected_Ver_2' + tabNum + ' option:selected').val();
         if (verRefid2 === "Select Version") {
             alert("Please Select A Version");
             $.LoadingOverlay("hide");
@@ -326,8 +325,8 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         else {
             $.LoadingOverlay("show");
             var data_1;
-            v1 = $('#selected_Ver_1' + tabNum + '  option:selected').attr("data-tokens");
-            v2 = $('#selected_Ver_2' + tabNum + '  option:selected').attr("data-tokens");
+            v1 = $('#selected_Ver_1' + tabNum + ' option:selected').attr("data-tokens");
+            v2 = $('#selected_Ver_2' + tabNum + ' option:selected').attr("data-tokens");
             $.post('../CE/VersionCodes', { "objid": verRefid1, "objtype": this.ObjectType }, this.getSecondVersionCode.bind(this, verRefid2, v1, v2));
         }
         //  }
@@ -384,7 +383,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         }
         if (isCommitorSave === true) {
             var _json = null;
-            if (this.Parameter_Count !== 0 && ($('#fd option:selected').text() === "Select Filter Dialog")) {
+            if (this.Parameter_Count !== 0 && ($('#fd' + tabNum + ' option:selected').text() === "Select Filter Dialog")) {
                 if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
                     this.SetValues();
                     this.FilterDId = null;
@@ -402,38 +401,43 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     }
 
     this.CreateObjString = function () {
-        this.ValidInput = true;
-        var ObjString = "[";
-        var filter_control_list = "datefrom,dateto";
-        var myarray = filter_control_list.split(',');
-        for (var i = 0; i < myarray.length; i++) {
-            console.log($("#" + myarray[i]).val());
-            if (typeof $("#" + myarray[i]).val() === "undefined") {
-                $(this).addClass('has-error');
-                this.ValidInput = false;
-            }
-            var type = $('#' + myarray[i]).attr('data-ebtype');
-            var name = $('#' + myarray[i]).attr('name');
-            var value = $('#' + myarray[i]).val();
-            if (type === '6')
-                value = value.substring(0, 10);
+       // this.ValidInput = true;
+        if (this.Parameter_Count != 0) {
+            var ObjString = "[";
+            var filter_control_list = "datefrom,dateto";
+            var myarray = filter_control_list.split(',');
+            for (var i = 0; i < myarray.length; i++) {
+                console.log($("#" + myarray[i]).val());
+                //if (typeof $("#" + myarray[i]).val() === "undefined") {
+                //    $(this).addClass('has-error');
+                //    this.ValidInput = false;
+                //}
+                var type = $('#' + myarray[i]).attr('data-ebtype');
+                var name = $('#' + myarray[i]).attr('name');
+                var value = $('#' + myarray[i]).val();
+                if (type === '6')
+                    value = value.substring(0, 10);
 
-            ObjString += '{\"name\":\"' + name + '\",';
-            ObjString += '\"type\":\"' + type + '\",';
-            ObjString += '\"value\":\"' + value + '\"},';
+                ObjString += '{\"name\":\"' + name + '\",';
+                ObjString += '\"type\":\"' + type + '\",';
+                ObjString += '\"value\":\"' + value + '\"},';
+            }
+            ObjString = ObjString.slice(0, -1) + ']';
+            this.Object_String_WithVal = ObjString;
         }
-        ObjString = ObjString.slice(0, -1) + ']';
-        this.Object_String_WithVal = ObjString;
+        else {
+            this.Object_String_WithVal = null;
+        }
         console.log("Object_String_WithVal" + this.Object_String_WithVal);
     }
 
     this.DrawTable = function () {
         $.LoadingOverlay("show");
-        if (this.ValidInput === true) {
+       // if (this.ValidInput === true) {
             tabNum++;
             $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
             $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
-            $('#vernav' + this.Obj_Id + tabNum).append("  <div class=' filter_modal_body'>" +
+            $('#vernav' + this.Obj_Id + tabNum).append(" <div class=' filter_modal_body'>" +
                 "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
                 "</div>");
             $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
@@ -442,11 +446,11 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 parameter: this.Object_String_WithVal
             }, this.Load_Table_Columns.bind(this));
 
-        }
-        else {
-            $.LoadingOverlay("hide");
-            alert('not valid');
-        }
+        //}
+        //else {
+        //    $.LoadingOverlay("hide");
+        //    alert('not valid');
+        //}
     };
 
     this.Load_Table_Columns = function (result) {
@@ -489,26 +493,23 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
     this.Load_Fd = function () {
         var getNav = $("#versionNav li.active a").attr("href");
-        if ($(getNav + ' #inner_well').children().length === 0) {
+        if ($(getNav + ' #inner_well' + tabNum).children().length === 0) {
             $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId},
                 function (result) {
-                    $(getNav + ' #inner_well').append(result);
-                    $(getNav + ' #run').removeClass('disabled');
+                    $(getNav + ' #inner_well' + tabNum).append(result);
                     $.LoadingOverlay("hide");
                 });
         }
         else {
             $.LoadingOverlay("hide");
-            $(getNav + ' #run').removeClass('disabled');
         }
-
-        $(getNav + " #run").off("click").on("click", this.RunDs.bind(this));
     };
 
     this.RunDs = function () {
+        $.LoadingOverlay("show");
         if (this.Parameter_Count === 0) {
             this.Save(false);
-            this.ValidInput === true;
+          //  this.ValidInput = true;
             this.Object_String_WithVal = "";
            // this.DrawTable();
         }
@@ -516,6 +517,9 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             this.Find_parameters(true, true, true);
         }
     };
+
+
+    $("#run").off("click").on("click", this.RunDs.bind(this));
 
     this.CallDiffer = function (data_1, selected_ver_number, curr_ver, data_2) {
         var getNav = $("#versionNav li.active a").attr("href");
@@ -589,7 +593,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         $.each(data, this.FetchUsedSqlFns_inner.bind(this));
 
         var getNav = $("#versionNav li.active a").attr("href");
-        var filter_dialog_refid = $(getNav + " #fdlist #fd  option:selected").val();
+        var filter_dialog_refid = $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum + ' option:selected').val();
 
         if (filter_dialog_refid === "Select Filter Dialog") {
             filter_dialog_refid = null;

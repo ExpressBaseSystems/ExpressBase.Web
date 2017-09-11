@@ -7,6 +7,7 @@
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
+    this.PropertyChanged = null;
     this.IsSortByGroup = true;
 
     this.getvaluesFromPG = function () {
@@ -207,6 +208,7 @@
         this.getvaluesFromPG();
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
+        this.PropertyChanged(this.PropsObj, );
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();

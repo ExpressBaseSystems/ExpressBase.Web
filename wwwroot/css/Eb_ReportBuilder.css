@@ -1,13 +1,4 @@
 ﻿
-
-.tab-menu{
-    width:100%;
-    height:34px;
-    background-color:#fafafa;
-    margin-top: 52px;
-    position:fixed;
-    z-index: 100;
-}
 .tab-section{
     position: fixed;
     z-index: 100;
@@ -239,19 +230,19 @@
     padding-left: 0;
     background-color:white;
     z-index:1;
-    margin-top:84px;
+    margin-top:50px;
 }
 .PGgrid{
     min-height: 1000px;
     padding:0;
-    margin-top:84px;
+    margin-top:50px;
 }
 .title {
     width: 104px;
     height: 20px;
     background-color: #fbf7f7;
     position: fixed;
-    top: 187px;
+    top: 153px;
     left: 225px;
     border: 1px solid #aaaaaa;
     z-index: 200;
@@ -274,7 +265,7 @@
     height: 28px;
 }
 /*shapes*/
-.h-line .ui-resizable-handle {
+/*.h-line .ui-resizable-handle {
    width: 7px;
     height: 7px;
     top: -4px!important;
@@ -291,7 +282,7 @@
 }
 .v-line .ui-resizable-e{
     margin-right:0;
-}
+}*/
 .arrow-right {
   width: 0; 
   height: 0; 
@@ -301,15 +292,15 @@
   float: right;
   margin-top: -5px;
 }
-.arrow-r-draggable .ui-resizable-handle{
-background-color: green;
+/*.arrow-r-draggable .ui-resizable-e, .ui-resizable-w{
+    background-color: green;
     width: 7px;
     height: 7px;
     margin-top: -4px;
 }
 .arrow-r-draggable .ui-resizable-e {
     margin-right: -6px;
-}
+}*/
 .arrow-left {
  width: 0; 
   height: 0; 
@@ -319,15 +310,15 @@ background-color: green;
   float: left;
   margin-top: -5px;
 }
-.arrow-l-draggable .ui-resizable-handle{
-background-color: green;
+/*.arrow-l-draggable .ui-resizable-e, .ui-resizable-w {
+    background-color: green;
     width: 7px;
     height: 7px;
     margin-top: -4px;
 }
 .arrow-l-draggable .ui-resizable-w {
     margin-left: -3px;
-}
+}*/
 .arrow-up {
  width: 0; 
   height: 0; 
@@ -336,15 +327,15 @@ background-color: green;
   border-bottom: 5px solid black;  
   margin-left: -5px;
 }
-.arrow-u-draggable .ui-resizable-handle{
-background-color: green;
+/*.arrow-u-draggable .ui-resizable-s, .ui-resizable-n {
+    background-color: green;
     width: 7px;
     height: 7px;
     margin-left: -3px;
 }
 .arrow-u-draggable .ui-resizable-n{
 margin-top: -4px;
-}
+}*/
 .arrow-down {
  width: 0; 
   height: 0; 
@@ -354,15 +345,18 @@ margin-top: -4px;
   margin-left: -5px;
   align-self: flex-end;
 }
-.arrow-d-draggable .ui-resizable-handle{
-background-color: green;
+.arrow-d-draggable{
+    display:flex;
+}
+/*.arrow-d-draggable .ui-resizable-n, .ui-resizable-s {
+    background-color: green;
     width: 7px;
     height: 7px;
-     margin-left: -3px;
+    margin-left: -3px;
 }
 .arrow-d-draggable .ui-resizable-s{
 margin-bottom: -4px;
-}
+}*/
 .arrow-By-dir-v-t{
     width: 0; 
   height: 0; 
@@ -381,16 +375,17 @@ margin-bottom: -4px;
   margin-left: -10px;
   align-self: flex-end;
 }
-.arrow-by-d-v-draggable .ui-resizable-handle{
+/*.arrow-by-d-v-draggable .ui-resizable-s, .ui-resizable-n{
     background-color: green;
     width: 7px;
     height: 7px;
     margin-left: -3px;
+
 }
 .arrow-by-d-v-draggable .ui-resizable-s,.ui-resizable-n{
 margin: -4px;
-}
-.arrow-By-dir-h-r{
+}*/
+.arrow-By-dir-h{
  width: 0; 
   height: 0; 
   border-top: 5px solid transparent;
@@ -399,7 +394,7 @@ margin: -4px;
   float: right;
   margin-top: -5px;
 }
-.arrow-By-dir-h-l{
+/*.arrow-By-dir-h{
      width: 0; 
   height: 0; 
   border-top: 5px solid transparent;
@@ -407,8 +402,8 @@ margin: -4px;
   border-right:5px solid black;
   float: left;
   margin-top: -5px;
-}
-.arrow-by-d-h-draggable .ui-resizable-handle{
+}*/
+/*.arrow-by-d-h-draggable .ui-resizable-handle{
     background-color: green;
     width: 7px;
     height: 7px;
@@ -416,4 +411,4 @@ margin: -4px;
 }
 .arrow-by-d-h-draggable .ui-resizable-w,.ui-resizable-e{
 margin: -4px;
-}
+}*/

@@ -35,16 +35,15 @@ var PageElements = function (id, left, top, width, height) {
     this.height = height;
 };
 
-var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, custWidth, custunit) {
-    this.savebtnid = saveBtnid;
-    this.newPage = newPage;
-    this.incrId = 0;
+var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth, custunit) {
+    this.savebtnid = saveBtnid; 
     this.type = type;
     this.Commitbtnid = commit;
     this.IsNew = Isnew;
     this.Rel_object;
     this.objCollection = {};
-
+    this.splitarray = [];
+    this.btn_indx = null;
     if (this.type === 'custom-size') {
         this.height = custHeight + custunit;
         this.width = custWidth + custunit;
@@ -54,16 +53,12 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.width = pages[type].width;
         $('#custom-size').hide();
     }
-
     this.idCounter = {
         EbCircleCounter: 0,
         EbReportColCounter: 0,
         EbRectCounter: 0,
     };
-    this.incrId = 0;
-    this.splitarray = [];
-    this.btn_indx = null;
-
+  
     //$('#propGrid').show();
     this.pg = new Eb_PropertyGrid("propGrid");
 
@@ -366,18 +361,15 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.posLeft = event.pageX;
         this.posTop = event.pageY;
         this.dropLoc = $(event.target);
-        this.col = $(ui.draggable);
-        console.log(this.col);
-        var minwidth = $(ui.draggable).width();
-        var minheight = $(ui.draggable).height();
+        this.col = $(ui.draggable);              
         this.col.attr("tabindex", "1").attr("onclick","$(this).focus()");
         this.col.on("focus", this.elementOnFocus.bind(this));
         this.Objtype = this.col.attr('eb-type');
         var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
         var colVal = this.col.text();
+
         if (!this.col.hasClass('dropped')) {
-            var obj = new EbObjects["Eb" + this.Objtype + "Obj"](Objid);
-            console.log(JSON.stringify(obj));
+            var obj = new EbObjects["Eb" + this.Objtype + "Obj"](Objid);            
             this.dropLoc.append(obj.Html());
            
             obj.Top = this.posTop - 200;
@@ -392,6 +384,7 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
             this.dropLoc.append(this.col);          
         }
         $('.dropped').draggable();
+
         //$('.image-reSize').resizable({ containment: "parent" });
         //$('.dropped').resizable({
         //    containment: "parent",

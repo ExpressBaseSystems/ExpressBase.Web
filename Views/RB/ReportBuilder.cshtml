@@ -29,10 +29,7 @@
 </script>
 <div class="row" style="margin-top: 20px">
     <div class="reportmenu">
-        <div class="form-inline" id="options">
-            <div class="form-group">
-                <button class="btn" id="newPage" data-toggle="tooltip" data-placement="bottom" title="New page"><i class="fa fa-file-text" aria-hidden="true"></i></button>
-            </div>
+        <div class="form-inline" id="options">           
             <div class="form-group">
                 <select id="pagesize">
                     <option value="">Page Size</option>
@@ -173,7 +170,7 @@
 
 <script>
         $(document).ready(function () {
-            var report = new RptBuilder('A4', save, newPage, commit, @ViewBag.IsNew);
+            var report = new RptBuilder('A4', save, commit, @ViewBag.IsNew);
 
             $("#pagesize").change(function () {
                 var type = $(this).val();
@@ -181,7 +178,7 @@
                     getCustomSize(type);
                 }
                 else if (type !== 'custom-size') {
-                    var report = new RptBuilder(type, save, newPage, commit, @ViewBag.IsNew);
+                    var report = new RptBuilder(type, save, commit, @ViewBag.IsNew);
                 }
             });
 
@@ -192,7 +189,7 @@
                     var custHeight = $('#customHeight').val();
                     var custWidth = $('#customWidth').val();
                     var custunit = $('#custome-unit').val();
-                    var report = new RptBuilder(type, save, newPage, commit, @ViewBag.IsNew, custHeight, custWidth, custunit);
+                    var report = new RptBuilder(type, save, commit, @ViewBag.IsNew, custHeight, custWidth, custunit);
                 })
             };
 

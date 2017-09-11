@@ -63,9 +63,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.pg = new Eb_PropertyGrid("propGrid");
 
     RefreshControl = function (obj) {
-
-        $('.dropped').draggable({            
-        });
+       
         var NewHtml = obj.Html();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
         $.each(metas, function (i, meta) {
@@ -78,6 +76,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         });
 
         $("#" + obj.EbSid).replaceWith(NewHtml);
+        $('.dropped').draggable({
+        });
     };
 
     this.pg.PropertyChanged = function (obj) {
@@ -159,16 +159,21 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.pageSplitters = function () {
+        for (var sections in ReportSections) {
+            console.log(sections);
+            //this.$div.append(new EbObjects["Eb" + sections]);
+        }
+        
 
-        this.$div.append("<div class='pageHeaders' id='rpthead' data_val='0' style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='rpthead' data_val='0' style='width :100%'></div>");
 
-        this.$div.append("<div class='pageHeaders' id='pghead' data_val='1'style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='pghead' data_val='1'style='width :100%'></div>");
 
-        this.$div.append("<div class='pageHeaders' id='pgbody' data_val='2'style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='pgbody' data_val='2'style='width :100%'></div>");
 
-        this.$div.append("<div class='pageHeaders' id='pgfooter' data_val='3'style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='pgfooter' data_val='3'style='width :100%'></div>");
 
-        this.$div.append("<div class='pageHeaders' id='rptfooter' data_val='4' style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='rptfooter' data_val='4' style='width :100%'></div>");
 
         this.headerBox1_Split();
     };
@@ -369,7 +374,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         var colVal = this.col.text();
 
         if (!this.col.hasClass('dropped')) {
-            var obj = new EbObjects["Eb" + this.Objtype + "Obj"](Objid);            
+            var obj = new EbObjects["Eb" + this.Objtype](Objid);            
             this.dropLoc.append(obj.Html());
            
             obj.Top = this.posTop - 200;

@@ -326,7 +326,7 @@ var EbDataTable = function (settings) {
         o.retrieve = true;
         o.keys = true;
         o.ajax = {
-            url: this.ssurl + '/ds/data/' + this.dsid,
+            url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
             type: 'POST',
             timeout: 180000,
             data: this.ajaxData.bind(this),
@@ -348,7 +348,7 @@ var EbDataTable = function (settings) {
     this.ajaxData = function (dq) {
         //alert("xxxxxx");
         delete dq.columns; delete dq.order; delete dq.search;
-        dq.RefId = this.dsid;
+        dq.RefId = (this.dtsettings.login == "uc") ? this.dvid : this.dsid;
         //dq.Token = getToken();
         //dq.rToken = getrToken();
         //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
@@ -509,7 +509,7 @@ var EbDataTable = function (settings) {
             $.each(this.Api.columns().header().toArray(), function (i, obj) {
                 //var colum = $(obj).children('span').text();
                 var colum = $(obj).text();
-                if (colum !== '') {
+                if (colum !== '' && colum !== '#' && colum !== 'serial') {
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colum + '_hdr_txt1';

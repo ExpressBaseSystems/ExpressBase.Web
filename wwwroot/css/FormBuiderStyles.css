@@ -246,13 +246,12 @@
     border-bottom: var(--sild1pxDDD);
 }
 
-.pgCollEditor-Cont .controls-dd-cont .open, .pgCollEditor-Cont .controls-dd-cont .caret {
+.pgCXEditor-Cont .controls-dd-cont .open, .pgCXEditor-Cont .controls-dd-cont .caret {
     display: none !important;
     outline: none !important;
-    
 }
 
-.pgCollEditor-Cont .controls-dd-cont button:focus {
+.pgCXEditor-Cont .controls-dd-cont button:focus {
     background-color: white !important;
 }
 
@@ -284,11 +283,11 @@
     width: 100%;
 }
 
-.pgCollEditor-Cont .btn {
+.pgCXEditor-Cont .btn {
     border-radius: 1px !important;
 }
 
-.pgCollEditor-Cont .modal-body {
+.pgCXEditor-Cont .modal-body {
     height: 51vh;
 }
 
@@ -332,7 +331,7 @@
     transition: box-shadow .1s ease,border-color .1s ease;
 }
 
-.pgCollEditor-Cont {
+.pgCXEditor-Cont {
     width: 50%;
     height: 70VH;
     position: fixed;
@@ -343,11 +342,11 @@
     padding: 3px;
 }
 
-    .pgCollEditor-Cont .propgrid-table-cont {
+    .pgCXEditor-Cont .propgrid-table-cont {
         height: 36.2vh;
     }
 
-    .pgCollEditor-Cont .CodeMirror {
+    .pgCXEditor-Cont .CodeMirror {
         height: 46vh;
     }
 
@@ -363,7 +362,7 @@
 }
 
 .CE-controls-head, .inner-PG-Cont .pgHead {
-    padding: 9px;
+    padding: 8px;
     font-weight: bold;
     background-color: var(--colorDDD);
 }
@@ -381,22 +380,26 @@
         background-color: var(--colorDDD);
     }
 
-    .colTile:focus {
-        outline: none;
-        background-color: #c2c8ce;
-    }
+.colTile:focus {
+    outline: none;
+}
+
+
+.CE-body .colTile:focus {
+    background-color: #c2c8ce;
+}
 
 .editTbl {
     table-layout: fixed;
     height: 46.7vh;
 }
 
-.CEctrlsCont {
+.CEctrlsCont, .OSEctrlsCont {
     overflow-y: auto;
     height: 40vh;
 }
 
-.pgCollEditor-Cont .modal-footer {
+.pgCXEditor-Cont .modal-footer {
     padding: 10px 15px;
     text-align: right;
     border-top: 1px solid #e5e5e5;
@@ -482,3 +485,9 @@
         color: black;
         background-color: #aaaaaa;
     }
+
+.DD-refresh {
+    margin-right: 10px;
+    margin-top: 2.4px;
+    float: right;
+}

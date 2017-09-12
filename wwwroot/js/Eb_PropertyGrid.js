@@ -3,7 +3,8 @@
     this.wraperId = id;
     this.$controlsDD = $(".controls-dd-cont select");
     this.CEctrlsContId = this.wraperId + "_CEctrlsCont";
-    this.controlsDDContSelec = "#" + this.wraperId + " .controls-dd-cont";
+    this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
+    this.pgCXE_Cont_Slctr = "#" + this.wraperId + " .pgCXEditor-Cont";
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
@@ -216,10 +217,10 @@
 
     this.addToDD = function () {
         if ($("#SelOpt" + this.PropsObj.EbSid + this.wraperId).length === 0) {
-            $(this.controlsDDContSelec + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
-            $(this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
+            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
+            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }
-        $(this.controlsDDContSelec + " .selectpicker").selectpicker('val', this.PropsObj.Name);
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', this.PropsObj.Name);
 
     };
 
@@ -238,12 +239,13 @@
     this.removeFromDD = function (name) {
         if ($("#SelOpt" + name + this.wraperId)) {
             $("#SelOpt" + name + this.wraperId).remove();
-            $(this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
+            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }
     };
 
-    this.refreshDD = function () {
-        var $selectedOpt = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+    this.refreshDD = function (e) {
+        e.stopPropagation();
+        var $selectedOpt = $(this.pgCXE_Cont_Slctr +" .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         var ObjType = $selectedOpt.attr("obj-type");
         this.OSElist[ObjType] = null;
         this.getOSElist.bind(this)();
@@ -264,31 +266,11 @@
             + '</tbody>'
             + '</table>'
             + '</div>'
-        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Collection Editor");
-        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(CEbody);
-        $("#" + this.wraperId + " .pgCollEditor-Cont .sub-controls-DD-cont").show();
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Collection Editor");
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
+        $(this.pgCXE_Cont_Slctr + " .sub-controls-DD-cont").show();
 
         this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
-        this.setColTiles();
-    };
-
-    this.initJE = function () {
-
-        var CEbody = '<textarea id="code" name="code" rows="12" cols="40" ></textarea>'
-        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Javascript Editor");
-        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(CEbody);
-        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
-        window.editor = CodeMirror.fromTextArea(code, {
-            mode: "javascript",
-            lineNumbers: true,
-            lineWrapping: true,
-            extraKeys: { "Ctrl-Space": "autocomplete" },
-            foldGutter: {
-                rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
-            },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-
         this.setColTiles();
     };
 
@@ -301,19 +283,39 @@
             + '<option obj-type="3"> Report </option>'
             + '</select>'
             + '</div>'
-            + '<div id="pgWraper_CEctrlsCont" class="CEctrlsCont">'
+            + '<div class="OSEctrlsCont">'
             + '</div>'
             + '</div>';
-        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-title").text("Object Selector");
-        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body").html(OSEbody);
-        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Object Selector");
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
 
         this.getOSElist.bind(this)();
 
     };
+
+    this.initJE = function () {
+
+        var CEbody = '<textarea id="JE_txtEdtr' + this.wraperId + '" rows="12" cols="40" ></textarea>'
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Javascript Editor");
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
+        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
+        window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.wraperId), {
+            mode: "javascript",
+            lineNumbers: true,
+            lineWrapping: true,
+            extraKeys: { "Ctrl-Space": "autocomplete" },
+            foldGutter: {
+                rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
+            },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+
+        this.setColTiles();
+    };
     ////////////////////////////////////////////////////
     this.getOSElist = function () {
-        var $selectedOpt = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         var ObjType = $selectedOpt.attr("obj-type");
         if (!this.OSElist[ObjType]) {
             $.LoadingOverlay("show");
@@ -331,9 +333,9 @@
     this.biuldObjList = function (data) {
         $.LoadingOverlay("hide");
         var _refid = null;
-        $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").empty();
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
         $.each(data, function (refid, name) {
-            $("#" + this.wraperId + " .pgCollEditor-Cont .CEctrlsCont").append('<div class="colTile" tabindex="1" data-refid="' + refid + '">' + name
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" data-refid="' + refid + '">' + name
                 + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
             _refid = refid;
         }.bind(this));
@@ -342,18 +344,18 @@
         this.OSElist[ObjType] = data;
         console.log(JSON.stringify(this.OSElist));
 
-        $("#" + this.wraperId + " .pgCollEditor-Cont .OSE-body .colTile").on("click", this.OTileClick.bind(this));
+        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").on("click", this.OTileClick.bind(this));
 
-        if ($("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .filter-option .fa-refresh").length===0) {
+        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length===0) {
             var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
-            $("#" + this.wraperId + " .pgCollEditor-Cont .modal-body .OSE-DD-cont .filter-option").append($refresh);
+            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
 
     }.bind(this);
 
     this.OTileClick = function (e) {
         $(this).focus();
-        $("#" + this.wraperId + " .pgCollEditor-Cont .OSE-body .colTile").attr("is-selected", false).find(".fa-check").hide();
+        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").attr("is-selected", false).find(".fa-check").hide();
         $(e.target).attr("is-selected", true).find(".fa-check").show();
     };
 
@@ -366,7 +368,7 @@
         $("#" + this.wraperId + " .pgCollEditor-bg").show();
         this.CurProp = e.target.getAttribute("for");
         var editor = e.target.getAttribute("editor");
-        $("#" + this.wraperId + " .pgCollEditor-Cont .sub-controls-DD-cont").hide();
+        $(this.pgCXE_Cont_Slctr + " .sub-controls-DD-cont").hide();
         if (editor === "7") {
             this.initCE();
         }
@@ -387,10 +389,10 @@
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
-        $(this.controlsDDContSelec + " .selectpicker").on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
 
         var CE_HTML = '<div class="pgCollEditor-bg">'
-            + '<div class="pgCollEditor-Cont">'
+            + '<div class="pgCXEditor-Cont">'
 
             + '<div class="modal-header">'
             + '<button type="button" class="close" onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();" >&times;</button>'
@@ -402,7 +404,7 @@
             + '<div class="modal-footer">'
             + '<div class="sub-controls-DD-cont pull-left">'
             + '<select class="selectpicker"> </select>'
-            + '<button type="button" id="CE_add" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
+            + '<button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
             + '</div>'
             + '<button type="button" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>'
             + '</div>'
@@ -411,7 +413,7 @@
             + '</div>';
         $(this.$wraper).append(CE_HTML);
 
-        $("#" + this.wraperId + " .pgCollEditor-Cont").on("click", ".CE-add", this.pgCE_AddFn.bind(this));
+        $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.pgCE_AddFn.bind(this));
 
         $("#" + this.CEctrlsContId).on("click", ".close", this.colTileCloseFn.bind(this));
 
@@ -428,7 +430,7 @@
     };
 
     this.pgCE_AddFn = function () {
-        var SelType = $("#" + this.wraperId + " .pgCollEditor-Cont .modal-footer .sub-controls-DD-cont").find("option:selected").val();
+        var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
         if (this.CurProp === "Controls")
             this.PropsObj.Controls.$values.push(new EbObjects[SelType](this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length));
         else
@@ -463,7 +465,7 @@
             options += '<option>' + typesArr[i] + '</option>'
         }
 
-        $("#" + this.wraperId + " .pgCollEditor-Cont .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
+        $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
 
         $("#" + this.CEctrlsContId).empty().append(_html);
     };
@@ -515,7 +517,7 @@
 
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", function (e) {
             $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(e.target.value);
-            $(this.controlsDDContSelec + " .selectpicker").selectpicker('refresh');
+            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }.bind(this));
 
     };

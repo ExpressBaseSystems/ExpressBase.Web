@@ -522,6 +522,10 @@
 
     };
 
+    this.clear = function () {
+        this.$PGcontainer.empty();
+    };
+
     this.setObject = function (props, metas) {
         //params check
         {

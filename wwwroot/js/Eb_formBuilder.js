@@ -187,10 +187,10 @@
         var id = ControlTile.attr("id");
 
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).Name);
-
+        this.PGobj.clear();
         this.rootContainerObj.Controls.DelByName(id);
+        ControlTile.siblings().focus();
         ControlTile.remove();
-        this.$propGrid.hide();
         e.preventDefault();
         this.saveObj();
     };

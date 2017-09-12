@@ -8,7 +8,7 @@
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
-    this.PropertyChanged = null;
+    this.PropertyChanged = function (obj) { };
     this.IsSortByGroup = true;
 
     this.getvaluesFromPG = function () {
@@ -24,46 +24,60 @@
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.pgId + name;
-
-        // If boolean create checkbox
-        if (type === 0 || typeof value === 'boolean') {
+    
+        if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
 
-            // If options create drop-down list
-        } else if (type === 1 && Array.isArray(meta.options)) {
+        } else if (type === 1) {    // If options create drop-down list
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.options);
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', value); };
 
-            // If number 
-        } else if (type === 2) {
+        } else if (type === 2) {    // If number 
             valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
 
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return ($('#' + elemId).val() === "") ? "" : parseInt($('#' + elemId).val()); };
 
-            // If color use color picker 
-        } else if (type === 3) {
+        } else if (type === 3) {    // If color use color picker 
             valueHTML = '<input type="color" id="' + elemId + '" value="' + value + '" style="width:100%; height: 21px;" />';
 
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
-
-            // If label (for read-only)
-        } else if (type === 4) {
-            valueHTML = '<label for="' + elemId + '" editor="' + type + '">' + value + '</label>';
-
-            // If collection editor for object || If JS editor
-        } else if (type > 6) {
-            valueHTML = '<button for="' + name + '" editor="' + type + '" class= "pgCX-Editor-Btn" >... </button>';
-
-            // Default is textbox
-        } else {
+        } else if (type === 4) {    // If label (for read-only) span
+            valueHTML = '<span style="vertical-align: sub;" for="' + elemId + '" editor="' + type + '">' + value + '</span>';
+            
+        } else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+
+        } else if (type === 6) {    //  If date&time date
+            valueHTML = '<input type="date" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
+            if (this.getValueFuncs)
+                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+
+        } else if (type === 7) {    //  If collection editor for object
+            valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+
+        } else if (type === 8) {    // If JS editor If Object Selector editor
+            valueHTML = '<span style="vertical-align: sub;">(JavaScript)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+
+        } else if (type === 9) {    // SQL editor
+            valueHTML = '<span style="vertical-align: sub;">(SQL)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+            
+        } else if (type === 10) {  //  If JS editor If Object Selector editor
+            valueHTML = '<input type="text" id="' + elemId + '" style=" width: calc(100% - 26px);" />'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+
+            // Default is textbox
+        } else {
+            valueHTML = 'editor Not implemented';
         }
 
         if (meta.OnChangeExec)
@@ -209,7 +223,7 @@
         this.getvaluesFromPG();
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
-        this.PropertyChanged(this.PropsObj, );
+        this.PropertyChanged(this.PropsObj);
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
@@ -245,7 +259,7 @@
 
     this.refreshDD = function (e) {
         e.stopPropagation();
-        var $selectedOpt = $(this.pgCXE_Cont_Slctr +" .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         var ObjType = $selectedOpt.attr("obj-type");
         this.OSElist[ObjType] = null;
         this.getOSElist.bind(this)();
@@ -346,7 +360,7 @@
 
         $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").on("click", this.OTileClick.bind(this));
 
-        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length===0) {
+        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
             var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
@@ -474,7 +488,7 @@
     this.InitPG = function () {
         this.propNames = [];
 
-        this.MISC_GROUP_NAME = 'Misc';
+        this.MISC_GROUP_NAME = 'Miscellaneous';
         this.GET_VALS_FUNC_KEY = 'pg.getValues';
         this.pgIdSequence = 0;
 

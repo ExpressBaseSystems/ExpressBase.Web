@@ -30,7 +30,7 @@ namespace ExpressBase.Web.Controllers
      
             ViewBag.Meta = _jsResult.Meta;
             ViewBag.JsObjects = _jsResult.JsObjects;
-            ViewBag.ReportSections = _jsResult.ReportSections;
+            //ViewBag.ReportSections = _jsResult.ReportSections;
 
             ViewBag.IsNew = "true";
             return View();

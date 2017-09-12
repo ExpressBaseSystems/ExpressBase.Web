@@ -292,7 +292,7 @@ var EbDataTable = function (settings) {
                 o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
             //o.lengthMenu = this.ebSettings.lengthMenu;
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
-            if (!this.ebSettings.IsPaged) {
+            if (this.ebSettings.IsPaged == "false") {
 
                 o.dom = "<'col-md-12 noPadding'B>rt";
             }
@@ -326,7 +326,7 @@ var EbDataTable = function (settings) {
         o.retrieve = true;
         o.keys = true;
         o.ajax = {
-            url: this.ssurl + '/ds/data/' + this.dsid,
+            url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
             type: 'POST',
             timeout: 180000,
             data: this.ajaxData.bind(this),
@@ -348,7 +348,7 @@ var EbDataTable = function (settings) {
     this.ajaxData = function (dq) {
         //alert("xxxxxx");
         delete dq.columns; delete dq.order; delete dq.search;
-        dq.RefId = this.dsid;
+        dq.RefId = (this.dtsettings.login == "uc") ? this.dvid : this.dsid;
         //dq.Token = getToken();
         //dq.rToken = getrToken();
         //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
@@ -405,10 +405,10 @@ var EbDataTable = function (settings) {
 
     this.receiveAjaxData = function (dd) {
         this.MainData = dd.data;
-        //if (!dd.IsPaged) {
-        //    this.Api.paging = dd.IsPaged;
-        //    this.Api.lengthChange = false;
-        //}
+        if (!dd.IsPaged) {
+            this.Api.paging = dd.IsPaged;
+            this.Api.lengthChange = false;
+        }
         return dd.data;
     };
 
@@ -506,10 +506,9 @@ var EbDataTable = function (settings) {
         var filter_obj_arr = [];
         var api = this.Api;
         if (api !== null) {
-            $.each(this.Api.columns().header().toArray(), function (i, obj) {
-                //var colum = $(obj).children('span').text();
-                var colum = $(obj).text();
-                if (colum !== '') {
+            this.Api.columns().every(function (i) {
+                var colum = api.settings().init().aoColumns[i].name;
+                if (colum !== 'checkbox' && colum !== 'serial') {
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colum + '_hdr_txt1';
@@ -517,13 +516,12 @@ var EbDataTable = function (settings) {
                     if (type === 'boolean') {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
                         if (!($(textid).is(':indeterminate')))
-                            filter_obj_arr.push(new filter_obj(((table === "dv13") ? "INV." : "") + colum, "=", val1));
+                            filter_obj_arr.push(new filter_obj(colum, "=", val1));
                     }
                     else {
                         oper = $('#' + table + '_' + colum + '_hdr_sel').text();
                         if (api.columns(i).visible()[0]) {
                             if (oper !== '' && $(textid).val() !== '') {
-                                //alert(colum + "," + oper + "," + $(textid).val());
                                 if (oper === 'B') {
                                     val1 = $(textid).val();
                                     val2 = $(textid).siblings('input').val();
@@ -1702,7 +1700,7 @@ var EbDataTable = function (settings) {
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);
             }
-            if (this.ebSettings.Columns.$values[i].RenderAs === "Graph") {
+            if (this.ebSettings.Columns.$values[i].RenderAs === "Chart") {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
             }
         }

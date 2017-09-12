@@ -186,7 +186,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string refid;
-            if (req["id"] == "null")
+            if ( string.IsNullOrEmpty( req["id"]))
             {
                 var ds = new EbObjectFirstCommitRequest();
                 ds.EbObjectType = (int)EbObjectType.DataSource;

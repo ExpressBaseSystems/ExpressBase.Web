@@ -152,13 +152,6 @@ margin-left:5px;
     }
 </select>
 <ul id="data-table-list" class="tool-box-items">
-    @*<li>
-        <a>Data Table1</a>
-        <ul>
-            <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-            <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-        </ul>
-    </li>*@
 </ul>
 <ul id="running-summary" class="tool-box-items">
     <li>
@@ -212,7 +205,7 @@ margin-left:5px;
             $.each(result.columns, function (i, columnCollection) {
                 $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
                 $.each(columnCollection, function (j, obj) {
-                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div eb-type='EbCol' class='coloums draggable textval'> " + obj.columnName + "</div></li>");                
+                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div eb-type='ReportCol' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");                
                 });
             });
             $('#data-table-list').treed();

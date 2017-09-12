@@ -35,15 +35,15 @@ var PageElements = function (id, left, top, width, height) {
     this.height = height;
 };
 
-var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, custWidth, custunit) {
-    this.savebtnid = saveBtnid;
-    this.newPage = newPage;
-    this.incrId = 0;
+var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth, custunit) {
+    this.savebtnid = saveBtnid; 
     this.type = type;
     this.Commitbtnid = commit;
     this.IsNew = Isnew;
     this.Rel_object;
-
+    this.objCollection = {};
+    this.splitarray = [];
+    this.btn_indx = null;
     if (this.type === 'custom-size') {
         this.height = custHeight + custunit;
         this.width = custWidth + custunit;
@@ -53,19 +53,37 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.width = pages[type].width;
         $('#custom-size').hide();
     }
-
     this.idCounter = {
-        EbColCounter: 0,
         EbCircleCounter: 0,
+        EbReportColCounter: 0,
+        EbRectCounter: 0,
+    };
+  
+    //$('#propGrid').show();
+    this.pg = new Eb_PropertyGrid("propGrid");
+
+    RefreshControl = function (obj) {
+       
+        var NewHtml = obj.Html();
+        var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
+                console.log('@' + name + ' ');
+                console.log(obj[name]);
+            }
+        });
+
+        $("#" + obj.EbSid).replaceWith(NewHtml);
+        $('.dropped').draggable({
+        });
     };
 
-    this.splitarray = [];
-    this.btn_indx = null;
-
-    $('#propGrid').show();
-    var pg = new Eb_PropertyGrid("propGrid");
-    pg.setObject({ ForeColor: '#FFFFFF', FontSize: '20' }, [{ "name": "ForeColor", "group": "Appearance", "editor": 3, "options": null, "IsUIproperty": true, "helpText": "Choose color" }, { "name": "FontSize", "group": "Appearance", "editor": 2, "options": null, "IsUIproperty": true, "helpText": "" }]);
-
+    this.pg.PropertyChanged = function (obj) {
+        
+        RefreshControl(obj);
+    };
 
     this.ruler = function () {
         $('.ruler,.rulerleft').show();
@@ -141,16 +159,21 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
     };
 
     this.pageSplitters = function () {
+        for (var sections in ReportSections) {
+            console.log(sections);
+            //this.$div.append(new EbObjects["Eb" + sections]);
+        }
+        
 
-        this.$div.append("<div class='pageHeaders' id='rpthead' data_val='0' style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='rpthead' data_val='0' style='width :100%'></div>");
 
-        this.$div.append("<div class='pageHeaders' id='pghead' data_val='1'style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='pghead' data_val='1'style='width :100%'></div>");
 
-        this.$div.append("<div class='pageHeaders' id='pgbody' data_val='2'style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='pgbody' data_val='2'style='width :100%'></div>");
 
-        this.$div.append("<div class='pageHeaders' id='pgfooter' data_val='3'style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='pgfooter' data_val='3'style='width :100%'></div>");
 
-        this.$div.append("<div class='pageHeaders' id='rptfooter' data_val='4' style='width :100%'></div>");
+        //this.$div.append("<div class='pageHeaders' id='rptfooter' data_val='4' style='width :100%'></div>");
 
         this.headerBox1_Split();
     };
@@ -343,181 +366,50 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.posLeft = event.pageX;
         this.posTop = event.pageY;
         this.dropLoc = $(event.target);
-        this.col = $(ui.draggable);
-        var type = this.col.attr('eb-type').trim();
-        var id = type + (this.idCounter["Eb" + type + "Counter"])++;
-        var minwidth = $(ui.draggable).width();
-        var minheight = $(ui.draggable).height();
+        this.col = $(ui.draggable);              
+        this.col.attr("tabindex", "1").attr("onclick","$(this).focus()");
+        this.col.on("focus", this.elementOnFocus.bind(this));
+        this.Objtype = this.col.attr('eb-type');
+        var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
+        var colVal = this.col.text();
 
-
-        //this.dropLoc.append(new EbObjects["Eb" + type + "Obj"](id));        
-
-
-        if (this.col.hasClass('shapes')) {
-
-            if (this.col.attr('id') === 'circle') {
-                this.createCircle(new EbObjects["Eb" + type + "Obj"](id).Html() );
-            }
-            else if (this.col.attr('id') === 'rectangle') {
-                this.createRectangle();
-            }
-            else if (this.col.attr('id') === 'v-line') {
-                this.createVerticalLine();
-            }
-            else if (this.col.attr('id') === 'h-line') {
-                this.createHorrizLine();
-            }
-            else if (this.col.attr('id') === 'arrow-right') {
-                this.createArrowRight();
-            }
-            else if (this.col.attr('id') === 'arrow-left') {
-                this.createArrowLeft();
-            }
-            else if (this.col.attr('id') === 'arrow-up') {
-                this.createArrowUp();
-            }
-            else if (this.col.attr('id') === 'arrow-down') {
-                this.createArrowDown();
-            }
-            else if (this.col.attr('id') === 'by-dir-arrow-v') {
-                this.createByDirArrowHori();
-            }
-            else if (this.col.attr('id') === 'by-dir-arrow-h') {
-                this.createByDirArrowVertcal();
-            }
+        if (!this.col.hasClass('dropped')) {
+            var obj = new EbObjects["Eb" + this.Objtype](Objid);            
+            this.dropLoc.append(obj.Html());
+           
+            obj.Top = this.posTop - 200;
+            obj.Left = this.posLeft - 300;
+            obj.ColVal = colVal;
+            $("#" + Objid).attr("eb-type", this.Objtype);
+            this.objCollection[Objid] = obj;
+            RefreshControl(obj); 
+            
         }
-
-        else if (this.col.hasClass('special-field')) {
-
-            if (this.col.attr('id') === "date-time") {
-                this.addCurrentDateTime();
-            }
+        else if (this.col.hasClass('dropped')) {
+            this.dropLoc.append(this.col);          
         }
-        else if (this.col.hasClass('qr-Br-img-btn')) {
+        $('.dropped').draggable();
 
-            if (this.col.attr('id') === 'pg-img') {
-                this.addImageOnPage();
-            }
-
-        }
-
-        else if (this.col.hasClass('coloums')) {
-
-            if (!this.col.hasClass("dropped")) {
-
-
-                $(event.target).append(this.col.clone().addClass("dropped").removeClass("draggable").attr('id', id).css({
-                    width: this.col.width(),
-                    height: this.col.height(),
-                    position: 'absolute',
-                    left: this.posLeft - 270,
-                    top: this.posTop - 200
-                }));
-
-            }
-            else if (this.col.hasClass("dropped")) {
-
-                $(event.target).append(this.col.css({
-                    width: this.col.width(),
-                    height: this.col.height(),
-                    position: 'absolute'
-                }));
-
-            }
-        }
-
-        $('.dropped').draggable({
-            cursor: 'move',
-            start: this.onDrag_Start.bind(this),
-            stop: this.onDrag_stop.bind(this)
-
-        });
-
-        $('.image-reSize').resizable({ containment: "parent" });
-
-        $('.dropped').resizable({
-            containment: "parent",
-            handles: "n, e, s, w",
-            minHeight: minheight,
-            minWidth: minwidth,
-            resize: this.resizeElement.bind(this)
-        });
+        //$('.image-reSize').resizable({ containment: "parent" });
+        //$('.dropped').resizable({
+        //    containment: "parent",
+        //    handles: "n, e, s, w",
+        //    minHeight: minheight,
+        //    minWidth: minwidth,
+        //    resize: this.resizeElement.bind(this)
+        //});
 
         this.PropertyMenu();
     };
 
-    this.createArrowLeft = function () {
+    this.elementOnFocus = function (event) {
 
-        var $arrowL = $("<div class='arrow' id='arrow-left" + this.incrId++ + "' style='border:1px solid'><div class='arrow-left'></div></div>");
-        this.dropLoc.append($arrowL.addClass("arrow-l-draggable").css({
-            width: '50px',
-            height: '1px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-        $('.arrow-l-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
-        $('.arrow-l-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
-
-    };
-
-    this.createArrowUp = function () {
-
-        var $arrowU = $("<div class='arrow' id='arrow-up" + this.incrId++ + "' style='border:1px solid'><div class='arrow-up'></div></div>");
-        this.dropLoc.append($arrowU.addClass("arrow-u-draggable").css({
-            width: '1px',
-            height: '50px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-        $('.arrow-u-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
-        $('.arrow-u-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
-
-    };
-
-    this.createArrowDown = function () {
-
-        var $arrowD = $("<div class='arrow' id='arrow-down" + this.incrId++ + "' style='display: flex;border:1px solid'><div class='arrow-down'></div></div>");
-        this.dropLoc.append($arrowD.addClass("arrow-d-draggable").css({
-            width: '1px',
-            height: '50px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-        $('.arrow-d-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
-        $('.arrow-d-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
-
-    };
-
-    this.createByDirArrowVertcal = function () {
-
-        var $arrowByDirVert = $("<div class='arrow' id='arrow-by-dir-v" + this.incrId++ + "' style='display: flex;border:1px solid'><div class='arrow-By-dir-v-t'></div><div class='arrow-By-dir-v-b'></div></div>");
-        this.dropLoc.append($arrowByDirVert.addClass("arrow-by-d-v-draggable").css({
-            width: '1px',
-            height: '50px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-        $('.arrow-by-d-v-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
-        $('.arrow-by-d-v-draggable').resizable({ containment: "parent", handles: "s,n", resize: this.resizeElement.bind(this) });
-
-    };
-
-    this.createByDirArrowHori = function () {
-
-        var $arrowByDirHori = $("<div class='arrow' id='arrow-by-dir-h" + this.incrId++ + "' style='border:1px solid'><div class='arrow-By-dir-h-l'></div><div class='arrow-By-dir-h-r'></div></div>");
-        this.dropLoc.append($arrowByDirHori.addClass("arrow-by-d-h-draggable").css({
-            width: '50px',
-            height: '1px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-        $('.arrow-by-d-h-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
-        $('.arrow-by-d-h-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
+        var curControl = $(event.target);
+        var id = curControl.attr("id");
+        var curObject = this.objCollection[id];
+        var type = curControl.attr('eb-type');
+        $('#propGrid').show();
+        this.pg.setObject(curObject, AllMetas["Eb" + type]);
 
     };
 
@@ -556,21 +448,6 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         });
     };
 
-    this.createArrowRight = function () {
-
-        var $arrowR = $("<div class='arrow' id='arrow-right" + this.incrId++ + "' style='border:1px solid'><div class='arrow-right'></div></div>");
-        this.dropLoc.append($arrowR.addClass("arrow-r-draggable").css({
-            width: '50px',
-            height: '1px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-        $('.arrow-r-draggable').draggable({ cursor: 'move', start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });
-        $('.arrow-r-draggable').resizable({ containment: "parent", handles: "e,w", resize: this.resizeElement.bind(this) });
-
-    };
-
     this.addCurrentDateTime = function () {
 
         var currentdate = new Date();
@@ -589,77 +466,6 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
             left: this.posLeft - 270,
             top: this.posTop - 200
         }));
-    };
-
-    this.createCircle = function (_html) {
-
-        var $cir =  $(_html.replace("@id", this.incrId++)
-                            .replace("@left", this.posLeft - 270)
-                            .replace("@top", this.posTop - 200));
-        this.dropLoc.append($cir.addClass("dropped"));
-    };
-
-    this.createRectangle = function () {
-
-        var $rect = $("<div class='rectangle' id='rect" + this.incrId++ + "' style='border:1px solid'></div>");
-        this.dropLoc.append($rect.addClass("dropped").css({
-            width: '50px',
-            height: '50px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-    };
-
-    this.createVerticalLine = function () {
-
-        var $vline = $("<div class='v-line' id='v-line" + this.incrId++ + "' style='border:none;border:1px solid;cursor:move'></div>");
-        this.dropLoc.append($vline.addClass("v-line-dropped").css({
-            width: '1px',
-            height: '50px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-
-        $('.v-line-dropped').draggable({
-            cursor: 'move',
-            start: this.onDrag_Start.bind(this),
-            stop: this.onDrag_stop.bind(this)
-
-        });
-
-        $('.v-line-dropped').resizable({
-            containment: "parent",
-            handles: "n, s",
-            resize: this.resizeElement.bind(this)
-        });
-
-    };
-
-    this.createHorrizLine = function () {
-
-        var $hline = $("<div class='h-line' id='h-line" + this.incrId++ + "' style='border:none;border:1px solid;cursor:move'></div>");
-        this.dropLoc.append($hline.addClass("h-line-dropped").css({
-            width: '50px',
-            height: '1px',
-            position: 'absolute',
-            left: this.posLeft - 270,
-            top: this.posTop - 200
-        }));
-
-        $('.h-line-dropped').draggable({
-            cursor: 'move',
-            start: this.onDrag_Start.bind(this),
-            stop: this.onDrag_stop.bind(this)
-
-        });
-
-        $('.h-line-dropped').resizable({
-            containment: "parent",
-            handles: "e,w",
-            resize: this.resizeElement.bind(this)
-        });
     };
 
     this.resizeElement = function (event, ui) {
@@ -745,11 +551,6 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.report.subsection[this.i].subsection[this.j].subsection.push(new PageElements(this.elements.attr('id'), this.elements.position().left - 83 + 'px', this.elements.position().top + 'px', this.elements.css('width'), this.elements.css('height')));
     };
 
-    this.createNewPage = function () {
-        console.log(this.pgC);
-        //this.createPage(this.pgC);
-    };
-
     this.Commit = function () {
         var _json = this.savefile();
         alert(_json);
@@ -777,9 +578,7 @@ var RptBuilder = function (type, saveBtnid, newPage, commit, Isnew, custHeight, 
         this.pgC = this.createPagecontainer();
         this.createPage(this.pgC);
         this.DragDrop_Items();
-
         $(this.savebtnid).on('click', this.savefile.bind(this));
-        $(this.newPage).on('click', this.createNewPage.bind(this));
         $(this.Commitbtnid).on('click', this.Commit.bind(this));
 
     };

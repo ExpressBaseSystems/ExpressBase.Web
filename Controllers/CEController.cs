@@ -149,6 +149,20 @@ namespace ExpressBase.Web.Controllers
             return objects_dict;
         }
 
+        public Dictionary<string, EbObjectWrapper> GetObjects_refid_dict_all_ver(int obj_type)
+        {
+            var fdresultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = obj_type });
+            var fdrlist = fdresultlist.Data;
+            Dictionary<string, EbObjectWrapper> objects_dict = new Dictionary<string, EbObjectWrapper>();
+           
+            foreach (var element in fdrlist)
+            {
+              //  objects_dict[element.id.] = element;
+            }
+            return objects_dict;
+        }
+
+
         public List<string> Getsqlfns(int obj_type)
         {
             var fdresultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = obj_type });

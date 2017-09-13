@@ -27,8 +27,10 @@ namespace ExpressBase.Web.Controllers
 
             var _jsResult = CSharpToJs.GenerateJs<EbReportField>(BuilderType.Report, typeArray);
 
+     
             ViewBag.Meta = _jsResult.Meta;
             ViewBag.JsObjects = _jsResult.JsObjects;
+            //ViewBag.ReportSections = _jsResult.ReportSections;
 
             ViewBag.IsNew = "true";
             return View();

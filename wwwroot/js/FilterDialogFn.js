@@ -1,5 +1,5 @@
 ﻿var tabNum = 0;
-var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
+var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
     this.Obj_Id = obj_id;
     this.Name;
     this.Description;
@@ -38,7 +38,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
         $("#fdlist" + tabNum + " .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $(".selectpicker").selectpicker();
-        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));        
+        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
         $('#compare').off('click').on('click', this.Compare.bind(this));
     }
 
@@ -46,11 +46,14 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         this.Code = window.editor.getValue();
         this.Name = $('#obj_name').val();
         this.Description = $('#obj_desc').val();
-        this.changeLog=$('#obj_changelog').val();
+        this.changeLog = $('#obj_changelog').val();
     }
 
-    this.Success_alert = function (result) {
-        $.LoadingOverlay("hide");
+    this.AddVerNavTab = function (navitem, tabitem) {
+        $('#versionNav').append(navitem);
+        $('#versionTab').append(tabitem);
+         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
     }
 
     this.SetFdInit = function (me, fdId) {
@@ -69,10 +72,10 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
     this.Load_filter_dialog_list = function (val) {
         var getNav = $("#versionNav li.active a").attr("href");
-        if (!$(getNav + ' #fdlist' + tabNum+ ' .bootstrap-select').hasClass('open')) {
+        if (!$(getNav + ' #fdlist' + tabNum + ' .bootstrap-select').hasClass('open')) {
             $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
             $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
-            $('#loader_fd' + tabNum ).show();
+            $('#loader_fd' + tabNum).show();
             $.ajax({
                 url: "../CE/GetObjects_refid_dict",
                 type: 'post',
@@ -85,7 +88,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                     });
                     $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
                     $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('val', val);
-                    $('#loader_fd' + tabNum ).hide();
+                    $('#loader_fd' + tabNum).hide();
                 }
             });
 
@@ -112,8 +115,8 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         this.SetValues();
         this.Versions = result;
         tabNum++;
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>" +
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tabitem = "<div id='vernav"+ tabNum + "' class='tab-pane fade'>" +
             "<table class='table table-striped table-bordered col-md-12' id='versions" + this.Obj_Id + tabNum + "'>" +
             "<thead class='verthead" + this.Obj_Id + tabNum + "'>" +
             "<tr>" +
@@ -124,11 +127,28 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             "<th class='col-md-1'> </th>" +
             "</tr>" +
             " </thead>" +
-            "<tbody id='vertbody" + this.Obj_Id + tabNum + "' class='vertbody'></tbody>" +
+            "<tbody id='vertbody" +tabNum + "' class='vertbody'></tbody>" +
             "</table>" +
-            "</div>");
-        $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
-        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+            "</div>";
+        this.AddVerNavTab(navitem, tabitem);
+
+        // $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" +tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        //$('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>" +
+        //    "<table class='table table-striped table-bordered col-md-12' id='versions" + this.Obj_Id + tabNum + "'>" +
+        //    "<thead class='verthead" + this.Obj_Id + tabNum + "'>" +
+        //    "<tr>" +
+        //    "<th class='col-md-1'>Version Number</th>" +
+        //    "<th class='col-md-4'>Change Log</th>" +
+        //    "<th class='col-md-1'>Committed By</th>" +
+        //    "<th class='col-md-2'>Committed At</th>" +
+        //    "<th class='col-md-1'> </th>" +
+        //    "</tr>" +
+        //    " </thead>" +
+        //    "<tbody id='vertbody" + this.Obj_Id + tabNum + "' class='vertbody'></tbody>" +
+        //    "</table>" +
+        //    "</div>");
+        //$("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        //$('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         var scrollPos = $('#versionTab').offset().top;
         $(window).scrollTop(scrollPos);
 
@@ -168,20 +188,20 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     };
 
     this.VersionCode_success = function (data) {
-        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
         $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">");
         $('#vernav' + this.Obj_Id + tabNum).append("<div class='form-inline inner_toolbar' style='margin-bottom:0px;'>  " +
             " <div class='btn btn-group'>" +
-            "<div class='verlist input-group'>"+
+            "<div class='verlist input-group'>" +
             "</div>" +
             "<div class='dropdown fdlist btn-group' id='fdlist" + tabNum + "'>" +
             "Parameter Div Name<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true' disabled></select>" +
-            "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd"+tabNum+"' style='display:none;color:dodgerblue;'></i>" +
+            "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd" + tabNum + "' style='display:none;color:dodgerblue;'></i>" +
             "</div>" +
             "<a href='#inner_well" + tabNum + "' class='btn collapsed' id='execute" + tabNum + "' data-toggle='collapse' title='Click to open Parameter dialog'><i class='fa fa-chevron-down fa-1x' aria-hidden='true'>Render</i></a>" +
             "</div>" +
             "</div>" +
-            "<div id='inner_well" + tabNum + "' class='collapse'></div>" );       
+            "<div id='inner_well" + tabNum + "' class='collapse'></div>");
         $('#vernav' + this.Obj_Id + tabNum).append(
             " <div><label class = 'label label-default codeEditLabel'>Version V." + this.HistoryVerNum + "</label>" +
             " <label class = 'label label-default codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
@@ -201,13 +221,13 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         });
 
         var getNav = $("#versionNav li.active a").attr("href");
-        $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
-     //   $(getNav + ' #execute' + tabNum).off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this)); 
+        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        //   $(getNav + ' #execute' + tabNum).off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this)); 
         $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
         $("#fdlist" + tabNum + " .bootstrap-select").off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $(".selectpicker").selectpicker();
-        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));        
+        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
         $.LoadingOverlay("hide");
         setTimeout(function () {
             window.editor1.refresh();
@@ -260,6 +280,8 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     }
 
     this.Load_version_list = function () {
+        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        $('#loader_fd' + tabNum).show();
         $.post('../CE/GetVersions', { objid: this.Obj_Id },
             function (data) {
                 $('#selected_Ver_1' + tabNum).append("<option value='Current' data-tokens='Select Version'>Current</option>");
@@ -271,10 +293,11 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 $('.selectpicker').selectpicker({
                     size: 4
                 });
-               $('.selectpicker').selectpicker('refresh');
+                $('.selectpicker').selectpicker('refresh');
+                $('#loader_fd' + tabNum).hide();
             })
-        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+
     };
 
     this.Compare = function () {
@@ -289,10 +312,11 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             "<select id='selected_Ver_1" + tabNum + "' class='selectpicker' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
             "</select>" +
             "</div>" +
-            "<div class='verlist input-group col-md-6' style='display:inline-block '>" +
+            "<div class='verlist input-group col-md-6' style='display:inline-block'>" +
             "<select id='selected_Ver_2" + tabNum + "' class='selectpicker' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
             "</select>" +
             "</div>" +
+            "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd" + tabNum + "' style='display:none;color:dodgerblue;'></i>" +
             "</div>" +
             " </div>" +
             "<button id='compare_inner" + tabNum + "' class='compare_inner btn btn-primary'>Comapre</button>" +
@@ -300,7 +324,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
             "<div id='compare_result" + tabNum + "'></div>" +
             " </div>");
         $('#compare_inner' + tabNum).off("click").on("click", this.Differ.bind(this));
-        this.Load_version_list();  
+        this.Load_version_list();
         $('.selectpicker').selectpicker({
             size: 4
         });
@@ -340,11 +364,11 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
     this.Save = function (needRun) {
         $.LoadingOverlay("show");
-        this.SetValues();       
-            if (this.ObjectType === 5) {
-                this.SetSqlFnName();
-            }
-            this.Find_parameters(true, true, needRun);      
+        this.SetValues();
+        if (this.ObjectType === 5) {
+            this.SetSqlFnName();
+        }
+        this.Find_parameters(true, true, needRun);
     };
 
     this.Commit = function (needRun) {
@@ -401,7 +425,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     }
 
     this.CreateObjString = function () {
-       // this.ValidInput = true;
+        // this.ValidInput = true;
         if (this.Parameter_Count != 0) {
             var ObjString = "[";
             var filter_control_list = "datefrom,dateto";
@@ -433,18 +457,18 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
 
     this.DrawTable = function () {
         $.LoadingOverlay("show");
-       // if (this.ValidInput === true) {
-            tabNum++;
-            $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + this.Obj_Id + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-            $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
-            $('#vernav' + this.Obj_Id + tabNum).append(" <div class=' filter_modal_body'>" +
-                "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
-                "</div>");
-            $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-            $.post('GetColumns4Trial', {
-                ds_refid:this.runver_Refid,
-                parameter: this.Object_String_WithVal
-            }, this.Load_Table_Columns.bind(this));
+        // if (this.ValidInput === true) {
+        tabNum++;
+        $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        $('#versionTab').append("<div id='vernav" + this.Obj_Id + tabNum + "' class='tab-pane fade'>");
+        $('#vernav' + this.Obj_Id + tabNum).append(" <div class=' filter_modal_body'>" +
+            "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
+            "</div>");
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        $.post('GetColumns4Trial', {
+            ds_refid: this.runver_Refid,
+            parameter: this.Object_String_WithVal
+        }, this.Load_Table_Columns.bind(this));
 
         //}
         //else {
@@ -478,7 +502,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 }
             });
 
-            $("#versionNav a[href='#vernav" + this.Obj_Id + tabNum + "']").tab('show');
+            $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
             $.LoadingOverlay("hide");
         }
     };
@@ -494,7 +518,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     this.Load_Fd = function () {
         var getNav = $("#versionNav li.active a").attr("href");
         if ($(getNav + ' #inner_well' + tabNum).children().length === 0) {
-            $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId},
+            $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId },
                 function (result) {
                     $(getNav + ' #inner_well' + tabNum).append(result);
                     $.LoadingOverlay("hide");
@@ -509,9 +533,9 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
         $.LoadingOverlay("show");
         if (this.Parameter_Count === 0) {
             this.Save(false);
-          //  this.ValidInput = true;
+            //  this.ValidInput = true;
             this.Object_String_WithVal = "";
-           // this.DrawTable();
+            // this.DrawTable();
         }
         else {
             this.Find_parameters(true, true, true);
@@ -619,7 +643,7 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
                 }, this.CallDrawTable.bind(this, needRun));
         }
         else {
-            
+
             $.post("../CE/CommitEbDataSource", {
                 "objtype": this.ObjectType,
                 "id": this.Obj_Id,
@@ -635,12 +659,12 @@ var DataSource = function (obj_id, is_new, ver_num,type, fd_id) {
     };
     this.CallDrawTable = function (needRun, result) {
         if (needRun === true) {
-        var getNav = $("#versionNav li.active a").attr("href");
-        this.runver_Refid = $(getNav).attr("data-id");
-        if (this.runver_Refid === "new") {
-            this.runver_Refid = result.refId;
-            alert(this.runver_Refid);
-        }
+            var getNav = $("#versionNav li.active a").attr("href");
+            this.runver_Refid = $(getNav).attr("data-id");
+            if (this.runver_Refid === "new") {
+                this.runver_Refid = result.refId;
+                alert(this.runver_Refid);
+            }
             this.CreateObjString();
             this.DrawTable();
         }

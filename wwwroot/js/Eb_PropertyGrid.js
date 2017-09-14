@@ -8,7 +8,7 @@
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
-    this.PropertyChanged = null;
+    this.PropertyChanged = function (obj) { };
     this.IsSortByGroup = true;
 
     this.getvaluesFromPG = function () {
@@ -25,45 +25,59 @@
         var type = meta.editor || '';
         var elemId = this.pgId + name;
 
-        // If boolean create checkbox
-        if (type === 0 || typeof value === 'boolean') {
+        if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
 
-            // If options create drop-down list
-        } else if (type === 1 && Array.isArray(meta.options)) {
+        } else if (type === 1) {    // If options create drop-down list
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.options);
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', value); };
 
-            // If number 
-        } else if (type === 2) {
+        } else if (type === 2) {    // If number 
             valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
 
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return ($('#' + elemId).val() === "") ? "" : parseInt($('#' + elemId).val()); };
 
-            // If color use color picker 
-        } else if (type === 3) {
+        } else if (type === 3) {    // If color use color picker 
             valueHTML = '<input type="color" id="' + elemId + '" value="' + value + '" style="width:100%; height: 21px;" />';
 
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+        } else if (type === 4) {    // If label (for read-only) span
+            valueHTML = '<span style="vertical-align: sub;" for="' + elemId + '" editor="' + type + '">' + value + '</span>';
 
-            // If label (for read-only)
-        } else if (type === 4) {
-            valueHTML = '<label for="' + elemId + '" editor="' + type + '">' + value + '</label>';
-
-            // If collection editor for object || If JS editor
-        } else if (type > 6) {
-            valueHTML = '<button for="' + name + '" editor="' + type + '" class= "pgCX-Editor-Btn" >... </button>';
-
-            // Default is textbox
-        } else {
+        } else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+
+        } else if (type === 6) {    //  If date&time date
+            valueHTML = '<input type="date" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
+            if (this.getValueFuncs)
+                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+
+        } else if (type === 7) {    //  If collection editor
+            valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+
+        } else if (type === 8) {    // If JS editor
+            valueHTML = '<span style="vertical-align: sub;">(JavaScript)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+
+        } else if (type === 9) {    // SQL editor
+            valueHTML = '<span style="vertical-align: sub;">(SQL)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+
+        } else if (type === 10) {  //  If Object Selector editor
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" style=" width: calc(100% - 26px);" />'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+
+            // Default is textbox
+        } else {
+            valueHTML = 'editor Not implemented';
         }
 
         if (meta.OnChangeExec)
@@ -209,7 +223,7 @@
         this.getvaluesFromPG();
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
-        this.PropertyChanged(this.PropsObj, );
+        this.PropertyChanged(this.PropsObj);
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
@@ -245,7 +259,7 @@
 
     this.refreshDD = function (e) {
         e.stopPropagation();
-        var $selectedOpt = $(this.pgCXE_Cont_Slctr +" .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         var ObjType = $selectedOpt.attr("obj-type");
         this.OSElist[ObjType] = null;
         this.getOSElist.bind(this)();
@@ -277,14 +291,25 @@
     this.initOSE = function () {
 
         var OSEbody = '<div class="OSE-body">'
+            + '<table class="table table-bordered editTbl">'
+            + '<tbody>'
+            + '<tr>'
+            + '<td style="padding: 0px;">'
             + '<div class="OSE-DD-cont" > '
             + '<select class="selectpicker">'
             + '<option obj-type="11"> DataVisualization </option>'
             + '<option obj-type="3"> Report </option>'
             + '</select>'
             + '</div>'
-            + '<div class="OSEctrlsCont">'
-            + '</div>'
+            + '<div class="OSEctrlsCont"> </div>'
+            + '</td>'
+            + '<td style="padding: 0px;">'
+            + '<div class="CE-controls-head"> Versions </div>'
+            + '<div class="OSE-verTile-Cont"> </div>'
+            + '</td> '
+            + '</tr>'
+            + '</tbody>'
+            + '</table>'
             + '</div>';
         $(this.pgCXE_Cont_Slctr + " .modal-title").text("Object Selector");
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
@@ -332,31 +357,41 @@
 
     this.biuldObjList = function (data) {
         $.LoadingOverlay("hide");
-        var _refid = null;
+        var ObjType = null;
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
-        $.each(data, function (refid, name) {
-            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" data-refid="' + refid + '">' + name
-                + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
-            _refid = refid;
+        $.each(data, function (name, val) {
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" name ="' + name + '">' + name
+                + '<i class="fa fa-chevron-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
+            ObjType = val[0].refId.split("-")[2];
         }.bind(this));
-
-        var ObjType = _refid.split("-")[2];
         this.OSElist[ObjType] = data;
-        console.log(JSON.stringify(this.OSElist));
-
-        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").on("click", this.OTileClick.bind(this));
-
-        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length===0) {
+        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").on("click", this.OTileClick.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").on("click", ".colTile", this.VTileClick.bind(this, data));
+        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
             var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
 
     }.bind(this);
 
-    this.OTileClick = function (e) {
+    this.OTileClick = function (data) {
+        var ObjName = event.target.getAttribute("name");
         $(this).focus();
-        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").attr("is-selected", false).find(".fa-check").hide();
-        $(e.target).attr("is-selected", true).find(".fa-check").show();
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".fa-chevron-right").css("visibility", "hidden");
+        $(event.target).attr("is-selected", true).find(".fa-chevron-right").css("visibility", "visible");
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
+        $.each(data[ObjName], function (i, obj) {
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" data-refid="' + obj.refId + '">' + obj.versionNumber
+                + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
+        }.bind(this));
+    };
+    this.VTileClick = function () {
+        $(this).focus();
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
+        var refId = $(event.target).attr("data-refid");
+        this.PropsObj[this.CurProp] = refId;
+        $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val(refId);
+        $(event.target).attr("is-selected", true).find(".fa-check").show();
     };
 
     //this.OTileBlur = function (e) {
@@ -474,7 +509,7 @@
     this.InitPG = function () {
         this.propNames = [];
 
-        this.MISC_GROUP_NAME = 'Misc';
+        this.MISC_GROUP_NAME = 'Miscellaneous';
         this.GET_VALS_FUNC_KEY = 'pg.getValues';
         this.pgIdSequence = 0;
 
@@ -520,6 +555,10 @@
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }.bind(this));
 
+    };
+
+    this.clear = function () {
+        this.$PGcontainer.empty();
     };
 
     this.setObject = function (props, metas) {

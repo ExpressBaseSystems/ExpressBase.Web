@@ -14,26 +14,6 @@
     <h3>My Google Maps Demo</h3>
     <div id="map"></div>
     <script>
-        function initMap() {
-            var uluru = { lat: 10.018495, lng: 76.352092 };
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 4,
-                center: uluru
-            });
-            //var marker = new google.maps.Marker({
-            //  position: uluru,
-            //  map: map,
-            //});
-            var markers = locations.map(function (location, i) {
-                return new google.maps.Marker({
-                    position: location,
-                    label: "A"
-                });
-            });
-
-            // Add a marker clusterer to manage the markers.
-            var markerCluster = new MarkerClusterer(map, markers,
-                { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
         var locations = [
             { lat: -31.563910, lng: 147.154312 },
             { lat: -33.718234, lng: 150.363181 },
@@ -59,10 +39,39 @@
             { lat: -42.735258, lng: 147.438000 },
             { lat: -43.999792, lng: 170.463352 }
         ]
-      }
+        function initMap() {
+            var uluru = { lat: 10.018495, lng: 76.352092 };
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 5,
+                center: { lat: -28.024, lng: 140.887 },
+                mapTypeId: 'terrain'
+            });
+            for (i = 0; i < locations.length; i++) {
+               var latlng = new google.maps.LatLng(locations[i].lat, locations[i].lng);
+                var marker = new google.maps.Marker({
+                    position: latlng,
+                    map: map,
+                });
+            }
+            //var marker = new google.maps.Marker({
+            //  position: uluru,
+            //  map: map,
+            //});
+            //var markers = locations.map(function (location, i) {
+            //    alert(location);
+            //    return new google.maps.Marker({
+            //        position: location,
+            //        label: "A",
+            //    });
+            //});
+
+            // Add a marker clusterer to manage the markers.
+            //var markerCluster = new MarkerClusterer(map, markers,
+            //    { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+        }
     </script>
-    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-        <script async defer
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh12bqSKCYb6sJ9EVzNkEyXEDZ__UA-TE&callback=initMap">
     </script>
 </body>

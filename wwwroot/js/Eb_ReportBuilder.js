@@ -27,14 +27,6 @@ var sub = function (name, index, height, subsection) {
     this.subsection = subsection;
 };
 
-var PageElements = function (id, left, top, width, height) {
-    this.id = id;
-    this.left = left;
-    this.top = top;
-    this.width = width;
-    this.height = height;
-};
-
 var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth, custunit) {
     this.savebtnid = saveBtnid; 
     this.type = type;
@@ -58,7 +50,16 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         EbReportColCounter: 0,
         EbRectCounter: 0,
     };
-  
+
+    this.ReportSections = {
+        ReportHeader: 'rpthead',
+        PageHeader: 'pghead',
+        Detail: 'pgbody',
+        PageFooter: 'pgfooter',
+        ReportFooter: 'rptfooter',
+    }
+
+    
     //$('#propGrid').show();
     this.pg = new Eb_PropertyGrid("propGrid");
 
@@ -70,8 +71,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             var name = meta.name;
             if (meta.IsUIproperty) {
                 NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
-                console.log('@' + name + ' ');
-                console.log(obj[name]);
+                //console.log('@' + name + ' ');
+                //console.log(obj[name]);
             }
         });
 
@@ -159,9 +160,13 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.pageSplitters = function () {
-        for (var sections in ReportSections) {
-            console.log(sections);
-            //this.$div.append(new EbObjects["Eb" + sections]);
+
+        for (var i = 0; i < ReportSections.length;i++) {          
+            var sec = "Eb" + ReportSections[i];
+            console.log(sec);
+            var obj = new EbObjects[sec];           
+            this.$div.append(obj.Html());
+            console.log(JSON.stringify(obj));
         }
         
 
@@ -374,16 +379,15 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         var colVal = this.col.text();
 
         if (!this.col.hasClass('dropped')) {
-            var obj = new EbObjects["Eb" + this.Objtype](Objid);            
-            this.dropLoc.append(obj.Html());
-           
+            var obj = new EbObjects["Eb" + this.Objtype](Objid);
+            var typ = obj.$type;
+            this.dropLoc.append(obj.Html());                     
             obj.Top = this.posTop - 200;
             obj.Left = this.posLeft - 300;
             obj.ColVal = colVal;
-            $("#" + Objid).attr("eb-type", this.Objtype);
             this.objCollection[Objid] = obj;
-            RefreshControl(obj); 
-            
+            RefreshControl(obj);
+            console.log(JSON.stringify(obj));
         }
         else if (this.col.hasClass('dropped')) {
             this.dropLoc.append(this.col);          
@@ -545,10 +549,10 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.findPageElements = function (k, elements) {
-        this.elements = $(elements);
-        console.log(this.elements.offset());
-        console.log(this.elements.position().left);
-        this.report.subsection[this.i].subsection[this.j].subsection.push(new PageElements(this.elements.attr('id'), this.elements.position().left - 83 + 'px', this.elements.position().top + 'px', this.elements.css('width'), this.elements.css('height')));
+        var elemId = $(elements).attr('id');
+        console.log(elemId);
+        console.log(this.objCollection);
+        this.report.subsection[this.i].subsection[this.j].subsection.push(this.objCollection[elemId]);
     };
 
     this.Commit = function () {

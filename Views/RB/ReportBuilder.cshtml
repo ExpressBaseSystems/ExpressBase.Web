@@ -5,24 +5,6 @@
 @using ExpressBase.Objects;
 @using ExpressBase.Common.Objects;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
-@*<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="~/js/Eb_ReportBuilder.js"></script>
-    <script type="text/javascript" src="~/js/split.js"></script>
-    <script type="text/javascript" src='~/js/Eb_formBuilder.js'></script>
-    <script type="text/javascript" src="~/js/Eb_PropertyGrid.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">*@
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -32,11 +14,10 @@
     <div class="reportmenu">
         <div class="form-inline" id="options">           
             <div class="form-group">
-                <select id="pagesize">
-                    <option value="">Page Size</option>
+                <select id="pagesize">                    
+                    <option value="A4">A4</option>
                     <option value="Letter">Letter</option>
                     <option value="A3">A3</option>
-                    <option value="A4">A4</option>
                     <option value="A5">A5</option>
                     <option value="custom-size">Custom</option>
                 </select>
@@ -156,7 +137,7 @@
                 <div class="title text-center" style="display:none"></div>
                 <div class='ruler' style="display:none"></div>
                 <div class='rulerleft' style="display:none"></div>
-                <div id="pageCanvas" style="position:relative;margin-top:24px;margin-bottom:50px">
+                <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px">
                 </div>
             </div>
             <div class="col-md-2 PGgrid">

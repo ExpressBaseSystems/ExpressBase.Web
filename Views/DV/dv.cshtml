@@ -29,7 +29,7 @@
     var dvRefId = ViewBag.dvRefId;
     var dvname = (ViewBag.dvObject != null) ? ViewBag.dvObject.Name : "* Untitled *";
 }
-<div class="well well-sm" id="devpanel" style="margin-top: 53px;">
+<div class="well well-sm" id="devpanel" style="margin-top: 53px;margin-bottom: 1px !important;">
     <div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
         <select class="selectpicker" data-live-search="true">
             @{
@@ -64,7 +64,7 @@
         
     </div>
 
-<div id="filterDia">
+<div id="Outer">
     @if (ViewBag.dvObject != null)
     {
         @await Component.InvokeAsync("DataVisualization", new { dsRefid = ViewBag.dvObject.DataSourceRefId, Meta = ViewBag.Meta.Substring(11, (ViewBag.Meta.Length - 11)), dvRefId = ViewBag.dvRefId });
@@ -82,7 +82,7 @@
         $("#datatSourceDropdown select").on("changed.bs.select", function (e, clickedIndex, newValue, oldValue) {
             var dsRefid = $(this).find('option').eq(clickedIndex).attr("data-dsid");
             $.LoadingOverlay("show");
-            $("#filterDia").load("../DV/dvCommon", { dsRefid: dsRefid, Meta: JSON.stringify( @Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length-11))) ), dvRefId: null }, function () {
+            $("#Outer").load("../DV/dvCommon", { dsRefid: dsRefid, Meta: JSON.stringify( @Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length-11))) ), dvRefId: null }, function () {
                 $.LoadingOverlay("hide");
                 });
         });

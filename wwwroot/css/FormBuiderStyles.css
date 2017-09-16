@@ -316,6 +316,15 @@
 /*.controls-dd-cont {
     border-bottom: var(--sild1pxDDD);
 }*/
+.OSE-DD-cont .btn-default {
+    padding: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: var(--colorDDD);
+    box-shadow: none;
+    border: none;
+    text-shadow: none;
+}
 
 .pgCX-Editor-Btn {
     width: 20px;
@@ -380,13 +389,30 @@
         background-color: var(--colorDDD);
     }
 
-.colTile:focus {
-    outline: none;
+    .colTile:focus {
+        outline: none;
+    }
+
+
+    .colTile:focus {
+        background-color: #c2c8ce;
+    }
+
+.OSE-verTile-Cont .colTile:focus {
+    background-color: rgb(238, 238, 238);
 }
 
+.ColT-right-arrow {
+    visibility: hidden;
+    font-size: 18px;
+}
 
-.CE-body .colTile:focus {
-    background-color: #c2c8ce;
+.colTile .ColT-right-arrow {
+    visibility: hidden;
+}
+
+.colTile:hover .ColT-right-arrow {
+    visibility: visible;
 }
 
 .editTbl {
@@ -394,7 +420,7 @@
     height: 46.7vh;
 }
 
-.CEctrlsCont, .OSEctrlsCont {
+.CEctrlsCont, .OSEctrlsCont, OSE-verTile-Cont {
     overflow-y: auto;
     height: 40vh;
 }
@@ -487,7 +513,8 @@
     }
 
 .DD-refresh {
-    margin-right: 10px;
+    margin-right: 20px;
     margin-top: 2.4px;
     float: right;
+    font-size: 14px;
 }

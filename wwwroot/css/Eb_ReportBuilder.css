@@ -32,7 +32,7 @@
     border: 1px solid #ddd;
     background-color: #ffffff;
     border-radius: 4px;
-    margin-left: 0px;
+    margin-left: 545px;
 }
     .shapes-tank .btn{
         background-color: white !important;
@@ -64,14 +64,14 @@
 }
 
 .ruler {
-    margin-top: 3px;
+    margin-top: 1px;
     color: #000;
     font-family: arial;
     font-size: 10px;
     line-height: 14px;
     overflow: hidden;
     border: 1px solid #aaa;
-    margin-left: 82px !important;
+    margin-left: 79px !important;
     border-left: 0;
     background-color: #fbf7f7;
     position: fixed;
@@ -113,8 +113,8 @@
 
 .page {
     display: block;
-    margin-left: 82px;
-    border:1px solid #918f8f;
+    margin-left: 79px;
+    border: 1px solid #918f8f;
 }
 
 .rulerleft {
@@ -123,10 +123,10 @@
     border: 1px solid #aaa;
     font-size: 10px;
     background-color: #fbf7f7;
-    margin-left: -21px;
-    margin-top: 22px;
+    margin-left: -19px;
+    margin-top: 20px;
     width: 20px;
-    z-index:50;
+    z-index: 50;
 }
 
     .rulerleft > div {
@@ -164,9 +164,7 @@
     position: fixed;
     z-index: 1000;
     margin-top: 29px;
-    padding-top: 10px;
-    padding-bottom:10px;
-    border-bottom:1px solid rgba(0,0,0,0.5);
+    border-bottom: 1px solid rgb(170, 170, 170);
 }
 
 #imgbg {
@@ -191,13 +189,13 @@
     position: fixed;
     margin-top: 3px;
     padding: 0 !important;
-    box-shadow: 0 6px 12px rgba(0,0,0,.175) !important;
-    width:15%;
-    background-color:white;    
+    width: 15%;
+    background-color: white;
+    border: 1px solid #ccc;
 }
 
 .pgB {
-    margin-top: 80px;
+    margin-top: 47px;
 }
 
 .toolbox li {
@@ -225,25 +223,25 @@
 .reportmenu .btn-group > .btn:first-child {
     margin-left: 5px !important;
 }
-.side-toolbar{
-       min-height: 1000px;
-    padding-left: 0;
-    background-color:white;
-    z-index:1;
-    margin-top:50px;
-}
-.PGgrid{
+.side-toolbar {
     min-height: 1000px;
-    padding:0;
-    margin-top:50px;
+    padding-left: 0;
+    background-color: white;
+    z-index: 1;
+    margin-top: 48px;
+}
+.PGgrid {
+    min-height: 1000px;
+    padding: 0;
+    margin-top: 48px;
 }
 .title {
-    width: 104px;
+    width: 99px;
     height: 20px;
     background-color: #fbf7f7;
     position: fixed;
-    top: 153px;
-    left: 225px;
+    top: 118px;
+    left: 227px;
     border: 1px solid #aaaaaa;
     z-index: 200;
 }
@@ -411,4 +409,47 @@ margin: -4px;
 }
 .arrow-by-d-h-draggable .ui-resizable-w,.ui-resizable-e{
 margin: -4px;
+}*/
+/*.pgB .nav-tabs {
+    border-bottom: 2px solid #DDD;
+}
+
+    .pgB .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+        border-width: 0;
+    }
+
+    .pgB .nav-tabs > li > a {
+        border: none;
+        color: #666;
+    }
+
+    .pgB .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+        border: none;
+        color: #4285F4 !important;
+        background: transparent;
+    }
+
+    .pgB .nav-tabs > li > a::after {
+        content: "";
+        background: #4285F4;
+        height: 2px;
+        position: absolute;
+        width: 100%;
+        left: 0px;
+        bottom: -1px;
+        transition: all 250ms ease 0s;
+        transform: scale(0);
+    }
+
+    .pgB .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
+        transform: scale(1);
+    }
+
+.pgB .tab-nav > li > a::after {
+    background: #21527d none repeat scroll 0% 0%;
+    color: #fff;
+}
+
+.pgB .tab-pane {
+    padding: 15px 0;
 }*/

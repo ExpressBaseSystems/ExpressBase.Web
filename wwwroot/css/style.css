@@ -43,9 +43,17 @@ Navigation bar
     }
 
 .navbar-default {
-    background-color: #ffffff;
+    background-color: #ffffff !important;
 }
-
+.navbar-default {
+    background-image: -o-linear-gradient(top,#fff 0,#ffffff 100%);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background-image:none !important;
+    /*background-image: -webkit-linear-gradient(top,#fff 0,#ffffff 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#fff),to(#ffffff));
+    background-image: linear-gradient(to bottom,#fff 0,#ffffff 100%);*/
+}
     .navbar-default img {
         height: 40px;
         margin-top: 3px;
@@ -541,7 +549,7 @@ footer {
     height: 100%;
     position: fixed;
     padding-right: 10px;
-    z-index: 100;
+    z-index: 10000;
 }
 
 .list-group .list-group-item {

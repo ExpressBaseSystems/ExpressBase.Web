@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
+<script src="~/js/splitWindow.js" type="text/javascript"></script>
+
+
+
+<div class="container-fluid parent-div">
+    @{
+        Html.RenderPartial("_PageheaderDev");
+    }
+    <div class="row">
+        <div class="toolbar-com"><button class="btn" id="new"><i class="fa fa-plus" aria-hidden="true"></i></button> </div>
+    </div>
+    <div class="row" id="parent-div">
+    </div>
+</div>
+
+<script>
+    $(function () {
+        var sw = new splitWindow("parent-div", "sidediv", "contBox", "pGrid");
+    });
+
+</script>

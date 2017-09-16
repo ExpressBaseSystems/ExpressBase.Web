@@ -24,7 +24,14 @@
                     <div class="form-group">
                         <label for="sel1">Select your locale:</label>
                         <select class="form-control" id="locale" name="locale">
-                            <option selected="selected">en_US</option>
+                            if(@ViewBag.locale != null)
+                            {
+                            <option selected="selected">@ViewBag.locale</option>
+                            }
+                            else
+                            {
+                            <option selected>en_US</option>
+                            }                                                   
                             <option>en-BZ</option>
                             <option>en-CA</option>
                             <option>en-GB</option>
@@ -45,7 +52,14 @@
                     <div class="form-group">
                         <label for="sel1">Select your date format:</label>
                         <select class="form-control" id="dateformat" name="dateformat">
-                            <option selected="selected">dd/mm/yyyy</option>
+                            if(@ViewBag.dateformat != null)
+                            {
+                            <option selected="selected">@ViewBag.dateformat</option>
+                            }
+                            else
+                            {
+                            <option selected>dd/mm/yyyy</option>
+                            }                  
                             <option>mm/dd/yyyy</option>
                             <option>yyyy/mm/dd</option>
                             <option>dd-mm-yyyy</option>
@@ -63,7 +77,7 @@
                     <div class="tdd">
                         <div class="input-group margin-bottom-sm">
                             <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                            <input class="form-control" type="text" id="numformat" name="numformat" placeholder="Number Format" />
+                            <input class="form-control" type="text" id="numformat" name="numformat" placeholder="Number Format" value="@ViewBag.numformat"/>
                         </div>
                     </div>
                 </td>
@@ -73,7 +87,14 @@
                     <div class="form-group">
                         <label for="sel1">Select your Time Zone:</label>
                         <select id="timezone" name="timezone" class="form-control selectpicker">
-                            <option value="Dateline Standard Time" data-utc="UTC-12:00">(UTC-12:00) International Date Line West</option>
+                            if(@ViewBag.timezone != null)
+                            {
+                            <option selected value="@ViewBag.timezonefull" data-utc="@ViewBag.timezone">(@ViewBag.timezone) @ViewBag.timezonefull</option>
+                            }
+                            else
+                            {
+                            <option selected value="Dateline Standard Time" data-utc="UTC-12:00">(UTC-12:00) International Date Line West</option>
+                            }
                             <option value="UTC-11" data-utc="UTC-11:00">(UTC-11:00) Coordinated Universal Time-11</option>
                             <option value="Hawaiian Standard Time" data-utc="UTC-10:00">(UTC-10:00) Hawaii</option>
                             <option value="Alaskan Standard Time" data-utc="UTC-09:00">(UTC-09:00) Alaska</option>

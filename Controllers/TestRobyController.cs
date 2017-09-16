@@ -19,5 +19,14 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult route()
+        {
+            return View();
+        }
+        public IActionResult chart()
+        {
+            return View();
+        }
     }
 }

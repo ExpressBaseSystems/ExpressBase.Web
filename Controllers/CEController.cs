@@ -149,19 +149,7 @@ namespace ExpressBase.Web.Controllers
             return objects_dict;
         }
 
-        public Dictionary<string, EbObjectWrapper> GetObjects_refid_dict_all_ver(int obj_type)
-        {
-            var fdresultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = obj_type });
-            var fdrlist = fdresultlist.Data;
-            Dictionary<string, EbObjectWrapper> objects_dict = new Dictionary<string, EbObjectWrapper>();
-           
-            foreach (var element in fdrlist)
-            {
-              //  objects_dict[element.id.] = element;
-            }
-            return objects_dict;
-        }
-
+     
 
         public List<string> Getsqlfns(int obj_type)
         {
@@ -186,40 +174,35 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string refid;
-            if ( string.IsNullOrEmpty( req["id"]))
+            if (string.IsNullOrEmpty(req["id"]))
             {
-                var ds = new EbObjectFirstCommitRequest();
+                var ds = new EbObject_Create_New_ObjectRequest();
                 ds.EbObjectType = (int)EbObjectType.DataSource;
                 ds.Name = req["name"];
                 ds.Description = req["description"];
                 ds.Json = req["json"];
                 ds.EbObject = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
                 (ds.EbObject as EbDataSource).EbObjectType = EbObjectType.DataSource;
-                ds.Status = ObjectLifeCycleStatus.Live;
-                ds.UserId = ViewBag.UId;
+                ds.Status = ObjectLifeCycleStatus.Development;
                 ds.Relations = req["rel_obj"];
 
-                var res  = ServiceClient.Post<EbObjectFirstCommitResponse>(ds);
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
-             
+
             }
             else
             {
-                var ds = new EbObjectSubsequentCommitRequest();
+                var ds = new EbObject_CommitRequest();
                 ds.EbObjectType = (int)EbObjectType.DataSource;
                 ds.Name = req["name"];
                 ds.Description = req["description"];
                 ds.Json = req["json"];
                 ds.EbObject = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
                 (ds.EbObject as EbDataSource).EbObjectType = EbObjectType.DataSource;
-                ds.Status = ObjectLifeCycleStatus.Live;
-                ds.UserId = ViewBag.UId;
                 ds.Relations = req["rel_obj"];
-                ViewBag.IsNew = "false";
-                ds.IsSave = false;
                 ds.RefId = req["id"];
                 ds.ChangeLog = req["changeLog"];
-                var res = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
+                var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
                 refid = res.RefId;
             }
 
@@ -231,30 +214,54 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public EbObjectSubsequentCommitResponse SaveEbDataSource()
+        public string SaveEbDataSource()
         {
             var req = this.HttpContext.Request.Form;
-            var ds = new EbObjectSubsequentCommitRequest();
+            string refid;            
+            if (string.IsNullOrEmpty(req["id"]))
+            {
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = (int)EbObjectType.DataSource;
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["json"];
+                ds.EbObject = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+                (ds.EbObject as EbDataSource).EbObjectType = EbObjectType.DataSource;
+                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Relations = req["rel_obj"];
 
-            var _EbObjectType = (EbObjectType)Convert.ToInt32(req["ObjectType"]);
-            ds.IsSave = Convert.ToBoolean(req["isSave"]);
-            ds.RefId = req["Id"];
-            ds.Name = req["Name"];
-            ds.Description = req["Description"];
-            ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
-            ds.Json = req["json"];
-            //if (_EbObjectType == EbObjectType.SqlFunction)
-            //{
-            //    ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
-            //}
-            ds.UserId = ViewBag.UId;
-            ds.Relations = req["rel_obj"];
-            ds.ChangeLog = "";
-            ViewBag.IsNew = "false";
-            var x = this.ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
-            return x;
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
+            }
+            else
+            {
+              
+                var ds = new EbObject_SaveRequest();
+                var _EbObjectType = (EbObjectType)Convert.ToInt32(req["ObjectType"]);
+                ds.RefId = req["Id"];
+                ds.Name = req["Name"];
+                ds.Description = req["Description"];
+                ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
+                ds.Json = req["json"];
+                //if (_EbObjectType == EbObjectType.SqlFunction)
+                //{
+                //    ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
+                //}
+                ds.Relations = req["rel_obj"];
+                ViewBag.IsNew = "false";
+                var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
+                refid = res.RefId;
+            }
+            return refid;
         }
-
+        public string Create_Major_Version()
+        {
+            var req = this.HttpContext.Request.Form;
+            string refid;
+            var ds = new EbObject_Create_Major_VersionRequest();
+            var res = this.ServiceClient.Post<EbObject_Create_Major_VersionResponse>(ds);
+            return refid;
+        }
         [HttpPost]
         public string VersionCodes(string objid, int objtype)
         {

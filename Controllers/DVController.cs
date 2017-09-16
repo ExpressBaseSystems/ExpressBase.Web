@@ -122,9 +122,9 @@ namespace ExpressBase.Web.Controllers
             FetchAllDataSources();
             //FetchAllDataVisualizations();
 
-            var typeArray = typeof(DVBaseColumn).GetTypeInfo().Assembly.GetTypes();
+            var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
 
-            var _jsResult = CSharpToJs.GenerateJs<EbObject>(BuilderType.DVBuilder, typeArray);
+            var _jsResult = CSharpToJs.GenerateJs<EbDataVisualizationObject>(BuilderType.DVBuilder, typeArray);
 
             ViewBag.Meta = _jsResult.Meta;
 
@@ -355,15 +355,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         // Get All DVNames for Linking with each other -href click
-        public Dictionary<string, string> FetchAllDataVisualizations(EbObjectType type)
+        public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(EbObjectType type)
         {
-            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {  EbObjectType = (int)type});
+            var resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest {  EbObjectType = Convert.ToInt32(type) });
+            var ObjDVListAll = resultlist.Data;
 
-            Dictionary<string, string> ObjDVListAll = new Dictionary<string, string>();
-            foreach (var element in resultlist.Data)
-                ObjDVListAll[element.RefId] = element.Name;
-
-            //ViewBag.DVListAll = ObjDVListAll;
             return ObjDVListAll;
         }
      }

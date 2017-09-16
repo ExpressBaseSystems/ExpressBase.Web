@@ -146,7 +146,7 @@ var EbDataTable = function (settings) {
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
         this.dvName = this.ebSettings.Name;
         if (this.ebSettings.scrollY == null || this.ebSettings.scrollY == undefined)
-            this.ebSettings.scrollY = "300";
+            this.ebSettings.scrollY = "250";
         if (index !== 1)
             $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
         $("#dvName_lbl" + this.tableId).text(this.dvName);
@@ -180,7 +180,7 @@ var EbDataTable = function (settings) {
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         //this.collapseFilter();
-        this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
+        //this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
         this.printAllbtn = $("#btnprintAll" + this.tableId);
@@ -292,6 +292,7 @@ var EbDataTable = function (settings) {
                 o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
             //o.lengthMenu = this.ebSettings.lengthMenu;
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
+            o.pagingType = "full";
             if (this.ebSettings.IsPaged == "false") {
 
                 o.dom = "<'col-md-12 noPadding'B>rt";
@@ -603,6 +604,9 @@ var EbDataTable = function (settings) {
         //$("#renderOption").css("display", "inline-flex");
         //if (this.filterBox.css("display") !== "none") 
         //    this.collapseFilter();
+        //$("#sidediv").toggleClass("toggled");
+        //$("#contBox").removeClass('col-md-10').addClass('col-md-8');
+        //$('#fd-min-btn').css('margin-right', '0').removeClass("rotated");
         this.Api.columns.adjust();
     }
 
@@ -845,7 +849,7 @@ var EbDataTable = function (settings) {
 
         //this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
         $("#clearfilterbtn_" + this.tableId).off("click").on("click", this.clearFilter.bind(this));
-        this.totalpagebtn.off("click").on("click", this.showOrHideAggrControl.bind(this));
+        $("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
         this.copybtn.off("click").on("click", this.CopyToClipboard.bind(this));
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
         this.printAllbtn.off("click").on("click", this.printAll.bind(this));
@@ -866,13 +870,15 @@ var EbDataTable = function (settings) {
 
     this.GenerateButtons = function () {
        // $("#Toolbar_" + this.tableId).append("<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'><i class='fa fa-chevron-down' aria-hidden='true'></i></div>");
-        $("#TableControls_" + this.tableId).prepend("<div style='display: inline;float: right;'>" +
-            "<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
-            "<button type='button' id='" + this.tableId + "_btntotalpage' class='btn btn-default' style='display: none;' data-table='@tableId'>&sum;</button>" +
+        //$("#TableControls_" + this.tableId).prepend("<div style='display: inline;float: right;'>" +
+        $("#indi-toolbar").prepend("<label class='dvname' style= 'color: white;'>" + this.dvName+"</label>"+
+            "<div style= 'display: inline;' > " +
+            //"<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
+            "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' style='display: none;' data-table='@tableId'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
              "<div class='btn-group'>" +
                 "<div class='btn-group'>" +
-                   " <div id='btnPrint" + this.tableId + "' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></div>" +
+                    " <button id='btnPrint" + this.tableId + "' class='tools'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
                        " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
                          "   <span class='caret'></span>  <!-- caret --></div>" +
                          "   <ul class='dropdown-menu' role='menu'>" +
@@ -880,17 +886,18 @@ var EbDataTable = function (settings) {
                            "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
                             "</ul>" +
                 "</div>" +
-                "<div id='btnExcel" + this.tableId + "' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></div>" +
-                "<div id='btnPdf" + this.tableId + "' class='btn btn-default'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></div>" +
-                "<div id='btnCsv" + this.tableId + "' class='btn btn-default'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></div>  " +
-                "<div id='btnCopy" + this.tableId + "' class='btn btn-default'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></div>" +
+                "<button id='btnExcel" + this.tableId + "' class='tools'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
+                "<button id='btnPdf" + this.tableId + "' class='tools'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
+                "<button id='btnCsv" + this.tableId + "' class='tools'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
+                "<button id='btnCopy" + this.tableId + "' class='tools'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
             "</div>" +
             "</div>" +
-            "<a id='" + this.tableId + "_btnSettings' class='btn btn-default'><i class='fa fa-cog' aria-hidden='true'></i></a>" +
+            "<button id='" + this.tableId + "_btnSettings' class='tools'><i class='fa fa-cog' aria-hidden='true'></i></button>" +
             //"<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
             //       " <i class='fa fa-chevron-down' aria-hidden='true'></i>" +
             //   " </div>" +
             "</div>");
+        //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
     };
 
 
@@ -1178,10 +1185,10 @@ var EbDataTable = function (settings) {
     };
 
     this.showOrHideAggrControl = function (e) {
-        if (this.ebSettings.scrollY !== 0)
+        //if (this.ebSettings.scrollY !== 0)
             $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
-        else
-            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
+        //else
+        //    $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
     };
 
     this.link2NewTable = function (e) {
@@ -1397,7 +1404,7 @@ var EbDataTable = function (settings) {
             $("#" + this.tableId + "ColumnsGrouping").css("display", "none");
         }
         else {
-            $("#" + this.tableId + "divcont").css("width", "55%");
+            $("#" + this.tableId + "divcont").css("width", "79%");
             $("#" + this.tableId + "divcont").css("display", "inline-block");
             $("#" + this.tableId + "divcont").css("vertical-align", "top");
             this.Api.columns.adjust();
@@ -1831,7 +1838,8 @@ var EbDataTable = function (settings) {
     };
 
     this.appendColumns = function () {
-        this.pg = new Eb_PropertyGrid(this.tableId + "TableColumnsPPGrid")
+        //this.pg = new Eb_PropertyGrid(this.tableId + "TableColumnsPPGrid")
+        this.pg = new Eb_PropertyGrid("pGrid");
         var id = this.tableId;
         var pid = id + "TableColumnsPPGrid";
         $("#" + id + "TableColumns4Drag").append("<div style='background-color: #ccc;padding: 5px;font-weight: bold;'>Columns</div>")

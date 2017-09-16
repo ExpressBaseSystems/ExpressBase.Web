@@ -56,8 +56,6 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult UserDashboard()
         {
 
-           // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-           //var fr = this.ServiceClient.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = ViewBag.UId, restype = "img", TenantAccountId = ViewBag.cid });
             return View();
         }
 
@@ -141,6 +139,17 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult UserPreferences()
         {
+            var res = this.ServiceClient.Post<EditUserPreferenceResponse>(new EditUserPreferenceRequest());
+            if(res.Data != null)
+            {
+                ViewBag.dateformat = res.Data["dateformat"];
+                ViewBag.timezone = res.Data["timezone"];
+                ViewBag.numformat = res.Data["numformat"];
+                ViewBag.timezoneabbre = res.Data["timezoneabbre"];
+                ViewBag.timezonefull = res.Data["timezonefull"];
+                ViewBag.locale = res.Data["locale"];
+
+            }
 
             return View();
         }
@@ -149,8 +158,7 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult UserPreferences(int i)
         {
             var req = this.HttpContext.Request.Form;
-           // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var res = this.ServiceClient.Post<UserPreferenceResponse>(new UserPreferenceRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), TenantAccountId = ViewBag.cid });
+            var res = this.ServiceClient.Post<UserPreferenceResponse>(new UserPreferenceRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)});
             return View();
         }
 

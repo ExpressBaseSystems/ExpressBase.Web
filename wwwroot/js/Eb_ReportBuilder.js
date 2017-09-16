@@ -21,7 +21,7 @@
 };
 
 var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth, custunit) {
-    this.savebtnid = saveBtnid; 
+    this.savebtnid = saveBtnid;
     this.type = type;
     this.Commitbtnid = commit;
     this.IsNew = Isnew;
@@ -43,7 +43,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.idCounter = {
         EbCircleCounter: 0,
         EbReportColCounter: 0,
-        EbRectCounter: 0
+        EbRectCounter: 0,
+        EbTableCounter: 0
     };
 
     this.ReportSections = {
@@ -57,7 +58,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.pg = new Eb_PropertyGrid("propGrid");
 
     RefreshControl = function (obj) {
-       
+
         var NewHtml = obj.Html();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
         $.each(metas, function (i, meta) {
@@ -74,7 +75,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         });
     };
 
-    this.pg.PropertyChanged = function (obj) {      
+    this.pg.PropertyChanged = function (obj) {
         RefreshControl(obj);
     };
 
@@ -136,7 +137,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.page.PageSize = this.type;
         this.page.Height = this.height;
         this.page.Width = this.width;
-        RefreshControl(this.page);        
+        RefreshControl(this.page);
         this.objCollection["page"] = this.page;
         $('.title').show();
 
@@ -153,21 +154,20 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
 
             var obj = new EbObjects["EbMultiSplitBox"]("box" + i);
             $(".multiSplit").append(obj.Html().replace("@data", i));
-            this.objCollection["box" + i] = obj;            
+            this.objCollection["box" + i] = obj;
             $("#box" + i).attr("tabindex", "1").attr("onclick", "$(this).focus()");
-            $("#box" + i).on("focus", this.elementOnFocus.bind(this));
         }
 
     };
 
     this.pageSplitters = function () {
-        
+
         for (var i in this.ReportSections) {
             var sec = "Eb" + i;
             var obj = new EbObjects[sec](this.ReportSections[i]);
             $("#" + this.page.Name).append(obj.Html());
             this.objCollection[this.ReportSections[i]] = obj;           
-        }      
+        }
         this.headerBox1_Split();
     };
 
@@ -220,16 +220,25 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.set_Dropable = function (i, obj) {
-        var id="s" + $(obj).attr('data_val') + "0";
+
+        var id = "s" + $(obj).attr('data_val') + "0";
         var SubSec_obj = new EbObjects["EbSubSection"](id);
         $(obj).append(SubSec_obj.Html());
-        SubSec_obj.Height = 100 + "%";       
-        this.objCollection[id] = SubSec_obj;    
+        SubSec_obj.Height = 100 + "%";
+        this.objCollection[id] = SubSec_obj;
         RefreshControl(SubSec_obj);
-        console.log(JSON.stringify(this.objCollection[id]));
-        $("#" + id).attr("tabindex", "1").attr("onclick", "$(this).focus()");
+        //$("#" + id).attr("tabindex", "1").attr("onclick", "$(this).focus()");
         $("#" + id).on("focus", this.elementOnFocus.bind(this));
         $("#" + id).droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
+        console.log(JSON.stringify(SubSec_obj));
+    };
+
+    this.focusSection = function () {
+
+        $("#box0").click(function () {
+            $("#s00").attr("tabindex", "1").focus();           
+        });
+
     };
 
     this.splitButton = function () {
@@ -259,11 +268,12 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
 
             this.$sec = $("#" + obj.id);
             var id = "s" + $(obj).attr('data_val') + this.j++;
+            this.$sec.children('.gutter').remove();
             var SubSec_obj = new EbObjects["EbSubSection"](id);
             this.$sec.append(SubSec_obj.Html());
-            this.objCollection[id] = SubSec_obj;                   
+            this.objCollection[id] = SubSec_obj;
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
-            $("#"+id).children('.gutter').remove();
+            //$("#" + id).children('.gutter').remove();
             $("#" + id).droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
 
             Split(this.splitarray, {
@@ -304,8 +314,13 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
                 var hLength = $(obj2).children().not(".gutter").length;
                 if ($(obj).attr("data_val") === $(obj2).attr("data_val") && index === $(obj).attr("data_val")) {
                     for (var k = 0; k < hLength; k++) {
-                        $(obj).append("<div class='multiSplitHboxSub' id='subBox" + k + $(obj).attr("data_val") + "' style='width:100%'><p>s" + k + "</p></div>");
-                        temp1.push("#subBox" + k + $(obj).attr("data_val") + "");
+
+                        $(obj).removeAttr("tabindex").removeAttr("onclick");
+                        var id = "subBox" + $(obj).attr("data_val") + k ;
+                        var MultiBoxSub = new EbObjects["EbMultiSplitBoxSub"](id);
+                        $(obj).append(MultiBoxSub.Html().replace("@SubDivName", "s" + k));
+                        $("#" + id).attr("tabindex", "1").attr("onclick", "$(this).focus()");
+                        temp1.push("#" + id);                                               
                     }
                     flagsuccess = true;
                     return false;
@@ -364,8 +379,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.posLeft = event.pageX;
         this.posTop = event.pageY;
         this.dropLoc = $(event.target);
-        this.col = $(ui.draggable);              
-        this.col.attr("tabindex", "1").attr("onclick","$(this).focus()");
+        this.col = $(ui.draggable);
+        this.col.attr("tabindex", "2").attr("onclick", "$(this).focus()");
         this.col.on("focus", this.elementOnFocus.bind(this));
         this.Objtype = this.col.attr('eb-type');
         var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
@@ -374,15 +389,15 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         if (!this.col.hasClass('dropped')) {
             var obj = new EbObjects["Eb" + this.Objtype](Objid);
             var typ = obj.$type;
-            this.dropLoc.append(obj.Html());                     
+            this.dropLoc.append(obj.Html());
             obj.Top = this.posTop - 200;
             obj.Left = this.posLeft - 300;
             obj.ColVal = colVal;
             this.objCollection[Objid] = obj;
-            RefreshControl(obj);           
+            RefreshControl(obj);
         }
         else if (this.col.hasClass('dropped')) {
-            this.dropLoc.append(this.col);          
+            this.dropLoc.append(this.col);
         }
         $('.dropped').draggable();
 
@@ -399,14 +414,13 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.elementOnFocus = function (event) {
-
+        event.stopPropagation();
         var curControl = $(event.target);
         var id = curControl.attr("id");
         var curObject = this.objCollection[id];
         var type = curControl.attr('eb-type');
         $('#propGrid').show();
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
-
     };
 
     this.addImageOnPage = function () {
@@ -498,7 +512,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.element_click = function (e) {
-      
+
         $(e.target).css("color", this.font_color);
 
     };
@@ -508,9 +522,9 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.savefile = function () {
-       
+
         this.report = new Object();
-        this.report = this.objCollection["page"];       
+        this.report = this.objCollection["page"];
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         console.log(JSON.stringify(this.report));
         return this.report;
@@ -521,21 +535,21 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.sections = $(sections).attr('id');
         this.i = i;
         this.report.SubSection.push(this.objCollection[this.sections])
-        $.each($("#"+this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
+        $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
 
     };
 
     this.findPageSectionsSub = function (j, subsec) {
 
         this.subsec = $(subsec).attr("id");
-        this.j = j;       
-        this.report.SubSection[this.i].SubSection.push(this.objCollection[this.subsec]);     
+        this.j = j;
+        this.report.SubSection[this.i].SubSection.push(this.objCollection[this.subsec]);
         $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
 
     };
 
     this.findPageElements = function (k, elements) {
-        var elemId = $(elements).attr('id');      
+        var elemId = $(elements).attr('id');
         this.report.SubSection[this.i].SubSection[this.j].SubSection.push(this.objCollection[elemId]);
     };
 
@@ -566,9 +580,9 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.pgC = this.createPagecontainer();
         this.createPage(this.pgC);
         this.DragDrop_Items();
+        this.focusSection();
         $(this.savebtnid).on('click', this.savefile.bind(this));
-        $(this.Commitbtnid).on('click', this.Commit.bind(this));
-
+        $(this.Commitbtnid).on('click', this.Commit.bind(this));      
     };
 
     this.init();

@@ -453,3 +453,8 @@ margin: -4px;
 .pgB .tab-pane {
     padding: 15px 0;
 }*/
+.multiSplitHboxSub {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -53,41 +53,41 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UploadFileAsync(int i)
-        {
-            JsonResult resp = null;
+        //public async Task<JsonResult> UploadFileAsync(int i)
+        //{
+        //    JsonResult resp = null;
 
-            try
-            {
-                var req = this.HttpContext.Request.Form;
+        //    try
+        //    {
+        //        var req = this.HttpContext.Request.Form;
 
-                foreach (var formFile in req.Files)
-                {
-                    if (formFile.Length > 0)
-                    {
-                        byte[] myFileContent;
+        //        foreach (var formFile in req.Files)
+        //        {
+        //            if (formFile.Length > 0)
+        //            {
+        //                byte[] myFileContent;
 
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await formFile.CopyToAsync(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            myFileContent = new byte[memoryStream.Length];
-                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+        //                using (var memoryStream = new MemoryStream())
+        //                {
+        //                    await formFile.CopyToAsync(memoryStream);
+        //                    memoryStream.Seek(0, SeekOrigin.Begin);
+        //                    myFileContent = new byte[memoryStream.Length];
+        //                    await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
 
-                            this.ServiceClient.Post(new UploadFileRequest { FileName = formFile.FileName, ByteArray = myFileContent });
+        //                    this.ServiceClient.Post(new UploadFileRequest { FileName = formFile.FileName, ByteArray = myFileContent });
 
-                            resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK" });
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
-            }
+        //                    resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK" });
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
+        //    }
 
-            return resp;
-        }
+        //    return resp;
+        //}
 
 
         //[HttpPost]

@@ -26,6 +26,11 @@ namespace ExpressBase.Web.Controllers
 
         protected RedisMessageProducer RedisMessageProducer { get; set; }
 
+        public EbBaseNewController(IServiceClient _ssclient)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+        }
+
         public EbBaseNewController(IServiceClient _ssclient, IRedisClient _redis)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;

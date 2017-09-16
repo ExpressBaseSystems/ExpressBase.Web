@@ -72,28 +72,6 @@ namespace ExpressBase.Web2
             {
                 return new RedisClient(string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort));
             });
-
-            services.AddScoped<IMessageQueueClient, RedisMessageQueueClient>(serviceProvider =>
-            {
-                var redisConnectionStringMq = string.Format("redis://{0}@{1}:{2}?ssl=true&db=1",
-                    redisPassword, redisServer, redisPort);
-
-                var redisFactory = new PooledRedisClientManager(redisConnectionStringMq);
-                var mqHost = new RedisMqServer(redisFactory, retryCount: 2);
-
-                return mqHost.CreateMessageQueueClient() as RedisMessageQueueClient;
-            });
-
-            services.AddScoped<IMessageProducer, RedisMessageProducer>(serviceProvider =>
-            {
-                var redisConnectionStringMq = string.Format("redis://{0}@{1}:{2}?ssl=true&db=1",
-                    redisPassword, redisServer, redisPort);
-
-                var redisFactory = new PooledRedisClientManager(redisConnectionStringMq);
-                var mqHost = new RedisMqServer(redisFactory, retryCount: 2);
-
-                return mqHost.CreateMessageProducer() as RedisMessageProducer;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

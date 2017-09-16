@@ -26,8 +26,8 @@ namespace ExpressBase.Web.Controllers
 {
     public class ExtController : EbBaseNewController
     {
-        public ExtController(IServiceClient _client, IRedisClient _redis, IMessageQueueClient _mqFactory, IMessageProducer _mqProducer) 
-            : base(_client, _redis, _mqFactory, _mqProducer) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis) 
+            : base(_client, _redis) { }
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -78,23 +78,6 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SignUp()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
-            return View();
-        }
-
-        public IActionResult SendMail()
-        {           
-            var emailMessage = new Message<EmailRequest>(new EmailRequest
-            {
-                FromAdressTitle = "Message Queue",
-                ToAddress = "ahammedunni@expressbase.com",
-                ToAdressTitle = "Ahammed Unni",
-                Subject = "Message Queue Success ",
-                BodyContent = "Mail Sent from Web Controller via Message Queue",
-            });
-
-            base.RedisMessageQueueClient.Publish((QueueNames<EmailRequest>.In), emailMessage);
-            base.RedisMessageProducer.Publish((QueueNames<EmailRequest>.In), emailMessage);
-
             return View();
         }
 

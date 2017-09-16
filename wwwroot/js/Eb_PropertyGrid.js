@@ -288,6 +288,26 @@
         this.setColTiles();
     };
 
+    this.initJE = function () {
+
+        var CEbody = '<textarea id="JE_txtEdtr' + this.wraperId + '" rows="12" cols="40" ></textarea>'
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Javascript Editor");
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
+        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
+        window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.wraperId), {
+            mode: "javascript",
+            lineNumbers: true,
+            lineWrapping: true,
+            extraKeys: { "Ctrl-Space": "autocomplete" },
+            foldGutter: {
+                rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
+            },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+
+        this.setColTiles();
+    };
+
     this.initOSE = function () {
 
         var OSEbody = '<div class="OSE-body">'
@@ -315,33 +335,24 @@
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
 
-        this.getOSElist.bind(this)();
+        var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
+        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        if (CurRefId) {
+            var ObjType = CurRefId.split("-")[2];
+            var ObjName = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker [obj-type=" + ObjType + "]").text();
+            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont a:contains(" + ObjName + ")").click();
+        }
+        else
+            this.getOSElist.bind(this)();
 
-    };
-
-    this.initJE = function () {
-
-        var CEbody = '<textarea id="JE_txtEdtr' + this.wraperId + '" rows="12" cols="40" ></textarea>'
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Javascript Editor");
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
-        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
-        window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.wraperId), {
-            mode: "javascript",
-            lineNumbers: true,
-            lineWrapping: true,
-            extraKeys: { "Ctrl-Space": "autocomplete" },
-            foldGutter: {
-                rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
-            },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-
-        this.setColTiles();
     };
     ////////////////////////////////////////////////////
     this.getOSElist = function () {
+        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
         var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+        $CXbtn.attr("objtype-name", $selectedOpt.text());///
         var ObjType = $selectedOpt.attr("obj-type");
+
         if (!this.OSElist[ObjType]) {
             $.LoadingOverlay("show");
             $.ajax({
@@ -365,38 +376,77 @@
             ObjType = val[0].refId.split("-")[2];
         }.bind(this));
         this.OSElist[ObjType] = data;
-        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").on("click", this.OTileClick.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").on("click", ".colTile", this.VTileClick.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").off("click").on("click", this.OTileClick.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("click").on("click", ".colTile", this.VTileClick.bind(this, data));
         if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
             var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
+        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
+
+        var objName = $CXbtn.attr("obj-name") || this.getOBjNameByval(data, CurRefId);
+        if (CurRefId) {
+            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
+                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").focus()[0].click();
+            else
+                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
+        }
 
     }.bind(this);
 
+    this.getOBjNameByval = function (data, refId) {
+        var ObjName = null;
+        var f = false;
+        for (objName in data) {
+            $.each(data[objName], function (i, obj) {
+                if (obj.refId === refId) {
+                    ObjName = obj.name;
+                    f = true;
+                    this.OSECurObj = obj;
+                    return ObjName;
+                }
+            }.bind(this));
+            if (f)
+                break;
+        }
+        return ObjName;
+    };
+
     this.OTileClick = function (data) {
         var ObjName = event.target.getAttribute("name");
-        $(this).focus();
+        //$(event.target).focus();
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".fa-chevron-right").css("visibility", "hidden");
         $(event.target).attr("is-selected", true).find(".fa-chevron-right").css("visibility", "visible");
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for", ObjName);
         $.each(data[ObjName], function (i, obj) {
-            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" data-refid="' + obj.refId + '">' + obj.versionNumber
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
                 + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
         }.bind(this));
+        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        if ($CXbtn.attr("obj-name")) {
+            if ($CXbtn.attr("obj-name") === $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for"))///////////////////////////////////
+                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile:contains(" + $CXbtn.attr("ver-name") + ")")[0].click();
+        }
+        else
+            if (this.OSECurObj)
+                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont [ver-no=" + this.OSECurObj.versionNumber + "]")[0].click();
     };
     this.VTileClick = function () {
-        $(this).focus();
+        //$(event.target).focus();
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
         var refId = $(event.target).attr("data-refid");
         this.PropsObj[this.CurProp] = refId;
         $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val(refId);
         $(event.target).attr("is-selected", true).find(".fa-check").show();
+
+
+        var ObjName = $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for");
+        $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("obj-name", ObjName);//
+        $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("ver-name", $(event.target).text());//
     };
 
-    //this.OTileBlur = function (e) {
-    //    $(e.target).attr("is-selected", true).find(".fa-check").hide();
-    //};
     /////////////////////////////////////////////////
 
     this.pgCXE_BtnClicked = function (e) {

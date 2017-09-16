@@ -82,7 +82,7 @@
 <script type="text/javascript">   
     $(document).ready(function () {
         $('#AllVerList').on("click", function () {
-            $.post("../CE/GetObjects_refid_dict_all_ver", { obj_type: 2 });
+            $.post("../CE/GetObjects_refid_dict_all_ver", { obj_type: 2 }, function (result) { console.log(result); });
         })
     });
 

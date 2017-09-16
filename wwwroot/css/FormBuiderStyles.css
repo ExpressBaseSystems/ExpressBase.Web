@@ -398,6 +398,10 @@
         background-color: #c2c8ce;
     }
 
+.OSE-verTile-Cont .colTile:focus {
+    background-color: rgb(238, 238, 238);
+}
+
 .ColT-right-arrow {
     visibility: hidden;
     font-size: 18px;

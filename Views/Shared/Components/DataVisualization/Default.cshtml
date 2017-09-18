@@ -28,17 +28,6 @@
     });
 </script>
 
-@*<div class="container-fluid my-container">
-    @{
-        Html.RenderPartial("_PageheaderDev");
-    }
-    <div class="row">
-        <div class="toolbar-com"><button class="btn" id="new"><i class="fa fa-plus" aria-hidden="true"></i></button> </div>
-    </div>
-    <div class="row" id="parent-div">
-    </div>
-</div>*@
-
 <div class='tablecontainer' style='background-color:rgb(260,260,260);'>
     <ul class='nav nav-tabs' id='table_tabs'>
         <li class='nav-item active'>
@@ -159,13 +148,6 @@
         </script>
     }*@
 <script>
-    @*if ('@ViewBag.data.EbDataSource.FilterDialog' != null) {
-        $('#filterBox').append("<button id='btnGo' class='btn btn-primary' style='float: right;margin-top: 4px;'>Run</button>");
-    }
-    else {
-        alert("gjgg");
-        $("#Toolbar").append("<button id='btnGo' class='btn btn-primary'>Run</button>");
-    }*@
     @Html.Raw(ViewBag.HtmlHead)
     var sett = @Html.Raw(dvobj);
     var meta = @Html.Raw(ViewBag.meta);

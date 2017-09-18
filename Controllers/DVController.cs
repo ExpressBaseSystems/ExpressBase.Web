@@ -168,9 +168,9 @@ namespace ExpressBase.Web.Controllers
         //    return View();
         //}
         
-        public IActionResult dvCommon(string dsRefId, string Meta, string dvRefId)
+        public IActionResult dvCommon(List<EbDataVisualization> dvset, string Meta, string dvRefId)
         {
-            return ViewComponent("DataVisualization", new { dsRefid = dsRefId, Meta = Meta , dvRefId = dvRefId });
+            return ViewComponent("DataVisualization", new { dvset = dvset, Meta = Meta , dvRefId = dvRefId });
         }
 
         //public PartialViewResult DataVisualisation(int dsid)

@@ -260,5 +260,18 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Objlist = ObjList;
             return View();
         }
+
+        public IActionResult Eb_EmailBuilder()
+        {
+            
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Eb_EmailBuilder(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            return View();
+        }
     }
 }

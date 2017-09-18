@@ -256,9 +256,15 @@
             + '</tbody>'
             + '</table>'
             + '</div>';
+        var DD_html = '<div class="sub-controls-DD-cont pull-left">'
+            + '<select class="selectpicker"> </select>'
+            + '<button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
+            + '</div>'
+            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>';
+
         $(this.pgCXE_Cont_Slctr + " .modal-title").text("Collection Editor");
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
-        $(this.pgCXE_Cont_Slctr + " .sub-controls-DD-cont").show();
+        $(this.pgCXE_Cont_Slctr + " .modal-footer").append(DD_html);
         this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
         this.setColTiles();
     };
@@ -420,7 +426,6 @@
         this.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].editor;
         var editor = e.target.getAttribute("editor");
-        $(this.pgCXE_Cont_Slctr + " .sub-controls-DD-cont").hide();
         if (editor === "7") {
             this.initCE();
         }
@@ -458,11 +463,6 @@
             + '<div class="modal-body"> </div>'
 
             + '<div class="modal-footer">'
-            + '<div class="sub-controls-DD-cont pull-left">'
-            + '<select class="selectpicker"> </select>'
-            + '<button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
-            + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>'
             + '</div>'
 
             + '</div>'
@@ -537,7 +537,7 @@
         this.CallpostInitFns();
         this.getvaluesFromPG();//no need
 
-        $("#" + this.wraperId + " .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
+        $("#" + this.wraperId + " .propgrid-table-cont .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
         this.addToDD();
         if (this.PropsObj.RenderMe)

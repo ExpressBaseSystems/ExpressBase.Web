@@ -490,7 +490,6 @@
 }
 
 .sub-controls-DD-cont {
-    display: none;
     background-color: white;
     border: var(--sild1pxDDD);
 }

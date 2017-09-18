@@ -16,8 +16,8 @@
     //var client = new ProtoBufServiceClient("http://localhost:53125/");
     //var fr = client.Get<FormResponse>(new FormRequest { Id = id });
 
-    IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
-    var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
+    //IServiceClient client = new JsonServiceClient("http://localhost:53125/").WithCache();
+    //var fr = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, Token = ViewBag.Token });
 
 }
 
@@ -30,7 +30,7 @@
                 <button style="font-weight:800" class="dropbtn navbar-fixed-top" onclick="showMitems();">@Html.ActionLink("Forms", "formmenu", "Sample") &#8659; </button>
 
                 <div id="divMenuItems" style="font-weight:700" class="dropdown-content">
-                    @{  foreach (var f in fr.Data)
+                    @*@{  foreach (var f in fr.Data)
                         {
                             string fname = f.Name;
                             string formid = string.Format("f?fid={0}", f.Id);
@@ -38,7 +38,7 @@
                                 @Html.ActionLink(fname, formid, "Sample")
                             </div>
                         }
-                    }
+                    }*@
                 </div>
             </div>
         </nav>

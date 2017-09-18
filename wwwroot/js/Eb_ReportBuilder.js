@@ -224,19 +224,32 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         var id = "s" + $(obj).attr('data_val') + "0";
         var SubSec_obj = new EbObjects["EbSubSection"](id);
         $(obj).append(SubSec_obj.Html());
-        SubSec_obj.Height = 100 + "%";
+        SubSec_obj.Height = "100";        
         this.objCollection[id] = SubSec_obj;
+        console.log(JSON.stringify(this.objCollection[id]));
         RefreshControl(SubSec_obj);
         //$("#" + id).attr("tabindex", "1").attr("onclick", "$(this).focus()");
         $("#" + id).on("focus", this.elementOnFocus.bind(this));
         $("#" + id).droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
-        console.log(JSON.stringify(SubSec_obj));
+        
     };
 
     this.focusSection = function () {
 
         $("#box0").click(function () {
-            $("#s00").attr("tabindex", "1").focus();           
+           $("#s00").attr("tabindex", "1").focus();           
+        });
+        $("#box1").click(function () {
+            $("#s10").attr("tabindex", "1").focus();
+        });
+        $("#box2").click(function () {
+            $("#s20").attr("tabindex", "1").focus();
+        });
+        $("#box3").click(function () {
+            $("#s30").attr("tabindex", "1").focus();
+        });
+        $("#box4").click(function () {
+            $("#s40").attr("tabindex", "1").focus();
         });
 
     };
@@ -267,13 +280,12 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         if ($(obj).attr('data_val') === this.btn_indx) {
 
             this.$sec = $("#" + obj.id);
-            var id = "s" + $(obj).attr('data_val') + this.j++;
+            var id = "s" + $(obj).attr('data_val') + this.j++;            
             this.$sec.children('.gutter').remove();
             var SubSec_obj = new EbObjects["EbSubSection"](id);
-            this.$sec.append(SubSec_obj.Html());
+            this.$sec.append(SubSec_obj.Html());            
             this.objCollection[id] = SubSec_obj;
-            $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
-            //$("#" + id).children('.gutter').remove();
+            $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));           
             $("#" + id).droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
 
             Split(this.splitarray, {
@@ -294,12 +306,14 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
                     });
                 }
             });
+            this.objCollection[id].Height = $("#" + id).css("height");
+            RefreshControl(this.objCollection[id]);
             this.multiSplitBoxinner();
         }
     };
 
     this.splitMore = function (i, obj) {
-        this.splitarray.push("#" + obj.id);
+        this.splitarray.push("#" + obj.id);       
     };
 
     this.multiSplitBoxinner = function () {
@@ -316,7 +330,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
                     for (var k = 0; k < hLength; k++) {
 
                         $(obj).removeAttr("tabindex").removeAttr("onclick");
-                        var id = "subBox" + $(obj).attr("data_val") + k ;
+                        var id = "subBox" + $(obj).attr("data_val") + k;
                         var MultiBoxSub = new EbObjects["EbMultiSplitBoxSub"](id);
                         $(obj).append(MultiBoxSub.Html().replace("@SubDivName", "s" + k));
                         $("#" + id).attr("tabindex", "1").attr("onclick", "$(this).focus()");
@@ -345,6 +359,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.posLeft = null;
         this.posTop = null;
         this.font = null;
+        this.reDragLeft = null;
+        this.reDragTop = null;
 
         $('.draggable').draggable({
             cancel: "a.ui-icon",
@@ -370,12 +386,10 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         });
     };
 
-    this.onDrag = function (event, ui) {
-
+    this.onDrag = function (event, ui) {       
     };
 
-    this.onDropFn = function (event, ui) {
-
+    this.onDropFn = function (event, ui) {        
         this.posLeft = event.pageX;
         this.posTop = event.pageY;
         this.dropLoc = $(event.target);
@@ -390,16 +404,20 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             var obj = new EbObjects["Eb" + this.Objtype](Objid);
             var typ = obj.$type;
             this.dropLoc.append(obj.Html());
-            obj.Top = this.posTop - 200;
-            obj.Left = this.posLeft - 300;
+            obj.Top = this.posTop - this.dropLoc.offset().top;
+            //console.log(obj.Top, this.posTop);
+            obj.Left = this.posLeft - this.dropLoc.offset().left;
             obj.ColVal = colVal;
             this.objCollection[Objid] = obj;
             RefreshControl(obj);
         }
-        else if (this.col.hasClass('dropped')) {
-            this.dropLoc.append(this.col);
+        else if (this.col.hasClass('dropped')) {            
+            this.dropLoc.append(this.col.css({ left: (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop}));
+            var obj = this.objCollection[this.col.attr('id')];
+            obj.Top = this.col.css("top");
+            obj.Left = this.col.css("left");           
         }
-        $('.dropped').draggable();
+        $('.dropped').draggable({ start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.onDrag.bind(this)});
 
         //$('.image-reSize').resizable({ containment: "parent" });
         //$('.dropped').resizable({
@@ -486,13 +504,16 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
 
     };
 
-    this.onDrag_stop = function (event, ui) {
+    this.onDrag_stop = function (event, ui) {     
         $(".vL").remove();
-        $(".hL").remove();
+        $(".hL").remove();      
     };
 
-    this.onDrag_Start = function (event, ui) {
-
+    this.onDrag_Start = function (event, ui) {        
+       
+        this.reDragLeft = event.pageX - $(event.target).offset().left;
+        this.reDragTop = event.pageY - $(event.target).offset().top;
+        
         $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:0px;margin-top:-" + this.posTop + "px;'></div>");
         $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px;'></div>");
 
@@ -534,7 +555,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
 
         this.sections = $(sections).attr('id');
         this.i = i;
-        this.report.SubSection.push(this.objCollection[this.sections])
+        this.report.SubSection.push(this.objCollection[this.sections]);
         $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
 
     };

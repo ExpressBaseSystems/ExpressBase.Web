@@ -79,31 +79,29 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.ServiceClient;
-            var ds = new EbObjectSaveOrCommitRequest();
+            var ds = new EbObjectFirstCommitRequest();
 
-            ds.IsSave = false;
-            ds.RefId = req["id"];
+
             ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = req["filterdialogjson"];
 
-            if (ds.EbObjectType == 0)
-                ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
-            else if (ds.EbObjectType == 12)
-            {
-                ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
-                //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
-            }
+            //if (ds.EbObjectType == 0)
+            //   ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
+            //else if (ds.EbObjectType == 12)
+            //{
+            //    ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
+            //    (ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
+            //}
 
             //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
             ds.Status = ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
-            ds.Relations = "";
-            ds.ChangeLog = "";
-            ds.NeedRun = false;
-            var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
+            ds.Relations = "";          
+
+            var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);
             return CurrSaveId.RefId;
         }
 
@@ -258,6 +256,19 @@ namespace ExpressBase.Web.Controllers
                 ObjList[element.Id] = element;
             }
             ViewBag.Objlist = ObjList;
+            return View();
+        }
+
+        public IActionResult Eb_EmailBuilder()
+        {
+            
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Eb_EmailBuilder(int i)
+        {
+            var req = this.HttpContext.Request.Form;
             return View();
         }
     }

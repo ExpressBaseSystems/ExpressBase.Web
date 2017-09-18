@@ -1,4 +1,4 @@
-﻿@using ServiceStack;
+﻿@*@using ServiceStack;
 @using ExpressBase.Objects;
 @using ExpressBase.Common;
 @{
@@ -72,7 +72,7 @@
     {
         html += "</div>";
     }
-    foreach (EbControl c in _form.Controls)
+    foreach (var c in _form.Controls)
     {
         head += c.GetHead();
         if (c is EbDataGridView && ViewBag.FormId == 22)
@@ -95,4 +95,4 @@
     </script>
 }
 
-@Html.Raw(html)
+@Html.Raw(html)*@

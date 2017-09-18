@@ -420,7 +420,7 @@
     height: 46.7vh;
 }
 
-.CEctrlsCont, .OSEctrlsCont, OSE-verTile-Cont {
+.CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont {
     overflow-y: auto;
     height: 40vh;
 }

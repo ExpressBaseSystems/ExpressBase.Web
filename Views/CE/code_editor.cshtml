@@ -47,7 +47,7 @@
             }
             else
             {
-                @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+               @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
             }
         }
     </div>
@@ -78,6 +78,7 @@
         </div>
     </div>
 </div>
+<script>
 
     window.onload = function() {
         CodeMirror.commands.autocomplete = function(cm)
@@ -291,7 +292,7 @@
     }
 
     .inner_toolbar {
-        border;
+       border:0px;
     }
 
     /*differ styles*/

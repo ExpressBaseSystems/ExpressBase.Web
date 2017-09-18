@@ -546,19 +546,17 @@
 
         var _html = "";
         var options = "";
-        var typesArr = [];
+        var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;;
+
         $.each(values, function (i, control) {
-            var type = control.$type.split(",")[0].split(".")[2];
             _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
                 + control.Name
                 + '<button type="button" class="close">&times;</button>'
                 + '</div>';
-            if (!typesArr.includes(type))
-                typesArr.push(type);
         })
 
-        for (var i = 0; i < typesArr.length; i++) {
-            options += '<option>' + typesArr[i] + '</option>'
+        for (var i = 0; i < SubTypes.length; i++) {
+            options += '<option>' + SubTypes[i] + '</option>'
         }
 
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');

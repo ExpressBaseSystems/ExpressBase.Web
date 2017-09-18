@@ -25,83 +25,73 @@
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.pgId + name;
-
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
-
-        } else if (type === 1) {    // If options create drop-down list
+        }
+        else if (type === 1) {    // If options create drop-down list
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.options);
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', value); };
-
-        } else if (type === 2) {    // If number 
+        }
+        else if (type === 2) {    // If number 
             valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
-
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return ($('#' + elemId).val() === "") ? "" : parseInt($('#' + elemId).val()); };
-
-        } else if (type === 3) {    // If color use color picker 
+        }
+        else if (type === 3) {    // If color use color picker 
             valueHTML = '<input type="color" id="' + elemId + '" value="' + value + '" style="width:100%; height: 21px;" />';
-
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
-        } else if (type === 4) {    // If label (for read-only) span
+        }
+        else if (type === 4) {    // If label (for read-only) span
             valueHTML = '<span style="vertical-align: sub;" for="' + elemId + '" editor="' + type + '">' + value + '</span>';
-
-        } else if (type === 5) {    //  If string editor textbox
+        }
+        else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
-
-        } else if (type === 6) {    //  If date&time date
+        }
+        else if (type === 6) {    //  If date&time date
             valueHTML = '<input type="date" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
-
-        } else if (type === 7) {    //  If collection editor
+        }
+        else if (type === 7) {    //  If collection editor
             valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-
-        } else if (type === 8) {    // If JS editor
+        }
+        else if (type === 8) {    // If JS editor
             valueHTML = '<span style="vertical-align: sub;">(JavaScript)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-
-        } else if (type === 9) {    // SQL editor
+        }
+        else if (type === 9) {    // SQL editor
             valueHTML = '<span style="vertical-align: sub;">(SQL)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-
-        } else if (type === 10) {  //  If Object Selector editor
+        }
+        else if (type === 10) {  //  If Object Selector editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" style=" width: calc(100% - 26px);" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-
             // Default is textbox
         } else {
             valueHTML = 'editor Not implemented';
         }
-
         if (meta.OnChangeExec)
             this.OnChangeExec[name] = meta.OnChangeExec;
-
         //     if (typeof meta.description === 'string' && meta.description &&
         //(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
         //         this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
         //     }
-
         return '<tr class="pgRow" name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
         selectedValue = selectedValue || options[0];
-
         var html = "<select class='selectpicker' >";
-
         for (var i = 0; i < options.length; i++)
             html += "<option data-tokens='" + options[i] + "'>" + options[i] + "</option>";
-
         html += "</select><input type='hidden' value='" + selectedValue + "' id='" + id + "'>";
-
         return html;
     };
 
@@ -111,8 +101,7 @@
                 + '<span class="bs-caret" style= "margin-right: 5px;" > <span class="caret"></span></span > ' + displayName
                 + '</td></tr > ';
         else
-            return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell"> &nbsp ' + displayName
-                + '</td></tr > ';
+            return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell"> &nbsp ' + displayName + '</td></tr > ';
     };
 
     this.isContains = function (obj, val) {
@@ -138,13 +127,9 @@
         }
     };
 
-    this.MakeReadOnly = function (prop) {
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
-    };
+    this.MakeReadOnly = function (prop) { $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true); };
 
-    this.MakeReadWrite = function (prop) {
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false);
-    };
+    this.MakeReadWrite = function (prop) { $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false); };
 
     this.HideProperty = function (prop) {
         if (this.$hiddenProps[prop])
@@ -171,30 +156,22 @@
             // Add the group cells
             this.innerHTML += this.propertyRowsHTML[group];
         }
-
         // Finally we add the 'Other' group (if we have something there)
         if (this.propertyRowsHTML[this.MISC_GROUP_NAME]) {
             this.innerHTML += this.getGroupHeaderRowHtml(this.MISC_GROUP_NAME);
             this.innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
         }
-
         // Close the table and apply it to the div
         this.$PGcontainer.html(this.innerHTML);
-
         $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").val()); });
-
-        return true;
     };
 
     this.buildRows = function () {
-
         var propArray = [];
         for (var prop in this.PropsObj) { propArray.push(prop); }
         propArray.sort();
         var prop = null;
-
         for (var i in propArray) {
-
             prop = propArray[i];
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
             if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop))
@@ -217,7 +194,6 @@
             this.propertyRowsHTML[this.currGroup] += this.getPropertyRowHtml(prop, this.PropsObj[prop], this.Metas[this.propNames.indexOf(prop.toLowerCase())], (this.Metas[this.propNames.indexOf(prop.toLowerCase())]).options);
 
         }
-        return true;
     };
 
     this.OnInputchangedFn = function (e) {
@@ -238,7 +214,6 @@
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', this.PropsObj.Name);
-
     };
 
     this.colTileFocusFn = function (e) {
@@ -250,7 +225,6 @@
         else
             obj = this.PropsObj[this.CurProp].filter(function (obj) { return obj.EbSid == e.target.getAttribute("id"); })[0];
         this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
-
     };
 
     this.removeFromDD = function (name) {
@@ -269,7 +243,6 @@
     };
 
     this.initCE = function () {
-
         var CEbody = '<div class="CE-body">'
             + '<table class="table table-bordered editTbl">'
             + '<tbody>'
@@ -282,20 +255,18 @@
             + '</tr>'
             + '</tbody>'
             + '</table>'
-            + '</div>'
+            + '</div>';
         $(this.pgCXE_Cont_Slctr + " .modal-title").text("Collection Editor");
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
         $(this.pgCXE_Cont_Slctr + " .sub-controls-DD-cont").show();
-
         this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
         this.setColTiles();
     };
 
     this.initJE = function () {
-
-        var CEbody = '<textarea id="JE_txtEdtr' + this.wraperId + '" rows="12" cols="40" ></textarea>'
+        var JEbody = '<textarea id="JE_txtEdtr' + this.wraperId + '" rows="12" cols="40" ></textarea>'
         $(this.pgCXE_Cont_Slctr + " .modal-title").text("Javascript Editor");
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
         CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
         window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.wraperId), {
             mode: "javascript",
@@ -307,12 +278,10 @@
             },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
-
         this.setColTiles();
     };
 
     this.initOSE = function () {
-
         var OSEbody = '<div class="OSE-body">'
             + '<table class="table table-bordered editTbl">'
             + '<tbody>'
@@ -320,8 +289,6 @@
             + '<td style="padding: 0px;">'
             + '<div class="OSE-DD-cont" > '
             + '<select class="selectpicker">'
-            + '<option obj-type="11"> DataVisualization </option>'
-            + '<option obj-type="3"> Report </option>'
             + '</select>'
             + '</div>'
             + '<div class="OSEctrlsCont"> </div>'
@@ -336,8 +303,11 @@
             + '</div>';
         $(this.pgCXE_Cont_Slctr + " .modal-title").text("Object Selector");
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
+        var options = "";
+        var ObjTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
+        for (var i = 0; i < ObjTypes.length; i++) { options += '<option>' + ObjTypes[i] + '</option>' }
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
-
         var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
         var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
         if (CurRefId) {
@@ -347,7 +317,6 @@
         }
         else
             this.getOSElist.bind(this)();
-
     };
     ////////////////////////////////////////////////////
     this.getOSElist = function () {
@@ -387,7 +356,6 @@
         }
         var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
         var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
-
         var objName = $CXbtn.attr("obj-name") || this.getOBjNameByval(data, CurRefId);
         if (CurRefId) {
             if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
@@ -418,7 +386,6 @@
 
     this.OTileClick = function (data) {
         var ObjName = event.target.getAttribute("name");
-        //$(event.target).focus();
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".fa-chevron-right").css("visibility", "hidden");
         $(event.target).attr("is-selected", true).find(".fa-chevron-right").css("visibility", "visible");
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
@@ -432,25 +399,21 @@
             if ($CXbtn.attr("obj-name") === $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for"))///////////////////////////////////
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile:contains(" + $CXbtn.attr("ver-name") + ")")[0].click();
         }
-        else
+        else {
             if (this.OSECurObj)
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont [ver-no=" + this.OSECurObj.versionNumber + "]")[0].click();
+        }
     };
     this.VTileClick = function () {
-        //$(event.target).focus();
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
         var refId = $(event.target).attr("data-refid");
         this.PropsObj[this.CurProp] = refId;
         $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val(refId);
         $(event.target).attr("is-selected", true).find(".fa-check").show();
-
-
         var ObjName = $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for");
         $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("obj-name", ObjName);//
         $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("ver-name", $(event.target).text());//
     };
-
-    /////////////////////////////////////////////////
 
     this.pgCXE_BtnClicked = function (e) {
         $("#" + this.wraperId + " .pgCollEditor-bg").show();
@@ -466,9 +429,6 @@
         }
         if (editor === "10")
             this.initOSE();
-
-
-
         $("#" + this.wraperId + " .CE-body").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
 
@@ -508,15 +468,10 @@
             + '</div>'
             + '</div>';
         $(this.$wraper).append(CE_HTML);
-
         $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.pgCE_AddFn.bind(this));
-
         $("#" + this.CEctrlsContId).on("click", ".close", this.colTileCloseFn.bind(this));
-
         $("#" + this.wraperId + " .pgHead").on("click", "[name=sort]", this.SortFn.bind(this));
-
         $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
-
     };
 
     this.SortFn = function (e) {
@@ -543,78 +498,55 @@
             var values = this.PropsObj.Controls.$values;
         else
             var values = this.PropsObj[this.CurProp];
-
         var _html = "";
         var options = "";
-        var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;;
-
+        var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
         $.each(values, function (i, control) {
             _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
                 + control.Name
                 + '<button type="button" class="close">&times;</button>'
                 + '</div>';
         })
-
-        for (var i = 0; i < SubTypes.length; i++) {
-            options += '<option>' + SubTypes[i] + '</option>'
-        }
-
+        for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
-
         $("#" + this.CEctrlsContId).empty().append(_html);
     };
 
-
     this.InitPG = function () {
         this.propNames = [];
-
         this.MISC_GROUP_NAME = 'Miscellaneous';
         this.GET_VALS_FUNC_KEY = 'pg.getValues';
         this.pgIdSequence = 0;
-
         this.propertyRowsHTML = { 'Misc': '' };
         this.groupsHeaderRowHTML = {};
         this.postCreateInitFuncs = {};
         this.OnChangeExec = {};
         this.getValueFuncs = {};
-
         this.pgId = this.wraperId + this.pgIdSequence++;
         this.currGroup = null;
         this.CurProp = null;
         this.CurEditor = null;
         this.OSElist = {};
-
         this.innerHTML = '<table class="table-bordered table-hover pg-table">';
-
         this.$PGcontainer.empty();
-
         for (var i = 0; i < this.Metas.length; i++)
             this.propNames.push(this.Metas[i].name.toLowerCase());
 
         this.buildRows();
-
         this.buildGrid();
-
         this.CallpostInitFns();
-
         this.getvaluesFromPG();//no need
 
         $("#" + this.wraperId + " .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
-
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
-
         this.addToDD();
-
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
-
         $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.pgCXE_BtnClicked.bind(this));
-
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", function (e) {
             $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(e.target.value);
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }.bind(this));
-
     };
 
     this.clear = function () {
@@ -639,7 +571,6 @@
         this.PropsObj = props;
         console.log(JSON.stringify(props));
         console.log(JSON.stringify(metas));
-
         this.InitPG();
     };
     this.init();

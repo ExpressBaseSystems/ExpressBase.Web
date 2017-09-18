@@ -320,7 +320,7 @@
             + '<td style="padding: 0px;">'
             + '<div class="OSE-DD-cont" > '
             + '<select class="selectpicker">'
-            + '<option obj-type="11"> DataVisualization </option>'
+            + '<option obj-type="11"> DataSource </option>'
             + '<option obj-type="3"> Report </option>'
             + '</select>'
             + '</div>'
@@ -549,6 +549,7 @@
         var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;;
 
         $.each(values, function (i, control) {
+            var type = control.$type.split(",")[0].split(".")[2];
             _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
                 + control.Name
                 + '<button type="button" class="close">&times;</button>'

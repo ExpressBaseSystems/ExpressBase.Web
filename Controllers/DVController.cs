@@ -127,6 +127,7 @@ namespace ExpressBase.Web.Controllers
             var _jsResult = CSharpToJs.GenerateJs<EbDataVisualizationObject>(BuilderType.DVBuilder, typeArray);
 
             ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
 
             //Edit mode
             if (!string.IsNullOrEmpty(objid))

@@ -7,6 +7,7 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
 <style>
     .scrollable-menu {
         height: auto;
@@ -29,50 +30,71 @@
     var dvRefId = ViewBag.dvRefId;
     var dvname = (ViewBag.dvObject != null) ? ViewBag.dvObject.Name : "* Untitled *";
 }
-<div class="well well-sm" id="devpanel" style="margin-top: 53px;margin-bottom: 1px !important;">
-    <div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
-        <select class="selectpicker" data-live-search="true">
-            @{
-                if (ViewBag.dvObject == null)
-                {
-                    <option data-tokens="Select Datasource" data-dsid="Select Datasource" selected>Select Datasource</option>
-                }
-                foreach (var element in ViewBag.DSListAll)
-                {
-                    if (ViewBag.dvObject != null && element.Key == ViewBag.dvObject.DataSourceRefId)
-                    {
-                        <option data-tokens="@element.Key" data-dsid="@element.Key" selected>@element.Value.Name</option>
-                    }
-                    else
-                    {
-                        <option data-tokens="@element.Key" data-dsid="@element.Key">@element.Value.Name</option>
-                    }
-                }
-            }
-        </select>
+<div class="row" style="margin-top: 52px;">
+    <div class="toolbar-com" id='Toolbar'>
     </div>
-
-        <input id='dvnametxt' type='text' class='form-control' placeholder='dvname' style="width: auto;display: inline-block;" />
-        <input id='TableHeighttxt' type='number' class='form-control' placeholder='table height' style="width: auto;display: inline-block;" />
-        @*<div style="display: none;" id="renderOption">
-                <input type="radio" name="renderAs" value="table" checked> Table<br>
-                <input type="radio" name="renderAs" value="graph"> Graph<br>
-                <input type="radio" name="renderAs" value="both"> Both
-            </div>*@
-
-        <button id='Save_btn' class='btn btn-primary' style="float: right;display:inline-block"> Save </button>
-        
-    </div>
-
-<div id="Outer">
-    @if (ViewBag.dvObject != null)
-    {
-        @await Component.InvokeAsync("DataVisualization", new { dsRefid = ViewBag.dvObject.DataSourceRefId, Meta = ViewBag.Meta.Substring(11, (ViewBag.Meta.Length - 11)), dvRefId = ViewBag.dvRefId });
-    }
 </div>
+        @*<div class="well well-sm" id="devpanel" style="margin-top: 53px;margin-bottom: 1px !important;">
+            <div class='dropdown' id='datatSourceDropdown' style="display:inline-block">
+                <select class="selectpicker" data-live-search="true">
+                    @{
+                        if (ViewBag.dvObject == null)
+                        {
+                            <option data-tokens="Select Datasource" data-dsid="Select Datasource" selected>Select Datasource</option>
+                        }
+                        foreach (var element in ViewBag.DSListAll)
+                        {
+                            if (ViewBag.dvObject != null && element.Key == ViewBag.dvObject.DataSourceRefId)
+                            {
+                                <option data-tokens="@element.Key" data-dsid="@element.Key" selected>@element.Value.Name</option>
+                            }
+                            else
+                            {
+                                <option data-tokens="@element.Key" data-dsid="@element.Key">@element.Value.Name</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
 
-@section EbHead {
-    <script>
+                <input id='dvnametxt' type='text' class='form-control' placeholder='dvname' style="width: auto;display: inline-block;" />
+                <input id='TableHeighttxt' type='number' class='form-control' placeholder='table height' style="width: auto;display: inline-block;" />
+
+                <button id='Save_btn' class='btn btn-primary' style="float: right;display:inline-block"> Save </button>
+
+            </div>*@
+        <div id="ppgrid" class="col-md-2 pg no-padd pull-right">
+            <div class="min-btn">
+                <button class="btn-tb-com" onclick="pgBoxMin();" id='pg-min'><i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></button>
+            </div>
+        </div>
+
+        <div id="Outer">
+            @if (ViewBag.dvObject != null)
+            {
+                @await Component.InvokeAsync("DataVisualization", new { dsRefid = ViewBag.dvObject.DataSourceRefId, Meta = ViewBag.Meta.Substring(11, (ViewBag.Meta.Length - 11)), dvRefId = ViewBag.dvRefId });
+            }
+        </div>
+
+        @section EbHead {
+            <script>
+
+        @Html.Raw(ViewBag.Meta)
+        @Html.Raw(ViewBag.JsObjects);
+        var dvsetObj = new EbObjects["EbDataVisualizationSet"]("set1");
+        var pg = new Eb_PropertyGrid("ppgrid");
+        pg.setObject(dvsetObj, AllMetas["EbDataVisualizationSet"]);
+        pg.PropertyChanged = function (obj) {
+            console.log(obj);
+                if (obj.Visualizations !== null) {
+                    $.LoadingOverlay("show");
+                    $("#Outer").load("../DV/dvCommon", { dsRefid: obj.EbDataSource, Meta: JSON.stringify( @Html.Raw(ViewBag.Meta.Substring(11, (ViewBag.Meta.Length-11))) ), dvRefId: null }, function () {
+                    $.LoadingOverlay("hide");
+                });
+
+                }
+
+        }
         if ("@ViewBag.wc" == "uc") {
             $("#datatSourceDropdown").css("display", "none");
             $("#dvnametxt").css("display", "none");
@@ -98,6 +120,5 @@
             @Html.Raw(head)
             $('[data-toggle="tooltip"]').tooltip();
         });
-        @Html.Raw(ViewBag.Meta)
-    </script>
-}
+            </script>
+        }

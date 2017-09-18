@@ -54,27 +54,29 @@ namespace ExpressBase.Web.Components
             return View();
         }
         
-        private EbDataVisualization getDVObject(string dsRefid)
+        private EbTableVisualization getDVObject(string dsRefid)
         {
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
             if (columnresp == null || columnresp.Columns.Count == 0)
                 columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
 
-            EbDataVisualization eb = new EbDataVisualization()
-            {
-                DataSourceRefId = dsRefid,
-                Name = "<Untitled>",
-                IsPaged = columnresp.IsPaged.ToString().ToLower(),
-                Columns = new DVColumnCollection()
-            };
-            eb.AfterRedisGet(this.Redis);
+            EbTableVisualization ebTable = new EbTableVisualization();
+
+            //EbDataVisualization eb = new EbDataVisualization()
+            //{
+            //    DataSourceRefId = dsRefid,
+            //    Name = "<Untitled>",
+            //    IsPaged = columnresp.IsPaged.ToString().ToLower(),
+            //    Columns = new DVColumnCollection()
+            //};
+            ebTable.AfterRedisGet(this.Redis);
 
             var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
             int _pos = __columns.Count+100;
 
             // Add Serial & Checkbox
-            eb.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
-            eb.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
+            ebTable.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
+            ebTable.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
 
 
             foreach (EbDataColumn column in __columns)
@@ -90,10 +92,10 @@ namespace ExpressBase.Web.Components
                 else if (column.Type == DbType.DateTime || column.Type == DbType.Date || column.Type == DbType.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
 
-                eb.Columns.Add(_col);
+                ebTable.Columns.Add(_col);
             }
 
-            return eb;
+            return ebTable;
         }
     }
    

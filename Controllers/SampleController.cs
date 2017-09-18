@@ -1,8 +1,11 @@
-﻿using ExpressBase.Common.Connections;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Connections;
+using ExpressBase.Common.Data;
 using ExpressBase.Objects.Objects.TenantConnectionsRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -25,11 +28,73 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+
+        [HttpGet]
+        public IActionResult ConnectionManager()
+        {
+            EbSolutionConnections solutionConnections = this.ServiceClient.Post<EbSolutionConnections>(new GetConnectionsRequest());
+            ViewBag.Connections = solutionConnections;
+            //ViewBag.FilesDB = solutionConnections.FilesDbConnection.MongoDB_url;
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult EditSMTPConnection()
+        {
+            EbSolutionConnections solutionConnections = this.ServiceClient.Post<EbSolutionConnections>(new GetConnectionsRequest());
+            ViewBag.SMTP = solutionConnections.EmailConnection;
+            return View();
+        }
+
         [HttpGet]
         public IActionResult AddEmailAccount()
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult SlackPost()
+        {
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult DownloadFile()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DownloadFile(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            byte[] ImgByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { ObjectId = req["ObjectId"] });
+
+            FileContentResult result = this.File(ImgByte, "image/jpeg");
+            ViewBag.Image = ImgByte;
+            return View();
+        }
+
+
+
+
+        public IActionResult xx()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //public IActionResult LoadImage(int i)
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    byte[] ImgByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { ObjectId = req["ObjectId"] });
+
+        //    FileContentResult result = this.File(ImgByte, "image/jpeg");
+
+        //    return result;
+        //}
+
 
         [HttpPost]
         public IActionResult AddEmailAccount(int i)
@@ -43,7 +108,7 @@ namespace ExpressBase.Web2.Controllers
             smtpcon.Password = req["pwd"];
             var r = this.ServiceClient.Post<bool>(new AddSMTPConnectionRequest { SMTPConnection = smtpcon });
             Console.WriteLine(req.ToString());
-            return View();
+            return Redirect("/Sample/ConnectionManager");
         }
 
         [HttpGet]
@@ -52,42 +117,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<JsonResult> UploadFileAsync(int i)
-        {
-            JsonResult resp = null;
 
-            try
-            {
-                var req = this.HttpContext.Request.Form;
-
-                foreach (var formFile in req.Files)
-                {
-                    if (formFile.Length > 0)
-                    {
-                        byte[] myFileContent;
-
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await formFile.CopyToAsync(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            myFileContent = new byte[memoryStream.Length];
-                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
-
-                            this.ServiceClient.Post(new UploadFileRequest { FileName = formFile.FileName, ByteArray = myFileContent });
-
-                            resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK" });
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
-            }
-
-            return resp;
-        }
 
 
         //[HttpPost]
@@ -140,6 +170,6 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.FormId = id;
             return View();
         }
-        
+
     }
 }

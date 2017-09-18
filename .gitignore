@@ -258,3 +258,4 @@ paket-files/
 *.psm1
 *.ps1
 /Views/Dev/dragula.cshtml
+/StaticFiles

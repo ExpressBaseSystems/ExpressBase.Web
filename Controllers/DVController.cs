@@ -122,9 +122,9 @@ namespace ExpressBase.Web.Controllers
             FetchAllDataSources();
             //FetchAllDataVisualizations();
 
-            var typeArray = typeof(DVBaseColumn).GetTypeInfo().Assembly.GetTypes();
+            var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
 
-            var _jsResult = CSharpToJs.GenerateJs<EbObject>(BuilderType.DVBuilder, typeArray);
+            var _jsResult = CSharpToJs.GenerateJs<EbDataVisualizationObject>(BuilderType.DVBuilder, typeArray);
 
             ViewBag.Meta = _jsResult.Meta;
 

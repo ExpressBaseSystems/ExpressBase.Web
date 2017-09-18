@@ -88,13 +88,13 @@ namespace ExpressBase.Web.Controllers
             ds.Description = req["description"];
             ds.Json = req["filterdialogjson"];
 
-            if (ds.EbObjectType == 0)
-                ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
-            else if (ds.EbObjectType == 12)
-            {
-                ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
-                //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
-            }
+            //if (ds.EbObjectType == 0)
+            //   ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
+            //else if (ds.EbObjectType == 12)
+            //{
+            //    ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
+            //    (ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
+            //}
 
             //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
             ds.Status = ObjectLifeCycleStatus.Live;

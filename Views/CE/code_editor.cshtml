@@ -78,13 +78,6 @@
         </div>
     </div>
 </div>
-<button id="AllVerList" class="btn btn-primary" >AllVerList</button>
-<script type="text/javascript">   
-    $(document).ready(function () {
-        $('#AllVerList').on("click", function () {
-            $.post("../CE/GetObjects_refid_dict_all_ver", { obj_type: 2 }, function (result) { console.log(result); });
-        })
-    });
 
     window.onload = function() {
         CodeMirror.commands.autocomplete = function(cm)

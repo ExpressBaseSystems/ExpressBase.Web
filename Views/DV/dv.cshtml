@@ -130,17 +130,18 @@
             console.log(obj);
                 if (obj[Pname] !== null) {
                     $.each(obj[Pname], function (i, dv) {
-                        if (dv.$type.indexOf("EbTableVisualization") !== -1) {
-                            split.createContentWindow("EbTable" + Wcount,"EbTableVisualization");
-                            dvColl["EbTable" + Wcount] = (new EbObjects["EbTableVisualization"]("EbTable" + ObjCount));
-                            Wcount++; ObjCount++;
+                        if($("#contBox").children("#"+dv.EbSid).length == 0){
+                            if (dv.$type.indexOf("EbTableVisualization") !== -1) {
+                                split.createContentWindow(dv.EbSid, "EbTableVisualization");
+                                dvColl[dv.EbSid] = (new EbObjects["EbTableVisualization"]("EbTable" + ObjCount));
+                                ObjCount++;
+                            }
+                            else if (dv.$type.indexOf("EbChartVisualization") !== -1) {
+                                split.createContentWindow(dv.EbSid, "EbChartVisualization");
+                                dvColl[dv.EbSid] = (new EbObjects["EbChartVisualization"]("EbChart" + ObjCount));
+                                ObjCount++;
+                            }
                         }
-                        else if (dv.$type.indexOf("EbChartVisualization") !== -1) {
-                            split.createContentWindow("EbChart" + Wcount, "EbChartVisualization");
-                            dvColl["EbChart" + Wcount] = (new EbObjects["EbChartVisualization"]("EbChart" + ObjCount));
-                            Wcount++; ObjCount++;
-                        }
-
                     });
                 }
         }

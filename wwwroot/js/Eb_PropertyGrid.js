@@ -216,6 +216,10 @@
             $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }
+        if ($(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont").find("option:contains(" + this.PropsObj.Name + ")").length === 0) {
+            $("[name=master-ctrlDD-cont]" + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
+            $("[name=master-ctrlDD-cont]" + " .selectpicker").selectpicker('refresh');
+        }
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', this.PropsObj.Name);
     };
 

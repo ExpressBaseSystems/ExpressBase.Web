@@ -420,7 +420,7 @@
     height: 46.7vh;
 }
 
-.CEctrlsCont, .OSEctrlsCont, OSE-verTile-Cont {
+.CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont {
     overflow-y: auto;
     height: 40vh;
 }
@@ -490,7 +490,6 @@
 }
 
 .sub-controls-DD-cont {
-    display: none;
     background-color: white;
     border: var(--sild1pxDDD);
 }

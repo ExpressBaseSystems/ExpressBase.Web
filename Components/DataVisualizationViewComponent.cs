@@ -33,10 +33,10 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dsRefid, string Meta, string dvRefId)
+        public async Task<IViewComponentResult> InvokeAsync(List<EbDataVisualization> dvset, string Meta, string dvRefId)
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
-            if (!string.IsNullOrEmpty(dsRefid))
+            if (dvset.Count !=0)
             {
                 if (!string.IsNullOrEmpty(dvRefId))
                 {
@@ -47,18 +47,19 @@ namespace ExpressBase.Web.Components
                     ViewBag.data = dvObject;
                 }
                 else
-                    ViewBag.data = getDVObject(dsRefid);
+                    ViewBag.data = getDVObject(dvset);
             }
             ViewBag.Meta = Meta.Replace("\\r\\n", string.Empty);
             ViewBag.dvRefId = dvRefId;
             return View();
         }
         
-        private EbTableVisualization getDVObject(string dsRefid)
+        private EbTableVisualization getDVObject(List<EbDataVisualization> dvset)
         {
-            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
-            if (columnresp == null || columnresp.Columns.Count == 0)
-                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
+            DataSourceColumnsResponse columnresp = null;
+            //DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
+            //if (columnresp == null || columnresp.Columns.Count == 0)
+            //    columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
 
             EbTableVisualization ebTable = new EbTableVisualization();
 

@@ -79,10 +79,9 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.ServiceClient;
-            var ds = new EbObjectSaveOrCommitRequest();
+            var ds = new EbObjectFirstCommitRequest();
 
-            ds.IsSave = false;
-            ds.RefId = req["id"];
+
             ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
             ds.Name = req["name"];
             ds.Description = req["description"];
@@ -100,10 +99,9 @@ namespace ExpressBase.Web.Controllers
             ds.Status = ObjectLifeCycleStatus.Live;
             ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
-            ds.Relations = "";
-            ds.ChangeLog = "";
-            ds.NeedRun = false;
-            var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
+            ds.Relations = "";          
+
+            var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);
             return CurrSaveId.RefId;
         }
 

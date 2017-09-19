@@ -5,11 +5,13 @@ using ExpressBase.Objects.Objects.TenantConnectionsRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.IO;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -17,9 +19,10 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web2.Controllers
 {
+
     public class SampleController : EbBaseNewController
     {
-        public SampleController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+        public SampleController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
 
         // GET: /<controller>/
@@ -52,12 +55,12 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult SlackPost()
-        {
+        //[HttpGet]
+        //public IActionResult SlackPost()
+        //{
 
-            return View();
-        }
+        //    return View();
+        //}
 
         [HttpGet]
         public IActionResult DownloadFile()
@@ -76,7 +79,65 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Image2Slack()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult Image2Slack(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            byte[] myFileContent;
+            myFileContent = EbFile.Bytea_FromFile("F://1.jpg");
+
+            SlackPayload payload = new SlackPayload
+            {
+                Channel = req["Channel"],
+                Content = req["Content"],
+                SlackFile = new SlackFile
+                {
+                    FileName = req["FileName"],
+                    FileByte = myFileContent,
+                    FileType = req["FileType"],
+
+                }
+            };
+
+            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 1 });
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Post2Slack()
+        {
+
+            SlackPayload payload = new SlackPayload
+            {
+                Text = "Unniasdasdasdasdasdasdasdad",
+                Channel = "test",
+            };
+
+            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 0 });
+
+
+            return View();
+        }
+
+        //public Task IActionResult (string message, string channel = null, string username = null)
+        //{
+
+        //    var payload = new
+        //    {
+        //        text = message,
+        //        channel,
+        //        username,
+        //    };
+
+        //    return View();
+        //}
 
 
         public IActionResult xx()

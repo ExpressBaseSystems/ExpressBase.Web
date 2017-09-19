@@ -488,11 +488,14 @@
 
     this.CE_AddFn = function () {
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
-        var EbSid = this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length;
-        if (this.CurProp === "Controls")
+        if (this.CurProp === "Controls") {
+            var EbSid = this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length;
             this.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-        else
+        }
+        else {
+            var EbSid = this.PropsObj.EbSid + "_" + SelType + this.PropsObj[this.CurProp].length;
             this.PropsObj[this.CurProp].push(new EbObjects[SelType](EbSid));
+        }
         this.setColTiles();
         $("#" + EbSid).focus();
     };

@@ -83,7 +83,10 @@
         //(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
         //         this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
         //     }
-        return '<tr class="pgRow" name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
+        var req_html = '';
+        if (meta.IsRequired)
+            req_html = '<sup style="color: red">*</sup>';
+        return '<tr class="pgRow" name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
@@ -266,6 +269,7 @@
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
         this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
         this.setColTiles();
+        new dragula([document.getElementById(this.CEctrlsContId)]);
     };
 
     this.initJE = function () {
@@ -437,8 +441,6 @@
 
         $("#" + this.wraperId + " .CE-body").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
-
-        new dragula([document.getElementById(this.CEctrlsContId)]);
     };
 
     this.CXE_OKclicked = function () {
@@ -472,7 +474,7 @@
             + '</div>'
             + '</div>';
         $(this.$wraper).append(CE_HTML);
-        $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.pgCE_AddFn.bind(this));
+        $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.CE_AddFn.bind(this));
         $("#" + this.CEctrlsContId).on("click", ".close", this.colTileCloseFn.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", "[name=sort]", this.SortFn.bind(this));
         $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
@@ -484,13 +486,15 @@
         $("#" + this.wraperId + " [name=sort]").toggle();
     };
 
-    this.pgCE_AddFn = function () {
+    this.CE_AddFn = function () {
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
+        var EbSid = this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length;
         if (this.CurProp === "Controls")
-            this.PropsObj.Controls.$values.push(new EbObjects[SelType](this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length));
+            this.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         else
-            this.PropsObj[this.CurProp].push(new EbObjects[SelType](this.PropsObj.EbSid + "_" + SelType + this.PropsObj[this.CurProp].length));
+            this.PropsObj[this.CurProp].push(new EbObjects[SelType](EbSid));
         this.setColTiles();
+        $("#" + EbSid).focus();
     };
 
     this.colTileCloseFn = function (e) {

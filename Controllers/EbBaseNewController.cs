@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using ServiceStack.Messaging;
 using Microsoft.Extensions.Options;
 using ExpressBase.Web2;
+using System.Net.Http;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,7 +37,7 @@ namespace ExpressBase.Web.Controllers
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-       
+
         public EbBaseNewController(IServiceClient _ssclient, IRedisClient _redis, IMessageQueueClient _mqFactory, IMessageProducer _mqProducer)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;

@@ -32,7 +32,7 @@
     border: 1px solid #ddd;
     background-color: #ffffff;
     border-radius: 4px;
-    margin-left: 545px;
+    margin-left: 337px;
 }
     .shapes-tank .btn{
         background-color: white !important;
@@ -185,13 +185,14 @@
 }
 
 .toolbox {
-    height: 100%;
+    height: inherit;
     position: fixed;
     margin-top: 3px;
     padding: 0 !important;
     width: 15%;
     background-color: white;
     border: 1px solid #ccc;
+    overflow-y:auto;
 }
 
 .pgB {
@@ -219,8 +220,8 @@
 .reportmenu .btn-group > .btn:first-child {
     margin-left: 5px !important;
 }
-.side-toolbar {
-    min-height: 1000px;
+.side-toolbar {    
+    height:518px;
     padding-left: 0;
     background-color: white;
     z-index: 1;

@@ -259,12 +259,11 @@
         var DD_html = '<div class="sub-controls-DD-cont pull-left">'
             + '<select class="selectpicker"> </select>'
             + '<button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
-            + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>';
+            + '</div>';
 
         $(this.pgCXE_Cont_Slctr + " .modal-title").text("Collection Editor");
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
-        $(this.pgCXE_Cont_Slctr + " .modal-footer").append(DD_html);
+        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
         this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
         this.setColTiles();
     };
@@ -423,6 +422,7 @@
 
     this.pgCXE_BtnClicked = function (e) {
         $("#" + this.wraperId + " .pgCollEditor-bg").show();
+        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].editor;
         var editor = e.target.getAttribute("editor");
@@ -434,6 +434,7 @@
         }
         if (editor === "10")
             this.initOSE();
+
         $("#" + this.wraperId + " .CE-body").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
 
@@ -463,6 +464,9 @@
             + '<div class="modal-body"> </div>'
 
             + '<div class="modal-footer">'
+            + '<div class="modal-footer-body">'
+            + '</div>'
+            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>'
             + '</div>'
 
             + '</div>'
@@ -501,14 +505,16 @@
         var _html = "";
         var options = "";
         var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
-        $.each(values, function (i, control) {
-            var type = control.$type.split(",")[0].split(".")[2];
-            _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
-                + control.Name
-                + '<button type="button" class="close">&times;</button>'
-                + '</div>';
-        })
-        for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
+        if (SubTypes) {
+            $.each(values, function (i, control) {
+                var type = control.$type.split(",")[0].split(".")[2];
+                _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
+                    + control.Name
+                    + '<button type="button" class="close">&times;</button>'
+                    + '</div>';
+            })
+            for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
+        }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
         $("#" + this.CEctrlsContId).empty().append(_html);
     };

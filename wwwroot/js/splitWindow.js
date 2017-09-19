@@ -48,10 +48,9 @@
         }       
     };
 
-    this.createContentWindow = function () {
+    this.createContentWindow = function (id, type) {
        
-        var id = "sub" + this.wdId++;
-        $("#" + this.contBox).append("<div class='sub-windows' id='" + id + "'>"
+        $("#" + this.contBox).append("<div class='sub-windows' id='" + id + "' tabindex='1' eb-type = "+type+" onclick='$(this).focus();'>"
             + "<div class='sub-windows-head'><div class='pull-right' style='margin-top: 3px;'>"
             + "<button class='head-btn'><i class='fa fa-minus' aria-hidden='true'></i></button>"
             + "<button class='head-btn'><i class='fa fa-thumb-tack' aria-hidden='true'></i></button>"
@@ -60,8 +59,11 @@
         //this.wScroll = $("#" + id).css('width').replace('px', ' ');      
         //$("#"+this.contBox).scrollLeft(this.wScroll);
         //this.wScroll = this.wScroll + $("#" + id).prev().css('width').replace('px', ' ');
+        $('#' + id).on('focus', this.windowOnFocus.bind(this));
     };
-
+    this.windowOnFocus = function () {
+        
+    };
     this.init = function () {
         //this.createWindows();
         $('#new').on('click', this.createContentWindow.bind(this));

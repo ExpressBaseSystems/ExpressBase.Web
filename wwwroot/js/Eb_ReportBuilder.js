@@ -57,7 +57,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
 
     this.pg = new Eb_PropertyGrid("propGrid");
 
-    RefreshControl = function (obj) {
+    this.RefreshControl = function (obj) {        
 
         var NewHtml = obj.Html();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
@@ -71,13 +71,14 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         });
 
         $("#" + obj.EbSid).replaceWith(NewHtml);
-        $('.dropped').draggable({
-        });
+        $('.dropped').draggable({ cursor: "crosshair", containment: ".page", start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.onDrag.bind(this) });
+        $(".droppable").droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
+        $('.dropped').resizable({containment: "parent",handles: "n, e, s, w"});
     };
-
+    
     this.pg.PropertyChanged = function (obj) {
-        RefreshControl(obj);
-    };
+        this.RefreshControl(obj);
+    }.bind(this);
 
     this.ruler = function () {
         $('.ruler,.rulerleft').show();
@@ -137,7 +138,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.page.PageSize = this.type;
         this.page.Height = this.height;
         this.page.Width = this.width;
-        RefreshControl(this.page);
+        this.RefreshControl(this.page);
         this.objCollection["page"] = this.page;
         $('.title').show();
 
@@ -168,6 +169,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             $("#" + this.page.Name).append(obj.Html());
             this.objCollection[this.ReportSections[i]] = obj;           
         }
+
+
         this.headerBox1_Split();
     };
 
@@ -224,10 +227,9 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         var id = "s" + $(obj).attr('data_val') + "0";
         var SubSec_obj = new EbObjects["EbSubSection"](id);
         $(obj).append(SubSec_obj.Html());
-        SubSec_obj.Height = "100";        
+        SubSec_obj.Height = "100";       
         this.objCollection[id] = SubSec_obj;
-        console.log(JSON.stringify(this.objCollection[id]));
-        RefreshControl(SubSec_obj);
+        this.RefreshControl(SubSec_obj);
         //$("#" + id).attr("tabindex", "1").attr("onclick", "$(this).focus()");
         $("#" + id).on("focus", this.elementOnFocus.bind(this));
         $("#" + id).droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
@@ -285,6 +287,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             var SubSec_obj = new EbObjects["EbSubSection"](id);
             this.$sec.append(SubSec_obj.Html());            
             this.objCollection[id] = SubSec_obj;
+
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));           
             $("#" + id).droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
 
@@ -307,7 +310,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
                 }
             });
             this.objCollection[id].Height = $("#" + id).css("height");
-            RefreshControl(this.objCollection[id]);
+            this.RefreshControl(this.objCollection[id]);
             this.multiSplitBoxinner();
         }
     };
@@ -398,47 +401,53 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.col.on("focus", this.elementOnFocus.bind(this));
         this.Objtype = this.col.attr('eb-type');
         var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
-        var colVal = this.col.text();
-
+        var colVal = "T"+this.col.parent().parent().siblings("a").text().slice(-1) +"."+this.col.text().trim();
+       
         if (!this.col.hasClass('dropped')) {
-            var obj = new EbObjects["Eb" + this.Objtype](Objid);
-            var typ = obj.$type;
+            var obj = new EbObjects["Eb" + this.Objtype](Objid);            
             this.dropLoc.append(obj.Html());
-            obj.Top = this.posTop - this.dropLoc.offset().top;
-            //console.log(obj.Top, this.posTop);
+            obj.Top = this.posTop - this.dropLoc.offset().top;          
             obj.Left = this.posLeft - this.dropLoc.offset().left;
-            obj.ColVal = colVal;
+            obj.ColVal = colVal;           
             this.objCollection[Objid] = obj;
-            RefreshControl(obj);
+            this.RefreshControl(obj);
+            $("#" + Objid).attr("tabindex", "2").attr("onclick", "$(this).focus()");
+            $("#" + Objid).on("focus", this.elementOnFocus.bind(this));
         }
         else if (this.col.hasClass('dropped')) {            
             this.dropLoc.append(this.col.css({ left: (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop}));
-            var obj = this.objCollection[this.col.attr('id')];
-            obj.Top = this.col.css("top");
-            obj.Left = this.col.css("left");           
+            var obj1 = this.objCollection[this.col.attr('id')];
+            obj1.Top = this.col.css("top");
+            obj1.Left = this.col.css("left");           
         }
-        $('.dropped').draggable({ start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.onDrag.bind(this)});
+        $('.dropped').draggable({ cursor: "crosshair", containment: ".page",start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.onDrag.bind(this)});       
 
-        //$('.image-reSize').resizable({ containment: "parent" });
-        //$('.dropped').resizable({
-        //    containment: "parent",
-        //    handles: "n, e, s, w",
-        //    minHeight: minheight,
-        //    minWidth: minwidth,
-        //    resize: this.resizeElement.bind(this)
-        //});
+        $('.dropped').resizable({
+            containment: "parent",
+            handles: "n, e, s, w"            
+        });
 
         this.PropertyMenu();
     };
 
     this.elementOnFocus = function (event) {
+       
         event.stopPropagation();
         var curControl = $(event.target);
+        this.editElement(curControl);
         var id = curControl.attr("id");
         var curObject = this.objCollection[id];
         var type = curControl.attr('eb-type');
         $('#propGrid').show();
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
+    };
+
+    this.editElement = function (control) {
+        console.log(control);
+        $("#delete").click(function() {control.remove();});
+        $("#alg-R").click(function () {control.css("text-align","right");});
+        $("#alg-c").click(function () {control.css("text-align", "center");});
+        $("#alg-L").click(function () {control.css("text-align", "left");});
     };
 
     this.addImageOnPage = function () {
@@ -497,16 +506,9 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         }));
     };
 
-    this.resizeElement = function (event, ui) {
-
-        var font = parseInt($(event.target).css("height"));
-        //$(event.target).css("font-size", font - 5);
-
-    };
-
     this.onDrag_stop = function (event, ui) {     
-        $(".vL").remove();
-        $(".hL").remove();      
+        //$(".vL").remove();
+        //$(".hL").remove();      
     };
 
     this.onDrag_Start = function (event, ui) {        
@@ -514,8 +516,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.reDragLeft = event.pageX - $(event.target).offset().left;
         this.reDragTop = event.pageY - $(event.target).offset().top;
         
-        $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:0px;margin-top:-" + this.posTop + "px;'></div>");
-        $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px;'></div>");
+        //$(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + pages[type].height + ";margin-left:0px;margin-top:-" + this.posTop + "px;'></div>");
+        //$(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px;'></div>");
 
     };
 
@@ -555,6 +557,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
 
         this.sections = $(sections).attr('id');
         this.i = i;
+        this.objCollection[this.sections].Height = $("#" + this.sections).css("height");
         this.report.SubSection.push(this.objCollection[this.sections]);
         $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
 
@@ -564,6 +567,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
 
         this.subsec = $(subsec).attr("id");
         this.j = j;
+        this.objCollection[this.subsec].Height = $("#" + this.subsec).css("height");
         this.report.SubSection[this.i].SubSection.push(this.objCollection[this.subsec]);
         $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
 

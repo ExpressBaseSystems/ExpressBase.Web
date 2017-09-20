@@ -27,11 +27,11 @@
     fdBoxMin = function () {       
         $(this.sidediv).toggleClass("toggled");
           if ($(this.sidediv).hasClass("toggled")) {               
-              $(this.contBox).removeClass('col-md-8').addClass('col-md-10');
+              //$(this.contBox).removeClass('col-md-8').addClass('col-md-10');
               $('#fd-min-btn').css('margin-right', '-25px').addClass("rotated");
            }
             else {
-              $(this.contBox).removeClass('col-md-10').addClass('col-md-8');
+              //$(this.contBox).removeClass('col-md-10').addClass('col-md-8');
               $('#fd-min-btn').css('margin-right', '0').removeClass("rotated");
         }         
     };
@@ -49,17 +49,18 @@
     };
 
     this.createContentWindow = function (id, type) {
-       
-        $("#" + this.contBox).append("<div class='sub-windows' id='" + id + "' tabindex='1' eb-type = "+type+" onclick='$(this).focus();'>"
-            + "<div class='sub-windows-head'><div class='pull-right' style='margin-top: 3px;'>"
+        //$("#" + this.contBox).prepend("<div class='col-md-2 no-padd fd' id='" + this.sidediv + "'><div>");
+
+        $("#" + this.contBox).append("<div class='sub-windows col-md-8 no-padd' id='sub_window_dv" + id + "' tabindex='1' eb-type = "+type+" onclick='$(this).focus();'>"
+            + "<div class='sub-windows-head' id='sub_windows_head_dv" + id +"'><div class='pull-right' style='margin-top: 3px;'>"
             + "<button class='head-btn'><i class='fa fa-minus' aria-hidden='true'></i></button>"
             + "<button class='head-btn'><i class='fa fa-thumb-tack' aria-hidden='true'></i></button>"
             + "<button class='head-btn'><i class='fa fa-times' aria-hidden='true'></i></button></div></div></div>");
-        $("#"+id+" :input").focus();
+        //$("#"+id+" :input").focus();
         //this.wScroll = $("#" + id).css('width').replace('px', ' ');      
         //$("#"+this.contBox).scrollLeft(this.wScroll);
         //this.wScroll = this.wScroll + $("#" + id).prev().css('width').replace('px', ' ');
-        $('#' + id).on('focus', this.windowOnFocus.bind(this));
+        $('#sub_window_dv' + id).on('focus', this.windowOnFocus.bind(this));
     };
     this.windowOnFocus = function () {
         

@@ -90,7 +90,7 @@
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
-        selectedValue = selectedValue || options[0];
+        selectedValue = selectedValue || options[0]; 
         var html = "<select class='selectpicker' >";
         for (var i = 0; i < options.length; i++)
             html += "<option data-tokens='" + options[i] + "'>" + options[i] + "</option>";
@@ -212,13 +212,14 @@
     };
 
     this.addToDD = function () {
+        var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
         if ($("#SelOpt" + this.PropsObj.EbSid + this.wraperId).length === 0) {
             $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }
-        if ($(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont").find("option:contains(" + this.PropsObj.Name + ")").length === 0) {
-            $("[name=master-ctrlDD-cont]" + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
-            $("[name=master-ctrlDD-cont]" + " .selectpicker").selectpicker('refresh');
+        if ($MainCtrlsDDCont.find("option:contains(" + this.PropsObj.Name + ")").length === 0) {
+            $MainCtrlsDDCont.find("select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
+            $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
         }
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', this.PropsObj.Name);
     };
@@ -318,7 +319,10 @@
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
         var options = "";
         var ObjTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
-        for (var i = 0; i < ObjTypes.length; i++) { options += '<option>' + ObjTypes[i] + '</option>' }
+        if (ObjTypes !== null)
+            for (var i = 0; i < ObjTypes.length; i++) { options += '<option>' + ObjTypes[i] + '</option>' }
+        else
+            console.error("meta.options null for " + this.CurProp + " Check C# Decoration");
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
         var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();

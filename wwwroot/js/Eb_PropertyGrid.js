@@ -8,9 +8,10 @@
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
+    this.IsSortByGroup = true;
     this.PropertyChanged = function (obj) { };
     this.OnCXE_OK = function (obj) { };
-    this.IsSortByGroup = true;
+    this.DD_onChange = function (e) { };
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -211,12 +212,19 @@
             this.PropsObj.RenderMe();
     };
 
-    this.addToDD = function () {
-        if ($("#SelOpt" + this.PropsObj.EbSid + this.wraperId).length === 0) {
-            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
+    this.addToDD = function (obj) {
+        if (!obj)
+            obj = this.PropsObj;
+        var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
+        if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
+            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }
-        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', this.PropsObj.Name);
+        if ($MainCtrlsDDCont.find("option:contains(" + obj.Name + ")").length === 0) {
+            $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
+            $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
+        }
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', obj.Name);
     };
 
     this.colTileFocusFn = function (e) {
@@ -314,7 +322,10 @@
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
         var options = "";
         var ObjTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
-        for (var i = 0; i < ObjTypes.length; i++) { options += '<option>' + ObjTypes[i] + '</option>' }
+        if (ObjTypes !== null)
+            for (var i = 0; i < ObjTypes.length; i++) { options += '<option>' + ObjTypes[i] + '</option>' }
+        else
+            console.error("meta.options null for " + this.CurProp + " Check C# Decoration");
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
         var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
@@ -448,12 +459,17 @@
         this.OnCXE_OK(this.PropsObj[this.CurProp]);
     };
 
+    this.ctrlsDD_onchange = function (e) {
+        $("#" + $(e.target).find("option:selected").attr("data-name")).focus();
+        this.DD_onChange(e);
+    };
+
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
-        $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
 
         var CE_HTML = '<div class="pgCollEditor-bg">'
             + '<div class="pgCXEditor-Cont">'
@@ -510,21 +526,24 @@
             var values = this.PropsObj.Controls.$values;
         else
             var values = this.PropsObj[this.CurProp];
-        var _html = "";
         var options = "";
         var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
+        $("#" + this.CEctrlsContId).empty();
         if (SubTypes) {
             $.each(values, function (i, control) {
                 var type = control.$type.split(",")[0].split(".")[2];
-                _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
+                var $tile = $('<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
                     + control.Name
                     + '<button type="button" class="close">&times;</button>'
-                    + '</div>';
-            })
+                    + '</div>');
+                $("#" + this.CEctrlsContId).append($tile);
+                this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
+
+            }.bind(this));
+
             for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
-        $("#" + this.CEctrlsContId).empty().append(_html);
     };
 
     this.InitPG = function () {

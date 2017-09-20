@@ -13,6 +13,8 @@
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
     <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+    
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
@@ -23,10 +25,10 @@
 {
     <div class="container-fluid">
         <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
-            @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
+            @await Component.InvokeAsync("EbEmailObjectSelector", new { Type = (int)EbObjectType.DataSource })
         </div>
         <div class="col-md-10 pull-right">
-            <div id="summernote" name="maindiv">
+            <div id="summernote" contenteditable="true"  name="maindiv">
 
             </div>
         </div>
@@ -37,7 +39,7 @@
 }
     <script>
         $(document).ready(function () {
-
+          
             var w = $('.col-md-10').css("width");
         //$('#summernote').summernote();
         $('#summernote').summernote({
@@ -46,22 +48,35 @@
             minHeight: null,             // set minimum height of editor
             maxHeight: null,             // set maximum height of editor
             focus: true                  // set focus to editable area after initializing summernote
-        });
-        $('.note-editable').droppable({ accept: ".draggable", drop: onDropFunc.bind(this)});
-
-        function onDropFunc(event, ui) {
-            var dropLoc = $(event.target);
-            var col = $(ui.draggable);
-            dropLoc.append(col.addClass('dropped').css({          
-                position: 'relative',
-                left: event.clientX - 250 + 'px',
-                top: event.clientY - 70 + 'px'
-            }));
-            $('.dropped').draggable({
-                cancel: "a.ui-icon",
-                cursor: "move"
             });
-        };
+       
+        //$('.note-editable').droppable({ accept: ".draggable", drop: onDropFunc.bind(this)});
+
+        //function onDropFunc(event, ui) {
+        //    var dropLoc = $(event.target);
+        //    var col = $(ui.draggable);
+        //    if (!dropLoc.hasClass('dropped')) {
+        //        dropLoc.append(col.clone().prepend("@@").addClass('dropped').removeClass("draggable").css({
+        //            position: 'relative',
+        //            width:"150px",
+        //            left: event.pageX - $('.note-editable').offset().left + 'px',
+        //            top: event.pageY - $('.note-editable').offset().top + 'px'
+        //        }));
+        //    }
+        //    else if (dropLoc.hasClass('dropped')){
+
+        //        dropLoc.append(col.css({
+        //            position: 'relative',
+        //            left: event.pageX - $('.note-editable').offset().left + 'px',
+        //            top: event.pageY - $('.note-editable').offset().top + 'px'
+        //        }));
+        //    }
+        //    $('.dropped').draggable({
+        //        cancel: "a.ui-icon",
+        //        cursor: "move"
+        //    });
+        //};
+       
         });
 
 

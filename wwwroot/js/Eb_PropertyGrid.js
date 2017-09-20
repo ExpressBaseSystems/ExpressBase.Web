@@ -2,11 +2,10 @@
     this.$wraper = $("#" + id);
     this.wraperId = id;
     this.$controlsDD = $(".controls-dd-cont select");
-    this.CEctrlsContId = this.wraperId + "_CEctrlsCont";
     this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
-    this.pgCXE_Cont_Slctr = "#" + this.wraperId + " .pgCXEditor-Cont";
     this.objects = [];
-    this.PropsObj = null;
+    this.PropsObj = {};
+    this.CXVE = {};
     this.$hiddenProps = {};
     this.IsSortByGroup = true;
     this.PropertyChanged = function (obj) { };
@@ -227,17 +226,6 @@
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', obj.Name);
     };
 
-    this.colTileFocusFn = function (e) {
-        var $e = $(e.target);
-        var id = $e.attr("id");
-        var obj = null;
-        if (this.CurProp === "Controls")
-            obj = this.PropsObj.Controls.GetByName(id);
-        else
-            obj = this.PropsObj[this.CurProp].filter(function (obj) { return obj.EbSid == e.target.getAttribute("id"); })[0];
-        this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
-    };
-
     this.removeFromDD = function (name) {
         if ($("#SelOpt" + name + this.wraperId)) {
             $("#SelOpt" + name + this.wraperId).remove();
@@ -251,33 +239,6 @@
         var ObjType = $selectedOpt.attr("obj-type");
         this.OSElist[ObjType] = null;
         this.getOSElist.bind(this)();
-    };
-
-    this.initCE = function () {
-        var CEbody = '<div class="CE-body">'
-            + '<table class="table table-bordered editTbl">'
-            + '<tbody>'
-            + '<tr>'
-            + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head" >' + (this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].alias || this.CurProp) + ' </div>'
-            + '<div id="' + this.CEctrlsContId + '" class="CEctrlsCont"></div>'
-            + '</td>'
-            + '<td style="padding: 0px;"><div id="' + this.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>'
-            + '</tr>'
-            + '</tbody>'
-            + '</table>'
-            + '</div>';
-        var DD_html = '<div class="sub-controls-DD-cont pull-left">'
-            + '<select class="selectpicker"> </select>'
-            + '<button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
-            + '</div>';
-
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Collection Editor");
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
-        this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
-        this.setColTiles();
-        new dragula([document.getElementById(this.CEctrlsContId)]);
     };
 
     this.initJE = function () {
@@ -435,30 +396,6 @@
         $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("ver-name", $(event.target).text());//
     };
 
-    this.pgCXE_BtnClicked = function (e) {
-        $("#" + this.wraperId + " .pgCollEditor-bg").show();
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
-        this.CurProp = e.target.getAttribute("for");
-        this.CurEditor = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].editor;
-        var editor = e.target.getAttribute("editor");
-        if (editor === "7") {
-            this.initCE();
-        }
-        if (editor === "8") {
-            this.initJE();
-        }
-        if (editor === "10")
-            this.initOSE();
-
-        $("#" + this.wraperId + " .CE-body").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
-        $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
-    };
-
-    this.CXE_OKclicked = function () {
-        this.OnInputchangedFn.bind(this)();
-        this.OnCXE_OK(this.PropsObj[this.CurProp]);
-    };
-
     this.ctrlsDD_onchange = function (e) {
         $("#" + $(e.target).find("option:selected").attr("data-name")).focus();
         this.DD_onChange(e);
@@ -471,27 +408,8 @@
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
 
-        var CE_HTML = '<div class="pgCollEditor-bg">'
-            + '<div class="pgCXEditor-Cont">'
+        this.CXVE = new Eb_pgCXVE(this);
 
-            + '<div class="modal-header">'
-            + '<button type="button" class="close" onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();" >&times;</button>'
-            + '<h4 class="modal-title"> </h4>'
-            + '</div>'
-
-            + '<div class="modal-body"> </div>'
-
-            + '<div class="modal-footer">'
-            + '<div class="modal-footer-body">'
-            + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>'
-            + '</div>'
-
-            + '</div>'
-            + '</div>';
-        $(this.$wraper).append(CE_HTML);
-        $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.CE_AddFn.bind(this));
-        $("#" + this.CEctrlsContId).on("click", ".close", this.colTileCloseFn.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", "[name=sort]", this.SortFn.bind(this));
         $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
     };
@@ -500,50 +418,6 @@
         this.IsSortByGroup = !this.IsSortByGroup;
         this.InitPG();
         $("#" + this.wraperId + " [name=sort]").toggle();
-    };
-
-    this.CE_AddFn = function () {
-        var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
-        var EbSid = null;
-        if (this.CurProp === "Controls") {
-            EbSid = this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length;
-            this.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-        }
-        else {
-            EbSid = this.PropsObj.EbSid + "_" + SelType + this.PropsObj[this.CurProp].length;
-            this.PropsObj[this.CurProp].push(new EbObjects[SelType](EbSid));
-        }
-        this.setColTiles();
-        $("#" + EbSid).click();
-    };
-
-    this.colTileCloseFn = function (e) {
-        $(e.target).parent().remove();
-    };
-
-    this.setColTiles = function () {
-        if (this.CurProp === "Controls")
-            var values = this.PropsObj.Controls.$values;
-        else
-            var values = this.PropsObj[this.CurProp];
-        var options = "";
-        var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
-        $("#" + this.CEctrlsContId).empty();
-        if (SubTypes) {
-            $.each(values, function (i, control) {
-                var type = control.$type.split(",")[0].split(".")[2];
-                var $tile = $('<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
-                    + control.Name
-                    + '<button type="button" class="close">&times;</button>'
-                    + '</div>');
-                $("#" + this.CEctrlsContId).append($tile);
-                this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
-
-            }.bind(this));
-
-            for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
-        }
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
     };
 
     this.InitPG = function () {
@@ -576,7 +450,7 @@
         this.addToDD();
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
-        $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.pgCXE_BtnClicked.bind(this));
+        $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", function (e) {
             $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(e.target.value);
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');

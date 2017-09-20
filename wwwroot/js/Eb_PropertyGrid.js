@@ -8,9 +8,10 @@
     this.objects = [];
     this.PropsObj = null;
     this.$hiddenProps = {};
+    this.IsSortByGroup = true;
     this.PropertyChanged = function (obj) { };
     this.OnCXE_OK = function (obj) { };
-    this.IsSortByGroup = true;
+    this.DD_onChange = function (e) { };
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -90,7 +91,7 @@
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
-        selectedValue = selectedValue || options[0]; 
+        selectedValue = selectedValue || options[0];
         var html = "<select class='selectpicker' >";
         for (var i = 0; i < options.length; i++)
             html += "<option data-tokens='" + options[i] + "'>" + options[i] + "</option>";
@@ -456,12 +457,17 @@
         this.OnCXE_OK(this.PropsObj[this.CurProp]);
     };
 
+    this.ctrlsDD_onchange = function (e) {
+        $("#" + $(e.target).find("option:selected").attr("data-name")).focus();
+        this.DD_onChange(e);
+    };
+
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
-        $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', function (e) { $("#" + $(this).find("option:selected").attr("data-name")).focus(); });
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
 
         var CE_HTML = '<div class="pgCollEditor-bg">'
             + '<div class="pgCXEditor-Cont">'

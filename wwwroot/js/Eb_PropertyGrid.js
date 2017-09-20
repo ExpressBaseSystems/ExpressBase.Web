@@ -212,17 +212,19 @@
             this.PropsObj.RenderMe();
     };
 
-    this.addToDD = function () {
+    this.addToDD = function (obj) {
+        if (!obj)
+            obj = this.PropsObj;
         var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
-        if ($("#SelOpt" + this.PropsObj.EbSid + this.wraperId).length === 0) {
-            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
+        if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
+            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }
-        if ($MainCtrlsDDCont.find("option:contains(" + this.PropsObj.Name + ")").length === 0) {
-            $MainCtrlsDDCont.find("select").append("<option data-name = '" + this.PropsObj.Name + "'id='SelOpt" + this.PropsObj.Name + this.wraperId + "'>" + this.PropsObj.Name + "</option>");
+        if ($MainCtrlsDDCont.find("option:contains(" + obj.Name + ")").length === 0) {
+            $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
             $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
         }
-        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', this.PropsObj.Name);
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', obj.Name);
     };
 
     this.colTileFocusFn = function (e) {
@@ -524,21 +526,24 @@
             var values = this.PropsObj.Controls.$values;
         else
             var values = this.PropsObj[this.CurProp];
-        var _html = "";
         var options = "";
         var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
+        $("#" + this.CEctrlsContId).empty();
         if (SubTypes) {
             $.each(values, function (i, control) {
                 var type = control.$type.split(",")[0].split(".")[2];
-                _html += '<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
+                var $tile = $('<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
                     + control.Name
                     + '<button type="button" class="close">&times;</button>'
-                    + '</div>';
-            })
+                    + '</div>');
+                $("#" + this.CEctrlsContId).append($tile);
+                this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
+
+            }.bind(this));
+
             for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
-        $("#" + this.CEctrlsContId).empty().append(_html);
     };
 
     this.InitPG = function () {

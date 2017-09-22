@@ -259,6 +259,12 @@
     border: 1px solid #dedede;
     height: 28px;
 }
+#rulerUnit {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #aaaaaa;
+    color:black;
+}  
 /*shapes*/
 /*.h-line .ui-resizable-handle {
    width: 7px;
@@ -279,15 +285,15 @@
     margin-right:0;
 }*/
 .arrow-right {
-  width: 0; 
-  height: 0; 
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;  
-  border-left: 5px solid black;
-  float: right;
-  margin-top: -5px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid black;
+    float: right;
+    margin-top: -5px;
 }
-/*.arrow-r-draggable .ui-resizable-e, .ui-resizable-w{
+/*.arrow-r-draggable > .ui-resizable-e,.ui-resizable-w{
     background-color: green;
     width: 7px;
     height: 7px;

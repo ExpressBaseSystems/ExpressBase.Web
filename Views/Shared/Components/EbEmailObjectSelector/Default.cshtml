@@ -243,7 +243,7 @@
         }
     }
 
-    function xxx(text) {
+    function insertselected(text) {
         var text = text;
         $(".note-editable").append(text);
     }
@@ -258,9 +258,12 @@
             $('#data-table-list').treed();
             
             $('.styl').dblclick(function (e) {
-                var text = $(e.target).text();
-                alert(text);
-                xxx(text);
+                var colVal = "Table" + $(e.target).parent().siblings("a").text().slice(-1) + "." + $(e.target).text().trim();
+                
+                //alert(colVal);
+                //var text = $(e.target).text();
+               // alert(text);
+                insertselected("«"+colVal+"»");
             });
         }
    

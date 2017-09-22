@@ -21,21 +21,36 @@
     <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
 </head>
 <body>
+    @{
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+    }
 @using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
 {
     <div class="container-fluid">
-        <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
-            @await Component.InvokeAsync("EbEmailObjectSelector", new { Type = (int)EbObjectType.DataSource })
-        </div>
-        <div class="col-md-10 pull-right">
-            <div id="summernote" contenteditable="true"  name="maindiv">
-
+        <div class="row dshbrd">
+            <div>
+                @{
+                    if (ViewBag.IsNew == "true")
+                    {
+                        @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
+                    }
+                    else
+                    {
+                        @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+                    }
+                }
             </div>
         </div>
-        <div class="input-group">
-            <button class="btn btn-lg btn-primary btn-block" type="submit"><i class="fa fa-sign-in fa-fw"></i>Save</button>
+            <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
+                @await Component.InvokeAsync("EbEmailObjectSelector", new { Type = (int)EbObjectType.DataSource })
+            </div>
+            <div class="col-md-10 pull-right">
+                <div id="summernote">
+
+                </div>
+            </div>
+
         </div>
-    </div>
 }
     <script>
         $(document).ready(function () {
@@ -49,7 +64,19 @@
             maxHeight: null,             // set maximum height of editor
             focus: true                  // set focus to editable area after initializing summernote
             });
-       
+        $('#save').click(function () {
+            alert($('.note-codable').val());
+            $.post("../Dev/EmailTemplateSave",
+                {
+                    "Htmlcode": $('.note-codable').val(),
+                    "Name": $('#obj_name').val(),
+                    "Description": $('#obj_desc').val()
+
+                }, function (result) {
+                });
+
+
+        });
         //$('.note-editable').droppable({ accept: ".draggable", drop: onDropFunc.bind(this)});
 
         //function onDropFunc(event, ui) {

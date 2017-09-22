@@ -33,10 +33,11 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(List<EbDataVisualization> dvset, string Meta, string dvRefId)
+        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId)
         {
+            EbDataVisualization dvobj = EbSerializers.Json_Deserialize<EbDataVisualization>(dvobjt);
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
-            if (dvset.Count !=0)
+            if (dvobj != null)
             {
                 if (!string.IsNullOrEmpty(dvRefId))
                 {
@@ -47,37 +48,29 @@ namespace ExpressBase.Web.Components
                     ViewBag.data = dvObject;
                 }
                 else
-                    ViewBag.data = getDVObject(dvset);
+                    ViewBag.data = getDVObject(dvobj);
             }
-            ViewBag.Meta = Meta.Replace("\\r\\n", string.Empty);
+            //ViewBag.Meta = Meta.Replace("\\r\\n", string.Empty);
             ViewBag.dvRefId = dvRefId;
             return View();
         }
         
-        private EbTableVisualization getDVObject(List<EbDataVisualization> dvset)
+        private EbDataVisualization getDVObject(EbDataVisualization dvobj)
         {
-            DataSourceColumnsResponse columnresp = null;
-            //DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dsRefid));
-            //if (columnresp == null || columnresp.Columns.Count == 0)
-            //    columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dsRefid, TenantAccountId = ViewBag.cid });
+            //DataSourceColumnsResponse columnresp = null;
+            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
+            if (columnresp == null || columnresp.Columns.Count == 0)
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dvobj.DataSourceRefId, TenantAccountId = ViewBag.cid });
 
-            EbTableVisualization ebTable = new EbTableVisualization();
-
-            //EbDataVisualization eb = new EbDataVisualization()
-            //{
-            //    DataSourceRefId = dsRefid,
-            //    Name = "<Untitled>",
-            //    IsPaged = columnresp.IsPaged.ToString().ToLower(),
-            //    Columns = new DVColumnCollection()
-            //};
-            ebTable.AfterRedisGet(this.Redis);
+            dvobj.AfterRedisGet(this.Redis);
 
             var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
             int _pos = __columns.Count+100;
 
+            dvobj.Columns = new DVColumnCollection();
             // Add Serial & Checkbox
-            ebTable.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
-            ebTable.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
+            dvobj.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
+            dvobj.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
 
 
             foreach (EbDataColumn column in __columns)
@@ -93,10 +86,10 @@ namespace ExpressBase.Web.Components
                 else if (column.Type == DbType.DateTime || column.Type == DbType.Date || column.Type == DbType.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
 
-                ebTable.Columns.Add(_col);
+                dvobj.Columns.Add(_col);
             }
 
-            return ebTable;
+            return dvobj;
         }
     }
    

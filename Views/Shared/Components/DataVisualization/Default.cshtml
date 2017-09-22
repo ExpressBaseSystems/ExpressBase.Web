@@ -1,16 +1,10 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
-@*@model ExpressBase.Web.Models.RetValObj*@
-
-@{
+﻿@{
     @using Newtonsoft.Json;
     @using ExpressBase.Common;
     @using ExpressBase.Objects;
     var dvobj = EbSerializers.Json_Serialize(ViewBag.data);
     //var dvobj = JsonConvert.SerializeObject(ViewBag.data);
-    var tableId = "dv" + ViewBag.data.DataSourceRefId;
+    var tableId = "dv" + ViewBag.data.Name;
 }
 
 <link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
@@ -22,80 +16,17 @@
         color: white;
     }
 </style>
-<script>
-    $(function () {
-        var sw = new splitWindow("parent-div", "sidediv", "contBox", "pGrid");
-    });
-</script>
-
-<div class='tablecontainer' style='background-color:rgb(260,260,260);'>
-    <ul class='nav nav-tabs' id='table_tabs'>
-        <li class='nav-item active'>
-            <a class='nav-link' href='#@(tableId + "_tab_1")' data-toggle='tab' style="padding: 6px 4px !important;"><i class='fa fa-home' aria-hidden='true'></i>&nbsp; Home</a>
-        </li>
-    </ul>
-    <div class='tab-content' id='table_tabcontent'>
-        <div id='@(tableId + "_tab_1")' class='tab-pane active'>
-
-            <div class="container-fluid my-container">
-                <div class="row">
-                    <div class="toolbar-com" id='Toolbar'>
-                        <button class="btn" id="new"><i class="fa fa-plus" aria-hidden="true"></i></button> 
-                        @if (ViewBag.data.EbDataSource.FilterDialog == null)
-                        {
-                            <button id='btnGo' class='btn btn-primary'>Run</button>
-                        }
-                    </div>
-                </div>
-                <div class="row"  id="parent-div">
-                    <div class="col-md-2 no-padd fd" id="sidediv" style="display:block">
-                        <div class="min-btn">
-                            <button class="btn-tb-com pull-right" onclick="fdBoxMin();" id = 'fd-min-btn' ><i class="fa fa-caret-left fa-lg" aria-hidden="true"></i></button>
-                        </div>
-                        @{
-                            if (ViewBag.data.EbDataSource.FilterDialog != null)
-                            {
-                                @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
-                                <button id='btnGo' class='btn btn-primary' style='float: right;margin-top: 4px;'>Run</button>
-                            }
-                        }
-                    </div>
-                    <div class="col-md-8 no-padd cont-wnd" id="contBox">
-                        <div class="sub-w" id="sub-w">
-                            <div class='sub-windows' id='sub0'>
-                                <div class='sub-windows-head' id="indi-toolbar">
-                                    <div class='pull-right' style='margin-top: 3px;'>
-                                        <button class='head-btn'><i class='fa fa-minus' aria-hidden='true'></i></button>
-                                        <button class='head-btn'><i class='fa fa-thumb-tack' aria-hidden='true'></i></button>
-                                        <button class='head-btn'><i class='fa fa-times' aria-hidden='true'></i></button>
-                                    </div>
-                                </div>
-                                @*<div id='TableControls_@(tableId + "_1")' class='well well-sm' style='margin-bottom:5px!important;'>
-                                    <label class="dvname">@ViewBag.data.Name</label>
-                                    <button id='btnGo' class='btn btn-primary' style='float: right;'>Run</button>
-                                </div>*@
-                                <div id='@(tableId+"_1container")'>
-                                    <div id='@(tableId+"_1TableColumns4Drag")' style='border:1px solid;display:none;height:100%;min-height: 400px;overflow-y: auto;'>
-                                    </div>
-                                    <div style='width:auto;' id='@(tableId+"_1divcont")'>
-                                        <div id='@(tableId+"_1ColumnsDispaly")' style='display:none;' class='colCont'></div>
-                                        <div id='@(tableId+"_1ColumnsGrouping")' style='display:none;margin-top: 1px;' class='colCont'></div>
-                                        <table id='@(tableId+"_1")' class='table table-striped table-bordered'></table>
-                                    </div>
-                                    @*<div id='@(tableId+"_1TableColumnsPPGrid")' style='display:none;height:100%;min-height: 400px;overflow-y: auto;'></div>*@
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                    @*<div class="col-md-2 pg no-padd pull-right" id="pGrid">
-                        <div class="min-btn">
-                            <button class="btn-tb-com" onclick="pgBoxMin();" id='pg-min'><i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></button>
-                        </div>
-                    </div>*@
-                </div>
+@{ 
+    if (ViewBag.data.EbDataSource.FilterDialog != null)
+    {
+            <div class="min-btn">
+                <button class="btn-tb-com pull-right" onclick="fdBoxMin();" id='fd-min-btn'><i class="fa fa-caret-left fa-lg" aria-hidden="true"></i></button>
             </div>
-
+            @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
+                               
+    }
+}
+<button id='btnGo' class='btn btn-primary' style='float: right;margin-top: 4px;'>Run</button>
 
 
             @*<div id='graphcontainer_tab@(tableId+"_1")'>
@@ -138,9 +69,9 @@
                     </div>
                     <canvas id='myChart@(tableId+"_1")' width='auto' height='auto'></canvas>
                 </div>*@
-        </div>
+        @*</div>
     </div>
-</div>
+</div>*@
 
 @*@section EbHead {
         <script>
@@ -150,14 +81,14 @@
 <script>
     @Html.Raw(ViewBag.HtmlHead)
     var sett = @Html.Raw(dvobj);
-    var meta = @Html.Raw(ViewBag.meta);
+    @*var meta = @Html.Raw(ViewBag.meta);*@
     var ebdtable = new EbDataTable({
         ds_id: '@ViewBag.data.DataSourceRefId',
         ss_url: '@ViewBag.ServiceUrl',
-        tid: '@(tableId+"_1")',
+        tid: '@(tableId)',
         login:'@ViewBag.wc',
         settings:sett,
-        meta: meta,
+        //meta: meta,
         dvRefId:'@ViewBag.dvRefId'
         //fnKeyUpCallback:
     });

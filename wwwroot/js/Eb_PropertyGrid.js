@@ -2,15 +2,13 @@
     this.$wraper = $("#" + id);
     this.wraperId = id;
     this.$controlsDD = $(".controls-dd-cont select");
-    this.CEctrlsContId = this.wraperId + "_CEctrlsCont";
     this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
-    this.pgCXE_Cont_Slctr = "#" + this.wraperId + " .pgCXEditor-Cont";
     this.objects = [];
-    this.PropsObj = null;
+    this.PropsObj = {};
+    this.CXVE = {};
     this.$hiddenProps = {};
     this.IsSortByGroup = true;
     this.PropertyChanged = function (obj) { };
-    this.OnCXE_OK = function (obj) { };
     this.DD_onChange = function (e) { };
 
     this.getvaluesFromPG = function () {
@@ -227,241 +225,11 @@
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', obj.Name);
     };
 
-    this.colTileFocusFn = function (e) {
-        var $e = $(e.target);
-        var id = $e.attr("id");
-        var obj = null;
-        if (this.CurProp === "Controls")
-            obj = this.PropsObj.Controls.GetByName(id);
-        else
-            obj = this.PropsObj[this.CurProp].filter(function (obj) { return obj.EbSid == e.target.getAttribute("id"); })[0];
-        this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
-    };
-
     this.removeFromDD = function (name) {
         if ($("#SelOpt" + name + this.wraperId)) {
             $("#SelOpt" + name + this.wraperId).remove();
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
         }
-    };
-
-    this.refreshDD = function (e) {
-        e.stopPropagation();
-        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
-        var ObjType = $selectedOpt.attr("obj-type");
-        this.OSElist[ObjType] = null;
-        this.getOSElist.bind(this)();
-    };
-
-    this.initCE = function () {
-        var CEbody = '<div class="CE-body">'
-            + '<table class="table table-bordered editTbl">'
-            + '<tbody>'
-            + '<tr>'
-            + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head" >' + (this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].alias || this.CurProp) + ' </div>'
-            + '<div id="' + this.CEctrlsContId + '" class="CEctrlsCont"></div>'
-            + '</td>'
-            + '<td style="padding: 0px;"><div id="' + this.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>'
-            + '</tr>'
-            + '</tbody>'
-            + '</table>'
-            + '</div>';
-        var DD_html = '<div class="sub-controls-DD-cont pull-left">'
-            + '<select class="selectpicker"> </select>'
-            + '<button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
-            + '</div>';
-
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Collection Editor");
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
-        this.CE_PGObj = new Eb_PropertyGrid(this.wraperId + "_InnerPG");
-        this.setColTiles();
-        new dragula([document.getElementById(this.CEctrlsContId)]);
-    };
-
-    this.initJE = function () {
-        var JEbody = '<textarea id="JE_txtEdtr' + this.wraperId + '" rows="12" cols="40" ></textarea>'
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Javascript Editor");
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
-        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
-        window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.wraperId), {
-            mode: "javascript",
-            lineNumbers: true,
-            lineWrapping: true,
-            extraKeys: { "Ctrl-Space": "autocomplete" },
-            foldGutter: {
-                rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
-            },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-        this.setColTiles();
-    };
-
-    this.initOSE = function () {
-        var OSEbody = '<div class="OSE-body">'
-            + '<table class="table table-bordered editTbl">'
-            + '<tbody>'
-            + '<tr>'
-            + '<td style="padding: 0px;">'
-            + '<div class="OSE-DD-cont" > '
-            + '<select class="selectpicker">'
-            + '</select>'
-            + '</div>'
-            + '<div class="OSEctrlsCont"> </div>'
-            + '</td>'
-            + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head"> Versions </div>'
-            + '<div class="OSE-verTile-Cont"> </div>'
-            + '</td> '
-            + '</tr>'
-            + '</tbody>'
-            + '</table>'
-            + '</div>';
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Object Selector");
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
-        var options = "";
-        var ObjTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
-        if (ObjTypes !== null)
-            for (var i = 0; i < ObjTypes.length; i++) { options += '<option>' + ObjTypes[i] + '</option>' }
-        else
-            console.error("meta.options null for " + this.CurProp + " Check C# Decoration");
-        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
-        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
-        var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
-        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        if (CurRefId) {
-            var ObjType = CurRefId.split("-")[2];
-            var ObjName = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker [obj-type=" + ObjType + "]").text();
-            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont a:contains(" + ObjName + ")").click();
-        }
-        else
-            this.getOSElist.bind(this)();
-    };
-    ////////////////////////////////////////////////////
-    this.getOSElist = function () {
-        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
-        $CXbtn.attr("objtype-name", $selectedOpt.text());///
-        var ObjType = $selectedOpt.attr("obj-type");
-
-        if (!this.OSElist[ObjType]) {
-            $.LoadingOverlay("show");
-            $.ajax({
-                url: "../DV/FetchAllDataVisualizations",
-                type: "POST",
-                data: { type: $selectedOpt.text() },
-                success: this.biuldObjList
-            });
-        }
-        else
-            this.biuldObjList(this.OSElist[ObjType]);
-    }
-
-    this.biuldObjList = function (data) {
-        $.LoadingOverlay("hide");
-        var ObjType = null;
-        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
-        $.each(data, function (name, val) {
-            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" name ="' + name + '">' + name
-                + '<i class="fa fa-chevron-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
-            ObjType = val[0].refId.split("-")[2];
-        }.bind(this));
-        this.OSElist[ObjType] = data;
-        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").off("click").on("click", this.OTileClick.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("click").on("click", ".colTile", this.VTileClick.bind(this, data));
-        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
-            var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
-            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
-        }
-        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
-        var objName = $CXbtn.attr("obj-name") || this.getOBjNameByval(data, CurRefId);
-        if (CurRefId) {
-            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
-                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").focus()[0].click();
-            else
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
-        }
-
-    }.bind(this);
-
-    this.getOBjNameByval = function (data, refId) {
-        var ObjName = null;
-        var f = false;
-        for (objName in data) {
-            $.each(data[objName], function (i, obj) {
-                if (obj.refId === refId) {
-                    ObjName = obj.name;
-                    f = true;
-                    this.OSECurObj = obj;
-                    return ObjName;
-                }
-            }.bind(this));
-            if (f)
-                break;
-        }
-        return ObjName;
-    };
-
-    this.OTileClick = function (data) {
-        var ObjName = event.target.getAttribute("name");
-        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".fa-chevron-right").css("visibility", "hidden");
-        $(event.target).attr("is-selected", true).find(".fa-chevron-right").css("visibility", "visible");
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for", ObjName);
-        $.each(data[ObjName], function (i, obj) {
-            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
-        }.bind(this));
-        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        if ($CXbtn.attr("obj-name")) {
-            if ($CXbtn.attr("obj-name") === $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for"))///////////////////////////////////
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile:contains(" + $CXbtn.attr("ver-name") + ")")[0].click();
-        }
-        else {
-            if (this.OSECurObj)
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont [ver-no=" + this.OSECurObj.versionNumber + "]")[0].click();
-        }
-    };
-    this.VTileClick = function () {
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
-        var refId = $(event.target).attr("data-refid");
-        this.PropsObj[this.CurProp] = refId;
-        $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val(refId);
-        $(event.target).attr("is-selected", true).find(".fa-check").show();
-        var ObjName = $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for");
-        $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("obj-name", ObjName);//
-        $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("ver-name", $(event.target).text());//
-    };
-
-    this.pgCXE_BtnClicked = function (e) {
-        $("#" + this.wraperId + " .pgCollEditor-bg").show();
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
-        this.CurProp = e.target.getAttribute("for");
-        this.CurEditor = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].editor;
-        var editor = e.target.getAttribute("editor");
-        if (editor === "7") {
-            this.initCE();
-        }
-        if (editor === "8") {
-            this.initJE();
-        }
-        if (editor === "10")
-            this.initOSE();
-
-        $("#" + this.wraperId + " .CE-body").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
-        $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
-    };
-
-    this.CXE_OKclicked = function () {
-        this.OnInputchangedFn.bind(this)();
-        this.OnCXE_OK(this.PropsObj[this.CurProp]);
-    };
-
-    this.ctrlsDD_onchange = function (e) {
-        $("#" + $(e.target).find("option:selected").attr("data-name")).focus();
-        this.DD_onChange(e);
     };
 
     this.init = function () {
@@ -471,79 +239,21 @@
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
 
-        var CE_HTML = '<div class="pgCollEditor-bg">'
-            + '<div class="pgCXEditor-Cont">'
+        this.CXVE = new Eb_pgCXVE(this);
 
-            + '<div class="modal-header">'
-            + '<button type="button" class="close" onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();" >&times;</button>'
-            + '<h4 class="modal-title"> </h4>'
-            + '</div>'
-
-            + '<div class="modal-body"> </div>'
-
-            + '<div class="modal-footer">'
-            + '<div class="modal-footer-body">'
-            + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>'
-            + '</div>'
-
-            + '</div>'
-            + '</div>';
-        $(this.$wraper).append(CE_HTML);
-        $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.CE_AddFn.bind(this));
-        $("#" + this.CEctrlsContId).on("click", ".close", this.colTileCloseFn.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", "[name=sort]", this.SortFn.bind(this));
         $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
+    };
+
+    this.ctrlsDD_onchange = function (e) {
+        $("#" + $(e.target).find("option:selected").attr("data-name")).focus();
+        this.DD_onChange(e);
     };
 
     this.SortFn = function (e) {
         this.IsSortByGroup = !this.IsSortByGroup;
         this.InitPG();
         $("#" + this.wraperId + " [name=sort]").toggle();
-    };
-
-    this.CE_AddFn = function () {
-        var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
-        var EbSid = null;
-        if (this.CurProp === "Controls") {
-            EbSid = this.PropsObj.EbSid + "_" + SelType + this.PropsObj.Controls.$values.length;
-            this.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-        }
-        else {
-            EbSid = this.PropsObj.EbSid + "_" + SelType + this.PropsObj[this.CurProp].length;
-            this.PropsObj[this.CurProp].push(new EbObjects[SelType](EbSid));
-        }
-        this.setColTiles();
-        $("#" + EbSid).click();
-    };
-
-    this.colTileCloseFn = function (e) {
-        $(e.target).parent().remove();
-    };
-
-    this.setColTiles = function () {
-        if (this.CurProp === "Controls")
-            var values = this.PropsObj.Controls.$values;
-        else
-            var values = this.PropsObj[this.CurProp];
-        var options = "";
-        var SubTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
-        $("#" + this.CEctrlsContId).empty();
-        if (SubTypes) {
-            $.each(values, function (i, control) {
-                var type = control.$type.split(",")[0].split(".")[2];
-                var $tile = $('<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
-                    + control.Name
-                    + '<button type="button" class="close">&times;</button>'
-                    + '</div>');
-                $("#" + this.CEctrlsContId).append($tile);
-                this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
-
-            }.bind(this));
-
-            for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
-        }
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
     };
 
     this.InitPG = function () {
@@ -576,7 +286,7 @@
         this.addToDD();
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
-        $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.pgCXE_BtnClicked.bind(this));
+        $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", function (e) {
             $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(e.target.value);
             $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
@@ -607,5 +317,6 @@
         console.log(JSON.stringify(metas));
         this.InitPG();
     };
+
     this.init();
 };

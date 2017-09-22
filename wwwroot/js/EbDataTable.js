@@ -159,6 +159,8 @@ var EbDataTable = function (settings) {
         //    return false;
         //}
         //this.addSerialAndCheckboxColumns();
+
+        $("#sub_window_" + this.tableId).append("<div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId+"' class='table table-striped table-bordered'></table></div>");
         this.Init();
 
     };
@@ -871,7 +873,7 @@ var EbDataTable = function (settings) {
     this.GenerateButtons = function () {
        // $("#Toolbar_" + this.tableId).append("<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'><i class='fa fa-chevron-down' aria-hidden='true'></i></div>");
         //$("#TableControls_" + this.tableId).prepend("<div style='display: inline;float: right;'>" +
-        $("#indi-toolbar").prepend("<label class='dvname' style= 'color: white;'>" + this.dvName+"</label>"+
+        $("#sub_windows_head_" + this.tableId).prepend("<label class='dvname' style= 'color: white;'>" + this.dvName+"</label>"+
             "<div style= 'display: inline;' > " +
             //"<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
             "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' style='display: none;' data-table='@tableId'>&sum;</button>" +

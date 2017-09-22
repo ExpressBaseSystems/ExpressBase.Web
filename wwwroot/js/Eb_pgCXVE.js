@@ -187,6 +187,9 @@
     };
 
     this.OTileClick = function (data) {
+        var $e = $(event.target);
+        $("#" + this.PGobj.wraperId + " .OSE-body .colTile").css("background-color", "#eee");
+        $e.css("background-color", "#c2c8ce");
         var ObjName = event.target.getAttribute("name");
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".fa-chevron-right").css("visibility", "hidden");
         $(event.target).attr("is-selected", true).find(".fa-chevron-right").css("visibility", "visible");
@@ -259,6 +262,8 @@
         var $e = $(e.target);
         var id = $e.attr("id");
         var obj = null;
+        $("#" + this.PGobj.wraperId + " .CE-body .colTile").css("background-color", "#eee");
+        $e.css("background-color", "#c2c8ce");
         if (this.CurProp === "Controls")
             obj = this.PropsObj.Controls.GetByName(id);
         else

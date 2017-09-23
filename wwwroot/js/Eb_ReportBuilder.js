@@ -45,8 +45,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         EbImgCounter: 0,
         EbDateTimeCounter: 0,
         EbPageXYCounter:0,
-        EbPageNoCounter: 0,
-        EbDateTimeCounter: 0
+        EbPageNoCounter: 0       
     };
 
     this.ReportSections = {

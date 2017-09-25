@@ -46,30 +46,32 @@
             </div>
             <div class="col-md-10 pull-right">
                 <div id="summernote">
-
+                    @Html.Raw(ViewBag.html)
                 </div>
             </div>
 
         </div>
 }
     <script>
-        $(document).ready(function () {
-          
-            var w = $('.col-md-10').css("width");
-        //$('#summernote').summernote();
+    $(document).ready(function () {
+
+        var w = $('.col-md-10').css("width");
+       // $('#summernote').summernote();
+
         $('#summernote').summernote({
             width: w,
             height: 300,                 // set editor height
             minHeight: null,             // set minimum height of editor
             maxHeight: null,             // set maximum height of editor
             focus: true                  // set focus to editable area after initializing summernote
-            });
+        });
+       
         $('#save').click(function () {
-            alert($('.note-codable').val());
+           
             $.post("../Dev/EmailTemplateSave",
                 {
-                    "Htmlcode": $('.note-codable').val(),
-                    "Name": $('#obj_name').val(),
+                    "Htmlcode": $('#summernote').summernote('code'),
+                    "EName": $('#obj_name').val(),
                     "Description": $('#obj_desc').val()
 
                 }, function (result) {
@@ -103,7 +105,7 @@
         //        cursor: "move"
         //    });
         //};
-       
+
         });
 
 

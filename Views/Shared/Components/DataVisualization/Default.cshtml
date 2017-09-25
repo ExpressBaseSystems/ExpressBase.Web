@@ -12,21 +12,22 @@
 <style>
     .tools {
         border: none;
-        background-color: #489097;
-        color: white;
+        background: none;
+        color: #333;
     }
 </style>
 @{ 
     if (ViewBag.data.EbDataSource.FilterDialog != null)
     {
-            <div class="min-btn">
+            @*<div class="min-btn">
                 <button class="btn-tb-com pull-right" onclick="fdBoxMin();" id='fd-min-btn'><i class="fa fa-caret-left fa-lg" aria-hidden="true"></i></button>
-            </div>
+            </div>*@
+            <button class='head-btn' style="float: right;"><i class='fa fa-times' aria-hidden='true'></i></button>
             @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
                                
     }
 }
-<button id='btnGo' class='btn btn-primary' style='float: right;margin-top: 4px;'>Run</button>
+@*<button id='btnGo' class='btn btn-primary' style='float: right;margin-top: 4px;'>Run</button>*@
 
 
             @*<div id='graphcontainer_tab@(tableId+"_1")'>

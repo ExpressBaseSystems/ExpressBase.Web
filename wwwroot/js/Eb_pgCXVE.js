@@ -14,14 +14,14 @@
 
     this.CXE_OKclicked = function () {
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
-        this.OnCXE_OK(this.PGobj.PropsObj[this.CurProp]);
+        this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
     };
 
     this.pgCXE_BtnClicked = function (e) {
         $("#" + this.PGobj.wraperId + " .pgCollEditor-bg").show();
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
-        this.CurProp = e.target.getAttribute("for");
-        this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.CurProp.toLowerCase())].editor;
+        this.PGobj.CurProp = e.target.getAttribute("for");
+        this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
         var editor = e.target.getAttribute("editor");
         if (editor === "7") {
             this.initCE();
@@ -49,7 +49,7 @@
             + '<tbody>'
             + '<tr>'
             + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head" >' + (this.PGobj.Metas[this.PGobj.propNames.indexOf(this.CurProp.toLowerCase())].alias || this.CurProp) + ' </div>'
+            + '<div class="CE-controls-head" >' + (this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp) + ' </div>'
             + '<div id="' + this.CEctrlsContId + '" class="CEctrlsCont"></div>'
             + '</td>'
             + '<td style="padding: 0px;"><div id="' + this.PGobj.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>'
@@ -110,15 +110,15 @@
         $(this.pgCXE_Cont_Slctr + " .modal-title").text("Object Selector");
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
         var options = "";
-        var ObjTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.CurProp.toLowerCase())].options;
+        var ObjTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].options;
         if (ObjTypes !== null)
             for (var i = 0; i < ObjTypes.length; i++) { options += '<option obj-type="' + EbObjectTypes[ObjTypes[i]] + '">' + ObjTypes[i] + '</option>' }
         else
-            console.error("meta.options null for " + this.CurProp + " Check C# Decoration");
+            console.error("meta.options null for " + this.PGobj.CurProp + " Check C# Decoration");
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
-        var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
-        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val();
+        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgCX-Editor-Btn");
         if (CurRefId) {
             var ObjType = CurRefId.split("-")[2];
             var ObjName = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker [obj-type=" + ObjType + "]").text();
@@ -135,7 +135,7 @@
     };
 
     this.getOSElist = function () {
-        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgCX-Editor-Btn");
         var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         this.curObj.objType = $selectedOpt.text();
         $CXbtn.attr("objtype-name", $selectedOpt.text());///
@@ -171,8 +171,8 @@
             var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
-        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
+        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgCX-Editor-Btn");
+        var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val();
         var objName = $CXbtn.attr("obj-name") || this.getOBjNameByval(data, CurRefId);
         if (CurRefId) {
             if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
@@ -214,8 +214,8 @@
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
                 + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
         }.bind(this));
-        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        if (this.PGobj.PropsObj[this.CurProp] && $e.attr("name") === this.OSECurVobj.name) {
+        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgCX-Editor-Btn");
+        if (this.PGobj.PropsObj[this.PGobj.CurProp] && $e.attr("name") === this.OSECurVobj.name) {
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont [ver-no=" + this.OSECurVobj.versionNumber + "]")[0].click();
         }
     };
@@ -223,12 +223,12 @@
         var $e = $(event.target);
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
         var refId = $e.attr("data-refid");
-        this.PGobj.PropsObj[this.CurProp] = refId;
-        $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val(refId);
+        this.PGobj.PropsObj[this.PGobj.CurProp] = refId;
+        $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(refId);
         $(event.target).attr("is-selected", true).find(".fa-check").show();
         var ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
-        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("obj-name", ObjName);//
-        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("ver-name", $e.text());//
+        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);//
+        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("ver-name", $e.text());//
         this.OSECurVobj = this.OSE_curTypeObj[ObjName][$e.index()];
         this.curObj.objName = ObjName;
         this.curObj.objVer = $e.text();
@@ -243,18 +243,21 @@
     };
 
     this.setColTiles = function () {
-        if (this.CurProp === "Controls")
+        if (this.PGobj.CurProp === "Controls")
             var values = this.PGobj.PropsObj.Controls.$values;
         else
-            var values = this.PGobj.PropsObj[this.CurProp];
+            var values = this.PGobj.PropsObj[this.PGobj.CurProp];
         var options = "";
-        var SubTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.CurProp.toLowerCase())].options;
+        var SubTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].options;
         $("#" + this.CEctrlsContId).empty();
         if (SubTypes) {
             $.each(values, function (i, control) {
                 var type = control.$type.split(",")[0].split(".")[2];
+                var label = control.Name;
+                if (!control.Name)
+                    label = control.EbSid;
                 var $tile = $('<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
-                    + control.Name
+                    + label
                     + '<button type="button" class="close">&times;</button>'
                     + '</div>');
                 $("#" + this.CEctrlsContId).append($tile);
@@ -278,23 +281,23 @@
         var obj = null;
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").css("background-color", "#eee");
         $e.css("background-color", "#c2c8ce");
-        if (this.CurProp === "Controls")
+        if (this.PGobj.CurProp === "Controls")
             obj = this.PropsObj.Controls.GetByName(id);
         else
-            obj = this.PGobj.PropsObj[this.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
+            obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
         this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
     };
 
     this.CE_AddFn = function () {
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
         var EbSid = null;
-        if (this.CurProp === "Controls") {
+        if (this.PGobj.CurProp === "Controls") {
             EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + this.PGobj.PropsObj.Controls.$values.length;
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         }
         else {
-            EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + this.PGobj.PropsObj[this.CurProp].length;
-            this.PGobj.PropsObj[this.CurProp].push(new EbObjects[SelType](EbSid));
+            EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + this.PGobj.PropsObj[this.PGobj.CurProp].length;
+            this.PGobj.PropsObj[this.PGobj.CurProp].push(new EbObjects[SelType](EbSid));
         }
         this.setColTiles();
         $("#" + EbSid).click();

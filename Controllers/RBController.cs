@@ -23,9 +23,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult ReportBuilder()
         {
-            var typeArray = typeof(EbReportField).GetTypeInfo().Assembly.GetTypes();
+            var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
 
-            var _jsResult = CSharpToJs.GenerateJs<EbReportField>(BuilderType.Report, typeArray);
+            var _jsResult = CSharpToJs.GenerateJs<EbReportObject>(BuilderType.Report, typeArray);
 
      
             ViewBag.Meta = _jsResult.Meta;

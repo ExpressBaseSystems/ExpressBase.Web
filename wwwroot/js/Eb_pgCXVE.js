@@ -26,10 +26,16 @@
         if (editor === "7") {
             this.initCE();
         }
-        if (editor === "8") {
+        else if (editor === "8") {
+            this.initCE();
+        }
+        else if (editor === "9") {
+            this.initCE();
+        }
+        else if (editor === "10") {
             this.initJE();
         }
-        if (editor === "10")
+        else if (editor === "12")
             this.initOSE();
 
         $("#" + this.PGobj.wraperId + " .CE-body").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
@@ -60,7 +66,7 @@
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
         this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
-        this.setColTiles();///a
+        this.setColTiles();
         new dragula([document.getElementById(this.CEctrlsContId)]);
     };
 

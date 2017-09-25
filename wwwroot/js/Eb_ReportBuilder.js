@@ -70,8 +70,9 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         pgfooter: 'Pf',
         rptfooter: 'Rf'
     };
-
     this.pg = new Eb_PropertyGrid("propGrid");
+    var colSelect = new EbObjects["EbReportColSelect"]("DataSource");
+    this.pg.setObject(colSelect, AllMetas["EbReportColSelect"]);
 
     this.RefreshControl = function (obj) {         
         var NewHtml = obj.Html();
@@ -94,7 +95,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.pg.PropertyChanged = function (obj) {
         this.RefreshControl(obj);
     }.bind(this);
-
+   
     this.ruler = function () {
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": this.width });
@@ -309,8 +310,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.getOuterHtml = function (obj) {
-        var html = obj.outerHTML();
-        console.log(html);
+        var html = obj.outerHTML();        
         var calcHgt = html.substring(html.lastIndexOf("height:") + 8).split(";")[0];       
         return calcHgt;
     };
@@ -547,10 +547,10 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.init = function () {
 
         $('#PageContainer,.ruler,.rulerleft').empty();
-        this.ruler();
+        this.ruler("px");
         this.pgC = this.createPagecontainer();
         this.createPage(this.pgC);
-        this.DragDrop_Items();       
+        this.DragDrop_Items();        
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.Commitbtnid).on('click', this.Commit.bind(this));      
     };

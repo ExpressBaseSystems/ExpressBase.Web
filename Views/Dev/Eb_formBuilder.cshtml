@@ -56,6 +56,7 @@
 </div>
 
 <script>
+    @Html.Raw(_toolBox.EbObjectTypes);
     @Html.Raw(_toolBox.AllControlls);
     @Html.Raw(_toolBox.AllMetas);
     @Html.Raw(_toolBox.JsonToJsObjectFuncs);
@@ -75,7 +76,7 @@
         formBuilderObj.InitEditModeCtrls(editModeObj);
     }
     else
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);            
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
 </script>
 
 

@@ -3,9 +3,17 @@
     this.CE_PGObj = {};
     this.pgCXE_Cont_Slctr = "#" + this.PGobj.wraperId + " .pgCXEditor-Cont";
     this.CEctrlsContId = this.PGobj.wraperId + "_CEctrlsCont";
+    this.OnCXE_OK = function (obj) { };
+    this.OSE_curTypeObj = null;
+
+    this.curObj = {
+        objType: null,
+        objName: null,
+        objVer: null,
+    };
 
     this.CXE_OKclicked = function () {
-        this.OnInputchangedFn.bind(this)();
+        this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.CurProp]);
     };
 
@@ -25,6 +33,7 @@
             this.initOSE();
 
         $("#" + this.PGobj.wraperId + " .CE-body").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn);
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
     };
 
@@ -55,6 +64,178 @@
         new dragula([document.getElementById(this.CEctrlsContId)]);
     };
 
+    this.initJE = function () {
+        var JEbody = '<textarea id="JE_txtEdtr' + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Javascript Editor");
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
+        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
+        window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.PGobj.wraperId), {
+            mode: "javascript",
+            lineNumbers: true,
+            lineWrapping: true,
+            extraKeys: { "Ctrl-Space": "autocomplete" },
+            foldGutter: {
+                rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
+            },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+    };
+
+    this.initOSE = function () {
+        var OSEbody = '<div class="OSE-body">'
+            + '<table class="table table-bordered editTbl">'
+            + '<tbody>'
+            + '<tr>'
+            + '<td style="padding: 0px;">'
+            + '<div class="OSE-DD-cont" > '
+            + '<select class="selectpicker">'
+            + '</select>'
+            + '</div>'
+            + '<div class="OSEctrlsCont"> </div>'
+            + '</td>'
+            + '<td style="padding: 0px;">'
+            + '<div class="CE-controls-head"> Versions </div>'
+            + '<div class="OSE-verTile-Cont"> </div>'
+            + '</td> '
+            + '</tr>'
+            + '</tbody>'
+            + '</table>'
+            + '</div>';
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Object Selector");
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
+        var options = "";
+        var ObjTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.CurProp.toLowerCase())].options;
+        if (ObjTypes !== null)
+            for (var i = 0; i < ObjTypes.length; i++) { options += '<option obj-type="' + EbObjectTypes[ObjTypes[i]] + '">' + ObjTypes[i] + '</option>' }
+        else
+            console.error("meta.options null for " + this.CurProp + " Check C# Decoration");
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
+        var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
+        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        if (CurRefId) {
+            var ObjType = CurRefId.split("-")[2];
+            var ObjName = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker [obj-type=" + ObjType + "]").text();
+
+            var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+
+            if (ObjName === $selectedOpt.text())
+                this.getOSElist();
+            else
+                $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont a:contains(" + ObjName + ")").click();
+        }
+        else
+            this.getOSElist();
+    };
+
+    this.getOSElist = function () {
+        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+        this.curObj.objType = $selectedOpt.text();
+        $CXbtn.attr("objtype-name", $selectedOpt.text());///
+        var ObjType = $selectedOpt.attr("obj-type");
+
+        if (!this.PGobj.OSElist[ObjType]) {
+            $.LoadingOverlay("show");
+            $.ajax({
+                url: "../DV/FetchAllDataVisualizations",
+                type: "POST",
+                data: { type: $selectedOpt.text() },
+                success: this.biuldObjList
+            });
+        }
+        else
+            this.biuldObjList(this.PGobj.OSElist[ObjType]);
+    }.bind(this);
+
+    this.biuldObjList = function (data) {
+        this.OSE_curTypeObj = data;
+        $.LoadingOverlay("hide");
+        var ObjType = null;
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
+        $.each(data, function (name, val) {
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" name ="' + name + '">' + name
+                + '<i class="fa fa-chevron-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
+            ObjType = val[0].refId.split("-")[2];
+        }.bind(this));
+        this.PGobj.OSElist[ObjType] = data;
+        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").off("click").on("click", this.OTileClick.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("click").on("click", ".colTile", this.VTileClick.bind(this, data));
+        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
+            var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
+            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
+        }
+        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
+        var objName = $CXbtn.attr("obj-name") || this.getOBjNameByval(data, CurRefId);
+        if (CurRefId) {
+            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
+                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").focus()[0].click();
+            else
+                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
+        }
+
+    }.bind(this);
+
+    this.getOBjNameByval = function (data, refId) {
+        var ObjName = null;
+        var f = false;
+        for (objName in data) {
+            $.each(data[objName], function (i, obj) {
+                if (obj.refId === refId) {
+                    ObjName = obj.name;
+                    f = true;
+                    this.OSECurVobj = obj;
+                    return ObjName;
+                }
+            }.bind(this));
+            if (f)
+                break;
+        }
+        return ObjName;
+    };
+
+    this.OTileClick = function (data) {
+        var $e = $(event.target);
+        $("#" + this.PGobj.wraperId + " .OSE-body .colTile").css("background-color", "#eee");
+        $e.css("background-color", "#c2c8ce");
+        var ObjName = $e.attr("name");
+        this.curObj.objName = ObjName;
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".fa-chevron-right").css("visibility", "hidden");
+        $e.attr("is-selected", true).find(".fa-chevron-right").css("visibility", "visible");
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
+        $.each(data[ObjName], function (i, obj) {
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
+                + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
+        }.bind(this));
+        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
+        if (this.PGobj.PropsObj[this.CurProp] && $e.attr("name") === this.OSECurVobj.name) {
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont [ver-no=" + this.OSECurVobj.versionNumber + "]")[0].click();
+        }
+    };
+    this.VTileClick = function () {
+        var $e = $(event.target);
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
+        var refId = $e.attr("data-refid");
+        this.PGobj.PropsObj[this.CurProp] = refId;
+        $("#" + this.PGobj.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val(refId);
+        $(event.target).attr("is-selected", true).find(".fa-check").show();
+        var ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
+        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("obj-name", ObjName);//
+        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("ver-name", $e.text());//
+        this.OSECurVobj = this.OSE_curTypeObj[ObjName][$e.index()];
+        this.curObj.objName = ObjName;
+        this.curObj.objVer = $e.text();
+    };
+
+    this.refreshDD = function (e) {
+        e.stopPropagation();
+        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
+        var ObjType = $selectedOpt.attr("obj-type");
+        this.PGobj.OSElist[ObjType] = null;
+        this.getOSElist();
+    };
+
     this.setColTiles = function () {
         if (this.CurProp === "Controls")
             var values = this.PGobj.PropsObj.Controls.$values;
@@ -81,7 +262,6 @@
     };
 
     this.colTileCloseFn = function (e) {
-        alert();
         e.stopPropagation();
         $(e.target).parent().remove();
     };
@@ -90,6 +270,8 @@
         var $e = $(e.target);
         var id = $e.attr("id");
         var obj = null;
+        $("#" + this.PGobj.wraperId + " .CE-body .colTile").css("background-color", "#eee");
+        $e.css("background-color", "#c2c8ce");
         if (this.CurProp === "Controls")
             obj = this.PropsObj.Controls.GetByName(id);
         else
@@ -122,7 +304,6 @@
             + '</div>'
 
             + '<div class="modal-body"> </div>'
-
             + '<div class="modal-footer">'
             + '<div class="modal-footer-body">'
             + '</div>'
@@ -132,8 +313,6 @@
             + '</div>'
             + '</div>';
         $(this.PGobj.$wraper).append(CXVE_html);
-
-        $("#" + this.CEctrlsContId +" .colTile").on("click", ".close", this.colTileCloseFn);////////////////////
         $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.CE_AddFn.bind(this));
     }
     this.Init();

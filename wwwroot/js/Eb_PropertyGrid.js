@@ -9,7 +9,6 @@
     this.$hiddenProps = {};
     this.IsSortByGroup = true;
     this.PropertyChanged = function (obj) { };
-    this.OnCXE_OK = function (obj) { };
     this.DD_onChange = function (e) { };
 
     this.getvaluesFromPG = function () {
@@ -233,174 +232,6 @@
         }
     };
 
-    this.refreshDD = function (e) {
-        e.stopPropagation();
-        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
-        var ObjType = $selectedOpt.attr("obj-type");
-        this.OSElist[ObjType] = null;
-        this.getOSElist.bind(this)();
-    };
-
-    this.initJE = function () {
-        var JEbody = '<textarea id="JE_txtEdtr' + this.wraperId + '" rows="12" cols="40" ></textarea>'
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Javascript Editor");
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
-        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
-        window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.wraperId), {
-            mode: "javascript",
-            lineNumbers: true,
-            lineWrapping: true,
-            extraKeys: { "Ctrl-Space": "autocomplete" },
-            foldGutter: {
-                rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
-            },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-        this.setColTiles();
-    };
-
-    this.initOSE = function () {
-        var OSEbody = '<div class="OSE-body">'
-            + '<table class="table table-bordered editTbl">'
-            + '<tbody>'
-            + '<tr>'
-            + '<td style="padding: 0px;">'
-            + '<div class="OSE-DD-cont" > '
-            + '<select class="selectpicker">'
-            + '</select>'
-            + '</div>'
-            + '<div class="OSEctrlsCont"> </div>'
-            + '</td>'
-            + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head"> Versions </div>'
-            + '<div class="OSE-verTile-Cont"> </div>'
-            + '</td> '
-            + '</tr>'
-            + '</tbody>'
-            + '</table>'
-            + '</div>';
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Object Selector");
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
-        var options = "";
-        var ObjTypes = this.Metas[this.propNames.indexOf(this.CurProp.toLowerCase())].options;
-        if (ObjTypes !== null)
-            for (var i = 0; i < ObjTypes.length; i++) { options += '<option>' + ObjTypes[i] + '</option>' }
-        else
-            console.error("meta.options null for " + this.CurProp + " Check C# Decoration");
-        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
-        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
-        var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
-        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        if (CurRefId) {
-            var ObjType = CurRefId.split("-")[2];
-            var ObjName = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker [obj-type=" + ObjType + "]").text();
-            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont a:contains(" + ObjName + ")").click();
-        }
-        else
-            this.getOSElist.bind(this)();
-    };
-    ////////////////////////////////////////////////////
-    this.getOSElist = function () {
-        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
-        $CXbtn.attr("objtype-name", $selectedOpt.text());///
-        var ObjType = $selectedOpt.attr("obj-type");
-
-        if (!this.OSElist[ObjType]) {
-            $.LoadingOverlay("show");
-            $.ajax({
-                url: "../DV/FetchAllDataVisualizations",
-                type: "POST",
-                data: { type: $selectedOpt.text() },
-                success: this.biuldObjList
-            });
-        }
-        else
-            this.biuldObjList(this.OSElist[ObjType]);
-    }
-
-    this.biuldObjList = function (data) {
-        $.LoadingOverlay("hide");
-        var ObjType = null;
-        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
-        $.each(data, function (name, val) {
-            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" name ="' + name + '">' + name
-                + '<i class="fa fa-chevron-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
-            ObjType = val[0].refId.split("-")[2];
-        }.bind(this));
-        this.OSElist[ObjType] = data;
-        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").off("click").on("click", this.OTileClick.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("click").on("click", ".colTile", this.VTileClick.bind(this, data));
-        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
-            var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
-            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
-        }
-        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        var CurRefId = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val();
-        var objName = $CXbtn.attr("obj-name") || this.getOBjNameByval(data, CurRefId);
-        if (CurRefId) {
-            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
-                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").focus()[0].click();
-            else
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
-        }
-
-    }.bind(this);
-
-    this.getOBjNameByval = function (data, refId) {
-        var ObjName = null;
-        var f = false;
-        for (objName in data) {
-            $.each(data[objName], function (i, obj) {
-                if (obj.refId === refId) {
-                    ObjName = obj.name;
-                    f = true;
-                    this.OSECurObj = obj;
-                    return ObjName;
-                }
-            }.bind(this));
-            if (f)
-                break;
-        }
-        return ObjName;
-    };
-
-    this.OTileClick = function (data) {
-        var ObjName = event.target.getAttribute("name");
-        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".fa-chevron-right").css("visibility", "hidden");
-        $(event.target).attr("is-selected", true).find(".fa-chevron-right").css("visibility", "visible");
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for", ObjName);
-        $.each(data[ObjName], function (i, obj) {
-            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
-        }.bind(this));
-        var $CXbtn = $("#" + this.wraperId + " [name=" + this.CurProp + "Tr] .pgCX-Editor-Btn");
-        if ($CXbtn.attr("obj-name")) {
-            if ($CXbtn.attr("obj-name") === $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for"))///////////////////////////////////
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile:contains(" + $CXbtn.attr("ver-name") + ")")[0].click();
-        }
-        else {
-            if (this.OSECurObj)
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont [ver-no=" + this.OSECurObj.versionNumber + "]")[0].click();
-        }
-    };
-    this.VTileClick = function () {
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
-        var refId = $(event.target).attr("data-refid");
-        this.PropsObj[this.CurProp] = refId;
-        $("#" + this.wraperId + " [name=" + this.CurProp + "Tr]").find("input").val(refId);
-        $(event.target).attr("is-selected", true).find(".fa-check").show();
-        var ObjName = $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").attr("for");
-        $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("obj-name", ObjName);//
-        $("#" + this.wraperId + ".pgCX-Editor-Btn,[for=" + this.CurProp + "]").attr("ver-name", $(event.target).text());//
-    };
-
-    this.ctrlsDD_onchange = function (e) {
-        $("#" + $(e.target).find("option:selected").attr("data-name")).focus();
-        this.DD_onChange(e);
-    };
-
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
@@ -412,6 +243,11 @@
 
         $("#" + this.wraperId + " .pgHead").on("click", "[name=sort]", this.SortFn.bind(this));
         $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
+    };
+
+    this.ctrlsDD_onchange = function (e) {
+        $("#" + $(e.target).find("option:selected").attr("data-name")).focus();
+        this.DD_onChange(e);
     };
 
     this.SortFn = function (e) {
@@ -481,5 +317,6 @@
         console.log(JSON.stringify(metas));
         this.InitPG();
     };
+
     this.init();
 };

@@ -72,7 +72,7 @@
     .tree li a {
         text-decoration: none;
         font-size: 15px;
-        color: rgba(0,0,0,0.5);
+        color: black;
     }
 
     .tree li button, .tree li button:active, .tree li button:focus {
@@ -179,6 +179,18 @@ margin-left:5px;
         </ul>
     </li>
 </ul>
+<ul id="special-fields" class="tool-box-items">
+    <li>
+        <a>Special Fields</a>
+        <ul>
+            <li class="styl"><div eb-type='DateTime' class='coloums draggable textval'>CurrentDateTime</div></li>
+            <li class="styl"><div eb-type='PageNo' class='coloums draggable textval'>Page No</div></li>
+            <li class="styl"><div eb-type='PageXY' class='coloums draggable textval'>Page X/Y</div></li>
+            <li class="styl"><div eb-type='UserName' class='coloums draggable textval'>Username</div></li>
+        </ul>
+    </li>
+</ul>
+
 <script type="text/javascript">
 
     $(".slectDs").select2();

@@ -23,6 +23,7 @@ using ExpressBase.Objects.ObjectContainers;
 using ExpressBase.Common.Objects.Attributes;
 using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
+
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -195,7 +196,6 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult CreateApplicationModule()
         {
-
             return View();
         }
 
@@ -258,18 +258,62 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Objlist = ObjList;
             return View();
         }
-
+        [HttpGet]
         public IActionResult Eb_EmailBuilder()
         {
-            
+            ViewBag.Header = "New Email Template";
+            ViewBag.VersionNumber = 1;
+            ViewBag.Obj_id = null;
+            ViewBag.IsNew = "true";
+            ViewBag.EditorHint = "CodeMirror.hint.sql";
+            ViewBag.EditorMode = "text/x-sql";
+            ViewBag.Icon = "fa fa-database";
+            ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
+            ViewBag.ObjectName = "*Untitled";
+            ViewBag.FilterDialogId = "null";
+            //ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
+          
         }
 
         [HttpPost]
-        public IActionResult Eb_EmailBuilder(int i)
+        public IActionResult Eb_EmailBuilder(string Htmlcode)
         {
-            var req = this.HttpContext.Request.Form;
+       
+            
+          //  return CurrSaveId.RefId;
             return View();
+        }
+
+        public string EmailTemplateSave()
+        {
+            IServiceClient client = this.ServiceClient;
+            var req = this.HttpContext.Request.Form;
+            var ds = new EbObject_Create_New_ObjectRequest();
+
+
+            ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+            ds.Name = req["Name"];
+            ds.Description = req["Description"];
+            ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+            {
+                Name = req["name"],
+                EbObjectType = EbObjectType.EmailBuilder,
+                html = req["Htmlcode"],
+
+
+            });
+
+
+            //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
+            ds.Status = ObjectLifeCycleStatus.Live;
+            ds.Token = ViewBag.token;
+            ds.TenantAccountId = ViewBag.cid;
+            ds.Relations = "";
+
+            var CurrSaveId = client.Post<EbObject_Create_New_ObjectResponse>(ds);
+
+            return CurrSaveId.RefId.ToString();
         }
     }
 }

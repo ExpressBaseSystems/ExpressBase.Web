@@ -62,7 +62,6 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         PageFooter: 'pgfooter',
         ReportFooter: 'rptfooter'
     };
-
     this.msBoxSubNotation = {
         rpthead: 'Rh',
         pghead: 'Ph',
@@ -72,6 +71,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.pg = new Eb_PropertyGrid("propGrid");
+    var colSelect = new EbObjects["EbReportColSelect"]("DataSource");
+    this.pg.setObject(colSelect, AllMetas["EbReportColSelect"]);
 
     this.RefreshControl = function (obj) {         
         var NewHtml = obj.Html();
@@ -94,7 +95,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.pg.PropertyChanged = function (obj) {
         this.RefreshControl(obj);
     }.bind(this);
-
+   
     this.ruler = function () {
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": this.width });
@@ -142,6 +143,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.createPage = function (PageContainer) {
         this.page = new EbObjects["EbReportPage"]("page");
         PageContainer.append(this.page.Html());
+        this.pg.addToDD(this.page);
         this.page.PageSize = this.type;
         this.page.Height = this.height;
         this.page.Width = this.width;
@@ -156,9 +158,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         $("#PageContainer").append($headersection);
         $("#PageContainer").append("<div class='multiSplit' style='height:" + this.height + ";'></div>");
         for (var i = 0; i < 5; i++) {
-            var obj = new EbObjects["EbMultiSplitBox"]("box" + i);
-            $(".multiSplit").append(obj.Html().replace("@data", i));
-            this.objCollection["box" + i] = obj;           
+            $(".multiSplit").append("<div class='multiSplitHbox' data_val='"+i+"' eb-type='MultiSplitBox' id='box"+i+"' style='width: 100%;'></div>");                   
         }
     };
 
@@ -231,16 +231,17 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.setFirstMsSubBoxDiv = function (boxsub, obj) {
+
         var id = this.sectionArray[boxsub].slice(1) + "subBox" + 0;
-        var MultiBoxSub = new EbObjects["EbMultiSplitBoxSub"](id);
-        $(obj).append(MultiBoxSub.Html().replace("@SubDivName", this.msBoxSubNotation[this.sectionArray[boxsub].slice(1)] + "0"));                     
-        $("#" + id).css("height", "100%")
+        $(obj).append("<div class='multiSplitHboxSub' eb-type='MultiSplitBox' id='" + id + "' style='width: 100%;height:100%'>"
+            + "<p> " + this.msBoxSubNotation[this.sectionArray[boxsub].slice(1)] + "0" + " </p></div>");
     };
 
     this.setFirstSubDiv = function (i, obj) {
         var id = obj.id + "0";
         var SubSec_obj = new EbObjects["EbSubSection"](id);
-        $(obj).append(SubSec_obj.Html());                       
+        $(obj).append(SubSec_obj.Html());
+        this.pg.addToDD(SubSec_obj);
         this.objCollection[id] = SubSec_obj;
         this.objCollection[id].SectionHeight = "100%";
         this.RefreshControl(SubSec_obj);        
@@ -276,7 +277,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             } 
             this.$sec.children('.gutter').remove();
             var SubSec_obj = new EbObjects["EbSubSection"](id);
-            this.$sec.append(SubSec_obj.Html());           
+            this.$sec.append(SubSec_obj.Html());
+            this.pg.addToDD(SubSec_obj);
             this.objCollection[id] = SubSec_obj;
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));           
             $("#" + id).droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });            
@@ -309,8 +311,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.getOuterHtml = function (obj) {
-        var html = obj.outerHTML();
-        console.log(html);
+        var html = obj.outerHTML();        
         var calcHgt = html.substring(html.lastIndexOf("height:") + 8).split(";")[0];       
         return calcHgt;
     };
@@ -326,12 +327,10 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             $('.page').children().not(".gutter").each(function (j, obj2) {
                 var hLength = $(obj2).children().not(".gutter").length;
                 if ($(obj).attr("data_val") === $(obj2).attr("data_val") && index === $(obj).attr("data_val")) {
-                    for (var k = 0; k < hLength; k++) {
-                        $(obj).removeAttr("tabindex").removeAttr("onclick");
+                    for (var k = 0; k < hLength; k++) {                       
                         var id = obj2.id + "subBox" + k;
-                        var MultiBoxSub = new EbObjects["EbMultiSplitBoxSub"](id);
-                        $(obj).append(MultiBoxSub.Html().replace("@SubDivName", msBoxSubNotationTemp[obj2.id] + k));
-                        $("#" + id).attr("tabindex", "1").attr("onclick", "$(this).focus()");
+                        $(obj).append("<div class='multiSplitHboxSub' eb-type='MultiSplitBox' id='" + id + "' style='width: 100%;'>"
+                            + "<p> " + msBoxSubNotationTemp[obj2.id] + k + " </p></div>");                                         
                         temp1.push("#" + id);                                               
                     }
                     flagsuccess = true;
@@ -436,12 +435,15 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.removeElementFn = function () {
         this.control.remove();
     };
+
     this.alignRightFn = function () {
         this.control.css("text-align", "right");
     };
+
     this.alignCenterFn = function () {
         this.control.css("text-align", "center");
     };
+
     this.alignLeftFn = function () {
         this.control.css("text-align", "left");
     };
@@ -550,7 +552,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.ruler();
         this.pgC = this.createPagecontainer();
         this.createPage(this.pgC);
-        this.DragDrop_Items();       
+        this.DragDrop_Items();        
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.Commitbtnid).on('click', this.Commit.bind(this));      
     };

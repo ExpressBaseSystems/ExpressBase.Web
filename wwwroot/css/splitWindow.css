@@ -16,7 +16,7 @@
     border: 1px solid #808080;
     display: inline-block;
     height: inherit;
-    width: inherit;
+    width: 100%;
 }
 
 #parent-div .head-btn {

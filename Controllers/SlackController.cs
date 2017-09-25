@@ -54,14 +54,38 @@ namespace ExpressBase.Web.Controllers
 
         }
 
+        
         [HttpGet]
-        public IActionResult Image2Slack()
+        public IActionResult SlackTextPost()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult SlackTextPost(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+
+            SlackPayload payload = new SlackPayload
+            {
+                Channel = req["Channel"],
+                Text = req["Text"],
+            };
+
+            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 0 });
+            return View();
+        }
+        
+
+        [HttpGet]
+        public IActionResult SlackImagePost()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Image2Slack(int i)
+        public IActionResult SlackImagePost(int i)
         {
             var req = this.HttpContext.Request.Form;
             byte[] myFileContent;
@@ -70,7 +94,7 @@ namespace ExpressBase.Web.Controllers
             SlackPayload payload = new SlackPayload
             {
                 Channel = req["Channel"],
-                Content = req["Content"],
+                Text = req["Content"],
                 SlackFile = new SlackFile
                 {
                     FileName = req["FileName"],

@@ -54,12 +54,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        //[HttpGet]
-        //public IActionResult SlackPost()
-        //{
 
-        //    return View();
-        //}
 
         [HttpGet]
         public IActionResult DownloadFile()
@@ -78,51 +73,14 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult AddSlack()
-        {
-
-            return View();
-        }
-
         
 
         
 
-        [HttpGet]
-        public IActionResult Post2Slack()
-        {
-
-            SlackPayload payload = new SlackPayload
-            {
-                Text = "Unniasdasdasdasdasdasdasdad",
-                Channel = "test",
-            };
-
-            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 0 });
-
-
-            return View();
-        }
-
-        //public Task IActionResult (string message, string channel = null, string username = null)
+        //public IActionResult xx()
         //{
-
-        //    var payload = new
-        //    {
-        //        text = message,
-        //        channel,
-        //        username,
-        //    };
-
         //    return View();
         //}
-
-
-        public IActionResult xx()
-        {
-            return View();
-        }
 
         //[HttpPost]
         //public IActionResult LoadImage(int i)

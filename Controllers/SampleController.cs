@@ -35,17 +35,16 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult ConnectionManager()
         {
-            EbSolutionConnections solutionConnections = this.ServiceClient.Post<EbSolutionConnections>(new GetConnectionsRequest());
+            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest());
             ViewBag.Connections = solutionConnections;
-            //ViewBag.FilesDB = solutionConnections.FilesDbConnection.MongoDB_url;
             return View();
         }
 
         [HttpGet]
         public IActionResult EditSMTPConnection()
         {
-            EbSolutionConnections solutionConnections = this.ServiceClient.Post<EbSolutionConnections>(new GetConnectionsRequest());
-            ViewBag.SMTP = solutionConnections.EmailConnection;
+            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest());
+            ViewBag.SMTP = solutionConnections;
             return View();
         }
 
@@ -55,12 +54,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        //[HttpGet]
-        //public IActionResult SlackPost()
-        //{
 
-        //    return View();
-        //}
 
         [HttpGet]
         public IActionResult DownloadFile()
@@ -79,71 +73,14 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult Image2Slack()
-        {
-            return View();
-        }
+        
 
-        [HttpPost]
-        public IActionResult Image2Slack(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            byte[] myFileContent;
-            myFileContent = EbFile.Bytea_FromFile("F://1.jpg");
+        
 
-            SlackPayload payload = new SlackPayload
-            {
-                Channel = req["Channel"],
-                Content = req["Content"],
-                SlackFile = new SlackFile
-                {
-                    FileName = req["FileName"],
-                    FileByte = myFileContent,
-                    FileType = req["FileType"],
-
-                }
-            };
-
-            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 1 });
-
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult Post2Slack()
-        {
-
-            SlackPayload payload = new SlackPayload
-            {
-                Text = "Unniasdasdasdasdasdasdasdad",
-                Channel = "test",
-            };
-
-            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 0 });
-
-
-            return View();
-        }
-
-        //public Task IActionResult (string message, string channel = null, string username = null)
+        //public IActionResult xx()
         //{
-
-        //    var payload = new
-        //    {
-        //        text = message,
-        //        channel,
-        //        username,
-        //    };
-
         //    return View();
         //}
-
-
-        public IActionResult xx()
-        {
-            return View();
-        }
 
         //[HttpPost]
         //public IActionResult LoadImage(int i)

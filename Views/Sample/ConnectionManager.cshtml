@@ -16,32 +16,42 @@
     <div class="container">
         <div class="col-md-4">
             <div class="page-header"><h3>Connection Manager</h3></div>
-            <div class="list-group">
-                <div class="list-group-item-heading"><div class="h4">ObjectsDB</div></div>
-                <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.DatabaseName.ToString()</div>
-                <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.Server.ToString():@ViewBag.Connections.ObjectsDbConnection.Port.ToString()</div>
-                <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.UserName.ToString()</div>
-            </div>
-            <div class="list-group">
-                <div class="list-group-item-heading"><div class="h4">DataDB</div></div>
-                <div class="list-group-item">@ViewBag.Connections.DataDbConnection.DatabaseName.ToString()</div>
-                <div class="list-group-item">@ViewBag.Connections.DataDbConnection.Server.ToString():@ViewBag.Connections.DataDbConnection.Port.ToString()</div>
-                <div class="list-group-item">@ViewBag.Connections.DataDbConnection.UserName.ToString()</div>
-            </div>
 
-            <div class="list-group">
-                <div class="input-group-btn">
-                    <div class="list-group-item-heading"><div class="h4">SMTP</div></div>
-                    <a href="/Sample/AddEmailAccount" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-plus"></span> Add
-                    </a>
-                    <a href="/Sample/EditSMTPConnection" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-pencil"></span> Edit
-                    </a>
+            @if (ViewBag.Connections.ObjectsDbConnection != null)
+            {
+                <div class="list-group">
+                    <div class="list-group-item-heading"><div class="h4">ObjectsDB</div></div>
+                    <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.DatabaseName.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.Server.ToString():@ViewBag.Connections.ObjectsDbConnection.Port.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.UserName.ToString()</div>
                 </div>
-                <div class="list-group-item">@ViewBag.Connections.EmailConnection.NickName.ToString()</div>
-                <div class="list-group-item">@ViewBag.Connections.EmailConnection.EmailAddress.ToString()</div>
-            </div>
+            }
+
+            @if (ViewBag.Connections.DataDbConnection != null)
+            {
+                <div class="list-group">
+                    <div class="list-group-item-heading"><div class="h4">ObjectsDB</div></div>
+                    <div class="list-group-item">@ViewBag.Connections.DataDbConnection.DatabaseName.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.DataDbConnection.Server.ToString():@ViewBag.Connections.ObjectsDbConnection.Port.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.DataDbConnection.UserName.ToString()</div>
+                </div>
+            }
+            @if (ViewBag.Connections.ObjectsDbConnection != null)
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">SMTP</div></div>
+                        <a href="/Sample/AddEmailAccount" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span> Add
+                        </a>
+                        <a href="/Sample/EditSMTPConnection" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                        </a>
+                    </div>
+                    <div class="list-group-item">@ViewBag.Connections.EmailConnection.NickName.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.EmailConnection.EmailAddress.ToString()</div>
+                </div>
+            }
         </div>
     </div>
 </body>

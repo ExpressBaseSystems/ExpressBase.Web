@@ -61,16 +61,24 @@
             valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
-        else if (type === 8) {    // If JS editor
+        else if (type === 8) {    //  If collection editor
+            valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
+        else if (type === 9) {    //  If collection editor
+            valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
+        else if (type === 10) {    // If JS editor
             valueHTML = '<span style="vertical-align: sub;">(JavaScript)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
-        else if (type === 9) {    // SQL editor
+        else if (type === 11) {    // SQL editor
             valueHTML = '<span style="vertical-align: sub;">(SQL)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
-        else if (type === 10) {  //  If Object Selector editor
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" style=" width: calc(100% - 26px);" />'
+        else if (type === 12) {  //  If Object Selector editor
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             // Default is textbox
         } else {
@@ -214,11 +222,13 @@
         if (!obj)
             obj = this.PropsObj;
         var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
-        if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
-            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
-            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
+        if ($(".pgCXEditor-Cont").find("select") > 0) {// need close look
+            if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
+                $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
+                $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
+            }
         }
-        if ($MainCtrlsDDCont.find("option:contains(" + obj.Name + ")").length === 0) {
+        if ($MainCtrlsDDCont.find("option:contains(" + obj.EbSid + ")").length === 0) {
             $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
             $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
         }

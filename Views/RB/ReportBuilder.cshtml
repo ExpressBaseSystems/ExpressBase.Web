@@ -9,12 +9,13 @@
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.ReportSections);
+    @Html.Raw(ViewBag.EbObjectTypes);
 </script>
 <div class="row" style="margin-top: 20px">
     <div class="reportmenu">
-        <div class="form-inline" id="options">           
+        <div class="form-inline" id="options">
             <div class="form-group">
-                <select id="pagesize">                    
+                <select id="pagesize">
                     <option value="A4">A4</option>
                     <option value="Letter">Letter</option>
                     <option value="A3">A3</option>
@@ -37,26 +38,28 @@
                 <div class="form-group">
                     <button id="createCustom" data-toggle="tooltip" data-placement="bottom" title="Align Left">Go</button>
                 </div>
-            </div>           
+            </div>
             <div class="form-group">
                 <input type="file" style="display:none" id="Rptbgimg" />
                 <button class="btn" data-toggle="tooltip" data-placement="bottom" title="Background Image" onclick="$('#Rptbgimg').click();"><i class="fa fa-picture-o" aria-hidden="true"></i></button>
             </div>
-            <div class="form-group">
-                <button class="btn" id="alg-L" data-toggle="tooltip" data-placement="bottom" title="Align Left"><i class="fa fa-align-left" aria-hidden="true"></i></button>
-            </div>
-            <div class="form-group">
-                <button class="btn" id="alg-C" data-toggle="tooltip" data-placement="bottom" title="Align Center"><i class="fa fa-align-center" aria-hidden="true"></i></button>
-            </div>
-            <div class="form-group">
-                <button class="btn" id="alg-R" data-toggle="tooltip" data-placement="bottom" title="Align Right"><i class="fa fa-align-right" aria-hidden="true"></i></button>
-            </div>
-            <div class="form-group">
-                <button class="btn" data-toggle="tooltip" data-placement="bottom" title="Align Justify"><i class="fa fa-align-justify" aria-hidden="true"></i></button>
+            <div style="display: inline-block;border-right: 1px solid #ccc;border-left: 1px solid #ccc;">
+                <div class="form-group">
+                    <button class="btn" id="alg-L" data-toggle="tooltip" data-placement="bottom" title="Align Left"><i class="fa fa-align-left" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn" id="alg-C" data-toggle="tooltip" data-placement="bottom" title="Align Center"><i class="fa fa-align-center" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn" id="alg-R" data-toggle="tooltip" data-placement="bottom" title="Align Right"><i class="fa fa-align-right" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn" data-toggle="tooltip" data-placement="bottom" title="Align Justify"><i class="fa fa-align-justify" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="form-group">
                 <button class="btn" id="delete" data-toggle="tooltip" data-placement="bottom" title="Trash"><i class="fa fa-trash" aria-hidden="true"></i></button>
-            </div>                     
+            </div>
             <div class="form-group">
                 <button class="btn dropdown-toggle" data-toggle="dropdown" id="eb-shapes"><i class="fa fa-cubes" aria-hidden="true"></i> Shapes</button>
                 <div class="dropdown-menu shapes-tank">
@@ -82,9 +85,6 @@
                 </div>
             </div>
             <div class="form-group">
-                <button class="btn qr-Br-img-btn draggable" eb-type="DateTime" data-toggle="tooltip" data-placement="bottom" title="time"><i class="fa fa-clock-o" aria-hidden="true"></i></button>
-            </div>
-            <div class="form-group">
                 <button class="btn qr-Br-img-btn draggable" eb-type="Table" id="Table" data-toggle="tooltip" data-placement="bottom" title="Table"><i class="fa fa-table" aria-hidden="true"></i></button>
             </div>
             <div class="form-group">
@@ -97,13 +97,15 @@
                 <button class="btn qr-Br-img-btn draggable" id="Qr" data-toggle="tooltip" data-placement="bottom" title="Qr Code"><i class="fa fa-qrcode" aria-hidden="true"></i></button>
             </div>
             <div class="form-group">
-                    <input type="file" id="img-upload" style="display:none">
-            </div>               
-            <div class="form-group">
-                <button class="btn" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                <input type="file" id="img-upload" style="display:none">
             </div>
-            <div class="form-group">
-                <button class="btn" id="commit" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+            <div class="pull-right" style="margin-right: 5px;">
+                <div class="form-group">
+                    <button class="btn" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-group">
+                    <button class="btn" id="commit" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -127,14 +129,23 @@
                 </div>
             </div>
             <div class="col-md-8" style="padding-right:0;margin-top:50px">
-                <div class="title text-center" style="display:none"></div>
+                <div class="title text-center" style="display:none">
+                    <div class="form-group">
+                        <select id="rulerUnit">
+                            <option value="px">pixel</option>
+                            <option value="cm">cm</option>
+                            <option value="inch">inch</option>
+                            <option value="mm">mm</option>                            
+                        </select>
+                    </div>
+                </div>
                 <div class='ruler' style="display:none"></div>
                 <div class='rulerleft' style="display:none"></div>
                 <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px">
                 </div>
             </div>
             <div class="col-md-2 PGgrid">
-                <div class="formB-box pGreportBuilder" id="propGrid" style="display:none">
+                <div class="formB-box pGreportBuilder" id="propGrid">
 
                 </div>
             </div>
@@ -144,7 +155,7 @@
 </div>
 
 <script>
-    $(document).ready(function () {             
+    $(document).ready(function () {
             var report = new RptBuilder('A4', save, commit, @ViewBag.IsNew);
 
             $("#pagesize").change(function () {

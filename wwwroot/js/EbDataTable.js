@@ -159,8 +159,64 @@ var EbDataTable = function (settings) {
         //    return false;
         //}
         //this.addSerialAndCheckboxColumns();
+        if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1)
+            $("#sub_window_" + this.tableId).append("<div class='col-md-10'><div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div></div>");
+        else if (this.ebSettings.$type.indexOf("EbChartVisualization") !== -1) {
+            $("#sub_window_" + this.tableId).append("<div class='col-md-10'><div id='graphcontainer_tab" + this.tableId + "'>" +
+	"<div style='height: 50px;margin-bottom: 5px!important;' class='well well-sm'>" +
+		//"<label class="dvname">@ViewBag.data.Name</label>"+
+		"<div id='btnColumnCollapse" + this.tableId + "' class='btn btn-default' style='float: right;'>" +
+			"<i class='fa fa-cog' aria-hidden='true'></i>" +
+		"</div>" +
+		"<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;float:right'>" +
+			"<button class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>" +
+			"<span class='caret'></span>" +
+			"</button>" +
+			"<ul class='dropdown-menu'>" +
+			"<li><a href='#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
+			"<li><a href='#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
+			"<li><a href='#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
+			"<li><a href='#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
+			"<li><a href='#'> doughnut </a></li>" +
+			"</ul>" +
+		"</div>" +
+		"<button id='reset_zoom" + this.tableId + "' class='btn btn-default' style='float: right;'>Reset zoom</button>" +
 
-        $("#sub_window_" + this.tableId).append("<div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId+"' class='table table-striped table-bordered'></table></div>");
+	"</div>" +
+    "<table>" +
+        "<tr>" +
+            "<td colspan=2>" +
+                "<div id=id='xy" + this.tableId + "' style='vertical-align: top;width: 100%;'> " +
+                "<div class='input-group' > " +
+                "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
+                "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
+                "</div> " +
+                "<div class='input-group' style='padding-top: 1px;'> " +
+                "<span class='input-group-addon' id='basic-addon3'> Y - Axis</span> " +
+                "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
+                "</div> " +
+                "</div> " +
+            "</td>" +
+        "</tr>" +
+        "<tr>" +
+            "<td>" +
+                "<div id='columns4Drag" + this.tableId + "' style='width:200px'> " +
+                "<div>" +
+                "<label class='nav-header disabled' > <center><strong>Columns</strong></center> <center><font size='1'>Darg n Drop to X or Y Axis</font></center></label> " +
+                "<input id='searchColumn" + this.tableId + "' type='text' class='form-control' placeholder='search for column'/>" +
+                "<ul class='list-group' style='height: 450px; overflow-y: auto;' ></ul> " +
+                "</div> " +
+                "</div> " +
+            "</td > " +
+            "<td>" +
+                //"<canvas id='myChart" + this.tableId + "' width='80%' height='auto' ></canvas> " +
+	         "</td > " +
+        "</tr>" +
+    "</table>" +
+"</div></div>");
+            this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
+            return false;
+        }
         this.Init();
 
     };
@@ -185,7 +241,6 @@ var EbDataTable = function (settings) {
         //this.totalpagebtn = $("#" + this.tableId + "_btntotalpage");
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
-        this.printAllbtn = $("#btnprintAll" + this.tableId);
         this.printSelectedbtn = $("#btnprintSelected" + this.tableId);
         this.excelbtn = $("#btnExcel" + this.tableId);
         this.csvbtn = $("#btnCsv" + this.tableId);
@@ -854,7 +909,7 @@ var EbDataTable = function (settings) {
         $("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
         this.copybtn.off("click").on("click", this.CopyToClipboard.bind(this));
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
-        this.printAllbtn.off("click").on("click", this.printAll.bind(this));
+        //this.printAllbtn.off("click").on("click", this.printAll.bind(this));
         this.printSelectedbtn.off("click").on("click", this.printSelected.bind(this));
         this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
@@ -871,9 +926,8 @@ var EbDataTable = function (settings) {
 
 
     this.GenerateButtons = function () {
-       // $("#Toolbar_" + this.tableId).append("<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'><i class='fa fa-chevron-down' aria-hidden='true'></i></div>");
-        //$("#TableControls_" + this.tableId).prepend("<div style='display: inline;float: right;'>" +
-        $("#sub_windows_head_" + this.tableId).prepend("<label class='dvname' style= 'color: white;'>" + this.dvName+"</label>"+
+        //$("#sub_windows_head_" + this.tableId).prepend("<label class='dvname' style= 'color: white;'>" + this.dvName+"</label>"+
+        $("#Toolbar").append("<label class='dvname' style='color: #333;'>" + this.dvName + "</label>" +
             "<div style= 'display: inline;' > " +
             //"<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
             "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' style='display: none;' data-table='@tableId'>&sum;</button>" +
@@ -2144,7 +2198,7 @@ function GPointPopup(e) {
 
 function getFilterValues() {
     var fltr_collection = [];
-    var paramstxt = "";//$('#hiddenparams').val().trim();datefrom,dateto
+    var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
     if (paramstxt.length > 0) {
         var params = paramstxt.split(',');
         $.each(params, function (i, id) {

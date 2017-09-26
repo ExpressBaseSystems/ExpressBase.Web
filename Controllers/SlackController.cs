@@ -17,7 +17,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.RedirectUrl = string.Format("http://ebunnislack.azurewebsites.net/slack/auth/{0}/{1}", ViewBag.cid, ViewBag.UId);
+            ViewBag.RedirectUrl = string.Format("https://expressbase.azurewebsites.net/slack/auth/{0}/{1}", ViewBag.cid, ViewBag.UId);
             return View();
         }
 
@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Controllers
 
             var client = new RestClient("https://slack.com");
 
-            string RedirectUri = String.Format("http://ebunnislack.azurewebsites.net/slack/auth/{0}/{1}", TenantId, UserId);
+            string RedirectUri = String.Format("https://expressbase.azurewebsites.net/slack/auth/{0}/{1}", TenantId, UserId);
             
             var request = new RestRequest("api/oauth.access", Method.GET);
             request.AddParameter("client_id", ClientId);

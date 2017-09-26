@@ -279,37 +279,37 @@ namespace ExpressBase.Web.Controllers
           
         }
 
-        //[HttpPost]
-        //public IActionResult Eb_EmailBuilder(string Htmlcode)
-        //{
-        //    ViewBag.Header = "Edit Datasource";
-        //    var req = this.HttpContext.Request.Form;
-        //    ViewBag.Obj_id = req["objid"].ToString();
+        [HttpPost]
+        public IActionResult Eb_EmailBuilder(string Htmlcode)
+        {
+            ViewBag.Header = "Edit Datasource";
+            var req = this.HttpContext.Request.Form;
+            ViewBag.Obj_id = req["objid"].ToString();
 
-        //    var resultlist = this.ServiceClient.Get<EbObjectNonCommitedVersionResponse>(new EbObjectNonCommitedVersionRequest { RefId = req["objid"].ToString() });
-        //    var rlist = resultlist.Data;
-        //    foreach (var element in rlist)
-        //    {
-        //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-        //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-        //        ViewBag.LifeCycle = lifeCycle;
-        //        ViewBag.IsNew = "false";
-        //        var dsobj = EbSerializers.Json_Deserialize<EbEmailBuilder>(element.Json);
-        //        ViewBag.ObjectName = element.Name;
-        //        ViewBag.ObjectDesc = element.Description;
-        //        ViewBag.Status = element.Status;
-        //        ViewBag.VersionNumber = element.VersionNumber;
-        //        ViewBag.Icon = "fa fa-database";
-        //        ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
-        //        ViewBag.html = dsobj.Body;
-              
-        //    }
-            
-        //    return View();
-          
-        //}
+            var resultlist = this.ServiceClient.Get<EbObjectNonCommitedVersionResponse>(new EbObjectNonCommitedVersionRequest { RefId = req["objid"].ToString() });
+            var rlist = resultlist.Data;
+            foreach (var element in rlist)
+            {
+                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                ViewBag.LifeCycle = lifeCycle;
+                ViewBag.IsNew = "false";
+                var dsobj = EbSerializers.Json_Deserialize<EbEmailBuilder>(element.Json);
+                ViewBag.ObjectName = element.Name;
+                ViewBag.ObjectDesc = element.Description;
+                ViewBag.Status = element.Status;
+                ViewBag.VersionNumber = element.VersionNumber;
+                ViewBag.Icon = "fa fa-database";
+                ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
+                ViewBag.html = dsobj.Body;
 
-        public IActionResult EmailTemplateSave(string Htmlcode,string EName, string Description)
+            }
+
+            return View();
+
+        }
+
+        public string EmailTemplateSave(string Htmlcode,string EName, string Description)
         {
             IServiceClient client = this.ServiceClient;   
             var ds = new EbObjectFirstCommitRequest();
@@ -333,8 +333,7 @@ namespace ExpressBase.Web.Controllers
 
             var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);
 
-            return RedirectToAction("EbObjectList", new RouteValueDictionary(
-                             new { controller = "Dev", action = "EbObjectList", type = (int)EbObjectType.EmailBuilder }));
+            return CurrSaveId.RefId;
 
         }
     }

@@ -378,6 +378,7 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
     };
 
     this.Commit = function (needRun) {
+      //  $("#close_popup").click();
         $.LoadingOverlay("show");
         this.SetValues();
         if (this.ObjectType === 5) {

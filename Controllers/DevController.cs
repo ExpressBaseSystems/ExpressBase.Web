@@ -98,7 +98,6 @@ namespace ExpressBase.Web.Controllers
 
             //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
             ds.Status = ObjectLifeCycleStatus.Live;
-            ds.Token = ViewBag.token;
             ds.TenantAccountId = ViewBag.cid;
             ds.Relations = "";
             ds.ChangeLog = "";
@@ -143,7 +142,7 @@ namespace ExpressBase.Web.Controllers
 
             IServiceClient client = this.ServiceClient;
 
-            var resultlist = client.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = (int)type});
+            var resultlist = client.Get<EbObjectListResponse>(new EbObjectListRequest { EbObjectType = (int)type});
             var rlist = resultlist.Data;
 
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
@@ -223,7 +222,6 @@ namespace ExpressBase.Web.Controllers
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = "";
             ds.Relations = null;
-            ds.Token = ViewBag.token;//removed tcid
 
             ViewBag.IsNew = "false";
             var res = client.Post<EbObjectSaveOrCommitResponse>(ds);

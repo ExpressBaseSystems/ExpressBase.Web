@@ -103,10 +103,10 @@
                 <h4 name="head4" style="color:black;">@element.Value.Name</h4>
                 <p class="text-justify">@element.Value.Description</p>
                 <h6>
-                    <i style="font-style:italic;">Last commit by @element.Value.CommitUname on @element.Value.CommitTs</i>
+                    @*<i style="font-style:italic;">Last commit by @element.Value.CommitUname on @element.Value.CommitTs</i>*@
                     <a style="margin-left:10px;" id="labels">
                         <span name="Status" class="label label-primary">Status</span>
-                        <span name="Version" class="label label-default">v @element.Value.VersionNumber</span>
+                        @*<span name="Version" class="label label-default">v @element.Value.VersionNumber</span>*@
                         @if (ViewBag.wc == "dc")
                         {
                             <span class="label label-success">Dependency</span>
@@ -120,7 +120,7 @@
                 @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
 
                 {
-                    <input type="hidden" name="objid" value="@element.Value.RefId" />
+                   <input type="hidden" name="objid" value="@element.Value.Id" />
                     <input type="hidden" name="tacid" value="@ViewBag.cid" />
                     <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
                     <input type="submit" class="btn btn-primary fa-input" value="Open &#xf054;" style="font-family: FontAwesome;" id="btnOpen">

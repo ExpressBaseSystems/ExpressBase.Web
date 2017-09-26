@@ -52,27 +52,41 @@
         </div>
 
     <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        var w = $('.col-md-10').css("width");
-       // $('#summernote').summernote();
+            var w = $('.col-md-10').css("width");
+            // $('#summernote').summernote();
 
-        $('#summernote').summernote({
-            width: w,
-            height: 300,                 // set editor height
-            minHeight: null,             // set minimum height of editor
-            maxHeight: null,             // set maximum height of editor
-            focus: true                  // set focus to editable area after initializing summernote
-        });
-       
-        $('#save').click(function () {
-           
-            $.post("../Dev/EmailTemplateSave",
-                {
+            $('#summernote').summernote({
+                width: w,
+                height: 300,                 // set editor height
+                minHeight: null,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: true                  // set focus to editable area after initializing summernote
+            });
+
+            $('#save').click(function () {
+                $.post("../Dev/EmailTemplateSave",
+                    {
+                    "_Refid":'@ViewBag.Refid',
                     "Htmlcode": $('#summernote').summernote('code'),
                     "EName": $('#obj_name').val(),
                     "Description": $('#obj_desc').val()
 
+                }, function (result) {
+                });
+
+
+        });
+        $('#commit').click(function () {
+
+            $.post("../Dev/EmailTemplateCommit",
+                {
+                    "_Refid":'@ViewBag.Refid',
+                    "Htmlcode": $('#summernote').summernote('code'),
+                    "EName": $('#obj_name').val(),
+                    "Description": $('#obj_desc').val(),
+                    "ChangeLog": $('#obj_changelog').text()
                 }, function (result) {
                 });
 

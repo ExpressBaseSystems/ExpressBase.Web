@@ -325,8 +325,6 @@ namespace ExpressBase.Web.Controllers
 
             //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
             ds.Status = ObjectLifeCycleStatus.Live;
-            ds.Token = ViewBag.token;
-            ds.TenantAccountId = ViewBag.cid;
             ds.Relations = "";
 
             var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);

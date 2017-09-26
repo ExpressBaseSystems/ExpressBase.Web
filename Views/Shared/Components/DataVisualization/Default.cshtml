@@ -82,16 +82,28 @@
 <script>
     @Html.Raw(ViewBag.HtmlHead)
     var sett = @Html.Raw(dvobj);
+    dvcontainerObj.currentObj = sett;
+    @*dvcontainerObj.dvcol["sub_window_dv" + @dvobj.EbSid] = sett;*@
     @*var meta = @Html.Raw(ViewBag.meta);*@
-    var ebdtable = new EbDataTable({
-        ds_id: '@ViewBag.data.DataSourceRefId',
+    @*var dvCommon = new DvCommonObj({
         ss_url: '@ViewBag.ServiceUrl',
-        tid: '@(tableId)',
-        login:'@ViewBag.wc',
-        settings:sett,
-        //meta: meta,
-        dvRefId:'@ViewBag.dvRefId'
-        //fnKeyUpCallback:
-    });
+        login: '@ViewBag.wc',
+        dvobj: sett,
+    });*@
+    @*if ("@ViewBag.data.$type".indexOf("EbTableVisualization") !== -1) {
+        var ebdtable = new EbDataTable({
+            ds_id: '@ViewBag.data.DataSourceRefId',
+            ss_url: '@ViewBag.ServiceUrl',
+            tid: '@(tableId)',
+            login: '@ViewBag.wc',
+            settings: sett,
+            //meta: meta,
+            dvRefId: '@ViewBag.dvRefId'
+            //fnKeyUpCallback:
+        });
+    }
+    else if ("@ViewBag.data.$type".indexOf("EbChartVisualization") !== -1) {
+        var chartJs = new eb_chart(sett,'@ViewBag.ServiceUrl',"",'@(tableId)');
+    }*@
 </script>
 

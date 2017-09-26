@@ -43,17 +43,28 @@
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
-        $.post("SaveFormBuilder", {
+        $.post("../Dev/SaveFormBuilder", {
             "Id": null,
             "FilterDialogJson": JSON.stringify(this.rootContainerObj),
             "Name": $('#save_txtBox').val(),
             "Description": "",
-            "isSave": "false",
-            "VersionNumber": "1",
             "Obj_type": Eb_objType
         }, this.Save_Success.bind(this));
     };
-
+    this.commit = function () {
+        if ($('#save_txtBox').val().trim() === '')
+            return false;
+        if (this.PGobj)
+            this.saveObj();
+        $(".eb-loaderFixed").show();
+        $.post("../Dev/CommitFormBuilder", {
+            "Id": null,
+            "FilterDialogJson": JSON.stringify(this.rootContainerObj),
+            "Name": $('#save_txtBox').val(),
+            "Description": "",
+            "Obj_type": Eb_objType
+        }, this.Save_Success.bind(this));
+    };
     this.Save_Success = function (result) {
         alert("Saved");
         $(".eb-loaderFixed").hide();
@@ -281,7 +292,8 @@
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
-        $("#saveformBtn").on("click", this.save.bind(this));
+        $("#save").on("click", this.save.bind(this));
+        $("#commit").on("click", this.commit.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
     };
     this.Init();

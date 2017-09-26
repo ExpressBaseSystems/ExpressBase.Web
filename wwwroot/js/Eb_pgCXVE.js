@@ -112,7 +112,7 @@
                 if (sibling) {
                     var idx = sibling.index() - 1;
                     this.CElist.splice(idx, 1, this.movingObj);/////////////
-                    this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
+                    //this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
                     console.log("no sibling ");

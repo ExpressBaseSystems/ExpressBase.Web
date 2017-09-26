@@ -17,7 +17,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.RedirectUrl = string.Format("http://ebunnislack.azurewebsites.net/slack/auth/{0}/{1}", ViewBag.cid, ViewBag.UId);
+            ViewBag.RedirectUrl = string.Format("https://expressbase.azurewebsites.net/slack/auth/{0}/{1}", ViewBag.cid, ViewBag.UId);
             return View();
         }
 
@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Controllers
 
             var client = new RestClient("https://slack.com");
 
-            string RedirectUri = String.Format("http://ebunnislack.azurewebsites.net/slack/auth/{0}/{1}", TenantId, UserId);
+            string RedirectUri = String.Format("https://expressbase.azurewebsites.net/slack/auth/{0}/{1}", TenantId, UserId);
             
             var request = new RestRequest("api/oauth.access", Method.GET);
             request.AddParameter("client_id", ClientId);
@@ -54,14 +54,38 @@ namespace ExpressBase.Web.Controllers
 
         }
 
+        
         [HttpGet]
-        public IActionResult Image2Slack()
+        public IActionResult SlackTextPost()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult SlackTextPost(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+
+            SlackPayload payload = new SlackPayload
+            {
+                Channel = req["Channel"],
+                Text = req["Text"],
+            };
+
+            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 0 });
+            return View();
+        }
+        
+
+        [HttpGet]
+        public IActionResult SlackImagePost()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Image2Slack(int i)
+        public IActionResult SlackImagePost(int i)
         {
             var req = this.HttpContext.Request.Form;
             byte[] myFileContent;
@@ -70,7 +94,7 @@ namespace ExpressBase.Web.Controllers
             SlackPayload payload = new SlackPayload
             {
                 Channel = req["Channel"],
-                Content = req["Content"],
+                Text = req["Content"],
                 SlackFile = new SlackFile
                 {
                     FileName = req["FileName"],

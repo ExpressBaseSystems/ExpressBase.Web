@@ -9,12 +9,18 @@ namespace ExpressBase.Web.Components
 {
     public class ObjectDashboardViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(string objid, string objname, int totVer, string status, string desc)
+        public async Task<IViewComponentResult> InvokeAsync(string refid, string objname, /*int totVer,*/ string status, string desc, bool _readonly, int _type, int major, int minor, int patch)
         {
+            ViewBag._Refid = refid;
             ViewBag.ObjName = objname;
-            ViewBag.TotalVersions = totVer;
+            //ViewBag.TotalVersions = totVer;
             ViewBag.Status = status;
             ViewBag.description = desc;
+            ViewBag._ReadOnly = _readonly;
+            ViewBag._objtype = _type;
+            ViewBag._major = major;
+            ViewBag._minor = minor;
+            ViewBag._patch = patch;
             return View();
 
         }

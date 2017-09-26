@@ -22,7 +22,7 @@
 <script src="~/lib/codemirror/mode/xml/xml.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        var MyDs=new DataSource('@ViewBag.Obj_id',@ViewBag.IsNew, @ViewBag.VersionNumber,@ViewBag.ObjType,'@ViewBag.FilterDialogId');
+        var MyDs=new DataSource('@ViewBag.Refid',@ViewBag.IsNew,'@ViewBag.VersionNumber',@ViewBag.ObjType,'@ViewBag.FilterDialogId');
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {
             $("#sample").DataTable().destroy();
@@ -47,14 +47,14 @@
             }
             else
             {
-               @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+               @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType ,major= ViewBag.Majorv, minor= ViewBag.Minorv ,patch= ViewBag.Patchv});
             }
         }
     </div> 
 </div>
 <div class="row codedit">
     <ul class="nav nav-tabs versionNav" id="versionNav">
-        <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">Current</a></li>
+        <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
     </ul>
     <div class="tab-content " id="versionTab">
         <div id="code_edit0" class="tab-pane fade in active" data-id="new">
@@ -85,6 +85,12 @@
         {
             CodeMirror.showHint(cm, @ViewBag.EditorHint);
         };
+        
+        var _readonly = "@ViewBag.ReadOnly";
+        if (_readonly === "True")
+        _readonly = true;
+        else
+            _readonly = false;
 
         window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             mode: "@ViewBag.EditorMode",
@@ -92,6 +98,7 @@
             lineWrapping: false,
             extraKeys: { "Ctrl-Space": "autocomplete" },
             autoRefresh: true,
+            readOnly:_readonly,
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });

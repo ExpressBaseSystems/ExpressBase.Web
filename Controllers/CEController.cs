@@ -55,11 +55,10 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.Header = "Edit Datasource";
             var req = this.HttpContext.Request.Form;
-            string obj_id = req["objid"].ToString();
+            int obj_id = Convert.ToInt32(req["objid"]);
 
             ViewBag.Obj_id = obj_id;
-
-            var resultlist = this.ServiceClient.Get<EbObjectNonCommitedVersionResponse>(new EbObjectNonCommitedVersionRequest { RefId = obj_id });
+            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -67,18 +66,33 @@ namespace ExpressBase.Web.Controllers
                 List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
                 ViewBag.LifeCycle = lifeCycle;
                 ViewBag.IsNew = "false";
-
-                var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
-                ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
                 ViewBag.Status = element.Status;
                 ViewBag.VersionNumber = element.VersionNumber;
                 ViewBag.EditorHint = "CodeMirror.hint.sql";
                 ViewBag.EditorMode = "text/x-pgsql";
                 ViewBag.Icon = "fa fa-database";
                 ViewBag.ObjType = (int)EbObjectType.DataSource;
-                ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
+                ViewBag.Refid = element.RefId;
+                ViewBag.Majorv = element.MajorVersionNumber;
+                ViewBag.Minorv = element.MinorVersionNumber;
+                ViewBag.Patchv = element.PatchVersionNumber;
+                  
+                if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc)) 
+                {
+                    ViewBag.ReadOnly = true;
+                    var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_lc);
+                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
+                    ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
+                }
+                else
+                {
+                    ViewBag.ReadOnly = false;
+                    var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_wc);
+                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
+                    ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
+                }
             }
             //   ViewBag.Allversions = GetVersions(obj_id);
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
@@ -181,6 +195,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = req["json"];
                 ds.Status = ObjectLifeCycleStatus.Development;
                 ds.Relations = req["rel_obj"];
+                ds.IsSave = false;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -216,6 +231,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = req["json"];
                 ds.Status = ObjectLifeCycleStatus.Development;
                 ds.Relations = req["rel_obj"];
+                ds.IsSave = true;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -242,35 +258,32 @@ namespace ExpressBase.Web.Controllers
             return refid;
         }
 
-        public string Create_Major_Version()
+        public string Create_Major_Version(string _refId, int _type)
         {
-            var req = this.HttpContext.Request.Form;
             var ds = new EbObject_Create_Major_VersionRequest();
-            ds.RefId = req["Id"];
-            ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
-            ds.Relations = req["rel_obj"];
+            ds.RefId = _refId;
+            ds.EbObjectType = _type;
+            ds.Relations = null;
             var res = this.ServiceClient.Post<EbObject_Create_Major_VersionResponse>(ds);
             return res.RefId;
         }
 
-        public string Create_Minor_Version()
+        public string Create_Minor_Version(string _refId, int _type)
         {
-            var req = this.HttpContext.Request.Form;
             var ds = new EbObject_Create_Minor_VersionRequest();
-            ds.RefId = req["Id"];
-            ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
-            ds.Relations = req["rel_obj"];
+            ds.RefId = _refId;
+            ds.EbObjectType = _type;
+            ds.Relations = null;
             var res = this.ServiceClient.Post<EbObject_Create_Minor_VersionResponse>(ds);
             return res.RefId;
         }
 
-        public string Create_Patch_Version()
+        public string Create_Patch_Version(string _refId, int _type)
         {
-            var req = this.HttpContext.Request.Form;
             var ds = new EbObject_Create_Patch_VersionRequest();
-            ds.RefId = req["Id"];
-            ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
-            ds.Relations = req["rel_obj"];
+            ds.RefId = _refId;
+            ds.EbObjectType = _type;
+            ds.Relations = null;
             var res = this.ServiceClient.Post<EbObject_Create_Patch_VersionResponse>(ds);
             return res.RefId;
         }

@@ -150,7 +150,6 @@
         -webkit-box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
         box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
     }
-
 </style>
 <div class="row">
     <div class="toolbar">
@@ -162,6 +161,17 @@
                 <div class='form-group'>
                     <button class='btn save' id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
                     <button class='btn commit_outer' id="commit_outer" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                    @{
+                        var vNumMajor = ("v." + (ViewBag._major + 1) + "." + ViewBag._minor + "." + ViewBag._patch + ".w");
+                        var vNumMinor = ("v." + ViewBag._major + "." + (ViewBag._minor + 1) + "." + ViewBag._patch + ".w");
+                        var vNumPatch = ("v." + ViewBag._major + "." + ViewBag._minor + "." + (ViewBag._patch + 1) + ".w");
+                    }
+                    <select class="selectpicker btn" id="create">
+                        <option>Create</option>
+                        <option id="_major">Major Version - (@vNumMajor) from (v.@ViewBag.VersionNumber)</option>
+                        <option id="_minor">Minor Version - (@vNumMinor) from (v.@ViewBag.VersionNumber)</option>
+                        <option id="_patch">Patch Version - (@vNumPatch) from (v.@ViewBag.VersionNumber)</option>
+                    </select>
                     <button class='btn run' id="run" data-toggle="tooltip" data-placement="bottom" title="Run"><i class="fa fa-play" aria-hidden="true"></i></button>
                     <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
                     <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
@@ -193,7 +203,7 @@
                     Total Versions
                 </div>
                 <div class="count text-center">
-                    @ViewBag.TotalVersions
+                    @*@ViewBag.TotalVersions*@
                 </div>
             </div>
             <div class="col-md-3 card1">
@@ -209,7 +219,7 @@
                     Live Version
                 </div>
                 <div class="count text-center">
-                    V.6
+                    V.
                 </div>
             </div>
             <div class="col-md-3 card1">
@@ -292,10 +302,10 @@
 </div>
 <div id="changelogPopup" class="changelogPopup">
     <div class="popup">
-        <a class="close" href="#" style="color:indianred">&times;</a>
+        <a class="close" id="close_popup" href="#" style="color:indianred">&times;</a>
         <h4>Change Log</h4>
         <div class="content">
-         <textarea class="form-control changlogTxtArea" id="obj_changelog"></textarea>
+            <textarea class="form-control changlogTxtArea" id="obj_changelog"></textarea>
         </div>
         <button id="commit" class="btn btn-primary pull-right">Commit</button>
     </div>
@@ -308,9 +318,53 @@
         $('#commit_outer').on('click', function () {
             $('#changelogPopup').show();
         });
-        $('.close').on('click', function () {
+        $('#close_popup').on('click', function () {
             $('#changelogPopup').css("display", "none");
         })
+
+        if ("@ViewBag._ReadOnly" == "True") {
+            $('#commit_outer').hide();
+            $('#save').hide();
+        }
+         if ("@ViewBag._ReadOnly" == "False") {
+             $('#_minor').remove();
+             $('#_patch').remove();
+            $('.selectpicker').selectpicker('refresh');
+         }
+        $('#create').on('change', function () {
+            var selected = $(this).find("option:selected").val();
+            var selected_opt = $(this).find("option:selected").attr("id");
+
+            if (selected_opt === "_major")
+            {
+                $.LoadingOverlay("show");
+                $.post("../CE/Create_Major_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
+                    function () {
+                    alert("Created Major version");
+                    $.LoadingOverlay("hide");
+                })
+            }
+              if (selected_opt === "_minor")
+            {
+                $.LoadingOverlay("show");
+                $.post("../CE/Create_Minor_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
+                    function () {
+                        alert("Created Minor version");
+                        $.LoadingOverlay("hide");
+                    })
+            }
+            if (selected_opt === "_patch")
+            {
+                $.LoadingOverlay("show");
+                $.post("../CE/Create_Patch_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
+                    function () {
+                        alert("Created patch version");
+                        $.LoadingOverlay("hide");
+                    })
+            }
+
+        });
+
     });
     $(function () {
         $('#minmize').click(function () {

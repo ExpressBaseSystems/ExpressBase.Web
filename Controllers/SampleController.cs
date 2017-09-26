@@ -5,11 +5,13 @@ using ExpressBase.Objects.Objects.TenantConnectionsRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.IO;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -17,9 +19,10 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web2.Controllers
 {
+
     public class SampleController : EbBaseNewController
     {
-        public SampleController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+        public SampleController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
 
         // GET: /<controller>/
@@ -32,17 +35,16 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult ConnectionManager()
         {
-            EbSolutionConnections solutionConnections = this.ServiceClient.Post<EbSolutionConnections>(new GetConnectionsRequest());
+            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest());
             ViewBag.Connections = solutionConnections;
-            //ViewBag.FilesDB = solutionConnections.FilesDbConnection.MongoDB_url;
             return View();
         }
 
         [HttpGet]
         public IActionResult EditSMTPConnection()
         {
-            EbSolutionConnections solutionConnections = this.ServiceClient.Post<EbSolutionConnections>(new GetConnectionsRequest());
-            ViewBag.SMTP = solutionConnections.EmailConnection;
+            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest());
+            ViewBag.SMTP = solutionConnections;
             return View();
         }
 
@@ -52,12 +54,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult SlackPost()
-        {
 
-            return View();
-        }
 
         [HttpGet]
         public IActionResult DownloadFile()
@@ -76,13 +73,14 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
+        
 
+        
 
-
-        public IActionResult xx()
-        {
-            return View();
-        }
+        //public IActionResult xx()
+        //{
+        //    return View();
+        //}
 
         //[HttpPost]
         //public IActionResult LoadImage(int i)

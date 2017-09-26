@@ -54,6 +54,11 @@
         editor = "ReportBuilder";
         whichController = "RB";
     }
+    else if (ObjectType == (int)EbObjectType.EmailBuilder)
+    {
+        editor = "Eb_Emailbuilder";
+        whichController = "Dev";
+    }
 }
 <script>
     $('#impexp').next().css("display", "inline-block");

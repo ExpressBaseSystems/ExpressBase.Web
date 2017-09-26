@@ -259,3 +259,4 @@ paket-files/
 *.ps1
 /Views/Dev/dragula.cshtml
 /StaticFiles
+/Properties/launchSettings.json

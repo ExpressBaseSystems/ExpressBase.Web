@@ -27,11 +27,11 @@
     fdBoxMin = function () {       
         $(this.sidediv).toggleClass("toggled");
           if ($(this.sidediv).hasClass("toggled")) {               
-              $(this.contBox).removeClass('col-md-8').addClass('col-md-10');
+              //$(this.contBox).removeClass('col-md-8').addClass('col-md-10');
               $('#fd-min-btn').css('margin-right', '-25px').addClass("rotated");
            }
             else {
-              $(this.contBox).removeClass('col-md-10').addClass('col-md-8');
+              //$(this.contBox).removeClass('col-md-10').addClass('col-md-8');
               $('#fd-min-btn').css('margin-right', '0').removeClass("rotated");
         }         
     };
@@ -48,20 +48,27 @@
         }       
     };
 
-    this.createContentWindow = function () {
-       
-        var id = "sub" + this.wdId++;
-        $("#" + this.contBox).append("<div class='sub-windows' id='" + id + "'>"
-            + "<div class='sub-windows-head'><div class='pull-right' style='margin-top: 3px;'>"
-            + "<button class='head-btn'><i class='fa fa-minus' aria-hidden='true'></i></button>"
-            + "<button class='head-btn'><i class='fa fa-thumb-tack' aria-hidden='true'></i></button>"
-            + "<button class='head-btn'><i class='fa fa-times' aria-hidden='true'></i></button></div></div></div>");
-        $("#"+id+" :input").focus();
+    this.createContentWindow = function (id, type) {
+        //$("#" + this.contBox).prepend("<div class='col-md-2 no-padd fd' id='" + this.sidediv + "'><div>");
+
+        $("#" + this.contBox).append("<div class='sub-windows no-padd' id='sub_window_dv" + id + "' tabindex='1' eb-type = " + type + ">"
+            + "<div class='col-md-2 no-padd fd' id= 'sub_windows_sidediv_dv" + id + "' style= 'display:block'>"
+            + "</div>"
+            + "<button class='head-btn' style= 'float: right;'> <i class='fa fa-times' aria-hidden='true'></i></button>"
+            + "</div> ");
+        //+ "<div class='sub-windows-head' id='sub_windows_head_dv" + id + "'><div class='pull-right' style='margin-top: 3px;'>"
+        //    + "<button class='head-btn'><i class='fa fa-minus' aria-hidden='true'></i></button>"
+        //    + "<button class='head-btn'><i class='fa fa-thumb-tack' aria-hidden='true'></i></button>"
+        //    + "<button class='head-btn'><i class='fa fa-times' aria-hidden='true'></i></button></div></div>"
+        //$("#"+id+" :input").focus(); onclick='$(this).focus();'
         //this.wScroll = $("#" + id).css('width').replace('px', ' ');      
         //$("#"+this.contBox).scrollLeft(this.wScroll);
         //this.wScroll = this.wScroll + $("#" + id).prev().css('width').replace('px', ' ');
+        $('#sub_window_dv' + id).focusin(this.windowOnFocus.bind(this));
     };
-
+    this.windowOnFocus = function () {
+        
+    };
     this.init = function () {
         //this.createWindows();
         $('#new').on('click', this.createContentWindow.bind(this));

@@ -2,16 +2,7 @@
     .tool-box-items {
         margin-left: 0px !important;
         margin-top: 10px !important;
-    }
-
-    .toolboxhead {
-        width: 100%;
-        height: 28px;
-        background-color: #f7f7f7;
-        margin-bottom: 10px;
-        border-bottom: 1px solid #ccc;
-        border-top: 1px solid #ccc;
-    }
+    }   
 
     .tree, .tree ul {
         padding: 0;
@@ -72,7 +63,7 @@
     .tree li a {
         text-decoration: none;
         font-size: 15px;
-        color: rgba(0,0,0,0.5);
+        color: black;
     }
 
     .tree li button, .tree li button:active, .tree li button:focus {
@@ -150,15 +141,13 @@ margin-left:5px;
     });
 </script>
 
-<div class="toolboxhead">
-    <div class="text-center" style="float:left;font-size: 16px">Data Source</div>
-</div>
-<select class="slectDs" id="selDsource">
+@*<select class="slectDs" id="selDsource">
     @foreach (var element in ViewBag.Objlist)
     {
         <option value="@element.Value.RefId">@element.Value.Name</option>
     }
-</select>
+</select>*@
+<div id="get-col-loader" style="display:none;"><i class="fa fa-spinner" aria-hidden="true"></i></div>
 <ul id="data-table-list" class="tool-box-items">
 </ul>
 <ul id="running-summary" class="tool-box-items">
@@ -183,32 +172,21 @@ margin-left:5px;
     <li>
         <a>Special Fields</a>
         <ul>
-            <li class="styl"><div id="page-no" class="special-field textval">Page No</div></li>
-            <li class="styl"><div id="date-time" class="special-field date-time">Date time</div></li>
+            <li class="styl"><div eb-type='DateTime' class='coloums draggable textval'>CurrentDateTime</div></li>
+            <li class="styl"><div eb-type='PageNo' class='coloums draggable textval'>Page No</div></li>
+            <li class="styl"><div eb-type='PageXY' class='coloums draggable textval'>Page X/Y</div></li>
+            <li class="styl"><div eb-type='UserName' class='coloums draggable textval'>Username</div></li>
         </ul>
     </li>
 </ul>
+
 <script type="text/javascript">
 
-    $(".slectDs").select2();
-    
+    $(".slectDs").select2();    
     $('#running-summary').treed();
     $('#calculated-fields').treed();
     $('#special-fields').treed();
-    $('#other-fields').treed();
-    $('#selDsource').on('change', function(){
-        $.ajax({
-            url: "../RB/GetColumns",
-            type: "POST",
-            cache: false,
-            data: { refID: $(this).val() },
-            success: function (result) {
-                console.log(result);
-                DrawColumnTree(result)
-            }
-        });
-        
-    });
+    $('#other-fields').treed();    
     function DrawColumnTree(result) {
             $.each(result.columns, function (i, columnCollection) {
                 $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");

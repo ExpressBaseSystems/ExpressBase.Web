@@ -23,6 +23,9 @@ using ExpressBase.Objects.ObjectContainers;
 using ExpressBase.Common.Objects.Attributes;
 using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
+using Microsoft.AspNetCore.Routing;
+using ExpressBase.Common.JsonConverters;
+
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -79,10 +82,9 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.ServiceClient;
-            var ds = new EbObjectSaveOrCommitRequest();
+            var ds = new EbObjectFirstCommitRequest();
 
-            ds.IsSave = false;
-            ds.RefId = req["id"];
+
             ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
             ds.Name = req["name"];
             ds.Description = req["description"];
@@ -99,10 +101,9 @@ namespace ExpressBase.Web.Controllers
             //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
             ds.Status = ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;
-            ds.Relations = "";
-            ds.ChangeLog = "";
-            ds.NeedRun = false;
-            var CurrSaveId = client.Post<EbObjectSaveOrCommitResponse>(ds);
+            ds.Relations = "";          
+
+            var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);
             return CurrSaveId.RefId;
         }
 
@@ -196,7 +197,6 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult CreateApplicationModule()
         {
-
             return View();
         }
 
@@ -257,6 +257,82 @@ namespace ExpressBase.Web.Controllers
             }
             ViewBag.Objlist = ObjList;
             return View();
+        }
+        [HttpGet]
+        public IActionResult Eb_EmailBuilder()
+        {
+            ViewBag.Header = "New Email Template";
+
+            ViewBag.VersionNumber = 1;
+            ViewBag.Obj_id = null;
+            ViewBag.IsNew = "true";
+            ViewBag.EditorHint = "CodeMirror.hint.sql";
+            ViewBag.EditorMode = "text/x-sql";
+            ViewBag.Icon = "fa fa-database";
+            ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
+            ViewBag.ObjectName = "*Untitled";
+            ViewBag.FilterDialogId = "null";
+            //ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+            return View();
+          
+        }
+
+        [HttpPost]
+        public IActionResult Eb_EmailBuilder(string Htmlcode)
+        {
+            ViewBag.Header = "Edit Datasource";
+            var req = this.HttpContext.Request.Form;
+            ViewBag.Obj_id = req["objid"].ToString();
+
+            var resultlist = this.ServiceClient.Get<EbObjectNonCommitedVersionResponse>(new EbObjectNonCommitedVersionRequest { RefId = req["objid"].ToString() });
+            var rlist = resultlist.Data;
+            foreach (var element in rlist)
+            {
+                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                ViewBag.LifeCycle = lifeCycle;
+                ViewBag.IsNew = "false";
+                var dsobj = EbSerializers.Json_Deserialize<EbEmailBuilder>(element.Json);
+                ViewBag.ObjectName = element.Name;
+                ViewBag.ObjectDesc = element.Description;
+                ViewBag.Status = element.Status;
+                ViewBag.VersionNumber = element.VersionNumber;
+                ViewBag.Icon = "fa fa-database";
+                ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
+                ViewBag.html = dsobj.Body;
+
+            }
+
+            return View();
+
+        }
+
+        public string EmailTemplateSave(string Htmlcode,string EName, string Description)
+        {
+            IServiceClient client = this.ServiceClient;   
+            var ds = new EbObjectFirstCommitRequest();
+
+
+            ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+            ds.Name = EName;
+            ds.Description = Description;
+            ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+            {
+                Name = EName,
+                EbObjectType = EbObjectType.EmailBuilder,
+                Body = Htmlcode,
+            });
+
+            //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
+            ds.Status = ObjectLifeCycleStatus.Live;
+            ds.Token = ViewBag.token;
+            ds.TenantAccountId = ViewBag.cid;
+            ds.Relations = "";
+
+            var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);
+
+            return CurrSaveId.RefId;
+
         }
     }
 }

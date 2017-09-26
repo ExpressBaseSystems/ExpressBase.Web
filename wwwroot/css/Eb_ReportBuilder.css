@@ -32,7 +32,7 @@
     border: 1px solid #ddd;
     background-color: #ffffff;
     border-radius: 4px;
-    margin-left: 545px;
+    margin-left: 337px;
 }
     .shapes-tank .btn{
         background-color: white !important;
@@ -185,13 +185,14 @@
 }
 
 .toolbox {
-    height: 100%;
+    height: inherit;
     position: fixed;
     margin-top: 3px;
     padding: 0 !important;
     width: 15%;
     background-color: white;
     border: 1px solid #ccc;
+    overflow-y:auto;
 }
 
 .pgB {
@@ -207,10 +208,6 @@
     padding: 10px;
 }
 
-#rpthead .draggable {
-    position: absolute !important;
-}
-
 .page .textval{    
     margin:0;
     border:1px solid #cccccc;
@@ -223,8 +220,8 @@
 .reportmenu .btn-group > .btn:first-child {
     margin-left: 5px !important;
 }
-.side-toolbar {
-    min-height: 1000px;
+.side-toolbar {    
+    height:518px;
     padding-left: 0;
     background-color: white;
     z-index: 1;
@@ -262,6 +259,12 @@
     border: 1px solid #dedede;
     height: 28px;
 }
+#rulerUnit {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #aaaaaa;
+    color:black;
+}  
 /*shapes*/
 /*.h-line .ui-resizable-handle {
    width: 7px;
@@ -282,15 +285,15 @@
     margin-right:0;
 }*/
 .arrow-right {
-  width: 0; 
-  height: 0; 
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;  
-  border-left: 5px solid black;
-  float: right;
-  margin-top: -5px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid black;
+    float: right;
+    margin-top: -5px;
 }
-/*.arrow-r-draggable .ui-resizable-e, .ui-resizable-w{
+/*.arrow-r-draggable > .ui-resizable-e,.ui-resizable-w{
     background-color: green;
     width: 7px;
     height: 7px;
@@ -457,4 +460,8 @@ margin: -4px;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size:11px;
+}
+.dropped{
+    z-index:50;
 }

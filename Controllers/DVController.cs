@@ -127,6 +127,7 @@ namespace ExpressBase.Web.Controllers
             var _jsResult = CSharpToJs.GenerateJs<EbDataVisualizationObject>(BuilderType.DVBuilder, typeArray);
 
             ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
 
             //Edit mode
             if (!string.IsNullOrEmpty(objid))
@@ -167,9 +168,9 @@ namespace ExpressBase.Web.Controllers
         //    return View();
         //}
         
-        public IActionResult dvCommon(string dsRefId, string Meta, string dvRefId)
+        public IActionResult dvCommon(string dvobj, string dvRefId)
         {
-            return ViewComponent("DataVisualization", new { dsRefid = dsRefId, Meta = Meta , dvRefId = dvRefId });
+            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId });
         }
 
         //public PartialViewResult DataVisualisation(int dsid)

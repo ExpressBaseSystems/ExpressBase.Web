@@ -1,0 +1,270 @@
+﻿<style>
+    .tool-box-items {
+        margin-left: 0px !important;
+        margin-top: 10px !important;
+    }
+
+    .toolboxhead {
+        width: 100%;
+        height: 28px;
+        background-color: #f7f7f7;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+        border-top: 1px solid #ccc;
+    }
+
+    .tree, .tree ul {
+        padding: 0;
+        list-style: none;
+    }
+
+        .tree ul {
+            margin-left: 1em;
+            position: relative;
+        }
+
+            .tree ul ul {
+                margin-left: .5em;
+            }
+
+            .tree ul:before {
+                content: "";
+                display: block;
+                width: 0;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                border-left: 1px solid;
+            }
+
+        .tree li {
+            margin: 0;
+            padding: 0 1em;
+            line-height: 2em;
+            font-weight: 300;
+            position: relative;
+        }
+
+        .tree ul li:before {
+            content: "";
+            display: block;
+            width: 10px;
+            height: 0;
+            border-top: 1px solid;
+            margin-top: -1px;
+            position: absolute;
+            top: 1em;
+            left: 0;
+        }
+
+        .tree ul li:last-child:before {
+            background: #fff;
+            height: auto;
+            top: 1em;
+            bottom: 0;
+        }
+
+    .indicator {
+        margin-right: 5px;
+    }
+
+    .tree li a {
+        text-decoration: none;
+        font-size: 15px;
+        color: rgba(0,0,0,0.5);
+    }
+
+    .tree li button, .tree li button:active, .tree li button:focus {
+        text-decoration: none;
+        border: none;
+        background: transparent;
+        margin: 0px 0px 0px 0px;
+        padding: 0px 0px 0px 0px;
+        outline: 0;
+    }
+
+    .select2-container {
+        width: 97% !important;
+        margin-left: 3px;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ccc !important;
+        border-radius: 0;
+    }
+
+    .select2-dropdown {
+        margin-left: -3px !important;
+    }
+
+    .qr-Br-img-btn {
+        margin-left: 5px;
+    }
+</style>
+<script>
+    $.fn.extend({
+        treed: function (o) {
+
+            var openedClass = 'glyphicon-minus-sign';
+            var closedClass = 'glyphicon-plus-sign';
+
+            if (typeof o !== 'undefined') {
+                if (typeof o.openedClass !== 'undefined') {
+                    openedClass = o.openedClass;
+                }
+                if (typeof o.closedClass !== 'undefined') {
+                    closedClass = o.closedClass;
+                }
+            }
+            var tree = $(this);
+            tree.addClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this);
+                branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
+                branch.addClass('branch');
+                branch.on('click', function (e) {
+                    if (this === e.target) {
+                        var icon = $(this).children('i:first');
+                        icon.toggleClass(openedClass + " " + closedClass);
+                        $(this).children().children().toggle();
+                    }
+                });
+                branch.children().children().toggle();
+            });
+            tree.find('.branch .indicator').each(function () {
+                $(this).on('click', function () {
+                    $(this).closest('li').click();
+                });
+            });
+            tree.find('.branch>a').each(function () {
+                $(this).on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+            tree.find('.branch>button').each(function () {
+                $(this).on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+        }
+    });
+</script>
+
+<div class="toolboxhead">
+    <div class="text-center" style="float:left;font-size: 16px">Data Source</div>
+</div>
+<select class="slectDs" id="selDsource">
+    @foreach (var element in ViewBag.Objlist)
+    {
+        <option value="@element.Value.RefId">@element.Value.Name</option>
+    }
+</select>
+<ul id="data-table-list" class="tool-box-items"></ul>
+@*<ul id="running-summary" class="tool-box-items">
+    <li>
+        <a>Summary</a>
+        <ul>
+            <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+            <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+        </ul>
+    </li>
+</ul>
+<ul id="calculated-fields" class="tool-box-items">
+    <li>
+        <a>Calculated Fields</a>
+        <ul>
+            <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+            <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+        </ul>
+    </li>
+</ul>
+<ul id="special-fields" class="tool-box-items">
+    <li>
+        <a>Special Fields</a>
+        <ul>
+            <li class="styl"><div id="page-no" class="special-field textval">Page No</div></li>
+            <li class="styl"><div id="date-time" class="special-field date-time">Date time</div></li>
+        </ul>
+    </li>
+</ul>*@
+<script type="text/javascript">
+
+   
+
+    $(".slectDs").select2();
+
+    $('#running-summary').treed();
+    $('#calculated-fields').treed();
+    $('#special-fields').treed();
+    $('#other-fields').treed();
+    $('#selDsource').on('change', function(){
+        $.ajax({
+            url: "../RB/GetColumns",
+            type: "POST",
+            cache: false,
+            data: { refID: $(this).val() },
+            success: function (result) {
+                console.log(result);
+                DrawColumnTree(result)
+            }
+        });
+     
+
+    });
+    function insertAtCursor(text) {       
+        $(".note-editable").attr("tabindex", "1").attr("onclick", "$(this).focus();");
+        //document.getElementsByClassName("note-editable").focus(); 
+        var sel, range;
+        var text = text; 
+        if (window.getSelection) {
+
+            sel = window.getSelection();
+            console.log(sel);
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+
+                var lines = text.replace("\r\n", "\n").split("\n");
+                var frag = document.createDocumentFragment();
+                for (var i = 0, len = lines.length; i < len; ++i) {
+                    if (i > 0) {
+                        frag.appendChild(document.createElement("br"));
+                    }
+                    frag.appendChild(document.createTextNode(lines[i]));
+                }
+
+                range.insertNode(frag);
+            }
+        } else if (document.selection && document.selection.createRange) {
+            document.selection.createRange().text = text;
+        }
+    }
+
+    function insertselected(text) {
+        var text = text;
+        $(".note-editable").append(text);
+    }
+
+    function DrawColumnTree(result) {
+            $.each(result.columns, function (i, columnCollection) {
+                $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
+                $.each(columnCollection, function (j, obj) {
+                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'>" + obj.columnName + "</li>");
+                });
+            });
+            $('#data-table-list').treed();
+            
+            $('.styl').dblclick(function (e) {
+                var colVal = "Table" + $(e.target).parent().siblings("a").text().slice(-1) + "." + $(e.target).text().trim();
+                
+                //alert(colVal);
+                //var text = $(e.target).text();
+               // alert(text);
+                insertselected("«"+colVal+"»");
+            });
+        }
+   
+</script>

@@ -1,0 +1,114 @@
+﻿
+@using ExpressBase.Common.Objects;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Summernote</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
+</head>
+<body>
+    @{
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+    }
+@using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
+{
+    <div class="container-fluid">
+        <div class="row dshbrd">
+            <div>
+                @{
+                    if (ViewBag.IsNew == "true")
+                    {
+                        @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
+                    }
+                    else
+                    {
+                        @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+                    }
+                }
+            </div>
+        </div>
+            <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
+                @await Component.InvokeAsync("EbEmailObjectSelector", new { Type = (int)EbObjectType.DataSource })
+            </div>
+            <div class="col-md-10 pull-right">
+                <div id="summernote">
+                    @Html.Raw(ViewBag.html)
+                </div>
+            </div>
+
+        </div>
+}
+    <script>
+    $(document).ready(function () {
+
+        var w = $('.col-md-10').css("width");
+       // $('#summernote').summernote();
+
+        $('#summernote').summernote({
+            width: w,
+            height: 300,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+            focus: true                  // set focus to editable area after initializing summernote
+        });
+       
+        $('#save').click(function () {
+           
+            $.post("../Dev/EmailTemplateSave",
+                {
+                    "Htmlcode": $('#summernote').summernote('code'),
+                    "EName": $('#obj_name').val(),
+                    "Description": $('#obj_desc').val()
+
+                }, function (result) {
+                });
+
+
+        });
+        //$('.note-editable').droppable({ accept: ".draggable", drop: onDropFunc.bind(this)});
+
+        //function onDropFunc(event, ui) {
+        //    var dropLoc = $(event.target);
+        //    var col = $(ui.draggable);
+        //    if (!dropLoc.hasClass('dropped')) {
+        //        dropLoc.append(col.clone().prepend("@@").addClass('dropped').removeClass("draggable").css({
+        //            position: 'relative',
+        //            width:"150px",
+        //            left: event.pageX - $('.note-editable').offset().left + 'px',
+        //            top: event.pageY - $('.note-editable').offset().top + 'px'
+        //        }));
+        //    }
+        //    else if (dropLoc.hasClass('dropped')){
+
+        //        dropLoc.append(col.css({
+        //            position: 'relative',
+        //            left: event.pageX - $('.note-editable').offset().left + 'px',
+        //            top: event.pageY - $('.note-editable').offset().top + 'px'
+        //        }));
+        //    }
+        //    $('.dropped').draggable({
+        //        cancel: "a.ui-icon",
+        //        cursor: "move"
+        //    });
+        //};
+
+        });
+
+
+    </script>
+</body>
+</html>

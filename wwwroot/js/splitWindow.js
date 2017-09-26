@@ -1,4 +1,4 @@
-﻿var splitWindow = function (parent_div, sidediv, cont_box, p_grid) {
+﻿var splitWindow = function (parent_div, cont_box, sidediv, p_grid) {
     
     this.parent_div = parent_div;
     this.sidediv = sidediv;

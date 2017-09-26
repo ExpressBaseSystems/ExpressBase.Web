@@ -279,7 +279,7 @@
         background-color: transparent;
     }
 
-.bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+.pg-wraper .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
     width: 100%;
 }
 
@@ -377,11 +377,12 @@
 }
 
 .colTile {
-    padding: 5px;
-    background-color: rgb(238, 238, 238);
+    padding: 3px 8px;
+    background-color: #c8d4ef;
     margin: 3px 1px;
+    border-radius: 15px;
     font-size: 13px;
-    border-left: solid 1px #eee;
+    border: solid 1px #d6d6d6;
     cursor: pointer;
 }
 
@@ -420,7 +421,7 @@
     height: 46.7vh;
 }
 
-.CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont {
+.CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont, .CE-all-ctrlsCont {
     overflow-y: auto;
     height: 40vh;
 }

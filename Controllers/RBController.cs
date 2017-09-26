@@ -23,9 +23,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult ReportBuilder()
         {
-            var typeArray = typeof(EbReportField).GetTypeInfo().Assembly.GetTypes();
+            var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
 
-            var _jsResult = CSharpToJs.GenerateJs<EbReportField>(BuilderType.Report, typeArray);
+            var _jsResult = CSharpToJs.GenerateJs<EbReportObject>(BuilderType.Report, typeArray);
 
      
             ViewBag.Meta = _jsResult.Meta;
@@ -42,25 +42,8 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.IsNew = "false";
             return View();
-        }
+        }       
 
-        [HttpPost]
-        public DataSourceColumnsResponse GetColumns(String refID)
-        {
-            DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
-            cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", refID));
-            foreach(var columnCollection in cresp.Columns)
-            {
-                columnCollection.Sort(CompareEbDataColumn);
-            }
-
-            return cresp;
-        }
-
-        private int CompareEbDataColumn(object a, object b)
-        {
-            return (a as EbDataColumn).ColumnName.CompareTo((b as EbDataColumn).ColumnName);
-        }
         public EbObjectSaveOrCommitResponse CommitReport()
         {
             var req = this.HttpContext.Request.Form;

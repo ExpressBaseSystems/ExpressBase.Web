@@ -287,7 +287,7 @@
 </div>
 <div id="changelogPopup" class="changelogPopup">
     <div class="popup">
-        <a class="close" href="#" style="color:indianred">&times;</a>
+        <a class="close" id="close_popup" href="#" style="color:indianred">&times;</a>
         <h4>Change Log</h4>
         <div class="content">
             <textarea class="form-control changlogTxtArea" id="obj_changelog"></textarea>
@@ -298,7 +298,14 @@
 
 
 <script>
-
+    $(document).ready(function () {
+        $('#commit_outer').on('click', function () {
+            $('#changelogPopup').show();
+        });
+        $('#close_popup').on('click', function () {
+            $('#changelogPopup').css("display", "none");
+        })
+    });
     $(function () {
         $('#minmize').click(function () {
             $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");

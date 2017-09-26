@@ -189,11 +189,11 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
 
     this.VersionCode_drpListItem = function (i, version) {
         var vnum = version.versionNumber;
-        $('#vernav'+ tabNum + " select").append("<option value='" + version.id + "' data-tokens='" + vnum + "'> Version " + version.versionNumber + "</option>");
+        $('#vernav'+ tabNum + " select").append("<option value='" + version.id + "' data-tokens='" + vnum + "'> v " + version.versionNumber + "</option>");
     };
 
     this.VersionCode_success = function (data) {
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>v." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav"+ tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
        // $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
@@ -211,7 +211,7 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
             "</div>" +
             "<div id='inner_well" + tabNum + "' class='collapse'></div>");
         $('#vernav' +  tabNum).append(
-            " <div><label class = 'label label-default codeEditLabel'>Version V." + this.HistoryVerNum + "</label>" +
+            " <div><label class = 'label label-default codeEditLabel'>Version v." + this.HistoryVerNum + "</label>" +
             " <label class = 'label label-default codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
             "<label  class = 'label label-default codeEditLabel'>Committed By: " + this.commitUname + " </label>" +
             " <label class = 'label label-default codeEditLabel'>CommittedAt: " + this.commitTs + "</label>" +

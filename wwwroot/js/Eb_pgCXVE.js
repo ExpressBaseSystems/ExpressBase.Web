@@ -3,8 +3,11 @@
     this.CE_PGObj = {};
     this.pgCXE_Cont_Slctr = "#" + this.PGobj.wraperId + " .pgCXEditor-Cont";
     this.CEctrlsContId = this.PGobj.wraperId + "_CEctrlsCont";
+    this.CE_all_ctrlsContId = this.PGobj.wraperId + "_CE_all_ctrlsCont";
     this.OnCXE_OK = function (obj) { };
     this.OSE_curTypeObj = null;
+    this.CElist = [];
+    this.editor = null;
 
     this.curObj = {
         objType: null,
@@ -22,24 +25,18 @@
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
-        var editor = e.target.getAttribute("editor");
-        if (editor === "7") {
+        this.editor = parseInt(e.target.getAttribute("editor"));
+        if (this.editor === 7 || this.editor === 8 || this.editor === 9) {
             this.initCE();
         }
-        else if (editor === "8") {
-            this.initCE();
-        }
-        else if (editor === "9") {
-            this.initCE();
-        }
-        else if (editor === "10") {
+        else if (this.editor === 10) {
             this.initJE();
         }
-        else if (editor === "12")
+        else if (this.editor === 12)
             this.initOSE();
 
-        $("#" + this.PGobj.wraperId + " .CE-body").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
-        $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn);
+        $("#" + this.PGobj.wraperId + " .CEctrlsCont").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
     };
 
@@ -48,10 +45,17 @@
             + '<table class="table table-bordered editTbl">'
             + '<tbody>'
             + '<tr>'
+
             + '<td style="padding: 0px;">'
             + '<div class="CE-controls-head" >' + (this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp) + ' </div>'
+            + '<div id="' + this.CE_all_ctrlsContId + '" class="CE-all-ctrlsCont"></div>'
+            + '</td>'
+
+            + '<td style="padding: 0px;">'
+            + '<div class="CE-controls-head" > Selected </div>'
             + '<div id="' + this.CEctrlsContId + '" class="CEctrlsCont"></div>'
             + '</td>'
+
             + '<td style="padding: 0px;"><div id="' + this.PGobj.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>'
             + '</tr>'
             + '</tbody>'
@@ -61,13 +65,76 @@
             + '<select class="selectpicker"> </select>'
             + '<button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
             + '</div>';
-
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Collection Editor");
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
-        this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
-        this.setColTiles();
-        new dragula([document.getElementById(this.CEctrlsContId)]);
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("Collection Editor");
+
+        if (this.editor === 7) {
+            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0)").hide();
+            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
+            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp));
+            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+            this.setColTiles();
+        }
+        else if (this.editor === 8) {
+            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
+        }
+        else if (this.editor === 9) {
+            this.setAllColTiles();
+            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+        }
+        this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)]);
+        this.drake.on("drop", this.onDropFn.bind(this));
+        this.drake.on("drag", this.onDragFn.bind(this));
+        this.drake.on("dragend", this.onDragendFn.bind(this));
+    };
+    
+    this.onDragFn = function (el, source) {
+        //if drag start within the form
+        if (source.id !== this.CE_all_ctrlsContId) {
+            console.log("el poped");
+            var sibling = $(el).next();
+            if (sibling) {
+                var idx = sibling.index() - 1;
+                this.movingObj = this.PGobj.PropsObj[this.PGobj.CurProp].splice(idx, 1);
+            }
+        }
+        else
+            this.movingObj = null;
+    };// start
+
+    this.onDragendFn = function (el) {
+        var sibling = $(el).next();
+        var target = $(el).parent();
+        if (this.movingObj) {
+
+            //Drag end with in the form
+            if (target.id !== this.CE_all_ctrlsContId) {
+                if (sibling) {
+                    var idx = sibling.index() - 1;
+                    this.CElist.splice(idx, 1, this.movingObj);/////////////
+                    //this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
+                }
+                else {
+                    console.log("no sibling ");
+                    this.rootContainerObj.Controls.Append(this.movingObj);
+                }
+                //$(el).on("focus", this.controlOnFocus.bind(this));
+            }
+
+        }
+    };
+
+    this.onDropFn = function (el, target, source, sibling) {
+        var $e = $(el);
+        var $close = $('<button type="button" class="close">&times;</button>');
+        if (source.id === this.CE_all_ctrlsContId && target.id === this.CEctrlsContId) {
+            $e.append($close);
+            $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
+        }
+        else if (source.id === this.CEctrlsContId && target.id === this.CE_all_ctrlsContId ) {
+            $e.children(".close").remove();
+            $e.removeAttr("style`");
+        }
     };
 
     this.initJE = function () {
@@ -183,6 +250,17 @@
 
     }.bind(this);
 
+    this.getObjByval = function (ObjArray, key, val) {
+        var Obj = null;
+        $.each(ObjArray, function (i, object) {
+            if (object[key] === val) {
+                Obj = object;
+                return 0;
+            };
+        });
+        return Obj;
+    };
+
     this.getOBjNameByval = function (data, refId) {
         var ObjName = null;
         var f = false;
@@ -192,7 +270,7 @@
                     ObjName = obj.name;
                     f = true;
                     this.OSECurVobj = obj;
-                    return ObjName;
+                    return 0;
                 }
             }.bind(this));
             if (f)
@@ -203,7 +281,7 @@
 
     this.OTileClick = function (data) {
         var $e = $(event.target);
-        $("#" + this.PGobj.wraperId + " .OSE-body .colTile").css("background-color", "#eee");
+        //$("#" + this.PGobj.wraperId + " .OSE-body .colTile").css("background-color", "#eee");
         $e.css("background-color", "#c2c8ce");
         var ObjName = $e.attr("name");
         this.curObj.objName = ObjName;
@@ -242,6 +320,20 @@
         this.getOSElist();
     };
 
+    this.setAllColTiles = function () {
+        this.PGobj.PropsObj[this.PGobj.CurProp] = Gcolumns.Columns.$values;
+        var values = this.PGobj.PropsObj[this.PGobj.CurProp];
+        $("#" + this.CEctrlsContId).empty();
+        $.each(values, function (i, control) {
+            var type = control.$type.split(",")[0].split(".")[2];
+            var label = control.Name || control.name;
+            if (!(control.Name || control.name))
+                label = control.EbSid;
+            var $tile = $('<div class="colTile" id="' + label + '" eb-type="' + type + '" ><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + label + '</div>');
+            $("#" + this.CE_all_ctrlsContId).append($tile);
+        }.bind(this));
+    };
+
     this.setColTiles = function () {
         if (this.PGobj.CurProp === "Controls")
             var values = this.PGobj.PropsObj.Controls.$values;
@@ -262,9 +354,7 @@
                     + '</div>');
                 $("#" + this.CEctrlsContId).append($tile);
                 this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
-
             }.bind(this));
-
             for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
@@ -272,19 +362,28 @@
 
     this.colTileCloseFn = function (e) {
         e.stopPropagation();
-        $(e.target).parent().remove();
+        var $tile = $(e.target).parent().remove();
+        if (this.editor === 9) {
+            $("#" + this.CE_all_ctrlsContId).prepend($tile);
+            $tile.children(".close").remove();
+        }
     };
 
     this.colTileFocusFn = function (e) {
         var $e = $(e.target);
         var id = $e.attr("id");
         var obj = null;
-        $("#" + this.PGobj.wraperId + " .CE-body .colTile").css("background-color", "#eee");
-        $e.css("background-color", "#c2c8ce");
-        if (this.PGobj.CurProp === "Controls")
-            obj = this.PropsObj.Controls.GetByName(id);
-        else
-            obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
+        $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
+        $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
+        if (this.editor === 7) {
+            if (this.PGobj.CurProp === "Controls")
+                obj = this.PropsObj.Controls.GetByName(id);
+            else
+                obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
+        }
+        else if (this.editor === 9) {
+            obj = this.getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp], "name", id);////////////////
+        }
         this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
     };
 

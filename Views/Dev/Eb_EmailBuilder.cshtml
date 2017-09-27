@@ -6,19 +6,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Summernote</title>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    @*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css " />*@
+   
     <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
     
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
+    @*<link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />*@
+    @*<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">*@
 </head>
 <body>
     @{
@@ -43,17 +42,59 @@
             <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
                 @await Component.InvokeAsync("EbEmailObjectSelector", new { Type = (int)EbObjectType.DataSource })
             </div>
-            <div class="col-md-10 pull-right">
+            <div class="col-md-8">
                 <div id="summernote">
                     @Html.Raw(ViewBag.html)
                 </div>
             </div>
-
+        <div class="col-md-2 pull-right">
+            <div id="PropertyG">
+               
+            </div>
+        </div>
         </div>
 
     <script>
-        $(document).ready(function () {
 
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+
+        $(document).ready(function () {
+            var emailpropG = new Eb_PropertyGrid("PropertyG");
+            var emailobj = new EbObjects["EbEmailTemplatePG"]("email");
+            emailpropG.setObject(emailobj,AllMetas["EbEmailTemplatePG"]);
+            emailpropG.PropertyChanged = function (obj, Pname) {
+                console.log(obj);
+                console.log(emailobj);
+                if (Pname == "Visualizations") {
+                    if (obj[Pname] !== null) {
+                        $.each(obj[Pname], function (i, dv) {
+                            if ($("#contBox").children("#sub_window_dv" + dv.EbSid+"_1").length == 0) {
+                                if (dv.$type.indexOf("EbTableVisualization") !== -1) {
+                                    split.createContentWindow(dv.EbSid + "_1", "EbTableVisualization");
+                                    dvcontainerObj.dvcol["sub_window_dv" + dv.EbSid + "_1"] = (new EbObjects["EbTableVisualization"](dv.EbSid + "_1"));
+                                    ObjCount++;
+                                }
+                                else if (dv.$type.indexOf("EbChartVisualization") !== -1) {
+                                    split.createContentWindow(dv.EbSid + "_1", "EbChartVisualization");
+                                    dvcontainerObj.dvcol["sub_window_dv" + dv.EbSid + "_1"] = (new EbObjects["EbChartVisualization"](dv.EbSid+"_1"));
+                                    ObjCount++;
+                                }
+                            }
+                        });
+                    }
+                    if ($("#contBox").children().length >= 2) {
+                        $("#prev").css("display", "inline-block");
+                        $("#next").css("display", "inline-block");
+                    }
+                    $.each(dvcontainerObj.dvcol, function (key, value) {
+                        focusedId = key;
+                        return false;
+                    });
+                    $("#" + focusedId).focus();
+                }
+        }
             var w = $('.col-md-10').css("width");
             // $('#summernote').summernote();
 

@@ -503,10 +503,23 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.report.Height = $("#page").height();
         this.report.Width = $("#page").width();        
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
-        console.log(JSON.stringify(this.report));
-        return this.report;
-    };
 
+        if (this.IsNew === "true") {
+            var Obj_Id = null;
+        }
+        var Name = this.report.ReportName;
+        var Description = this.report.Description;
+        this.Rel_object = "";
+
+        $.post("../RB/SaveReport", {
+            "id": Obj_Id,
+            "name": Name,
+            "description": Description,
+            "json": JSON.stringify(this.report),
+            "rel_obj": this.Rel_object
+        });
+    };
+  
     this.findPageSections = function (i, sections) {
 
         this.sections = $(sections).attr('id');        
@@ -557,18 +570,19 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         }
         else if (eb_typeCntl === 'ReportDetail') {
             this.report.Detail.Fields.push(this.objCollection[elemId]);
-        }       
-        //this.report.SubSection[this.i].SubSection[this.j].SubSection.push(this.objCollection[elemId]);
+        }              
     };
 
     this.Commit = function () {
-        var _json = this.savefile();
-        alert(_json);
+        this.report.Height = $("#page").height();
+        this.report.Width = $("#page").width();
+        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
+       
         if (this.IsNew === "true") {
             var Obj_Id = null;
         }
-        var Name = _json.ReportName;
-        var Description = _json.Description;
+        var Name = this.report.ReportName;
+        var Description = this.report.Description;
         this.Rel_object = "";
 
         $.post("../RB/CommitReport", {
@@ -576,7 +590,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             "name": Name,
             "description": Description,
             "changeLog": "changed",
-            "json": JSON.stringify(_json),
+            "json": JSON.stringify(this.report),
             "rel_obj": this.Rel_object
         });
     };

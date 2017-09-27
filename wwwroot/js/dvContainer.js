@@ -12,6 +12,8 @@
         $("#btnGo").off("click").on("click", this.btnGoClick.bind(this));
         $("#next").off("click").on("click", this.gotoNext.bind(this));
         $("#prev").off("click").on("click", this.gotoPrevious.bind(this));
+        $("#first").off("click").on("click", this.gotoFirst.bind(this));
+        $("#last").off("click").on("click", this.gotoLast.bind(this));
     };
 
 
@@ -40,16 +42,24 @@
         $("#" + focusedId).focus();
         var dvobj = this.dvcol[focusedId];
         if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+            $("#Toolbar").children(":not(.commonControls)").remove();
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                $("#Toolbar").children(":not(.commonControls)").remove();
                 this.ebdtable["dv" + dvobj.EbSid].GenerateButtons();
             }
         }
-        else {
+        else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
+            $("#Toolbar").children(":not(.commonControls)").remove();
             if ($("#" + focusedId).find("canvas").length > 0) {
-                $("#Toolbar").children(":not(.commonControls)").remove();
                 this.chartJs["dv" + dvobj.EbSid].createButtons();
             }
+        }
+        if ($("#" + focusedId).next().attr("id") == undefined) {
+            $("#next").attr("disabled", true).css("color", "darkgray");
+            $("#last").attr("disabled", true).css("color", "darkgray");
+        }
+        if ($("#" + focusedId).prev().attr("id") !== undefined) {
+            $("#prev").attr("disabled", false).css("color", "black");
+            $("#first").attr("disabled", false).css("color", "black");
         }
     };
 
@@ -68,6 +78,66 @@
                 $("#Toolbar").children(":not(.commonControls)").remove();
                 this.chartJs["dv" + dvobj.EbSid].createButtons();
             }
+        }
+        if ($("#" + focusedId).prev().attr("id") == undefined) {
+            $("#prev").attr("disabled", true).css("color","darkgray");
+            $("#first").attr("disabled", true).css("color", "darkgray");
+        }
+        if ($("#" + focusedId).next().attr("id") !== undefined) {
+            $("#next").attr("disabled", false).css("color", "black");
+            $("#last").attr("disabled", false).css("color", "black");
+        }
+    };
+
+    this.gotoFirst = function () {
+        focusedId = $("#" + focusedId).siblings().first().attr("id");
+        $("#" + focusedId).focus();
+        var dvobj = this.dvcol[focusedId];
+        if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+            $("#Toolbar").children(":not(.commonControls)").remove();
+            if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                this.ebdtable["dv" + dvobj.EbSid].GenerateButtons();
+            }
+        }
+        else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
+            $("#Toolbar").children(":not(.commonControls)").remove();
+            if ($("#" + focusedId).find("canvas").length > 0) {
+                this.chartJs["dv" + dvobj.EbSid].createButtons();
+            }
+        }
+        if ($("#" + focusedId).prev().attr("id") == undefined) {
+            $("#prev").attr("disabled", true).css("color", "darkgray");
+            $("#first").attr("disabled", true).css("color", "darkgray");
+        }
+        if ($("#" + focusedId).next().attr("id") !== undefined) {
+            $("#next").attr("disabled", false).css("color", "black");
+            $("#last").attr("disabled", false).css("color", "black");
+        }
+    };
+
+    this.gotoLast = function () {
+        focusedId = $("#" + focusedId).siblings().last().attr("id");
+        $("#" + focusedId).focus();
+        var dvobj = this.dvcol[focusedId];
+        if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+            $("#Toolbar").children(":not(.commonControls)").remove();
+            if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                this.ebdtable["dv" + dvobj.EbSid].GenerateButtons();
+            }
+        }
+        else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
+            $("#Toolbar").children(":not(.commonControls)").remove();
+            if ($("#" + focusedId).find("canvas").length > 0) {
+                this.chartJs["dv" + dvobj.EbSid].createButtons();
+            }
+        }
+        if ($("#" + focusedId).next().attr("id") == undefined) {
+            $("#next").attr("disabled", true).css("color", "darkgray");
+            $("#last").attr("disabled", true).css("color", "darkgray");
+        }
+        if ($("#" + focusedId).prev().attr("id") !== undefined) {
+            $("#prev").attr("disabled", false).css("color", "black");
+            $("#first").attr("disabled", false).css("color", "black");
         }
     };
 

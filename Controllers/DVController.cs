@@ -121,6 +121,7 @@ namespace ExpressBase.Web.Controllers
         {
             FetchAllDataSources();
             //FetchAllDataVisualizations();
+            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
 
             var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
 
@@ -128,7 +129,7 @@ namespace ExpressBase.Web.Controllers
 
             ViewBag.Meta = _jsResult.Meta;
             ViewBag.JsObjects = _jsResult.JsObjects;
-
+            ViewBag.EbObjectType = _jsResult.EbObjectTypes;
             //Edit mode
             if (!string.IsNullOrEmpty(objid))
             {

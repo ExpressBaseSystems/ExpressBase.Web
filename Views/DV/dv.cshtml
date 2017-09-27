@@ -33,7 +33,9 @@
 }
 <div class="row" style="margin-top: 52px;">
     <div class="toolbar-com" id='Toolbar'>
-        <button id='btnGo' class='tools' style='float: right;display:none'><i class="fa fa-play" aria-hidden="true"></i></button>
+            <button id='prev' class='tools commonControls' style="display:none"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <button id='next' class='tools commonControls' style="display:none"><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button id='btnGo' class='tools commonControls' style='float: right;display:none'><i class="fa fa-play" aria-hidden="true"></i></button>
     </div>
 </div>
 
@@ -120,14 +122,20 @@
 
 @section EbHead {
     <script>
-
+        @Html.Raw(ViewBag.EbObjectType)
         @Html.Raw(ViewBag.Meta)
         @Html.Raw(ViewBag.JsObjects);
         var Wcount = 0, ObjCount = 0;
-        var dvColl = {};
-        var split = new splitWindow("parent-div", "sidediv", "contBox");
+        var focusedId;
+        var dvcontainerObj = new DvContainerObj({
+            ss_url: '@ViewBag.ServiceUrl'
+
+        });
+        //var dvColl = {};
+        var split = new splitWindow("parent-div", "contBox");
         var dvsetObj = new EbObjects["EbDataVisualizationSet"]("set1");
         var pg = new Eb_PropertyGrid("ppgrid");
+        //alert(JSON.stringify(dvsetObj));
         pg.setObject(dvsetObj, AllMetas["EbDataVisualizationSet"]);
         pg.PropertyChanged = function (obj, Pname) {
             console.log(obj);
@@ -137,26 +145,34 @@
                         if ($("#contBox").children("#sub_window_dv" + dv.EbSid+"_1").length == 0) {
                             if (dv.$type.indexOf("EbTableVisualization") !== -1) {
                                 split.createContentWindow(dv.EbSid + "_1", "EbTableVisualization");
-                                dvColl["sub_window_dv" + dv.EbSid + "_1"] = (new EbObjects["EbTableVisualization"](dv.EbSid + "_1"));
+                                dvcontainerObj.dvcol["sub_window_dv" + dv.EbSid + "_1"] = (new EbObjects["EbTableVisualization"](dv.EbSid + "_1"));
                                 ObjCount++;
                             }
                             else if (dv.$type.indexOf("EbChartVisualization") !== -1) {
                                 split.createContentWindow(dv.EbSid + "_1", "EbChartVisualization");
-                                dvColl["sub_window_dv" + dv.EbSid + "_1"] = (new EbObjects["EbChartVisualization"](dv.EbSid+"_1"));
+                                dvcontainerObj.dvcol["sub_window_dv" + dv.EbSid + "_1"] = (new EbObjects["EbChartVisualization"](dv.EbSid+"_1"));
                                 ObjCount++;
                             }
                         }
                     });
                 }
+                if ($("#contBox").children().length >= 2) {
+                    $("#prev").css("display", "inline-block");
+                    $("#next").css("display", "inline-block");
+                }
+                $.each(dvcontainerObj.dvcol, function (key, value) { 
+                    focusedId = key;
+                    return false;
+                });
+                $("#" + focusedId).focus();
             }
             else if (Pname == "DataSourceRefId") {
-               // obj.Pname = "eb_roby_dev-eb_roby_dev-2-519-1165";
                 if (obj[Pname] !== null) {
                     $.LoadingOverlay("show");
-                    $("#sub_windows_sidediv_dv" + obj.EbSid +"").load("../DV/dvCommon", { dvobj:JSON.stringify(obj), dvRefId: null }, function () {
+                    $("#sub_windows_sidediv_dv" + obj.EbSid).load("../DV/dvCommon", { dvobj:JSON.stringify(obj), dvRefId: null }, function () {
                         $.LoadingOverlay("hide");
                         $("#btnGo").css("display", "inline-block");
-
+                        dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid] = dvcontainerObj.currentObj;
                     });
                 }
             }
@@ -165,7 +181,7 @@
             if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
                 var id = $(ev.target).attr("id");
                 var type = $(ev.target).attr("eb-type");
-                var dvobj = dvColl[id];
+                var dvobj = dvcontainerObj.dvcol[id];
                 pg.setObject(dvobj, AllMetas[type]);
             }
         }

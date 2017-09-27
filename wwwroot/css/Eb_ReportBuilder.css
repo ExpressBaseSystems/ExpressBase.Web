@@ -1,4 +1,99 @@
-﻿
+﻿/*side menuBar*/
+.tool-box-items {
+    margin-left: 0px !important;
+    margin-top: 10px !important;
+}
+
+.tree, .tree ul {
+    padding: 0;
+    list-style: none;
+}
+
+    .tree ul {
+        margin-left: 1em;
+        position: relative;
+    }
+
+        .tree ul ul {
+            margin-left: .5em;
+        }
+
+        .tree ul:before {
+            content: "";
+            display: block;
+            width: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            border-left: 1px solid;
+        }
+
+    .tree li {
+        margin: 0;
+        padding: 0 1em;
+        line-height: 2em;
+        font-weight: 300;
+        position: relative;
+    }
+
+    .tree ul li:before {
+        content: "";
+        display: block;
+        width: 10px;
+        height: 0;
+        border-top: 1px solid;
+        margin-top: -1px;
+        position: absolute;
+        top: 1em;
+        left: 0;
+    }
+
+    .tree ul li:last-child:before {
+        background: #fff;
+        height: auto;
+        top: 1em;
+        bottom: 0;
+    }
+
+.indicator {
+    margin-right: 5px;
+}
+
+.tree li a {
+    text-decoration: none;
+    font-size: 15px;
+    color: black;
+}
+
+.tree li button, .tree li button:active, .tree li button:focus {
+    text-decoration: none;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+}
+
+.select2-container {
+    width: 97% !important;
+    margin-left: 3px;
+}
+
+.select2-container--default .select2-selection--single {
+    border: 1px solid #ccc !important;
+    border-radius: 0;
+}
+
+.select2-dropdown {
+    margin-left: -3px !important;
+}
+
+.qr-Br-img-btn {
+    margin-left: 5px;
+}
+
+/*end side menuBar*/
 .tab-section{
     position: fixed;
     z-index: 100;

@@ -80,35 +80,85 @@ namespace ExpressBase.Web.Controllers
 
         }
 
+        public string CommitFormBuilder()
+        {
+            var req = this.HttpContext.Request.Form;
+            string refid;
+            if (string.IsNullOrEmpty(req["id"]))
+            {
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["filterdialogjson"];
+                //if (ds.EbObjectType == 0)
+                //   ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
+                //else if (ds.EbObjectType == 12)
+                //{
+                //    ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
+                //    (ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
+                //}
+
+                //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
+                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Relations = "";
+                ds.IsSave = false;
+
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
+
+            }
+            else
+            {
+                var ds = new EbObject_CommitRequest();
+                ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["filterdialogjson"];
+                ds.Relations = "";
+                ds.RefId = req["id"];
+                ds.ChangeLog = "";
+                var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
+                refid = res.RefId;
+            }
+
+            return refid;
+        }
+
         public string SaveFormBuilder()
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.ServiceClient;
-            var ds = new EbObjectFirstCommitRequest();
+            string refid;
+            if (string.IsNullOrEmpty(req["id"]))
+            {
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["filterdialogjson"];
+                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Relations = "";
+                ds.IsSave = true;
 
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
+            }
+            else
+            {
 
-            ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
-            ds.Name = req["name"];
-            ds.Description = req["description"];
-            ds.Json = req["filterdialogjson"];
-
-            //if (ds.EbObjectType == 0)
-            //   ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
-            //else if (ds.EbObjectType == 12)
-            //{
-            //    ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
-            //    (ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
-            //}
-
-            //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
-            ds.Status = ObjectLifeCycleStatus.Live;
-            ds.TenantAccountId = ViewBag.cid;
-            ds.Relations = "";          
-
-            var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);
-            return CurrSaveId.RefId;
+                var ds = new EbObject_SaveRequest();
+                ds.RefId = req["Id"];
+                ds.Name = req["Name"];
+                ds.Description = req["Description"];
+                ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
+                ds.Json = req["filterdialogjson"];
+                ds.Relations = "";
+                ViewBag.IsNew = "false";
+                var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
+                refid = res.RefId;
+            }
+            return refid;
         }
-
         //Jith Builder related
         private string GetHtml2Render(BuilderType type, string objid)
         {

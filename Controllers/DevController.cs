@@ -25,6 +25,8 @@ using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using Microsoft.AspNetCore.Routing;
 using ExpressBase.Common.JsonConverters;
+using ExpressBase.Objects.Objects.EmailRelated;
+using System.Reflection;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -295,19 +297,7 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("DevSignIn", "Ext");
 
         }
-        public IActionResult ReportBuilder()
-        {
-            IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {EbObjectType = 2 });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            foreach (var element in rlist)
-            {
-                ObjList[element.Id] = element;
-            }
-            ViewBag.Objlist = ObjList;
-            return View();
-        }
+       
         [HttpGet]
         public IActionResult Eb_EmailBuilder()
         {
@@ -323,7 +313,17 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
             ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";
-            //ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+
+            var typeArray = typeof(EbEmailBuilder).GetTypeInfo().Assembly.GetTypes();
+
+            var _jsResult = CSharpToJs.GenerateJs<EbEmailBuilder>(BuilderType.EmailBuilder, typeArray);
+
+
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+
+         
             return View();
           
         }

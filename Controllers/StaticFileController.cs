@@ -9,6 +9,7 @@ using System.IO;
 using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.Net.Http.Headers;
+using System.Text;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,12 +37,19 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UploadFileAsync(int i)
+        public async Task<JsonResult> UploadFileAsync(string byteArray,string fileName)
         {
-            JsonResult resp = null;
-
+            JsonResult resp = null;       
             try
             {
+                if (byteArray != null)
+                {
+                    byte[] myFileVal = Encoding.ASCII.GetBytes(byteArray);              
+                    this.ServiceClient.Post(new UploadFileRequest { FileName = fileName, ByteArray = myFileVal });
+                    resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK" });
+                }
+
+
                 var req = this.HttpContext.Request.Form;
 
                 foreach (var formFile in req.Files)

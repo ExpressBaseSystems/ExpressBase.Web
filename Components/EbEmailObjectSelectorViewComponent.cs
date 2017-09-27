@@ -26,10 +26,10 @@ namespace ExpressBase.Web.Components
         {
             var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = Type });
             var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            Dictionary<string, EbObjectWrapper> ObjList = new Dictionary<string, EbObjectWrapper>();
             foreach (var element in rlist)
             {
-                ObjList[element.Id] = element;
+                ObjList[element.RefId] = element;
             }
             ViewBag.Objlist = ObjList;
 

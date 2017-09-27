@@ -42,28 +42,98 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.IsNew = "false";
             return View();
-        }       
+        }
 
-        public EbObjectSaveOrCommitResponse CommitReport()
+        //public EbObjectSaveOrCommitResponse CommitReport()
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    var ds = new EbObjectSaveOrCommitRequest();
+        //    ds.IsSave = false;
+        //    ds.RefId = req["id"];
+        //    ds.EbObjectType = (int)EbObjectType.Report;
+        //    ds.Name = req["name"];
+        //    ds.Description = req["description"];
+        //    ds.Json = req["json"];
+        //    //ds.EbObject = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+        //    //(ds.EbObject as EbDataSource).EbObjectType = EbObjectType.DataSource;
+        //    ds.Status = ObjectLifeCycleStatus.Live;
+        //    ds.UserId = ViewBag.UId;
+        //    ds.ChangeLog = req["changeLog"];
+        //    ds.Relations = req["rel_obj"];
+        //    ViewBag.IsNew = "false";
+
+        //    return this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
+
+        //}
+        public string SaveReport()
         {
             var req = this.HttpContext.Request.Form;
-            var ds = new EbObjectSaveOrCommitRequest();
-            ds.IsSave = false;
-            ds.RefId = req["id"];
-            ds.EbObjectType = (int)EbObjectType.Report;
-            ds.Name = req["name"];
-            ds.Description = req["description"];
-            ds.Json = req["json"];
-            //ds.EbObject = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-            //(ds.EbObject as EbDataSource).EbObjectType = EbObjectType.DataSource;
-            ds.Status = ObjectLifeCycleStatus.Live;
-            ds.UserId = ViewBag.UId;
-            ds.ChangeLog = req["changeLog"];
-            ds.Relations = req["rel_obj"];
-            ViewBag.IsNew = "false";
+            string refid;
+            if (string.IsNullOrEmpty(req["id"]))
+            {
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = (int)EbObjectType.Report;
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["json"];
+                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Relations = req["rel_obj"];
+                ds.IsSave = true;
 
-            return this.ServiceClient.Post<EbObjectSaveOrCommitResponse>(ds);
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);               
+                 refid = res.RefId;
+            }
+            else
+            {
 
+                var ds = new EbObject_SaveRequest();
+                ds.RefId = req["Id"];
+                ds.Name = req["Name"];
+                ds.Description = req["Description"];
+                ds.EbObjectType = (int)EbObjectType.Report;
+                ds.Json = req["json"];
+                ds.Relations = req["rel_obj"];
+                ViewBag.IsNew = "false";
+                var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
+                refid = res.RefId;
+            }
+            return refid;
+        }
+
+        public string CommitReport()
+        {
+            var req = this.HttpContext.Request.Form;
+            string refid;
+            if (string.IsNullOrEmpty(req["id"]))
+            {
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = (int)EbObjectType.Report;
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["json"];
+                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Relations = req["rel_obj"];
+                ds.IsSave = false;
+
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
+
+            }
+            else
+            {
+                var ds = new EbObject_CommitRequest();
+                ds.EbObjectType = (int)EbObjectType.Report;
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["json"];
+                ds.Relations = req["rel_obj"];
+                ds.RefId = req["id"];
+                ds.ChangeLog = req["changeLog"];
+                var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
+                refid = res.RefId;
+            }
+
+            return refid;
         }
     }
 }

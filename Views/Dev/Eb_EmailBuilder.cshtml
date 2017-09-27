@@ -55,14 +55,46 @@
         </div>
 
     <script>
-      
+
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
-   
+
         $(document).ready(function () {
             var emailpropG = new Eb_PropertyGrid("PropertyG");
-          
+            var emailobj = new EbObjects["EbEmailTemplatePG"]("email");
+            emailpropG.setObject(emailobj,AllMetas["EbEmailTemplatePG"]);
+            emailpropG.PropertyChanged = function (obj, Pname) {
+                console.log(obj);
+                console.log(emailobj);
+                if (Pname == "Visualizations") {
+                    if (obj[Pname] !== null) {
+                        $.each(obj[Pname], function (i, dv) {
+                            if ($("#contBox").children("#sub_window_dv" + dv.EbSid+"_1").length == 0) {
+                                if (dv.$type.indexOf("EbTableVisualization") !== -1) {
+                                    split.createContentWindow(dv.EbSid + "_1", "EbTableVisualization");
+                                    dvcontainerObj.dvcol["sub_window_dv" + dv.EbSid + "_1"] = (new EbObjects["EbTableVisualization"](dv.EbSid + "_1"));
+                                    ObjCount++;
+                                }
+                                else if (dv.$type.indexOf("EbChartVisualization") !== -1) {
+                                    split.createContentWindow(dv.EbSid + "_1", "EbChartVisualization");
+                                    dvcontainerObj.dvcol["sub_window_dv" + dv.EbSid + "_1"] = (new EbObjects["EbChartVisualization"](dv.EbSid+"_1"));
+                                    ObjCount++;
+                                }
+                            }
+                        });
+                    }
+                    if ($("#contBox").children().length >= 2) {
+                        $("#prev").css("display", "inline-block");
+                        $("#next").css("display", "inline-block");
+                    }
+                    $.each(dvcontainerObj.dvcol, function (key, value) {
+                        focusedId = key;
+                        return false;
+                    });
+                    $("#" + focusedId).focus();
+                }
+        }
             var w = $('.col-md-10').css("width");
             // $('#summernote').summernote();
 

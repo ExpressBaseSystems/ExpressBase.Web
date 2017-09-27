@@ -337,30 +337,36 @@
 
             if (selected_opt === "_major")
             {
-                $.LoadingOverlay("show");
-                $.post("../CE/Create_Major_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
-                    function () {
-                    alert("Created Major version");
-                    $.LoadingOverlay("hide");
-                })
+                if (confirm('Are you sure you want to create Major version?')) {
+                    $.LoadingOverlay("show");
+                    $.post("../CE/Create_Major_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
+                        function () {
+                            alert("Created Major version");
+                            $.LoadingOverlay("hide");
+                        })
+                }
             }
               if (selected_opt === "_minor")
-            {
-                $.LoadingOverlay("show");
-                $.post("../CE/Create_Minor_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
-                    function () {
-                        alert("Created Minor version");
-                        $.LoadingOverlay("hide");
-                    })
+              {
+                  if (confirm('Are you sure you want to create Minor version?')) {
+                      $.LoadingOverlay("show");
+                      $.post("../CE/Create_Minor_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
+                          function () {
+                              alert("Created Minor version");
+                              $.LoadingOverlay("hide");
+                          })
+                  }
             }
             if (selected_opt === "_patch")
             {
-                $.LoadingOverlay("show");
-                $.post("../CE/Create_Patch_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
-                    function () {
-                        alert("Created patch version");
-                        $.LoadingOverlay("hide");
-                    })
+                if (confirm('Are you sure you want to create Patch version?')) {
+                    $.LoadingOverlay("show");
+                    $.post("../CE/Create_Patch_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
+                        function () {
+                            alert("Created patch version");
+                            $.LoadingOverlay("hide");
+                        })
+                }
             }
 
         });

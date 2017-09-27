@@ -297,19 +297,7 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("DevSignIn", "Ext");
 
         }
-        public IActionResult ReportBuilder()
-        {
-            IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {EbObjectType = 2 });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            foreach (var element in rlist)
-            {
-                ObjList[element.Id] = element;
-            }
-            ViewBag.Objlist = ObjList;
-            return View();
-        }
+       
         [HttpGet]
         public IActionResult Eb_EmailBuilder()
         {

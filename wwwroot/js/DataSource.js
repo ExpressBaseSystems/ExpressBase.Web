@@ -152,12 +152,12 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         //    "</table>" +
         //    "</div>");
         //$("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-      
+
         var scrollPos = $('#versionTab').offset().top;
         $(window).scrollTop(scrollPos);
 
         this.ShowVersions();
-        
+
     }
 
     this.ShowVersions = function () {
@@ -189,15 +189,15 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
 
     this.VersionCode_drpListItem = function (i, version) {
         var vnum = version.versionNumber;
-        $('#vernav'+ tabNum + " select").append("<option value='" + version.id + "' data-tokens='" + vnum + "'> v " + version.versionNumber + "</option>");
+        $('#vernav' + tabNum + " select").append("<option value='" + version.id + "' data-tokens='" + vnum + "'> v " + version.versionNumber + "</option>");
     };
 
     this.VersionCode_success = function (data) {
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>v." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav"+ tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
+        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
-       // $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-       // $('#versionTab').append("<div id='vernav" +  tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">");
+        // $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        // $('#versionTab').append("<div id='vernav" +  tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">");
         $('#vernav' + tabNum).append("<div class='form-inline inner_toolbar' style='margin-bottom:0px;'>  " +
             " <div class='btn btn-group'>" +
             "<div class='verlist input-group'>" +
@@ -210,14 +210,14 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
             "</div>" +
             "</div>" +
             "<div id='inner_well" + tabNum + "' class='collapse'></div>");
-        $('#vernav' +  tabNum).append(
+        $('#vernav' + tabNum).append(
             " <div><label class = 'label label-default codeEditLabel'>Version v." + this.HistoryVerNum + "</label>" +
             " <label class = 'label label-default codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
             "<label  class = 'label label-default codeEditLabel'>Committed By: " + this.commitUname + " </label>" +
             " <label class = 'label label-default codeEditLabel'>CommittedAt: " + this.commitTs + "</label>" +
             "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + data + "</textarea>" +
             "</div>");
-     //   $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        //   $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         window.editor1 = CodeMirror.fromTextArea(document.getElementById("vercode" + tabNum), {
             mode: "text/x-sql",
             lineNumbers: true,
@@ -229,7 +229,7 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         });
 
         var getNav = $("#versionNav li.active a").attr("href");
-      //  $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        //  $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
         //   $(getNav + ' #execute' + tabNum).off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this)); 
         $(".selectpicker").selectpicker();
         $.LoadingOverlay("hide");
@@ -292,8 +292,8 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
                 $('#selected_Ver_1' + tabNum).append("<option value='Current' data-tokens='Select Version'>Current</option>");
                 $('#selected_Ver_2' + tabNum).append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
                 $.each(data, function (i, obj) {
-                    $('#selected_Ver_1' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
-                    $('#selected_Ver_2' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> Version" + obj.versionNumber + "</option>");
+                    $('#selected_Ver_1' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> v " + obj.versionNumber + "</option>");
+                    $('#selected_Ver_2' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> v " + obj.versionNumber + "</option>");
                 });
                 $('.selectpicker').selectpicker({
                     size: 4
@@ -308,8 +308,8 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
-      //  $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-       // $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
+        //  $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
+        // $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
         $('#vernav' + tabNum).append("<div>" +
             "<div class='well'>" +
             " <div>" +
@@ -378,7 +378,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
     };
 
     this.Commit = function (needRun) {
-      //  $("#close_popup").click();
         $.LoadingOverlay("show");
         this.SetValues();
         if (this.ObjectType === 5) {
@@ -470,11 +469,11 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         //$('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-      //  $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
+        //  $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
         $('#vernav' + tabNum).append(" <div class=' filter_modal_body'>" +
             "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
             "</div>");
-      //  $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        //  $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         $.post('GetColumns4Trial', {
             ds_refid: this.runver_Refid,
             parameter: this.Object_String_WithVal
@@ -678,6 +677,8 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
             this.CreateObjString();
             this.DrawTable();
         }
+        alert("Success");
+        $("#close_popup").click();
         $.LoadingOverlay("hide");
     };
 

@@ -40,12 +40,20 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         $(".selectpicker").selectpicker();
         $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
         $('#compare').off('click').on('click', this.Compare.bind(this));
+
+        var DSPropGrid = new Eb_PropertyGrid("dspropgrid");
+        var dsprop = new EbObjects["EbDataSource"]("EbDataSource1");
+        DSPropGrid.setObject(dsprop, AllMetas["EbDataSource"]);
+        DSPropGrid.PropertyChanged = function (obj) {
+            this.Name = obj.Name;
+            this.Description = obj.Description;
+        };
+
     }
 
     this.SetValues = function () {
         this.Code = window.editor.getValue();
-        this.Name = $('#obj_name').val();
-        this.Description = $('#obj_desc').val();
+       
         this.changeLog = $('#obj_changelog').val();
     }
 
@@ -54,10 +62,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         $('#versionNav').append(navitem);
         $('#versionTab').append(tabitem);
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        //    var scrollPos = $('#versionTab').offset().top;
-        //    $(window).scrollTop(scrollPos);
-
-        //    this.ShowVersions();
     }
 
     this.SetFdInit = function (me, fdId) {
@@ -134,25 +138,7 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
             "<tbody id='vertbody" + tabNum + "' class='vertbody'></tbody>" +
             "</table>" +
             "</div>";
-        this.AddVerNavTab(navitem, tabitem);
-
-        // $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" +tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        //$('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>" +
-        //    "<table class='table table-striped table-bordered col-md-12' id='versions"  + tabNum + "'>" +
-        //    "<thead class='verthead"+ tabNum + "'>" +
-        //    "<tr>" +
-        //    "<th class='col-md-1'>Version Number</th>" +
-        //    "<th class='col-md-4'>Change Log</th>" +
-        //    "<th class='col-md-1'>Committed By</th>" +
-        //    "<th class='col-md-2'>Committed At</th>" +
-        //    "<th class='col-md-1'> </th>" +
-        //    "</tr>" +
-        //    " </thead>" +
-        //    "<tbody id='vertbody" +  tabNum + "' class='vertbody'></tbody>" +
-        //    "</table>" +
-        //    "</div>");
-        //$("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-
+        this.AddVerNavTab(navitem, tabitem); 
         var scrollPos = $('#versionTab').offset().top;
         $(window).scrollTop(scrollPos);
 
@@ -196,8 +182,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>v." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
-        // $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>V." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        // $('#versionTab').append("<div id='vernav" +  tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">");
         $('#vernav' + tabNum).append("<div class='form-inline inner_toolbar' style='margin-bottom:0px;'>  " +
             " <div class='btn btn-group'>" +
             "<div class='verlist input-group'>" +
@@ -217,7 +201,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
             " <label class = 'label label-default codeEditLabel'>CommittedAt: " + this.commitTs + "</label>" +
             "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + data + "</textarea>" +
             "</div>");
-        //   $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         window.editor1 = CodeMirror.fromTextArea(document.getElementById("vercode" + tabNum), {
             mode: "text/x-sql",
             lineNumbers: true,
@@ -229,8 +212,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         });
 
         var getNav = $("#versionNav li.active a").attr("href");
-        //  $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        //   $(getNav + ' #execute' + tabNum).off('shown.bs.collapse').on('shown.bs.collapse', this.Execute.bind(this)); 
         $(".selectpicker").selectpicker();
         $.LoadingOverlay("hide");
         setTimeout(function () {
@@ -308,8 +289,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
-        //  $('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        // $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
         $('#vernav' + tabNum).append("<div>" +
             "<div class='well'>" +
             " <div>" +
@@ -438,10 +417,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
             var myarray = filter_control_list.split(',');
             for (var i = 0; i < myarray.length; i++) {
                 console.log($("#" + myarray[i]).val());
-                //if (typeof $("#" + myarray[i]).val() === "undefined") {
-                //    $(this).addClass('has-error');
-                //    this.ValidInput = false;
-                //}
                 var type = $('#' + myarray[i]).attr('data-ebtype');
                 var name = $('#' + myarray[i]).attr('name');
                 var value = $('#' + myarray[i]).val();
@@ -463,27 +438,17 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
 
     this.DrawTable = function () {
         $.LoadingOverlay("show");
-        // if (this.ValidInput === true) {
         tabNum++;
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
-        //$('#versionNav').append("<li><a data-toggle='tab' href='#vernav" + tabNum + "'>Result-" + this.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>");
-        //  $('#versionTab').append("<div id='vernav" + tabNum + "' class='tab-pane fade'>");
         $('#vernav' + tabNum).append(" <div class=' filter_modal_body'>" +
             "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
             "</div>");
-        //  $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         $.post('GetColumns4Trial', {
             ds_refid: this.runver_Refid,
             parameter: this.Object_String_WithVal
         }, this.Load_Table_Columns.bind(this));
-
-        //}
-        //else {
-        //    $.LoadingOverlay("hide");
-        //    alert('not valid');
-        //}
     };
 
     this.Load_Table_Columns = function (result) {
@@ -556,7 +521,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
 
     this.CallDiffer = function (data_1, selected_ver_number, curr_ver, data_2) {
         var getNav = $("#versionNav li.active a").attr("href");
-        // var vername = $('#selected_Ver option:selected').attr("data-tokens");
         this.SetValues();
         if (selected_ver_number > curr_ver) {
             $.post("../CE/GetDiffer", {
@@ -574,7 +538,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
 
     this.showDiff = function (new_ver_num, old_ver_num, data) {
         var getNav = $("#versionNav li.active a").attr("href");
-        //  var verid = $(getNav + ' #selected_Ver option:selected').val();
 
         $('#versionNav li.active a').text().replace('compare', "v." + old_ver_num + " v/s v." + new_ver_num);
 
@@ -593,11 +556,6 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
             $('.leftPane').scrollTop($(this).scrollTop());
             $('.leftPane').scrollLeft($(this).scrollLeft());
         });
-        //Split(['.leftPane', '.rightPane'], {
-        //    sizes: [50, 50],
-        //    minSize: 0,
-        //    gutterSize: 3
-        //});
         var scrollPos = $('#compare_result' + tabNum).offset().top;
         $(window).scrollTop(scrollPos);
         $.LoadingOverlay("hide");

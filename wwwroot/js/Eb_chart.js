@@ -201,8 +201,8 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     };
 };
 
-var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
-    this.type = type;
+var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
+    this.type = columnInfo.type;
     this.columnInfo = columnInfo;
     this.data = data;
     this.ssurl = ssurl;
@@ -219,9 +219,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
 
     this.init = function () {
         $.event.props.push('dataTransfer');
-        $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
-        $("#graphDropdown_tab" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
-        $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
+        this.bindEvents();
         if (!this.flagAppendColumns) {
             this.appendColumns();
             this.appendXandYAxis();
@@ -250,14 +248,20 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         }
     };
 
+    this.bindEvents = function () {
+        $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
+        $("#graphDropdown_tab" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
+        $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
+    }
+
     this.appendColumns = function () {
         var colsAll_X = [], Xcol = [];
         var tid = this.tableId;
         if (this.columnInfo.options !== null && this.columnInfo.options !== undefined) {
-            $.each(this.columnInfo.options.Xaxis, this.AddXcolumns.bind(this, Xcol));
+            $.each(this.columnInfo.Xaxis, this.AddXcolumns.bind(this, Xcol));
             $.each(this.columnInfo.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
             var colsAll_XY = [], Ycol = [];
-            $.each(this.columnInfo.options.Yaxis, this.AddYcolumns.bind(this, Ycol));
+            $.each(this.columnInfo.Yaxis, this.AddYcolumns.bind(this, Ycol));
             $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
             colsAll_XY = colsAll_XY.sort(function (a, b) {
                 return a.name.localeCompare(b.name);
@@ -300,11 +304,11 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
 
     this.appendXandYAxis = function () {
         var tid = this.tableId;
-        if (this.columnInfo.options !== null && this.columnInfo.options !== undefined) {
-            $.each(this.columnInfo.options.Xaxis, function (i, obj) {
+        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
+            $.each(this.columnInfo.Xaxis, function (i, obj) {
                 $("#X_col_name" + tid).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.index + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
             });
-            $.each(this.columnInfo.options.Yaxis, function (i, obj) {
+            $.each(this.columnInfo.Yaxis, function (i, obj) {
                 $("#Y_col_name" + tid).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.index + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
             });
         }
@@ -322,7 +326,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
 
 
     this.getDataSuccess = function (result) {
-        this.drawGraphHelper(result.data);
+            this.drawGraphHelper(result.data);
     };
 
     this.drawGraphHelper = function (datain) {
@@ -338,11 +342,11 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         this.dataset = [];
         this.XLabel = [];
         this.YLabel = [];
-        if (this.columnInfo.options !== null && this.columnInfo.options !== undefined) {
-            $.each(this.columnInfo.options.Xaxis, function (i, obj) {
+        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
+            $.each(this.columnInfo.Xaxis, function (i, obj) {
                 Xindx.push(obj.index);
             });
-            $.each(this.columnInfo.options.Yaxis, function (i, obj) {
+            $.each(this.columnInfo.Yaxis, function (i, obj) {
                 Yindx.push(obj.index);
             });
 
@@ -351,7 +355,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
                 this.YLabel = [];
                 for (j = 0; j < this.data.length; j++)
                     this.YLabel.push(this.data[j][Yindx[k]]);
-                this.dataset.push(new datasetObj(this.columnInfo.options.Yaxis[k].name, this.YLabel, getRandomColor(), false));
+                this.dataset.push(new datasetObj(this.columnInfo.Yaxis[k].name, this.YLabel, getRandomColor(), false));
             }
         }
     };
@@ -406,8 +410,12 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
     this.RemoveCanvasandCheckButton = function () {
         var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim().toLowerCase();
         if (ty == "areafilled" || ty == "line") {
-            $.each(this.gdata.datasets, this.GdataDSiterFn.bind(this));
-            this.type = "line";
+            if (this.gdata !== null) {
+                $.each(this.gdata.datasets, this.GdataDSiterFn.bind(this));
+                this.type = "line";
+            }
+            else
+                this.drawGeneralGraph();
         }
         else if (ty == "bar")
             this.type = "bar";
@@ -419,14 +427,20 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             this.goptions = null;
             this.type = "doughnut";
         }
-        if (this.columnInfo.options !== null && this.columnInfo.options !== undefined)
-            this.columnInfo.options.type = this.type;
-        else
-            $("#graphDropdown_tab" + this.tableId + " .button:first-child").html("bar" + "&nbsp;<span class = 'caret'></span>")
+        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
+            if (this.columnInfo.type == null || this.columnInfo.type == "") {
+                $("#graphDropdown_tab" + this.tableId + " button:first-child").html("Bar" + "&nbsp;<span class = 'caret'></span>")
+                this.columnInfo.type = "bar";
+            }
+            else
+                this.columnInfo.type = this.type;
+        }
         $("#graphcontainer_tab" + this.tableId).children("iframe").remove();
         $("#myChart" + this.tableId).remove();
         $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
-        this.drawGraph();
+
+        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null)
+            this.drawGraph();
     };
 
     this.ApiDSiterFn = function (i, obj) {
@@ -457,7 +471,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
     this.drawGraph = function () {
         var canvas = document.getElementById("myChart" + this.tableId);
         this.chartApi = new Chart(canvas, {
-            type:(this.columnInfo.options === null || this.columnInfo.options === undefined) ? "bar" : this.columnInfo.options.type.trim().toLowerCase(),
+            type:this.columnInfo.type.trim().toLowerCase(),
             data: this.gdata,
             options: this.goptions
         });
@@ -514,15 +528,13 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
                 $("#X_col_name" + this.tableId + " div").each(this.changeIndexIOfXColumns.bind(this));
             }
         }
-        if (this.columnInfo.options === null || this.columnInfo.options === undefined) {
-            var opt = new Object();
-            opt.Xaxis = this.Xax;
-            opt.Yaxis = this.Yax;
-            this.columnInfo.options = opt;
+        if (this.columnInfo.Xaxis === null || this.columnInfo.Yaxis === null) {
+            this.columnInfo.Xaxis = this.Xax;
+            this.columnInfo.Yaxis = this.Yax;
         }
         else {
-            this.columnInfo.options.Xaxis = this.Xax;
-            this.columnInfo.options.Yaxis = this.Yax;
+            this.columnInfo.Xaxis = this.Xax;
+            this.columnInfo.Yaxis = this.Yax;
         }
         if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
             this.drawGeneralGraph();
@@ -531,7 +543,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
             $("#myChart" + this.tableId).remove();
             $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
         }
-        console.log(this.columnInfo.options.Xaxis); console.log(this.columnInfo.options.Yaxis);
+        console.log(this.columnInfo.Xaxis); console.log(this.columnInfo.Yaxis);
         $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
 
@@ -590,8 +602,8 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
         //$("#columns4Drag" + this.tableId + " .list-group").append("<li class='alert alert-success columnDrag' id='" + $(e.target).parent().attr("id") + "' draggable='true' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "</li>");
         $(e.target).parent().remove();
         //$("#columns4Drag" + this.tableId + " .columnDrag").off("dragstart").on("dragstart", this.colDrag.bind(this));
-        this.columnInfo.options.Xaxis = $.grep(this.columnInfo.options.Xaxis, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
-        this.columnInfo.options.Yaxis = $.grep(this.columnInfo.options.Yaxis, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
+        this.columnInfo.Xaxis = $.grep(this.columnInfo.Xaxis, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
+        this.columnInfo.Yaxis = $.grep(this.columnInfo.Yaxis, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
         this.Xax = $.grep(this.Xax, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
         this.Yax = $.grep(this.Yax, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
         if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
@@ -626,7 +638,7 @@ var Eb_chartJSgraph = function (type, data, columnInfo, ssurl, tableId) {
 var eb_chart = function (columnInfo, ssurl, data, tableId) {
     this.data = data;
     this.columnInfo = columnInfo;
-    this.type = (this.columnInfo.options === null || this.columnInfo.options === undefined) ? "bar" : this.columnInfo.options.type.trim().toLowerCase();
+    //this.type = (this.columnInfo.options === null || this.columnInfo.options === undefined) ? "bar" : this.columnInfo.options.type.trim().toLowerCase();
     this.ssurl = ssurl;
     this.chartJs = null;
     this.tableId = tableId;
@@ -639,7 +651,7 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
                 "<table>" +
                 "<tr>" +
                 "<td colspan=2>" +
-                "<div id=id='xy" + this.tableId + "' style='vertical-align: top;width: 100%;'> " +
+                "<div id=id='xy" + this.tableId + "' style='vertical-align: top;width: 300%;'> " +
                 "<div class='input-group' > " +
                 "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
                 "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
@@ -668,7 +680,7 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
                 "</table>" +
                 "</div></div>");
             this.createButtons();
-            this.chartJs = new Eb_chartJSgraph(this.type, this.data, this.columnInfo, this.ssurl, tableId);
+            this.chartJs = new Eb_chartJSgraph( this.data, this.columnInfo, this.ssurl, tableId);
         }
 
     };
@@ -687,11 +699,11 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
             "<li><a href='#'> doughnut </a></li>" +
             "</ul>" +
             "</div>" +
-            "<select class='selectpicker' id='graphDropdown_tab" + this.tableId +"' style='display: inline-block;padding-top: 1px;'>" +
-            "   <option><i class='fa fa-line-chart custom'></i> Line</option>" +
-            "  <option><i class='fa fa-bar-chart custom'></i> Bar</option>" +
-            " <option><i class='fa fa-area-chart custom'></i> AreaFilled</option>" +
-            "</select>" +
+            //"<select class='selectpicker' id='graphDropdown_tab" + this.tableId +"' style='display: inline-block;padding-top: 1px;'>" +
+            //"   <option><i class='fa fa-line-chart custom'></i> Line</option>" +
+            //"  <option><i class='fa fa-bar-chart custom'></i> Bar</option>" +
+            //" <option><i class='fa fa-area-chart custom'></i> AreaFilled</option>" +
+            //"</select>" +
             "<button id='reset_zoom" + this.tableId + "' class='tools'>Reset zoom</button>" +
             "<button id='btnColumnCollapse" + this.tableId + "' class='tools' style='display: inline-block;'>" +
             "<i class='fa fa-cog' aria-hidden='true'></i>" +
@@ -700,7 +712,8 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
         //    //style: 'btn-info',
         //    //size: 4
         //});
-
+        //this.chartJs.bindEvents();
+        
     };
 
     this.drawGraphHelper = function (datain) {

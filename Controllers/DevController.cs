@@ -66,18 +66,62 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult Eb_formBuilder(int i)
         {
+            //var req = this.HttpContext.Request.Form;
+            //ViewBag.Objtype = req["objtype"];
+            //ViewBag.Objid = req["objid"];
+
+            //BuilderType _BuilderType = (BuilderType)Convert.ToInt32(ViewBag.Objtype);
+
+            //EbObjectWrapper FormObj = GetFormObj(req["objid"].ToString(), Convert.ToInt32(req["objtype"]));
+            //ViewBag.Json = FormObj.Json;
+            //ViewBag.Name = FormObj.Name;
+            //ViewBag.html = GetHtml2Render(_BuilderType, ViewBag.Objid);
+            //return View();
+
+            //================
+
+            ViewBag.Header = "Edit WebForm";
             var req = this.HttpContext.Request.Form;
-            ViewBag.Objtype = req["objtype"];
-            ViewBag.Objid = req["objid"];
+            int obj_id = Convert.ToInt32(req["objid"]);
 
-            BuilderType _BuilderType = (BuilderType)Convert.ToInt32(ViewBag.Objtype);
+            ViewBag.Obj_id = obj_id;
+            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
+            var rlist = resultlist.Data;
+            foreach (var element in rlist)
+            {
+                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                ViewBag.LifeCycle = lifeCycle;
+                ViewBag.IsNew = "false";
+                ViewBag.Objtype = EbObjectType.WebForm;
+                ViewBag.ObjectName = element.Name;
+                ViewBag.ObjectDesc = element.Description;
+                ViewBag.Status = element.Status;
+                ViewBag.VersionNumber = element.VersionNumber;
+                ViewBag.Icon = "fa fa-database";
+                ViewBag.ObjType = (int)EbObjectType.WebForm;
+                ViewBag.Refid = element.RefId;
+                ViewBag.Majorv = element.MajorVersionNumber;
+                ViewBag.Minorv = element.MinorVersionNumber;
+                ViewBag.Patchv = element.PatchVersionNumber;
 
-            EbObjectWrapper FormObj = GetFormObj(req["objid"].ToString(), Convert.ToInt32(req["objtype"]));
-            ViewBag.Json = FormObj.Json;
-            ViewBag.Name = FormObj.Name;
-            ViewBag.html = GetHtml2Render(_BuilderType, ViewBag.Objid);
+                if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+                {
+                    EbForm dsobj = EbSerializers.Json_Deserialize<EbForm>(element.Json_lc);
+                    ViewBag.Name = dsobj.Name;
+                    ViewBag.Json = element.Json_lc;
+                    ViewBag.html = dsobj.GetHtml();
+                }
+                else
+                {
+                    EbForm dsobj = EbSerializers.Json_Deserialize<EbForm>(element.Json_wc);
+                    ViewBag.Name = dsobj.Name;
+                    ViewBag.Json = element.Json_wc;
+                    ViewBag.html = dsobj.GetHtml();
+                }
+            }
+
             return View();
-
         }
 
         public string CommitFormBuilder()

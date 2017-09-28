@@ -39,6 +39,12 @@ function slide(dir, leftDiv, rightDiv, $stickBtn) {
     }
 };
 
+
+
+function getObjByval(ObjArray, key, val) {
+    return ObjArray.filter(function (obj) { return obj[key] == val; })[0];
+};
+
 jQuery.fn.outerHTML = function (s) {
     return s
         ? this.before(s).remove()

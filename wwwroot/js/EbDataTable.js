@@ -864,7 +864,7 @@ var EbDataTable = function (settings) {
         this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
-        $("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsWindow.bind(this));
+        //$("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsWindow.bind(this));
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
         //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
         $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
@@ -898,12 +898,13 @@ var EbDataTable = function (settings) {
                 "<button id='btnCopy" + this.tableId + "' class='tools'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
             "</div>" +
             "</div>" +
-            "<button id='" + this.tableId + "_btnSettings' class='tools'><i class='fa fa-cog' aria-hidden='true'></i></button>" +
+            //"<button id='" + this.tableId + "_btnSettings' class='tools'><i class='fa fa-cog' aria-hidden='true'></i></button>" +
             //"<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
             //       " <i class='fa fa-chevron-down' aria-hidden='true'></i>" +
             //   " </div>" +
             "</div>");
         //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
+        this.addFilterEventListeners();
     };
 
 

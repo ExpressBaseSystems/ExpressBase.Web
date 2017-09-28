@@ -71,7 +71,14 @@
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0)").hide();
             $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp));
-            this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp];
+
+            if (this.PGobj.CurProp === "Controls") {
+                this.CElist = this.PGobj.PropsObj.Controls.$values;
+            }
+            else {
+                this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp];
+            }
+
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
             this.setColTiles();
         }
@@ -87,24 +94,16 @@
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
         }
         this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)]);
-        this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
     };
 
     this.onDragFn = function (el, source) {
-        var target = $(el).parent()[0];
         if (source.id !== this.CE_all_ctrlsContId) {
-            var sibling = $(el).next();
-            if (sibling) {
-                var idx = sibling.index() - 1;
-                if (this.editor === 7) {
-                    this.movingObj = this.CElist.splice(idx, 1)[0];
-                }
-                else if (this.editor === 9) {
-                    this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1);////////////
-                }
-            }
+            if (this.editor === 7)
+                this.movingObj = this.CElist.splice(this.CElist.indexOf(this.getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
+            else if (this.editor === 9)
+                this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1);
         }
         else
             this.movingObj = null;
@@ -112,39 +111,22 @@
 
     this.onDragendFn = function (el) {
         var sibling = $(el).next();
-        var target = $(el).parent();
+        var target = $(el).parent()[0];
         var idx = sibling.index() - 1;
         if (target.id !== this.CE_all_ctrlsContId) {
             if (this.editor === 7) {
-                if (this.movingObj) {
-                    if (sibling.length > 0) {
-                        this.CElist.splice(idx, 1, this.movingObj);/////////////
-                    }
-                    else {
-                        this.CElist.push(this.movingObj);/////////////
-                    }
-                }
+                if (sibling.length > 0)
+                    this.CElist.splice(idx, 0, this.movingObj);
+                else
+                    this.CElist.push(this.movingObj);
             } else if (this.editor === 9) {
-                if (sibling.length > 0) {
+                if (sibling.length > 0)
                     this.rowGrouping.splice(idx, 0, el.id);
-                }
-                else {
+                else
                     this.rowGrouping.push(el.id);
-                }
             }
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
-    };
-
-    this.onDropFn = function (el, target, source, sibling) {
-        var $e = $(el);
-        //var idx = $(sibling).index();
-        if (source.id === this.CE_all_ctrlsContId && target.id === this.CEctrlsContId) {
-            ;
-        }
-        else if (source.id === this.CEctrlsContId && target.id === this.CE_all_ctrlsContId) {
-            this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1, el.id);//////
-        }
     };
 
     this.initJE = function () {
@@ -195,7 +177,6 @@
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
         var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val();
-        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgCX-Editor-Btn");
         if (CurRefId) {
             var ObjType = CurRefId.split("-")[2];
             var ObjName = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker [obj-type=" + ObjType + "]").text();
@@ -212,10 +193,8 @@
     };
 
     this.getOSElist = function () {
-        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgCX-Editor-Btn");
         var $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         this.curObj.objType = $selectedOpt.text();
-        $CXbtn.attr("objtype-name", $selectedOpt.text());///
         var ObjType = $selectedOpt.attr("obj-type");
 
         if (!this.PGobj.OSElist[ObjType]) {
@@ -248,9 +227,8 @@
             var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
-        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgCX-Editor-Btn");
         var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val();
-        var objName = $CXbtn.attr("obj-name") || this.getOBjNameByval(data, CurRefId);
+        var objName = this.getOBjNameByval(data, CurRefId);
         if (CurRefId) {
             if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
                 $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").focus()[0].click();
@@ -302,7 +280,6 @@
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
                 + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
         }.bind(this));
-        var $CXbtn = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgCX-Editor-Btn");
         if (this.PGobj.PropsObj[this.PGobj.CurProp] && $e.attr("name") === this.OSECurVobj.name) {
             $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
         }
@@ -316,7 +293,6 @@
         $(event.target).attr("is-selected", true).find(".fa-check").show();
         var ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
         $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);//
-        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("ver-name", $e.text());//
         this.OSECurVobj = this.OSE_curTypeObj[ObjName][$e.index()];
         this.curObj.objName = ObjName;
         this.curObj.objVer = $e.text();
@@ -355,15 +331,11 @@
     };
 
     this.setColTiles = function () {
-        if (this.PGobj.CurProp === "Controls")
-            var values = this.PGobj.PropsObj.Controls.$values;
-        else
-            var values = this.CElist;
         var options = "";
         var SubTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].options;
         $("#" + this.CEctrlsContId).empty();
         if (SubTypes) {
-            $.each(values, function (i, control) {
+            $.each(this.CElist, function (i, control) {
                 var type = control.$type.split(",")[0].split(".")[2];
                 var label = control.Name;
                 if (!control.Name)
@@ -378,12 +350,15 @@
             for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
+        $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
     };
 
     this.colTileCloseFn = function (e) {
         e.stopPropagation();
         var $tile = $(e.target).parent().remove();
-        if (this.editor === 9) {
+        if (this.editor === 7) 
+            this.CElist.splice(this.CElist.indexOf(this.getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1);
+        else if (this.editor === 9) {
             this.rowGrouping.splice(this.rowGrouping.indexOf(e.id), 1);
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }

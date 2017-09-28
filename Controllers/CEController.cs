@@ -49,10 +49,10 @@ namespace ExpressBase.Web.Controllers
             ViewBag.FilterDialogId = "null";
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
 
-            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-            ViewBag.Meta = _jsResult.Meta;
-            ViewBag.JsObjects = _jsResult.JsObjects;
+            //var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+            //var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+            //ViewBag.Meta = _jsResult.Meta;
+            //ViewBag.JsObjects = _jsResult.JsObjects;
             return View();
         }
 
@@ -100,10 +100,10 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
                 }
             }
-            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-            ViewBag.Meta = _jsResult.Meta;
-            ViewBag.JsObjects = _jsResult.JsObjects;
+            //var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+            //var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+            //ViewBag.Meta = _jsResult.Meta;
+            //ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
         }

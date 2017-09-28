@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ServiceStack;
-using ServiceStack.Redis;
-using System.IO;
-using ExpressBase.Common;
+﻿using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
-using System.Text;
+using ServiceStack;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,7 +36,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> UploadFileAsync(int i)
         {
-            JsonResult resp = null;       
+            JsonResult resp = null;
+
             try
             {
                 var req = this.HttpContext.Request.Form;
@@ -57,7 +55,17 @@ namespace ExpressBase.Web.Controllers
                             myFileContent = new byte[memoryStream.Length];
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
 
-                            this.ServiceClient.Post(new UploadFileRequest { FileName = formFile.FileName, ByteArray = myFileContent });
+                            UploadFileRequest uploadFileRequest = new UploadFileRequest();
+
+                            uploadFileRequest.IsAsync = false;
+                            uploadFileRequest.FileName = formFile.FileName;
+                            uploadFileRequest.ByteArray = myFileContent;
+
+                            uploadFileRequest.metaDataPair = new Dictionary<String, String>();
+                            uploadFileRequest.metaDataPair.Add("section", "upload-26");
+                            uploadFileRequest.metaDataPair.Add("type", "Unni-image");
+
+                            string Id = this.ServiceClient.Post<string>(uploadFileRequest);
 
                             resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK" });
                         }
@@ -70,6 +78,23 @@ namespace ExpressBase.Web.Controllers
             }
 
             return resp;
+        }
+
+        [HttpGet]
+        public IActionResult FindFilesByTags(int i)
+        {
+            FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
+            findFilesByTagRequest.Filter = new KeyValuePair<string, string>("metadata.type", "Unni-image");
+            var filesListJson = this.ServiceClient.Post(findFilesByTagRequest);
+
+            List<string> files = new List<string>();
+            foreach (var file in filesListJson.FileList)
+            {
+                files.Add(file.ObjectId);
+            }
+
+            ViewBag.Ids = files;
+            return View();
         }
     }
 }

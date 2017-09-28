@@ -1,0 +1,9 @@
+﻿<html>
+<body>
+    @{ string extension = ".jpg"; }
+    @foreach (string id in ViewBag.Ids)
+    {
+        <img src="/static/@ViewBag.cid/@id@extension" />
+    }
+</body>
+</html>

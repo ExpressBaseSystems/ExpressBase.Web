@@ -1,18 +1,11 @@
-﻿using ExpressBase.Common;
-using ExpressBase.Common.Connections;
-using ExpressBase.Common.Data;
+﻿using ExpressBase.Common.Connections;
 using ExpressBase.Objects.Objects.TenantConnectionsRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,19 +17,17 @@ namespace ExpressBase.Web2.Controllers
     {
         public SampleController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-
         // GET: /<controller>/
         public IActionResult Index()
         {
             return View();
         }
 
-
         [HttpGet]
         public IActionResult ConnectionManager()
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest());
-            ViewBag.Connections = solutionConnections;
+            ViewBag.Connections = solutionConnections.EBSolutionConnections;
             return View();
         }
 
@@ -53,8 +44,6 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-
-
 
         [HttpGet]
         public IActionResult DownloadFile()
@@ -73,10 +62,6 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        
-
-        
-
         //public IActionResult xx()
         //{
         //    return View();
@@ -92,7 +77,6 @@ namespace ExpressBase.Web2.Controllers
 
         //    return result;
         //}
-
 
         [HttpPost]
         public IActionResult AddEmailAccount(int i)
@@ -115,9 +99,6 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-
-
-
         //[HttpPost]
         //public async Task<IActionResult> MongoDBAsync(int j)
         //{
@@ -128,9 +109,7 @@ namespace ExpressBase.Web2.Controllers
         //    //EbFile.Bytea_ToFile(dwnldImageByte, "F://ExpressBase/MongoDB Uploads/Downloads/5.pdf");
         //    return View();
         //}
-
-
-
+        
         public IActionResult dragNdrop()
         {
             return View();
@@ -168,6 +147,5 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.FormId = id;
             return View();
         }
-
     }
 }

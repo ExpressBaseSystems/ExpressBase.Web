@@ -72,6 +72,7 @@ namespace ExpressBase.Web.Controllers
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = req["json"];
+            var jsonD = EbSerializers.Json_Deserialize<EbReport>(req["json"]);
             //ds.EbObject = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
             //(ds.EbObject as EbDataSource).EbObjectType = EbObjectType.DataSource;
             ds.Status = ObjectLifeCycleStatus.Live;

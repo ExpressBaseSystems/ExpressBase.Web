@@ -66,8 +66,8 @@ namespace ExpressBase.Web.Controllers
                             uploadFileRequest.metaDataPair.Add("type", "Unni-image");
 
                             string Id = this.ServiceClient.Post<string>(uploadFileRequest);
-
-                            resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK" });
+                            string url =string.Format( "/static/{0}/{1}.jpg",ViewBag.cid,Id);
+                            resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview =  url, objId = Id });
                         }
                     }
                 }

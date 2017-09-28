@@ -168,7 +168,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         for (var i in this.ReportSections) {
             var sec = "Eb" + i;
             var obj = new EbObjects[sec](this.ReportSections[i]);
-            $("#page").append(obj.Html());
+            $("#page").append(obj.Html());           
             //this.objCollection[this.ReportSections[i]] = obj; 
             this.sectionArray.push("#" + this.ReportSections[i]);           
         }

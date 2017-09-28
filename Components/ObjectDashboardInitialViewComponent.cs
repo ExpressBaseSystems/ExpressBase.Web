@@ -9,8 +9,9 @@ namespace ExpressBase.Web.Components
 {
     public class ObjectDashboardInitialViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(string objid)
+        public async Task<IViewComponentResult> InvokeAsync(string refid)
         {
+            ViewBag._Refid = refid;
             return View();
 
         }

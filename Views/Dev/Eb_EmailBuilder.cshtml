@@ -1,75 +1,145 @@
-﻿
-@using ExpressBase.Common.Objects;
+﻿@using ExpressBase.Common.Objects;
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Summernote</title>
+    @*
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css " />*@
+
     <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
-    
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
+
+    @*
+    <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />*@
+    @*
+    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">*@
 </head>
 <body>
     @{
-        Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
     }
-@using (Html.BeginForm(FormMethod.Post, new { enctype = "application/x-www-form-urlencoded" }))
-{
+    <script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.ReportSections);
+    @Html.Raw(ViewBag.EbObjectTypes);
+
+    $.fn.extend({
+        treed: function (o) {
+
+            var openedClass = 'glyphicon-minus-sign';
+            var closedClass = 'glyphicon-plus-sign';
+
+            if (typeof o !== 'undefined') {
+                if (typeof o.openedClass !== 'undefined') {
+                    openedClass = o.openedClass;
+                }
+                if (typeof o.closedClass !== 'undefined') {
+                    closedClass = o.closedClass;
+                }
+            }
+            var tree = $(this);
+            tree.addClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this);
+                branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
+                branch.addClass('branch');
+                branch.on('click', function (e) {
+                    if (this === e.target) {
+                        var icon = $(this).children('i:first');
+                        icon.toggleClass(openedClass + " " + closedClass);
+                        $(this).children().children().toggle();
+                    }
+                });
+                branch.children().children().toggle();
+            });
+            tree.find('.branch .indicator').each(function () {
+                $(this).on('click', function () {
+                    $(this).closest('li').click();
+                });
+            });
+            tree.find('.branch>a').each(function () {
+                $(this).on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+            tree.find('.branch>button').each(function () {
+                $(this).on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+        }
+    });
+
+    </script>
     <div class="container-fluid">
         <div class="row dshbrd">
             <div>
                 @{
-                    if (ViewBag.IsNew == "true")
-                    {
-                        @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
-                    }
-                    else
-                    {
-                        @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
-                    }
+                if (ViewBag.IsNew == "true")
+                {
+                @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
+                }
+                else
+                {
+                @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+                }
                 }
             </div>
         </div>
-            <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
-                @await Component.InvokeAsync("EbEmailObjectSelector", new { Type = (int)EbObjectType.DataSource })
-            </div>
-            <div class="col-md-10 pull-right">
-                <div id="summernote">
-                    @Html.Raw(ViewBag.html)
-                </div>
-            </div>
-
+        <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
+            @*@await Component.InvokeAsync("EbEmailObjectSelector", new { Type = (int)EbObjectType.DataSource })*@
         </div>
-}
+        <div class="col-md-8">
+            <div id="summernote">
+                @Html.Raw(ViewBag.html)
+            </div>
+        </div>
+        <div class="col-md-2 pull-right">
+            <div id="PropertyG">
+
+            </div>
+        </div>
+    </div>
+
     <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
+            var emailpropG = new Eb_PropertyGrid("PropertyG");
+            var emailobj = new EbObjects["EbEmailTemplatePG"]("email");
+            emailpropG.setObject(emailobj, AllMetas["EbEmailTemplatePG"]);
+            emailpropG.PropertyChanged = function (obj, Pname) {
+                if (obj.DataSourceRefId) {
+                    getDataSourceColoums(obj.DataSourceRefId);
+                }
+                console.log(obj);
+                console.log(emailobj);
 
-        var w = $('.col-md-10').css("width");
-       // $('#summernote').summernote();
-
-        $('#summernote').summernote({
-            width: w,
-            height: 300,                 // set editor height
-            minHeight: null,             // set minimum height of editor
-            maxHeight: null,             // set maximum height of editor
-            focus: true                  // set focus to editable area after initializing summernote
-        });
+            }
        
-        $('#save').click(function () {
-           
-            $.post("../Dev/EmailTemplateSave",
-                {
+            var w = $('.col-md-10').css("width");
+            // $('#summernote').summernote();
+
+            $('#summernote').summernote({
+                width: w,
+                height: 300,                 // set editor height
+                minHeight: null,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: true                  // set focus to editable area after initializing summernote
+            });
+
+            $('#save').click(function () {
+                $.post("../Dev/EmailTemplateSave",
+                    {
+                    "_Refid":'@ViewBag.Refid',
                     "Htmlcode": $('#summernote').summernote('code'),
                     "EName": $('#obj_name').val(),
                     "Description": $('#obj_desc').val()
@@ -79,6 +149,88 @@
 
 
         });
+        $('#commit').click(function () {
+
+            $.post("../Dev/EmailTemplateCommit",
+                {
+                    "_Refid":'@ViewBag.Refid',
+                    "Htmlcode": $('#summernote').summernote('code'),
+                    "EName": $('#obj_name').val(),
+                    "Description": $('#obj_desc').val(),
+                    "ChangeLog": $('#obj_changelog').text()
+                }, function (result) {
+                });
+
+
+            });
+        function getDataSourceColoums(DSid)
+        {
+            $("#get-col-loader").show();
+            $.ajax({
+                url: "../RB/GetColumns",
+                type: "POST",
+                cache: false,
+                data: { refID: DSid },
+                success: function (result) {
+                    $("#get-col-loader").hide();
+                    DrawColumnTree(result)
+                }
+            });
+
+        }
+
+        function insertAtCursor(text) {
+            $(".note-editable").attr("tabindex", "1").attr("onclick", "$(this).focus();");
+            //document.getElementsByClassName("note-editable").focus(); 
+            var sel, range;
+            var text = text;
+            if (window.getSelection) {
+
+                sel = window.getSelection();
+                console.log(sel);
+                if (sel.getRangeAt && sel.rangeCount) {
+                    range = sel.getRangeAt(0);
+                    range.deleteContents();
+
+                    var lines = text.replace("\r\n", "\n").split("\n");
+                    var frag = document.createDocumentFragment();
+                    for (var i = 0, len = lines.length; i < len; ++i) {
+                        if (i > 0) {
+                            frag.appendChild(document.createElement("br"));
+                        }
+                        frag.appendChild(document.createTextNode(lines[i]));
+                    }
+
+                    range.insertNode(frag);
+                }
+            } else if (document.selection && document.selection.createRange) {
+                document.selection.createRange().text = text;
+            }
+        }
+
+        function insertselected(text) {
+            var text = text;
+            $(".note-editable").append(text);
+        }
+
+        function DrawColumnTree(result) {
+            $.each(result.columns, function (i, columnCollection) {
+                $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
+                $.each(columnCollection, function (j, obj) {
+                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'>" + obj.columnName + "</li>");
+                });
+            });
+            $('#data-table-list').treed();
+
+            $('.styl').dblclick(function (e) {
+                var colVal = "Table" + $(e.target).parent().siblings("a").text().slice(-1) + "." + $(e.target).text().trim();
+
+                //alert(colVal);
+                //var text = $(e.target).text();
+                // alert(text);
+                insertselected("«" + colVal + "»");
+            });
+        }
         //$('.note-editable').droppable({ accept: ".draggable", drop: onDropFunc.bind(this)});
 
         //function onDropFunc(event, ui) {

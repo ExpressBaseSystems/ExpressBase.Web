@@ -5,11 +5,62 @@
 @using ExpressBase.Objects;
 @using ExpressBase.Common.Objects;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
+<script src="~/js/ImageUploader.js" type="text/javascript"></script>
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.ReportSections);
     @Html.Raw(ViewBag.EbObjectTypes);
+
+    $.fn.extend({
+        treed: function (o) {
+
+            var openedClass = 'glyphicon-minus-sign';
+            var closedClass = 'glyphicon-plus-sign';
+
+            if (typeof o !== 'undefined') {
+                if (typeof o.openedClass !== 'undefined') {
+                    openedClass = o.openedClass;
+                }
+                if (typeof o.closedClass !== 'undefined') {
+                    closedClass = o.closedClass;
+                }
+            }
+            var tree = $(this);
+            tree.addClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this);
+                branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
+                branch.addClass('branch');
+                branch.on('click', function (e) {
+                    if (this === e.target) {
+                        var icon = $(this).children('i:first');
+                        icon.toggleClass(openedClass + " " + closedClass);
+                        $(this).children().children().toggle();
+                    }
+                });
+                branch.children().children().toggle();
+            });
+            tree.find('.branch .indicator').each(function () {
+                $(this).on('click', function () {
+                    $(this).closest('li').click();
+                });
+            });
+            tree.find('.branch>a').each(function () {
+                $(this).on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+            tree.find('.branch>button').each(function () {
+                $(this).on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+        }
+    });
+
 </script>
 <div class="row" style="margin-top: 20px">
     <div class="reportmenu">
@@ -64,23 +115,14 @@
                 <button class="btn dropdown-toggle" data-toggle="dropdown" id="eb-shapes"><i class="fa fa-cubes" aria-hidden="true"></i> Shapes</button>
                 <div class="dropdown-menu shapes-tank">
                     <button class="btn btn-xs draggable" eb-type="Circle" id="circle" data-toggle="tooltip" data-placement="bottom" title="Circle"><i class="fa fa-circle-thin fa-lg" aria-hidden="true"></i></button>
-
                     <button class="btn btn-xs draggable" eb-type="Rect" id="rectangle" data-toggle="tooltip" data-placement="bottom" title="Rectangle"><i class="fa fa-square-o fa-lg" aria-hidden="true"></i></button>
-
                     <button class="btn btn-xs draggable" eb-type="ArrR" id="arrow-right" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-right fa-lg" aria-hidden="true"></i></button>
-
                     <button class="btn btn-xs draggable" eb-type="ArrL" id="arrow-left" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-left fa-lg" aria-hidden="true"></i></button>
-
                     <button class="btn btn-xs draggable" eb-type="ArrU" id="arrow-up" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-up fa-lg" aria-hidden="true"></i></button>
-
                     <button class="btn btn-xs draggable" eb-type="ArrD" id="arrow-down" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-down fa-lg" aria-hidden="true"></i></button>
-
                     <button class="btn btn-xs draggable" eb-type="ByArrH" id="by-dir-arrow-h" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button>
-
                     <button class="btn btn-xs draggable" eb-type="ByArrV" id="by-dir-arrow-v" data-toggle="tooltip" data-placement="bottom" title="By directional Arrow"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button>
-
                     <button class="btn btn-xs draggable" eb-type="Hl" id="h-line" data-toggle="tooltip" data-placement="bottom" title="Horrizontal Line"><i> __ </i></button>
-
                     <button class="btn btn-xs draggable" eb-type="Vl" id="v-line" data-toggle="tooltip" data-placement="bottom" title="Vertical Line"><i> | </i></button>
                 </div>
             </div>
@@ -100,6 +142,9 @@
                 <input type="file" id="img-upload" style="display:none">
             </div>
             <div class="pull-right" style="margin-right: 5px;">
+                <div class="form-group">
+                    <button class="btn" data-target="#uploadDemo" data-toggle="modal">upload</button>
+                </div>
                 <div class="form-group">
                     <button class="btn" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
                 </div>
@@ -125,7 +170,37 @@
         <div class="tab-pane active" id="home" role="tabpanel">
             <div class="col-md-2 side-toolbar">
                 <div class="toolbox">
-                    @await Component.InvokeAsync("EbObjectSelector", new { Type = (int)EbObjectType.DataSource });
+                    <div id="get-col-loader" style="display:none;"><i class="fa fa-spinner" aria-hidden="true"></i></div>
+                    <ul id="data-table-list" class="tool-box-items"></ul>
+                    <ul id="running-summary" class="tool-box-items">
+                        <li>
+                            <a>Summary</a>
+                            <ul>
+                                <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul id="calculated-fields" class="tool-box-items">
+                        <li>
+                            <a>Calculated Fields</a>
+                            <ul>
+                                <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul id="special-fields" class="tool-box-items">
+                        <li>
+                            <a>Special Fields</a>
+                            <ul>
+                                <li class="styl"><div eb-type='DateTime' class='coloums draggable textval'>CurrentDateTime</div></li>
+                                <li class="styl"><div eb-type='PageNo' class='coloums draggable textval'>Page No</div></li>
+                                <li class="styl"><div eb-type='PageXY' class='coloums draggable textval'>Page X/Y</div></li>
+                                <li class="styl"><div eb-type='UserName' class='coloums draggable textval'>Username</div></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
             <div class="col-md-8" style="padding-right:0;margin-top:50px">
@@ -146,16 +221,36 @@
             </div>
             <div class="col-md-2 PGgrid">
                 <div class="formB-box pGreportBuilder" id="propGrid">
-
                 </div>
             </div>
         </div>
         <div class="tab-pane" id="Preview" role="tabpanel">...</div>
     </div>
 </div>
-
+<div class="Img-upload-modal" id="modal-container"></div>
 <script>
     $(document).ready(function () {
+        $('#running-summary').treed();
+        $('#calculated-fields').treed();
+        $('#special-fields').treed();
+        $('#other-fields').treed();
+        var uploader = imageUploader("uploadDemo", "modal-container");
+        function DrawColumnTree(result) {
+            $.each(result.columns, function (i, columnCollection) {
+                $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
+                $.each(columnCollection, function (j, obj) {
+                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div eb-type='ReportCol' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
+                });
+            });
+            $('#data-table-list').treed();
+
+            $('.draggable').draggable({
+                cancel: "a.ui-icon",
+                revert: "invalid",
+                helper: "clone",
+                cursor: "move",
+            });
+        }
             var report = new RptBuilder('A4', save, commit, @ViewBag.IsNew);
 
             $("#pagesize").change(function () {

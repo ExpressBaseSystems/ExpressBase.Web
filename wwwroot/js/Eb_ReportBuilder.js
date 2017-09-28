@@ -52,14 +52,14 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.subSecIdCounter = {
         Countrpthead :1,
         Countpghead: 1,
-        Countpgbody: 1,
+        Countdetail: 1,
         Countpgfooter: 1,
         Countrptfooter: 1
     };
     this.ReportSections = {
         ReportHeader: 'rpthead',
         PageHeader: 'pghead',
-        ReportDetail: 'pgbody',
+        ReportDetail: 'detail',
         PageFooter: 'pgfooter',
         ReportFooter: 'rptfooter'
     };
@@ -67,7 +67,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.msBoxSubNotation = {
         rpthead: 'Rh',
         pghead: 'Ph',
-        pgbody: 'Dt',
+        detail: 'Dt',
         pgfooter: 'Pf',
         rptfooter: 'Rf'
     };
@@ -149,15 +149,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         return PageContainer;
     };
 
-    this.createPage = function (PageContainer) {
-        //this.page = new EbObjects["EbReportPage"]("page");
-        //PageContainer.append(this.page.Html());
+    this.createPage = function (PageContainer) {        
         PageContainer.append("<div class='page' id='page' style='width:" + this.width + ";height:" + this.height +"'>")
-        //this.page.PageSize = this.type;
-        //this.page.Height = this.height;
-        //this.page.Width = this.width;
-        //this.RefreshControl(this.page);
-        //this.objCollection["page"] = this.page;
         $('.title').show();
         this.pageSplitters();
     };
@@ -203,12 +196,12 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             onDrag: function (e) {
                 $('#box0,#rptheadHbox').css("height", $('#rpthead').height());
                 $('#box1,#pgheadHbox').css("height", $('#pghead').height());
-                $('#box2,#pgbodyHbox').css("height", $('#pgbody').height());
+                $('#box2,#detailHbox').css("height", $('#detail').height());
                 $('#box3,#pgfooterHbox').css("height", $('#pgfooter').height());
                 $('#box4,#rptfooterHbox').css("height", $('#rptfooter').height());
             }         
         });
-        Split(['#rptheadHbox', '#pgheadHbox', '#pgbodyHbox', '#pgfooterHbox', '#rptfooterHbox'], {
+        Split(['#rptheadHbox', '#pgheadHbox', '#detailHbox', '#pgfooterHbox', '#rptfooterHbox'], {
             direction: 'vertical',
             cursor: 'row-resize',
             sizes: [20, 20, 20, 20, 20],
@@ -217,7 +210,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             onDrag: function (e) {
                 $('#box0,#rpthead').css("height", $('#rptheadHbox').height());
                 $('#box1,#pghead').css("height", $('#pgheadHbox').height());
-                $('#box2,#pgbody').css("height", $('#pgbodyHbox').height());
+                $('#box2,#detail').css("height", $('#detailHbox').height());
                 $('#box3,#pgfooter').css("height", $('#pgfooterHbox').height());
                 $('#box4,#rptfooter').css("height", $('#rptfooterHbox').height());
             }         
@@ -231,7 +224,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             onDrag: function (e) {
                 $('#rptheadHbox,#rpthead').css("height", $('#box0').height());
                 $('#pgheadHbox,#pghead').css("height", $('#box1').height());
-                $('#pgbodyHbox,#pgbody').css("height", $('#box2').height());
+                $('#detailHbox,#detail').css("height", $('#box2').height());
                 $('#pgfooterHbox,#pgfooter').css("height", $('#box3').height());
                 $('#rptfooterHbox,#rptfooter').css("height", $('#box4').height());
             }         
@@ -385,16 +378,20 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.col = $(ui.draggable);              
         this.Objtype = this.col.attr('eb-type');
         var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
-        var colVal = "T"+this.col.parent().parent().siblings("a").text().slice(-1) +"."+this.col.text().trim();
-        var currTime = this.addCurrentDateTime();
+        var Title = "";
+        if (this.Objtype === 'DateTime') {
+            Title = this.addCurrentDateTime();
+        }
+        else {          
+            Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
+        }       
 
         if (!this.col.hasClass('dropped')) {
             var obj = new EbObjects["Eb" + this.Objtype](Objid);            
             this.dropLoc.append(obj.Html());
             obj.Top = this.posTop - this.dropLoc.offset().top;          
             obj.Left = this.posLeft - this.dropLoc.offset().left;
-            obj.ColVal = colVal;
-            obj.CurrentTime = currTime;
+            obj.Title = Title;            
             this.objCollection[Objid] = obj;           
             this.RefreshControl(obj);
             $('#' + Objid).attr("tabindex", "1").attr("onclick", "$(this).focus()");
@@ -502,23 +499,30 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         //$(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px;'></div>");
     };
 
-    this.savefile = function () {
-        
-        this.report = new EbObjects["EbReport"]("EbReport");       
+    this.savefile = function () {              
         this.report.Height = $("#page").height();
         this.report.Width = $("#page").width();        
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
-        console.log(JSON.stringify(this.report));
-        return this.report;
-    };
 
+        if (this.IsNew === "true") {
+            var Obj_Id = null;
+        }
+        var Name = this.report.ReportName;
+        var Description = this.report.Description;
+        this.Rel_object = "";
+
+        $.post("../RB/SaveReport", {
+            "id": Obj_Id,
+            "name": Name,
+            "description": Description,
+            "json": JSON.stringify(this.report),
+            "rel_obj": this.Rel_object
+        });
+    };
+  
     this.findPageSections = function (i, sections) {
 
-        this.sections = $(sections).attr('id');
-        this.i = i;
-        //this.objCollection[this.sections].Width = $("#" + this.sections).width();
-        //this.objCollection[this.sections].Height = $("#" + this.sections).height();
-        //this.report.SubSection.push(this.objCollection[this.sections]);
+        this.sections = $(sections).attr('id');        
         $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
 
     };
@@ -526,27 +530,59 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.findPageSectionsSub = function (j, subsec) {
 
         this.subsec = $(subsec).attr("id");
+        var eb_type = $(subsec).attr("eb-type");
         this.j = j;
         this.objCollection[this.subsec].Width = $("#" + this.subsec).width();
-        this.objCollection[this.subsec].Height = $("#" + this.subsec).height();
-        this.report.SubSection[this.i].SubSection.push(this.objCollection[this.subsec]);
-        $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
+        this.objCollection[this.subsec].Height = $("#" + this.subsec).height();             
+        if (eb_type === 'ReportHeader') {
+            this.report.ReportHeaders.push(this.objCollection[this.subsec]);
+        }
+        else if (eb_type === 'PageHeader') {
+            this.report.PageHeaders.push(this.objCollection[this.subsec]);
+        }
+        else if (eb_type === 'ReportFooter') {
+            this.report.ReportFooters.push(this.objCollection[this.subsec]);
+        }
+        else if (eb_type === 'PageFooter') {
+            this.report.PageFooters.push(this.objCollection[this.subsec]);
+        }
+        else if (eb_type === 'ReportDetail') {
+            this.report.Detail = this.objCollection[this.subsec];
+        }
 
+        $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
     };
 
     this.findPageElements = function (k, elements) {
         var elemId = $(elements).attr('id');
-        this.report.SubSection[this.i].SubSection[this.j].SubSection.push(this.objCollection[elemId]);
+        var eb_typeCntl = $("#" + this.subsec).attr("eb-type");
+        if (eb_typeCntl === 'ReportHeader') {
+            this.report.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
+        }
+        else if (eb_typeCntl === 'PageHeader') {
+            this.report.PageHeaders[this.j].Fields.push(this.objCollection[elemId]);
+        }
+        else if (eb_typeCntl === 'ReportFooter') {
+            this.report.ReportFooters[this.j].Fields.push(this.objCollection[elemId]);
+        }
+        else if (eb_typeCntl === 'PageFooter') {
+            this.report.PageFooters[this.j].Fields.push(this.objCollection[elemId]);
+        }
+        else if (eb_typeCntl === 'ReportDetail') {
+            this.report.Detail.Fields.push(this.objCollection[elemId]);
+        }              
     };
 
     this.Commit = function () {
-        var _json = this.savefile();
-        alert(_json);
+        this.report.Height = $("#page").height();
+        this.report.Width = $("#page").width();
+        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
+       
         if (this.IsNew === "true") {
             var Obj_Id = null;
         }
-        var Name = $('#RptName').val();
-        var Description = $('#RptDesc').val();
+        var Name = this.report.ReportName;
+        var Description = this.report.Description;
         this.Rel_object = "";
 
         $.post("../RB/CommitReport", {
@@ -554,7 +590,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             "name": Name,
             "description": Description,
             "changeLog": "changed",
-            "json": JSON.stringify(_json),
+            "json": JSON.stringify(this.report),
             "rel_obj": this.Rel_object
         });
     };
@@ -569,7 +605,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         }.bind(this);
         this.report = new EbObjects["EbReport"]("Report1");
         this.pg.setObject(this.report, AllMetas["EbReport"]);
-
+        this.pg.addToDD(this.report);
         $('#PageContainer,.ruler,.rulerleft').empty();
         this.ruler();
         this.pgC = this.createPagecontainer();

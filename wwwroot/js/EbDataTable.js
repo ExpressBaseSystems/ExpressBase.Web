@@ -73,7 +73,7 @@ var isSettingsSaved = false;
 //ds_id, dv_id, ss_url, tid, setting
 var EbDataTable = function (settings) {
     this.dtsettings = settings;
-    this.meta = this.dtsettings.meta;
+    //this.meta = this.dtsettings.meta;
     this.dsid = this.dtsettings.ds_id;
     this.dvid = this.dtsettings.dvRefId;
     this.dvName = null;
@@ -94,7 +94,7 @@ var EbDataTable = function (settings) {
 
     //Controls & Buttons
     this.table_jQO = null;
-    this.btnGo = $('#btnGo');
+    //this.btnGo = $('#btnGo');
     this.filterBox = null;
     this.filterbtn = null;
     this.clearfilterbtn = null;
@@ -159,66 +159,16 @@ var EbDataTable = function (settings) {
         //    return false;
         //}
         //this.addSerialAndCheckboxColumns();
-        if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1)
-            $("#sub_window_" + this.tableId).append("<div class='col-md-10'><div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div></div>");
-        else if (this.ebSettings.$type.indexOf("EbChartVisualization") !== -1) {
-            $("#sub_window_" + this.tableId).append("<div class='col-md-10'><div id='graphcontainer_tab" + this.tableId + "'>" +
-	"<div style='height: 50px;margin-bottom: 5px!important;' class='well well-sm'>" +
-		//"<label class="dvname">@ViewBag.data.Name</label>"+
-		"<div id='btnColumnCollapse" + this.tableId + "' class='btn btn-default' style='float: right;'>" +
-			"<i class='fa fa-cog' aria-hidden='true'></i>" +
-		"</div>" +
-		"<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;float:right'>" +
-			"<button class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>" +
-			"<span class='caret'></span>" +
-			"</button>" +
-			"<ul class='dropdown-menu'>" +
-			"<li><a href='#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
-			"<li><a href='#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
-			"<li><a href='#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
-			"<li><a href='#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
-			"<li><a href='#'> doughnut </a></li>" +
-			"</ul>" +
-		"</div>" +
-		"<button id='reset_zoom" + this.tableId + "' class='btn btn-default' style='float: right;'>Reset zoom</button>" +
-
-	"</div>" +
-    "<table>" +
-        "<tr>" +
-            "<td colspan=2>" +
-                "<div id=id='xy" + this.tableId + "' style='vertical-align: top;width: 100%;'> " +
-                "<div class='input-group' > " +
-                "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
-                "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
-                "</div> " +
-                "<div class='input-group' style='padding-top: 1px;'> " +
-                "<span class='input-group-addon' id='basic-addon3'> Y - Axis</span> " +
-                "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
-                "</div> " +
-                "</div> " +
-            "</td>" +
-        "</tr>" +
-        "<tr>" +
-            "<td>" +
-                "<div id='columns4Drag" + this.tableId + "' style='width:200px'> " +
-                "<div>" +
-                "<label class='nav-header disabled' > <center><strong>Columns</strong></center> <center><font size='1'>Darg n Drop to X or Y Axis</font></center></label> " +
-                "<input id='searchColumn" + this.tableId + "' type='text' class='form-control' placeholder='search for column'/>" +
-                "<ul class='list-group' style='height: 450px; overflow-y: auto;' ></ul> " +
-                "</div> " +
-                "</div> " +
-            "</td > " +
-            "<td>" +
-                //"<canvas id='myChart" + this.tableId + "' width='80%' height='auto' ></canvas> " +
-	         "</td > " +
-        "</tr>" +
-    "</table>" +
-"</div></div>");
-            this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
-            return false;
+        if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
+            if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").length === 0) {
+                $("#Toolbar").children(":not(.commonControls)").remove();
+                $("#sub_window_" + this.tableId).append("<div class='col-md-10'><div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div></div>");
+                this.Init();
+            }
+            //else {
+            //    $("#" + this.tableId).DataTable().ajax().reload();
+            //}
         }
-        this.Init();
-
     };
 
     //this.modifyColumns = function (i, obj) {
@@ -491,7 +441,7 @@ var EbDataTable = function (settings) {
         var controlIds = ["datefrom", "dateto"];// temp
 
         //if (isValid(controlIds)) {
-        this.btnGo.attr("disabled", true);
+        //this.btnGo.attr("disabled", true);
         if (this.columnDefDuplicate !== JSON.stringify(this.ebSettings.Columns.$values)) {
             this.dragNdrop = true;
             this.columnDefDuplicate = JSON.stringify(this.ebSettings.Columns.$values);
@@ -678,7 +628,7 @@ var EbDataTable = function (settings) {
         //if (this.chartJs !== null)
         //    this.chartJs.drawGraphHelper(this.Api.data());
         //}
-        this.btnGo.attr("disabled", false);
+        //this.btnGo.attr("disabled", false);
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -930,7 +880,7 @@ var EbDataTable = function (settings) {
         $("#Toolbar").append("<label class='dvname' style='color: #333;'>" + this.dvName + "</label>" +
             "<div style= 'display: inline;' > " +
             //"<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
-            "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' style='display: none;' data-table='@tableId'>&sum;</button>" +
+            "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' data-table='@tableId'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
              "<div class='btn-group'>" +
                 "<div class='btn-group'>" +
@@ -2119,7 +2069,7 @@ var EbDataTable = function (settings) {
         //};
     }
 
-    this.btnGo.click(this.btnGoClick.bind(this));
+    //this.btnGo.click(this.btnGoClick.bind(this));
 
     if (this.dtsettings.directLoad)
         this.getColumns();

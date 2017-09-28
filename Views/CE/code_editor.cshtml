@@ -21,8 +21,10 @@
 <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
 <script src="~/lib/codemirror/mode/xml/xml.js"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
-        var MyDs=new DataSource('@ViewBag.Obj_id',@ViewBag.IsNew, @ViewBag.VersionNumber,@ViewBag.ObjType,'@ViewBag.FilterDialogId');
+    $(document).ready(function () {
+
+        var MyDs = new DataSource('@ViewBag.Refid',@ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId');
+
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {
             $("#sample").DataTable().destroy();
@@ -36,7 +38,9 @@
             $("#save").trigger("click");
         }
     });
-
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
 </script>
 <div class="row dshbrd">
     <div>
@@ -47,14 +51,14 @@
             }
             else
             {
-               @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+                @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv });
             }
         }
-    </div> 
+    </div>
 </div>
 <div class="row codedit">
     <ul class="nav nav-tabs versionNav" id="versionNav">
-        <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">Current</a></li>
+        <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
     </ul>
     <div class="tab-content " id="versionTab">
         <div id="code_edit0" class="tab-pane fade in active" data-id="new">
@@ -70,21 +74,29 @@
 
             </div>
 
-            <div class="col-md-12" style="margin:0;padding:0;">
+            <div class="col-md-9" style="margin:0;padding:0;">
                 <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
                 <input type="hidden" id="obj_type" value="@ViewBag.ObjType" />
-                <textarea id="code" name="code" class="code">@ViewBag.Code</textarea>
+                <textarea id="code" name="code">@ViewBag.Code</textarea>
+                <input type="hidden" id="tcid" class="tcid" value="@ViewBag.TenantId" />
             </div>
+            <div id="dspropgrid" class="col-md-3" style="padding:0px"></div>
         </div>
     </div>
 </div>
 <script>
 
-    window.onload = function() {
+    window.onload = function () {
         CodeMirror.commands.autocomplete = function(cm)
         {
             CodeMirror.showHint(cm, @ViewBag.EditorHint);
         };
+
+        var _readonly = "@ViewBag.ReadOnly";
+        if (_readonly === "True")
+        _readonly = true;
+        else
+            _readonly = false;
 
         window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             mode: "@ViewBag.EditorMode",
@@ -92,6 +104,7 @@
             lineWrapping: false,
             extraKeys: { "Ctrl-Space": "autocomplete" },
             autoRefresh: true,
+            readOnly:_readonly,
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
@@ -254,9 +267,9 @@
     }
 
     .CodeMirror {
-        width: 1339px;
         height: 413px;
-        background-color: ivory;
+        background-color: #dceae5;
+        border: 1px solid #cccccc;
     }
 
     .table-responsive {
@@ -292,7 +305,7 @@
     }
 
     .inner_toolbar {
-       border:0px;
+        border: 0px;
     }
 
     /*differ styles*/

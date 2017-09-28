@@ -25,6 +25,8 @@ using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using Microsoft.AspNetCore.Routing;
 using ExpressBase.Common.JsonConverters;
+using ExpressBase.Objects.Objects.EmailRelated;
+using System.Reflection;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -78,36 +80,85 @@ namespace ExpressBase.Web.Controllers
 
         }
 
+        public string CommitFormBuilder()
+        {
+            var req = this.HttpContext.Request.Form;
+            string refid;
+            if (string.IsNullOrEmpty(req["id"]))
+            {
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["filterdialogjson"];
+                //if (ds.EbObjectType == 0)
+                //   ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
+                //else if (ds.EbObjectType == 12)
+                //{
+                //    ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
+                //    (ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
+                //}
+
+                //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
+                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Relations = "";
+                ds.IsSave = false;
+
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
+
+            }
+            else
+            {
+                var ds = new EbObject_CommitRequest();
+                ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["filterdialogjson"];
+                ds.Relations = "";
+                ds.RefId = req["id"];
+                ds.ChangeLog = "";
+                var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
+                refid = res.RefId;
+            }
+
+            return refid;
+        }
+
         public string SaveFormBuilder()
         {
             var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.ServiceClient;
-            var ds = new EbObjectFirstCommitRequest();
+            string refid;
+            if (string.IsNullOrEmpty(req["id"]))
+            {
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
+                ds.Name = req["name"];
+                ds.Description = req["description"];
+                ds.Json = req["filterdialogjson"];
+                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Relations = "";
+                ds.IsSave = true;
 
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
+            }
+            else
+            {
 
-            ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
-            ds.Name = req["name"];
-            ds.Description = req["description"];
-            ds.Json = req["filterdialogjson"];
-
-            //if (ds.EbObjectType == 0)
-            //   ds.EbObject = EbSerializers.Json_Deserialize<EbForm>(req["filterdialogjson"]);
-            //else if (ds.EbObjectType == 12)
-            //{
-            //    ds.EbObject = EbSerializers.Json_Deserialize<EbFilterDialog>(req["filterdialogjson"]);
-            //    (ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.WebForm;
-            //}
-
-            //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
-            ds.Status = ObjectLifeCycleStatus.Live;
-            ds.Token = ViewBag.token;
-            ds.TenantAccountId = ViewBag.cid;
-            ds.Relations = "";          
-
-            var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);
-            return CurrSaveId.RefId;
+                var ds = new EbObject_SaveRequest();
+                ds.RefId = req["Id"];
+                ds.Name = req["Name"];
+                ds.Description = req["Description"];
+                ds.EbObjectType = Convert.ToInt32(req["obj_type"]);
+                ds.Json = req["filterdialogjson"];
+                ds.Relations = "";
+                ViewBag.IsNew = "false";
+                var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
+                refid = res.RefId;
+            }
+            return refid;
         }
-
         //Jith Builder related
         private string GetHtml2Render(BuilderType type, string objid)
         {
@@ -144,7 +195,7 @@ namespace ExpressBase.Web.Controllers
 
             IServiceClient client = this.ServiceClient;
 
-            var resultlist = client.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = (int)type});
+            var resultlist = client.Get<EbObjectListResponse>(new EbObjectListRequest { EbObjectType = (int)type});
             var rlist = resultlist.Data;
 
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
@@ -223,7 +274,6 @@ namespace ExpressBase.Web.Controllers
             ds.TenantAccountId = ViewBag.cid;
             ds.ChangeLog = "";
             ds.Relations = null;
-            ds.Token = ViewBag.token;//removed tcid
 
             ViewBag.IsNew = "false";
             var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
@@ -247,19 +297,7 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("DevSignIn", "Ext");
 
         }
-        public IActionResult ReportBuilder()
-        {
-            IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {EbObjectType = 2 });
-            var rlist = resultlist.Data;
-            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
-            foreach (var element in rlist)
-            {
-                ObjList[element.Id] = element;
-            }
-            ViewBag.Objlist = ObjList;
-            return View();
-        }
+       
         [HttpGet]
         public IActionResult Eb_EmailBuilder()
         {
@@ -267,6 +305,7 @@ namespace ExpressBase.Web.Controllers
 
             ViewBag.VersionNumber = 1;
             ViewBag.Obj_id = null;
+            ViewBag.Refid = null;
             ViewBag.IsNew = "true";
             ViewBag.EditorHint = "CodeMirror.hint.sql";
             ViewBag.EditorMode = "text/x-sql";
@@ -274,68 +313,149 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
             ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";
-            //ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+
+            var typeArray = typeof(EbEmailBuilder).GetTypeInfo().Assembly.GetTypes();
+
+            var _jsResult = CSharpToJs.GenerateJs<EbEmailBuilder>(BuilderType.EmailBuilder, typeArray);
+
+
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+
+         
             return View();
           
         }
 
-        //[HttpPost]
-        //public IActionResult Eb_EmailBuilder(string Htmlcode)
-        //{
-        //    ViewBag.Header = "Edit Datasource";
-        //    var req = this.HttpContext.Request.Form;
-        //    ViewBag.Obj_id = req["objid"].ToString();
+        [HttpPost]
+        public IActionResult Eb_EmailBuilder(string Htmlcode)
+        {
+            ViewBag.Header = "Edit Email";
+            var req = this.HttpContext.Request.Form;
+            int obj_id = Convert.ToInt32(req["objid"]);
+            ViewBag.Obj_id = Convert.ToInt32(req["objid"]);
+            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
+            var rlist = resultlist.Data;
+            foreach (var element in rlist)
+            {
+                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                ViewBag.LifeCycle = lifeCycle;
+                ViewBag.IsNew = "false";
+                ViewBag.ObjectName = element.Name;
+                ViewBag.ObjectDesc = element.Description;
+                ViewBag.Status = element.Status;
+                ViewBag.VersionNumber = element.VersionNumber;
+                ViewBag.Icon = "fa fa-database";
+                ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
+                ViewBag.Refid = element.RefId;
+                ViewBag.Majorv = element.MajorVersionNumber;
+                ViewBag.Minorv = element.MinorVersionNumber;
+                ViewBag.Patchv = element.PatchVersionNumber;
+                if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+                {
+                    ViewBag.ReadOnly = true;
+                    var dsobj = EbSerializers.Json_Deserialize<EbEmailBuilder>(element.Json_lc);
+                    ViewBag.html = dsobj.Body;
+                }
+                else
+                {
+                    ViewBag.ReadOnly = false;
+                    var dsobj = EbSerializers.Json_Deserialize<EbEmailBuilder>(element.Json_wc);
+                    ViewBag.html = dsobj.Body;
+                }
+            }
+            return View();
+        }      
 
-        //    var resultlist = this.ServiceClient.Get<EbObjectNonCommitedVersionResponse>(new EbObjectNonCommitedVersionRequest { RefId = req["objid"].ToString() });
-        //    var rlist = resultlist.Data;
-        //    foreach (var element in rlist)
-        //    {
-        //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-        //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-        //        ViewBag.LifeCycle = lifeCycle;
-        //        ViewBag.IsNew = "false";
-        //        var dsobj = EbSerializers.Json_Deserialize<EbEmailBuilder>(element.Json);
-        //        ViewBag.ObjectName = element.Name;
-        //        ViewBag.ObjectDesc = element.Description;
-        //        ViewBag.Status = element.Status;
-        //        ViewBag.VersionNumber = element.VersionNumber;
-        //        ViewBag.Icon = "fa fa-database";
-        //        ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
-        //        ViewBag.html = dsobj.Body;
-              
-        //    }
-            
-        //    return View();
-          
-        //}
 
-        public IActionResult EmailTemplateSave(string Htmlcode,string EName, string Description)
+        public string EmailTemplateCommit(string _Refid, string Htmlcode, string EName, string Description, string ChangeLog)
         {
             IServiceClient client = this.ServiceClient;   
-            var ds = new EbObjectFirstCommitRequest();
-
-
-            ds.EbObjectType = (int)EbObjectType.EmailBuilder;
-            ds.Name = EName;
-            ds.Description = Description;
-            ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+            string refid="";
+            if (string.IsNullOrEmpty(_Refid))
             {
-                Name = EName,
-                EbObjectType = EbObjectType.EmailBuilder,
-                Body = Htmlcode,
-            });
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+                ds.Name = EName;
+                ds.Description = Description;
+                ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+                {
+                    Name = EName,
+                    EbObjectType = EbObjectType.EmailBuilder,
+                    Body = Htmlcode,
+                });
+                ds.Relations = "";
+                ds.IsSave = false;
 
-            //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
-            ds.Status = ObjectLifeCycleStatus.Live;
-            ds.Token = ViewBag.token;
-            ds.TenantAccountId = ViewBag.cid;
-            ds.Relations = "";
-
-            var CurrSaveId = client.Post<EbObjectFirstCommitResponse>(ds);
-
-            return RedirectToAction("EbObjectList", new RouteValueDictionary(
-                             new { controller = "Dev", action = "EbObjectList", type = (int)EbObjectType.EmailBuilder }));
-
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
+            }
+            else
+            {
+                var ds = new EbObject_CommitRequest();
+                ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+                ds.Name = EName;
+                ds.Description = Description;
+                ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+                {
+                    Name = EName,
+                    EbObjectType = EbObjectType.EmailBuilder,
+                    Body = Htmlcode,
+                });
+                ds.Relations = "";
+                ds.RefId = _Refid;
+                ds.ChangeLog = ChangeLog;
+                var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
+                refid = res.RefId;
+            }
+            return refid ;
         }
+
+        public string EmailTemplateSave(string _Refid, string Htmlcode, string EName, string Description)
+        {
+            var req = this.HttpContext.Request.Form;
+            string refid;
+            if (string.IsNullOrEmpty(_Refid))
+            {
+                var ds = new EbObject_Create_New_ObjectRequest();
+                ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+                ds.Name = EName;
+                ds.Description = Description;
+                ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+                {
+                    Name = EName,
+                    EbObjectType = EbObjectType.EmailBuilder,
+                    Body = Htmlcode,
+                });
+                ds.Relations ="";
+                ds.IsSave = true;
+
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
+            }
+            else
+            {
+
+                var ds = new EbObject_SaveRequest();
+                ds.RefId = _Refid;
+                ds.Name = EName;
+                ds.Description = Description;
+                ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+                ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+                {
+                    Name = EName,
+                    EbObjectType = EbObjectType.EmailBuilder,
+                    Body = Htmlcode,
+                });
+                ds.Relations = "";
+                ViewBag.IsNew = "false";
+                var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
+                refid = res.RefId;
+            }
+            return refid;
+        }
+
     }
 }

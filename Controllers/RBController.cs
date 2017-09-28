@@ -49,7 +49,7 @@ namespace ExpressBase.Web.Controllers
         {
             DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
             cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", refID));
-            foreach(var columnCollection in cresp.Columns)
+            foreach (var columnCollection in cresp.Columns)
             {
                 columnCollection.Sort(CompareEbDataColumn);
             }
@@ -61,6 +61,7 @@ namespace ExpressBase.Web.Controllers
         {
             return (a as EbDataColumn).ColumnName.CompareTo((b as EbDataColumn).ColumnName);
         }
+
         public EbObjectSaveOrCommitResponse CommitReport()
         {
             var req = this.HttpContext.Request.Form;

@@ -20,8 +20,9 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 @{
-    int typeInt = (string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
-    EbObjectType type = (EbObjectType)typeInt;
+    //int typeInt = 0//(string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
+    EbObjectType type = EbObjectType.WebForm;
+    int typeInt = (int)type;
 
     var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
     var _toolBox = new EbToolbox(_builderType);
@@ -50,7 +51,7 @@
         </div>
     </div>
     <input type="hidden" id="objtype" value="@type" />
-    <input type="hidden" id="objid" value="@ViewBag.Objid" />
+    <input type="hidden" id="objid" value="@ViewBag.Refid" />
     <div id='form-buider-propGrid' class='formB-box property-grid-cont'>
         <div id='pgWraper'></div>
     </div>
@@ -71,7 +72,7 @@
     var PGid = "form-buider-propGrid";
     // if edit mode
     if(objid){
-        editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
+        var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
         //$.each(editModeFormObj, funcion(i, obj) {  });
         formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
         formBuilderObj.InitEditModeCtrls(editModeObj);

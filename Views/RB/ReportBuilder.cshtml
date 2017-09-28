@@ -170,7 +170,7 @@
         <div class="tab-pane active" id="home" role="tabpanel">
             <div class="col-md-2 side-toolbar">
                 <div class="toolbox">
-                    <div id="get-col-loader" style="display:none;"><i class="fa fa-spinner" aria-hidden="true"></i></div>
+                    <div id="get-col-loader" style="display:none;margin-left: 50%;margin-top: 10%;"><i class="fa fa-spinner fa-spin fa-lg" style='color:blue'aria-hidden="true"></i></div>
                     <ul id="data-table-list" class="tool-box-items"></ul>
                     <ul id="running-summary" class="tool-box-items">
                         <li>
@@ -235,11 +235,12 @@
         $('#special-fields').treed();
         $('#other-fields').treed();
         var uploader = imageUploader("uploadDemo", "modal-container");
-        function DrawColumnTree(result) {
-            $.each(result.columns, function (i, columnCollection) {
-                $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
+        DrawColTree = function (result) {
+            $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");
+            $.each(result.columns, function (i, columnCollection) {              
+                $("#data-table-list ul[id='dataSource']").append(" <li><a>Table" + ++i + "</a><ul id='t" + i + "'></ul></li>");
                 $.each(columnCollection, function (j, obj) {
-                    $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'><div eb-type='ReportCol' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
+                    $("#data-table-list ul[id='t" + i + "']").append("<li class='styl'><div eb-type='ReportCol' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
                 });
             });
             $('#data-table-list').treed();

@@ -22,7 +22,7 @@
                 <div class="list-group">
                     <div class="list-group-item-heading"><div class="h4">ObjectsDB</div></div>
                     <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.DatabaseName.ToString()</div>
-                    <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.Server.ToString():@ViewBag.Connections.ObjectsDbConnection.Port.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.Server.ToString()</div>
                     <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.UserName.ToString()</div>
                 </div>
             }
@@ -30,13 +30,13 @@
             @if (ViewBag.Connections.DataDbConnection != null)
             {
                 <div class="list-group">
-                    <div class="list-group-item-heading"><div class="h4">ObjectsDB</div></div>
+                    <div class="list-group-item-heading"><div class="h4">DataDB</div></div>
                     <div class="list-group-item">@ViewBag.Connections.DataDbConnection.DatabaseName.ToString()</div>
-                    <div class="list-group-item">@ViewBag.Connections.DataDbConnection.Server.ToString():@ViewBag.Connections.ObjectsDbConnection.Port.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.DataDbConnection.Server.ToString()</div>
                     <div class="list-group-item">@ViewBag.Connections.DataDbConnection.UserName.ToString()</div>
                 </div>
             }
-            @if (ViewBag.Connections.ObjectsDbConnection != null)
+            @if (ViewBag.Connections.EmailConnection != null)
             {
                 <div class="list-group">
                     <div class="input-group-btn">

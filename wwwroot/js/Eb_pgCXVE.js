@@ -101,7 +101,7 @@
     this.onDragFn = function (el, source) {
         if (source.id !== this.CE_all_ctrlsContId) {
             if (this.editor === 7)
-                this.movingObj = this.CElist.splice(this.CElist.indexOf(this.getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
+                this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
             else if (this.editor === 9)
                 this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1);
         }
@@ -217,7 +217,7 @@
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
         $.each(data, function (name, val) {
             $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" name ="' + name + '">' + name
-                + '<i class="fa fa-chevron-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
+                + '<i class="fa fa-chevron-circle-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
             ObjType = val[0].refId.split("-")[2];
         }.bind(this));
         this.PGobj.OSElist[ObjType] = data;
@@ -238,43 +238,26 @@
 
     }.bind(this);
 
-    this.getObjByval = function (ObjArray, key, val) {
-        var Obj = null;
-        $.each(ObjArray, function (i, object) {
-            if (object[key] === val) {
-                Obj = object;
-                return 0;
-            };
-        });
-        return Obj;
-    };
-
     this.getOBjNameByval = function (data, refId) {
         var ObjName = null;
-        var f = false;
         for (objName in data) {
-            $.each(data[objName], function (i, obj) {
-                if (obj.refId === refId) {
-                    ObjName = obj.name;
-                    f = true;
-                    this.OSECurVobj = obj;
-                    return 0;
-                }
-            }.bind(this));
-            if (f)
+            if (getObjByval(data[objName], "refId", refId)) {
+                ObjName = getObjByval(data[objName], "refId", refId).name;
                 break;
+            }
         }
         return ObjName;
     };
 
     this.OTileClick = function (data) {
         var $e = $(event.target);
-        //$("#" + this.PGobj.wraperId + " .OSE-body .colTile").css("background-color", "#eee");
-        $e.css("background-color", "#c2c8ce");
+        $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeAttr("style");
+        $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
+
         var ObjName = $e.attr("name");
         this.curObj.objName = ObjName;
-        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".fa-chevron-right").css("visibility", "hidden");
-        $e.attr("is-selected", true).find(".fa-chevron-right").css("visibility", "visible");
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".ColT-right-arrow").removeAttr("style");
+        $e.attr("is-selected", true).find(".ColT-right-arrow").css("visibility", "visible");
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
         $.each(data[ObjName], function (i, obj) {
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
@@ -325,7 +308,7 @@
     this.setSelColtiles = function () {
         var selObjs = [];
         $.each(this.rowGrouping, function (i, name) {
-            selObjs.push(this.getObjByval(this.allCols, "name", name));
+            selObjs.push(getObjByval(this.allCols, "name", name));
         }.bind(this));
         this.set9ColTiles(this.CEctrlsContId, selObjs)
     };
@@ -356,8 +339,8 @@
     this.colTileCloseFn = function (e) {
         e.stopPropagation();
         var $tile = $(e.target).parent().remove();
-        if (this.editor === 7) 
-            this.CElist.splice(this.CElist.indexOf(this.getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1);
+        if (this.editor === 7)
+            this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1);
         else if (this.editor === 9) {
             this.rowGrouping.splice(this.rowGrouping.indexOf(e.id), 1);
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
@@ -377,7 +360,7 @@
                 obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
         }
         else if (this.editor === 9) {
-            obj = this.getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values, "name", id);////////////////
+            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values, "name", id);////////////////
         }
         this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
     };

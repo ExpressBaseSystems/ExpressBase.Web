@@ -388,12 +388,8 @@
 
     .colTile:hover {
         background-color: var(--colorDDD);
-    }
-
-    .colTile:focus {
         outline: none;
     }
-
 
     .colTile:focus {
         background-color: #c2c8ce;
@@ -405,7 +401,8 @@
 
 .ColT-right-arrow {
     visibility: hidden;
-    font-size: 18px;
+    font-size: 19px;
+    color: white;
 }
 
 .colTile .ColT-right-arrow {

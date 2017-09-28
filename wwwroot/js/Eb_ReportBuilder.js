@@ -28,7 +28,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.btn_indx = null;
     this.sectionArray = [];
     this.report = null;
-
+    this.refId = null;
     if (this.type === 'custom-size') {
         this.height = custHeight + custunit;
         this.width = custWidth + custunit;
@@ -100,7 +100,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             data: { refID: refid },
             success: function (result) {
                 $("#get-col-loader").hide();
-                DrawColumnTree(result)
+                DrawColTree(result);
             }
         });
     };
@@ -264,6 +264,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
 
     this.addButton = function (i, obj) {             
         $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
+        $('#btn2').css('display', 'none');
         $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
     };
 
@@ -599,8 +600,9 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         this.pg = new Eb_PropertyGrid("propGrid");
         this.pg.PropertyChanged = function (obj) {
             this.RefreshControl(obj);
-            if (obj.DataSourceRefId) {
-                this.getDataSourceColoums(obj.DataSourceRefId);
+            this.refId = obj.DataSourceRefId;           
+            if (obj.DataSourceRefId) {             
+                    this.getDataSourceColoums(obj.DataSourceRefId);                                                             
             }
         }.bind(this);
         this.report = new EbObjects["EbReport"]("Report1");

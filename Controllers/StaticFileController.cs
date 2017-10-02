@@ -42,35 +42,35 @@ namespace ExpressBase.Web.Controllers
             {
                 var req = this.HttpContext.Request.Form;
 
-                foreach (var formFile in req.Files)
-                {
-                    if (formFile.Length > 0)
-                    {
-                        byte[] myFileContent;
+                //foreach (var formFile in req.Files)
+                //{
+                //    if (formFile.Length > 0)
+                //    {
+                //        byte[] myFileContent;
 
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await formFile.CopyToAsync(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            myFileContent = new byte[memoryStream.Length];
-                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                //        using (var memoryStream = new MemoryStream())
+                //        {
+                //            await formFile.CopyToAsync(memoryStream);
+                //            memoryStream.Seek(0, SeekOrigin.Begin);
+                //            myFileContent = new byte[memoryStream.Length];
+                //            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
 
-                            UploadFileRequest uploadFileRequest = new UploadFileRequest();
+                //            UploadFileRequest uploadFileRequest = new UploadFileRequest();
 
-                            uploadFileRequest.IsAsync = false;
-                            uploadFileRequest.FileName = formFile.FileName;
-                            uploadFileRequest.ByteArray = myFileContent;
+                //            uploadFileRequest.IsAsync = false;
+                //            uploadFileRequest.FileName = formFile.FileName;
+                //            uploadFileRequest.ByteArray = myFileContent;
 
-                            uploadFileRequest.metaDataPair = new Dictionary<String, String>();
-                            uploadFileRequest.metaDataPair.Add("section", "upload-26");
-                            uploadFileRequest.metaDataPair.Add("type", "Unni-image");
+                //            uploadFileRequest.metaDataPair = new Dictionary<String, String>();
+                //            uploadFileRequest.metaDataPair.Add("section", "upload-26");
+                //            uploadFileRequest.metaDataPair.Add("type", "Unni-image");
 
-                            string Id = this.ServiceClient.Post<string>(uploadFileRequest);
+                //            string Id = this.ServiceClient.Post<string>(uploadFileRequest);
 
-                            resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK" });
-                        }
-                    }
-                }
+                //            resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK" });
+                //        }
+                //    }
+                //}
             }
             catch (Exception e)
             {
@@ -83,17 +83,17 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult FindFilesByTags(int i)
         {
-            FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
-            findFilesByTagRequest.Filter = new KeyValuePair<string, string>("metadata.type", "Unni-image");
-            var filesListJson = this.ServiceClient.Post(findFilesByTagRequest);
+            //FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
+            //findFilesByTagRequest.Filter = new KeyValuePair<string, string>("metadata.type", "Unni-image");
+            //var filesListJson = this.ServiceClient.Post(findFilesByTagRequest);
 
-            List<string> files = new List<string>();
-            foreach (var file in filesListJson.FileList)
-            {
-                files.Add(file.ObjectId);
-            }
+            //List<string> files = new List<string>();
+            //foreach (var file in filesListJson.FileList)
+            //{
+            //    files.Add(file.ObjectId);
+            //}
 
-            ViewBag.Ids = files;
+            //ViewBag.Ids = files;
             return View();
         }
     }

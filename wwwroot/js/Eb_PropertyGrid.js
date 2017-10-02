@@ -59,27 +59,19 @@ var Eb_PropertyGrid = function (id) {
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
-        else if (type === 7) {    //  If collection editor
+        else if (type > 6 && type < 11) {    //  If collection editor
             valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
-        else if (type === 8) {    //  If collection editor
-            valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
-                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-        }
-        else if (type === 9) {    //  If collection editor
-            valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
-                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-        }
-        else if (type === 10) {    // If JS editor
+        else if (type === 11) {    // If JS editor
             valueHTML = '<span style="vertical-align: sub;">(JavaScript)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
-        else if (type === 11) {    // SQL editor
+        else if (type === 12) {    // SQL editor
             valueHTML = '<span style="vertical-align: sub;">(SQL)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
-        else if (type === 12) {  //  If Object Selector editor
+        else if (type === 13) {  //  If Object Selector editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             // Default is textbox

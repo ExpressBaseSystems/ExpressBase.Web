@@ -365,7 +365,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Meta = _jsResult.Meta;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-         
+        
             return View();
         }
 
@@ -378,6 +378,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Obj_id = Convert.ToInt32(req["objid"]);
             var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
             var rlist = resultlist.Data;
+            
             foreach (var element in rlist)
             {
                 ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
@@ -398,14 +399,23 @@ namespace ExpressBase.Web.Controllers
                 {
                     ViewBag.ReadOnly = true;
                     var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_lc);
+                    ViewBag.dsobj = dsobj;            
                     ViewBag.html = dsobj.Body;
                 }
                 else
                 {
                     ViewBag.ReadOnly = false;
                     var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_wc);
+                    ViewBag.dsobj = dsobj;
                     ViewBag.html = dsobj.Body;
                 }
+                var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
+
+                var _jsResult = CSharpToJs.GenerateJs<EbEmailTemplateBase>(BuilderType.EmailBuilder, typeArray);
+
+                ViewBag.Meta = _jsResult.Meta;
+                ViewBag.JsObjects = _jsResult.JsObjects;
+                ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
             }
             return View();
         }      
@@ -428,8 +438,9 @@ namespace ExpressBase.Web.Controllers
                     Body = emailobj.Body,
                     EbObjectType = emailobj.EbObjectType,
                     Name = emailobj.Name,
-                    Subject = emailobj.Subject
-                    
+                    Subject = emailobj.Subject,
+                    DataSourceRefId = emailobj.DataSourceRefId
+
                 });
                 ds.Relations = "";
                 ds.IsSave = false;
@@ -448,7 +459,8 @@ namespace ExpressBase.Web.Controllers
                     Body = emailobj.Body,
                     EbObjectType = emailobj.EbObjectType,
                     Name = emailobj.Name,
-                    Subject = emailobj.Subject
+                    Subject = emailobj.Subject,
+                    DataSourceRefId = emailobj.DataSourceRefId
 
                 });
                 ds.Relations = "";
@@ -477,7 +489,8 @@ namespace ExpressBase.Web.Controllers
                     Body = emailobj.Body,
                     EbObjectType = emailobj.EbObjectType,
                     Name = emailobj.Name,
-                    Subject = emailobj.Subject
+                    Subject = emailobj.Subject,
+                    DataSourceRefId = emailobj.DataSourceRefId
 
                 });
                 ds.Relations ="";
@@ -499,7 +512,8 @@ namespace ExpressBase.Web.Controllers
                     Body = emailobj.Body,
                     EbObjectType = emailobj.EbObjectType,
                     Name = emailobj.Name,
-                    Subject = emailobj.Subject
+                    Subject = emailobj.Subject,
+                    DataSourceRefId = emailobj.DataSourceRefId
 
                 });
                 ds.Relations = "";

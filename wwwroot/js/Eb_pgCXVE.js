@@ -26,16 +26,16 @@
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
         this.editor = parseInt(e.target.getAttribute("editor"));
-        if (this.editor === 7 || this.editor === 8 || this.editor === 9) {
+        if (this.editor > 6 && this.editor < 11) {
             this.initCE();
         }
-        else if (this.editor === 10) {
+        else if (this.editor === 11) {
             this.initJE();
         }
-        else if (this.editor === 12)
+        else if (this.editor === 13)
             this.initOSE();
 
-        $("#" + this.PGobj.wraperId + " .CEctrlsCont").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        $("#" + this.CEctrlsContId ).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
     };
 
@@ -82,10 +82,14 @@
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
             this.setColTiles();
         }
-        else if (this.editor === 8) {
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
-        }
-        else if (this.editor === 9) {
+        else if (this.editor > 7 && this.editor < 11) {
+            if (this.editor === 8) {
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
+            }
+            else if (this.editor === 10) {
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
+                $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+            }
             this.PGobj.PropsObj[this.PGobj.CurProp] = Gcolumns;
             this.allCols = this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values;
             this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].rowGrouping;
@@ -93,18 +97,26 @@
             this.setSelColtiles();
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
         }
-        this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)]);
+        this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], {
+            accepts: this.acceptFn.bind(this)
+        });
+
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
     };
+
+    this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10); };
 
     this.onDragFn = function (el, source) {
         if (source.id !== this.CE_all_ctrlsContId) {
             if (this.editor === 7)
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
-            else if (this.editor === 9)
+            else if (this.editor === 9 || this.editor === 8)
                 this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1);
+            
         }
+        else if (this.editor === 10)
+            this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
         else
             this.movingObj = null;
     };
@@ -119,12 +131,18 @@
                     this.CElist.splice(idx, 0, this.movingObj);
                 else
                     this.CElist.push(this.movingObj);
-            } else if (this.editor === 9) {
+            } else if (this.editor === 9 || this.editor === 8) {
                 if (sibling.length > 0)
                     this.rowGrouping.splice(idx, 0, el.id);
                 else
                     this.rowGrouping.push(el.id);
-            }
+            } 
+        }
+        else if (this.editor === 10) {
+            if (sibling.length > 0)
+                this.allCols.splice(idx, 0, this.movingObj);
+            else
+                this.allCols.push(this.movingObj);
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
     };
@@ -341,8 +359,8 @@
         var $tile = $(e.target).parent().remove();
         if (this.editor === 7)
             this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1);
-        else if (this.editor === 9) {
-            this.rowGrouping.splice(this.rowGrouping.indexOf(e.id), 1);
+        else if (this.editor === 9 || this.editor === 8) {
+            this.rowGrouping.splice(this.rowGrouping.indexOf($tile.attr("id")), 1);
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
     };
@@ -354,12 +372,12 @@
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
         $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
         if (this.editor === 7) {
-            if (this.PGobj.CurProp === "Controls")
+            if (this.PGobj.CurProp === "Controls")///////////////////////
                 obj = this.PropsObj.Controls.GetByName(id);
             else
                 obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
         }
-        else if (this.editor === 9) {
+        else if (this.editor === 9 || this.editor === 10) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values, "name", id);////////////////
         }
         this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);

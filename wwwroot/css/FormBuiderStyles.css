@@ -164,12 +164,13 @@
 .formB-box {
     display: inline-block;
     background-color: white;
-    padding: 3px;
-    /*border: var(--sild1pxDDD);*/
+    padding: 0px;
+    border: var(--sild1pxDDD);
     vertical-align: top;
-    -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    border-radius:6px;
+    /*-webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);*/
 }
 
 .fb-cont {
@@ -283,6 +284,10 @@
     width: 100%;
 }
 
+.pg-wraper .pg-table td {
+    font-size: 12px;
+}
+
 .pgCXEditor-Cont .btn {
     border-radius: 1px !important;
 }
@@ -341,6 +346,7 @@
 }
 
 .pgCXEditor-Cont {
+    border-radius: 2px;
     width: 50%;
     height: 70VH;
     position: fixed;
@@ -393,6 +399,7 @@
 
     .colTile:focus {
         background-color: #c2c8ce;
+        outline: none;
     }
 
 .OSE-verTile-Cont .colTile:focus {
@@ -500,6 +507,7 @@
     display: flex;
     flex-flow: column;
     height: 100%;
+    font-family: Tahoma;
 }
 
 .icon-cont {

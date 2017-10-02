@@ -1,10 +1,9 @@
-﻿var imageUploader = function (mId,container) {  
-    this.mId = mId;
+﻿var imageUploader = function (container) {    
     this.container = container;
     this.mWid = null;
 
     this.CreateMOdalW = function () {
-        var modalW = $("<div class='modal fade modalstyle' id='" + this.mId + "' role='dialog'>"
+        var modalW = $("<div class='modal fade modalstyle' id='up-modal' role='dialog'>"
             + "<div class='modal-dialog modal-lg'>"
             + "<div class='modal-content wstyle' style='border-radius:0;'>"
             + "<div class='modal-header'>"
@@ -13,7 +12,7 @@
             + "</div>"
             + "<div class='modal-body' id='imgUBody' style=''>"
             +"<div class='input-group'><span class='input-group-addon'>Image Id</span>"
-            +"<input type='text' class='form-control'>"
+            +"<input type='text' id='obj-id' class='form-control'>"
             + "</div>"
             + "<div id-'img-upload-body' style='margin-top:15px;'><input id='input-id' type='file' class='file' data-preview-file-type='text' multiple></div>"
             +"</div>"
@@ -23,8 +22,11 @@
 
         $("#input-id").fileinput({
             uploadUrl: "../StaticFile/UploadFileAsync",
-            maxFileCount: 5
-        }); 
+            maxFileCount: 5,           
+        }).on('fileuploaded', function (event, data, previewId, index) {
+            var objId = data.response.objId;
+            $('#obj-id').attr('value', objId);
+        });
     };   
 
     this.init = function () {

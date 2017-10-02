@@ -25,8 +25,8 @@ using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using Microsoft.AspNetCore.Routing;
 using ExpressBase.Common.JsonConverters;
-//using ExpressBase.Objects.Objects.EmailRelated;
 using System.Reflection;
+using ExpressBase.Objects.EmailRelated;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -358,18 +358,15 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";
 
-            var typeArray = typeof(EbEmailBuilder).GetTypeInfo().Assembly.GetTypes();
+            var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
 
-            var _jsResult = CSharpToJs.GenerateJs<EbEmailBuilder>(BuilderType.EmailBuilder, typeArray);
-
+            var _jsResult = CSharpToJs.GenerateJs<EbEmailTemplateBase>(BuilderType.EmailBuilder, typeArray);
 
             ViewBag.Meta = _jsResult.Meta;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-
          
             return View();
-          
         }
 
         [HttpPost]
@@ -400,13 +397,13 @@ namespace ExpressBase.Web.Controllers
                 if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                 {
                     ViewBag.ReadOnly = true;
-                    var dsobj = EbSerializers.Json_Deserialize<EbEmailBuilder>(element.Json_lc);
+                    var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_lc);
                     ViewBag.html = dsobj.Body;
                 }
                 else
                 {
                     ViewBag.ReadOnly = false;
-                    var dsobj = EbSerializers.Json_Deserialize<EbEmailBuilder>(element.Json_wc);
+                    var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_wc);
                     ViewBag.html = dsobj.Body;
                 }
             }
@@ -414,21 +411,25 @@ namespace ExpressBase.Web.Controllers
         }      
 
 
-        public string EmailTemplateCommit(string _Refid, string Htmlcode, string EName, string Description, string ChangeLog)
+        public string EmailTemplateCommit(string _Refid, string Htmlcode, string PropObj, string ChangeLog)
         {
-            IServiceClient client = this.ServiceClient;   
+            IServiceClient client = this.ServiceClient;
+            var emailobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(PropObj);
             string refid="";
             if (string.IsNullOrEmpty(_Refid))
             {
                 var ds = new EbObject_Create_New_ObjectRequest();
                 ds.EbObjectType = (int)EbObjectType.EmailBuilder;
-                ds.Name = EName;
-                ds.Description = Description;
-                ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+                ds.Name = emailobj.Name;
+                ds.Description = emailobj.Description;
+
+                ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
-                    Name = EName,
-                    EbObjectType = EbObjectType.EmailBuilder,
-                    Body = Htmlcode,
+                    Body = emailobj.Body,
+                    EbObjectType = emailobj.EbObjectType,
+                    Name = emailobj.Name,
+                    Subject = emailobj.Subject
+                    
                 });
                 ds.Relations = "";
                 ds.IsSave = false;
@@ -440,13 +441,15 @@ namespace ExpressBase.Web.Controllers
             {
                 var ds = new EbObject_CommitRequest();
                 ds.EbObjectType = (int)EbObjectType.EmailBuilder;
-                ds.Name = EName;
-                ds.Description = Description;
-                ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+                ds.Name = emailobj.Name;
+                ds.Description = emailobj.Description;
+                ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
-                    Name = EName,
-                    EbObjectType = EbObjectType.EmailBuilder,
-                    Body = Htmlcode,
+                    Body = emailobj.Body,
+                    EbObjectType = emailobj.EbObjectType,
+                    Name = emailobj.Name,
+                    Subject = emailobj.Subject
+
                 });
                 ds.Relations = "";
                 ds.RefId = _Refid;
@@ -457,21 +460,25 @@ namespace ExpressBase.Web.Controllers
             return refid ;
         }
 
-        public string EmailTemplateSave(string _Refid, string Htmlcode, string EName, string Description)
+        public string EmailTemplateSave(string _Refid, string PropObj)
         {
             var req = this.HttpContext.Request.Form;
+
+            var emailobj =  EbSerializers.Json_Deserialize<EbEmailTemplate>(PropObj);
             string refid;
             if (string.IsNullOrEmpty(_Refid))
             {
                 var ds = new EbObject_Create_New_ObjectRequest();
                 ds.EbObjectType = (int)EbObjectType.EmailBuilder;
-                ds.Name = EName;
-                ds.Description = Description;
-                ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+                ds.Name = emailobj.Name;
+                ds.Description = emailobj.Description;
+                ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
-                    Name = EName,
-                    EbObjectType = EbObjectType.EmailBuilder,
-                    Body = Htmlcode,
+                    Body = emailobj.Body,
+                    EbObjectType = emailobj.EbObjectType,
+                    Name = emailobj.Name,
+                    Subject = emailobj.Subject
+
                 });
                 ds.Relations ="";
                 ds.IsSave = true;
@@ -484,14 +491,16 @@ namespace ExpressBase.Web.Controllers
 
                 var ds = new EbObject_SaveRequest();
                 ds.RefId = _Refid;
-                ds.Name = EName;
-                ds.Description = Description;
+                ds.Name = emailobj.Name;
+                ds.Description = emailobj.Description;
                 ds.EbObjectType = (int)EbObjectType.EmailBuilder;
-                ds.Json = EbSerializers.Json_Serialize(new EbEmailBuilder
+                ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
-                    Name = EName,
-                    EbObjectType = EbObjectType.EmailBuilder,
-                    Body = Htmlcode,
+                    Body = emailobj.Body,
+                    EbObjectType = emailobj.EbObjectType,
+                    Name = emailobj.Name,
+                    Subject = emailobj.Subject
+
                 });
                 ds.Relations = "";
                 ViewBag.IsNew = "false";

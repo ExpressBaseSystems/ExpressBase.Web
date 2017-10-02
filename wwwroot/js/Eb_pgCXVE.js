@@ -105,7 +105,7 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
     };
 
-    this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId); };
+    this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10); };
 
     this.onDragFn = function (el, source) {
         if (source.id !== this.CE_all_ctrlsContId) {
@@ -113,7 +113,10 @@
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
             else if (this.editor === 9 || this.editor === 8)
                 this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1);
+            
         }
+        else if (this.editor === 10)
+            this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
         else
             this.movingObj = null;
     };
@@ -133,7 +136,13 @@
                     this.rowGrouping.splice(idx, 0, el.id);
                 else
                     this.rowGrouping.push(el.id);
-            }
+            } 
+        }
+        else if (this.editor === 10) {
+            if (sibling.length > 0)
+                this.allCols.splice(idx, 0, this.movingObj);
+            else
+                this.allCols.push(this.movingObj);
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
     };

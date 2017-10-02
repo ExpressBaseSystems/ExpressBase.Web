@@ -216,6 +216,7 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
     this.tableId = tableId;
     this.sourceElement = null;
     this.flagAppendColumns = false;
+    this.dvid = null;
 
     this.init = function () {
         $.event.props.push('dataTransfer');
@@ -252,20 +253,22 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
         $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
         $("#graphDropdown_tab" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
         $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
+        $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
     }
 
     this.appendColumns = function () {
         var colsAll_X = [], Xcol = [];
         var tid = this.tableId;
-        if (this.columnInfo.options !== null && this.columnInfo.options !== undefined) {
-            $.each(this.columnInfo.Xaxis, this.AddXcolumns.bind(this, Xcol));
+        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
+            $.each(this.columnInfo.Xaxis.$values, this.AddXcolumns.bind(this, Xcol));
             $.each(this.columnInfo.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
             var colsAll_XY = [], Ycol = [];
-            $.each(this.columnInfo.Yaxis, this.AddYcolumns.bind(this, Ycol));
+            $.each(this.columnInfo.Yaxis.$values, this.AddYcolumns.bind(this, Ycol));
             $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
             colsAll_XY = colsAll_XY.sort(function (a, b) {
                 return a.name.localeCompare(b.name);
             });
+            $("#columns4Drag" + tid + " .list-group").children("li").remove();
         }
         else
         {
@@ -273,6 +276,7 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
             //    return a.name.localeCompare(b.name);
             //});
             colsAll_XY = this.columnInfo.Columns.$values;
+            $("#columns4Drag" + tid + " .list-group").children("li").remove();
         }
         $.each(colsAll_XY, function (i, obj) {
             if (obj.data != undefined) {
@@ -305,10 +309,12 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
     this.appendXandYAxis = function () {
         var tid = this.tableId;
         if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
-            $.each(this.columnInfo.Xaxis, function (i, obj) {
+            $("#X_col_name" + tid).children("div").remove();
+            $("#Y_col_name" + tid).children("div").remove();
+            $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
                 $("#X_col_name" + tid).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.index + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
             });
-            $.each(this.columnInfo.Yaxis, function (i, obj) {
+            $.each(this.columnInfo.Yaxis.$values, function (i, obj) {
                 $("#Y_col_name" + tid).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.index + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
             });
         }
@@ -326,7 +332,7 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
 
 
     this.getDataSuccess = function (result) {
-            this.drawGraphHelper(result.data);
+        this.drawGraphHelper(result.data);
     };
 
     this.drawGraphHelper = function (datain) {
@@ -343,10 +349,10 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
         this.XLabel = [];
         this.YLabel = [];
         if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
-            $.each(this.columnInfo.Xaxis, function (i, obj) {
+            $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
                 Xindx.push(obj.index);
             });
-            $.each(this.columnInfo.Yaxis, function (i, obj) {
+            $.each(this.columnInfo.Yaxis.$values, function (i, obj) {
                 Yindx.push(obj.index);
             });
 
@@ -355,7 +361,7 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
                 this.YLabel = [];
                 for (j = 0; j < this.data.length; j++)
                     this.YLabel.push(this.data[j][Yindx[k]]);
-                this.dataset.push(new datasetObj(this.columnInfo.Yaxis[k].name, this.YLabel, getRandomColor(), false));
+                this.dataset.push(new datasetObj(this.columnInfo.Yaxis.$values[k].name, this.YLabel, getRandomColor(), false));
             }
         }
     };
@@ -502,14 +508,13 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
         if (this.sourceElement === "UL") {
             $(e.target).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='" + data + "' data-id='" + $("#" + data).attr("data-id") + "'>" + $("#" + data).text() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
             if ($(e.target).attr("id") == "X_col_name" + this.tableId)
-                this.Xax.push(new axis($("#" + data).attr("data-id"), $("#" + data).text().substring(0, $("#" + data).text().length-1)));
+                this.columnInfo.Xaxis.$values.push(new axis($("#" + data).attr("data-id"), $("#" + data).text().substring(0, $("#" + data).text().length-1)));
             if ($(e.target).attr("id") == "Y_col_name" + this.tableId)
-                this.Yax.push(new axis($("#" + data).attr("data-id"), $("#" + data).text().substring(0, $("#" + data).text().length - 1)));
+                this.columnInfo.Yaxis.$values.push(new axis($("#" + data).attr("data-id"), $("#" + data).text().substring(0, $("#" + data).text().length - 1)));
             //$("#" + data).remove();
         }
         else {
             var str = $("#" + data).text();
-            this.Xax = []; this.Yax = [];
             $(e.target).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='" + data + "' data-id='" + $("#" + data).attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
             if ($(e.target).attr("id") == "X_col_name" + this.tableId) {
                 if (this.sourceElementId == "Y_col_name" + this.tableId)
@@ -528,14 +533,8 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
                 $("#X_col_name" + this.tableId + " div").each(this.changeIndexIOfXColumns.bind(this));
             }
         }
-        if (this.columnInfo.Xaxis === null || this.columnInfo.Yaxis === null) {
-            this.columnInfo.Xaxis = this.Xax;
-            this.columnInfo.Yaxis = this.Yax;
-        }
-        else {
-            this.columnInfo.Xaxis = this.Xax;
-            this.columnInfo.Yaxis = this.Yax;
-        }
+        
+
         if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
             this.drawGeneralGraph();
         }
@@ -631,6 +630,14 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
         };
 
     };
+
+    this.saveSettings = function () {
+        $.post('../DV/SaveSettings', { json: JSON.stringify(this.columnInfo), RefId: this.dvid, type: "ChartVisualization" }, this.saveSuccess.bind(this));
+    };
+
+    this.saveSuccess = function () {
+        alert("Success!!!!!!!");
+    }
 
     this.init();
 };

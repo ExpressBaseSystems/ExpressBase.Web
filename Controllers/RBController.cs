@@ -41,6 +41,12 @@ namespace ExpressBase.Web.Controllers
         public IActionResult ReportBuilder(int i)
         {
             ViewBag.IsNew = "false";
+            ViewBag.Header = "Edit Report";
+            var req = this.HttpContext.Request.Form;
+            int obj_id = Convert.ToInt32(req["obj-id"]);
+            ViewBag.Obj_id = obj_id;
+            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
+            var rlist = resultlist.Data;
             return View();
         }
 

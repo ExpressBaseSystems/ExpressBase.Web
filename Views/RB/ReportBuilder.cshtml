@@ -2,6 +2,9 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 
 }
+@{ 
+    EbObjectType type = EbObjectType.Report;
+}
 @using ExpressBase.Objects;
 @using ExpressBase.Common.Objects;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -201,6 +204,8 @@
                             </ul>
                         </li>
                     </ul>
+                    <input type="hidden" id="obj-type" value="@type"/>
+                    <input type="hidden" id="obj-id" value="@ViewBag.Refid"/>
                 </div>
             </div>
             <div class="col-md-8" style="padding-right:0;margin-top:50px">

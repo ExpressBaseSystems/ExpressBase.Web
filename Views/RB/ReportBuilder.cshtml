@@ -2,8 +2,12 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 
 }
+@{ 
+    EbObjectType type = EbObjectType.Report;
+}
 @using ExpressBase.Objects;
 @using ExpressBase.Common.Objects;
+@using ExpressBase.Common;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <script src="~/js/ImageUploader.js" type="text/javascript"></script>
 <script>
@@ -143,7 +147,7 @@
             </div>
             <div class="pull-right" style="margin-right: 5px;">
                 <div class="form-group">
-                    <button class="btn" data-target="#uploadDemo" data-toggle="modal">upload</button>
+                    <button class="btn" data-target="#up-modal" data-toggle="modal">upload</button>
                 </div>
                 <div class="form-group">
                     <button class="btn" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
@@ -201,6 +205,8 @@
                             </ul>
                         </li>
                     </ul>
+                    <input type="hidden" id="objtype" value="@type"/>
+                    <input type="hidden" id="objid" value="@ViewBag.Refid"/>
                 </div>
             </div>
             <div class="col-md-8" style="padding-right:0;margin-top:50px">
@@ -234,10 +240,11 @@
         $('#calculated-fields').treed();
         $('#special-fields').treed();
         $('#other-fields').treed();
-        var uploader = imageUploader("uploadDemo", "modal-container");
+        var uploader = imageUploader("modal-container");
+
         DrawColTree = function (result) {
             $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");
-            $.each(result.columns, function (i, columnCollection) {              
+            $.each(result.columns, function (i, columnCollection) {
                 $("#data-table-list ul[id='dataSource']").append(" <li><a>Table" + ++i + "</a><ul id='t" + i + "'></ul></li>");
                 $.each(columnCollection, function (j, obj) {
                     $("#data-table-list ul[id='t" + i + "']").append("<li class='styl'><div eb-type='ReportCol' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
@@ -252,7 +259,18 @@
                 cursor: "move",
             });
         }
+        alert(@ViewBag.IsNew);
+        if (@ViewBag.IsNew === true){
             var report = new RptBuilder('A4', save, commit, @ViewBag.IsNew);
+        }
+        //edit mode
+        else if(@ViewBag.IsNew === false){
+            var editModeObj = @Html.Raw(EbSerializers.Json_Serialize(@ViewBag.Json));            
+            var parseObj = JSON.parse(editModeObj);
+            //console.log(editModeObj);
+            var report = new RptBuilder(parseObj.PaperSize, save, commit, @ViewBag.IsNew, null, null, null, parseObj);
+        }
+        @*var report = new RptBuilder('A4', save, commit, @ViewBag.IsNew);*@
 
             $("#pagesize").change(function () {
                 var type = $(this).val();

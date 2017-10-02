@@ -23,7 +23,8 @@
 </head>
 <body>
     @{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+        @using ExpressBase.Common;
     }
     <script>
     @Html.Raw(ViewBag.Meta);
@@ -85,19 +86,21 @@
         <div class="row dshbrd">
             <div>
                 @{
-                if (ViewBag.IsNew == "true")
-                {
-                @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
-                }
-                else
-                {
-                @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
-                }
+                    var eobj = EbSerializers.Json_Serialize(ViewBag.dsobj);
+                    if (ViewBag.IsNew == "true")
+                    {
+                        @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
+                    }
+                    else
+                    {
+                        @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+                    }
                 }
             </div>
         </div>
         <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
-            @*@await Component.InvokeAsync("EbEmailObjectSelector", new { Type = (int)EbObjectType.DataSource })*@
+            <ul id="data-table-list"></ul>
+           
         </div>
         <div class="col-md-8">
             <div id="summernote">
@@ -113,10 +116,25 @@
 
     <script>
         $(document).ready(function () {
+            var propObj;
             var emailpropG = new Eb_PropertyGrid("PropertyG");
-            var emailobj = new EbObjects["EbEmailTemplatePG"]("email");
-            emailpropG.setObject(emailobj, AllMetas["EbEmailTemplatePG"]);
+
+
+            if ('@ViewBag.dsobj'.indexOf("EbEmailTemplate") == -1)
+            {
+                var emailobj = new EbObjects["EbEmailTemplate"]("email");
+                emailpropG.setObject(emailobj, AllMetas["EbEmailTemplate"]);
+            }
+            else
+            {
+                var emailobj = @Html.Raw(eobj);
+                emailpropG.setObject(emailobj, AllMetas["EbEmailTemplate"]);
+
+            }
+
+
             emailpropG.PropertyChanged = function (obj, Pname) {
+                propObj = obj;
                 if (obj.DataSourceRefId) {
                     getDataSourceColoums(obj.DataSourceRefId);
                 }
@@ -124,7 +142,7 @@
                 console.log(emailobj);
 
             }
-       
+
             var w = $('.col-md-10').css("width");
             // $('#summernote').summernote();
 
@@ -137,26 +155,24 @@
             });
 
             $('#save').click(function () {
+                propObj.Body = window.btoa($('#summernote').summernote('code'));
                 $.post("../Dev/EmailTemplateSave",
                     {
                     "_Refid":'@ViewBag.Refid',
-                    "Htmlcode": $('#summernote').summernote('code'),
-                    "EName": $('#obj_name').val(),
-                    "Description": $('#obj_desc').val()
+                    "PropObj": JSON.stringify(propObj)
 
                 }, function (result) {
                 });
 
 
         });
-        $('#commit').click(function () {
+            $('#commit').click(function () {
 
             $.post("../Dev/EmailTemplateCommit",
                 {
                     "_Refid":'@ViewBag.Refid',
                     "Htmlcode": $('#summernote').summernote('code'),
-                    "EName": $('#obj_name').val(),
-                    "Description": $('#obj_desc').val(),
+                    "PropObj": JSON.stringify(propObj),
                     "ChangeLog": $('#obj_changelog').text()
                 }, function (result) {
                 });
@@ -181,7 +197,7 @@
 
         function insertAtCursor(text) {
             $(".note-editable").attr("tabindex", "1").attr("onclick", "$(this).focus();");
-            //document.getElementsByClassName("note-editable").focus(); 
+            //document.getElementsByClassName("note-editable").focus();
             var sel, range;
             var text = text;
             if (window.getSelection) {
@@ -214,6 +230,7 @@
         }
 
         function DrawColumnTree(result) {
+
             $.each(result.columns, function (i, columnCollection) {
                 $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
                 $.each(columnCollection, function (j, obj) {

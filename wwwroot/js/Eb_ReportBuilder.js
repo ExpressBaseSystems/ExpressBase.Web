@@ -17,7 +17,8 @@
     }
 };
 
-var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth, custunit) {
+var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth, custunit,edModObj) {
+    this.edModObj = edModObj;
     this.savebtnid = saveBtnid;
     this.type = type;
     this.Commitbtnid = commit;
@@ -29,15 +30,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.sectionArray = [];
     this.report = null;
     this.refId = null;
-    if (this.type === 'custom-size') {
-        this.height = custHeight + custunit;
-        this.width = custWidth + custunit;
-    }
-    else if (this.type !== 'custom-size') {
-        this.height = pages[type].height;
-        this.width = pages[type].width;
-        $('#custom-size').hide();
-    }
+    this.height = pages[type].height;
+    this.width = pages[type].width; 
 
     this.idCounter = {
         EbCircleCounter: 0,
@@ -49,6 +43,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         EbPageXYCounter:0,
         EbPageNoCounter: 0       
     };
+
     this.subSecIdCounter = {
         Countrpthead :1,
         Countpghead: 1,
@@ -56,6 +51,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         Countpgfooter: 1,
         Countrptfooter: 1
     };
+
     this.ReportSections = {
         ReportHeader: 'rpthead',
         PageHeader: 'pghead',
@@ -168,7 +164,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         for (var i in this.ReportSections) {
             var sec = "Eb" + i;
             var obj = new EbObjects[sec](this.ReportSections[i]);
-            $("#page").append(obj.Html());
+            $("#page").append(obj.Html());           
             //this.objCollection[this.ReportSections[i]] = obj; 
             this.sectionArray.push("#" + this.ReportSections[i]);           
         }
@@ -500,9 +496,10 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         //$(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + this.posLeft + "px;'></div>");
     };
 
-    this.savefile = function () {              
+    this.savefile = function () {       
         this.report.Height = $("#page").height();
-        this.report.Width = $("#page").width();        
+        this.report.Width = $("#page").width();
+        this.report.PaperSize = this.type;
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
 
         if (this.IsNew === "true") {
@@ -577,6 +574,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.Commit = function () {
         this.report.Height = $("#page").height();
         this.report.Width = $("#page").width();
+        this.report.PaperSize = this.type;
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
        
         if (this.IsNew === "true") {
@@ -596,6 +594,18 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         });
     };
 
+    this.drawCustomePage = function (obj) {
+        if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {           
+            this.height = obj.CustomPaperHeight;
+            this.width = obj.CustomPaperWidth;
+            $('.ruler,.rulerleft').empty();
+            this.ruler();
+            $(".headersections,.multiSplit").css({ "height": this.height });
+            $("#page").css({ "height": this.height, "width":this.width });
+           
+        }
+    };
+
     this.init = function () {
         this.pg = new Eb_PropertyGrid("propGrid");
         this.pg.PropertyChanged = function (obj) {
@@ -604,15 +614,29 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
             if (obj.DataSourceRefId) {             
                     this.getDataSourceColoums(obj.DataSourceRefId);                                                             
             }
+            if (obj.PaperSize === "Custom") {
+                this.drawCustomePage(obj);
+            }
         }.bind(this);
-        this.report = new EbObjects["EbReport"]("Report1");
-        this.pg.setObject(this.report, AllMetas["EbReport"]);
-        this.pg.addToDD(this.report);
-        $('#PageContainer,.ruler,.rulerleft').empty();
-        this.ruler();
-        this.pgC = this.createPagecontainer();
-        this.createPage(this.pgC);
-        this.DragDrop_Items();        
+        if (this.IsNew === true) {
+            this.report = new EbObjects["EbReport"]("Report1");           
+            this.pg.setObject(this.report, AllMetas["EbReport"]);
+            this.pg.addToDD(this.report);
+            $('#PageContainer,.ruler,.rulerleft').empty();
+            this.ruler();
+            this.pgC = this.createPagecontainer();
+            this.createPage(this.pgC);
+            this.DragDrop_Items();
+        }
+        if (this.IsNew === false) {
+            var edModObjParsed = this.edModObj;
+            this.height = edModObjParsed.Height + "px";
+            this.width = edModObjParsed.Width + "px";
+            $('#PageContainer,.ruler,.rulerleft').empty();
+            this.ruler();
+            this.pgC = this.createPagecontainer();
+            this.createPage(this.pgC);
+        }
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.Commitbtnid).on('click', this.Commit.bind(this));      
     };

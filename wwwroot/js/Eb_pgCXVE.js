@@ -26,16 +26,16 @@
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
         this.editor = parseInt(e.target.getAttribute("editor"));
-        if (this.editor === 7 || this.editor === 8 || this.editor === 9) {
+        if (this.editor > 6 && this.editor < 11) {
             this.initCE();
         }
-        else if (this.editor === 10) {
+        else if (this.editor === 11) {
             this.initJE();
         }
-        else if (this.editor === 12)
+        else if (this.editor === 13)
             this.initOSE();
 
-        $("#" + this.PGobj.wraperId + " .CEctrlsCont").off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        $("#" + this.CEctrlsContId ).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
     };
 
@@ -82,9 +82,13 @@
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
             this.setColTiles();
         }
-        else if (this.editor === 9 || this.editor === 8) {
+        else if (this.editor > 7 && this.editor < 11) {
             if (this.editor === 8) {
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
+            }
+            else if (this.editor === 10) {
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
+                $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
             }
             this.PGobj.PropsObj[this.PGobj.CurProp] = Gcolumns;
             this.allCols = this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values;
@@ -364,7 +368,7 @@
             else
                 obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
         }
-        else if (this.editor === 9) {
+        else if (this.editor === 9 || this.editor === 10) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values, "name", id);////////////////
         }
         this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);

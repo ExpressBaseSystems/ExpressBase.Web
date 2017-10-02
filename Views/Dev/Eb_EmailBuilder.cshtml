@@ -23,7 +23,8 @@
 </head>
 <body>
     @{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+        @using ExpressBase.Common;
     }
     <script>
     @Html.Raw(ViewBag.Meta);
@@ -85,14 +86,15 @@
         <div class="row dshbrd">
             <div>
                 @{
-                if (ViewBag.IsNew == "true")
-                {
-                @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
-                }
-                else
-                {
-                @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
-                }
+                    var eobj = EbSerializers.Json_Serialize(ViewBag.dsobj);
+                    if (ViewBag.IsNew == "true")
+                    {
+                        @await Component.InvokeAsync("ObjectDashboardInitial", new { objid = ViewBag.Obj_id });
+                    }
+                    else
+                    {
+                        @await Component.InvokeAsync("ObjectDashboard", new { objid = ViewBag.Obj_id, objname = ViewBag.ObjectName, totVer = ViewBag.VersionNumber, status = ViewBag.Status, desc = ViewBag.ObjectDesc });
+                    }
                 }
             </div>
         </div>
@@ -116,8 +118,20 @@
         $(document).ready(function () {
             var propObj;
             var emailpropG = new Eb_PropertyGrid("PropertyG");
-            var emailobj = new EbObjects["EbEmailTemplate"]("email");
-            emailpropG.setObject(emailobj, AllMetas["EbEmailTemplate"]);
+
+
+            if ('@ViewBag.dsobj'.indexOf("EbEmailTemplate") == -1)
+            {
+                var emailobj = new EbObjects["EbEmailTemplate"]("email");
+                emailpropG.setObject(emailobj, AllMetas["EbEmailTemplate"]);
+            }
+            else
+            {
+                var emailobj = @Html.Raw(eobj);
+                emailpropG.setObject(emailobj, AllMetas["EbEmailTemplate"]);
+
+            }
+
 
             emailpropG.PropertyChanged = function (obj, Pname) {
                 propObj = obj;
@@ -152,7 +166,7 @@
 
 
         });
-        $('#commit').click(function () {
+            $('#commit').click(function () {
 
             $.post("../Dev/EmailTemplateCommit",
                 {

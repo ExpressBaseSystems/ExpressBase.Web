@@ -246,7 +246,11 @@
     };
 
     this.ctrlsDD_onchange = function (e) {
-        $("#" + $(e.target).find("option:selected").attr("data-name")).focus();
+        var SelItem = $(e.target).find("option:selected").attr("data-name");
+        $("#" + SelItem).focus();
+        SelObj = this.AllObjects[SelItem];
+        var type = SelObj.$type.split(",")[0].split(".")[2];
+        this.setObject(SelObj, AllMetas[type]);
         this.DD_onChange(e);
     };
 

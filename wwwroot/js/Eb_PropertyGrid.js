@@ -313,7 +313,7 @@
         }
         this.Metas = metas;
         this.PropsObj = props;
-        this.AllObjects[obj.EbSid] = obj;
+        this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         console.log(JSON.stringify(props));
         console.log(JSON.stringify(metas));
         this.InitPG();

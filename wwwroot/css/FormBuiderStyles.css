@@ -100,6 +100,7 @@
     padding: 5px;
     font-weight: bold;
     width: 100%;
+    border-radius: 9px 9px 0px 0px;
 }
 
 .ctrlHead {
@@ -167,7 +168,7 @@
     padding: 0px;
     border: var(--sild1pxDDD);
     vertical-align: top;
-    border-radius:6px;
+    border-radius:10px;
     /*-webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);*/
@@ -380,6 +381,7 @@
     padding: 8px;
     font-weight: bold;
     background-color: var(--colorDDD);
+    border-radius:unset;
 }
 
 .colTile {

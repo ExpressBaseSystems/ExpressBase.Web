@@ -59,6 +59,16 @@
         editor = "Eb_Emailbuilder";
         whichController = "Dev";
     }
+    else if (ObjectType == (int)EbObjectType.TableVisualization)
+    {
+        editor = "dvTable";
+        whichController = "DV";
+    }
+    else if (ObjectType == (int)EbObjectType.ChartVisualization)
+    {
+        editor = "dvChart";
+        whichController = "DV";
+    }
 }
 <script>
     $('#impexp').next().css("display", "inline-block");

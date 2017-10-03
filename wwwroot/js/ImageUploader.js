@@ -22,7 +22,8 @@
 
         $("#input-id").fileinput({
             uploadUrl: "../StaticFile/UploadFileAsync",
-            maxFileCount: 5,           
+            maxFileCount: 5,
+            initialPreview:[]
         }).on('fileuploaded', function (event, data, previewId, index) {
             var objId = data.response.objId;
             $('#obj-id').attr('value', objId);

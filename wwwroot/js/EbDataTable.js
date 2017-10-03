@@ -160,13 +160,14 @@ var EbDataTable = function (settings) {
         //}
         //this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
-            if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").length === 0) {
+            //if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").length === 0) {
                 $("#Toolbar").children(":not(.commonControls)").remove();
-                $("#sub_window_" + this.tableId).append("<div class='col-md-10'><div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div></div>");
+                $("#sub_window_" + this.tableId).children("#"+this.tableId + "_Container").remove();
+                $("#sub_window_" + this.tableId).append("<div class='col-md-10' id='"+this.tableId+"_Container'><div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div></div>");
                 this.Init();
-            }
+            //}
             //else {
-            //    $("#" + this.tableId).DataTable().ajax().reload();
+            //    $("#" + this.tableId).DataTable().ajax.reload();
             //}
         }
     };
@@ -1506,7 +1507,7 @@ var EbDataTable = function (settings) {
     };
 
     this.saveSettings = function () {
-        $.post('../DV/SaveSettings', { json: JSON.stringify(this.ebSettings), RefId: this.dvid }, this.saveSuccess.bind(this));
+        $.post('../DV/SaveSettings', { json: JSON.stringify(this.ebSettings), RefId: this.dvid, type:"TableVisualization" }, this.saveSuccess.bind(this));
     };
 
     this.saveSuccess = function () {

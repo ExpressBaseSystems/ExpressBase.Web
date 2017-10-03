@@ -1,0 +1,101 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+    @using ExpressBase.Common;
+    var dvobj = EbSerializers.Json_Serialize(ViewBag.dvObject);
+}
+<style>
+    .tools {
+        border: none;
+        background: none;
+        color: black;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
+<script src="~/js/splitWindow.js" type="text/javascript"></script>
+
+<div class="row" style="margin-top: 52px;">
+    <div class="toolbar-com" id='Toolbar'>
+        <button id='btnGo' class='tools commonControls' style='float: right;display:none'><i class="fa fa-play" aria-hidden="true"></i></button>
+        <button id='Save_btn' class='tools commonControls'>Save</button>
+    </div>
+</div>
+<div class="row" id="parent-div" style="margin-top:80px;">
+    <div class="col-md-10 no-padd cont-wnd" id="contBox">
+    </div>
+    <div class="col-md-2 pg no-padd pull-right" id="ppgrid">
+        <div class="min-btn">
+            <button class="btn-tb-com" onclick="pgBoxMin();" id='pg-min'><i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></button>
+        </div>
+    </div>
+</div>
+    <script>
+    @Html.Raw(ViewBag.EbObjectType)
+    @Html.Raw(ViewBag.Meta)
+    @Html.Raw(ViewBag.JsObjects);
+    var dvcontainerObj = new DvContainerObj({
+        ss_url: '@ViewBag.ServiceUrl'
+    });
+    var split = new splitWindow("parent-div", "contBox");
+    var pg = new Eb_PropertyGrid("ppgrid");
+    if ('@ViewBag.dvObject'.indexOf("EbTableVisualization") === -1) {
+        var dvTableObj = new EbObjects["EbTableVisualization"]("table");
+        pg.setObject(dvTableObj, AllMetas["EbTableVisualization"]);
+    }
+    else {
+        var dvTableObj = @Html.Raw(dvobj);
+        pg.setObject(dvTableObj, AllMetas["EbTableVisualization"]);
+        split.createContentWindow(dvTableObj.EbSid, "EbTableVisualization");
+        call2dv(dvTableObj);
+    }
+    pg.PropertyChanged = function (obj, Pname) {
+        if (Pname == "DataSourceRefId") {
+            if (obj[Pname] !== null) {
+                if ('@ViewBag.dvObject'.indexOf("EbTableVisualization") === -1) {
+                    split.createContentWindow(obj.EbSid, "EbTableVisualization");
+                }
+                call2dv(obj);
+            }
+        }
+        else if (Pname == "Name") {
+            dvcontainerObj.currentObj = obj;
+            console.log(obj);
+        }
+    }
+
+    function call2dv(obj) {
+        $.LoadingOverlay("show");
+        $.ajax({
+            type: "POST",
+            url: "../DV/dvCommon",
+            data: { dvobj: JSON.stringify(obj), dvRefId: null },
+            success: function (text) {
+                if (text.indexOf("filterBox") === -1) {
+                    $("#sub_windows_sidediv_dv" + obj.EbSid).css("display", "none");
+                    $.LoadingOverlay("hide");
+                    $($("#sub_window_dv" + obj.EbSid).children()[2]).removeClass("col-md-10").addClass("col-md-12");
+                }
+                else {
+                    $("#sub_windows_sidediv_dv" + obj.EbSid).css("display", "inline");
+                    $("#sub_windows_sidediv_dv" + obj.EbSid).children().remove();
+                    $("#sub_windows_sidediv_dv" + obj.EbSid).append(text);
+                    $.LoadingOverlay("hide");
+                    $("#btnGo").css("display", "inline-block");
+                    dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid] = dvcontainerObj.currentObj;
+                    $($("#sub_window_dv" + obj.EbSid).children()[2]).removeClass("col-md-12").addClass("col-md-10");
+                }
+
+            }
+        });
+        $("#sub_window_dv" + obj.EbSid).focus();
+
+    }
+    split.windowOnFocus = function (ev) {
+        if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
+            var id = $(ev.target).attr("id");
+            var type = $(ev.target).attr("eb-type");
+            var dvobj = dvcontainerObj.dvcol[id];
+            pg.setObject(dvobj, AllMetas[type]);
+        }
+    }
+    </script>

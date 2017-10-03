@@ -68,13 +68,15 @@ namespace ExpressBase.Web.Controllers
                 {
                     EbReport dsobj = EbSerializers.Json_Deserialize<EbReport>(element.Json_lc);
                     ViewBag.Name = dsobj.Name;
-                    ViewBag.Json = element.Json_lc;                   
+                    ViewBag.Json = element.Json_lc;
+                    //ViewBag.html = dsobj.GetHtml();
                 }
                 else
                 {
                     EbReport dsobj = EbSerializers.Json_Deserialize<EbReport>(element.Json_wc);
                     ViewBag.Name = dsobj.Name;
-                    ViewBag.Json = element.Json_wc;                   
+                    ViewBag.Json = element.Json_wc;
+                    //ViewBag.html = dsobj.GetHtml();
                 }
             }
             return View();

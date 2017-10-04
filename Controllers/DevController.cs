@@ -55,6 +55,14 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public IActionResult ListApplications()
+        {
+
+            IServiceClient client = this.ServiceClient;
+            var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest());
+            ViewBag.dict = resultlist.Data;
+            return View();
+        }
 
 
         [HttpGet]
@@ -267,28 +275,34 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult CreateApplication(int i)
         {
-            //var req = this.HttpContext.Request.Form;
+            var req = this.HttpContext.Request.Form;
 
-            //IServiceClient client = this.ServiceClient;
-            //ViewBag.Header = "Edit Application";
-            //int obj_id = Convert.ToInt32(req["objid"]);
-            //ViewBag.Obj_id = obj_id;
-            //var resultlist = client.Get<EbObjectlatestco>(new EbObjectRequest { Id = obj_id/*, VersionId = null*/, EbObjectType = (int)EbObjectType.Application, Token = ViewBag.token });
-            //var rlist = resultlist.Data;
-            //foreach (var element in rlist)
-            //{
-            //    ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-            //    List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-            //    ViewBag.LifeCycle = lifeCycle;
-            //    ViewBag.IsNew = "false";
-            //    var dsobj = EbSerializers.Json_Deserialize<EbApplication>(element.Json);
-            //    ViewBag.ObjectName = element.Name;
-            //    ViewBag.ObjectDesc = element.Description;
-            //    ViewBag.ObjType = (int)EbObjectType.Application;
+            IServiceClient client = this.ServiceClient;
+            var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest{ id =Convert.ToInt32(req["itemid"]) });
+           /// ViewBag.applicationname = resultlist.Data[""]  complete application edit 
+            return View();          
+        }
 
-            //}
+        public IActionResult SaveApplications()
+        {
+            var req = this.HttpContext.Request.Form;
 
-            return View();
+            IServiceClient client = this.ServiceClient;
+            var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+
+            if (resultlist.id > 0)
+            {
+                ViewBag.Message = "Successfully Added";
+                return RedirectToAction("CreateApplication", "Dev");
+
+            }
+            else
+            {
+                ViewBag.Message = "Error..Please try again";
+                return RedirectToAction("CreateApplication", "Dev");
+
+            }
+            
         }
 
         public IActionResult CreateApplicationModule()
@@ -296,40 +310,40 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public JsonResult SaveApplications()
-        {
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.ServiceClient;
-            ViewBag.Header = "Create Application";
-            var ds = new EbObjectSaveOrCommitRequest();
-            ds.IsSave = false;
-            ds.RefId = (string.IsNullOrEmpty(req["objid"])) ? string.Empty : req["objid"].ToString();           //Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
-          //  ds.EbObjectType = (int)EbObjectType.Application;
-            ds.Name = req["name"];
-            ds.Description = req["description"];
-            ds.Json = EbSerializers.Json_Serialize(new EbApplication
-            {
-                Name = req["name"],
-               // EbObjectType = EbObjectType.Application
-            });
-            ds.Status = ObjectLifeCycleStatus.Live;
-            ds.TenantAccountId = ViewBag.cid;
-            ds.ChangeLog = "";
-            ds.Relations = null;
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public JsonResult SaveApplications()
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    IServiceClient client = this.ServiceClient;
+        //    ViewBag.Header = "Create Application";
+        //    var ds = new EbObjectSaveOrCommitRequest();
+        //    ds.IsSave = false;
+        //    ds.RefId = (string.IsNullOrEmpty(req["objid"])) ? string.Empty : req["objid"].ToString();           //Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
+        //  //  ds.EbObjectType = (int)EbObjectType.Application;
+        //    ds.Name = req["name"];
+        //    ds.Description = req["description"];
+        //    ds.Json = EbSerializers.Json_Serialize(new EbApplication
+        //    {
+        //        Name = req["name"],
+        //       // EbObjectType = EbObjectType.Application
+        //    });
+        //    ds.Status = ObjectLifeCycleStatus.Live;
+        //    ds.TenantAccountId = ViewBag.cid;
+        //    ds.ChangeLog = "";
+        //    ds.Relations = null;
 
-            ViewBag.IsNew = "false";
-            var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
-            if (res.Id > 0)
-            {
-                return Json("Success");
-            }
-            else
-            {
-                return Json("Failed");
-            }
-        }
+        //    ViewBag.IsNew = "false";
+        //    var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
+        //    if (res.Id > 0)
+        //    {
+        //        return Json("Success");
+        //    }
+        //    else
+        //    {
+        //        return Json("Failed");
+        //    }
+        //}
 
         public IActionResult DevLogout()
         {

@@ -1,0 +1,111 @@
+﻿@{
+    if (ViewBag.isAjaxCall)
+    {
+        Layout = null;
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+    }   
+    Dictionary<int, object> Dict = ViewBag.dict;
+}
+<script>
+    $("#reload").next().css("display", "inline-block");
+</script>
+<div class="row">
+    <div class="form-inline">
+        <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+
+        @using (Html.BeginForm("CreateApplication", "Dev", FormMethod.Get, new { target = "_blank" }))
+        {
+
+            <button href="" class="btn btn-primary"><i class="fa fa-plus-circle"></i> New</button>
+
+        }
+        <div class="input-group pull-right">
+            <div class="input-group-btn">
+                <button type="button" id="dropbuttn" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Name <span class="caret"></span></button>
+                <ul class="dropdown-menu" id="MyDropDownId">
+                    <li><a href="#">Application</a></li>
+                    <li><a href="#">Application module</a></li>
+                </ul>
+            </div>
+            <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+        </div>
+    </div>
+</div>
+@{
+    foreach (var element in Dict.Keys)
+    {
+        <div class="row objitems" name="objBox">
+            <div class="col-md-1">
+                <input type="checkbox" aria-label="...">
+            </div>
+
+            <div class="col-md-8">
+                <h4 name="head4" style="color:black;">@Dict[element]</h4>
+                <p class="text-justify">dsgfds dgfrdhg dfhgdrewteberyrt reyhrtu6trujhfg reyer5y54</p>
+                <h6>
+                    <i style="font-style:italic;">Created by Mr X on 12/09/2017 at 02:00 pm</i>
+                    <a style="margin-left:10px;">
+                        <span name="Status" class="label label-primary">Status</span>
+                        <span name="Version" class="label label-default">Version</span>
+                        <span class="label label-success">Dependency</span>
+                        <span name="Application" class="label label-danger">Application</span>
+                        <span name="Module" class="label label-default">Module</span>
+                    </a>
+                </h6>
+            </div>
+            @using (Html.BeginForm("CreateApplication", "Dev", FormMethod.Post, new { target = "_blank" }))
+            {
+                <div class="col-md-2 pull-right">
+                    <input type="hidden" id="itemid" name="itemid" value="@element" />
+                    <input type="submit" class="btn btn-primary fa-input" value="Open &#xf054;" style="font-family: FontAwesome;">
+                </div>
+            }
+        </div>
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        $('#MyDropDownId li').click(function () {
+            $('#dropbuttn').text($(this).text());
+        });
+        $("#searchobj").on("keyup", function (e) {
+            if ($('#dropbuttn').text() === 'Name ') {
+                var f = false;
+                var srch = $(this).val().toLowerCase();
+                $('[name=head4]').each(function () {
+                    $(this).parent().parent().hide();
+                    var head = $(this).text().toLowerCase();
+                    if (head.match(srch)) {
+                        $(this).parent().parent().show();
+                        f = true;
+                    }
+                });
+                if (!f)
+                    $("#notfound").text('Item not found.......');
+                else
+                    $("#notfound").text('');
+            }
+            else {
+                var searchBy = $('#dropbuttn').text();
+                var f = false;
+                var srch = $(this).val().toLowerCase();
+                $('[name=' + searchBy + ']').each(function () {
+                    $(this).parent().parent().parent().parent().hide();
+                    var head = $(this).text().toLowerCase();
+                    if (head.match(srch)) {
+                        $(this).parent().parent().parent().parent().show();
+                        f = true;
+                    }
+                });
+                if (!f)
+                    $("#notfound").text('Item not found.......');
+                else
+                    $("#notfound").text('');
+            }
+        });
+    });
+</script>

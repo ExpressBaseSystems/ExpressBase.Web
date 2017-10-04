@@ -2,26 +2,42 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
     Html.RenderPartial("ExtPageHeader2");
 }
-
-@using (Html.BeginForm("SaveApplications", "Dev", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-<div class="col-md-4 col-md-offset-4">
-    <h3 class="text-center">@ViewBag.Header</h3>
+    //  @Html.AntiForgeryToken()
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">           
+                alert("@ViewBag.Message");
+       
+        </script>
+    }
+<div class="col-md-4 col-md-offset-4" style="margin-top: 115px">
+    <h3 class="text-center">Create Application</h3>
     <div class="form-group">
-        <input type="text" class="form-control" name="name" placeholder="Application Name" value="@ViewBag.ObjectName"/>
+        <input type="text" class="form-control" id="applicationname" name="applicationname" placeholder="Application Name" value="@ViewBag.applicationname"/>
     </div>
     <div class="form-group">
-        <textarea name="description"  placeholder="Description" class="form-control">@ViewBag.ObjectDesc</textarea>
+        <textarea name="description" id="description" placeholder="description" class="form-control">@ViewBag.ObjectDesc</textarea>
     </div>
    
     <div class="form-group pull-right">
-        <input type="submit" class="btn btn-primary" id="sub" value="Create" />
-        <input type="hidden" name="objid" value="@ViewBag.Obj_id" />
+        <input type="button" class="btn btn-primary" id="sub" value="Create" />
+        <input type="hidden" id="itemid" name="itemid" value="@ViewBag.Obj_id" />
     </div>
 </div>
-}
 <script>
+    $('document').ready(function () {
+        $('#sub').click(function () {
+            $.post("../Dev/SaveApplications",
+                {
+                    "applicationname": $('#applicationname').val(),
+                    "description": $('#description').val(),
+                    "itemid": $('#itemid').val()
+                },function (result) {
+                });
+        });
+    });
+</script>
+@*<script>
     $('document').ready(function () {
         var f = true;
         $('.selectpicker').on('rendered.bs.select', function (e) {
@@ -30,7 +46,4 @@
             f = false;
         });
     });
-</script>
-<style>
-
-</style>
+</script>*@

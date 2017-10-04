@@ -44,10 +44,11 @@
             <button id='next' class='tools commonControls' style="display:none"><i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></button>
             <button id='last' class='tools commonControls' style="display:none"><i class="fa fa-step-forward fa-lg" style="margin-bottom: 11px;" aria-hidden="true"></i></button>
             <button id='btnGo' class='tools commonControls' style='float: right;display:none'><i class="fa fa-play" aria-hidden="true"></i></button>
+            <button id='Save_btn' class='tools commonControls'>Save</button>
     </div>
 </div>
 
-<div class='tablecontainer' style='background-color:rgb(260,260,260);'>
+@*<div class='tablecontainer' style='background-color:rgb(260,260,260);'>
     <ul class='nav nav-tabs' id='table_tabs'>
         <li class='nav-item active'>
             <a class='nav-link' href='#tab_1' data-toggle='tab' style="padding: 6px 4px !important;"><i class='fa fa-home' aria-hidden='true'></i>&nbsp; Home</a>
@@ -56,7 +57,7 @@
     <div class='tab-content' id='table_tabcontent'>
         <div id='tab_1' class='tab-pane active'>
 
-            <div class="container-fluid my-container">
+            <div class="container-fluid my-container">*@
                 @*<div class="row">
                     <div class="toolbar-com" id='Toolbar'>
                         <button class="btn" id="new"><i class="fa fa-plus" aria-hidden="true"></i></button>
@@ -114,11 +115,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            @*</div>
 
         </div>
     </div>
-</div>
+</div>*@
 
 
 @*<div id="Outer">
@@ -148,6 +149,7 @@
         if ('@ViewBag.dvObject'.indexOf("EbTableVisualization") !== -1) {
             pg.setObject(dvJsObj, AllMetas["EbTableVisualization"]);
             split.createContentWindow(dvJsObj.EbSid, "EbTableVisualization");
+            call2dvView(dvJsObj);
         }
         else if ('@ViewBag.dvObject'.indexOf("EbChartVisualization") !== -1) {
             pg.setObject(dvJsObj, AllMetas["EbChartVisualization"]);
@@ -199,9 +201,12 @@
                     //});
                 }
             }
+            else if (Pname == "Name") {
+                dvcontainerObj.currentObj = obj;
+            }
         }
 
-        function call2dvView() {
+        function call2dvView(obj) {
             $.LoadingOverlay("show");
             $.ajax({
                 type: "POST",

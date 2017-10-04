@@ -131,25 +131,70 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
             //Edit mode
-            if (!string.IsNullOrEmpty(objid))
+            if (objid != null)
             {
-                EbDataVisualization dvObject = null;
-                if (objtype == EbObjectType.TableVisualization)
+                var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
+                var rlist = resultlist.Data;
+                foreach (var element in rlist)
                 {
-                    dvObject = this.Redis.Get<EbTableVisualization>(objid + ViewBag.UId);
-                    if (dvObject == null)
-                        dvObject = this.Redis.Get<EbDataVisualization>(objid);
+                    ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                    List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                    ViewBag.LifeCycle = lifeCycle;
+                    ViewBag.IsNew = "false";
+                    ViewBag.ObjectName = element.Name;
+                    ViewBag.ObjectDesc = element.Description;
+                    ViewBag.Status = element.Status;
+                    ViewBag.VersionNumber = element.VersionNumber;
+                    ViewBag.Icon = "fa fa-database";
+                    ViewBag.ObjType = (int)objtype;
+                    ViewBag.Refid = element.RefId;
+                    ViewBag.Majorv = element.MajorVersionNumber;
+                    ViewBag.Minorv = element.MinorVersionNumber;
+                    ViewBag.Patchv = element.PatchVersionNumber;
+
+                    EbDataVisualization dsobj = null;
+
+                    if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+                    {
+                        ViewBag.ReadOnly = true;
+                        if (objtype == EbObjectType.TableVisualization)
+                            dsobj = EbSerializers.Json_Deserialize<EbTableVisualization>(element.Json_lc);
+                        else if (objtype == EbObjectType.ChartVisualization)
+                            dsobj = EbSerializers.Json_Deserialize<EbChartVisualization>(element.Json_lc);
+                    }
+                    else
+                    {
+                        ViewBag.ReadOnly = false;
+                        if (objtype == EbObjectType.TableVisualization)
+                            dsobj = EbSerializers.Json_Deserialize<EbTableVisualization>(element.Json_wc);
+                        else if (objtype == EbObjectType.ChartVisualization)
+                            dsobj = EbSerializers.Json_Deserialize<EbChartVisualization>(element.Json_wc);
+                    }
+
+                    dsobj.AfterRedisGet(this.Redis);
+                    ViewBag.dvObject = dsobj;
                 }
-                else if (objtype == EbObjectType.ChartVisualization)
-                {
-                    dvObject = this.Redis.Get<EbChartVisualization>(objid + ViewBag.UId);
-                    if (dvObject == null)
-                        dvObject = this.Redis.Get<EbChartVisualization>(objid);
-                }
-                dvObject.AfterRedisGet(this.Redis);
-                ViewBag.dvObject = dvObject;
+
             }
-            ViewBag.dvRefId = objid;
+            //if (!string.IsNullOrEmpty(objid))
+            //{
+            //    EbDataVisualization dvObject = null;
+            //    if (objtype == EbObjectType.TableVisualization)
+            //    {
+            //        dvObject = this.Redis.Get<EbTableVisualization>(objid + ViewBag.UId);
+            //        if (dvObject == null)
+            //            dvObject = this.Redis.Get<EbDataVisualization>(objid);
+            //    }
+            //    else if (objtype == EbObjectType.ChartVisualization)
+            //    {
+            //        dvObject = this.Redis.Get<EbChartVisualization>(objid + ViewBag.UId);
+            //        if (dvObject == null)
+            //            dvObject = this.Redis.Get<EbChartVisualization>(objid);
+            //    }
+            //    dvObject.AfterRedisGet(this.Redis);
+            //    ViewBag.dvObject = dvObject;
+            //}
+            //ViewBag.dvRefId = objid;
             return View();
         }
 

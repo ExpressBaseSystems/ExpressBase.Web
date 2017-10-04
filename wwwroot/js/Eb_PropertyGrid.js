@@ -15,7 +15,7 @@
         // function that will update and return the values back from the property grid
         for (var prop in this.getValueFuncs) {
             if (typeof this.getValueFuncs[prop] !== 'function') continue;
-            this.PropsObj[prop] = this.getValueFuncs[prop]();
+            this.PropsObj[prop] = ($('#' + this.wraperId + prop).length === 0) ? this.PropsObj[prop] : this.getValueFuncs[prop]();
         }
         return this.PropsObj;
     };
@@ -23,7 +23,7 @@
     this.getPropertyRowHtml = function (name, value, meta, options) {
         var valueHTML;
         var type = meta.editor || '';
-        var elemId = this.pgId + name;
+        var elemId = this.wraperId + name;
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
@@ -264,13 +264,11 @@
         this.propNames = [];
         this.MISC_GROUP_NAME = 'Miscellaneous';
         this.GET_VALS_FUNC_KEY = 'pg.getValues';
-        this.pgIdSequence = 0;
         this.propertyRowsHTML = { 'Misc': '' };
         this.groupsHeaderRowHTML = {};
         this.postCreateInitFuncs = {};
         this.OnChangeExec = {};
         this.getValueFuncs = {};
-        this.pgId = this.wraperId + this.pgIdSequence++;
         this.currGroup = null;
         this.CurProp = null;
         this.CurEditor = null;

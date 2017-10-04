@@ -49,10 +49,11 @@ namespace ExpressBase.Web.Controllers
             ViewBag.FilterDialogId = "null";
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
 
-            //var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-            //var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-            //ViewBag.Meta = _jsResult.Meta;
-            //ViewBag.JsObjects = _jsResult.JsObjects;
+            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
             return View();
         }
 
@@ -84,26 +85,33 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Majorv = element.MajorVersionNumber;
                 ViewBag.Minorv = element.MinorVersionNumber;
                 ViewBag.Patchv = element.PatchVersionNumber;
-                  
-                if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc)) 
+
+                if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                 {
                     ViewBag.ReadOnly = true;
                     var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_lc);
-                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
+                    ViewBag.Code = dsobj.Sql;
+                    ViewBag.dsObj = dsobj;
+                    ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
+                }
+                else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
+                {
+                    ViewBag.ReadOnly = false;
+                    var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_wc);
+                    ViewBag.Code = dsobj.Sql;
+                    ViewBag.dsObj = dsobj;
                     ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
                 }
                 else
                 {
-                    ViewBag.ReadOnly = false;
-                    var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_wc);
-                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
-                    ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
+                    ViewBag.WC = element.Wc_All;
                 }
             }
-            //var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-            //var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-            //ViewBag.Meta = _jsResult.Meta;
-            //ViewBag.JsObjects = _jsResult.JsObjects;
+            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
             ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
             return View();
         }
@@ -195,12 +203,14 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string refid;
+            EbDataSource obj;
             if (string.IsNullOrEmpty(req["id"]))
             {
                 var ds = new EbObject_Create_New_ObjectRequest();
                 ds.EbObjectType = (int)EbObjectType.DataSource;
-                ds.Name = req["name"];
-                ds.Description = req["description"];
+                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+                ds.Name = obj.Name;
+                ds.Description = obj.Description;
                 ds.Json = req["json"];
                 ds.Status = ObjectLifeCycleStatus.Development;
                 ds.Relations = req["rel_obj"];
@@ -214,8 +224,9 @@ namespace ExpressBase.Web.Controllers
             {
                 var ds = new EbObject_CommitRequest();
                 ds.EbObjectType = (int)EbObjectType.DataSource;
-                ds.Name = req["name"];
-                ds.Description = req["description"];
+                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+                ds.Name = obj.Name;
+                ds.Description = obj.Description;
                 ds.Json = req["json"];
                 ds.Relations = req["rel_obj"];
                 ds.RefId = req["id"];
@@ -307,7 +318,7 @@ namespace ExpressBase.Web.Controllers
                 if (_EbObjectType == EbObjectType.DataSource)
                 {
                     var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
-                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
+                    ViewBag.Code =dsobj.Sql;
                 }
                 if (_EbObjectType == EbObjectType.SqlFunction)
                 {

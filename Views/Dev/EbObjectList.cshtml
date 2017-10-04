@@ -61,12 +61,26 @@
     }
     else if (ObjectType == (int)EbObjectType.TableVisualization)
     {
-        editor = "dvTable";
+        if (ViewBag.wc == "dc")
+        {
+            editor = "dvTable";
+        }
+        else
+        {
+            editor = "dv";
+        }
         whichController = "DV";
     }
     else if (ObjectType == (int)EbObjectType.ChartVisualization)
     {
-        editor = "dvChart";
+        if (ViewBag.wc == "dc")
+        {
+            editor = "dvChart";
+        }
+        else
+        {
+            editor = "dv";
+        }
         whichController = "DV";
     }
 }

@@ -1,17 +1,19 @@
-﻿
+﻿<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" />
 <style>
     .dashbord {
         background-color: white;
         width: 100%;
-        min-height: 270px;
-        border: 1px solid #d3c9c9;
+        /*min-height: 147px;*/
+        /*border: 1px solid #d3c9c9;*/
         border-top: none;
         font-family: Tahoma;
-        margin-top: 24px;
+        margin-top: 3px;
     }
 
     .row {
         padding-top: 22px;
+        margin-top: -4px;
     }
 
     .box1 {
@@ -44,7 +46,7 @@
     }
 
     .count {
-        font-size: 29px;
+        font-size: 15px;
     }
 
     .head {
@@ -69,7 +71,7 @@
         background-color: white;
         width: 100%;
         min-height: 50px;
-        margin-top: -25px;
+        margin-top: -37px;
         padding-top: 10px;
         position: fixed;
         z-index: 50;
@@ -106,6 +108,7 @@
     .firstcommit {
         width: 100%;
         min-height: 60px;
+        padding-right: 20%;
     }
 
     .lastCommit {
@@ -118,7 +121,7 @@
     }
 
     .col-md-1 {
-        width: 9.333333% !important;
+        width: 9% !important;
     }
 
     .smallfont {
@@ -175,7 +178,7 @@
                     <button class='btn run' id="run" data-toggle="tooltip" data-placement="bottom" title="Run"><i class="fa fa-play" aria-hidden="true"></i></button>
                     <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
                     <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
-                    <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"> v.@ViewBag.VersionNumber</i></button>
+                    <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
                     <button class='btn' id="minmize"><i class="fa fa-caret-down" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                 </div>
             </div>
@@ -184,119 +187,89 @@
 </div>
 <div class="row">
     <div class="dashbord">
-        <div class="col-md-3 box1">
-            <div class="form-group form1">
-                <div class="input-group">
-                    <div class="input-group-addon"><i class="fa fa-database"></i></div>
-                    <input type="text" class="form-control" id="obj_name" value="@ViewBag.ObjName">
-                </div>
-                <div class="form-group ">
-                    <label style="margin-top:10px;">Description</label>
-                    <textarea class="form-control txtarea" id="obj_desc">@ViewBag.description</textarea>
-                </div>
-            </div>
-        </div>
         <div class="col-md-7 box2">
-
             <div class="col-md-3 card1">
                 <div class="head text-center">
-                    Total Versions
+                    Working Copy(s)
                 </div>
                 <div class="count text-center">
-                    @*@ViewBag.TotalVersions*@
+                    @ViewBag.WC
                 </div>
             </div>
             <div class="col-md-3 card1">
                 <div class="head text-center">
-                    Status
+                    Last Commit
                 </div>
-                <div style="color:#0db71b" class="count text-center">
+                <div class="count text-center">
+                    v.x.0.0
+                </div>
+                <div class="count text-center">
                     @ViewBag.Status
                 </div>
-            </div>
-            <div class="col-md-3 card1">
-                <div class="head text-center">
-                    Live Version
-                </div>
-                <div class="count text-center">
-                    V.
-                </div>
-            </div>
-            <div class="col-md-3 card1">
-                <div class="head text-center">
-                    Related Objects
-                </div>
-                <div class="count text-center">
-                    2
-                </div>
-            </div>
-            <div class="col-md-3 card1">
-                <div class="head text-center">
-                    Featured
-                </div>
-                <div class="count text-center">
-                    2
-                </div>
-            </div>
-            <div class="col-md-3 card1">
-                <div class="head text-center">
-                    Object Size
-                </div>
-                <div class="count text-center">
-                    12 Kb
-                </div>
-            </div>
-            <div class="col-md-3 card1">
-                <div class="head text-center">
-                    Object Size
-                </div>
-                <div class="count text-center">
-                    12 Kb
-                </div>
-            </div>
-            <div class="col-md-3 card1">
-                <div class="head text-center">
-                    Object Size
-                </div>
-                <div class="count text-center">
-                    12 Kb
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-1 box3">
-            <div class="firstcommit">
-                <h6 class="smallfont">First Commit </h6>
                 <div style="display:block">
                     <div class="userimg">
                         <img src="~/images/proimg.jpg" style="width:30px" />
                     </div>
                     <div class="profileInfo">
                         <h6 class="xtrasmall">Mr X</h6>
+                        commit time
                     </div>
                 </div>
             </div>
-            <div class="xtrasmall">
-                Application
-                <div class="med-font ">appl1</div>
-            </div>
-        </div>
-        <div class="col-md-1 box4">
-            <div class="lastCommit">
-                <h6 class="smallfont">Last Commit</h6>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Live Version
+                </div>
+                <div style="color:#0db71b" class="count text-center">
+                    v.x.0.0
+                </div>
                 <div style="display:block">
                     <div class="userimg">
                         <img src="~/images/proimg.jpg" style="width:30px" />
                     </div>
                     <div class="profileInfo">
-                        <h6 class="smallfont">Mr X</h6>
+                        <h6 class="xtrasmall">Mr X</h6>
+                        commit time
                     </div>
                 </div>
             </div>
-            <div class="xtrasmall">
-                Module
-                <div class="med-font ">mod1</div>
+            <div class="col-md-3 card1">
+                <div class="head text-center">
+                    Issues
+                </div>
+                <div class="count text-center">
+                    10
+                </div>
             </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="col-md-1 box3">
+                <div class="firstcommit">
+                    <h6 class="smallfont">Owner/Assignee</h6>
+                    <div style="display:block">
+                        <div class="userimg">
+                            <img src="~/images/proimg.jpg" style="width:30px" />
+                        </div>
+                        <div class="profileInfo">
+                            <h6 class="xtrasmall">Mr X</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1 box4">
+                    <h6 class="smallfont">Application</h6>
+                    <select class="selectpicker btn" id="apps">
+                        <option id="">app1</option>
+                        <option id="">app2</option>
+                        <option id="">app3</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <h6 class="smallfont">Tags </h6>
+            <input type="text" id="tags" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput" />
         </div>
     </div>
 </div>
@@ -376,10 +349,10 @@
         $('#minmize').click(function () {
             $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");
             var t = $('.dashbord').toggle();
-            if ($('.dashbord').css("display") === "none")
-                $('.codedit').css("margin-top", "102px");
-            else
-                $('.codedit').css("margin-top", "0px");
+            //if ($('.dashbord').css("display") === "none")
+            //    $('.codedit').css("margin-top", "102px");
+            //else
+            //    $('.codedit').css("margin-top", "0px");
 
             console.log(t);
         });

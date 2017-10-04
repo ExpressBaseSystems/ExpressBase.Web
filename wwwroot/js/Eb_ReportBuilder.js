@@ -87,6 +87,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     };
 
     this.getDataSourceColoums = function (refid) {
+        $('#data-table-list').empty();
         $("#get-col-loader").show();
         $.ajax({
             url: "../RB/GetColumns",
@@ -594,13 +595,15 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     };
 
     this.setpageSize = function (obj) {         
-        this.height = pages[obj.PaperSize].height;
-        this.width = pages[obj.PaperSize].width;
-        $('.ruler,.rulerleft').empty();
-        this.ruler();
-        $(".headersections,.multiSplit").css({ "height": this.height });
-        $("#page").css({ "height": this.height, "width": this.width });
-        if (obj.PaperSize === "Custom") {
+        if (obj.PaperSize !== "Custom") {
+            this.height = pages[obj.PaperSize].height;
+            this.width = pages[obj.PaperSize].width;
+            $('.ruler,.rulerleft').empty();
+            this.ruler();
+            $(".headersections,.multiSplit").css({ "height": this.height });
+            $("#page").css({ "height": this.height, "width": this.width });
+        }       
+        else if (obj.PaperSize === "Custom") {
             if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
                 this.height = obj.CustomPaperHeight;
                 this.width = obj.CustomPaperWidth;

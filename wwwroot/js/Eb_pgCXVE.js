@@ -90,9 +90,11 @@
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
                 $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
             }
-            this.PGobj.PropsObj[this.PGobj.CurProp] = Gcolumns;
-            this.allCols = this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values;
-            this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].rowGrouping;
+            //this.PGobj.PropsObj[this.PGobj.CurProp] = Gcolumns;
+            
+            var sourceProp = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].source;
+            this.allCols = this.PGobj.PropsObj[sourceProp].$values;
+            this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
             this.setSelColtiles();
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");

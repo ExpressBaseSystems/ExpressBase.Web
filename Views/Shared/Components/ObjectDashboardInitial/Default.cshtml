@@ -3,7 +3,7 @@
     .dashbord {
         background-color: white;
         width: 100%;
-        min-height: 270px;
+        min-height: 156px;
         border: 1px solid #d3c9c9;
         border-top: none;
         font-family: Tahoma;
@@ -69,7 +69,7 @@
         background-color: white;
         width: 100%;
         min-height: 50px;
-        margin-top: -25px;
+        margin-top: -37px;
         padding-top: 10px;
         position: fixed;
         z-index: 50;
@@ -113,8 +113,8 @@
         min-height: 60px;
     }
 
-    .col-md-3 {
-        width: 23% !important;
+    .col-md-2 {
+        width: 15% !important;
     }
 
     .col-md-1 {
@@ -310,10 +310,10 @@
         $('#minmize').click(function () {
             $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");
             var t = $('.dashbord').toggle();
-            if ($('.dashbord').css("display") === "none")
-                $('.codedit').css("margin-top", "102px");
-            else
-                $('.codedit').css("margin-top", "0px");
+            //if ($('.dashbord').css("display") === "none")
+            //    $('.codedit').css("margin-top", "102px");
+            //else
+            //    $('.codedit').css("margin-top", "0px");
 
             console.log(t);
         });

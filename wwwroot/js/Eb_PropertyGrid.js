@@ -1,4 +1,8 @@
-﻿var Eb_PropertyGrid = function (id) {
+﻿var Gcolumns = { "$type": "ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects", "IsPaged": "", "rowGrouping": ["serial", "checkbox"], "DataSourceRefId": "eb_roby_dev-eb_roby_dev-2-519-1165", "Ebsid": "set1_EbTableVisualization0_1", "Columns": { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [{ "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 0, "name": "serial", "Type": 12, "sTitle": "#", "bVisible": true, "Pos": -2, "sWidth": "10px", "className": null, "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 0, "name": "checkbox", "Type": 3, "sTitle": "checkbox", "bVisible": false, "Pos": -1, "sWidth": "10px", "className": null, "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 0, "name": "id", "Type": 11, "sTitle": "id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 1, "name": "xid", "Type": 16, "sTitle": "xid", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 2, "name": "trndate", "Type": 6, "sTitle": "trndate", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 3, "name": "cash_or_cre", "Type": 16, "sTitle": "cash_or_cre", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 4, "name": "cash2", "Type": 3, "sTitle": "cash2", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 5, "name": "lpo", "Type": 16, "sTitle": "lpo", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 6, "name": "dispname", "Type": 16, "sTitle": "dispname", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 7, "name": "discount", "Type": 7, "sTitle": "discount", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 8, "name": "grossamt", "Type": 7, "sTitle": "grossamt", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 9, "name": "netamt", "Type": 7, "sTitle": "netamt", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 10, "name": "submitter", "Type": 16, "sTitle": "submitter", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 11, "name": "routegroup", "Type": 16, "sTitle": "routegroup", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 12, "name": "sys_submitted_ts", "Type": 6, "sTitle": "sys_submitted_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 13, "name": "modifier", "Type": 16, "sTitle": "modifier", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 14, "name": "sys_last_modified_ts", "Type": 6, "sTitle": "sys_last_modified_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 15, "name": "device_id", "Type": 16, "sTitle": "device_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 16, "name": "forms_id", "Type": 16, "sTitle": "forms_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 17, "name": "sys_location_id", "Type": 16, "sTitle": "sys_location_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 18, "name": "sys_cancelled", "Type": 3, "sTitle": "sys_cancelled", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 19, "name": "sys_locked", "Type": 3, "sTitle": "sys_locked", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 20, "name": "sys_row_color", "Type": 11, "sTitle": "sys_row_color", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 21, "name": "verified", "Type": 16, "sTitle": "verified", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 22, "name": "appversion", "Type": 16, "sTitle": "appversion", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 23, "name": "appsubmit_ts", "Type": 6, "sTitle": "appsubmit_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }] }, "Name": "set1_EbTableVisualization0_1", "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null };
+
+
+
+var Eb_PropertyGrid = function (id) {
     this.$wraper = $("#" + id);
     this.wraperId = id;
     this.$controlsDD = $(".controls-dd-cont select");
@@ -15,7 +19,7 @@
         // function that will update and return the values back from the property grid
         for (var prop in this.getValueFuncs) {
             if (typeof this.getValueFuncs[prop] !== 'function') continue;
-            this.PropsObj[prop] = this.getValueFuncs[prop]();
+            this.PropsObj[prop] = ($('#' + this.wraperId + prop).length === 0) ? this.PropsObj[prop] : this.getValueFuncs[prop]();
         }
         return this.PropsObj;
     };
@@ -23,7 +27,7 @@
     this.getPropertyRowHtml = function (name, value, meta, options) {
         var valueHTML;
         var type = meta.editor || '';
-        var elemId = this.pgId + name;
+        var elemId = this.wraperId + name;
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
@@ -208,6 +212,8 @@
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
+
+        console.log("col :\n\n" + JSON.stringify(res) + '\n\n');
     };
 
     this.addToDD = function (obj) {
@@ -264,13 +270,11 @@
         this.propNames = [];
         this.MISC_GROUP_NAME = 'Miscellaneous';
         this.GET_VALS_FUNC_KEY = 'pg.getValues';
-        this.pgIdSequence = 0;
         this.propertyRowsHTML = { 'Misc': '' };
         this.groupsHeaderRowHTML = {};
         this.postCreateInitFuncs = {};
         this.OnChangeExec = {};
         this.getValueFuncs = {};
-        this.pgId = this.wraperId + this.pgIdSequence++;
         this.currGroup = null;
         this.CurProp = null;
         this.CurEditor = null;
@@ -318,8 +322,6 @@
         this.Metas = metas;
         this.PropsObj = props;
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
-        console.log(JSON.stringify(props));
-        console.log(JSON.stringify(metas));
         this.InitPG();
     };
 

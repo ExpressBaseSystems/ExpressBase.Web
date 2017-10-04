@@ -307,13 +307,13 @@ namespace ExpressBase.Web.Controllers
             var ds = new EbObjectSaveOrCommitRequest();
             ds.IsSave = false;
             ds.RefId = (string.IsNullOrEmpty(req["objid"])) ? string.Empty : req["objid"].ToString();           //Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
-            ds.EbObjectType = (int)EbObjectType.Application;
+          //  ds.EbObjectType = (int)EbObjectType.Application;
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = EbSerializers.Json_Serialize(new EbApplication
             {
                 Name = req["name"],
-                EbObjectType = EbObjectType.Application
+               // EbObjectType = EbObjectType.Application
             });
             ds.Status = ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;

@@ -17,10 +17,9 @@
     }
 };
 
-var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth, custunit,edModObj) {
+var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     this.edModObj = edModObj;
-    this.savebtnid = saveBtnid;
-    this.type = type;
+    this.savebtnid = saveBtnid; 
     this.Commitbtnid = commit;
     this.IsNew = Isnew;
     this.Rel_object;
@@ -30,8 +29,8 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     this.sectionArray = [];
     this.report = null;
     this.refId = null;
-    this.height = pages[type].height;
-    this.width = pages[type].width; 
+    this.height = null;
+    this.width = null;
 
     this.idCounter = {
         EbCircleCounter: 0,
@@ -88,6 +87,7 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
     };
 
     this.getDataSourceColoums = function (refid) {
+        $('#data-table-list').empty();
         $("#get-col-loader").show();
         $.ajax({
             url: "../RB/GetColumns",
@@ -594,34 +594,65 @@ var RptBuilder = function (type, saveBtnid, commit, Isnew, custHeight, custWidth
         });
     };
 
-    this.drawCustomePage = function (obj) {
-        if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {           
-            this.height = obj.CustomPaperHeight;
-            this.width = obj.CustomPaperWidth;
+    this.setpageSize = function (obj) {         
+        if (obj.PaperSize !== "Custom") {
+            this.height = pages[obj.PaperSize].height;
+            this.width = pages[obj.PaperSize].width;
             $('.ruler,.rulerleft').empty();
             this.ruler();
             $(".headersections,.multiSplit").css({ "height": this.height });
-            $("#page").css({ "height": this.height, "width":this.width });
-           
+            $("#page").css({ "height": this.height, "width": this.width });
+        }       
+        else if (obj.PaperSize === "Custom") {
+            if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
+                this.height = obj.CustomPaperHeight;
+                this.width = obj.CustomPaperWidth;
+                $('.ruler,.rulerleft').empty();
+                this.ruler();
+                $(".headersections,.multiSplit").css({ "height": this.height });
+                $("#page").css({ "height": this.height, "width": this.width });
+
+            }
+        }       
+    };
+
+    this.setpageMode = function (obj) {
+        if (obj.IsLandscape === true) {
+            this.height = pages[obj.PaperSize].width;
+            this.width = pages[obj.PaperSize].height;
         }
+        else if (obj.IsLandscape === false) {
+            this.height = pages[obj.PaperSize].height;
+            this.width = pages[obj.PaperSize].width;
+        }
+        $('.ruler,.rulerleft').empty();
+        this.ruler();
+        $(".headersections,.multiSplit").css({ "height": this.height });
+        $("#page").css({ "height": this.height, "width": this.width });
     };
 
     this.init = function () {
         this.pg = new Eb_PropertyGrid("propGrid");
-        this.pg.PropertyChanged = function (obj) {
+        this.pg.PropertyChanged = function (obj,pname) {
             this.RefreshControl(obj);
             this.refId = obj.DataSourceRefId;           
-            if (obj.DataSourceRefId) {             
+            if (pname === "DataSourceRefId") {             
                     this.getDataSourceColoums(obj.DataSourceRefId);                                                             
             }
-            if (obj.PaperSize === "Custom") {
-                this.drawCustomePage(obj);
+            if (pname === "PaperSize") {
+                this.setpageSize(obj);
+            }
+            if (pname === "IsLandscape") {
+                this.setpageMode(obj);
             }
         }.bind(this);
         if (this.IsNew === true) {
-            this.report = new EbObjects["EbReport"]("Report1");           
+            this.report = new EbObjects["EbReport"]("Report1");
+            this.report.Height,this.height = pages["A4"].height;
+            this.report.Width,this.width = pages["A4"].width;
+            this.report.PaperSize = "A4";
             this.pg.setObject(this.report, AllMetas["EbReport"]);
-            this.pg.addToDD(this.report);
+            this.pg.addToDD(this.report);          
             $('#PageContainer,.ruler,.rulerleft').empty();
             this.ruler();
             this.pgC = this.createPagecontainer();

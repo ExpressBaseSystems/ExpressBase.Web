@@ -117,7 +117,7 @@ namespace ExpressBase.Web.Controllers
 
 
         [HttpGet][HttpPost]
-        public IActionResult dv(string objid)
+        public IActionResult dv(string objid, EbObjectType objtype)
         {
             FetchAllDataSources();
             //FetchAllDataVisualizations();
@@ -131,20 +131,74 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
             //Edit mode
-            if (!string.IsNullOrEmpty(objid))
+            if (objid != null)
             {
-                var dvObject = (ViewBag.wc == "dc") ? this.Redis.Get<EbDataVisualization>(objid) : this.Redis.Get<EbDataVisualization>(objid + ViewBag.UId);
-                if(dvObject == null)
-                    dvObject = this.Redis.Get<EbDataVisualization>(objid);
-                dvObject.AfterRedisGet(this.Redis);
-                ViewBag.dvObject = dvObject;
+                var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
+                var rlist = resultlist.Data;
+                foreach (var element in rlist)
+                {
+                    ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                    List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                    ViewBag.LifeCycle = lifeCycle;
+                    ViewBag.IsNew = "false";
+                    ViewBag.ObjectName = element.Name;
+                    ViewBag.ObjectDesc = element.Description;
+                    ViewBag.Status = element.Status;
+                    ViewBag.VersionNumber = element.VersionNumber;
+                    ViewBag.Icon = "fa fa-database";
+                    ViewBag.ObjType = (int)objtype;
+                    ViewBag.Refid = element.RefId;
+                    ViewBag.Majorv = element.MajorVersionNumber;
+                    ViewBag.Minorv = element.MinorVersionNumber;
+                    ViewBag.Patchv = element.PatchVersionNumber;
+
+                    EbDataVisualization dsobj = null;
+
+                    if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+                    {
+                        ViewBag.ReadOnly = true;
+                        if (objtype == EbObjectType.TableVisualization)
+                            dsobj = EbSerializers.Json_Deserialize<EbTableVisualization>(element.Json_lc);
+                        else if (objtype == EbObjectType.ChartVisualization)
+                            dsobj = EbSerializers.Json_Deserialize<EbChartVisualization>(element.Json_lc);
+                    }
+                    else
+                    {
+                        ViewBag.ReadOnly = false;
+                        if (objtype == EbObjectType.TableVisualization)
+                            dsobj = EbSerializers.Json_Deserialize<EbTableVisualization>(element.Json_wc);
+                        else if (objtype == EbObjectType.ChartVisualization)
+                            dsobj = EbSerializers.Json_Deserialize<EbChartVisualization>(element.Json_wc);
+                    }
+
+                    dsobj.AfterRedisGet(this.Redis);
+                    ViewBag.dvObject = dsobj;
+                }
+
             }
-            ViewBag.dvRefId = objid;
+            //if (!string.IsNullOrEmpty(objid))
+            //{
+            //    EbDataVisualization dvObject = null;
+            //    if (objtype == EbObjectType.TableVisualization)
+            //    {
+            //        dvObject = this.Redis.Get<EbTableVisualization>(objid + ViewBag.UId);
+            //        if (dvObject == null)
+            //            dvObject = this.Redis.Get<EbDataVisualization>(objid);
+            //    }
+            //    else if (objtype == EbObjectType.ChartVisualization)
+            //    {
+            //        dvObject = this.Redis.Get<EbChartVisualization>(objid + ViewBag.UId);
+            //        if (dvObject == null)
+            //            dvObject = this.Redis.Get<EbChartVisualization>(objid);
+            //    }
+            //    dvObject.AfterRedisGet(this.Redis);
+            //    ViewBag.dvObject = dvObject;
+            //}
+            //ViewBag.dvRefId = objid;
             return View();
         }
 
-        [HttpGet]
-        [HttpPost]
+        [HttpGet][HttpPost]
         public IActionResult dvTable(string objid, EbObjectType objtype)
         {
             FetchAllDataSources();
@@ -207,8 +261,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet]
-        [HttpPost]
+        [HttpGet][HttpPost]
         public IActionResult dvChart(string objid, EbObjectType objtype)
         {
             FetchAllDataSources();
@@ -433,7 +486,7 @@ namespace ExpressBase.Web.Controllers
                 obj = EbSerializers.Json_Deserialize<EbTableVisualization>(json);
             else if (type == "ChartVisualization")
                 obj = EbSerializers.Json_Deserialize<EbChartVisualization>(json);
-            string SaveId;
+            string SaveId="";
             if (ViewBag.wc == "dc")
             {
                 if (string.IsNullOrEmpty(RefId))
@@ -442,10 +495,6 @@ namespace ExpressBase.Web.Controllers
                     ds.EbObjectType =(type == "TableVisualization") ? (int)EbObjectType.TableVisualization  : (int)EbObjectType.ChartVisualization;
                     ds.Name = obj.Name;
                     ds.Json = json;
-                    //ds.Description = "abcd";
-                    //ds.EbObject = EbSerializers.Json_Deserialize<EbDataVisualization>(json);
-                    //ds.EbObject = JsonConvert.DeserializeObject<EbDataVisualization>(json);
-                    //(ds.EbObject as EbDataVisualization).EbObjectType = EbObjectType.DataVisualization;
                     ds.Status = ObjectLifeCycleStatus.Live;
                     ds.Relations = "aaa";
                     var result = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
@@ -453,27 +502,36 @@ namespace ExpressBase.Web.Controllers
                 }
                 else
                 {
-                    var ds = new EbObjectSubsequentCommitRequest();
+                    var ds = new EbObject_CommitRequest();
                     ds.EbObjectType = (type == "TableVisualization") ? (int)EbObjectType.TableVisualization : (int)EbObjectType.ChartVisualization;
                     ds.Name = obj.Name;
-                    //ds.Description = "abcd";
                     ds.Json = json;
-                    //ds.EbObject = EbSerializers.Json_Deserialize<EbDataVisualization>(json);
-                    //(ds.EbObject as EbDataVisualization).EbObjectType = EbObjectType.DataVisualization;
-                    ds.Status = ObjectLifeCycleStatus.Live;
-                    ds.UserId = ViewBag.UId;
+                    ds.Description = req["description"];
                     ds.Relations = req["rel_obj"];
-                    ViewBag.IsNew = "false";
-                    ds.IsSave = false;
-                    ds.RefId = RefId;
-                    ds.ChangeLog = "changelog";
-                    var result = ServiceClient.Post<EbObjectSubsequentCommitResponse>(ds);
+                    ds.RefId = req["id"];
+                    ds.ChangeLog = req["changeLog"];
+                    var result = ServiceClient.Post<EbObject_CommitResponse>(ds);
                     SaveId = result.RefId;
                 }
             }
-            if (ViewBag.wc == "uc")
-                this.Redis.Set<EbDataVisualization>(RefId + ViewBag.UId, EbSerializers.Json_Deserialize<EbDataVisualization>(json));
-            return Json("Success");
+            if (SaveId != "")
+            {
+                if (ViewBag.wc == "uc")
+                {
+                    if (type == "TableVisualization")
+                        this.Redis.Set<EbTableVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
+                    else if (type == "ChartVisualization")
+                        this.Redis.Set<EbChartVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
+                }
+                else if (ViewBag.wc == "dc")
+                {
+                    if (type == "TableVisualization")
+                        this.Redis.Set<EbTableVisualization>(SaveId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
+                    else if (type == "ChartVisualization")
+                        this.Redis.Set<EbChartVisualization>(SaveId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
+                }
+            }
+                return Json("Success");
         }
 
         // Get all DataSources

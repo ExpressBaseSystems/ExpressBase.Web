@@ -1,7 +1,7 @@
 ﻿var tabNum = 0;
-var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
-    this.Obj_Id = obj_id;
-    this.Name;
+var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
+    this.Obj_Id = refid;
+    this.Name = name;
     this.Description;
     this.Code;
     this.ObjectType = type;
@@ -24,7 +24,9 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
     this.Rel_object;
     this.rel_arr = [];
     this.runver_Refid;
+    this.DsObj = dsobj;
 
+    var DSPropGrid = new Eb_PropertyGrid("dspropgrid");
 
     this.Init = function () {
         this.SaveBtn = $('#save');
@@ -41,19 +43,35 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
         $('#compare').off('click').on('click', this.Compare.bind(this));
 
-        var DSPropGrid = new Eb_PropertyGrid("dspropgrid");
-        var dsprop = new EbObjects["EbDataSource"]("EbDataSource1");
-        DSPropGrid.setObject(dsprop, AllMetas["EbDataSource"]);
-        DSPropGrid.PropertyChanged = function (obj) {
-            this.Name = obj.Name;
-            this.Description = obj.Description;
-        };
+        if (this.DsObj === null) {
+            this.DsObj = new EbObjects["EbDataSource"]("EbDataSource1");
+        }
+        DSPropGrid.setObject(this.DsObj, AllMetas["EbDataSource"]);
+        this.Name = this.DsObj.Name;
 
     }
+    DSPropGrid.PropertyChanged = function (obj, pname) {
+        if (pname === "Name")
+            this.Name = obj.Name;
+        else if (pname === "Description")
+            this.Description = obj.Description;
+        else if (pname === "FilterDialogRefId")
+        {
+            $('#paramdiv #filterBox').remove();
+            $('#paramdiv').show();
+            $('#codewindow').removeClass("col-md-9");
+            $('#codewindow').addClass("col-md-8");
+
+            $.post("../CE/GetFilterBody", { "ObjId": obj.FilterDialogRefId },
+                function (result) {
+                    $('#paramdiv').append(result);
+                    $.LoadingOverlay("hide");
+                });
+        }
+    };
 
     this.SetValues = function () {
         this.Code = window.editor.getValue();
-       
         this.changeLog = $('#obj_changelog').val();
     }
 
@@ -138,7 +156,7 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
             "<tbody id='vertbody" + tabNum + "' class='vertbody'></tbody>" +
             "</table>" +
             "</div>";
-        this.AddVerNavTab(navitem, tabitem); 
+        this.AddVerNavTab(navitem, tabitem);
         var scrollPos = $('#versionTab').offset().top;
         $(window).scrollTop(scrollPos);
 
@@ -592,7 +610,8 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         this.SetValues();
         this.rel_arr.push(filter_dialog_refid);
         this.Rel_object = this.rel_arr.toString();
-        _json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))), name: this.Name }
+        this.DsObj.Sql = btoa(this.Code);
+        //_json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))), name: this.Name }
         if (issave === true) {
             $.post("../CE/SaveEbDataSource",
                 {
@@ -612,13 +631,9 @@ var DataSource = function (obj_id, is_new, ver_num, type, fd_id) {
         else {
 
             $.post("../CE/CommitEbDataSource", {
-                "objtype": this.ObjectType,
                 "id": this.Obj_Id,
-                "name": this.Name,
-                "description": this.Description,
-                "filterDialogId": filter_dialog_refid,
                 "changeLog": this.changeLog,
-                "json": JSON.stringify(_json),
+                "json": JSON.stringify(this.DsObj),
                 "rel_obj": this.Rel_object
             }, this.CallDrawTable.bind(this, needRun));
         }

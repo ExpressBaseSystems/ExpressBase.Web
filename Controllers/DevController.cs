@@ -60,6 +60,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult Eb_formBuilder()
         {
+            ViewBag.Objtype = this.HttpContext.Request.Query["objtype"];
             return View();
         }
 
@@ -93,7 +94,7 @@ namespace ExpressBase.Web.Controllers
                 List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
                 ViewBag.LifeCycle = lifeCycle;
                 ViewBag.IsNew = "false";
-                ViewBag.Objtype = EbObjectType.WebForm;
+                ViewBag.Objtype = (EbObjectType)Convert.ToInt32(req["objtype"]);
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
                 ViewBag.Status = element.Status;

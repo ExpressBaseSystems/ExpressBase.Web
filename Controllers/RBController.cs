@@ -39,11 +39,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public IActionResult ReportBuilder(int i)
-        {
-            var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
-
-            var _jsResult = CSharpToJs.GenerateJs<EbReportObject>(BuilderType.Report, typeArray);
-
+        {            
             ViewBag.Header = "Edit Report";
             var req = this.HttpContext.Request.Form;
             int obj_id = Convert.ToInt32(req["objid"]);
@@ -71,17 +67,22 @@ namespace ExpressBase.Web.Controllers
                 {
                     EbReport dsobj = EbSerializers.Json_Deserialize<EbReport>(element.Json_lc);
                     ViewBag.Name = dsobj.Name;
-                    ViewBag.Json = element.Json_lc;
-                    //ViewBag.html = dsobj.GetHtml();
+                    ViewBag.Json = element.Json_lc;                    
                 }
                 else
                 {
                     EbReport dsobj = EbSerializers.Json_Deserialize<EbReport>(element.Json_wc);
                     ViewBag.Name = dsobj.Name;
-                    ViewBag.Json = element.Json_wc;
-                    //ViewBag.html = dsobj.GetHtml();
+                    ViewBag.Json = element.Json_wc;                   
                 }
             }
+            var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
+            var _jsResult = CSharpToJs.GenerateJs<EbReportObject>(BuilderType.Report, typeArray);
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+
             return View();
         }
 

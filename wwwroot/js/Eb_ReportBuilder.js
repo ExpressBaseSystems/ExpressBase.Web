@@ -31,7 +31,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     this.refId = null;
     this.height = null;
     this.width = null;
-
+    this.type = "A4";
     this.idCounter = {
         EbCircleCounter: 0,
         EbReportColCounter: 0,
@@ -602,6 +602,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             this.ruler();
             $(".headersections,.multiSplit").css({ "height": this.height });
             $("#page").css({ "height": this.height, "width": this.width });
+            this.type = obj.PaperSize;
         }       
         else if (obj.PaperSize === "Custom") {
             if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
@@ -611,7 +612,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
                 this.ruler();
                 $(".headersections,.multiSplit").css({ "height": this.height });
                 $("#page").css({ "height": this.height, "width": this.width });
-
+                this.type = obj.PaperSize;
             }
         }       
     };
@@ -632,7 +633,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     };
 
     this.init = function () {
-        this.pg = new Eb_PropertyGrid("propGrid");
+        this.pg = new Eb_PropertyGrid("propGrid");        
         this.pg.PropertyChanged = function (obj,pname) {
             this.RefreshControl(obj);
             this.refId = obj.DataSourceRefId;           
@@ -645,29 +646,18 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             if (pname === "IsLandscape") {
                 this.setpageMode(obj);
             }
-        }.bind(this);
-        if (this.IsNew === true) {
+        }.bind(this);        
             this.report = new EbObjects["EbReport"]("Report1");
             this.report.Height,this.height = pages["A4"].height;
             this.report.Width,this.width = pages["A4"].width;
-            this.report.PaperSize = "A4";
+            this.report.PaperSize = this.type;
             this.pg.setObject(this.report, AllMetas["EbReport"]);
             this.pg.addToDD(this.report);          
             $('#PageContainer,.ruler,.rulerleft').empty();
             this.ruler();
             this.pgC = this.createPagecontainer();
             this.createPage(this.pgC);
-            this.DragDrop_Items();
-        }
-        if (this.IsNew === false) {
-            var edModObjParsed = this.edModObj;
-            this.height = edModObjParsed.Height + "px";
-            this.width = edModObjParsed.Width + "px";
-            $('#PageContainer,.ruler,.rulerleft').empty();
-            this.ruler();
-            this.pgC = this.createPagecontainer();
-            this.createPage(this.pgC);
-        }
+            this.DragDrop_Items();      
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.Commitbtnid).on('click', this.Commit.bind(this));      
     };

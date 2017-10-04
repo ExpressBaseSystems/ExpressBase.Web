@@ -60,6 +60,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult Eb_formBuilder()
         {
+            ViewBag.Objtype = this.HttpContext.Request.Query["objtype"];
             return View();
         }
 
@@ -93,7 +94,7 @@ namespace ExpressBase.Web.Controllers
                 List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
                 ViewBag.LifeCycle = lifeCycle;
                 ViewBag.IsNew = "false";
-                ViewBag.Objtype = EbObjectType.WebForm;
+                ViewBag.Objtype = (EbObjectType)Convert.ToInt32(req["objtype"]);
                 ViewBag.ObjectName = element.Name;
                 ViewBag.ObjectDesc = element.Description;
                 ViewBag.Status = element.Status;
@@ -306,13 +307,13 @@ namespace ExpressBase.Web.Controllers
             var ds = new EbObjectSaveOrCommitRequest();
             ds.IsSave = false;
             ds.RefId = (string.IsNullOrEmpty(req["objid"])) ? string.Empty : req["objid"].ToString();           //Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
-            ds.EbObjectType = (int)EbObjectType.Application;
+          //  ds.EbObjectType = (int)EbObjectType.Application;
             ds.Name = req["name"];
             ds.Description = req["description"];
             ds.Json = EbSerializers.Json_Serialize(new EbApplication
             {
                 Name = req["name"],
-                EbObjectType = EbObjectType.Application
+               // EbObjectType = EbObjectType.Application
             });
             ds.Status = ObjectLifeCycleStatus.Live;
             ds.TenantAccountId = ViewBag.cid;

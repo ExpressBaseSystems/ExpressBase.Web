@@ -20,7 +20,7 @@
         <button id='Save_btn' class='tools commonControls'>Save</button>
     </div>
 </div>
-<div class="row" id="parent-div" style="margin-top:80px;">
+<div class="row" id="parent-div">
     <div class="col-md-10 no-padd cont-wnd" id="contBox">
     </div>
     <div class="col-md-2 pg no-padd pull-right" id="ppgrid">
@@ -89,7 +89,8 @@
         });
         $("#sub_window_dv" + obj.EbSid).focus();
 
-    }
+        }
+
     split.windowOnFocus = function (ev) {
         if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
             var id = $(ev.target).attr("id");

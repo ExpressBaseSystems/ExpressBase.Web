@@ -248,8 +248,8 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult ManageRoles()
         {
             //IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = (int)EbObjectType.Application});
-            ViewBag.dict = resultlist.Data;
+            //var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = (int)EbObjectType.Application});
+            //ViewBag.dict = resultlist.Data;    // get application from application table
             return View();
         }
 
@@ -270,8 +270,8 @@ namespace ExpressBase.Web2.Controllers
                 ViewBag.DominantRefId = fr.Data["dominantrefid"];
             }
 
-            var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {EbObjectType = (int)EbObjectType.Application});
-            ViewBag.dict = resultlist.Data;
+            //var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {EbObjectType = (int)EbObjectType.Application});
+            //ViewBag.dict = resultlist.Data;
             ViewBag.roleid = itemid;
 
             return View();

@@ -40,7 +40,10 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult ReportBuilder(int i)
         {
-            
+            var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
+
+            var _jsResult = CSharpToJs.GenerateJs<EbReportObject>(BuilderType.Report, typeArray);
+
             ViewBag.Header = "Edit Report";
             var req = this.HttpContext.Request.Form;
             int obj_id = Convert.ToInt32(req["objid"]);
@@ -68,13 +71,15 @@ namespace ExpressBase.Web.Controllers
                 {
                     EbReport dsobj = EbSerializers.Json_Deserialize<EbReport>(element.Json_lc);
                     ViewBag.Name = dsobj.Name;
-                    ViewBag.Json = element.Json_lc;                   
+                    ViewBag.Json = element.Json_lc;
+                    //ViewBag.html = dsobj.GetHtml();
                 }
                 else
                 {
                     EbReport dsobj = EbSerializers.Json_Deserialize<EbReport>(element.Json_wc);
                     ViewBag.Name = dsobj.Name;
-                    ViewBag.Json = element.Json_wc;                   
+                    ViewBag.Json = element.Json_wc;
+                    //ViewBag.html = dsobj.GetHtml();
                 }
             }
             return View();
@@ -101,6 +106,7 @@ namespace ExpressBase.Web.Controllers
         public EbObject_Create_New_ObjectResponse CommitReport()
         {
             var req = this.HttpContext.Request.Form;
+            var js = req["json"];
             var jsonD = EbSerializers.Json_Deserialize<EbReport>(req["json"]);
             ViewBag.IsNew = "false";
 

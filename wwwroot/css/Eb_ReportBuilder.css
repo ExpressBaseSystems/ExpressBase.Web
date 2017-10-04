@@ -31,7 +31,7 @@
 
     .tree li {
         margin: 0;
-        padding: 0 1em;
+        padding: 0 4%;
         line-height: 2em;
         font-weight: 300;
         position: relative;
@@ -107,18 +107,24 @@
     border: none !important;
     background-color: #fafafa !important;
 }
+#eb-shapes {
+    margin-left: 4%;
+    color: #333333;
+}
 .shapes-tank {
-    width: 200px;
+    width: 94%;
     height: 60px;
     border: 1px solid #ddd;
     background-color: #ffffff;
     border-radius: 4px;
-    margin-left: 337px;
+    margin-left: 3%;
+    color: #333333;
 }
     .shapes-tank .btn{
         background-color: white !important;
         border: none !important;
     }
+
  #pagesize{       
      height: 28px;
      border-color: #dedede;

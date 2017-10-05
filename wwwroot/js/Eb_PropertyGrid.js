@@ -14,6 +14,7 @@ var Eb_PropertyGrid = function (id) {
     this.IsSortByGroup = true;
     this.PropertyChanged = function (obj) { };
     this.DD_onChange = function (e) { };
+    this.nameChanged = function (e) { };
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -218,24 +219,28 @@ var Eb_PropertyGrid = function (id) {
 
     this.addToDD = function (obj) {
         var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
-        if ($(".pgCXEditor-bg").length !== 0) {
+        if ($(".pgCXEditor-bg").css("display") !== "none") {
             if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
                 $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
                 $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
             }
         }
-        if ($MainCtrlsDDCont.find("option:contains(" + obj.EbSid + ")").length === 0) {
-            $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
+        if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
+            $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.Name + "'id='M_SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
             $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
         }
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', obj.Name);
     };
 
-    this.removeFromDD = function (name) {
-        if ($("#SelOpt" + name + this.wraperId)) {
-            $("#SelOpt" + name + this.wraperId).remove();
-            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
+    this.removeFromDD = function (EbSid) { /////////// this conflict
+        var slctr = EbSid + this.wraperId;
+        if ($("#M_SelOpt" + slctr)) {
+            $("#M_SelOpt" + slctr).remove();
         }
+        if ($("#SelOpt" + slctr)) {
+            $("#SelOpt" + slctr).remove();
+        }
+        $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
     };
 
     this.init = function () {
@@ -295,11 +300,19 @@ var Eb_PropertyGrid = function (id) {
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
         $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
-        $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", function (e) {
-            $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(e.target.value);
-            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
-        }.bind(this));
+        $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", this.nameChangedFn);
     };
+
+    this.nameChangedFn = function (e) {
+        var name = e.target.value;
+        $("#M_SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
+        $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
+
+        $("#" + this.PropsObj.EbSid  + ' span').text(name);
+
+        $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
+        this.nameChanged();
+    }.bind(this)
 
     this.clear = function () {
         this.$PGcontainer.empty();

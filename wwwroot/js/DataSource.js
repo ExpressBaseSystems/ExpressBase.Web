@@ -37,10 +37,10 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
         $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
-        $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
-        $("#fdlist" + tabNum).off("click").on("click", this.Load_filter_dialog_list.bind(this));
+      //  $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
+       // $("#fdlist" + tabNum).off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $(".selectpicker").selectpicker();
-        $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
+      //  $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
         $('#compare').off('click').on('click', this.Compare.bind(this));
 
         if (this.DsObj === null) {
@@ -82,44 +82,44 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
     }
 
-    this.SetFdInit = function (me, fdId) {
-        var val = "Select Filter Dialog";
-        if (this.Is_New === false && fdId !== "") {
-            val = this.FilterDId;
-        }
-        this.Load_filter_dialog_list(val);
-    }
+    //this.SetFdInit = function (me, fdId) {
+    //    var val = "Select Filter Dialog";
+    //    if (this.Is_New === false && fdId !== "") {
+    //        val = this.FilterDId;
+    //    }
+    //    this.Load_filter_dialog_list(val);
+    //}
 
-    this.Clear_fd = function () {
-        var getNav = $("#versionNav li.active a").attr("href");
-        $(getNav + ' #inner_well' + tabNum).children().remove();
-        $('#execute' + tabNum).addClass('collapsed');
-    };
+    //this.Clear_fd = function () {
+    //    var getNav = $("#versionNav li.active a").attr("href");
+    //    $(getNav + ' #inner_well' + tabNum).children().remove();
+    //    $('#execute' + tabNum).addClass('collapsed');
+    //};
 
-    this.Load_filter_dialog_list = function (val) {
-        var getNav = $("#versionNav li.active a").attr("href");
-        if (!$(getNav + ' #fdlist' + tabNum + ' .bootstrap-select').hasClass('open')) {
-            $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
-            $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
-            $('#loader_fd' + tabNum).show();
-            $.ajax({
-                url: "../CE/GetObjects_refid_dict",
-                type: 'post',
-                data: { obj_type: 12 },
-                success: function (data) {
-                    $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
-                    $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
-                    $.each(data, function (i, obj) {
-                        $(getNav + ' #fd' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.refId + "'>" + obj.name + "</option>")
-                    });
-                    $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
-                    $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('val', val);
-                    $('#loader_fd' + tabNum).hide();
-                }
-            });
+    //this.Load_filter_dialog_list = function (val) {
+    //    var getNav = $("#versionNav li.active a").attr("href");
+    //    if (!$(getNav + ' #fdlist' + tabNum + ' .bootstrap-select').hasClass('open')) {
+    //        $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
+    //        $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
+    //        $('#loader_fd' + tabNum).show();
+    //        $.ajax({
+    //            url: "../CE/GetObjects_refid_dict",
+    //            type: 'post',
+    //            data: { obj_type: 12 },
+    //            success: function (data) {
+    //                $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
+    //                $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
+    //                $.each(data, function (i, obj) {
+    //                    $(getNav + ' #fd' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.refId + "'>" + obj.name + "</option>")
+    //                });
+    //                $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
+    //                $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('val', val);
+    //                $('#loader_fd' + tabNum).hide();
+    //            }
+    //        });
 
-        }
-    }
+    //    }
+    //}
 
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");

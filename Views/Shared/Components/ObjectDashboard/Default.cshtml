@@ -178,6 +178,7 @@
                     <button class='btn run' id="run" data-toggle="tooltip" data-placement="bottom" title="Run"><i class="fa fa-play" aria-hidden="true"></i></button>
                     <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
                     <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
+                    <button class='btn status' id="status" data-toggle="tooltip" data-placement="bottom" title="status"><i class="fa fa-exchange" aria-hidden="true"></i></button>
                     <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
                     <button class='btn' id="minmize"><i class="fa fa-caret-down" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                 </div>
@@ -193,7 +194,17 @@
                     Working Copy(s)
                 </div>
                 <div class="count text-center">
-                    @ViewBag.WC
+                    @using Newtonsoft.Json;
+                    @{
+                        string[] wrkcpy = ViewBag.Workingcopy;
+                        foreach (var w in wrkcpy)
+                        {
+                            var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
+                            foreach (var k in wcpy)
+                            {<a href="">@k.Key</a><br/>}
+                        }
+                    }
+
                 </div>
             </div>
             <div class="col-md-3 card1">

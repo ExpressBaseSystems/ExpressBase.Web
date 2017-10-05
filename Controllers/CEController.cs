@@ -93,6 +93,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Code = dsobj.Sql;
                     ViewBag.dsObj = dsobj;
                     ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
+                    ViewBag.Workingcopy = element.Wc_All;
                 }
                 else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
                 {
@@ -101,10 +102,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Code = dsobj.Sql;
                     ViewBag.dsObj = dsobj;
                     ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
-                }
-                else
-                {
-                    ViewBag.WC = element.Wc_All;
+                    ViewBag.Workingcopy = element.Wc_All;
                 }
             }
             var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();

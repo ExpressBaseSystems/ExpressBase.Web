@@ -20,7 +20,7 @@
 }
 
 .form-buider-cont {
-    background-color: #f5f5f5;
+    /*background-color: #f5f5f5;*/
     padding: .3vw;
 }
 
@@ -46,7 +46,7 @@
     overflow-y: auto;
 }
 
-    .form-buider-form input[type="text"], input[type="email"], input[type="number"], input[type="password"], input[type="singleline"] {
+    .form-buider-form input[type="text"], .form-buider-form input[type="email"], .form-buider-form input[type="number"], .form-buider-form input[type="password"], .form-buider-form input[type="singleline"] {
         height: auto !important;
         min-height: 28px;
         -webkit-tap-highlight-color: rgba(255,255,255,0);
@@ -65,7 +65,7 @@
     }
 
 .pgTdval > input[type="text"], input[type="email"], input[type="number"], input[type="color"], input[type="password"], input[type="singleline"] {
-    height: 25px;
+    height: 21px;
     width: 110px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background-color: transparent;
@@ -100,7 +100,7 @@
     padding: 5px;
     font-weight: bold;
     width: 100%;
-    border-radius: 9px 9px 0px 0px;
+    border-radius: 4px 4px 0px 0px;
 }
 
 .ctrlHead {
@@ -166,9 +166,10 @@
     display: inline-block;
     background-color: white;
     padding: 0px;
-    border: var(--sild1pxDDD);
+    /*border: var(--sild1pxDDD);*/
     vertical-align: top;
-    border-radius:10px;
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
     /*-webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
     box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);*/
@@ -219,7 +220,7 @@
 }
 
 .pgTdName {
-    padding: 4px;
+    padding: 0px 4px;
 }
 
 .pgTdval .property-grid-cont .btn {
@@ -267,7 +268,7 @@
 .pgTdval .dropdown-toggle {
     padding: 0px 12px;
     border-radius: 0px;
-    height: 26px;
+    height: 22px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
     border: none;
@@ -333,14 +334,14 @@
 }
 
 .pgCX-Editor-Btn {
-    width: 20px;
-    padding: 1px 4px;
+    width: 13px;
+    padding: 0px 0px;
     float: right;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
-    border: 1px solid rgba(34,36,38,.15);
+    border: var(--sild1pxDDD);
     margin: 3px;
-    font-size: 11px;
+    font-size: 8px;
     text-align: center;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
@@ -366,7 +367,7 @@
         height: 46vh;
     }
 
-.pgCollEditor-bg {
+.pgCXEditor-bg {
     display: none;
     height: 100vh;
     width: 100%;
@@ -381,7 +382,7 @@
     padding: 8px;
     font-weight: bold;
     background-color: var(--colorDDD);
-    border-radius:unset;
+    border-radius: unset;
 }
 
 .colTile {
@@ -433,7 +434,7 @@
 }
 
     .CE-all-ctrlsCont .close {
-        display:none;
+        display: none;
     }
 
 .pgCXEditor-Cont .modal-footer {
@@ -510,6 +511,7 @@
     flex-flow: column;
     height: 100%;
     font-family: Tahoma;
+    width: 100%;
 }
 
 .icon-cont {

@@ -21,7 +21,7 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
-        $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show();
+        $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450);
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
@@ -349,7 +349,7 @@
                     + '<button type="button" class="close">&times;</button>'
                     + '</div>');
                 $("#" + this.CEctrlsContId).append($tile);
-                this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
+                //this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
             }.bind(this));
             for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
         }
@@ -394,12 +394,11 @@
     this.CE_AddFn = function () {
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
         var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-2).replace(/[^0-9]/g, '')) + 1);
-        if (this.PGobj.CurProp === "Controls") {
+        if (this.PGobj.CurProp === "Controls")
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-        }
-        else {
+        else
             this.PGobj.PropsObj[this.PGobj.CurProp].push(new EbObjects[SelType](EbSid));
-        }
+
         this.setColTiles();
         $("#" + EbSid).click();
     };
@@ -409,7 +408,7 @@
             + '<div class="pgCXEditor-Cont">'
 
             + '<div class="modal-header">'
-            + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide();" >&times;</button>'
+            + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'
             + '<h4 class="modal-title"> </h4>'
             + '</div>'
 
@@ -417,7 +416,7 @@
             + '<div class="modal-footer">'
             + '<div class="modal-footer-body">'
             + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide();">OK</button>'
+            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);">OK</button>'
             + '</div>'
 
             + '</div>'

@@ -232,14 +232,14 @@ var Eb_PropertyGrid = function (id) {
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', obj.Name);
     };
 
-    this.removeFromDD = function (EbSid) { /////////// this conflict
+    this.removeFromDD = function (EbSid) {
         var slctr = EbSid + this.wraperId;
-        if ($("#M_SelOpt" + slctr)) {
+        if ($(".pgCXEditor-bg").css("display") !== "none")
+            slctr = slctr + "_InnerPG";
+        if ($("#M_SelOpt" + slctr))
             $("#M_SelOpt" + slctr).remove();
-        }
-        if ($("#SelOpt" + slctr)) {
+        if ($("#SelOpt" + slctr))
             $("#SelOpt" + slctr).remove();
-        }
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
     };
 
@@ -308,7 +308,7 @@ var Eb_PropertyGrid = function (id) {
         $("#M_SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
         $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
 
-        $("#" + this.PropsObj.EbSid  + ' span').text(name);
+        $("#" + this.PropsObj.EbSid + ' span').text(name);
 
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
         this.nameChanged();

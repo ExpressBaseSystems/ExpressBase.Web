@@ -270,6 +270,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult CreateApplication()
         {
+            ViewBag.applicationname = "";
+            ViewBag.description = "";
+            ViewBag.Obj_id = "";
             return View();
         }
 
@@ -280,7 +283,9 @@ namespace ExpressBase.Web.Controllers
 
             IServiceClient client = this.ServiceClient;
             var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest{ id =Convert.ToInt32(req["itemid"]) });
-           /// ViewBag.applicationname = resultlist.Data[""]  complete application edit 
+            ViewBag.applicationname = resultlist.Data["applicationname"];
+            ViewBag.description = resultlist.Data["description"];
+            ViewBag.Obj_id = req["itemid"];
             return View();          
         }
 
@@ -289,18 +294,18 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
 
             IServiceClient client = this.ServiceClient;
-            var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+            var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest {Id = (req["itemid"] != "")? Convert.ToInt32(req["itemid"]) : 0, Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
 
             if (resultlist.id > 0)
             {
                 ViewBag.Message = "Successfully Added";
-                return RedirectToAction("CreateApplication", "Dev");
-
+                return RedirectToAction("CreateApplication");
+                // check redirection
             }
             else
             {
                 ViewBag.Message = "Error..Please try again";
-                return RedirectToAction("CreateApplication", "Dev");
+                return RedirectToAction("CreateApplication");
 
             }
             

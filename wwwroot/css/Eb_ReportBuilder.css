@@ -35,6 +35,7 @@
         line-height: 2em;
         font-weight: 300;
         position: relative;
+        cursor: pointer;
     }
 
     .tree ul li:before {
@@ -46,7 +47,7 @@
         margin-top: -1px;
         position: absolute;
         top: 1em;
-        left: 0;
+        left: 0;       
     }
 
     .tree ul li:last-child:before {
@@ -64,6 +65,7 @@
     text-decoration: none;
     font-size: 15px;
     color: black;
+    cursor: pointer;
 }
 
 .tree li button, .tree li button:active, .tree li button:focus {
@@ -77,6 +79,10 @@
 
 .qr-Br-img-btn {
     margin-left: 5px;
+}
+.draggable{
+    margin-left:6px;
+    cursor:move;
 }
 
 /*end side menuBar*/
@@ -135,6 +141,7 @@
     border: 1px solid #cccccc;
     background-color: #fafafa;
     color: #000000;
+    cursor:pointer;
 }
 
 .headersections .btn {
@@ -213,7 +220,7 @@
     margin-left: -19px;
     margin-top: 20px;
     width: 20px;
-    z-index: 50;
+    z-index: 2;
 }
 
     .rulerleft > div {
@@ -272,11 +279,10 @@
 }
 
 .toolbox {
-    height: inherit;
-    position: fixed;
+    height: inherit;   
     margin-top: 3px;
     padding: 0 !important;
-    width: 15%;
+    width: 100%;
     background-color: white;
     border: 1px solid #ccc;
     overflow-y:auto;
@@ -307,12 +313,13 @@
 .reportmenu .btn-group > .btn:first-child {
     margin-left: 5px !important;
 }
-.side-toolbar {    
-    height:518px;
+.side-toolbar {
+    height: 518px;
     padding-left: 0;
-    background-color: white;
-    z-index: 1;
+    background-color: white;   
     margin-top: 48px;
+    position: fixed;
+    z-index:2;
 }
 .PGgrid {
     min-height: 1000px;

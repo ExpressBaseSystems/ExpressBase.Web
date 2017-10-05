@@ -196,8 +196,7 @@
     this.controlCloseOnClick = function (e) {
         var ControlTile = $(e.target).parent().parent();
         var id = ControlTile.attr("id");
-
-        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).Name);
+        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
         this.PGobj.clear();
         this.rootContainerObj.Controls.DelByName(id);
         ControlTile.siblings().focus();
@@ -275,8 +274,7 @@
         $(".Eb-ctrlContainer").each(function (i, el) { this.initCtrl(el); }.bind(this));
         setTimeout(function () {
             Proc(JSON.parse(editModeObj), this.rootContainerObj);
-        }.bind(this), 1000);
-       
+        }.bind(this), 1000);       
     };
 
     this.Init = function () {

@@ -21,7 +21,7 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
-        $("#" + this.PGobj.wraperId + " .pgCollEditor-bg").show();
+        $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show();
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
@@ -35,7 +35,8 @@
         else if (this.editor === 13)
             this.initOSE();
 
-        $("#" + this.CEctrlsContId ).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
     };
 
@@ -91,7 +92,7 @@
                 $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
             }
             //this.PGobj.PropsObj[this.PGobj.CurProp] = Gcolumns;
-            
+
             var sourceProp = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].source;
             this.allCols = this.PGobj.PropsObj[sourceProp].$values;
             this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
@@ -115,7 +116,7 @@
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
             else if (this.editor === 9 || this.editor === 8)
                 this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1);
-            
+
         }
         else if (this.editor === 10)
             this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
@@ -138,7 +139,7 @@
                     this.rowGrouping.splice(idx, 0, el.id);
                 else
                     this.rowGrouping.push(el.id);
-            } 
+            }
         }
         else if (this.editor === 10) {
             if (sibling.length > 0)
@@ -146,7 +147,7 @@
             else
                 this.allCols.push(this.movingObj);
         }
-        $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
+        $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn);
     };
 
     this.initJE = function () {
@@ -322,7 +323,7 @@
                 if (containerId === this.CEctrlsContId)
                     $("#" + this.CEctrlsContId).append($tile);
         }.bind(this));
-        $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
+        $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn);
     };
 
     this.setSelColtiles = function () {
@@ -344,7 +345,7 @@
                 if (!control.Name)
                     label = control.EbSid;
                 var $tile = $('<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
-                    + label
+                    + '<span>' + label + '</span>'
                     + '<button type="button" class="close">&times;</button>'
                     + '</div>');
                 $("#" + this.CEctrlsContId).append($tile);
@@ -353,23 +354,28 @@
             for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
-        $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn.bind(this));
+        $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn);
     };
 
     this.colTileCloseFn = function (e) {
         e.stopPropagation();
         var $tile = $(e.target).parent().remove();
-        if (this.editor === 7)
+        if (this.editor === 7) {
+            this.PGobj.removeFromDD.bind(this.PGobj)($tile.attr("id"));
             this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1);
+        }
         else if (this.editor === 9 || this.editor === 8) {
             this.rowGrouping.splice(this.rowGrouping.indexOf($tile.attr("id")), 1);
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
-    };
+    }.bind(this);
 
     this.colTileFocusFn = function (e) {
-        var $e = $(e.target);
-        var id = $e.attr("id");
+        var $e = $(e.target); var id = $e.attr("id");
+        if (!$e.hasClass("colTile")) {
+            this.colTileFocusFn.bind(this)({ target: $e.parent() });
+            return 0;
+        }
         var obj = null;
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
         $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
@@ -387,13 +393,11 @@
 
     this.CE_AddFn = function () {
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
-        var EbSid = null;
+        var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-2).replace(/[^0-9]/g, '')) + 1);
         if (this.PGobj.CurProp === "Controls") {
-            EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + this.PGobj.PropsObj.Controls.$values.length;
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         }
         else {
-            EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + this.PGobj.PropsObj[this.PGobj.CurProp].length;
             this.PGobj.PropsObj[this.PGobj.CurProp].push(new EbObjects[SelType](EbSid));
         }
         this.setColTiles();
@@ -401,11 +405,11 @@
     };
 
     this.Init = function () {
-        var CXVE_html = '<div class="pgCollEditor-bg">'
+        var CXVE_html = '<div class="pgCXEditor-bg">'
             + '<div class="pgCXEditor-Cont">'
 
             + '<div class="modal-header">'
-            + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCollEditor-bg\').hide();" >&times;</button>'
+            + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide();" >&times;</button>'
             + '<h4 class="modal-title"> </h4>'
             + '</div>'
 
@@ -413,7 +417,7 @@
             + '<div class="modal-footer">'
             + '<div class="modal-footer-body">'
             + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.PGobj.wraperId + ' .pgCollEditor-bg\').hide();">OK</button>'
+            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide();">OK</button>'
             + '</div>'
 
             + '</div>'

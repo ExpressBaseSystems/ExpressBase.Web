@@ -92,7 +92,7 @@
                 $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
             }
             //this.PGobj.PropsObj[this.PGobj.CurProp] = Gcolumns;
-            
+
             var sourceProp = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].source;
             this.allCols = this.PGobj.PropsObj[sourceProp].$values;
             this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
@@ -116,7 +116,7 @@
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
             else if (this.editor === 9 || this.editor === 8)
                 this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1);
-            
+
         }
         else if (this.editor === 10)
             this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
@@ -139,7 +139,7 @@
                     this.rowGrouping.splice(idx, 0, el.id);
                 else
                     this.rowGrouping.push(el.id);
-            } 
+            }
         }
         else if (this.editor === 10) {
             if (sibling.length > 0)
@@ -345,7 +345,7 @@
                 if (!control.Name)
                     label = control.EbSid;
                 var $tile = $('<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
-                    + '<span>' + label +'</span>'
+                    + '<span>' + label + '</span>'
                     + '<button type="button" class="close">&times;</button>'
                     + '</div>');
                 $("#" + this.CEctrlsContId).append($tile);
@@ -393,13 +393,11 @@
 
     this.CE_AddFn = function () {
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
-        var EbSid = null;
+        var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-2).replace(/[^0-9]/g, '')) + 1);
         if (this.PGobj.CurProp === "Controls") {
-            EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + this.PGobj.PropsObj.Controls.$values.length;
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         }
         else {
-            EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + this.PGobj.PropsObj[this.PGobj.CurProp].length;
             this.PGobj.PropsObj[this.PGobj.CurProp].push(new EbObjects[SelType](EbSid));
         }
         this.setColTiles();

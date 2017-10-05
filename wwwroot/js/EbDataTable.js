@@ -868,11 +868,12 @@ var EbDataTable = function (settings) {
         //$("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsWindow.bind(this));
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
         //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
-        $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
+        //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#dvnametxt").off("keyup").on("keyup", this.ModifyDvname.bind(this));
         $("#TableHeighttxt").off("keyup").on("keyup", this.ModifyTableHeight.bind(this));
         //$("input[name=renderAs]").off("click").on("click", this.graphSettings.bind(this));
         //$("#settingsbtn").off("click").on("click", this.getdvWindow.bind(this));
+        $("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
     };
 
 
@@ -903,8 +904,17 @@ var EbDataTable = function (settings) {
             //"<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
             //       " <i class='fa fa-chevron-down' aria-hidden='true'></i>" +
             //   " </div>" +
-            "</div>");
+            "</div>"+
         //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
+        "<div class='dropdown' id='Related" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
+            "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
+            "<span class='caret'></span>" +
+            "</button>" +
+            "<ul class='dropdown-menu'>" +
+            "<li><a href='#' data-id='685' objtype='16'><i class='fa fa-line-chart custom'></i> ohm</a></li>" +
+            "<li><a href='#' data-id='686' objtype='17'><i class='fa fa-bar-chart custom'></i> namo </a></li>" +
+            "</ul>" +
+            "</div>");
         this.addFilterEventListeners();
     };
 
@@ -2089,7 +2099,29 @@ var EbDataTable = function (settings) {
         this.ebSettings.scrollY = (this.ebSettings.scrollY < 100) ? "300" : this.ebSettings.scrollY;
     };
 
-
+    this.drawDv = function (e) {
+        $.LoadingOverlay("show");
+        $.ajax({
+            type: "POST",
+            url: "../DV/getdv",
+            data: { id: $(e.target).attr("data-id"), objtype: $(e.target).attr("objtype")},
+            success: function (dvObj) {
+                dvObj = JSON.parse(dvObj);
+                dvcontainerObj.currentObj = dvObj;
+                $.LoadingOverlay("hide");
+                if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
+                    pg.setObject(dvObj, AllMetas["EbTableVisualization"]);
+                    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbTableVisualization");
+                    call2dvView(dvObj);
+                }
+                else if (dvObj.$type.indexOf("EbChartVisualization") !== -1) {
+                    pg.setObject(dvObj, AllMetas["EbChartVisualization"]);
+                    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbChartVisualization");
+                    call2dvView(dvObj);
+                }
+            }
+        });
+    };
 };
 
 

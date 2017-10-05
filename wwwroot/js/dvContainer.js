@@ -1,4 +1,5 @@
-﻿var DvContainerObj = function (settings) {
+﻿var counter = 0;
+var DvContainerObj = function (settings) {
     this.ssurl = settings.ss_url;
     this.wc = settings.wc;
     this.currentObj = null;
@@ -14,12 +15,14 @@
         $("#prev").off("click").on("click", this.gotoPrevious.bind(this));
         $("#first").off("click").on("click", this.gotoFirst.bind(this));
         $("#last").off("click").on("click", this.gotoLast.bind(this));
+        $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
+        //$("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
     };
 
 
     this.btnGoClick = function () {
-        this.UniqueId = "dv" + this.currentObj.EbSid;
-        console.log(this.dvcol["sub_window_dv" + this.currentObj.EbSid]);
+        this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
+        console.log(this.dvcol["sub_window_dv" + this.currentObj.EbSid + "_" + counter]);
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             this.ebdtable[this.UniqueId] = new EbDataTable({
                 ds_id: this.currentObj.DataSourceRefId,
@@ -32,9 +35,10 @@
             this.ebdtable[this.UniqueId].getColumnsSuccess(this.currentObj);
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
+            //this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
             this.chartJs[this.UniqueId] = new eb_chart(this.currentObj, this.ssurl, this.MainData, this.UniqueId);
         }
-        console.log("xxxxx", this.dvcol["sub_window_dv" + this.currentObj.EbSid]);
+        console.log("xxxxx", this.dvcol["sub_window_dv" + this.currentObj.EbSid + "_" + counter]);
     };
 
     this.gotoNext = function () {
@@ -44,13 +48,13 @@
         if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
             $("#Toolbar").children(":not(.commonControls)").remove();
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.ebdtable["dv" + dvobj.EbSid].GenerateButtons();
+                this.ebdtable["dv" + dvobj.EbSid + "_" + counter].GenerateButtons();
             }
         }
         else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
             $("#Toolbar").children(":not(.commonControls)").remove();
             if ($("#" + focusedId).find("canvas").length > 0) {
-                this.chartJs["dv" + dvobj.EbSid].createButtons();
+                this.chartJs["dv" + dvobj.EbSid + "_" + counter].createButtons();
             }
         }
         if ($("#" + focusedId).next().attr("id") == undefined) {
@@ -70,13 +74,13 @@
         if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
                 $("#Toolbar").children(":not(.commonControls)").remove();
-                this.ebdtable["dv" + dvobj.EbSid].GenerateButtons();
+                this.ebdtable["dv" + dvobj.EbSid + "_" + counter].GenerateButtons();
             }
         }
         else {
             if ($("#" + focusedId).find("canvas").length > 0) {
                 $("#Toolbar").children(":not(.commonControls)").remove();
-                this.chartJs["dv" + dvobj.EbSid].createButtons();
+                this.chartJs["dv" + dvobj.EbSid + "_" + counter].createButtons();
             }
         }
         if ($("#" + focusedId).prev().attr("id") == undefined) {
@@ -96,13 +100,13 @@
         if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
             $("#Toolbar").children(":not(.commonControls)").remove();
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.ebdtable["dv" + dvobj.EbSid].GenerateButtons();
+                this.ebdtable["dv" + dvobj.EbSid + "_" + counter].GenerateButtons();
             }
         }
         else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
             $("#Toolbar").children(":not(.commonControls)").remove();
             if ($("#" + focusedId).find("canvas").length > 0) {
-                this.chartJs["dv" + dvobj.EbSid].createButtons();
+                this.chartJs["dv" + dvobj.EbSid + "_" + counter].createButtons();
             }
         }
         if ($("#" + focusedId).prev().attr("id") == undefined) {
@@ -122,13 +126,13 @@
         if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
             $("#Toolbar").children(":not(.commonControls)").remove();
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.ebdtable["dv" + dvobj.EbSid].GenerateButtons();
+                this.ebdtable["dv" + dvobj.EbSid + "_" + counter].GenerateButtons();
             }
         }
         else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
             $("#Toolbar").children(":not(.commonControls)").remove();
             if ($("#" + focusedId).find("canvas").length > 0) {
-                this.chartJs["dv" + dvobj.EbSid].createButtons();
+                this.chartJs["dv" + dvobj.EbSid + "_" + counter].createButtons();
             }
         }
         if ($("#" + focusedId).next().attr("id") == undefined) {
@@ -140,6 +144,29 @@
             $("#first").attr("disabled", false).css("color", "black");
         }
     };
+
+    //this.drawDv = function (e) {
+    //    $.LoadingOverlay("show");
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "../DV/getdv",
+    //        data: { dvRefId: $(e.target).attr("data-refid") },
+    //        success: function (text) {
+    //                $.LoadingOverlay("hide");
+    //        }
+    //    });
+    //};
+
+    this.saveSettings = function () {
+        if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1)
+            $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvid, type: "TableVisualization" }, this.saveSuccess.bind(this));
+        else
+            $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvid, type: "ChartVisualization" }, this.saveSuccess.bind(this));
+    };
+
+    this.saveSuccess = function () {
+        alert("Success!!!!!!!");
+    }
 
     this.init();
 }

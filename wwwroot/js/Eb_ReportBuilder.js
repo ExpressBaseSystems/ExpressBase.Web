@@ -641,8 +641,11 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     this.init = function () {
         this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
         this.pg.PropertyChanged = function (obj,pname) {
-            this.RefreshControl(obj);
-            this.refId = obj.DataSourceRefId;           
+            if (obj.SectionHeight) {
+                this.sizeArray = [];
+                this.idArray = []
+                $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this))
+            }           
             if (pname === "DataSourceRefId") {             
                     this.getDataSourceColoums(obj.DataSourceRefId);                                                             
             }
@@ -652,11 +655,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             if (pname === "IsLandscape") {
                 this.setpageMode(obj);
             }
-            if (obj.SectionHeight) {
-                this.sizeArray = [];
-                this.idArray =[]
-                $("#"+obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this))
-            }
+            this.RefreshControl(obj);
         }.bind(this);        
             this.report = new EbObjects["EbReport"]("Report1");
             this.report.Height,this.height = pages["A4"].height;

@@ -33,6 +33,12 @@ namespace ExpressBase.Web.Controllers
             return System.IO.File.OpenRead(sFilePath);
         }
 
+        //[HttpPost("/event-subscribers/{Id}")]
+        //public void Post(UploadFileControllerResponse request)
+        //{
+
+        //}
+
         [HttpPost]
         public async Task<JsonResult> UploadFileAsync(int i)
         {

@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Configuration;
+﻿using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServiceStack;
-using Microsoft.AspNetCore.Routing.Constraints;
-using ExpressBase.Web.Filters;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Http;
 using ServiceStack.Redis;
-using ExpressBase.Objects.Objects.MQRelated;
-using ServiceStack.Messaging.Redis;
-using ServiceStack.Messaging;
 
 namespace ExpressBase.Web2
 {
@@ -57,16 +48,33 @@ namespace ExpressBase.Web2
             // Added - Confirms that we have a home for our DemoSettings
             services.Configure<EbSetupConfig>(Configuration.GetSection("EbSetupConfig"));
 
+            var connectionString = Configuration["EbSetupConfig:ServiceStackUrl"];
             //services.AddScoped(typeof(IServiceClient), ServiceClientFactory);
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
             {
-                var connectionString = Configuration["EbSetupConfig:ServiceStackUrl"];
                 return new JsonServiceClient(connectionString);
             });
 
             var redisServer = Configuration["EbSetupConfig:RedisServer"];
             var redisPassword = Configuration["EbSetupConfig:RedisPassword"];
             var redisPort = Configuration["EbSetupConfig:RedisPort"];
+
+            //var redisConnectionString = string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort);
+
+            //container.Register<IRedisClientsManager>(new RedisManagerPool(redisHost));
+
+            //container.Register<IServerEvents>(c => new RedisServerEvents(c.Resolve<IRedisClientsManager>()));
+
+            //container.Resolve<IServerEvents>().Start();
+
+            
+            //var client = new ServerEventsClient("redis://YK8GtsURARN+x9qITeLj5GikW/rK/i8Uekr1ECxscLA=@ExpressBaseRedisCache.redis.cache.windows.net:6380?ssl=true");
+
+            //client.Handlers["FileUpload"] = (client1, msg) => {
+            //    //Deserialize JSON string to typed DTO
+            //    var Response = msg.Json.FromJson<UploadFileControllerResponse>();
+            //};
+
 
             services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
             {
@@ -111,7 +119,7 @@ namespace ExpressBase.Web2
 
             });
 
-          
+
         }
     }
 }

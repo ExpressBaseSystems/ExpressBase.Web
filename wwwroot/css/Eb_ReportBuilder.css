@@ -47,7 +47,7 @@
         margin-top: -1px;
         position: absolute;
         top: 1em;
-        left: 0;       
+        left: 0;
     }
 
     .tree ul li:last-child:before {
@@ -80,19 +80,26 @@
 .qr-Br-img-btn {
     margin-left: 5px;
 }
-.draggable{
-    margin-left:6px;
-    cursor:move;
+
+.draggable {
+    margin-left: 6px;
+    cursor: pointer;
 }
 
+    .draggable:hover {
+        background-color: #a2dce4;
+        border-radius: 4px;
+    }
+
 /*end side menuBar*/
-.tab-section{
+.tab-section {
     position: fixed;
     z-index: 100;
     background-color: white;
     width: 100%;
     padding-top: 10px;
 }
+
 .headersections {
     width: 50px;
     float: left;
@@ -102,21 +109,23 @@
     border-right: 0;
 }
 
-.reportmenu .btn{
-    color: #333 !important;
-    border: none !important;
-    background-color: #fafafa !important;
-    
-}
-.tab-menu .btn{
+.reportmenu .btn {
     color: #333 !important;
     border: none !important;
     background-color: #fafafa !important;
 }
+
+.tab-menu .btn {
+    color: #333 !important;
+    border: none !important;
+    background-color: #fafafa !important;
+}
+
 #eb-shapes {
     margin-left: 4%;
     color: #333333;
 }
+
 .shapes-tank {
     width: 94%;
     height: 60px;
@@ -126,30 +135,31 @@
     margin-left: 3%;
     color: #333333;
 }
-    .shapes-tank .btn{
+
+    .shapes-tank .btn {
         background-color: white !important;
         border: none !important;
     }
 
- #pagesize{       
-     height: 28px;
-     border-color: #dedede;
+#pagesize {
+    height: 28px;
+    border-color: #dedede;
 }
+
 .multiSplit {
     width: 30px;
     float: left;
     border: 1px solid #cccccc;
     background-color: #fafafa;
     color: #000000;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .headersections .btn {
     align-self: flex-end;
-    border:none;
-    background-color:#fafafa;
-    color:#333;
-
+    border: none;
+    background-color: #fafafa;
+    color: #333;
 }
 
 .gutter.gutter-vertical {
@@ -189,7 +199,7 @@
     }
 
         .ruler .tickLabel:first-of-type {
-            margin-left: 0;           
+            margin-left: 0;
         }
 
     .ruler .tickMajor {
@@ -235,7 +245,7 @@
 
         .rulerleft .tickLabel:first-of-type {
             margin-left: 0;
-            margin-top:-1px;
+            margin-top: -1px;
         }
 
     .rulerleft .tickMajor {
@@ -266,27 +276,29 @@
     z-index: -1;
 }
 
-.pGreportBuilder{
+.pGreportBuilder {
     margin-top: 3px;
     position: fixed;
     margin-right: 10px;
-    margin-left:10px;
+    margin-left: 10px;
 }
-.head_Box1{
+
+.head_Box1 {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .toolbox {
-    height: inherit;   
+    height: inherit;
     margin-top: 3px;
     padding: 0 !important;
     width: 100%;
     background-color: white;
     border: 1px solid #ccc;
-    overflow-y:auto;
+    overflow-y: auto;
 }
+
 
 .pgB {
     margin-top: 47px;
@@ -301,9 +313,9 @@
     padding: 10px;
 }
 
-.page .textval{    
-    margin:0;
-    border:1px solid #cccccc;
+.page .textval {
+    margin: 0;
+    border: 1px solid #cccccc;
 }
 
 #selDsource {
@@ -313,61 +325,70 @@
 .reportmenu .btn-group > .btn:first-child {
     margin-left: 5px !important;
 }
+
 .side-toolbar {
     height: 518px;
     padding-left: 0;
-    background-color: white;   
+    background-color: white;
     margin-top: 48px;
     position: fixed;
-    z-index:2;
+    z-index: 2;
 }
+
 .PGgrid {
     min-height: 1000px;
     padding: 0;
     margin-top: 48px;
+    z-index: 2;
 }
+
 .title {
     width: 99px;
     height: 20px;
     background-color: #fbf7f7;
     position: fixed;
     top: 118px;
-    left: 221px;
+    left: 224px;
     border: 1px solid #aaaaaa;
     z-index: 200;
 }
-.measurement{
-    height: 28px;  
+
+.measurement {
+    height: 28px;
     border-left: 0;
     border-color: #dedede;
-    padding-bottom: 2px;  
+    padding-bottom: 2px;
 }
-.custom-size{
+
+.custom-size {
     width: 60px;
     border: 1px solid #dedede;
     height: 28px;
     padding-bottom: 3px;
 }
-#createCustom{
+
+#createCustom {
     background-color: #fafafa;
     border: 1px solid #dedede;
     height: 28px;
 }
+
 #rulerUnit {
     width: 100%;
     border: none;
     border-bottom: 1px solid #aaaaaa;
-    color:black;
-}  
+    color: black;
+}
 /*shapes*/
 .h-line > .ui-resizable-handle {
-   width: 7px;
+    width: 7px;
     height: 7px;
-    top: -4px!important;
+    top: -4px !important;
     background-color: green !important;
 }
-.h-line .ui-resizable-e{
-    margin-top:0;
+
+.h-line .ui-resizable-e {
+    margin-top: 0;
 }
 /*.v-line .ui-resizable-handle {
    background-color: green;
@@ -397,13 +418,13 @@
     margin-right: -6px;
 }*/
 .arrow-left {
- width: 0; 
-  height: 0; 
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent; 
-  border-right:5px solid black;
-  float: left;
-  margin-top: -5px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-right: 5px solid black;
+    float: left;
+    margin-top: -5px;
 }
 /*.arrow-l-draggable .ui-resizable-e, .ui-resizable-w {
     background-color: green;
@@ -415,12 +436,12 @@
     margin-left: -3px;
 }*/
 .arrow-up {
- width: 0; 
-  height: 0; 
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 5px solid black;  
-  margin-left: -5px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid black;
+    margin-left: -5px;
 }
 /*.arrow-u-draggable .ui-resizable-s, .ui-resizable-n {
     background-color: green;
@@ -432,16 +453,17 @@
 margin-top: -4px;
 }*/
 .arrow-down {
- width: 0; 
-  height: 0; 
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid black;  
-  margin-left: -5px;
-  align-self: flex-end;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid black;
+    margin-left: -5px;
+    align-self: flex-end;
 }
-.arrow-d-draggable{
-    display:flex;
+
+.arrow-d-draggable {
+    display: flex;
 }
 /*.arrow-d-draggable .ui-resizable-n, .ui-resizable-s {
     background-color: green;
@@ -452,23 +474,24 @@ margin-top: -4px;
 .arrow-d-draggable .ui-resizable-s{
 margin-bottom: -4px;
 }*/
-.arrow-By-dir-v-t{
-    width: 0; 
-  height: 0; 
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 5px solid black;  
-  margin-left: -5px;
-  align-self: flex-start;
+.arrow-By-dir-v-t {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid black;
+    margin-left: -5px;
+    align-self: flex-start;
 }
-.arrow-By-dir-v-b{
-    width: 0; 
-  height: 0; 
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid black;  
-  margin-left: -10px;
-  align-self: flex-end;
+
+.arrow-By-dir-v-b {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid black;
+    margin-left: -10px;
+    align-self: flex-end;
 }
 /*.arrow-by-d-v-draggable .ui-resizable-s, .ui-resizable-n{
     background-color: green;
@@ -480,14 +503,14 @@ margin-bottom: -4px;
 .arrow-by-d-v-draggable .ui-resizable-s,.ui-resizable-n{
 margin: -4px;
 }*/
-.arrow-By-dir-h{
- width: 0; 
-  height: 0; 
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;  
-  border-left: 5px solid black;
-  float: right;
-  margin-top: -5px;
+.arrow-By-dir-h {
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid black;
+    float: right;
+    margin-top: -5px;
 }
 /*.arrow-By-dir-h{
      width: 0; 
@@ -554,8 +577,9 @@ margin: -4px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size:11px;
+    font-size: 11px;
 }
-.dropped{
-    z-index:50;
+
+.dropped {
+    z-index: 50;
 }

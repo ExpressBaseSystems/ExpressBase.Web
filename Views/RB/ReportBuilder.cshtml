@@ -197,7 +197,7 @@
                 </div>
                 <div class='ruler' style="display:none"></div>
                 <div class='rulerleft' style="display:none"></div>
-                <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px">                   
+                <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px;overflow-x: auto;">                   
                 </div>
             </div>
             <div class="col-md-2 PGgrid">
@@ -234,8 +234,7 @@
                 helper: "clone",
                 cursor: "move",
                 drag: function (event, ui) {
-                    $(ui.draggable).css("background-color", "#000000");
-
+                    $(ui.draggable).css({ "background-color": "#000000","z-index":"1000"});
                 }
             });
         }

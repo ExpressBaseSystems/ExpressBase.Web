@@ -45,6 +45,7 @@
             <button id='last' class='tools commonControls' style="display:none"><i class="fa fa-step-forward fa-lg" style="margin-bottom: 11px;" aria-hidden="true"></i></button>
             <button id='btnGo' class='tools commonControls' style='float: right;display:none'><i class="fa fa-play" aria-hidden="true"></i></button>
             <button id='Save_btn' class='tools commonControls'>Save</button>
+            <button id='fd_toggle' class='tools commonControls' style="display:none">Toggle</button>
             @*<div class='dropdown tools commonControls' id='Relateddvtable' style='display: inline-block;padding-top: 1px;'>
                 <button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>
                     <span class='caret'></span>
@@ -118,9 +119,8 @@
 
                             </div>*@
                         </div>
-                    <div class="col-md-2 pg no-padd pull-right" id="ppgrid">
-                        <div class="min-btn">
-                            <button class="btn-tb-com" onclick="pgBoxMin();" id='pg-min'><i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></button>
+                    <div class="col-md-2">
+                        <div class="no-padd pull-right" id="ppgrid">
                         </div>
                     </div>
                 </div>
@@ -146,12 +146,23 @@
         @Html.Raw(ViewBag.JsObjects);
 
         var Wcount = 0, ObjCount = 0;
-        var focusedId;
         var dvcontainerObj = new DvContainerObj({
-            ss_url: '@ViewBag.ServiceUrl'
+            ss_url: '@ViewBag.ServiceUrl',
+            wc:'@ViewBag.wc'
 
         });
         var split = new splitWindow("parent-div", "contBox");
+
+        split.windowOnFocus = function (ev) {
+            if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
+                var id = $(ev.target).attr("id");
+                focusedId = id;
+                var type = $(ev.target).attr("eb-type");
+                var dvobj = dvcontainerObj.dvcol[id];
+                pg.setObject(dvobj, AllMetas[type]);
+            }
+        }
+
         var pg = new Eb_PropertyGrid("ppgrid");
         var dvJsObj = @Html.Raw(dvobj);
 
@@ -217,42 +228,56 @@
         }
 
         function call2dvView(obj) {
+            dvcontainerObj.currentObj = obj;
             $.LoadingOverlay("show");
             $.ajax({
                 type: "POST",
                 url: "../DV/dvCommon",
                 data: { dvobj: JSON.stringify(obj), dvRefId: null },
                 success: function (text) {
+                    var sideDivId = $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter);
                     if (text.indexOf("filterBox") === -1) {
-                        $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).css("display", "none");
+                        sideDivId.css("display", "none");
+                        $("#fd_toggle").css("display", "none");
                         $.LoadingOverlay("hide");
                         dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
-                        $($("#sub_window_dv" + obj.EbSid + "_" + counter).children()[2]).removeClass("col-md-10").addClass("col-md-12");
+                        $(sideDivId.children()[2]).removeClass("col-md-10").addClass("col-md-12");
                     }
                     else {
-                        $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).css("display", "inline");
-                        $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).children().remove();
-                        $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).append(text);
+                        sideDivId.children().remove();
+                        sideDivId.append(text);
                         $.LoadingOverlay("hide");
                         $("#btnGo").css("display", "inline-block");
                         dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
-                        $($("#sub_window_dv" + obj.EbSid + "_" + counter).children()[2]).removeClass("col-md-12").addClass("col-md-10");
+                        if (getVisCount() > 1) {
+                            sideDivId.css("display", "none");
+                            $(sideDivId.children()[2]).removeClass("col-md-10").addClass("col-md-12");
+                        }
+                        else {
+                            sideDivId.css("display", "inline");
+                            $(sideDivId.children()[2]).removeClass("col-md-12").addClass("col-md-10");
+                        }
                     }
-
+                    $("#sub_window_dv" + obj.EbSid + "_" + counter).focus();
+                    if ($("#contBox").children().length >= 2) {
+                        $("#prev").css("display", "inline-block");
+                        $("#next").css("display", "inline-block");
+                        if ($("#contBox").children().length > 2) {
+                                $("#first").css("display", "inline-block");
+                                $("#last").css("display", "inline-block");
+                        }
+                    }
                 }
             });
-            $("#sub_window_dv" + obj.EbSid + "_" + counter).focus();
         }
 
-        split.windowOnFocus = function (ev) {
-            if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
-                var id = $(ev.target).attr("id");
-                var type = $(ev.target).attr("eb-type");
-                var dvobj = dvcontainerObj.dvcol[id];
-                pg.setObject(dvobj, AllMetas[type]);
-            }
+        function getVisCount() {
+            var i = 0;
+            $.each(dvcontainerObj.dvcol, function () {
+                i++;
+            });
+            return i;
         }
-
         
 
         //function drawDv(e) {

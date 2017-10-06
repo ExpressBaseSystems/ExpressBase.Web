@@ -19,12 +19,11 @@
         <button id='Save_btn' class='tools commonControls'>Save</button>
     </div>
 </div>
-<div class="row" id="parent-div" style="margin-top:80px;">
+<div class="row" id="parent-div">
     <div class="col-md-10 no-padd cont-wnd" id="contBox">
     </div>
-    <div class="col-md-2 pg no-padd pull-right" id="ppgrid">
-        <div class="min-btn">
-            <button class="btn-tb-com" onclick="pgBoxMin();" id='pg-min'><i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></button>
+    <div class="col-md-2">
+        <div class="no-padd pull-right" id="ppgrid">
         </div>
     </div>
 </div>
@@ -64,6 +63,7 @@
     }
 
     function call2dv(obj) {
+        dvcontainerObj.currentObj = obj;
         $.LoadingOverlay("show");
         $.ajax({
             type: "POST",
@@ -85,15 +85,16 @@
                     dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
                     $($("#sub_window_dv" + obj.EbSid + "_" + counter).children()[2]).removeClass("col-md-12").addClass("col-md-10");
                 }
+                $("#sub_window_dv" + obj.EbSid + "_" + counter).focus();
 
             }
         });
-        $("#sub_window_dv" + obj.EbSid + "_" + counter).focus();
 
     }
     split.windowOnFocus = function (ev) {
         if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
             var id = $(ev.target).attr("id");
+            focusedId = id;
             var type = $(ev.target).attr("eb-type");
             var dvobj = dvcontainerObj.dvcol[id];
             pg.setObject(dvobj, AllMetas[type]);

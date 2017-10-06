@@ -75,8 +75,9 @@
     }*@
 <script>
     @Html.Raw(ViewBag.HtmlHead)
-    var sett = @Html.Raw(dvobj);
-    dvcontainerObj.currentObj = sett;
+    //var sett = @Html.Raw(dvobj);
+    $.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));
+    //dvcontainerObj.currentObj = sett;
     @*dvcontainerObj.dvcol["sub_window_dv" + @dvobj.EbSid] = sett;*@
     @*var meta = @Html.Raw(ViewBag.meta);*@
     @*var dvCommon = new DvCommonObj({

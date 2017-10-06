@@ -48,7 +48,7 @@
 
                 <div class="form-group">
                     <!-- <label class="control-label" for="port">Port:</label> -->
-                    <input type="text" class="form-control" id="port" name="port" placeholder="Port" value=@ViewBag.DataDB.Port.ToString()>
+                    <input type="number" class="form-control" id="port" name="port" placeholder="Port" value=@ViewBag.DataDB.Port.ToString()>
                 </div>
 
                 <div class="form-group">
@@ -59,6 +59,11 @@
                 <div class="form-group">
                     <!-- <label class="control-label" for="pwd">Password:</label> -->
                     <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Password" value=@ViewBag.DataDB.Password.ToString()>
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="pwd">Password:</label> -->
+                    <input type="number" class="form-control" id="timeout" name="timeout" placeholder="Time Out" value=@ViewBag.DataDB.Timeout.ToString()>
                 </div>
 
                 <div id="submit" class="form-group">

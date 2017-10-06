@@ -23,15 +23,15 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditSMTPConnection()
+        public IActionResult EditSMTP()
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP });
-            ViewBag.SMTP = solutionConnections.EBSolutionConnections.EmailConnection;
+            ViewBag.SMTP = solutionConnections.EBSolutionConnections.SMTPConnection;
             return View();
         }
 
         [HttpGet]
-        public IActionResult AddEmailAccount()
+        public IActionResult AddSMTP()
         {
             return View();
         }
@@ -63,13 +63,13 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddEmailAccount(int i)
+        public IActionResult AddSMTP(int i)
         {
             var req = this.HttpContext.Request.Form;
             SMTPConnection smtpcon = new SMTPConnection();
             smtpcon.NickName = req["nickname"];
             smtpcon.Smtp = req["smtp"];
-            smtpcon.Port = req["port"];
+            smtpcon.Port = Int32.Parse(req["port"]);
             smtpcon.EmailAddress = req["email"];
             smtpcon.Password = req["pwd"];
             var r = this.ServiceClient.Post<bool>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = true });
@@ -78,13 +78,13 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditEmailAccount(int i)
+        public IActionResult EditSMTP(int i)
         {
             var req = this.HttpContext.Request.Form;
             SMTPConnection smtpcon = new SMTPConnection();
             smtpcon.NickName = req["nickname"];
             smtpcon.Smtp = req["smtp"];
-            smtpcon.Port = req["port"];
+            smtpcon.Port = Int32.Parse(req["port"]);
             smtpcon.EmailAddress = req["email"];
             smtpcon.Password = req["pwd"];
             var r = this.ServiceClient.Post<bool>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = false });
@@ -101,6 +101,7 @@ namespace ExpressBase.Web.Controllers
             DataDB.Port = Int32.Parse(req["port"]);
             DataDB.UserName = req["username"];
             DataDB.Password = req["pwd"];
+            DataDB.Timeout = Int32.Parse(req["timeout"]);
             var r = this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest {  DataDBConnection = DataDB, IsNew = false });
             return Redirect("/ConnectionManager");
         }
@@ -115,6 +116,7 @@ namespace ExpressBase.Web.Controllers
             DataDB.Port = Int32.Parse(req["port"]);
             DataDB.UserName = req["username"];
             DataDB.Password = req["pwd"];
+            DataDB.Timeout = Int32.Parse(req["timeout"]);
             var r = this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = DataDB, IsNew = true });
             return Redirect("/ConnectionManager");
         }

@@ -94,7 +94,7 @@
                 </div>
             }
 
-            @if (ViewBag.Connections.EmailConnection != null)
+            @if (ViewBag.Connections.SMTPConnection != null)
             {
                 <div class="list-group">
                     <div class="input-group-btn">
@@ -103,8 +103,8 @@
                             <span class="glyphicon glyphicon-pencil"></span> Edit
                         </a>
                     </div>
-                    <div class="list-group-item">@ViewBag.Connections.EmailConnection.NickName.ToString()</div>
-                    <div class="list-group-item">@ViewBag.Connections.EmailConnection.EmailAddress.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.SMTPConnection.NickName.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.SMTPConnection.EmailAddress.ToString()</div>
                 </div>
             }
             else

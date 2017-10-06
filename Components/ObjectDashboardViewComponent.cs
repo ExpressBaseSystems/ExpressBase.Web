@@ -18,6 +18,7 @@ namespace ExpressBase.Web.Components
             ViewBag.description = desc;
             ViewBag._ReadOnly = _readonly;
             ViewBag._objtype = _type;
+            ViewBag._isUI = Enum.IsDefined(typeof(EbObjectTypesUI), _type);
             ViewBag._major = major;
             ViewBag._minor = minor;
             ViewBag._patch = patch;

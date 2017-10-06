@@ -197,11 +197,12 @@
                 </div>
                 <div class='ruler' style="display:none"></div>
                 <div class='rulerleft' style="display:none"></div>
-                <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px">                   
+                <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px;overflow-x: auto;">                   
                 </div>
             </div>
             <div class="col-md-2 PGgrid">
-                <div class="formB-box pGreportBuilder" id="propGrid">
+                <div class="pGreportBuilder">
+                    <div id="propGrid"></div>
                 </div>
             </div>
         </div>
@@ -216,7 +217,6 @@
         $('#special-fields').treed();
         $('#other-fields').treed();
         var uploader = imageUploader("modal-container");
-
         DrawColTree = function (result) {
             $('#data-table-list').empty();
             $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");
@@ -234,8 +234,7 @@
                 helper: "clone",
                 cursor: "move",
                 drag: function (event, ui) {
-                    $(ui.draggable).css("background-color", "#000000");
-
+                    $(ui.draggable).css({ "background-color": "#000000","z-index":"1000"});
                 }
             });
         }

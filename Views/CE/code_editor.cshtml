@@ -29,7 +29,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var MyDs = new DataSource('@ViewBag.Refid', '@ViewBag.ObjectName', @ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId',@Html.Raw(ds));
+        var MyDs = new DataSource('@ViewBag.Refid', '@ViewBag.ObjectName', @ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId',@Html.Raw(ds), '@ViewBag.Status');
 
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {
@@ -278,7 +278,7 @@
     }
 
     .CodeMirror {
-        height: 413px;
+        /*height: 413px;*/
         background-color: #dceae5;
         border: 1px solid #cccccc;
     }

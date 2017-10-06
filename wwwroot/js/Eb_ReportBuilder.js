@@ -624,25 +624,30 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
 
     this.setSplitArrayFSec = function (i, obj) {
         this.idArray.push("#" + obj.id); 
-        var size = ($(obj).height() / $(obj).parent().height()) * 100;
+        var size = (($(obj).height() / $(obj).parent().height()) * 100) + .5;        
         this.sizeArray.push(size);
         console.log(this.sizeArray);
-        $(obj).siblings(".gutter").remove();
-        Split(this.idArray, {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            size: this.sizeArray,
-            minSize: 5,
-            gutterSize: 3,
-            onDrag: this.splitterOndragFn.bind(this)
-        });
+        $(obj).siblings(".gutter").remove();        
+        this.objCollection[obj.id].SectionHeight = size + "%";
     };//section split for pg change
 
     this.init = function () {
         this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
         this.pg.PropertyChanged = function (obj,pname) {
-            this.RefreshControl(obj);
-            this.refId = obj.DataSourceRefId;           
+            if (obj.SectionHeight) {
+                this.sizeArray = [];
+                this.idArray = []
+                $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
+                this.RefreshControl(obj);
+                Split(this.idArray, {
+                    direction: 'vertical',
+                    cursor: 'row-resize',
+                    sizes: this.sizeArray,
+                    minSize: 5,
+                    gutterSize: 3,
+                    onDrag: this.splitterOndragFn.bind(this)
+                });
+            }           
             if (pname === "DataSourceRefId") {             
                     this.getDataSourceColoums(obj.DataSourceRefId);                                                             
             }
@@ -652,11 +657,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             if (pname === "IsLandscape") {
                 this.setpageMode(obj);
             }
-            if (obj.SectionHeight) {
-                this.sizeArray = [];
-                this.idArray =[]
-                $("#"+obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this))
-            }
+            
         }.bind(this);        
             this.report = new EbObjects["EbReport"]("Report1");
             this.report.Height,this.height = pages["A4"].height;

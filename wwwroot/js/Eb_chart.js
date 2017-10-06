@@ -336,6 +336,7 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
     };
 
     this.drawGraphHelper = function (datain) {
+        dvcontainerObj.currentObj.data = datain;
         this.data = datain;
         //if (this.type === "bar" || this.type === "line" || this.type === "areafilled") {
         this.drawGeneralGraph();

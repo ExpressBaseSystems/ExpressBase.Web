@@ -74,6 +74,7 @@ var isSettingsSaved = false;
 var EbDataTable = function (settings) {
     this.dtsettings = settings;
     //this.meta = this.dtsettings.meta;
+    this.data = this.dtsettings.data;
     this.dsid = this.dtsettings.ds_id;
     this.dvid = this.dtsettings.dvRefId;
     this.dvName = null;
@@ -146,7 +147,7 @@ var EbDataTable = function (settings) {
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
         this.dvName = this.ebSettings.Name;
         if (this.ebSettings.scrollY == null || this.ebSettings.scrollY == undefined)
-            this.ebSettings.scrollY = "250";
+            this.ebSettings.scrollY = "300";
         if (index !== 1)
             $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
         $("#dvName_lbl" + this.tableId).text(this.dvName);
@@ -336,18 +337,23 @@ var EbDataTable = function (settings) {
         //o.select = true;
         o.retrieve = true;
         o.keys = true;
-        o.ajax = {
-            url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
-            type: 'POST',
-            timeout: 180000,
-            data: this.ajaxData.bind(this),
-            dataSrc: this.receiveAjaxData.bind(this),
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-            },
+        if (this.data !== null)
+            o.data = this.receiveAjaxData(this.ebSettings);
+        else {
+            o.ajax = {
+                //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
+                url: this.ssurl + '/ds/data/' + this.dsid,
+                type: 'POST',
+                timeout: 180000,
+                data: this.ajaxData.bind(this),
+                dataSrc: this.receiveAjaxData.bind(this),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+                },
 
-            crossDomain: true
-        };
+                crossDomain: true
+            };
+        }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
@@ -630,6 +636,7 @@ var EbDataTable = function (settings) {
         //    this.chartJs.drawGraphHelper(this.Api.data());
         //}
         //this.btnGo.attr("disabled", false);
+        dvcontainerObj.currentObj.data = this.Api.data();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -904,17 +911,19 @@ var EbDataTable = function (settings) {
             //"<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
             //       " <i class='fa fa-chevron-down' aria-hidden='true'></i>" +
             //   " </div>" +
-            "</div>"+
-        //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
-        "<div class='dropdown' id='Related" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
-            "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
-            "<span class='caret'></span>" +
-            "</button>" +
-            "<ul class='dropdown-menu'>" +
-            "<li><a href='#' data-id='685' objtype='16'><i class='fa fa-line-chart custom'></i> ohm</a></li>" +
-            "<li><a href='#' data-id='686' objtype='17'><i class='fa fa-bar-chart custom'></i> namo </a></li>" +
-            "</ul>" +
             "</div>");
+        //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
+            if(this.dtsettings.login == "uc") {
+                $("#Toolbar").append("<div class='dropdown' id='Related" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
+                "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
+                "<span class='caret'></span>" +
+                "</button>" +
+                "<ul class='dropdown-menu'>" +
+                "<li><a href='#' data-id='687' objtype='16'><i class='fa fa-line-chart custom'></i> Koii</a></li>" +
+                "<li><a href='#' data-id='689' objtype='17'><i class='fa fa-bar-chart custom'></i> eeeeeee </a></li>" +
+                "</ul>" +
+                "</div>");
+        }
         this.addFilterEventListeners();
     };
 
@@ -2100,6 +2109,7 @@ var EbDataTable = function (settings) {
     };
 
     this.drawDv = function (e) {
+        dvcontainerObj.previousObj = dvcontainerObj.currentObj;
         $.LoadingOverlay("show");
         $.ajax({
             type: "POST",
@@ -2108,6 +2118,7 @@ var EbDataTable = function (settings) {
             success: function (dvObj) {
                 dvObj = JSON.parse(dvObj);
                 dvcontainerObj.currentObj = dvObj;
+                dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
                 $.LoadingOverlay("hide");
                 if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
                     pg.setObject(dvObj, AllMetas["EbTableVisualization"]);

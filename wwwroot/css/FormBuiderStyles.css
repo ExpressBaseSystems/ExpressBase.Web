@@ -3,6 +3,20 @@
     --sild1pxDDD: solid 1px var(--colorDDD);
 }
 
+.formB-box {
+    float: left;
+    background-color: white;
+    padding: 0px;
+    width: auto;
+    /*border: var(--sild1pxDDD);*/
+    vertical-align: top;
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+    /*-webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
+    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);*/
+}
+
 .settings-cont {
     position: absolute;
     width: 100vw;
@@ -20,7 +34,7 @@
 }
 
 .form-buider-cont {
-    /*background-color: #f5f5f5;*/
+    width: inherit;
     padding: .3vw;
 }
 
@@ -119,7 +133,7 @@
 }
 
 .form-save-wraper {
-    display: inline-block;
+    float: left;
     width: 66%;
     margin: 0px 4px;
 }
@@ -160,19 +174,6 @@
     margin-top: 1px;
     cursor: default;
     margin-right: 5px;
-}
-
-.formB-box {
-    display: inline-block;
-    background-color: white;
-    padding: 0px;
-    /*border: var(--sild1pxDDD);*/
-    vertical-align: top;
-    border-radius: 4px;
-    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
-    /*-webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);
-    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.26);*/
 }
 
 .fb-cont {
@@ -236,38 +237,6 @@
     background-color: var(--colorDDD) !important;
     border-bottom: solid 2px white;
 }
-
-.controls-dd-cont .dropdown-toggle {
-    height: 25px;
-    padding: 2px;
-    border: 1px solid rgba(34,36,38,.08);
-    margin-left: 0 !important;
-    box-shadow: none;
-    border-bottom: none;
-    border-top: none;
-    /*border-radius: 0px !important;*/
-    border-bottom: var(--sild1pxDDD);
-}
-.pgCXEditor-Cont div.controls-dd-cont > div > button > span.filter-option.pull-left {
-    text-align: center;
-}
-
-.pgCXEditor-Cont div.controls-dd-cont > div > button:focus {
-    outline: none !important;
-    box-shadow: none;
-    border: 0px !important;
-    /*border-bottom: var(--sild1pxDDD) !important;*/
-}
-
-.pgCXEditor-Cont .controls-dd-cont .open, .pgCXEditor-Cont .controls-dd-cont .caret {
-    display: none !important;
-    outline: none !important;
-}
-
-.pgCXEditor-Cont .controls-dd-cont button:focus {
-    background-color: white !important;
-}
-
 
 
 .controls-dd-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
@@ -524,7 +493,7 @@
 .pg-wraper {
     display: flex;
     flex-flow: column;
-    height: 100%;
+    height: inherit;
     font-family: Tahoma;
     width: 100%;
 }
@@ -546,3 +515,36 @@
     float: right;
     font-size: 14px;
 }
+
+.controls-dd-cont .dropdown-toggle {
+    height: 25px !important;
+    padding: 2px !important;
+    border: 1px solid rgba(34,36,38,.08);
+    margin-left: 0 !important;
+    box-shadow: none !important;
+    /*border-bottom: none;*/
+    border: none !important;
+    border-radius: 0px !important;
+    border-bottom: var(--sild1pxDDD) !important;
+}
+
+.pgCXEditor-Cont div.controls-dd-cont > div > button > span.filter-option.pull-left {
+    text-align: center !important;
+}
+
+.pgCXEditor-Cont div.controls-dd-cont > div > button:focus, .controls-dd-cont .dropdown-toggle:hover {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    /*border-bottom: var(--sild1pxDDD) !important;*/
+}
+
+.pgCXEditor-Cont .controls-dd-cont .open, .pgCXEditor-Cont .controls-dd-cont .caret {
+    display: none !important;
+    outline: none !important;
+}
+
+.pgCXEditor-Cont .controls-dd-cont button:focus {
+    background-color: white !important;
+}
+

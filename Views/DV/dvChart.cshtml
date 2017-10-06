@@ -29,6 +29,7 @@
     </div>
 </div>
 <script>
+    //var counter = 0;
     @Html.Raw(ViewBag.EbObjectType)
     @Html.Raw(ViewBag.Meta)
     @Html.Raw(ViewBag.JsObjects);
@@ -38,20 +39,20 @@
     var split = new splitWindow("parent-div", "contBox");
     var pg = new Eb_PropertyGrid("ppgrid");
     if ('@ViewBag.dvObject'.indexOf("EbChartVisualization") === -1) {
-        var dvTableObj = new EbObjects["EbChartVisualization"]("chart");
+        var dvTableObj = new EbObjects["EbChartVisualization"]("chart_" + Date.now());
         pg.setObject(dvTableObj, AllMetas["EbChartVisualization"]);
     }
     else {
         var dvTableObj = @Html.Raw(dvobj);
         pg.setObject(dvTableObj, AllMetas["EbChartVisualization"]);
-        split.createContentWindow(dvTableObj.EbSid, "EbChartVisualization");
+        split.createContentWindow(dvTableObj.EbSid + "_" + ++counter, "EbChartVisualization");
         call2dv(dvTableObj);
     }
     pg.PropertyChanged = function (obj, Pname) {
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 if ('@ViewBag.dvObject'.indexOf("EbChartVisualization") === -1) {
-                    split.createContentWindow(obj.EbSid, "EbChartVisualization");
+                    split.createContentWindow(obj.EbSid + "_" + ++counter, "EbChartVisualization");
                 }
                 call2dv(obj);
             }
@@ -70,23 +71,24 @@
             data: { dvobj: JSON.stringify(obj), dvRefId: null },
             success: function (text) {
                 if (text.indexOf("filterBox") === -1) {
-                    $("#sub_windows_sidediv_dv" + obj.EbSid).css("display", "none");
+                    $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).css("display", "none");
                     $.LoadingOverlay("hide");
-                    $($("#sub_window_dv" + obj.EbSid).children()[2]).removeClass("col-md-10").addClass("col-md-12");
+                    dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
+                    $($("#sub_window_dv" + obj.EbSid + "_" + counter).children()[2]).removeClass("col-md-10").addClass("col-md-12");
                 }
                 else {
-                    $("#sub_windows_sidediv_dv" + obj.EbSid).css("display", "inline");
-                    $("#sub_windows_sidediv_dv" + obj.EbSid).children().remove();
-                    $("#sub_windows_sidediv_dv" + obj.EbSid).append(text);
+                    $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).css("display", "inline");
+                    $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).children().remove();
+                    $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).append(text);
                     $.LoadingOverlay("hide");
                     $("#btnGo").css("display", "inline-block");
-                    dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid] = dvcontainerObj.currentObj;
-                    $($("#sub_window_dv" + obj.EbSid).children()[2]).removeClass("col-md-12").addClass("col-md-10");
+                    dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
+                    $($("#sub_window_dv" + obj.EbSid + "_" + counter).children()[2]).removeClass("col-md-12").addClass("col-md-10");
                 }
 
             }
         });
-        $("#sub_window_dv" + obj.EbSid).focus();
+        $("#sub_window_dv" + obj.EbSid + "_" + counter).focus();
 
     }
     split.windowOnFocus = function (ev) {

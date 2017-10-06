@@ -1,0 +1,76 @@
+﻿<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="col-md-4">
+            <div class="row" style="text-align:center"><h4>Connect Your DataBase</h4></div>
+            </br>
+            @using (Html.BeginForm("EditDataDB", "ConnectionManager", FormMethod.Post))
+            {
+                <div class="form-group">
+                    <!-- <label class ="control-label" for="dropdown">Mail Server:</label> -->
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="vendorname" name="vendorname" placeholder="PGSQL" disabled="disabled">
+                        <div class="input-group-btn">
+                            <div id="dbvendor" name="dbvendor" class="dropdown dropdown-menu-right">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                    DataBase Vendors
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">PGSQL</a></li>
+                                    <li><a fontcolor ="red">MySQL Coming Soon</a></li>
+                                    <li><a fontcolor ="red">MSSQL Coming Soon</a></li>
+                                    <li><a fontcolor ="red">ORACLE Coming Soon</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class ="control-label" for="smtp">Smtp:</label> -->
+                    <input type="text" class="form-control" id="databasename" name="databasename" placeholder="DataBase Name" value=@ViewBag.DataDB.DatabaseName.ToString()>
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="port">Port:</label> -->
+                    <input type="text" class="form-control" id="server" name="server" placeholder="Server Address" value=@ViewBag.DataDB.Server.ToString()>
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="port">Port:</label> -->
+                    <input type="number" class="form-control" id="port" name="port" placeholder="Port" value=@ViewBag.DataDB.Port.ToString()>
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="email">Email:</label> -->
+                    <input type="text" class="form-control" id="username" name="username" placeholder="User Name" value=@ViewBag.DataDB.UserName.ToString()>
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="pwd">Password:</label> -->
+                    <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Password" value=@ViewBag.DataDB.Password.ToString()>
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="pwd">Password:</label> -->
+                    <input type="number" class="form-control" id="timeout" name="timeout" placeholder="Time Out" value=@ViewBag.DataDB.Timeout.ToString()>
+                </div>
+
+                <div id="submit" class="form-group">
+                    <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>

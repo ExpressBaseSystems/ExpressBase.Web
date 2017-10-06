@@ -184,7 +184,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8" style="padding-right:0;margin-top:50px;">
+            <div class="col-md-8 col-md-offset-2" style="padding-right:0;margin-top:50px;">
                 <div class="title text-center" style="display:none">
                     <div class="form-group">
                         <select id="rulerUnit">
@@ -201,7 +201,8 @@
                 </div>
             </div>
             <div class="col-md-2 PGgrid">
-                <div class="formB-box pGreportBuilder" id="propGrid">
+                <div class="pGreportBuilder">
+                    <div id="propGrid"></div>
                 </div>
             </div>
         </div>
@@ -216,8 +217,8 @@
         $('#special-fields').treed();
         $('#other-fields').treed();
         var uploader = imageUploader("modal-container");
-
         DrawColTree = function (result) {
+            $('#data-table-list').empty();
             $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");
             $.each(result.columns, function (i, columnCollection) {
                 $("#data-table-list ul[id='dataSource']").append(" <li><a>Table" + ++i + "</a><ul id='t" + i + "'></ul></li>");
@@ -232,6 +233,10 @@
                 revert: "invalid",
                 helper: "clone",
                 cursor: "move",
+                drag: function (event, ui) {
+                    $(ui.draggable).css("background-color", "#000000");
+
+                }
             });
         }
         

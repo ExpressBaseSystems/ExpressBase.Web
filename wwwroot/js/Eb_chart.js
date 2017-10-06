@@ -253,7 +253,7 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
         $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
         $("#graphDropdown_tab" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
         $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
-        $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
+        //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
     }
 
     this.appendColumns = function () {

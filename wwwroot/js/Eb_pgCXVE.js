@@ -393,7 +393,7 @@
 
     this.CE_AddFn = function () {
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
-        var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-2).replace(/[^0-9]/g, '')) + 1);
+        var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, '')) + 1);
         if (this.PGobj.CurProp === "Controls")
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         else

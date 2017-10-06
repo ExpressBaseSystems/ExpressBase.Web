@@ -1,0 +1,149 @@
+﻿<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).on('ready', function () {
+
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="col-md-4">
+            <div class="page-header"><h3>Connection Manager</h3></div>
+
+            @if (ViewBag.Connections.ObjectsDbConnection != null)
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">ObjectsDB</div></div>
+                        <a href="/ConnectionManager/EditObjectDB" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                        </a>
+                    </div>
+                        <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.DatabaseName.ToString()</div>
+                        <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.Server.ToString()</div>
+                        <div class="list-group-item">@ViewBag.Connections.ObjectsDbConnection.UserName.ToString()</div>
+                    </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">ObjectDB</div><div class="h5">Not Yet Configured</div></div>
+                        <a href="/ConnectionManager/AddObjectDB" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span> Add
+                        </a>
+                    </div>
+                </div>
+            }
+            
+
+            @if (ViewBag.Connections.DataDbConnection != null)
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">DataDB</div></div>
+                        <a href="/ConnectionManager/EditDataDB" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                        </a>
+                    </div>
+                    <div class="list-group-item">@ViewBag.Connections.DataDbConnection.DatabaseName.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.DataDbConnection.Server.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.DataDbConnection.UserName.ToString()</div>
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">DataDB</div><div class="h5">Not Yet Configured</div></div>
+                        <a href="/ConnectionManager/AddDataDB" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span> Add
+                        </a>
+                    </div>
+                </div>
+            }
+            
+            @if (ViewBag.Connections.FilesDbConnection.FilesDB_url != null)
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">FilesDB</div></div>
+                        <a href="/ConnectionManager/EditFilesDB" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                        </a>
+                    </div>
+                    <div class="list-group-item">@ViewBag.Connections.FilesDBConnection.FilesDB_url.ToString()</div>
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">FilesDB</div><div class="h5">Not Yet Configured</div></div>
+                        <a href="/ConnectionManager/AddFilesDB" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span> Add
+                        </a>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.Connections.SMTPConnection != null)
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">Email Account</div></div>
+                        <a href="/ConnectionManager/EditEmailAccount" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                        </a>
+                    </div>
+                    <div class="list-group-item">@ViewBag.Connections.SMTPConnection.NickName.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.SMTPConnection.EmailAddress.ToString()</div>
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">Email Account</div><div class="h5">Not Yet Configured</div></div>
+                        <a href="/ConnectionManager/AddEmailAccount" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span> Add
+                        </a>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.Connections.SMSConnection != null)
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">SMS</div></div>
+                        <a href="/Sample/EditSMSConnection" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                        </a>
+                    </div>
+                    <div class="list-group-item">@ViewBag.Connections.SMSConnection.NickName.ToString()</div>
+                    <div class="list-group-item">@ViewBag.Connections.SMSConnection.Username.ToString()</div>
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    <div class="input-group-btn">
+                        <div class="list-group-item-heading"><div class="h4">SMS</div><div class="h5">Not Yet Configured</div></div>
+                        <a href="/Sample/AddSMSAccount" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span> Add
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>

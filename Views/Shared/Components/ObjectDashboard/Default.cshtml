@@ -30,12 +30,24 @@
         padding-right: 0;
     }
 
+    .box4 > .bootstrap-select {
+        padding: 0px;
+    }
+
+    .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+        width: 183px;
+    }
+    .box5 > .bootstrap-tagsinput {
+        height: 116px;
+        overflow-y: scroll;
+    }
+
     .card1 {
         background-color: #fafafa;
         border-radius: 4px;
         border: 1px solid #cccccc;
         margin-left: 15px;
-        height: 120px;
+        height: 140px;
         margin-top: 10px;
         padding: 0;
         font-weight: 300;
@@ -153,6 +165,35 @@
         -webkit-box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
         box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
     }
+
+    .StatChlog{
+
+    }
+
+    .st_box1 {
+        width: 119px;
+        height: 1px;
+        border: 1px solid black;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+
+    .st_box2 {
+        width: 34px;
+        height: 34px;
+        background: yellow;
+        border: 3px solid red;
+        display: inline-block;
+        border-radius: 50%
+    }
+    .statwindow {
+        height: 100px;
+        width: 1700px;
+    }
+    .status-cont {
+        overflow-x: auto;
+    }
+
 </style>
 <div class="row">
     <div class="toolbar">
@@ -201,7 +242,10 @@
                         {
                             var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
                             foreach (var k in wcpy)
-                            {<a href="">@k.Key</a><br/>}
+                            {
+                                <a href="#" class="wrkcpylink" data-id="@k.Value" data-verNum="@k.Key">@k.Key</a><br/>
+
+                            }
                         }
                     }
 
@@ -278,9 +322,9 @@
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 box5">
             <h6 class="smallfont">Tags </h6>
-            <input type="text" id="tags" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput" />
+            <input type="text" class="tags" id="tags" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput" />
         </div>
     </div>
 </div>
@@ -354,7 +398,7 @@
             }
 
         });
-
+        alert('@ViewBag._isUI');
     });
     $(function () {
         $('#minmize').click(function () {

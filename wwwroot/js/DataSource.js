@@ -1,5 +1,5 @@
 ﻿var tabNum = 0;
-var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
+var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur_status) {
     this.Obj_Id = refid;
     this.Name = name;
     this.Description;
@@ -10,7 +10,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
     this.CommitBtn;
     this.SaveBtn;
     this.Versions;
-    this.ver_Refid;
+    this.ver_Refid = refid;
     this.HistoryVerNum;
     this.changeLog;
     this.commitUname;
@@ -25,6 +25,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
     this.rel_arr = [];
     this.runver_Refid;
     this.DsObj = dsobj;
+    this.curr_status = cur_status;
 
     var DSPropGrid = new Eb_PropertyGrid("dspropgrid");
 
@@ -37,12 +38,13 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
         $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
-      //  $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
-       // $("#fdlist" + tabNum).off("click").on("click", this.Load_filter_dialog_list.bind(this));
+        //  $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
+        // $("#fdlist" + tabNum).off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $(".selectpicker").selectpicker();
-      //  $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
+        //  $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
         $('#compare').off('click').on('click', this.Compare.bind(this));
-
+        $('#status').off('click').on('click', this.StatusPage.bind(this));
+        $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         if (this.DsObj === null) {
             this.DsObj = new EbObjects["EbDataSource"]("EbDataSource1");
         }
@@ -50,13 +52,13 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
         this.Name = this.DsObj.Name;
 
     }
+
     DSPropGrid.PropertyChanged = function (obj, pname) {
         if (pname === "Name")
             this.Name = obj.Name;
         else if (pname === "Description")
             this.Description = obj.Description;
-        else if (pname === "FilterDialogRefId")
-        {
+        else if (pname === "FilterDialogRefId") {
             $('#paramdiv #filterBox').remove();
             $('#paramdiv').show();
             $('#codewindow').removeClass("col-md-9");
@@ -184,9 +186,9 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
         tabNum++;
         this.ver_Refid = $(e.target).attr("data-id");
         this.HistoryVerNum = $(e.target).attr("data-verNum");
-        this.changeLog = $(e.target).attr("data-changeLog");
-        this.commitUname = $(e.target).attr("data-commitUname");
-        this.commitTs = $(e.target).attr("data-commitTs");
+        //this.changeLog = $(e.target).attr("data-changeLog");
+        // this.commitUname = $(e.target).attr("data-commitUname");
+        //this.commitTs = $(e.target).attr("data-commitTs");
         $.post('../CE/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
             .done(this.VersionCode_success.bind(this));
     }
@@ -200,23 +202,8 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>v." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
-        $('#vernav' + tabNum).append("<div class='form-inline inner_toolbar' style='margin-bottom:0px;'>  " +
-            " <div class='btn btn-group'>" +
-            "<div class='verlist input-group'>" +
-            "</div>" +
-            "<div class='dropdown fdlist btn-group' id='fdlist" + tabNum + "'>" +
-            "Parameter Div Name<select id='fd" + tabNum + "' name='fd' class='fd selectpicker show-tick' data-live-search='true' disabled></select>" +
-            "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd" + tabNum + "' style='display:none;color:dodgerblue;'></i>" +
-            "</div>" +
-            "<a href='#inner_well" + tabNum + "' class='btn collapsed' id='execute" + tabNum + "' data-toggle='collapse' title='Click to open Parameter dialog'><i class='fa fa-chevron-down fa-1x' aria-hidden='true'>Render</i></a>" +
-            "</div>" +
-            "</div>" +
-            "<div id='inner_well" + tabNum + "' class='collapse'></div>");
         $('#vernav' + tabNum).append(
-            " <div><label class = 'label label-default codeEditLabel'>Version v." + this.HistoryVerNum + "</label>" +
-            " <label class = 'label label-default codeEditLabel'>ChangeLog: " + this.changeLog + "</label>" +
-            "<label  class = 'label label-default codeEditLabel'>Committed By: " + this.commitUname + " </label>" +
-            " <label class = 'label label-default codeEditLabel'>CommittedAt: " + this.commitTs + "</label>" +
+            " <div>" +
             "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + data + "</textarea>" +
             "</div>");
         window.editor1 = CodeMirror.fromTextArea(document.getElementById("vercode" + tabNum), {
@@ -281,6 +268,72 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
     this.TestSqlFn = function () {
         $.LoadingOverlay("show");
         alert("Test");
+    }
+
+    this.StatusPage = function () {
+        tabNum++;
+        var getNav = $("#versionNav li.active a").attr("href");
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> status <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
+        this.AddVerNavTab(navitem, tabitem);
+        $('#vernav' + tabNum).append("<div class=' well col-md-12'>" +
+            "<div class='col-md-2 col-md-offset-1'>Status<select class='selectpicker btn' id='status_drpdwn" + tabNum + "'></select></div>" +
+            "<div class='col-md-6' style='display:inline'><textarea id='StatChlog" + tabNum + "' class='StatChlog' style='width:100%'></textarea></div>" +
+            "<div class='col-md-2' style='display:inline'><button class='btn' id='confirm_stat_change" + tabNum + "'>confirm</button></div>" +
+            "</div>" +
+            "<div class='col-md-12'><div class='status-cont'><div id='statwindow" + tabNum + "' class='statwindow'></div></div></div>");
+
+        if (this.curr_status === "Development") {
+            $('#status_drpdwn' + tabNum).append("<option value='Test'>Test</option>");
+        }
+        if (this.curr_status === "Test") {
+            $('#status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
+                "<option value='UAT' id='uat'>UAT</option>" +
+                "<option value='Live'>Live</option>");
+        }
+        if (this.curr_status === "UAT") {
+            $('#status_drpdwn' + tabNum).append("<option value='Live'>Live</option>");
+        }
+        if (this.curr_status === "Live") {
+            $('#status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
+                "<option value='Test'>Test</option>" +
+                "<option value='Offline'>Offline</option>");
+        }
+        if (this.curr_status === "Offline") {
+            $('#status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
+                "<option value='Test'>Test</option>" +
+                "<option value='Obsolete'>Obsolete</option>");
+        }
+        if (this.curr_status === "Obsolete") {
+            //do something
+        }
+        $('.selectpicker').selectpicker({
+            size: 4
+        });
+        $('.selectpicker').selectpicker('refresh');
+
+        $('#confirm_stat_change' + tabNum).off("click").on("click", this.ChangeStatus.bind(this));
+
+        $.post("../CE/GetStatusHistory", { _refid: this.ver_Refid }, function (data) {
+            var firstentry_flag = true;
+            $.each(data, function (i, obj) {
+                if (firstentry_flag = true) {
+                    $('#statwindow' + tabNum).append("<div class='st_box2'></div>");
+                    firstentry_flag = false;
+                }
+                else {
+                    $('#statwindow' + tabNum).append("<div class='st_box1'></div>");
+                    $('#statwindow' + tabNum).append("<div class='st_box2'></div>");
+                }
+            });
+        });
+    }
+
+    this.ChangeStatus = function () {
+        var _chlog = $('#StatChlog' + tabNum).val();
+        var _stat = $('#status_drpdwn' + tabNum + ' option:selected').val();
+
+        $.post('../CE/ChangeStatus', { _refid: this.ver_Refid, _changelog: _chlog, _status: _stat }, alert("Changed Successfully"))
     }
 
     this.Load_version_list = function () {
@@ -513,8 +566,8 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj) {
             $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId },
                 function (result) {
                     $(getNav + ' #inner_well' + tabNum).append(result);
-                    $.LoadingOverlay("hide");
-                });
+
+                }, $.LoadingOverlay("hide"));
         }
         else {
             $.LoadingOverlay("hide");

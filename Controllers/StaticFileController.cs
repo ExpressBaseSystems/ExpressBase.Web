@@ -23,7 +23,7 @@ namespace ExpressBase.Web.Controllers
             string sFilePath = string.Format("StaticFiles/{0}/{1}", tenantId, filename);
             if (!System.IO.File.Exists(sFilePath))
             {
-                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { ObjectId = filename.Substring(0, filename.IndexOf('.')) });
+                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileName = filename });
                 EbFile.Bytea_ToFile(fileByte, sFilePath);
             }
 

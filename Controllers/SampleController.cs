@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Common.Connections;
-using ExpressBase.Objects.Objects.TenantConnectionsRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -23,27 +22,9 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult ConnectionManager()
-        {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest());
-            ViewBag.Connections = solutionConnections.EBSolutionConnections;
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult EditSMTPConnection()
-        {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest());
-            ViewBag.SMTP = solutionConnections;
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult AddEmailAccount()
-        {
-            return View();
-        }
+        
+        
+        
 
         [HttpGet]
         public IActionResult DownloadFile()
@@ -78,20 +59,7 @@ namespace ExpressBase.Web2.Controllers
         //    return result;
         //}
 
-        [HttpPost]
-        public IActionResult AddEmailAccount(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            SMTPConnection smtpcon = new SMTPConnection();
-            smtpcon.NickName = req["nickname"];
-            smtpcon.Smtp = req["smtp"];
-            smtpcon.Port = req["port"];
-            smtpcon.EmailAddress = req["email"];
-            smtpcon.Password = req["pwd"];
-            var r = this.ServiceClient.Post<bool>(new AddSMTPConnectionRequest { SMTPConnection = smtpcon });
-            Console.WriteLine(req.ToString());
-            return Redirect("/Sample/ConnectionManager");
-        }
+        
 
         [HttpGet]
         public IActionResult MongoDBAsync()

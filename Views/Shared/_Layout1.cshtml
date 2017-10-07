@@ -131,7 +131,7 @@
             }
         </div>
         <div class="row">
-            <div id="side" style="display:none;">
+            <div id="EbsideBar" style="display:none;">
                 @if (ViewBag.wc == "tc")
                 {
                     Html.RenderPartial("_SidebarMenu");
@@ -170,7 +170,7 @@
 <script>
     $('document').ready(function () {
         $('#submen').click(function () {
-            $('#side').toggle(300);
+            $('#EbsideBar').toggle(300);
         });
 
         $('.list-group a').on('click', function () {

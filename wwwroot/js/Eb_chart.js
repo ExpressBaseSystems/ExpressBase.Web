@@ -332,12 +332,12 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
 
 
     this.getDataSuccess = function (result) {
-        this.drawGraphHelper(result.data);
+        this.drawGraphHelper(result);
     };
 
     this.drawGraphHelper = function (datain) {
         dvcontainerObj.currentObj.data = datain;
-        this.data = datain;
+        this.data = datain.data;
         //if (this.type === "bar" || this.type === "line" || this.type === "areafilled") {
         this.drawGeneralGraph();
         //}

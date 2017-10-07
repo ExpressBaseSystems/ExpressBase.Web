@@ -539,7 +539,7 @@ footer {
     overflow-y: auto;
     border-right: 1px solid #ccc;
     overflow-x: hidden;
-    background-color: #0f1578;
+    background-color: #153076;
 }
     #EbsideBar::-webkit-scrollbar-track {
         background-color: #F5F5F5;
@@ -569,19 +569,19 @@ footer {
         padding: 0px 15px;
     }
 
-        
+
     .side-menu-container .outer .list-group-item {
-        background-color: #0f1578;
+        background-color: #153076;
         color: white;
         font-size: 15px;
-        font-family:Tahoma;
+        font-family: Tahoma;
     }
     .side-menu-container .list-group-item:hover {
-        background-color: #433be7;
+        background-color: #49459b;
     }
 
     .side-menu-container .list-group-item:focus {
-        background-color: #433be7;
+        background-color: #49459b;
     }
     .side-menu-container .sub-menu {
         padding: 0;

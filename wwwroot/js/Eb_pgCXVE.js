@@ -284,7 +284,7 @@
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
                 + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
         }.bind(this));
-        if (this.PGobj.PropsObj[this.PGobj.CurProp] && $e.attr("name") === this.OSECurVobj.name) {
+        if (this.PGobj.PropsObj[this.PGobj.CurProp] && $e.attr("name") === this.OSECurVobj.name) {//////edit mode bug
             $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
         }
     };

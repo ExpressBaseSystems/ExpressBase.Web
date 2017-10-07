@@ -52,6 +52,7 @@
             success: function (result) {
                 _container.html(result);
                 $.LoadingOverlay("hide");
+                $('#EbsideBar').animate({ width: 'toggle' });
             }
         });
     }
@@ -68,6 +69,7 @@
             success: function (result) {
                 _container.html(result);
                 $.LoadingOverlay("hide");
+                $('#EbsideBar').animate({ width: 'toggle' });
             }
         });
     }

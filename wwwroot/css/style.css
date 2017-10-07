@@ -528,7 +528,7 @@ footer {
     }
 
 /*sidebar*/
-#side {
+#EbsideBar {
     margin-top: 50px;
     padding-left: 0;
     width: 250px;
@@ -539,20 +539,20 @@ footer {
     overflow-y: auto;
     border-right: 1px solid #ccc;
     overflow-x: hidden;
-    background-color: white;   
+    background-color: #0f1578;
 }
-    #side::-webkit-scrollbar-track {        
+    #EbsideBar::-webkit-scrollbar-track {
         background-color: #F5F5F5;
     }
 
-    #side::-webkit-scrollbar {
+    #EbsideBar::-webkit-scrollbar {
         width: 10px;
         background-color: #605b5b;
     }
 
-    #side::-webkit-scrollbar-thumb {
+    #EbsideBar::-webkit-scrollbar-thumb {
         background-color: #6f6f6f;
-        border-radius:6px;
+        border-radius: 6px;
     }
 
 
@@ -569,33 +569,25 @@ footer {
         padding: 0px 15px;
     }
 
-        .side-menu-container .list-group-item:hover {
-            background-color: #dae9eb;
-        }
-        .side-menu-container .list-group-item:focus {
-            background-color: #dae9eb;
-        }
-    .side-menu-container .outer {
-        border: 0 !important;
-        border-right: 1px solid rgba(0,0,0,.15) !important;
+        
+    .side-menu-container .outer .list-group-item {
+        background-color: #0f1578;
+        color: white;
+        font-size: 15px;
+        font-family:Tahoma;
+    }
+    .side-menu-container .list-group-item:hover {
+        background-color: #433be7;
     }
 
+    .side-menu-container .list-group-item:focus {
+        background-color: #433be7;
+    }
     .side-menu-container .sub-menu {
         padding: 0;
         margin-left: 10px;
         list-style: none;
     }
-
-side-menu-container .list-group-item:last-child {
-    margin-bottom: 0;
-    border-bottom-right-radius: 0px !important;
-    border-bottom-left-radius: 0px !important;
-}
-
-side-menu-container .list-group-item:first-child {
-    border-top-left-radius: 0px !important;
-    border-top-right-radius: 0px !important;
-}
 /*sidebar end*/
 .main-cont {
     margin-bottom: 40px;
@@ -615,7 +607,7 @@ side-menu-container .list-group-item:first-child {
     padding-left: 10px;
 }
 
-#side i {
+#EbsideBar i {
     padding-right: 2px;
     padding-top: 10px;
 }

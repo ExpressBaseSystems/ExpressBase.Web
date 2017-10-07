@@ -61,7 +61,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         else if (pname === "FilterDialogRefId") {
             $('#paramdiv #filterBox').remove();
             $('#paramdiv').show();
-            $('#codewindow').removeClass("col-md-9");
+            $('#codewindow').removeClass("col-md-10");
             $('#codewindow').addClass("col-md-8");
 
             $.post("../CE/GetFilterBody", { "ObjId": obj.FilterDialogRefId },
@@ -317,7 +317,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         $.post("../CE/GetStatusHistory", { _refid: this.ver_Refid }, function (data) {
             var firstentry_flag = true;
             $.each(data, function (i, obj) {
-                if (firstentry_flag = true) {
+                if (firstentry_flag === true) {
                     $('#statwindow' + tabNum).append("<div class='st_box2'></div>");
                     firstentry_flag = false;
                 }
@@ -333,7 +333,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         var _chlog = $('#StatChlog' + tabNum).val();
         var _stat = $('#status_drpdwn' + tabNum + ' option:selected').val();
 
-        $.post('../CE/ChangeStatus', { _refid: this.ver_Refid, _changelog: _chlog, _status: _stat }, alert("Changed Successfully"))
+        $.post('../CE/ChangeStatus', { _refid: this.ver_Refid, _changelog: _chlog, _status: _stat }, function () { alert("Changed Successfully");});
     }
 
     this.Load_version_list = function () {

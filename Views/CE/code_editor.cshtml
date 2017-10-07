@@ -39,7 +39,7 @@
         $("#close_paramdiv").click(function () {
             $('#paramdiv').toggle();
             $('#codewindow').removeClass("col-md-8");
-            $('#codewindow').addClass("col-md-9");
+            $('#codewindow').addClass("col-md-10");
         });
     });
 
@@ -62,7 +62,7 @@
             }
             else
             {
-                @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv , workcopies= ViewBag.Workingcopy });
+                @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy });
             }
         }
     </div>
@@ -88,10 +88,12 @@
                 <h6 class="smallfont" style="font-size: 12px;display:inline">Parameter Div</h6>
                 <button class='head-btn pull-right' id="close_paramdiv"><i class='fa fa-times' aria-hidden='true'></i></button>
             </div>
-            <div class="col-md-9" id="codewindow" style="margin:0;padding:0;">
+            <div class="col-md-10" id="codewindow" style="margin:0;padding:0;">
                 <textarea id="code" name="code">@ViewBag.Code</textarea>
             </div>
-            <div id="dspropgrid" class="col-md-2 pull-right" style="padding:0px"></div>
+            <div class="col-md-2">
+                <div id="dspropgrid" class="pull-right" style="padding:0px"></div>
+            </div>
         </div>
     </div>
 </div>

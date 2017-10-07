@@ -338,7 +338,7 @@ var EbDataTable = function (settings) {
         o.retrieve = true;
         o.keys = true;
         if (this.data !== null)
-            o.data = this.receiveAjaxData(this.ebSettings);
+            o.data = this.receiveAjaxData(this.dtsettings);
         else {
             o.ajax = {
                 //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
@@ -422,10 +422,11 @@ var EbDataTable = function (settings) {
 
     this.receiveAjaxData = function (dd) {
         this.MainData = dd.data;
-        if (!dd.IsPaged) {
-            this.Api.paging = dd.IsPaged;
-            this.Api.lengthChange = false;
-        }
+        //if (!dd.IsPaged) {
+        //    this.Api.paging = dd.IsPaged;
+        //    this.Api.lengthChange = false;
+        //}
+        dvcontainerObj.currentObj.data = dd;
         return dd.data;
     };
 
@@ -636,7 +637,7 @@ var EbDataTable = function (settings) {
         //    this.chartJs.drawGraphHelper(this.Api.data());
         //}
         //this.btnGo.attr("disabled", false);
-        dvcontainerObj.currentObj.data = this.Api.data();
+        //dvcontainerObj.currentObj.data = this.Api.data();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {

@@ -50,26 +50,28 @@ var DvContainerObj = function (settings) {
     };
 
     this.gotoNext = function () {
-        focusedId = $("#" + focusedId).next().attr("id");
-        $("#" + focusedId).focus();
-        var dvobj = this.dvcol[focusedId];
-        dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        dvcontainerObj.currentObj = dvobj;
-        if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.ebdtable[focusedId].GenerateButtons();
-            }
-        }
-        else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            if ($("#" + focusedId).find("canvas").length > 0) {
-                this.chartJs[focusedId].createButtons();
-            }
-        }
         if ($("#" + focusedId).next().attr("id") == undefined) {
             $("#next").attr("disabled", true).css("color", "darkgray");
             $("#last").attr("disabled", true).css("color", "darkgray");
+        }
+        else {
+            focusedId = $("#" + focusedId).next().attr("id");
+            $("#" + focusedId).focus();
+            var dvobj = this.dvcol[focusedId];
+            dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+            dvcontainerObj.currentObj = dvobj;
+            if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+                $("#Toolbar").children(":not(.commonControls)").remove();
+                if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                    this.ebdtable[focusedId].GenerateButtons();
+                }
+            }
+            else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
+                $("#Toolbar").children(":not(.commonControls)").remove();
+                if ($("#" + focusedId).find("canvas").length > 0) {
+                    this.chartJs[focusedId].createButtons();
+                }
+            }
         }
         if ($("#" + focusedId).prev().attr("id") !== undefined) {
             $("#prev").attr("disabled", false).css("color", "black");

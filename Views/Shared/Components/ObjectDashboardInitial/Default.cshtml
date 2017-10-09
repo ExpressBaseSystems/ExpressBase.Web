@@ -160,7 +160,7 @@
             <div class='toolicons form-inline pull-right'>
                 <div class='form-group'>
                     <button class='btn save' id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-                    <button class='btn commit_outer' id="commit_outer" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                    <button class='btn commit' id="commit" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
                     <button class='btn' id="minmize"><i class="fa fa-caret-down" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                 </div>
             </div>
@@ -169,18 +169,6 @@
 </div>
 <div class="row">
     <div class="dashbord">
-        <div class="col-md-3 box1">
-            <div class="form-group form1">
-                <div class="input-group">
-                    <div class="input-group-addon"><i class="fa fa-database"></i></div>
-                    <input type="text" class="form-control" id="obj_name" value="@ViewBag.ObjectName">
-                </div>
-                <div class="form-group ">
-                    <label style="margin-top:10px;">Description</label>
-                    <textarea class="form-control txtarea" id="obj_desc"></textarea>
-                </div>
-            </div>
-        </div>
         <div class="col-md-7 box2">
 
             <div class="col-md-3 card1">
@@ -199,54 +187,7 @@
                    new
                 </div>
             </div>
-            @*<div class="col-md-3 card1">
-        <div class="head text-center">
-            Live Version
-        </div>
-        <div class="count text-center">
-            V.6
-        </div>
-    </div>
-    <div class="col-md-3 card1">
-        <div class="head text-center">
-            Related Objects
-        </div>
-        <div class="count text-center">
-            2
-        </div>
-    </div>
-    <div class="col-md-3 card1">
-        <div class="head text-center">
-            Featured
-        </div>
-        <div class="count text-center">
-            2
-        </div>
-    </div>
-    <div class="col-md-3 card1">
-        <div class="head text-center">
-            Object Size
-        </div>
-        <div class="count text-center">
-            12 Kb
-        </div>
-    </div>
-    <div class="col-md-3 card1">
-        <div class="head text-center">
-            Object Size
-        </div>
-        <div class="count text-center">
-            12 Kb
-        </div>
-    </div>
-    <div class="col-md-3 card1">
-        <div class="head text-center">
-            Object Size
-        </div>
-        <div class="count text-center">
-            12 Kb
-        </div>
-    </div>*@
+        
         </div>
 
         <div class="col-md-1 box3">
@@ -266,46 +207,14 @@
                 <div class="med-font ">appl1</div>
             </div>
         </div>
-        @*<div class="col-md-1 box4">
-            <div class="lastCommit">
-                <h6 class="smallfont">Last Commit</h6>
-                <div style="display:block">
-                    <div class="userimg">
-                        <img src="~/images/proimg.jpg" style="width:30px" />
-                    </div>
-                    <div class="profileInfo">
-                        <h6 class="smallfont">Mr X</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="xtrasmall">
-                Module
-                <div class="med-font ">mod1</div>
-            </div>
-        </div>*@
+    
     </div>
 </div>
-<div id="changelogPopup" class="changelogPopup">
-    <div class="popup">
-        <a class="close" id="close_popup" href="#" style="color:indianred">&times;</a>
-        <h4>Change Log</h4>
-        <div class="content">
-            <textarea class="form-control changlogTxtArea" id="obj_changelog"></textarea>
-        </div>
-        <button id="commit" class="btn btn-primary pull-right">Commit</button>
-    </div>
-</div>
+
 
 
 <script>
-    $(document).ready(function () {
-        $('#commit_outer').on('click', function () {
-            $('#changelogPopup').show();
-        });
-        $('#close_popup').on('click', function () {
-            $('#changelogPopup').css("display", "none");
-        })
-    });
+ 
     $(function () {
         $('#minmize').click(function () {
             $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");

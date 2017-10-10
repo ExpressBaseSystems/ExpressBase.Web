@@ -29,6 +29,7 @@ var Eb_PropertyGrid = function (id) {
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.wraperId + name;
+        var subRow_html = '';
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
@@ -77,20 +78,37 @@ var Eb_PropertyGrid = function (id) {
         else if (type === 13) {  //  If Object Selector editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
+        else if (type === 15) {  //  If expandable
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" style=" width: calc(100% - 26px); direction: rtl;" />';
+
+            //var _meta = ["{ \"name\":\"X\",\"alias\":Xvalues,\"editor\":2,\"options\":null,\"IsUIproperty\":true,\"helpText\":\"\",\"OnChangeExec\":null,\"IsRequired\":false,\"source\":null}", " { \"name\":\"Y\",\"alias\":Yvalues,\"editor\":2,\"options\":null,\"IsUIproperty\":true,\"helpText\":\"\",\"OnChangeExec\":null,\"IsRequired\":false,\"source\":null}"]
+            var _meta = meta.options;
+            var _obj = value.$values;
+            $.each(_meta, function (i, val) {
+                _meta[i] = JSON.parse(val);
+            });
+
+
+
+            subRow_html = '<tr><td>888888888888</td><tr>';
+
+
+            if (this.getValueFuncs)
+                this.getValueFuncs[name] = function () { return JSON.stringify($('#' + elemId).val()) };///////////
             // Default is textbox
         } else {
             valueHTML = 'editor Not implemented';
         }
         if (meta.OnChangeExec)
             this.OnChangeExec[name] = meta.OnChangeExec;
-        //     if (typeof meta.description === 'string' && meta.description &&
-        //(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
-        //         this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
-        //     }
+
         var req_html = '';
+
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
-        return '<tr class="pgRow" name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
+
+        return '<tr class="pgRow" name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {

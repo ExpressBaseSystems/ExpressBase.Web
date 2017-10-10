@@ -170,30 +170,55 @@
     .StatChlog {
     }
 
-    .st_box1 {
-        width: 119px;
-        height: 1px;
-        border: 1px solid black;
-        display: inline-block;
-        margin-bottom: 15px;
-    }
-
-    .st_box2 {
-        width: 34px;
-        height: 34px;
-        background: yellow;
-        border: 3px solid red;
-        display: inline-block;
-        border-radius: 50%
-    }
-
     .statwindow {
-        height: 100px;
-        width: 1700px;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: scroll;
+        height: 300px;
+        padding-top: 55px;
     }
 
-    .status-cont {
-        overflow-x: auto;
+    .stat-container {
+        width: 250px;
+        display: inline-block;
+        margin-left: -3px;
+        flex: 0 0 auto;
+    }
+
+    .stat-sub {
+        height: 45px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .line-left {
+        width: 42%;
+        border-top: 1px solid #bfbbbb;
+        height: 1px;
+        float: left;
+        margin-top: 9%
+    }
+
+    .stat-cir {
+        float: left;
+        width: 16%;
+        height: inherit;
+        border-radius: 50%;
+        border-top: 1px solid #bfbbbb;
+        text-align: center;
+    }
+
+    .line-right {
+        width: 42%;
+        float: left;
+        border-top: 1px solid #bfbbbb;
+        height: 1px;
+        margin-top: 9%
+    }
+
+    .stat_name {
+        padding-top: 37%;
+        font-family: Tahoma;
     }
 </style>
 <div class="row">
@@ -252,13 +277,13 @@
                                 {
                                     <a href="#" class="wrkcpylink" data-id="@k.Value" data-verNum="@k.Key">@k.Key</a><br />
 
-                                    }
                                 }
                             }
                         }
+                    }
 
+                </div>
             </div>
-        </div>
             <div class="col-md-3 card1">
                 <div class="head text-center">
                     Last Commit
@@ -332,7 +357,7 @@
 
         <div class="col-md-3 box5">
             <h6 class="smallfont">Tags </h6>
-            <input type="text" class="tags" id="tags" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput" />
+            <input type="text" class="tags" id="tags" data-role="tagsinput" />
         </div>
     </div>
 </div>
@@ -406,18 +431,20 @@
             }
 
         });
-        alert('@ViewBag._isUI');
+       // alert('@ViewBag._isUI');
+       // console.log('@ViewBag.Tags');
+        $('#tags').tagsinput('add', '@ViewBag.Tags');
     });
     $(function () {
         $('#minmize').click(function () {
             $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");
-            var t = $('.dashbord').toggle();
+           // var t = $('.dashbord').toggle();
             //if ($('.dashbord').css("display") === "none")
             //    $('.codedit').css("margin-top", "102px");
             //else
             //    $('.codedit').css("margin-top", "0px");
 
-            console.log(t);
+            //console.log(t);
         });
     });
 </script>

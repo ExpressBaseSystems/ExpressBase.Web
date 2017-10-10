@@ -236,6 +236,7 @@
                 data: { dvobj: JSON.stringify(obj), dvRefId: null },
                 success: function (text) {
                     var sideDivId = $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter);
+
                     if (text.indexOf("filterBox") === -1) {
                         sideDivId.css("display", "none");
                         $("#fd_toggle").css("display", "none");
@@ -250,8 +251,14 @@
                         $("#btnGo").css("display", "inline-block");
                         dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
                         if (getVisCount() > 1) {
-                            sideDivId.css("display", "none");
-                            $(sideDivId.children()[2]).removeClass("col-md-10").addClass("col-md-12");
+                            if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
+                                sideDivId.css("display", "inline");
+                                $(sideDivId.children()[2]).removeClass("col-md-12").addClass("col-md-10");
+                            }
+                            else {
+                                sideDivId.css("display", "none");
+                                $(sideDivId.children()[2]).removeClass("col-md-10").addClass("col-md-12");
+                            }
                         }
                         else {
                             sideDivId.css("display", "inline");

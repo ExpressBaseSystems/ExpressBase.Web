@@ -23,13 +23,10 @@
 <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
 <script src="~/lib/codemirror/mode/xml/xml.js"></script>
 
-{
-
-}
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var MyDs = new DataSource('@ViewBag.Refid', '@ViewBag.ObjectName', @ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId',@Html.Raw(ds), '@ViewBag.Status');
+        var MyDs = new DataSource('@ViewBag.Refid', '@ViewBag.ObjectName', @ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId',@Html.Raw(ds), '@ViewBag.Status', '@ViewBag.cid');
 
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {
@@ -62,7 +59,7 @@
             }
             else
             {
-                @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy });
+                @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy , _tags = ViewBag.Tags });
             }
         }
     </div>

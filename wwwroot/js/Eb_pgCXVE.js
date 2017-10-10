@@ -93,7 +93,7 @@
             }
             //this.PGobj.PropsObj[this.PGobj.CurProp] = Gcolumns;
 
-            var sourceProp = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].source;
+            var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;//this.PGobj.Metas[this.PGobj.CurProp].source;
             this.allCols = this.PGobj.PropsObj[sourceProp].$values;
             this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
@@ -251,7 +251,7 @@
         var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val();
         var objName = this.getOBjNameByval(data, CurRefId);
         if (CurRefId) {
-            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
+            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0) // need to change
                 $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").focus()[0].click();
             else
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
@@ -263,7 +263,8 @@
         var ObjName = null;
         for (objName in data) {
             if (getObjByval(data[objName], "refId", refId)) {
-                ObjName = getObjByval(data[objName], "refId", refId).name;
+                this.OSECurVobj = getObjByval(data[objName], "refId", refId);
+                ObjName = this.OSECurVobj.name;
                 break;
             }
         }
@@ -297,7 +298,7 @@
         $(event.target).attr("is-selected", true).find(".fa-check").show();
         var ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
         $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);//
-        this.OSECurVobj = this.OSE_curTypeObj[ObjName][$e.index()];
+        this.OSECurVobj = this.OSE_curTypeObj[ObjName][$e.index()];/////////////////////////
         this.curObj.objName = ObjName;
         this.curObj.objVer = $e.text();
     };
@@ -312,16 +313,17 @@
 
     this.set9ColTiles = function (containerId, values) {
         $.each(values, function (i, control) {
-            var name = control.Name || control.name;
+            var name = (control.Name || control.name);
             var type = control.$type.split(",")[0].split(".")[2];
             if (!(control.Name || control.name))
                 var label = control.EbSid;
-            var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" ><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
-            if (!this.rowGrouping.includes(name)) {
+            var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
+            if (null === getObjByval(this.rowGrouping, "name", control.name)) {
                 $("#" + containerId).append($tile);
-            } else
+            } else {
                 if (containerId === this.CEctrlsContId)
                     $("#" + this.CEctrlsContId).append($tile);
+            }
         }.bind(this));
         $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn);
     };
@@ -329,9 +331,10 @@
     this.setSelColtiles = function () {
         var selObjs = [];
         $.each(this.rowGrouping, function (i, name) {
-            selObjs.push(getObjByval(this.allCols, "name", name));
+            selObjs.push(getObjByval(this.allCols, "name", name.name));
         }.bind(this));
-        this.set9ColTiles(this.CEctrlsContId, selObjs)
+
+        this.set9ColTiles(this.CEctrlsContId, selObjs);
     };
 
     this.setColTiles = function () {

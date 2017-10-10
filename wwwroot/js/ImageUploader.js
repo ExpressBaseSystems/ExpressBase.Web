@@ -1,7 +1,6 @@
 ﻿var imageUploader = function (container) {    
     this.container = container;
-    this.mWid = null;
-
+    this.mWid = null;   
     this.CreateMOdalW = function () {
         var modalW = $("<div class='modal fade modalstyle' id='up-modal' role='dialog'>"
             + "<div class='modal-dialog modal-lg'>"
@@ -23,11 +22,12 @@
         $("#input-id").fileinput({
             uploadUrl: "../StaticFile/UploadFileAsync",
             maxFileCount: 5,
-            initialPreview:[]
+            initialPreview: [],
+            uploadExtraData: this.uploadtag.bind(this)
         }).on('fileuploaded', function (event, data, previewId, index) {
             var objId = data.response.objId;
             $('#obj-id').attr('value', objId);
-            }).on('fileloaded', this.addtagButton.bind(this));
+        }).on('fileloaded', this.addtagButton.bind(this));
     }; 
     this.addtagButton = function (event, file, previewId, index, reader) {        
         $("#" + previewId).children().find(".file-footer-buttons").append("<button type='button' id='tagbtn" + previewId + "'"
@@ -35,25 +35,18 @@
         $("#tagbtn" + previewId).on("click", this.tagimageOnClick.bind(this));
     };
 
+    this.uploadtag = function (previewId, index) {
+        this.tagnames = $("#tagval").tagsinput('items');
+        return { "tags": this.tagnames };
+    };
+
     this.tagimageOnClick = function () {
         $("#mdfooter").show();
-        $("#mdfooter").append("<div class='col-md-4'>"
-            + "<div class='form-group'>"
-            + "<label>Tag</label>"
-            + "<div class='input-group'>"
-            + "<input type= 'text' id= 'tagval' class='form-control'>"
-            + "<span class='input-group-btn'><button class='btn btn-secondary' id='tagbtn'><i class='fa fa-plus fa-lg'></i></button>"
-            +"</span>"
-            + "</div></div></div>"
-            + "<div class='col-md-8' id='tagprevContainer' style='border:1px solid #ccc;height:100%'></div>");
-        $("#tagbtn").on("click", this.addtagAndPrev.bind(this));
+        $("#mdfooter").append("<input type= 'text' data-role='tagsinput' id= 'tagval' value='tag' class='form-control'>");
+        $("#tagval").tagsinput('refresh');       
     };
     this.addtagAndPrev = function () {       
-            var tagname = $("#tagval").val();
-            if (tagname !== " ") {
-                $("#tagprevContainer").append("<div class='tag-body' style='height:25px;text-align:left;margin:5px;border-radius:4px;min-width:80px;float:left;border:1px solid #ccc;background-color:#fafafa;'>"
-                    + "" + tagname +" <i class='fa fa-close pull-right' style='margin-left:5px;' onclick='$(this).parent().remove();'></i></div>");
-            }       
+            var tagname = $("#tagval").val();                      
     };
 
     this.init = function () {

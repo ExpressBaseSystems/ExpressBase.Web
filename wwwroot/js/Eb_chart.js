@@ -491,9 +491,24 @@ var Eb_chartJSgraph = function (data, columnInfo, ssurl, tableId) {
     };
 
     this.setGraphType = function (e) {
+        var current = this;
         $("#graphDropdown_tab" + this.tableId + " button:first-child").html($(e.target).text().trim() + "&nbsp;<span class = 'caret'></span>");
-        this.type = $(e.target).text().trim().toLowerCase();
-        this.RemoveCanvasandCheckButton();
+        if ($(e.target).text().trim().toLowerCase() !== "map") {
+            this.type = $(e.target).text().trim().toLowerCase();
+            this.RemoveCanvasandCheckButton();
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: "../DV/dvgoogle",
+                success: function (text) {
+                    $("#graphcontainer_tab" + current.tableId).children("iframe").remove();
+                    $("#myChart" + current.tableId).remove();
+                    $("#graphcontainer_tab" + current.tableId).children("table").css("display","none");
+                    $("#graphcontainer_tab" + current.tableId).append(text);
+                }
+            });
+        }
         e.preventDefault();
     };
 
@@ -705,6 +720,7 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
             "<li><a href='#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
             "<li><a href='#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
             "<li><a href='#'> doughnut </a></li>" +
+            "<li><a href='#'> map </a></li>" +
             "</ul>" +
             "</div>" +
             //"<select class='selectpicker' id='graphDropdown_tab" + this.tableId +"' style='display: inline-block;padding-top: 1px;'>" +

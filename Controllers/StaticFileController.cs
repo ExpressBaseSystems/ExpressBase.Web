@@ -40,7 +40,7 @@ namespace ExpressBase.Web.Controllers
         //}
 
         [HttpPost]
-        public async Task<JsonResult> UploadFileAsync(int i)
+        public async Task<JsonResult> UploadFileAsync(int i, string tags)
         {
             JsonResult resp = null;
 
@@ -70,6 +70,7 @@ namespace ExpressBase.Web.Controllers
                             uploadFileRequest.MetaDataPair = new Dictionary<String, String>();
                             uploadFileRequest.MetaDataPair.Add("section", "upload-26");
                             uploadFileRequest.MetaDataPair.Add("type", "Unni-image");
+                            uploadFileRequest.MetaDataPair.Add("tags", tags);
 
                             string Id = this.ServiceClient.Post<string>(uploadFileRequest);
                             string url =string.Format("<img src='/static/{0}/{1}.jpg' style='width: auto; height:auto; max-width:100%;max-height:100%;'/>", ViewBag.cid,Id);

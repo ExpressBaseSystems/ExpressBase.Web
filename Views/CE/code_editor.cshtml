@@ -23,13 +23,10 @@
 <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
 <script src="~/lib/codemirror/mode/xml/xml.js"></script>
 
-{
-
-}
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var MyDs = new DataSource('@ViewBag.Refid', '@ViewBag.ObjectName', @ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId',@Html.Raw(ds), '@ViewBag.Status', '@ViewBag.Cid');
+        var MyDs = new DataSource('@ViewBag.Refid', '@ViewBag.ObjectName', @ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId',@Html.Raw(ds), '@ViewBag.Status', '@ViewBag.cid');
 
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {

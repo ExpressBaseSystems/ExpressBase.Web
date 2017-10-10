@@ -47,16 +47,16 @@ namespace ExpressBase.Web.Controllers
            
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.ServiceClient;
-            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
+            var res = client.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
-                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
+                return RedirectToAction("TenantDashboard","Tenant");
             }
 
             return View();
         }
 
-        [HttpGet]
+      
         public IActionResult TenantDashboard()
         {
             return View();

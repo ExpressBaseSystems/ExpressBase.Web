@@ -122,13 +122,14 @@
         <div class="row">
             @{if (ViewBag.wc == "tc")
             {
-                Html.RenderPartial("_PageheaderTenant");
-            }
-            else if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-            {
-                Html.RenderPartial("_PageheaderDev");
+                    @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = "", console = "" });
+                    //Html.RenderPartial("_PageheaderTenant");
+                }
+                else if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+                {
+                    Html.RenderPartial("_PageheaderDev");
 
-            }
+                }
             }
         </div>
         <div class="row">

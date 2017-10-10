@@ -243,12 +243,14 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string refid;
+            EbDataSource obj;
             if (string.IsNullOrEmpty(req["id"]))
             {
                 var ds = new EbObject_Create_New_ObjectRequest();
                 ds.EbObjectType = (int)EbObjectType.DataSource;
-                ds.Name = req["name"];
-                ds.Description = req["description"];
+                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+                ds.Name = obj.Name;
+                ds.Description = obj.Description;
                 ds.Json = req["json"];
                 ds.Status = ObjectLifeCycleStatus.Development;
                 ds.Relations = req["rel_obj"];
@@ -264,8 +266,9 @@ namespace ExpressBase.Web.Controllers
                 var ds = new EbObject_SaveRequest();
                 var _EbObjectType = (EbObjectType)Convert.ToInt32(req["ObjectType"]);
                 ds.RefId = req["Id"];
-                ds.Name = req["Name"];
-                ds.Description = req["Description"];
+                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+                ds.Name = obj.Name;
+                ds.Description = obj.Description;
                 ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
                 ds.Json = req["json"];
                 //if (_EbObjectType == EbObjectType.SqlFunction)

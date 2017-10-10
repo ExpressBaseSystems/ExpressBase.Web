@@ -88,7 +88,7 @@ namespace ExpressBase.Web.Components
 
                 dvobj.Columns.Add(_col);
             }
-
+            dvobj.TempColumns = dvobj.Columns;
             return dvobj;
         }
     }

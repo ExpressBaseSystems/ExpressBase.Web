@@ -337,9 +337,22 @@ var EbDataTable = function (settings) {
         //o.select = true;
         o.retrieve = true;
         o.keys = true;
-        if (this.data !== null)
-            o.data = this.receiveAjaxData(this.dtsettings);
-        else {
+        //if (this.data !== null) {
+        //    dvcontainerObj.currentObj.data = this.dtsettings.data;
+        //    o.ajax = function (data, callback, settings) {
+        //        setTimeout(function () {
+        //            callback({
+        //                draw : dvcontainerObj.currentObj.data.draw,
+        //                data : dvcontainerObj.currentObj.data.data,
+        //                recordsTotal : dvcontainerObj.currentObj.data.recordsTotal,
+        //                recordsFiltered : dvcontainerObj.currentObj.data.recordsFiltered,
+        //            });
+        //        }, 50);
+                
+        //    }
+        //    //o.data = this.receiveAjaxData(this.dtsettings.data);
+        //}
+        //else {
             o.ajax = {
                 //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
                 url: this.ssurl + '/ds/data/' + this.dsid,
@@ -353,7 +366,7 @@ var EbDataTable = function (settings) {
 
                 crossDomain: true
             };
-        }
+        //}
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);

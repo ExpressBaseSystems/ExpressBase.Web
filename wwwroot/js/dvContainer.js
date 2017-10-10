@@ -28,7 +28,7 @@ var DvContainerObj = function (settings) {
         this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
         console.log(this.dvcol[focusedId]);
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
-            this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
+            //this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
             this.ebdtable[focusedId] = new EbDataTable({
                 ds_id: this.currentObj.DataSourceRefId,
                 ss_url: this.ssurl,
@@ -42,7 +42,7 @@ var DvContainerObj = function (settings) {
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
             //this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
-            this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
+            this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null && dvcontainerObj.currentObj.Pippedfrom !== "") ? dvcontainerObj.previousObj.data : null;
             this.chartJs[focusedId] = new eb_chart(this.currentObj, this.ssurl, this.MainData, this.UniqueId);
         }
         console.log("xxxxx", this.dvcol[focusedId]);
@@ -72,6 +72,10 @@ var DvContainerObj = function (settings) {
                     this.chartJs[focusedId].createButtons();
                 }
             }
+        }
+        if ($("#" + focusedId).next().attr("id") == undefined) {
+            $("#next").attr("disabled", true).css("color", "darkgray");
+            $("#last").attr("disabled", true).css("color", "darkgray");
         }
         if ($("#" + focusedId).prev().attr("id") !== undefined) {
             $("#prev").attr("disabled", false).css("color", "black");

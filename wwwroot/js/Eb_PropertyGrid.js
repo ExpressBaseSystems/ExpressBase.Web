@@ -25,11 +25,15 @@ var Eb_PropertyGrid = function (id) {
         return this.PropsObj;
     };
 
-    this.getPropertyRowHtml = function (name, value, meta, options) {
+    this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf) {
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.wraperId + name;
         var subRow_html = '';
+        var subtypeOfAttr = '';
+        var req_html = '';
+        var NBSP = '';
+        var arrow = "&nbsp;";
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
@@ -80,35 +84,53 @@ var Eb_PropertyGrid = function (id) {
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 15) {  //  If expandable
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" style=" width: calc(100% - 26px); direction: rtl;" />';
-
-            //var _meta = ["{ \"name\":\"X\",\"alias\":Xvalues,\"editor\":2,\"options\":null,\"IsUIproperty\":true,\"helpText\":\"\",\"OnChangeExec\":null,\"IsRequired\":false,\"source\":null}", " { \"name\":\"Y\",\"alias\":Yvalues,\"editor\":2,\"options\":null,\"IsUIproperty\":true,\"helpText\":\"\",\"OnChangeExec\":null,\"IsRequired\":false,\"source\":null}"]
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + this.getExpandedValue(value) + '" style=" width: calc(100% - 26px); direction: rtl;" />';
+            var subRow_html = "";
             var _meta = meta.options;
             var _obj = value.$values;
+            arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
+
             $.each(_meta, function (i, val) {
-                _meta[i] = JSON.parse(val);
+                if (typeof _meta[i] === typeof "")
+                    _meta[i] = JSON.parse(_meta[i].replace('"', '\"'));
             });
 
+            $.each(_obj, function (key, val) {
+                var CurMeta = getObjByval(_meta, "name", key);
+                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+            }.bind(this));
 
 
-            subRow_html = '<tr><td>888888888888</td><tr>';
-
-
-            if (this.getValueFuncs)
-                this.getValueFuncs[name] = function () { return JSON.stringify($('#' + elemId).val()) };///////////
+            if (this.getValueFuncs) {
+                this.getValueFuncs[name] = function () {
+                    return ;/////////////
+                };
+            }///////////
             // Default is textbox
         } else {
             valueHTML = 'editor Not implemented';
         }
         if (meta.OnChangeExec)
             this.OnChangeExec[name] = meta.OnChangeExec;
-
-        var req_html = '';
-
+        if (SubtypeOf) {
+            NBSP = "&nbsp;&nbsp;";
+            subtypeOfAttr = 'subtype-of="' + SubtypeOf + '"';
+        }
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
 
-        return '<tr class="pgRow" name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+        return '<tr class="pgRow" ' + subtypeOfAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+    };
+
+    this.getExpandedValue = function (value) {
+        if (typeof value === typeof "")
+            return value;
+        var pairs = JSON.stringify(value.$values).split(",");
+        values = [];
+        $.each(pairs, function (i, pair) {
+            values.push(pair.split('":')[1].replace("}", ""));
+        });
+        return values;
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
@@ -289,6 +311,11 @@ var Eb_PropertyGrid = function (id) {
         $("#" + this.wraperId + " [name=sort]").toggle();
     };
 
+    this.ExpandToggle = function (e) {
+        var subtype = $(e.target).closest("tr").attr("name").slice(0, -2);
+        $("#" + this.wraperId + " [subtype-of=" + subtype + "]").toggle(200);
+    };
+
     this.InitPG = function () {
         this.propNames = [];
         this.MISC_GROUP_NAME = 'Miscellaneous';
@@ -314,6 +341,7 @@ var Eb_PropertyGrid = function (id) {
 
         $("#" + this.wraperId + " .propgrid-table-cont .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
+        $('#' + this.wraperId + "_propGrid" + ' table tr').find(".fa-caret-right").click(this.ExpandToggle.bind(this));
         this.addToDD(this.PropsObj);
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();

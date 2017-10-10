@@ -251,7 +251,7 @@
         var CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val();
         var objName = this.getOBjNameByval(data, CurRefId);
         if (CurRefId) {
-            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)// need to change
+            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0) // need to change
                 $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").focus()[0].click();
             else
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
@@ -263,7 +263,8 @@
         var ObjName = null;
         for (objName in data) {
             if (getObjByval(data[objName], "refId", refId)) {
-                ObjName = getObjByval(data[objName], "refId", refId).name;
+                this.OSECurVobj = getObjByval(data[objName], "refId", refId);
+                ObjName = this.OSECurVobj.name;
                 break;
             }
         }
@@ -297,7 +298,7 @@
         $(event.target).attr("is-selected", true).find(".fa-check").show();
         var ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
         $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);//
-        this.OSECurVobj = this.OSE_curTypeObj[ObjName][$e.index()];
+        this.OSECurVobj = this.OSE_curTypeObj[ObjName][$e.index()];/////////////////////////
         this.curObj.objName = ObjName;
         this.curObj.objVer = $e.text();
     };

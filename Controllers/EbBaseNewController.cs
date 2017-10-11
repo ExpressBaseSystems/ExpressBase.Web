@@ -55,13 +55,13 @@ namespace ExpressBase.Web.Controllers
                 this.ServiceClient.RefreshToken = context.HttpContext.Request.Cookies["rToken"];
 
                 var tokenS = (new JwtSecurityTokenHandler()).ReadToken(context.HttpContext.Request.Cookies["Token"]) as JwtSecurityToken;
-
+                
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
                 controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);
                 controller.ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
                 controller.ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
-
+                controller.ViewBag.email = tokenS.Claims.First(claim => claim.Type == "email").Value;
                 controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
 
                 base.OnActionExecuting(context);

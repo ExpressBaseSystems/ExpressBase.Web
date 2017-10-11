@@ -15,6 +15,7 @@ var Eb_PropertyGrid = function (id) {
     this.PropertyChanged = function (obj) { };
     this.DD_onChange = function (e) { };
     this.nameChanged = function (e) { };
+    this.Close = function (e) { };
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -84,36 +85,37 @@ var Eb_PropertyGrid = function (id) {
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 15) {  //  If expandable
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + this.getExpandedValue(value) + '" style=" width: calc(100% - 26px); direction: rtl;" />';
+            valueHTML = '<input type="text" for="' + name + '" readonly value="' + this.getExpandedValue(value) + '" style="width:100%; direction: rtl;" />';
+            valueHTML += "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
             var subRow_html = "";
-            var _meta = meta.options;
-            var _obj = value.$values;
+            var _meta = meta.submeta;
+            var _obj = value;
             arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
-
-            $.each(_meta, function (i, val) {
-                if (typeof _meta[i] === typeof "")
-                    _meta[i] = JSON.parse(_meta[i].replace('"', '\"'));
-            });
-
             $.each(_obj, function (key, val) {
                 var CurMeta = getObjByval(_meta, "name", key);
-                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+                if (CurMeta)
+                    subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
             }.bind(this));
-
-
+            var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
             if (this.getValueFuncs) {
                 this.getValueFuncs[name] = function () {
-                    return ;/////////////
-                };
-            }///////////
-            // Default is textbox
-        } else {
+                    var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                    $.each($subRows, function (i, row) {
+                        var key = $(row).attr("name").slice(0, -2);
+                        var val = $(row).find(".pgTdval input").val();
+                        value[key] = val;
+                    });
+                    $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
+                    return JSON.parse($('#' + elemId).val());
+                }.bind(this);
+            }   
+        } else {    // Default is textbox
             valueHTML = 'editor Not implemented';
         }
         if (meta.OnChangeExec)
             this.OnChangeExec[name] = meta.OnChangeExec;
         if (SubtypeOf) {
-            NBSP = "&nbsp;&nbsp;";
+            NBSP = "&nbsp;&nbsp;&nbsp;";
             subtypeOfAttr = 'subtype-of="' + SubtypeOf + '"';
         }
         if (meta.IsRequired)
@@ -122,13 +124,11 @@ var Eb_PropertyGrid = function (id) {
         return '<tr class="pgRow" ' + subtypeOfAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
-    this.getExpandedValue = function (value) {
-        if (typeof value === typeof "")
-            return value;
-        var pairs = JSON.stringify(value.$values).split(",");
+    this.getExpandedValue = function (obj) {
         values = [];
-        $.each(pairs, function (i, pair) {
-            values.push(pair.split('":')[1].replace("}", ""));
+        $.each(obj, function (key, val) {
+            if (key !== "$type")
+                values.push(val);
         });
         return values;
     };
@@ -283,12 +283,18 @@ var Eb_PropertyGrid = function (id) {
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
     };
 
+    this.CloseFn = function (e) {
+        alert();
+        this.Close();
+    };
+
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-times" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
+        $("#" + this.wraperId + " .pgHead").on("click", ".icon-cont", this.CloseFn.bind(this));
 
         this.CXVE = new Eb_pgCXVE(this);
 

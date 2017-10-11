@@ -122,7 +122,7 @@
         <div class="row">
             @{if (ViewBag.wc == "tc")
             {
-                    @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = "", console = "" });
+                    @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
                     //Html.RenderPartial("_PageheaderTenant");
                 }
                 else if (ViewBag.wc == "dc" || ViewBag.wc == "uc")

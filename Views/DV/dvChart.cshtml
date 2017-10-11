@@ -15,17 +15,14 @@
 
 <div class="row" style="margin-top: 52px;">
     <div class="toolbar-com" id='Toolbar'>
-        <button id='btnGo' class='tools commonControls' style='float: right;display:none'><i class="fa fa-play" aria-hidden="true"></i></button>
-        <button id='Save_btn' class='tools commonControls'>Save</button>
+        <label class='dvname commonControls' style='color: #333;width:200px'></label>
+        <button id='btnGo' class='tools commonControls' style='display:none'><i class="fa fa-play" aria-hidden="true"></i></button>
+        <button id='Save_btn' class='tools commonControls' style="display:none">Save</button>
+        <button id='fd_toggle' class='tools commonControls' style="display:none">Toggle</button>
     </div>
 </div>
-<div class="row" id="parent-div">
-    <div class="col-md-10 no-padd cont-wnd" id="contBox">
-    </div>
-    <div class="col-md-2">
-        <div class="no-padd pull-right" id="ppgrid">
-        </div>
-    </div>
+<div class="row" id="parent-div" style="height:calc(100vh - 87px);">
+    
 </div>
 <script>
     //var counter = 0;
@@ -36,28 +33,31 @@
         ss_url: '@ViewBag.ServiceUrl'
     });
     var split = new splitWindow("parent-div", "contBox");
-    var pg = new Eb_PropertyGrid("ppgrid");
+    var pg = {};
     if ('@ViewBag.dvObject'.indexOf("EbChartVisualization") === -1) {
         var dvTableObj = new EbObjects["EbChartVisualization"]("chart_" + Date.now());
-        pg.setObject(dvTableObj, AllMetas["EbChartVisualization"]);
+        $("label.dvname").text(dvTableObj.Name);
+        split.createContentWindow(dvTableObj.EbSid + "_" + ++counter, "EbChartVisualization");
+        pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter] = new Eb_PropertyGrid("ppgrid_dv" + dvTableObj.EbSid + "_" + counter);
+        pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter].setObject(dvTableObj,  AllMetas["EbChartVisualization"]);
     }
     else {
         var dvTableObj = @Html.Raw(dvobj);
-        pg.setObject(dvTableObj, AllMetas["EbChartVisualization"]);
+        $("label.dvname").text(dvTableObj.Name);
         split.createContentWindow(dvTableObj.EbSid + "_" + ++counter, "EbChartVisualization");
+        pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter] = new Eb_PropertyGrid("ppgrid_dv" + dvTableObj.EbSid + "_" + counter);
+        pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter].setObject(dvTableObj, AllMetas["EbChartVisualization"]);
         call2dv(dvTableObj);
     }
-    pg.PropertyChanged = function (obj, Pname) {
+    pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter].PropertyChanged = function (obj, Pname) {
+        dvcontainerObj.currentObj = obj;
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
-                if ('@ViewBag.dvObject'.indexOf("EbChartVisualization") === -1) {
-                    split.createContentWindow(obj.EbSid + "_" + ++counter, "EbChartVisualization");
-                }
                 call2dv(obj);
             }
         }
         else if (Pname == "Name") {
-            dvcontainerObj.currentObj = obj;
+            $("label.dvname").text(obj.Name);
             console.log(obj);
         }
     }
@@ -69,28 +69,35 @@
             type: "POST",
             url: "../DV/dvCommon",
             data: { dvobj: JSON.stringify(obj), dvRefId: null },
-            success: function (text) {
-                if (text.indexOf("filterBox") === -1) {
-                    $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).css("display", "none");
-                    $.LoadingOverlay("hide");
-                    dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
-                    $($("#sub_window_dv" + obj.EbSid + "_" + counter).children()[2]).removeClass("col-md-10").addClass("col-md-12");
-                }
-                else {
-                    $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).css("display", "inline");
-                    $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).children().remove();
-                    $("#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter).append(text);
-                    $.LoadingOverlay("hide");
-                    $("#btnGo").css("display", "inline-block");
-                    dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
-                    $($("#sub_window_dv" + obj.EbSid + "_" + counter).children()[2]).removeClass("col-md-12").addClass("col-md-10");
-                }
-                $("#sub_window_dv" + obj.EbSid + "_" + counter).focus();
-
-            }
+            success: ajaxSucc
         });
 
     }
+
+    function ajaxSucc(text) {
+        obj = dvcontainerObj.currentObj;
+        $("#btnGo").css("display", "inline-block");
+        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter;
+        var subDivId = "#sub_window_dv" + obj.EbSid + "_" + counter;
+        $("#content_dv" + obj.EbSid + "_" + counter).empty();
+        $(sideDivId).empty();
+        $(sideDivId).append("<div class='pgHead'> Param window <button class='close' type='button' style='float:right;font-size: 15px;' >x</button></div >");
+        $(sideDivId).append(text);
+        if (text.indexOf("filterBox") === -1) {
+            $(sideDivId).css("display", "none");
+            $.LoadingOverlay("hide");
+            dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
+            $("#content_dv" + obj.EbSid + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
+        }
+        else {
+            $(sideDivId).css("display", "inline");
+            $.LoadingOverlay("hide");
+            dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
+            $("#content_dv" + obj.EbSid + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
+        }
+        $(subDivId).focus();
+    };
+
     split.windowOnFocus = function (ev) {
         if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
             var id = $(ev.target).attr("id");

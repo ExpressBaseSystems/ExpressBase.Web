@@ -146,13 +146,15 @@ var EbDataTable = function (settings) {
         this.ebSettings = data;
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
         this.dvName = this.ebSettings.Name;
-        if (this.ebSettings.scrollY == null || this.ebSettings.scrollY == undefined)
-            this.ebSettings.scrollY = "300";
+        //if (this.ebSettings.scrollY == null || this.ebSettings.scrollY == undefined)
+        //    this.ebSettings.scrollY = "300";
         if (index !== 1)
             $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.cellData).append($("<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;' >×</button>"));
-        $("#dvName_lbl" + this.tableId).text(this.dvName);
-        if (this.dvName != "<Untitled>")
-            $("#dvnametxt").val(this.dvName);
+        //$("#dvName_lbl" + this.tableId).text(this.dvName);
+        //if (this.dvName != "<Untitled>")
+        //    $("#dvnametxt").val(this.dvName);
+
+        $("label.dvname").text(this.dvName);
         //if (this.ebSettings.renderAs == "graph") {
         //    $("#graphcontainer_tab" + this.tableId).show();
         //    new eb_chart(this.ebSettings, this.ssurl, false, this.tableId);
@@ -163,8 +165,10 @@ var EbDataTable = function (settings) {
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             //if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").length === 0) {
                 $("#Toolbar").children(":not(.commonControls)").remove();
-                $("#sub_window_" + this.tableId).children("#"+this.tableId + "_Container").remove();
-                $("#sub_window_" + this.tableId).append("<div class='col-md-10' id='"+this.tableId+"_Container'><div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div></div>");
+                //$("#sub_window_" + this.tableId).children("#"+this.tableId + "_Container").remove();
+                $("#content_" + this.tableId).empty();
+                //$("#sub_window_" + this.tableId).children("button").insertAfter("<div class='col-md-10' id='"+this.tableId+"_Container'><div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div></div>");
+                $("#content_" + this.tableId).append("<div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div>");
                 this.Init();
             //}
             //else {
@@ -293,8 +297,8 @@ var EbDataTable = function (settings) {
 
     this.createTblObject = function () {
         var o = new Object();
-        o.scrollY = this.ebSettings.scrollY+"px";
-        //o.scrollY = "300px";
+        //o.scrollY = this.ebSettings.scrollY+"px";
+        o.scrollY = "400px";
         o.scrollX = "100%";
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
             if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
@@ -900,8 +904,8 @@ var EbDataTable = function (settings) {
 
     this.GenerateButtons = function () {
         //$("#sub_windows_head_" + this.tableId).prepend("<label class='dvname' style= 'color: white;'>" + this.dvName+"</label>"+
-        $("#Toolbar").append("<label class='dvname' style='color: #333;'>" + this.dvName + "</label>" +
-            "<div style= 'display: inline;' > " +
+        $("#Toolbar").append(
+            "<div style= 'display: inline;float: right;' > " +
             //"<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
             "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' data-table='@tableId'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +

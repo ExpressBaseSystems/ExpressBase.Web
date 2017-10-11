@@ -85,20 +85,16 @@ var Eb_PropertyGrid = function (id) {
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 15) {  //  If expandable
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + this.getExpandedValue(value) + '" style=" width: calc(100% - 26px); direction: rtl;" />';
+            valueHTML = '<input type="text" for="' + name + '" readonly value="' + this.getExpandedValue(value) + '" style=" width: calc(100% - 26px); direction: rtl;" />';
+            valueHTML += "<input type='hidden' value='" + value + "' id='" + elemId + "'>";
             var subRow_html = "";
-            var _meta = meta.options;
-            var _obj = value.$values;
+            var _meta = meta.submeta;
+            var _obj = value;
             arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
-
-            $.each(_meta, function (i, val) {
-                if (typeof _meta[i] === typeof "")
-                    _meta[i] = JSON.parse(_meta[i].replace('"', '\"'));
-            });
-
             $.each(_obj, function (key, val) {
                 var CurMeta = getObjByval(_meta, "name", key);
-                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+                if (CurMeta)
+                    subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
             }.bind(this));
 
 
@@ -123,13 +119,11 @@ var Eb_PropertyGrid = function (id) {
         return '<tr class="pgRow" ' + subtypeOfAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
-    this.getExpandedValue = function (value) {
-        if (typeof value === typeof "")
-            return value;
-        var pairs = JSON.stringify(value.$values).split(",");
+    this.getExpandedValue = function (obj) {
         values = [];
-        $.each(pairs, function (i, pair) {
-            values.push(pair.split('":')[1].replace("}", ""));
+        $.each(obj, function (key, val) {
+            if (key !== "$type")
+                values.push(val);
         });
         return values;
     };

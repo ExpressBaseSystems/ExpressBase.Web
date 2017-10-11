@@ -55,7 +55,7 @@ namespace ExpressBase.Web.Controllers
                 this.ServiceClient.RefreshToken = context.HttpContext.Request.Cookies["rToken"];
 
                 var tokenS = (new JwtSecurityTokenHandler()).ReadToken(context.HttpContext.Request.Cookies["Token"]) as JwtSecurityToken;
-
+                controller.ViewBag.email = context.HttpContext.Request.Query["email"];
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
                 controller.ViewBag.UId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "uid").Value);

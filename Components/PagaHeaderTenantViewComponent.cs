@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Components
 {
-    public class PagaHeaderTenant : ViewComponent
+    public class PagaHeaderTenantViewComponent : ViewComponent
     {
         protected JsonServiceClient ServiceClient { get; set; }
 
         protected RedisClient Redis { get; set; }
 
-        public PagaHeaderTenant(IServiceClient _client, IRedisClient _redis)
+        public PagaHeaderTenantViewComponent(IServiceClient _client, IRedisClient _redis)
         {
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;

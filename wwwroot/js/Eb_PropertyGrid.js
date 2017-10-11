@@ -52,7 +52,6 @@ var Eb_PropertyGrid = function (id) {
         }
         else if (type === 3) {    // If color use color picker 
             valueHTML = '<input type="color" id="' + elemId + '" value="' + value + '" style="width:100%; height: 21px;" />';
-            if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
@@ -60,12 +59,10 @@ var Eb_PropertyGrid = function (id) {
         }
         else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
-            if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 6) {    //  If date&time date
             valueHTML = '<input type="date" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
-            if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type > 6 && type < 11) {    //  If collection editor
@@ -97,7 +94,6 @@ var Eb_PropertyGrid = function (id) {
                     subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
             }.bind(this));
             var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
-            if (this.getValueFuncs) {
                 this.getValueFuncs[name] = function () {
                     var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                     $.each($subRows, function (i, row) {
@@ -108,7 +104,6 @@ var Eb_PropertyGrid = function (id) {
                     $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
                     return JSON.parse($('#' + elemId).val());
                 }.bind(this);
-            }   
         } else {    // Default is textbox
             valueHTML = 'editor Not implemented';
         }
@@ -389,6 +384,5 @@ var Eb_PropertyGrid = function (id) {
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         this.InitPG();
     };
-
     this.init();
 };

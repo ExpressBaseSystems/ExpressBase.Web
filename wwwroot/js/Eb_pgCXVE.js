@@ -101,7 +101,7 @@
             if (this.editor === 7)
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
             else if (this.editor === 9 || this.editor === 8)
-                this.rowGrouping.splice(this.rowGrouping.indexOf(el.id), 1);
+                this.movingObj = this.rowGrouping.splice(this.rowGrouping.indexOf(getObjByval(this.rowGrouping, "name", el.id)), 1)[0];
         }
         else if (this.editor === 10)
             this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
@@ -121,9 +121,9 @@
                     this.CElist.push(this.movingObj);
             } else if (this.editor === 9 || this.editor === 8) {
                 if (sibling.length > 0)
-                    this.rowGrouping.splice(idx, 0, el.id);
+                    this.rowGrouping.splice(idx, 0, this.movingObj);
                 else
-                    this.rowGrouping.push(el.id);
+                    this.rowGrouping.push(this.movingObj);
             }
         }
         else if (this.editor === 10) {
@@ -291,7 +291,7 @@
             if (!(control.Name || control.name))
                 var label = control.EbSid;
             var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
-            if (null === getObjByval(this.rowGrouping, "name", control.name)) {
+            if (!getObjByval(this.rowGrouping, "name", control.name)) {
                 $("#" + containerId).append($tile);
             } else {
                 if (containerId === this.CEctrlsContId)
@@ -303,10 +303,12 @@
 
     this.setSelColtiles = function () {
         var selObjs = [];
-        $.each(this.rowGrouping, function (i, name) {
-            selObjs.push(getObjByval(this.allCols, "name", name.name));
-        }.bind(this));
-        this.set9ColTiles(this.CEctrlsContId, selObjs);
+        if (this.rowGrouping.length !== 0) {
+            $.each(this.rowGrouping, function (i, name) {
+                selObjs.push(getObjByval(this.allCols, "name", name.name));
+            }.bind(this));
+            this.set9ColTiles(this.CEctrlsContId, selObjs);
+        }
     };
 
     this.setColTiles = function () {

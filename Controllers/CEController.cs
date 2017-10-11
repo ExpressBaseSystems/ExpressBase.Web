@@ -85,6 +85,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Majorv = element.MajorVersionNumber;
                 ViewBag.Minorv = element.MinorVersionNumber;
                 ViewBag.Patchv = element.PatchVersionNumber;
+                ViewBag.Tags = element.Tags;
 
                 if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                 {
@@ -213,6 +214,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Status = ObjectLifeCycleStatus.Development;
                 ds.Relations = req["rel_obj"];
                 ds.IsSave = false;
+                ds.Tags = req["tags"];
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -229,6 +231,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Relations = req["rel_obj"];
                 ds.RefId = req["id"];
                 ds.ChangeLog = req["changeLog"];
+                ds.Tags = req["tags"];
                 var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
                 refid = res.RefId;
             }
@@ -240,16 +243,19 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string refid;
+            EbDataSource obj;
             if (string.IsNullOrEmpty(req["id"]))
             {
                 var ds = new EbObject_Create_New_ObjectRequest();
                 ds.EbObjectType = (int)EbObjectType.DataSource;
-                ds.Name = req["name"];
-                ds.Description = req["description"];
+                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+                ds.Name = obj.Name;
+                ds.Description = obj.Description;
                 ds.Json = req["json"];
                 ds.Status = ObjectLifeCycleStatus.Development;
                 ds.Relations = req["rel_obj"];
                 ds.IsSave = true;
+                ds.Tags = req["tags"];
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -260,8 +266,9 @@ namespace ExpressBase.Web.Controllers
                 var ds = new EbObject_SaveRequest();
                 var _EbObjectType = (EbObjectType)Convert.ToInt32(req["ObjectType"]);
                 ds.RefId = req["Id"];
-                ds.Name = req["Name"];
-                ds.Description = req["Description"];
+                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+                ds.Name = obj.Name;
+                ds.Description = obj.Description;
                 ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
                 ds.Json = req["json"];
                 //if (_EbObjectType == EbObjectType.SqlFunction)
@@ -269,6 +276,7 @@ namespace ExpressBase.Web.Controllers
                 //    ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
                 //}
                 ds.Relations = req["rel_obj"];
+                ds.Tags = req["tags"];
                 ViewBag.IsNew = "false";
                 var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
                 refid = res.RefId;
@@ -306,8 +314,9 @@ namespace ExpressBase.Web.Controllers
             return res.RefId;
         }
         [HttpPost]
-        public string VersionCodes(string objid, int objtype)
+        public EbDataSource VersionCodes(string objid, int objtype)
         {
+            EbDataSource dsobj = null;
             var _EbObjectType = (EbObjectType)objtype;
             var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = objid });
             var rlist = resultlist.Data;
@@ -315,16 +324,11 @@ namespace ExpressBase.Web.Controllers
             {
                 if (_EbObjectType == EbObjectType.DataSource)
                 {
-                    var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
+                    dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
                     ViewBag.Code =dsobj.Sql;
                 }
-                if (_EbObjectType == EbObjectType.SqlFunction)
-                {
-                    var dsobj = EbSerializers.Json_Deserialize<EbSqlFunction>(element.Json);
-                    ViewBag.Code = Encoding.UTF8.GetString(Convert.FromBase64String(dsobj.Sql));
-                }
             }
-            return ViewBag.Code;
+            return dsobj;
         }
 
         public IActionResult GetFilterBody()

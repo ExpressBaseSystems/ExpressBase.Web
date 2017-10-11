@@ -28,7 +28,7 @@ var DvContainerObj = function (settings) {
         this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
         console.log(this.dvcol[focusedId]);
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
-            this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
+            //this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
             this.ebdtable[focusedId] = new EbDataTable({
                 ds_id: this.currentObj.DataSourceRefId,
                 ss_url: this.ssurl,
@@ -42,7 +42,7 @@ var DvContainerObj = function (settings) {
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
             //this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
-            this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
+            this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null && dvcontainerObj.currentObj.Pippedfrom !== "") ? dvcontainerObj.previousObj.data : null;
             this.chartJs[focusedId] = new eb_chart(this.currentObj, this.ssurl, this.MainData, this.UniqueId);
         }
         console.log("xxxxx", this.dvcol[focusedId]);
@@ -50,21 +50,27 @@ var DvContainerObj = function (settings) {
     };
 
     this.gotoNext = function () {
-        focusedId = $("#" + focusedId).next().attr("id");
-        $("#" + focusedId).focus();
-        var dvobj = this.dvcol[focusedId];
-        dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        dvcontainerObj.currentObj = dvobj;
-        if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.ebdtable[focusedId].GenerateButtons();
-            }
+        if ($("#" + focusedId).next().attr("id") == undefined) {
+            $("#next").attr("disabled", true).css("color", "darkgray");
+            $("#last").attr("disabled", true).css("color", "darkgray");
         }
-        else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            if ($("#" + focusedId).find("canvas").length > 0) {
-                this.chartJs[focusedId].createButtons();
+        else {
+            focusedId = $("#" + focusedId).next().attr("id");
+            $("#" + focusedId).focus();
+            var dvobj = this.dvcol[focusedId];
+            dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+            dvcontainerObj.currentObj = dvobj;
+            if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+                $("#Toolbar").children(":not(.commonControls)").remove();
+                if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                    this.ebdtable[focusedId].GenerateButtons();
+                }
+            }
+            else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
+                $("#Toolbar").children(":not(.commonControls)").remove();
+                if ($("#" + focusedId).find("canvas").length > 0) {
+                    this.chartJs[focusedId].createButtons();
+                }
             }
         }
         if ($("#" + focusedId).next().attr("id") == undefined) {

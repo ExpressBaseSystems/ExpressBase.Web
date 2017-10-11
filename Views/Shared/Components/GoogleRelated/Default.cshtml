@@ -1,0 +1,81 @@
+﻿@{ 
+
+}
+
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+<div id="map"></div>
+    <script>
+        var locations = @Html.Raw(ViewBag.data);
+        //var locations = [
+        //    ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+        //    ['Bondi Beach', -33.890542, 151.274856, 4],
+        //    ['Coogee Beach', -33.923036, 151.259052, 5],
+        //    ['Maroubra Beach', -33.950198, 151.259302, 1],
+        //    ['Cronulla Beach', -34.028249, 151.157507, 3]
+        //];
+        function initMap() {
+            alert(Math.floor(locations.length / 2));
+            console.log(locations);
+            var directionsDisplay;
+            var directionsService = new google.maps.DirectionsService();
+            directionsDisplay = new google.maps.DirectionsRenderer();
+            var mid = Math.floor(locations.length / 2);
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 14,
+                center: new google.maps.LatLng(locations[mid].lat, locations[mid].lon),
+               // mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+            directionsDisplay.setMap(map);
+            var request = {
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            var marker,i;
+            for (i = 0; i < locations.length; i++) {
+                var latlng = new google.maps.LatLng(locations[i].lat, locations[i].lon);
+                marker = new google.maps.Marker({
+                    position: latlng,
+                    map: map,
+                    label: "A",
+                });
+                if (i == 0) request.origin = marker.getPosition();
+                else if (i == locations.length - 1) request.destination = marker.getPosition();
+                else {
+                    if (!request.waypoints) request.waypoints = [];
+                    request.waypoints.push({
+                        location: marker.getPosition(),
+                        stopover: true
+                    });
+                }
+            }
+            directionsService.route(request, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(result);
+                }
+            });
+            //var marker = new google.maps.Marker({
+            //  position: uluru,
+            //  map: map,
+            //});
+            //var markers = locations.map(function (location, i) {
+            //    alert(location);
+            //    return new google.maps.Marker({
+            //        position: location,
+            //        label: "A",
+            //    });
+            //});
+
+            // Add a marker clusterer to manage the markers.
+            //var markerCluster = new MarkerClusterer(map, markers,
+            //    { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+        }
+    </script>
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh12bqSKCYb6sJ9EVzNkEyXEDZ__UA-TE&callback=initMap">
+    </script>
+

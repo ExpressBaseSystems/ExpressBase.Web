@@ -1,25 +1,60 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
 }
-<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
-<script src="~/js/splitWindow.js" type="text/javascript"></script>
-
-    
-
-<div class="container-fluid parent-div">
-    @{      
-        Html.RenderPartial("_PageheaderDev");
+<style>
+    .stat-bar {
+        width: 100%;
+        overflow-x: auto;
     }
-    <div class="row">
-        <div class="toolbar-com"><button class="btn" id="new"><i class="fa fa-plus" aria-hidden="true"></i></button> </div>
-    </div>
-    <div class="row" id="parent-div">      
+
+    .stat-container {
+        width: 300px;
+        display: inline-block;
+        margin-left: -3px;
+        font-family: Tahoma;
+    }
+
+    .stat-sub {
+        height: 100px;
+        width: 100%;
+    }
+
+    .line-left {
+        width: 33%;
+        border-top: 1px solid black;
+        height: 1px;
+        float: left;
+        margin-top: 16%
+    }
+
+    .stat-cir {
+        float: left;
+        width: 33%;
+        height: inherit;
+        border-radius: 50%;
+        border: 1px solid black;
+    }
+
+    .line-right {
+        width: 33%;
+        float: left;
+        border-top: 1px solid black;
+        height: 1px;
+        margin-top: 16%
+    }
+</style>
+<div class='stat-bar'>
+    <div class='stat-container'>
+        <div class='stat-sub'>
+
+        </div>
+        <div class='stat-sub' id='status'>
+            <div class='line-left'></div>
+            <div class='stat-cir'></div>
+            <div class='line-right'></div>
+        </div>
+        <div class='stat-sub'>
+
+        </div>
     </div>
 </div>
-
-<script>
-    $(function () {
-        var sw = new splitWindow("parent-div", "sidediv", "contBox", "pGrid");
-    });
-
-</script>

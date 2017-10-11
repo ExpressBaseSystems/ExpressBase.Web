@@ -38,7 +38,7 @@
             success: function (result) {
                 _container.html(result);
                 $.LoadingOverlay("hide");
-                $('#EbsideBar').toggle(300);
+                $('#EbsideBar').animate({ width: 'toggle' });
             }
         });
     }

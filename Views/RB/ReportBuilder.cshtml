@@ -216,7 +216,12 @@
         $('#calculated-fields').treed();
         $('#special-fields').treed();
         $('#other-fields').treed();
-        var uploader = imageUploader("modal-container");
+        var uploader = imageUploader({
+            Container: "modal-container",
+            Controller: "@ViewBag.wc",
+            IsTag: true,
+            IsMultiple:true
+        });
         DrawColTree = function (result) {
             $('#data-table-list').empty();
             $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");
@@ -238,17 +243,17 @@
                 }
             });
         }
-        
+
         if (@ViewBag.IsNew === true){
             var report = new RptBuilder(save, commit, @ViewBag.IsNew);
         }        //edit mode
         else if(@ViewBag.IsNew === false){
-            var editModeObj = @Html.Raw(EbSerializers.Json_Serialize(@ViewBag.Json));            
+            var editModeObj = @Html.Raw(EbSerializers.Json_Serialize(@ViewBag.Json));
             var parseObj = JSON.parse(editModeObj);
             //console.log(editModeObj);
             var report = new RptBuilder(save, commit, @ViewBag.IsNew, parseObj);
         }
-        @*var report = new RptBuilder('A4', save, commit, @ViewBag.IsNew);*@                   
+        @*var report = new RptBuilder('A4', save, commit, @ViewBag.IsNew);*@
             $("#Rptbgimg").change(function () {
                 setBackgroud(this);
             });

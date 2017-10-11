@@ -430,7 +430,7 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = email,
                     Password = "NIL",
-                    Meta = new Dictionary<string, string> { { "wc", "dc" }, { "cid", "expressbase" }, { "socialId", socialId } },
+                    Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", "expressbase" }, { "socialId", socialId } },
                     // UseTokenCookie = true
                 });
 

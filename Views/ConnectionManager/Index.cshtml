@@ -70,7 +70,7 @@
                 </div>
             }
             
-            @if (ViewBag.Connections.FilesDbConnection.FilesDB_url != null)
+            @*@if (ViewBag.Connections.FilesDbConnection.FilesDB_url != null)
             {
                 <div class="list-group">
                     <div class="input-group-btn">
@@ -79,7 +79,7 @@
                             <span class="glyphicon glyphicon-pencil"></span> Edit
                         </a>
                     </div>
-                    <div class="list-group-item">@ViewBag.Connections.FilesDBConnection.FilesDB_url.ToString()</div>
+                    <div class="list-group-item"><p>@ViewBag.Connections.FilesDBConnection.FilesDB_url</p></div>
                 </div>
             }
             else
@@ -92,14 +92,14 @@
                         </a>
                     </div>
                 </div>
-            }
+            }*@
 
             @if (ViewBag.Connections.SMTPConnection != null)
             {
                 <div class="list-group">
                     <div class="input-group-btn">
                         <div class="list-group-item-heading"><div class="h4">Email Account</div></div>
-                        <a href="/ConnectionManager/EditEmailAccount" class="btn btn-default btn-sm">
+                        <a href="/ConnectionManager/EditSMTP" class="btn btn-default btn-sm">
                             <span class="glyphicon glyphicon-pencil"></span> Edit
                         </a>
                     </div>
@@ -112,7 +112,7 @@
                 <div class="list-group">
                     <div class="input-group-btn">
                         <div class="list-group-item-heading"><div class="h4">Email Account</div><div class="h5">Not Yet Configured</div></div>
-                        <a href="/ConnectionManager/AddEmailAccount" class="btn btn-default btn-sm">
+                        <a href="/ConnectionManager/AddSMTP" class="btn btn-default btn-sm">
                             <span class="glyphicon glyphicon-plus"></span> Add
                         </a>
                     </div>

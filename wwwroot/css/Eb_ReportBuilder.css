@@ -583,3 +583,6 @@ margin: -4px;
 .dropped {
     z-index: 50;
 }
+.marked{
+    background-color:#d8f7f6;
+}

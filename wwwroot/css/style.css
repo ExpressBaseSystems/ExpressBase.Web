@@ -635,3 +635,14 @@ footer {
 .obj-list .list-group-item {
     padding: 5px 5px 5px 5px;
 }
+/*imageuploader*/
+#mdfooter .bootstrap-tagsinput {
+    width: 100%;
+}
+#mdfooter .bootstrap-tagsinput input {
+        float: left;
+}
+#mdfooter .bootstrap-tagsinput .tag {
+        float: left;
+        font-size:14px;
+}

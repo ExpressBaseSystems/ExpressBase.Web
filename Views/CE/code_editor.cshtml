@@ -23,13 +23,10 @@
 <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
 <script src="~/lib/codemirror/mode/xml/xml.js"></script>
 
-{
-
-}
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var MyDs = new DataSource('@ViewBag.Refid', '@ViewBag.ObjectName', @ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId',@Html.Raw(ds), '@ViewBag.Status');
+        var MyDs = new DataSource('@ViewBag.Refid', '@ViewBag.ObjectName', @ViewBag.IsNew, '@ViewBag.VersionNumber',@ViewBag.ObjType, '@ViewBag.FilterDialogId',@Html.Raw(ds), '@ViewBag.Status', '@ViewBag.cid');
 
         $("#loader").hide();
         $('#filterRun').on('hidden.bs.modal', function () {
@@ -62,7 +59,7 @@
             }
             else
             {
-                @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy });
+                @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy , _tags = ViewBag.Tags });
             }
         }
     </div>
@@ -72,7 +69,7 @@
         <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
     </ul>
     <div class="tab-content " id="versionTab">
-        <div id="code_edit0" class="tab-pane fade in active" data-id="new">
+        <div id="code_edit0" class="tab-pane fade in active code_edit" data-id="new">
             @*<div class="form-inline inner_toolbar" style="margin-bottom:0px;">
                     <div class="btn btn-group">
                         <div class="dropdown fdlist btn-group" id="fdlist0">

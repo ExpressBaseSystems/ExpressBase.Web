@@ -254,17 +254,18 @@ var Eb_PropertyGrid = function (id) {
 
     this.addToDD = function (obj) {
         var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
+        var _name = (obj.Name || obj.name);
         if ($(".pgCXEditor-bg").css("display") !== "none") {
             if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
-                $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
+                $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + _name + "'id='SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
                 $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
             }
         }
         if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
-            $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.Name + "'id='M_SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
+            $MainCtrlsDDCont.find("select").append("<option data-name = '" + _name + "'id='M_SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
             $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
         }
-        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', obj.Name);
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
     };
 
     this.removeFromDD = function (EbSid) {

@@ -1,4 +1,4 @@
-﻿.form-buider-cont {
+﻿body {
     --colorDDD: #dddddd;
     --sild1pxDDD: solid 1px var(--colorDDD);
 }
@@ -547,6 +547,7 @@
 .pgCXEditor-Cont .controls-dd-cont button:focus {
     background-color: white !important;
 }
+
 .pgTdName .fa-caret-right {
     font-size: 14px;
     margin-left: -4px;
@@ -558,3 +559,8 @@
         padding: 4px 4px;
     }
 
+.colTile .close {
+    font-size: 18px;
+    margin-top: -1px;
+    color: #000;
+}

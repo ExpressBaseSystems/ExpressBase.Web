@@ -105,6 +105,8 @@
         }
         else if (this.editor === 10)
             this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
+        if (this.editor === 9 || this.editor === 8)
+            this.movingObj = getObjByval(this.allCols, "name", el.id);
         else
             this.movingObj = null;
     };
@@ -287,7 +289,7 @@
     this.set9ColTiles = function (containerId, values) {
         $.each(values, function (i, control) {
             var name = (control.Name || control.name);
-            var type = control.$type.split(",")[0].split(".")[2];
+            var type = control.$type.split(",")[0].split(".").pop();
             if (!(control.Name || control.name))
                 var label = control.EbSid;
             var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
@@ -342,7 +344,7 @@
             this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1);
         }
         else if (this.editor === 9 || this.editor === 8) {
-            this.rowGrouping.splice(this.rowGrouping.indexOf($tile.attr("id")), 1);
+            this.rowGrouping.splice(this.rowGrouping.indexOf(getObjByval(this.rowGrouping, "name", $tile.attr("id"))), 1)[0]
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
     }.bind(this);
@@ -363,7 +365,7 @@
                 obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
         }
         else if (this.editor === 9 || this.editor === 10) {
-            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values, "name", id);////////////////
+            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
         }
         this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
     };

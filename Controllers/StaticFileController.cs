@@ -62,7 +62,7 @@ namespace ExpressBase.Web.Controllers
 
                 UploadFileRequest uploadFileRequest = new UploadFileRequest();
 
-                uploadFileRequest.MetaDataPair = new Dictionary<String, IEnumerable<string>>();
+                uploadFileRequest.MetaDataPair = new Dictionary<String, List<string>>();
 
                 uploadFileRequest.MetaDataPair.Add("Tags", Tags);
 

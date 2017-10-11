@@ -2,6 +2,7 @@
 using ExpressBase.Common.Connections;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -126,7 +127,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             EbFilesDbConnection FilesDB = new EbFilesDbConnection();
-            FilesDB.FilesDB_url = req["url"];
+            FilesDB.FilesDB_url =req["url"].ToString();
             var r = this.ServiceClient.Post<bool>(new ChangeFilesDBConnectionRequest { FilesDBConnection = FilesDB, IsNew = true });
             return Redirect("/ConnectionManager");
         }
@@ -136,7 +137,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             EbFilesDbConnection FilesDB = new EbFilesDbConnection();
-            FilesDB.FilesDB_url = req["url"];
+            FilesDB.FilesDB_url = req["url"].ToString();
             var r = this.ServiceClient.Post<bool>(new ChangeFilesDBConnectionRequest { FilesDBConnection = FilesDB, IsNew = false });
             return Redirect("/ConnectionManager");
         }

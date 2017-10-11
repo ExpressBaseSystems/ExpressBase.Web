@@ -85,8 +85,8 @@ var Eb_PropertyGrid = function (id) {
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 15) {  //  If expandable
-            valueHTML = '<input type="text" for="' + name + '" readonly value="' + this.getExpandedValue(value) + '" style=" width: calc(100% - 26px); direction: rtl;" />';
-            valueHTML += "<input type='hidden' value='" + value + "' id='" + elemId + "'>";
+            valueHTML = '<input type="text" for="' + name + '" readonly value="' + this.getExpandedValue(value) + '" style="width:100%; direction: rtl;" />';
+            valueHTML += "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
             var subRow_html = "";
             var _meta = meta.submeta;
             var _obj = value;
@@ -96,21 +96,26 @@ var Eb_PropertyGrid = function (id) {
                 if (CurMeta)
                     subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
             }.bind(this));
-
-
+            var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
             if (this.getValueFuncs) {
                 this.getValueFuncs[name] = function () {
-                    return;/////////////
-                };
-            }///////////
-            // Default is textbox
-        } else {
+                    var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                    $.each($subRows, function (i, row) {
+                        var key = $(row).attr("name").slice(0, -2);
+                        var val = $(row).find(".pgTdval input").val();
+                        value[key] = val;
+                    });
+                    $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
+                    return JSON.parse($('#' + elemId).val());
+                }.bind(this);
+            }   
+        } else {    // Default is textbox
             valueHTML = 'editor Not implemented';
         }
         if (meta.OnChangeExec)
             this.OnChangeExec[name] = meta.OnChangeExec;
         if (SubtypeOf) {
-            NBSP = "&nbsp;&nbsp;";
+            NBSP = "&nbsp;&nbsp;&nbsp;";
             subtypeOfAttr = 'subtype-of="' + SubtypeOf + '"';
         }
         if (meta.IsRequired)

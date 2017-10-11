@@ -15,6 +15,7 @@ var Eb_PropertyGrid = function (id) {
     this.PropertyChanged = function (obj) { };
     this.DD_onChange = function (e) { };
     this.nameChanged = function (e) { };
+    this.Close = function (e) { };
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -103,7 +104,7 @@ var Eb_PropertyGrid = function (id) {
 
             if (this.getValueFuncs) {
                 this.getValueFuncs[name] = function () {
-                    return ;/////////////
+                    return;/////////////
                 };
             }///////////
             // Default is textbox
@@ -283,12 +284,18 @@ var Eb_PropertyGrid = function (id) {
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
     };
 
+    this.CloseFn = function (e) {
+        alert();
+        this.Close();
+    };
+
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-times" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
+        $("#" + this.wraperId + " .pgHead").on("click", ".icon-cont", this.CloseFn.bind(this));
 
         this.CXVE = new Eb_pgCXVE(this);
 

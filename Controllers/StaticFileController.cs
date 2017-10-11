@@ -17,13 +17,13 @@ namespace ExpressBase.Web.Controllers
         public StaticFileController(IServiceClient _ssclient) : base(_ssclient) { }
 
         // GET: /<controller>/
-        [HttpGet("static/{tenantId}/{filename}")]
-        public FileStream GetFile(string tenantId, string filename)
+        [HttpGet("static/{tenantId}/{bucketname}/{filename}")]
+        public FileStream GetFile(string tenantId, string filename, string bucketname)
         {
-            string sFilePath = string.Format("StaticFiles/{0}/{1}", tenantId, filename);
+            string sFilePath = string.Format("StaticFiles/{0}/{1}/{2}", tenantId, bucketname, filename);
             if (!System.IO.File.Exists(sFilePath))
             {
-                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileName = filename });
+                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileName = filename, BucketName = bucketname });
                 EbFile.Bytea_ToFile(fileByte, sFilePath);
             }
 
@@ -40,13 +40,33 @@ namespace ExpressBase.Web.Controllers
         //}
 
         [HttpPost]
-        public async Task<JsonResult> UploadFileAsync(int i, string tags)
+        public async Task<JsonResult> UploadFileAsync(int i)
         {
             JsonResult resp = null;
 
             try
             {
                 var req = this.HttpContext.Request.Form;
+
+                List<string> Tags = new List<string>();
+
+                //var tagarray = req["tags"].ToString().Split(',');
+                string reqtag = "unnitest,unni,test";
+
+                var tagarray = reqtag.ToString().Split(',');
+
+                foreach (string a in tagarray)
+                {
+                    Tags.Add(a);
+                }
+
+                UploadFileRequest uploadFileRequest = new UploadFileRequest();
+
+                uploadFileRequest.MetaDataPair = new Dictionary<String, List<string>>();
+
+                uploadFileRequest.MetaDataPair.Add("Tags", Tags);
+
+                uploadFileRequest.IsAsync = false;
 
                 foreach (var formFile in req.Files)
                 {
@@ -57,25 +77,34 @@ namespace ExpressBase.Web.Controllers
                         using (var memoryStream = new MemoryStream())
                         {
                             await formFile.CopyToAsync(memoryStream);
+
                             memoryStream.Seek(0, SeekOrigin.Begin);
+
                             myFileContent = new byte[memoryStream.Length];
+
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
 
-                            UploadFileRequest uploadFileRequest = new UploadFileRequest();
-
-                            uploadFileRequest.IsAsync = false;
-                            uploadFileRequest.FileName = formFile.FileName;
                             uploadFileRequest.ByteArray = myFileContent;
-
-                            uploadFileRequest.MetaDataPair = new Dictionary<String, String>();
-                            uploadFileRequest.MetaDataPair.Add("section", "upload-26");
-                            uploadFileRequest.MetaDataPair.Add("type", "Unni-image");
-                            uploadFileRequest.MetaDataPair.Add("tags", tags);
-
-                            string Id = this.ServiceClient.Post<string>(uploadFileRequest);
-                            string url =string.Format("<img src='/static/{0}/{1}.jpg' style='width: auto; height:auto; max-width:100%;max-height:100%;'/>", ViewBag.cid,Id);
-                            resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview =  url, objId = Id });
                         }
+
+                        uploadFileRequest.FileName = formFile.FileName;
+
+                        if (uploadFileRequest.FileName.EndsWith("jpg"))
+                            uploadFileRequest.BucketName = "images";
+
+                        string url;
+
+                        string Id = this.ServiceClient.Post<string>(uploadFileRequest);
+
+                        if (uploadFileRequest.FileName.EndsWith("jpg"))
+                            url = string.Format("<img src='/static/{0}/{1}/{2}.jpg' style='width: auto; height:auto; max-width:100%;max-height:100%;'/>", ViewBag.cid, uploadFileRequest.BucketName, Id);
+
+                        else if (uploadFileRequest.FileName.EndsWith("pdf"))
+                            url = string.Format("<img src='/static/{0}/{1}/{2}.pdf'>", ViewBag.cid, uploadFileRequest.BucketName, Id);
+                        else
+                            url = string.Empty;
+
+                        resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });
                     }
                 }
             }
@@ -91,10 +120,19 @@ namespace ExpressBase.Web.Controllers
         public IActionResult FindFilesByTags(int i)
         {
             FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
-            findFilesByTagRequest.Filter = new KeyValuePair<string, string>("metadata.type", "Unni-image");
+
+            List<string> tags = new List<string>()
+            {
+                "unni",
+                "test"
+            };
+
+            findFilesByTagRequest.Filter = new KeyValuePair<string, List<string>>("metadata.Tags", tags);
+
             var filesListJson = this.ServiceClient.Post(findFilesByTagRequest);
 
             List<string> files = new List<string>();
+
             foreach (var file in filesListJson.FileList)
             {
                 files.Add(file.ObjectId);

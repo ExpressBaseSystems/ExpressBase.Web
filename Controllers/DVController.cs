@@ -409,6 +409,11 @@ namespace ExpressBase.Web.Controllers
             return EbSerializers.Json_Serialize(ViewBag.dvObject);
         }
 
+        public IActionResult dvgoogle()
+        {
+            return ViewComponent("GoogleRelated");
+        }
+
         //public PartialViewResult DataVisualisation(int dsid)
         //{
         //    var resultlist = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = dsid, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, TenantAccountId = ViewBag.cid });

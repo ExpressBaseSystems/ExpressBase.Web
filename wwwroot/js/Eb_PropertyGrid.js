@@ -15,6 +15,7 @@ var Eb_PropertyGrid = function (id) {
     this.PropertyChanged = function (obj) { };
     this.DD_onChange = function (e) { };
     this.nameChanged = function (e) { };
+    this.Close = function (e) { };
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -25,10 +26,15 @@ var Eb_PropertyGrid = function (id) {
         return this.PropsObj;
     };
 
-    this.getPropertyRowHtml = function (name, value, meta, options) {
+    this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf) {
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.wraperId + name;
+        var subRow_html = '';
+        var subtypeOfAttr = '';
+        var req_html = '';
+        var NBSP = '';
+        var arrow = "&nbsp;";
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
@@ -77,20 +83,55 @@ var Eb_PropertyGrid = function (id) {
         else if (type === 13) {  //  If Object Selector editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
+        else if (type === 15) {  //  If expandable
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + this.getExpandedValue(value) + '" style=" width: calc(100% - 26px); direction: rtl;" />';
+            var subRow_html = "";
+            var _meta = meta.options;
+            var _obj = value.$values;
+            arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
+
+            $.each(_meta, function (i, val) {
+                if (typeof _meta[i] === typeof "")
+                    _meta[i] = JSON.parse(_meta[i].replace('"', '\"'));
+            });
+
+            $.each(_obj, function (key, val) {
+                var CurMeta = getObjByval(_meta, "name", key);
+                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+            }.bind(this));
+
+
+            if (this.getValueFuncs) {
+                this.getValueFuncs[name] = function () {
+                    return;/////////////
+                };
+            }///////////
             // Default is textbox
         } else {
             valueHTML = 'editor Not implemented';
         }
         if (meta.OnChangeExec)
             this.OnChangeExec[name] = meta.OnChangeExec;
-        //     if (typeof meta.description === 'string' && meta.description &&
-        //(typeof meta.showHelp === 'undefined' || meta.showHelp)) {
-        //         this.displayName += '<span class="pgTooltip" title="' + meta.description + '">' + options.helpHtml + '</span>';
-        //     }
-        var req_html = '';
+        if (SubtypeOf) {
+            NBSP = "&nbsp;&nbsp;";
+            subtypeOfAttr = 'subtype-of="' + SubtypeOf + '"';
+        }
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
-        return '<tr class="pgRow" name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>';
+
+        return '<tr class="pgRow" ' + subtypeOfAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+    };
+
+    this.getExpandedValue = function (value) {
+        if (typeof value === typeof "")
+            return value;
+        var pairs = JSON.stringify(value.$values).split(",");
+        values = [];
+        $.each(pairs, function (i, pair) {
+            values.push(pair.split('":')[1].replace("}", ""));
+        });
+        return values;
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
@@ -243,12 +284,18 @@ var Eb_PropertyGrid = function (id) {
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
     };
 
+    this.CloseFn = function (e) {
+        alert();
+        this.Close();
+    };
+
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-times" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
+        $("#" + this.wraperId + " .pgHead").on("click", ".icon-cont", this.CloseFn.bind(this));
 
         this.CXVE = new Eb_pgCXVE(this);
 
@@ -269,6 +316,11 @@ var Eb_PropertyGrid = function (id) {
         this.IsSortByGroup = !this.IsSortByGroup;
         this.InitPG();
         $("#" + this.wraperId + " [name=sort]").toggle();
+    };
+
+    this.ExpandToggle = function (e) {
+        var subtype = $(e.target).closest("tr").attr("name").slice(0, -2);
+        $("#" + this.wraperId + " [subtype-of=" + subtype + "]").toggle(200);
     };
 
     this.InitPG = function () {
@@ -296,6 +348,7 @@ var Eb_PropertyGrid = function (id) {
 
         $("#" + this.wraperId + " .propgrid-table-cont .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
+        $('#' + this.wraperId + "_propGrid" + ' table tr').find(".fa-caret-right").click(this.ExpandToggle.bind(this));
         this.addToDD(this.PropsObj);
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();

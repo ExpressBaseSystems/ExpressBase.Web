@@ -547,4 +547,8 @@
 .pgCXEditor-Cont .controls-dd-cont button:focus {
     background-color: white !important;
 }
+.pgTdName .fa-caret-right {
+    font-size: 14px;
+    padding-right: 2px;
+}
 

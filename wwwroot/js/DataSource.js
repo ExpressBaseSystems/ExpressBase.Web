@@ -310,8 +310,9 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
 
         $('#confirm_stat_change' + tabNum).off("click").on("click", this.ChangeStatus.bind(this));
 
+        var cid = this.Cid;
         $.post("../CE/GetStatusHistory", { _refid: this.ver_Refid }, function (data) {
-            $('#statwindow' + tabNum).remove();
+            $('#statwindow' + tabNum).empty();
             $.each(data, function (i, obj) {
                 if (obj.status === "Live" || obj.status === "Offline" || obj.status === "Obsolete") {
                     $('#statwindow' + tabNum).append(
@@ -345,8 +346,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
                         "<div class='stat-sub'>" +
                         obj.commitUname + "</br>" + obj.commitTs + "</br>" +
                         "<div class='userimg' >" +
-                         "<img src='http://localhost:5000/static/" + this.Cid +"/"+obj.profileImage +"' style='width:30px'/>" +
-
+                        "<img src='../static/" + cid +"/"+obj.profileImage +".jpg"+"' style='width:30px'/>" +
                         "</div>");
                 }
                 $('#stat' + i).on('hover', function () {

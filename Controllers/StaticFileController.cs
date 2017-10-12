@@ -40,25 +40,15 @@ namespace ExpressBase.Web.Controllers
         //}
 
         [HttpPost]
-        public async Task<JsonResult> UploadFileAsync(int i)
+        public async Task<JsonResult> UploadFileAsync(int i,string tags)
         {
             JsonResult resp = null;
 
             try
             {
-                var req = this.HttpContext.Request.Form;
-
-                List<string> Tags = new List<string>();
-                //var tagarray = req["tags"].ToString().Split(',');
-                string reqtag = "devres,image";
-
-                var tagarray = reqtag.ToString().Split(',');
-
-                foreach (string a in tagarray)
-                {
-                    Tags.Add(a);
-                }
-
+                var req = this.HttpContext.Request.Form;                               
+                var tagarray = tags.ToString().Split(',');
+                List<string> Tags = new List<string>(tagarray);
                 UploadFileRequest uploadFileRequest = new UploadFileRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
                 uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
@@ -88,7 +78,7 @@ namespace ExpressBase.Web.Controllers
                         string url;
 
                         if ((int)uploadFileRequest.FileDetails.ContentType < 100 && uploadFileRequest.FileDetails.ContentType != 0)
-                            url = string.Format("<img src='/static/{0}.{1}' style='width: auto; height:auto; max-width:100%;max-height:100%;'/>", Id, Enum.GetName(typeof(FileTypes), uploadFileRequest.FileDetails.ContentType));
+                            url = string.Format("http://eb_roby_dev.localhost:5000/static/{0}.{1}", Id, Enum.GetName(typeof(FileTypes), uploadFileRequest.FileDetails.ContentType));
 
                         else if ((int)uploadFileRequest.FileDetails.ContentType > 100)
                             url = string.Format("{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, Enum.GetName(typeof(FileTypes), uploadFileRequest.FileDetails.ContentType));
@@ -110,16 +100,9 @@ namespace ExpressBase.Web.Controllers
 
         public List<FileMeta> FindFilesByTags(int i, string tags, string bucketname)
         {
-            tags = "devres,image";
             FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
-
-            List<string> tagList = new List<string>();
-
             var tagCollection = tags.Split(',');
-            foreach (string tag in tagCollection)
-            {
-                tagList.Add(tag);
-            }
+            List<string> tagList = new List<string>(tagCollection);
             bucketname = "images";
 
             findFilesByTagRequest.Filter = new KeyValuePair<string, List<string>>("metadata.Tags", tagList);

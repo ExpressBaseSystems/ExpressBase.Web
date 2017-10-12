@@ -86,13 +86,13 @@ td.resizer {
 }
 
 .dataTables_scrollHead {
-    padding-bottom: 250px;
-    margin-bottom: -250px;
+    padding-bottom: 1px;
+    margin-bottom: -1px;
 }
 
 .dataTables_scrollFoot {
-    padding-bottom: 250px;
-    margin-bottom: -250px;
+    padding-bottom: 1px;
+    margin-bottom: -1px;
 }
 
 .dataTables_processing { /*margin-top: 30%!important;*/
@@ -166,11 +166,10 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
 }
 
 .columnDrag {
-    margin: 0px 2px;
+    margin: 3px 1px;
     padding: 2px 5px;
     width: auto;
     height: 25px;
-    margin-top: 2px;
 }
 
 .noPadding {

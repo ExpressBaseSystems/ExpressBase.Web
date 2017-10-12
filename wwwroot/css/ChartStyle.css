@@ -1,0 +1,20 @@
+﻿
+
+
+.tag-cont {
+    height: 573px;
+}
+
+.tag-wraper {
+    border: solid 1px #eee;
+    height:286px;
+    width:100%;
+}
+.tag-scroll {
+    overflow-y: auto;
+    height: 255px;
+}
+
+.tag-cont  .colTile:hover{
+    cursor:move;
+}

@@ -20,11 +20,14 @@ var DvContainerObj = function (settings) {
         $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         //$("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
         $("#fd_toggle").off("click").on("click", this.ToggleParamDiv.bind(this));
+        $("#Settings").off("click").on("click", this.TogglePPGrid.bind(this));
     };
 
 
     this.btnGoClick = function () {
         $("#fd_toggle").css("display", "inline");
+        $("#Settings").css("display", "inline");
+        $("#Save_btn").css("display", "inline");
         this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
         console.log(this.dvcol[focusedId]);
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
@@ -192,6 +195,7 @@ var DvContainerObj = function (settings) {
     };
 
     this.saveSettings = function () {
+        $.LoadingOverlay("show");
         if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1)
             $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvid, type: "TableVisualization" }, this.saveSuccess.bind(this));
         else
@@ -199,15 +203,25 @@ var DvContainerObj = function (settings) {
     };
 
     this.saveSuccess = function () {
+        $.LoadingOverlay("hide");
         alert("Success!!!!!!!");
     }
 
     this.ToggleParamDiv = function () {
         $("#" + focusedId).children(".fd").toggle();
         if ($("#" + focusedId).children(".fd").css("display") === "none")
-            $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-10").addClass("col-md-12");
+            $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-8").addClass("col-md-10");
         else
-            $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-12").addClass("col-md-10");
+            $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-10").addClass("col-md-8");
+
+    };
+
+    this.TogglePPGrid = function () {
+        $("#ppgrid").toggle();
+        if ($("#ppgrid").css("display") === "none")
+            $($("#" + focusedId).children()[2]).removeClass("col-md-10").addClass("col-md-12");
+        else
+            $($("#" + focusedId).children()[2]).removeClass("col-md-12").addClass("col-md-10");
 
     };
 

@@ -17,13 +17,13 @@ namespace ExpressBase.Web.Controllers
         public StaticFileController(IServiceClient _ssclient) : base(_ssclient) { }
 
         // GET: /<controller>/
-        [HttpGet("static/{tenantId}/{bucketname}/{filename}")]
-        public FileStream GetFile(string tenantId, string filename, string bucketname)
+        [HttpGet("static/{bucketname}/{filename}")]
+        public FileStream GetFile(string filename, string bucketname)
         {
-            string sFilePath = string.Format("StaticFiles/{0}/{1}/{2}", tenantId, bucketname, filename);
+            string sFilePath = string.Format("StaticFiles/{0}/{1}/{2}", ViewBag.cid, bucketname, filename);
             if (!System.IO.File.Exists(sFilePath))
             {
-                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileName = filename, BucketName = bucketname });
+                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename }, BucketName = bucketname });
                 EbFile.Bytea_ToFile(fileByte, sFilePath);
             }
 
@@ -50,8 +50,9 @@ namespace ExpressBase.Web.Controllers
 
                 List<string> Tags = new List<string>();
 
+                List<string> ContentType = new List<string>();
                 //var tagarray = req["tags"].ToString().Split(',');
-                string reqtag = "unnitest,unni,test";
+                string reqtag = "devres,image";
 
                 var tagarray = reqtag.ToString().Split(',');
 
@@ -61,11 +62,9 @@ namespace ExpressBase.Web.Controllers
                 }
 
                 UploadFileRequest uploadFileRequest = new UploadFileRequest();
-
-                uploadFileRequest.MetaDataPair = new Dictionary<String, List<string>>();
-
-                uploadFileRequest.MetaDataPair.Add("Tags", Tags);
-
+                uploadFileRequest.FileDetails = new FileMeta();
+                uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
+                uploadFileRequest.FileDetails.MetaDataDictionary.Add("Tags", Tags);
                 uploadFileRequest.IsAsync = false;
 
                 foreach (var formFile in req.Files)
@@ -87,23 +86,46 @@ namespace ExpressBase.Web.Controllers
                             uploadFileRequest.ByteArray = myFileContent;
                         }
 
-                        uploadFileRequest.FileName = formFile.FileName;
+                        
+                        ContentType.Add(formFile.FileName.Split('.')[1].ToString());
 
-                        if (uploadFileRequest.FileName.EndsWith("jpg"))
-                            uploadFileRequest.BucketName = "images";
+                        uploadFileRequest.FileDetails.FileName = formFile.FileName;
+                        uploadFileRequest.FileDetails.MetaDataDictionary.Add("ContentType", ContentType);
 
-                        string url;
+                        foreach (ImageTypes type in Enum.GetValues(typeof(ImageTypes)))
+                        {
+                            if (type.ToString() == ContentType[0])
+                            {
+                                uploadFileRequest.FileDetails.ContentType = (int)type;
+                                uploadFileRequest.BucketName = "images";
+                                break;
+                            }
+                        }
+
+                        foreach (DocTypes type in Enum.GetValues(typeof(DocTypes)))
+                        {
+                            if (type.ToString() == ContentType[0])
+                            {
+                                uploadFileRequest.FileDetails.ContentType = (int)type;
+                                uploadFileRequest.BucketName = "docs";
+                                break;
+                            }
+                        }
+
+                        if (uploadFileRequest.BucketName == string.Empty)
+                            uploadFileRequest.BucketName = "files";
 
                         string Id = this.ServiceClient.Post<string>(uploadFileRequest);
+                        string url;
 
-                        if (uploadFileRequest.FileName.EndsWith("jpg"))
-                            url = string.Format("<img src='/static/{0}/{1}/{2}.jpg' style='width: auto; height:auto; max-width:100%;max-height:100%;'/>", ViewBag.cid, uploadFileRequest.BucketName, Id);
+                        if (uploadFileRequest.FileDetails.ContentType < 100 && uploadFileRequest.FileDetails.ContentType != 0)
+                            url = string.Format("<img src='/static/{0}/{1}.{2}' style='width: auto; height:auto; max-width:100%;max-height:100%;'/>", uploadFileRequest.BucketName, Id, Enum.GetName(typeof(FileTypes), uploadFileRequest.FileDetails.ContentType));
 
-                        else if (uploadFileRequest.FileName.EndsWith("pdf"))
-                            url = string.Format("<img src='/static/{0}/{1}/{2}.pdf'>", ViewBag.cid, uploadFileRequest.BucketName, Id);
+                        else if (uploadFileRequest.FileDetails.ContentType > 100)
+                            url = string.Format("{0}.localhost:5000/static/{1}/{2}.{3}", ViewBag.cid,uploadFileRequest.BucketName, Id, Enum.GetName(typeof(FileTypes), uploadFileRequest.FileDetails.ContentType));
+
                         else
-                            url = string.Empty;
-
+                            url = "";
                         resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });
                     }
                 }
@@ -116,30 +138,55 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet]
-        public IActionResult FindFilesByTags(int i)
+
+        public List<FileMeta> FindFilesByTags(int i, string tags, string bucketname)
         {
+            tags = "devres,image";
             FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
 
-            List<string> tags = new List<string>()
+            List<string> tagList = new List<string>();
+
+            var tagCollection = tags.Split(',');
+            foreach (string tag in tagCollection)
             {
-                "unni",
-                "test"
-            };
-
-            findFilesByTagRequest.Filter = new KeyValuePair<string, List<string>>("metadata.Tags", tags);
-
-            var filesListJson = this.ServiceClient.Post(findFilesByTagRequest);
-
-            List<string> files = new List<string>();
-
-            foreach (var file in filesListJson.FileList)
-            {
-                files.Add(file.ObjectId);
+                tagList.Add(tag);
             }
+            bucketname = "images";
 
-            ViewBag.Ids = files;
-            return View();
+            findFilesByTagRequest.Filter = new KeyValuePair<string, List<string>>("metadata.Tags", tagList);
+            findFilesByTagRequest.BucketName = bucketname;
+
+            List<FileMeta> FileInfoList = new List<FileMeta>(); 
+
+            FileInfoList = this.ServiceClient.Post(findFilesByTagRequest);
+            
+            return FileInfoList;
         }
+
+        //[HttpGet]
+        //public IActionResult FindFilesByTags(int i)
+        //{
+        //    FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
+
+        //    List<string> tags = new List<string>()
+        //    {
+        //        "unni",
+        //        "test"
+        //    };
+
+        //    findFilesByTagRequest.Filter = new KeyValuePair<string, List<string>>("metadata.Tags", tags);
+
+        //    var filesListJson = this.ServiceClient.Post(findFilesByTagRequest);
+
+        //    List<string> files = new List<string>();
+
+        //    foreach (var file in filesListJson.FileList)
+        //    {
+        //        files.Add(file.ObjectId);
+        //    }
+
+        //    ViewBag.Ids = files;
+        //    return View();
+        //}
     }
 }

@@ -13,7 +13,7 @@
 #parent-div .sub-windows {
     background-color: white;
     float: none;
-    border: 1px solid #808080;
+    //border: 1px solid #808080;
     display: inline-block;
     height: inherit;
     width: 100%;
@@ -27,12 +27,16 @@
 
 #parent-div .fd {
     background-color: white;
-    height: 582px;
-    border-right: 1px solid;
+    height: inherit;
+    //border-right: 1px solid;
 }
 
 .no-padd {
     padding: 0;
+}
+
+.padd-2 {
+    padding: 4px;
 }
 
 .toolbar-com {
@@ -49,13 +53,13 @@
 #parent-div .cont-wnd {
     overflow-x: scroll;
     white-space: nowrap;
-    height: 582px;
+    height: inherit;
     overflow-y: hidden;
 }
 
 .pg {
     background-color: white;
-    height: 582px;
+    height: inherit;
     border-left: 1px solid;
     z-index: 1000;
 }

@@ -17,6 +17,7 @@ using ExpressBase.Data;
 using System.Text.RegularExpressions;
 using System.Collections;
 using ServiceStack.Redis;
+using ExpressBase.Security;
 
 
 
@@ -37,7 +38,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult ProfileSetup()
         {
-           
+            User _user = new User();
+            _user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+            ViewBag.ImgSrc = _user.Proimg;
             return View();
         }
 

@@ -52,7 +52,6 @@ var Eb_PropertyGrid = function (id) {
         }
         else if (type === 3) {    // If color use color picker 
             valueHTML = '<input type="color" id="' + elemId + '" value="' + value + '" style="width:100%; height: 21px;" />';
-            if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
@@ -60,12 +59,10 @@ var Eb_PropertyGrid = function (id) {
         }
         else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
-            if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 6) {    //  If date&time date
             valueHTML = '<input type="date" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
-            if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type > 6 && type < 11) {    //  If collection editor
@@ -85,36 +82,35 @@ var Eb_PropertyGrid = function (id) {
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 15) {  //  If expandable
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + this.getExpandedValue(value) + '" style=" width: calc(100% - 26px); direction: rtl;" />';
+            valueHTML = '<input type="text" for="' + name + '" readonly value="' + this.getExpandedValue(value) + '" style="width:100%; direction: rtl;" />';
+            valueHTML += "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
             var subRow_html = "";
-            var _meta = meta.options;
-            var _obj = value.$values;
+            var _meta = meta.submeta;
+            var _obj = value;
             arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
-
-            $.each(_meta, function (i, val) {
-                if (typeof _meta[i] === typeof "")
-                    _meta[i] = JSON.parse(_meta[i].replace('"', '\"'));
-            });
-
             $.each(_obj, function (key, val) {
                 var CurMeta = getObjByval(_meta, "name", key);
-                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+                if (CurMeta)
+                    subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
             }.bind(this));
-
-
-            if (this.getValueFuncs) {
+            var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                 this.getValueFuncs[name] = function () {
-                    return;/////////////
-                };
-            }///////////
-            // Default is textbox
-        } else {
+                    var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                    $.each($subRows, function (i, row) {
+                        var key = $(row).attr("name").slice(0, -2);
+                        var val = $(row).find(".pgTdval input").val();
+                        value[key] = val;
+                    });
+                    $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
+                    return JSON.parse($('#' + elemId).val());
+                }.bind(this);
+        } else {    // Default is textbox
             valueHTML = 'editor Not implemented';
         }
         if (meta.OnChangeExec)
             this.OnChangeExec[name] = meta.OnChangeExec;
         if (SubtypeOf) {
-            NBSP = "&nbsp;&nbsp;";
+            NBSP = "&nbsp;&nbsp;&nbsp;";
             subtypeOfAttr = 'subtype-of="' + SubtypeOf + '"';
         }
         if (meta.IsRequired)
@@ -123,13 +119,11 @@ var Eb_PropertyGrid = function (id) {
         return '<tr class="pgRow" ' + subtypeOfAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
-    this.getExpandedValue = function (value) {
-        if (typeof value === typeof "")
-            return value;
-        var pairs = JSON.stringify(value.$values).split(",");
+    this.getExpandedValue = function (obj) {
         values = [];
-        $.each(pairs, function (i, pair) {
-            values.push(pair.split('":')[1].replace("}", ""));
+        $.each(obj, function (key, val) {
+            if (key !== "$type")
+                values.push(val);
         });
         return values;
     };
@@ -260,17 +254,18 @@ var Eb_PropertyGrid = function (id) {
 
     this.addToDD = function (obj) {
         var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
+        var _name = (obj.Name || obj.name);
         if ($(".pgCXEditor-bg").css("display") !== "none") {
             if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
-                $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.Name + "'id='SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
+                $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + _name + "'id='SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
                 $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
             }
         }
         if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
-            $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.Name + "'id='M_SelOpt" + obj.Name + this.wraperId + "'>" + obj.Name + "</option>");
+            $MainCtrlsDDCont.find("select").append("<option data-name = '" + _name + "'id='M_SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
             $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
         }
-        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', obj.Name);
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
     };
 
     this.removeFromDD = function (EbSid) {
@@ -390,6 +385,5 @@ var Eb_PropertyGrid = function (id) {
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         this.InitPG();
     };
-
     this.init();
 };

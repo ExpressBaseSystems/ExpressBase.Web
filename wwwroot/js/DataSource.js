@@ -8,7 +8,6 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     this.SaveBtn;
     this.Versions;
     this.ver_Refid = refid;
-    this.HistoryVerNum;
     this.changeLog;
     this.commitUname;
     this.commitTs;
@@ -31,14 +30,10 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         this.CommitBtn = $('#commit');
 
         $('#ver_his').off("click").on("click", this.VerHistory.bind(this));
-        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
         $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
-        //  $('#fd' + tabNum).off("change").on("change", this.Clear_fd.bind(this));
-        // $("#fdlist" + tabNum).off("click").on("click", this.Load_filter_dialog_list.bind(this));
         $(".selectpicker").selectpicker();
-        //  $('#fd' + tabNum).off("loaded.bs.select").on("loaded.bs.select", this.SetFdInit(this, this.FilterDId));
         $('#compare').off('click').on('click', this.Compare.bind(this));
         $('#status').off('click').on('click', this.StatusPage.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
@@ -76,46 +71,8 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         $('#versionNav').append(navitem);
         $('#versionTab').append(tabitem);
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
     }
-
-    //this.SetFdInit = function (me, fdId) {
-    //    var val = "Select Filter Dialog";
-    //    if (this.Is_New === false && fdId !== "") {
-    //        val = this.FilterDId;
-    //    }
-    //    this.Load_filter_dialog_list(val);
-    //}
-
-    //this.Clear_fd = function () {
-    //    var getNav = $("#versionNav li.active a").attr("href");
-    //    $(getNav + ' #inner_well' + tabNum).children().remove();
-    //    $('#execute' + tabNum).addClass('collapsed');
-    //};
-
-    //this.Load_filter_dialog_list = function (val) {
-    //    var getNav = $("#versionNav li.active a").attr("href");
-    //    if (!$(getNav + ' #fdlist' + tabNum + ' .bootstrap-select').hasClass('open')) {
-    //        $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
-    //        $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
-    //        $('#loader_fd' + tabNum).show();
-    //        $.ajax({
-    //            url: "../CE/GetObjects_refid_dict",
-    //            type: 'post',
-    //            data: { obj_type: 12 },
-    //            success: function (data) {
-    //                $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).children().remove();
-    //                $(getNav + ' #fdlist' + tabNum + ' #fd' + tabNum).append("<option value='Select Filter Dialog' data-tokens='Select Filter Dialog'>Select Filter Dialog</option>");
-    //                $.each(data, function (i, obj) {
-    //                    $(getNav + ' #fd' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.refId + "'>" + obj.name + "</option>")
-    //                });
-    //                $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('refresh');
-    //                $(getNav + ' #fdlist' + tabNum + ' .selectpicker').selectpicker('val', val);
-    //                $('#loader_fd' + tabNum).hide();
-    //            }
-    //        });
-
-    //    }
-    //}
 
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");
@@ -157,7 +114,6 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         $(window).scrollTop(scrollPos);
 
         this.ShowVersions();
-
     }
 
     this.ShowVersions = function () {
@@ -179,7 +135,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         $.LoadingOverlay("show");
         tabNum++;
         this.ver_Refid = $(e.target).attr("data-id");
-        this.HistoryVerNum = $(e.target).attr("data-verNum");
+        this.Version_num = $(e.target).attr("data-verNum");
         //this.changeLog = $(e.target).attr("data-changeLog");
         // this.commitUname = $(e.target).attr("data-commitUname");
         //this.commitTs = $(e.target).attr("data-commitTs");
@@ -194,12 +150,12 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
 
     this.VersionCode_success = function (data) {
         this.Current_obj = data;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.HistoryVerNum + "'>v." + this.HistoryVerNum + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.Version_num + "'>v." + this.Version_num + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
         $('#vernav' + tabNum).append(
             " <div>" +
-            "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + this.Current_obj.Sql + "</textarea>" +
+            "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + atob(this.Current_obj.sql) + "</textarea>" +
             "</div>");
         window.editor1 = CodeMirror.fromTextArea(document.getElementById("vercode" + tabNum), {
             mode: "text/x-sql",
@@ -266,11 +222,12 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     }
 
     this.StatusPage = function () {
+        $.LoadingOverlay("show");
         tabNum++;
-        var getNav = $("#versionNav li.active a").attr("href");
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> status" + this.Version_num + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> status " + this.Version_num + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
+        var getNav = $("#versionNav li.active a").attr("href");
         $('#vernav' + tabNum).append("<div class=' well col-md-12'>" +
             "<div class='col-md-2 col-md-offset-1'>Current Status :" + this.curr_status + "<select class='selectpicker btn' id='status_drpdwn" + tabNum + "'></select></div>" +
             "<div class='col-md-6' style='display:inline'><p>Changelog</p><textarea id='StatChlog" + tabNum + "' class='StatChlog' style='width:100%'></textarea></div>" +
@@ -280,23 +237,23 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
 
         $('#status_drpdwn' + tabNum).append("<option value='Select Status'>Select Status</option>");
         if (this.curr_status === "Development") {
-            $('#status_drpdwn' + tabNum).append("<option value='Test'>Test</option>");
+            $(getNav +' #status_drpdwn' + tabNum).append("<option value='Test'>Test</option>");
         }
         if (this.curr_status === "Test") {
-            $('#status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
+            $(getNav +' #status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
                 "<option value='UAT' id='uat'>UAT</option>" +
                 "<option value='Live'>Live</option>");
         }
         if (this.curr_status === "UAT") {
-            $('#status_drpdwn' + tabNum).append("<option value='Live'>Live</option>");
+            $(getNav +' #status_drpdwn' + tabNum).append("<option value='Live'>Live</option>");
         }
         if (this.curr_status === "Live") {
-            $('#status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
+            $(getNav +' #status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
                 "<option value='Test'>Test</option>" +
                 "<option value='Offline'>Offline</option>");
         }
         if (this.curr_status === "Offline") {
-            $('#status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
+            $(getNav +' #status_drpdwn' + tabNum).append("<option value='Development'>Development</option>" +
                 "<option value='Test'>Test</option>" +
                 "<option value='Obsolete'>Obsolete</option>");
         }
@@ -308,52 +265,69 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         });
         $('.selectpicker').selectpicker('refresh');
 
-        $('#confirm_stat_change' + tabNum).off("click").on("click", this.ChangeStatus.bind(this));
+        $(getNav +' #confirm_stat_change' + tabNum).off("click").on("click", this.ChangeStatus.bind(this));
 
+
+        
         var cid = this.Cid;
         $.post("../CE/GetStatusHistory", { _refid: this.ver_Refid }, function (data) {
-            $('#statwindow' + tabNum).empty();
+            $(getNav +' #statwindow' + tabNum).empty();
+            $(getNav + ' #statwindow' + tabNum).append("<div class='container'>" +
+                "<div class='row'>" +
+                "<div class='col-md-12'>" +
+                "<ul class='timeline' id='timeline" + tabNum + "'>" +
+                "</ul>" +
+                "</div>" +
+                "</div>" +
+                "</div>");
+            $('#timeline' + tabNum).empty();
             $.each(data, function (i, obj) {
-                if (obj.status === "Live" || obj.status === "Offline" || obj.status === "Obsolete") {
-                    $('#statwindow' + tabNum).append(
-                        "<div class='stat-container' id='stat" + i + "' data-toggle='popover' title='" + obj.changeLog + "' >" +
-                        "<div class='stat-sub'>" +
-                        obj.commitUname + "</br>" + obj.commitTs + "</br>" +
-                        "<div class='userimg' >" +
-                        "<img src='~/images/proimg.jpg' style='width:30px'/>" +
-                        "</div >" +
-                        "</div>" +
-                        "<div class='stat-sub'>" +
-                        "<div class='line-left'></div>" +
-                        "<div class='stat-cir'> <div class='stat_name'>" + obj.status + "</div></div>" +
-                        "<div class='line-right'></div>" +
-                        "</div>" +
-                        "<div class='stat-sub'>" +
-                        "</div>" +
-                        "</div>");
-
+                $('#timeline' + tabNum).append(" <li class='timeline-item' id= 'stat" + i + "' > " +
+                    "<div class='timeline-badge' id='timeline-badge" + i + "'><i class='glyphicon glyphicon-check'></i></div>" +
+                    "<div class='timeline-panel'> "+
+                    "<div class='timeline-heading'> "+
+                    "<h4 class='timeline-title'>" + obj.status + "</h4>" +
+                    obj.commitUname + "<img src= '../static/" + cid + "/thumbs/" + obj.profileImage + "_small.png" + "' class='img-circle pull-right' />" +
+                    "<p><small class='text-muted'><i class='glyphicon glyphicon-time'></i>" + obj.commitTs + "</small></p>" +
+                    "</div>" +
+                    "<div class='timeline-body' > "+
+                    "<p>" + obj.changeLog + "</p>" +
+                    "</div> "+
+                    "</div> "+
+                    "</li>");
+                    //< li class='timeline-item' id= 'stat" + i + "' > " +
+                    //"<div class='timeline-badge' id='timeline-badge" + i + "'><i class='glyphicon glyphicon-check'></i></div>" +
+                    //"<div class='timeline-panel'>" +
+                    //"<div class='timeline-heading'>" +
+                    //"<h4 class='timeline-title'>" + obj.status + "</h4>" +
+                    //obj.commitUname + "<img src= '../static/" + cid + "/thumbs/" + obj.profileImage + "_small.png" + "' class='img-circle pull-right' />" +
+                    //"<p><small class='text-muted'><i class='glyphicon glyphicon-time'></i>" + obj.commitTs + "</small></p>" +
+                    //"</div>" +
+                    //"<div class='timeline-body'>" +
+                    //"<p>" + obj.changeLog + "</p>" +
+                    //"</div>" +
+                    //"</div>" +
+                    //"</li>
+                    //");
+                var classname;
+                if (obj.status === "Test")
+                    classname = "info";
+                if (obj.status === "UAT")
+                   classname = "primary";
+                if (obj.status === "Live")
+                {
+                    classname = "success";
+                    $(getNav + ' #stat' + i).addClass("livestat");
                 }
-                else {
-                    $('#statwindow' + tabNum).append(
-                        "<div class='stat-container' id='stat" + i + "' data-toggle='popover' title='" + obj.changeLog + "' >" +
-                        "<div class='stat-sub'>" +
-                        "</div>" +
-                        "<div class='stat-sub'>" +
-                        "<div class='line-left'></div>" +
-                        "<div class='stat-cir'> <div class='stat_name'>" + obj.status + "</div></div>" +
-                        "<div class='line-right'></div>" +
-                        "</div>" +
-                        "<div class='stat-sub'>" +
-                        obj.commitUname + "</br>" + obj.commitTs + "</br>" +
-                        "<div class='userimg' >" +
-                        "<img src='../static/" + cid +"/"+obj.profileImage +".jpg"+"' style='width:30px'/>" +
-                        "</div>");
-                }
-                $('#stat' + i).on('hover', function () {
-                });
+                if (obj.status === "Offline")
+                    classname = "warning";
+                if (obj.status === "Obsolete")
+                    classname = "danger";
+                $(getNav +' #timeline-badge' + i).addClass(classname);
             });
-            $('#statwindow' + tabNum + '> div:nth-child(1) > div:nth-child(2) > div.line-left').css("border", "none");
-            $('#statwindow' + tabNum + ' > div.stat-container .stat-cir:last').css("color", "white").css("background-color", "green");
+            $.LoadingOverlay("hide");
+            var scrollPos = $('#statwindow' + tabNum).offset().top;
+            $(window).scrollTop(scrollPos);
         });
     }
 
@@ -362,8 +336,14 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         var _chlog = $('#StatChlog' + tabNum).val();
         var _stat = $('#status_drpdwn' + tabNum + ' option:selected').val();
 
-        $.post('../CE/ChangeStatus', { _refid: this.ver_Refid, _changelog: _chlog, _status: _stat }, function () { $.LoadingOverlay("hide");alert("Changed Successfully"); });
+        $.post('../CE/ChangeStatus', { _refid: this.ver_Refid, _changelog: _chlog, _status: _stat }, this.ChangeStatusSuccess.bind(this, _stat));
     }
+
+    this.ChangeStatusSuccess = function (_stat) {
+        $.LoadingOverlay("hide");
+        this.curr_status = _stat;
+        this.StatusPage();
+    };
 
     this.Load_version_list = function () {
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
@@ -509,7 +489,6 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     }
 
     this.CreateObjString = function () {
-        // this.ValidInput = true;
         if (this.Parameter_Count !== 0) {
             var ObjString = "[";
             var filter_control_list = "datefrom,dateto";
@@ -606,7 +585,6 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         $.LoadingOverlay("show");
         if (this.Parameter_Count === 0) {
             this.Save(false);
-            //  this.ValidInput = true;
             this.Object_String_WithVal = "";
             // this.DrawTable();
         }
@@ -693,7 +671,6 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         this.Rel_object = this.rel_arr.toString();
         this.Current_obj.Sql = btoa(this.Code);
         var tagvalues = $('#tags').val();
-        //_json = { $type: "ExpressBase.Objects.EbDataSource, ExpressBase.Objects", filterdialogrefid: filter_dialog_refid, sql: btoa(unescape(encodeURIComponent(this.Code))), name: this.Name }
         if (issave === true) {
             $.post("../CE/SaveEbDataSource",
                 {

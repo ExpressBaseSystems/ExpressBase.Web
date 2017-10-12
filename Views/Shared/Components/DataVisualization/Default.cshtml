@@ -16,7 +16,9 @@
             @*<div class="min-btn">
                 <button class="btn-tb-com pull-right" onclick="fdBoxMin();" id='fd-min-btn'><i class="fa fa-caret-left fa-lg" aria-hidden="true"></i></button>
             </div>*@
-            <button class='head-btn' style="float: right;"><i class='fa fa-times' aria-hidden='true'></i></button>
+            @*<div style="float: right;">
+            <button class='close'><i class='fa fa-times' aria-hidden='true'></i></button>
+            </div>*@
             @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
                                
     }

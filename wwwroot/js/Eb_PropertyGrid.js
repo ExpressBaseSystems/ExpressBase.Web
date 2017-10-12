@@ -35,6 +35,7 @@ var Eb_PropertyGrid = function (id) {
         var req_html = '';
         var NBSP = '';
         var arrow = "&nbsp;";
+        var isExpandedAttr = '';
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
@@ -52,18 +53,18 @@ var Eb_PropertyGrid = function (id) {
         }
         else if (type === 3) {    // If color use color picker 
             valueHTML = '<input type="color" id="' + elemId + '" value="' + value + '" style="width:100%; height: 21px;" />';
-                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
             valueHTML = '<span style="vertical-align: sub;" for="' + elemId + '" editor="' + type + '">' + value + '</span>';
         }
         else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
-                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 6) {    //  If date&time date
             valueHTML = '<input type="date" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
-                this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type > 6 && type < 11) {    //  If collection editor
             valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
@@ -88,22 +89,23 @@ var Eb_PropertyGrid = function (id) {
             var _meta = meta.submeta;
             var _obj = value;
             arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
+            isExpandedAttr = 'is-expanded="true"';
             $.each(_obj, function (key, val) {
                 var CurMeta = getObjByval(_meta, "name", key);
                 if (CurMeta)
                     subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
             }.bind(this));
             var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
-                this.getValueFuncs[name] = function () {
-                    var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
-                    $.each($subRows, function (i, row) {
-                        var key = $(row).attr("name").slice(0, -2);
-                        var val = $(row).find(".pgTdval input").val();
-                        value[key] = val;
-                    });
-                    $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
-                    return JSON.parse($('#' + elemId).val());
-                }.bind(this);
+            this.getValueFuncs[name] = function () {
+                var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                $.each($subRows, function (i, row) {
+                    var key = $(row).attr("name").slice(0, -2);
+                    var val = $(row).find(".pgTdval input").val();
+                    value[key] = val;
+                });
+                $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
+                return JSON.parse($('#' + elemId).val());
+            }.bind(this);
         } else {    // Default is textbox
             valueHTML = 'editor Not implemented';
         }
@@ -116,7 +118,7 @@ var Eb_PropertyGrid = function (id) {
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
 
-        return '<tr class="pgRow" ' + subtypeOfAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+        return '<tr class="pgRow" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
     this.getExpandedValue = function (obj) {
@@ -139,7 +141,7 @@ var Eb_PropertyGrid = function (id) {
 
     this.getGroupHeaderRowHtml = function (displayName) {
         if (this.IsSortByGroup)
-            return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell" onclick="$(\'[group=' + displayName + ']\').slideToggle(0);">'
+            return '<tr class="pgGroupRow" is-expanded="true" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell">'
                 + '<span class="bs-caret" style= "margin-right: 5px;" > <span class="caret"></span></span > ' + displayName
                 + '</td></tr > ';
         else
@@ -290,7 +292,7 @@ var Eb_PropertyGrid = function (id) {
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
-        $("#" + this.wraperId + " .pgHead").on("click", ".icon-cont", this.CloseFn.bind(this));
+        $("#" + this.wraperId + " .pgHead").on("click", ".fa-times", this.CloseFn.bind(this));
 
         this.CXVE = new Eb_pgCXVE(this);
 
@@ -311,11 +313,6 @@ var Eb_PropertyGrid = function (id) {
         this.IsSortByGroup = !this.IsSortByGroup;
         this.InitPG();
         $("#" + this.wraperId + " [name=sort]").toggle();
-    };
-
-    this.ExpandToggle = function (e) {
-        var subtype = $(e.target).closest("tr").attr("name").slice(0, -2);
-        $("#" + this.wraperId + " [subtype-of=" + subtype + "]").toggle(200);
     };
 
     this.InitPG = function () {
@@ -349,6 +346,40 @@ var Eb_PropertyGrid = function (id) {
             this.PropsObj.RenderMe();
         $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", this.nameChangedFn);
+        $("#" + this.wraperId + " .pgGroupCell").on("click", this.collapsGroup);
+    };
+
+    this.collapsGroup = function (e) {
+        var $GroupHeadRow = $(e.target).closest("[group-h]");
+        var isExpanded = $GroupHeadRow.attr("is-expanded") === 'true';
+        var groupName = $GroupHeadRow.attr("group-h");
+        var $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
+        if (groupName !== "All") {
+            if (isExpanded) {
+                $("#" + this.wraperId + " [group=" + groupName + "]").filter("[subtype-of]").hide(200);
+                $groupRows.hide();
+            }
+            else {
+                $groupRows.show();
+                $("#" + this.wraperId + " [group=" + groupName + "]").filter("[is-expanded]").find(".fa-caret-right").click().click();
+            }
+        }
+        $GroupHeadRow.attr("is-expanded", !isExpanded);
+
+    }.bind(this);
+
+    this.ExpandToggle = function (e) {
+        var t = 0;
+        if (e.hasOwnProperty('originalEvent'))
+            var t = 200;
+        var $parentPropRow = $(e.target).closest("tr");
+        var isExpanded = $parentPropRow.attr("is-expanded") === 'true';
+        var subtype = $parentPropRow.attr("name").slice(0, -2);
+        if (isExpanded)
+            $("#" + this.wraperId + " [subtype-of=" + subtype + "]").hide(t);
+        else
+            $("#" + this.wraperId + " [subtype-of=" + subtype + "]").show(t);
+        $parentPropRow.attr("is-expanded", !isExpanded);
     };
 
     this.nameChangedFn = function (e) {

@@ -69,8 +69,8 @@ namespace ExpressBase.Web.Components
 
             dvobj.Columns = new DVColumnCollection();
             // Add Serial & Checkbox
-            dvobj.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
-            dvobj.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
+            //dvobj.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
+            //dvobj.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
 
 
             foreach (EbDataColumn column in __columns)
@@ -88,7 +88,7 @@ namespace ExpressBase.Web.Components
 
                 dvobj.Columns.Add(_col);
             }
-            dvobj.TempColumns = dvobj.Columns;
+            dvobj.DSColumns = dvobj.Columns;
             return dvobj;
         }
     }

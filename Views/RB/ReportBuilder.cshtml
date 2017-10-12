@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 
 }
-@{ 
+@{
     EbObjectType type = EbObjectType.Report;
 }
 @using ExpressBase.Objects;
@@ -68,7 +68,7 @@
 </script>
 <div class="row" style="margin-top: 20px">
     <div class="reportmenu">
-        <div class="form-inline" id="options">            
+        <div class="form-inline" id="options">
             <div class="form-group">
                 <input type="file" style="display:none" id="Rptbgimg" />
                 <button class="btn" data-toggle="tooltip" data-placement="bottom" title="Background Image" onclick="$('#Rptbgimg').click();"><i class="fa fa-picture-o" aria-hidden="true"></i></button>
@@ -89,7 +89,7 @@
             </div>
             <div class="form-group">
                 <button class="btn" id="delete" data-toggle="tooltip" data-placement="bottom" title="Trash"><i class="fa fa-trash" aria-hidden="true"></i></button>
-            </div>            
+            </div>
             <div class="form-group">
                 <button class="btn qr-Br-img-btn draggable" eb-type="Table" id="Table" data-toggle="tooltip" data-placement="bottom" title="Table"><i class="fa fa-table" aria-hidden="true"></i></button>
             </div>
@@ -119,7 +119,7 @@
         </div>
     </div>
 </div>
-<div class="row pgB">
+<div class="row pgB" id="eb-rpt-container">
     <div class="tab-section">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item active">
@@ -134,7 +134,7 @@
         <div class="tab-pane active" id="home" role="tabpanel">
             <div class="col-md-2 side-toolbar">
                 <div class="toolbox">
-                    <div id="get-col-loader" style="display:none;margin-left: 50%;margin-top: 10%;"><i class="fa fa-spinner fa-spin fa-lg" style='color:blue'aria-hidden="true"></i></div>
+                    <div id="get-col-loader" style="display:none;margin-left: 50%;margin-top: 10%;"><i class="fa fa-spinner fa-spin fa-lg" style='color:blue' aria-hidden="true"></i></div>
                     <ul id="data-table-list" class="tool-box-items"></ul>
                     <ul id="running-summary" class="tool-box-items">
                         <li>
@@ -165,8 +165,8 @@
                             </ul>
                         </li>
                     </ul>
-                    <input type="hidden" id="objtype" value="@type"/>
-                    <input type="hidden" id="objid" value="@ViewBag.Refid"/>
+                    <input type="hidden" id="objtype" value="@type" />
+                    <input type="hidden" id="objid" value="@ViewBag.Refid" />
                     <div class="form-group">
                         <Label id="eb-shapes"><i class="fa fa-cubes" aria-hidden="true"></i> Shapes</Label>
                         <div class="shapes-tank">
@@ -191,13 +191,13 @@
                             <option value="px">pixel</option>
                             <option value="cm">cm</option>
                             <option value="inch">inch</option>
-                            <option value="mm">mm</option>                            
+                            <option value="mm">mm</option>
                         </select>
                     </div>
                 </div>
                 <div class='ruler' style="display:none"></div>
                 <div class='rulerleft' style="display:none"></div>
-                <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px;overflow-x: auto;">                   
+                <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px;overflow-x: auto;">
                 </div>
             </div>
             <div class="col-md-2 PGgrid">
@@ -216,12 +216,15 @@
         $('#calculated-fields').treed();
         $('#special-fields').treed();
         $('#other-fields').treed();
-        var uploader = imageUploader({
+        var uploader = new imageUploader({
             Container: "modal-container",
             Controller: "@ViewBag.wc",
             IsTag: true,
             IsMultiple:true
         });
+    uploader.getFileId = function(res){
+    alert(res);        
+    };
         DrawColTree = function (result) {
             $('#data-table-list').empty();
             $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");

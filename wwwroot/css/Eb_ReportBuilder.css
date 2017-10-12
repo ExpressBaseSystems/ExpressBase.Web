@@ -94,7 +94,7 @@
 /*end side menuBar*/
 .tab-section {
     position: fixed;
-    z-index: 100;
+    z-index: 5;
     background-color: white;
     width: 100%;
     padding-top: 10px;
@@ -266,7 +266,7 @@
     width: 100%;
     background-color: #fafafa;
     position: fixed;
-    z-index: 150;
+    z-index: 5;
     margin-top: 29px;
     border-bottom: 1px solid rgb(170, 170, 170);
 }
@@ -289,7 +289,7 @@
     align-items: center;
 }
 
-.toolbox {
+#eb-rpt-container .toolbox {
     height: inherit;
     margin-top: 3px;
     padding: 0 !important;
@@ -300,11 +300,11 @@
 }
 
 
-.pgB {
-    margin-top: 47px;
+#eb-rpt-container {
+    margin-top: 62px;
 }
 
-.toolbox li {
+#eb-rpt-container .toolbox li {
     border: none;
 }
 
@@ -326,31 +326,31 @@
     margin-left: 5px !important;
 }
 
-.side-toolbar {
+#eb-rpt-container .side-toolbar {
     height: 518px;
     padding-left: 0;
     background-color: white;
     margin-top: 48px;
     position: fixed;
-    z-index: 2;
+    
 }
 
-.PGgrid {
+#eb-rpt-container .PGgrid {
     min-height: 1000px;
     padding: 0;
     margin-top: 48px;
     z-index: 2;
 }
 
-.title {
+#eb-rpt-container .title {
     width: 99px;
     height: 20px;
     background-color: #fbf7f7;
     position: fixed;
-    top: 118px;
+    top: 132px;
     left: 224px;
     border: 1px solid #aaaaaa;
-    z-index: 200;
+    z-index: 4;
 }
 
 .measurement {
@@ -512,67 +512,6 @@ margin: -4px;
     float: right;
     margin-top: -5px;
 }
-/*.arrow-By-dir-h{
-     width: 0; 
-  height: 0; 
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent; 
-  border-right:5px solid black;
-  float: left;
-  margin-top: -5px;
-}*/
-/*.arrow-by-d-h-draggable .ui-resizable-handle{
-    background-color: green;
-    width: 7px;
-    height: 7px;
-    margin-top: -4px;
-}
-.arrow-by-d-h-draggable .ui-resizable-w,.ui-resizable-e{
-margin: -4px;
-}*/
-/*.pgB .nav-tabs {
-    border-bottom: 2px solid #DDD;
-}
-
-    .pgB .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
-        border-width: 0;
-    }
-
-    .pgB .nav-tabs > li > a {
-        border: none;
-        color: #666;
-    }
-
-    .pgB .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
-        border: none;
-        color: #4285F4 !important;
-        background: transparent;
-    }
-
-    .pgB .nav-tabs > li > a::after {
-        content: "";
-        background: #4285F4;
-        height: 2px;
-        position: absolute;
-        width: 100%;
-        left: 0px;
-        bottom: -1px;
-        transition: all 250ms ease 0s;
-        transform: scale(0);
-    }
-
-    .pgB .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
-        transform: scale(1);
-    }
-
-.pgB .tab-nav > li > a::after {
-    background: #21527d none repeat scroll 0% 0%;
-    color: #fff;
-}
-
-.pgB .tab-pane {
-    padding: 15px 0;
-}*/
 .multiSplitHboxSub {
     display: flex;
     justify-content: center;
@@ -581,7 +520,7 @@ margin: -4px;
 }
 
 .dropped {
-    z-index: 50;
+    z-index: 2;
 }
 .marked{
     background-color:#d8f7f6;

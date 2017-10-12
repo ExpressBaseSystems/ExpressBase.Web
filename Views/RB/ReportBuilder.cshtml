@@ -18,9 +18,8 @@
 
     $.fn.extend({
         treed: function (o) {
-
-            var openedClass = 'glyphicon-minus-sign';
-            var closedClass = 'glyphicon-plus-sign';
+            var openedClass = 'fa-chevron-down';
+            var closedClass = 'fa-chevron-right';
 
             if (typeof o !== 'undefined') {
                 if (typeof o.openedClass !== 'undefined') {
@@ -34,7 +33,7 @@
             tree.addClass("tree");
             tree.find('li').has("ul").each(function () {
                 var branch = $(this);
-                branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
+                branch.prepend("<i class='indicator fa " + closedClass + "'></i>");
                 branch.addClass('branch');
                 branch.on('click', function (e) {
                     if (this === e.target) {
@@ -165,26 +164,28 @@
                             </ul>
                         </li>
                     </ul>
-                    <input type="hidden" id="objtype" value="@type" />
-                    <input type="hidden" id="objid" value="@ViewBag.Refid" />
-                    <div class="form-group">
-                        <Label id="eb-shapes"><i class="fa fa-cubes" aria-hidden="true"></i> Shapes</Label>
-                        <div class="shapes-tank">
-                            <button class="btn btn-xs draggable" eb-type="Circle" id="circle" data-toggle="tooltip" data-placement="bottom" title="Circle"><i class="fa fa-circle-thin fa-lg" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs draggable" eb-type="Rect" id="rectangle" data-toggle="tooltip" data-placement="bottom" title="Rectangle"><i class="fa fa-square-o fa-lg" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs draggable" eb-type="ArrR" id="arrow-right" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-right fa-lg" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs draggable" eb-type="ArrL" id="arrow-left" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-left fa-lg" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs draggable" eb-type="ArrU" id="arrow-up" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-up fa-lg" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs draggable" eb-type="ArrD" id="arrow-down" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-long-arrow-down fa-lg" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs draggable" eb-type="ByArrH" id="by-dir-arrow-h" data-toggle="tooltip" data-placement="bottom" title="Arrow"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs draggable" eb-type="ByArrV" id="by-dir-arrow-v" data-toggle="tooltip" data-placement="bottom" title="By directional Arrow"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button>
-                            <button class="btn btn-xs draggable" eb-type="Hl" id="h-line" data-toggle="tooltip" data-placement="bottom" title="Horrizontal Line"><i> __ </i></button>
-                            <button class="btn btn-xs draggable" eb-type="Vl" id="v-line" data-toggle="tooltip" data-placement="bottom" title="Vertical Line"><i> | </i></button>
-                        </div>
-                    </div>
+                    <ul class="Eb-shaps">                      
+                        <li>
+                            <a href="#" class="list-group-item collapsed Eb-shaps-title" data-toggle="collapse" data-target="#dropdownShapes">
+                                <i class="fa fa-chevron-right" style="padding-right:5px"></i> Shapes
+                            </a>
+                            <ul class="Eb-shaps shapes-tank collapse" id="dropdownShapes">
+                                <li><button class="btn btn-sm draggable" eb-type="Circle" id="circle"><i class="fa fa-circle-thin fa-lg"></i></button><div class="shape-text">Circle Tool</div></li>                                 
+                                <li><button class="btn btn-sm draggable" eb-type="Rect" id="rectangle"><i class="fa fa-square-o fa-lg"></i></button><div class="shape-text">Rectangle</div></li>
+                                <li><button class="btn btn-sm draggable" eb-type="ArrR" id="arrow-right"><i class="fa fa-long-arrow-right fa-lg"></i></button><div class="shape-text">Right Arrow</div></li>
+                                <li><button class="btn btn-sm draggable" eb-type="ArrL" id="arrow-left"><i class="fa fa-long-arrow-left fa-lg"></i></button><div class="shape-text">Left Arrow</div></li>
+                                <li><button class="btn btn-sm draggable" eb-type="ArrU" id="arrow-up"><i class="fa fa-long-arrow-up fa-lg"></i></button><div class="shape-text">Up Arrow</div></li>
+                                <li><button class="btn btn-sm draggable" eb-type="ArrD" id="arrow-down"><i class="fa fa-long-arrow-down fa-lg"></i></button><div class="shape-text">Down Arrow</div></li>
+                                <li><button class="btn btn-sm draggable" eb-type="ByArrH" id="by-dir-arrow-h"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button><div class="shape-text">By Dir Hori Arrow</div></li>
+                                <li><button class="btn btn-sm draggable" eb-type="ByArrV" id="by-dir-arrow-v"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button><div class="shape-text">By Dir Vert Arrow</div></li>
+                                <li><button class="btn btn-sm draggable" eb-type="Hl" id="h-line"><i> __ </i></button><div class="shape-text">Horrizontal Line</div></li>
+                                <li><button class="btn btn-sm draggable" eb-type="Vl" id="v-line"><i> | </i></button><div class="shape-text">Vertical Line</div></li>
+                            </ul>
+                        </li>
+                    </ul>                   
                 </div>
             </div>
-            <div class="col-md-8 col-md-offset-2" style="padding-right:0;margin-top:50px;">
+            <div class="col-md-8 col-md-offset-2" id="page-outer-cont">
                 <div class="title text-center" style="display:none">
                     <div class="form-group">
                         <select id="rulerUnit">
@@ -197,10 +198,10 @@
                 </div>
                 <div class='ruler' style="display:none"></div>
                 <div class='rulerleft' style="display:none"></div>
-                <div id="pageCanvas" style="position:relative;margin-top:20px;margin-bottom:50px;overflow-x: auto;">
+                <div id="pageCanvas">
                 </div>
             </div>
-            <div class="col-md-2 PGgrid">
+            <div class="col-md-2 col-md-offset-10 PGgrid">
                 <div class="pGreportBuilder">
                     <div id="propGrid"></div>
                 </div>

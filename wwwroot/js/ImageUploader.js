@@ -1,7 +1,7 @@
 ﻿var imageUploader = function (params) {
     this.params = params;
     this.previd = null;
-    this.multiple = " ";
+    this.multiple = " ";         
     this.controller = this.params.Controller;
     if (this.params.IsMultiple === true) {
         this.multiple = "multiple";
@@ -14,6 +14,8 @@
     else if (this.controller === "tc") {
         this.currtag = "tenantresource";
     }
+
+    this.getFileId = function (res) { };
 
     this.CreateMOdalW = function () {
         var modalW = $("<div class='modal fade modalstyle' id='up-modal' role='dialog'>"
@@ -29,8 +31,10 @@
             + "</div>"
             + "<div id-'img-upload-body' style='margin-top:15px;'><input id='input-id' type='file' class='file' data-preview-file-type='text' " + this.multiple + "></div>"
             + "</div>"
-            + "<div class='modal-footer' id='mdfooter' style='display:none;height:100px;border:none;padding-top:0;'></div>"
-            + "</div></div></div>");
+            + "<div class='modal-footer' id='mdfooter' style='height:auto;border:none;padding-top:0;'>"
+            + "<div class='col-md-11' id='tag-section' style='padding:0;'></div>"
+            + "<div class='col-md-1' id='sub-section'><button class='btn btn-default' id='sub-upload' style='display:none;'>OK</button></div>"
+            + "</div></div></div></div>");
 
         $("#" + this.params.Container).append(modalW);
       
@@ -41,21 +45,25 @@
             uploadUrl: "../StaticFile/UploadFileAsync",
             maxFileCount: 5,
             initialPreview: this.initialPrev,
+            initialPreviewAsData: true,
+            uploadAsync: true,
             uploadExtraData: this.uploadtag.bind(this)
         }).on('fileuploaded', this.fileUploadSuccess.bind(this))
-            .on('fileloaded', this.addtagButton.bind(this))
-            .on('fileclear', function (event) {
-                $("#mdfooter").empty().hide();
+          .on('fileloaded', this.addtagButton.bind(this))
+          .on('fileclear', function (event) {
+                $("#tag-section").empty();
                 $('#obj-id').attr('value', " ");
-            });
+          });
     };
 
     this.fileUploadSuccess = function (event, data, previewId, index) {
-        var objId = data.response.objId;
+        $("#sub-upload").show();
+        var objId = data.response.objId;      
         $('#obj-id').attr('value', objId);
         this.previd = previewId;
-        $(".file-preview-initial").attr("tabindex", "1").attr("onclick", "$(this).focus();");
+        $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
+        $("#sub-upload").on('click', this.getId.bind(this, objId));
     };
 
     this.addtagButton = function (event, file, previewId, index, reader) {
@@ -83,8 +91,8 @@
     };
 
     this.tagimageOnClick = function () {
-        $("#mdfooter").show().empty();        
-        $("#mdfooter").append("<div class='form-group'><div style='text-align:left;'>Tags(" + this.filename + ")</div></div><div class='form-group'>"
+        $("#tag-section").empty();        
+        $("#tag-section").append("<div class='form-group'><div style='text-align:left;'>Tags(" + this.filename + ")</div></div><div class='form-group'>"
             + "<input type= 'text' data-role='tagsinput' id= 'tagval' value='' class='form-control'></div>");
         $("#tagval").tagsinput('refresh');
     };//tag btn onclick
@@ -99,13 +107,18 @@
                 _this.initialPrev.push(url);               
             }
             _this.loadFileInput();
-            });
-       
+            });      
     };
 
+    this.getId = function (fileId) {
+        this.getFileId(fileId);
+        $('#up-modal').modal('toggle');
+    };
+    
     this.init = function () {
-        this.getUplodedImgOnload();
-        this.CreateMOdalW();                    
+        //this.getUplodedImgOnload();
+        this.CreateMOdalW();
+        this.loadFileInput();       
     };
     this.init();
 }

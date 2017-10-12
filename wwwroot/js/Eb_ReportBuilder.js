@@ -78,25 +78,29 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
         $('.dropped').draggable({ cursor: "crosshair", containment: ".page", start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this)});
-        $(".droppable").droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });
-        $('.dropped').resizable({ containment: "parent", handles: "n, e, s, w", stop: this.onReSizeFn.bind(this)});
-        $('.dropped').attr("tabindex", "1").attr("onclick", "$(this).focus()");
-        $('.dropped').on("focus", this.elementOnFocus.bind(this)); 
+        $('.dropped').resizable({ containment: "parent", handles: "n, e, s, w", stop: this.onReSizeFn.bind(this) });
+        if (obj.SectionHeight) {
+            $("#" + obj.EbSid).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
+        }        
+        $("#" + obj.EbSid).attr("tabindex", "1");
+        $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this)); 
     };//render after pgchange
 
     this.getDataSourceColoums = function (refid) {
-        $('#data-table-list').empty();
-        $("#get-col-loader").show();
-        $.ajax({
-            url: "../RB/GetColumns",
-            type: "POST",
-            cache: false,
-            data: { refID: refid },
-            success: function (result) {
-                $("#get-col-loader").hide();
-                DrawColTree(result);
-            }
-        });
+        if (refid !== "") {
+            $('#data-table-list').empty();
+            $("#get-col-loader").show();
+            $.ajax({
+                url: "../RB/GetColumns",
+                type: "POST",
+                cache: false,
+                data: { refID: refid },
+                success: function (result) {
+                    $("#get-col-loader").hide();
+                    DrawColTree(result);
+                }
+            });
+        }
     };//ajax for ds coloums
 
     this.ruler = function () {
@@ -387,7 +391,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             Title = this.addCurrentDateTime();
         }
         else {          
-            Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
+            Title = "Table" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
         }       
         if (!this.col.hasClass('dropped')) {
             var obj = new EbObjects["Eb" + this.Objtype](Objid);            
@@ -501,19 +505,19 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     };
 
     this.onDrag_stop = function (event, ui) {     
-        $(".vL").remove();
-        $(".hL").remove();
+        //$(".vL").remove();
+        //$(".hL").remove();
         var dragId = $(event.target).attr("id");
         var type = $(event.target).attr('eb-type');
         this.pg.setObject(this.objCollection[dragId], AllMetas["Eb" + type]);
-    };
+    };//drag start fn of control
 
     this.onDrag_Start = function (event, ui) {           
         this.reDragLeft = event.pageX - $(event.target).offset().left;
         this.reDragTop = event.pageY - $(event.target).offset().top;       
-        $(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:" + $(window).height() + "px;margin-left:0px;margin-top:-" + event.pageY + "px;'></div>");
-        $(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:" + $(window).width() + "px;margin-top:0px;margin-left:-" + event.pageX + "px;'></div>");
-    };
+        //$(event.target).append("<div class='vL' style='width :1px;border-left:1px dotted;height:500px;margin-left:0px;margin-top:-" + event.pageY + "px;'></div>");
+        //$(event.target).prepend("<div class='hL' style='height :1px;border-top:1px dotted;width:500px;margin-top:0px;margin-left:-" + event.pageX + "px;'></div>");
+    };//drag stop fn of control
 
     this.savefile = function () {       
         this.report.Height = $("#page").height();
@@ -533,12 +537,12 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             "json": JSON.stringify(this.report),
             "rel_obj": this.Rel_object
         });
-    };
+    };//save
   
     this.findPageSections = function (i, sections) {
         this.sections = $(sections).attr('id');        
         $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
-    };
+    };//........save/commit
 
     this.findPageSectionsSub = function (j, subsec) {
         this.subsec = $(subsec).attr("id");
@@ -563,7 +567,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         }
 
         $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
-    };
+    };//.........save/commit
 
     this.findPageElements = function (k, elements) {
         var elemId = $(elements).attr('id');
@@ -583,7 +587,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         else if (eb_typeCntl === 'ReportDetail') {
             this.report.Detail.Fields.push(this.objCollection[elemId]);
         }              
-    };
+    };//........save/commit
 
     this.Commit = function () {
         this.report.Height = $("#page").height();
@@ -604,7 +608,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             "json": JSON.stringify(this.report),
             "rel_obj": this.Rel_object
         });
-    };
+    };//commit
 
     this.setpageSize = function (obj) {         
         if (obj.PaperSize !== "Custom") {
@@ -668,7 +672,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
                     minSize: 5,
                     gutterSize: 3,
                     onDrag: this.splitterOndragFn.bind(this)
-                });
+                });                
                 $("#" + obj.EbSid).on("focus", this.elementOnFocus.bind(this));
             }           
             if (pname === "DataSourceRefId") {             

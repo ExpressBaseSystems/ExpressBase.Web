@@ -82,7 +82,7 @@ namespace ExpressBase.Web.Controllers
                         }
 
                         uploadFileRequest.FileDetails.FileName = formFile.FileName;
-                        uploadFileRequest.FileDetails.ContentType = (FileTypes)Enum.Parse(typeof(FileTypes), formFile.FileName.Split('.')[1]);
+                        uploadFileRequest.FileDetails.ContentType = (FileTypes)Enum.Parse(typeof(FileTypes), uploadFileRequest.FileDetails.FileName.Split('.')[1]);
                         
                         string Id = this.ServiceClient.Post<string>(uploadFileRequest);
                         string url;
@@ -131,31 +131,5 @@ namespace ExpressBase.Web.Controllers
             
             return FileInfoList;
         }
-
-        //[HttpGet]
-        //public IActionResult FindFilesByTags(int i)
-        //{
-        //    FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
-
-        //    List<string> tags = new List<string>()
-        //    {
-        //        "unni",
-        //        "test"
-        //    };
-
-        //    findFilesByTagRequest.Filter = new KeyValuePair<string, List<string>>("metadata.Tags", tags);
-
-        //    var filesListJson = this.ServiceClient.Post(findFilesByTagRequest);
-
-        //    List<string> files = new List<string>();
-
-        //    foreach (var file in filesListJson.FileList)
-        //    {
-        //        files.Add(file.ObjectId);
-        //    }
-
-        //    ViewBag.Ids = files;
-        //    return View();
-        //}
     }
 }

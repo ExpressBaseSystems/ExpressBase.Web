@@ -117,8 +117,7 @@ var Eb_PropertyGrid = function (id) {
         }
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
-
-        return '<tr class="pgRow" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
     this.getExpandedValue = function (obj) {
@@ -179,17 +178,20 @@ var Eb_PropertyGrid = function (id) {
         if (this.$hiddenProps[prop])
             return;
         var $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
-        this.$hiddenProps[prop] = { "$Tr": $Tr, "g": $Tr.attr("group") };
-        $Tr.remove();
+        var isExpanded = $Tr.attr("is-showprop") === 'true';
+            $Tr.hide(300)
+            $Tr.attr("is-showprop", false);
+            this.$hiddenProps[prop] = { "$Tr": $Tr };
     };
 
     this.ShowProperty = function (prop) {
         if (!this.$hiddenProps[prop])
             return;
         var $Tr = this.$hiddenProps[prop].$Tr;
-        var g = this.$hiddenProps[prop].g;
-        $Tr.insertAfter($("#" + this.wraperId + " [group-h=" + g + "]"));
-        this.$hiddenProps[prop] = null;
+        var isExpanded = $Tr.attr("is-showprop") === 'true';
+            $Tr.show(300);
+            $Tr.attr("is-showprop", true);
+            this.$hiddenProps[prop] = null;
     };
 
     this.buildGrid = function () {
@@ -282,14 +284,13 @@ var Eb_PropertyGrid = function (id) {
     };
 
     this.CloseFn = function (e) {
-        alert();
         this.Close();
     };
 
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
-        this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"  onclick="slideRight(\'.form-save-wraper\', \'#form-buider-propGrid\')"><i class="fa fa-times" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
-        this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div>"));
+        this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"><i class="fa fa-times" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
+        this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div><div id='" + this.wraperId + "_HelpBox' class='propgrid-helpbox'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", ".fa-times", this.CloseFn.bind(this));
@@ -327,6 +328,7 @@ var Eb_PropertyGrid = function (id) {
         this.currGroup = null;
         this.CurProp = null;
         this.CurEditor = null;
+        this.$hiddenProps = {};
         this.OSElist = {};
         this.innerHTML = '<table class="table-bordered table-hover pg-table">';
         this.$PGcontainer.empty();
@@ -347,7 +349,15 @@ var Eb_PropertyGrid = function (id) {
         $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", this.nameChangedFn);
         $("#" + this.wraperId + " .pgGroupCell").on("click", this.collapsGroup);
+        $("#" + this.wraperId + " .pgRow").on("focus", this.rowFocus);
     };
+
+    this.rowFocus = function (e) {
+        var $e = $(e.target);
+        var prop = $e.attr("name").slice(0, -2);
+        var ht = this.Metas[this.propNames.indexOf(prop.toLowerCase())].helpText;
+        $("#" + this.wraperId + "_HelpBox").text(ht);
+    }.bind(this);
 
     this.collapsGroup = function (e) {
         var $GroupHeadRow = $(e.target).closest("[group-h]");
@@ -360,7 +370,8 @@ var Eb_PropertyGrid = function (id) {
                 $groupRows.hide();
             }
             else {
-                $groupRows.show();
+                $groupRows.not("[is-showprop]").show();
+                $groupRows.filter("[is-showprop=true]").show();
                 $("#" + this.wraperId + " [group=" + groupName + "]").filter("[is-expanded]").find(".fa-caret-right").click().click();
             }
         }
@@ -415,6 +426,7 @@ var Eb_PropertyGrid = function (id) {
         this.PropsObj = props;
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         this.InitPG();
+        $("#" + this.wraperId + " .propgrid-helpbox").show();
     };
     this.init();
 };

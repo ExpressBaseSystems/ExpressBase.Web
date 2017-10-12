@@ -12,10 +12,10 @@ function slide(dir, leftDiv, rightDiv, $stickBtn) {
     var $leftDiv = $(leftDiv);
     var $rightDiv = $(rightDiv);
 
-    lW = parseFloat($leftDiv.css("width"));
-    rW = parseFloat($rightDiv.css("width"));
+    var lW = parseFloat($leftDiv.css("width"));
+    var rW = parseFloat($rightDiv.css("width"));
 
-    if ($rightDiv.css("display") === "inline-block") {
+    if ($rightDiv.css("display") !== "none") {
         $rightDiv.data("width", rW);
         $rightDiv.animate({ width: 0 }, 300);
         $leftDiv.animate({ width: lW + rW + "px" }, 300);

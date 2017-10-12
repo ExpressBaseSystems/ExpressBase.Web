@@ -124,7 +124,7 @@ namespace ExpressBase.Web.Controllers
                     var res = client.Post<RegisterResponse>(new RegisterRequest { Email = req["email"], Password = req["password"], DisplayName = "expressbase" });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
-                    {                      
+                    {
                         return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
                     }
 

@@ -63,10 +63,18 @@
 
 .tree li a {
     text-decoration: none;
-    font-size: 15px;
-    color: black;
+    font-size: 13px;
+    color: #444;
     cursor: pointer;
 }
+
+    .tree li a:active {
+        background-color: #efefef;
+    }
+
+    .tree li a:focus {
+        background-color: #efefef;
+    }
 
 .tree li button, .tree li button:active, .tree li button:focus {
     text-decoration: none;
@@ -81,21 +89,31 @@
     margin-left: 5px;
 }
 
-.draggable {
+.toolbox .draggable {
     margin-left: 6px;
     cursor: pointer;
+    font-size: 13px;
 }
 
-    .draggable:hover {
-        background-color: #a2dce4;
-        border-radius: 4px;
-    }
+.toolbox .Eb-shaps {
+    padding: 0;
+}
+
+.Eb-shaps-title {
+    padding: 4px 7px;
+}
+
+.draggable:hover {
+    background-color: #a2dce4;
+    border-radius: 4px;
+}
 
 /*end side menuBar*/
+
 .tab-section {
     position: fixed;
     z-index: 5;
-    background-color: white;
+    background-color: #f2f2f2;
     width: 100%;
     padding-top: 10px;
 }
@@ -109,37 +127,54 @@
     border-right: 0;
 }
 
-.reportmenu .btn {
-    color: #333 !important;
-    border: none !important;
-    background-color: #fafafa !important;
+.reportmenu {
+    width: 100%;
+    background-color: #2c2c3c;
+    position: fixed;
+    z-index: 5;
+    margin-top: 29px;
+    border-bottom: 1px solid rgb(170, 170, 170);
 }
 
-.tab-menu .btn {
-    color: #333 !important;
-    border: none !important;
-    background-color: #fafafa !important;
-}
-
-#eb-shapes {
-    margin-left: 4%;
-    color: #333333;
-}
-
-.shapes-tank {
-    width: 94%;
-    height: 60px;
-    border: 1px solid #ddd;
-    background-color: #ffffff;
-    border-radius: 4px;
-    margin-left: 3%;
-    color: #333333;
-}
-
-    .shapes-tank .btn {
-        background-color: white !important;
-        border: none !important;
+    .reportmenu .btn {
+        color: #eeecec !important;
+        border: none;
+        background-color: transparent;
     }
+
+        .reportmenu .btn:hover {
+            background-color: #30C2FF;
+            border-radius:0;
+        }
+
+        .reportmenu .btn:focus {
+            background-color: #30C2FF;
+            border-radius: 0;
+        }
+
+.Eb-shaps-title {
+    font-size: 13px;   
+}
+.Eb-shaps li{
+    border-radius:0;
+}
+.shapes-tank .btn {
+    background-color: transparent;
+    border: none !important;
+    width: 40px;
+}
+    .shapes-tank .btn:hover {
+        background-color: #f5f5f5;
+    }
+
+.shapes-tank .shape-text {
+    display: inline;
+    font-size: 13px;
+}
+
+.shapes-tank li:hover {
+    background-color: #f5f5f5;
+}
 
 #pagesize {
     height: 28px;
@@ -218,7 +253,20 @@
 .page {
     display: block;
     margin-left: 79px;
-    border: 1px solid #918f8f;
+    border: 1px solid #d8d8d8;
+    background-color: white;
+}
+
+#page-outer-cont {
+    padding-right: 0;
+    margin-top: 50px;
+}
+
+#pageCanvas {
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    overflow-x: auto;
 }
 
 .rulerleft {
@@ -262,14 +310,7 @@
         margin-left: 14px;
     }
 
-.reportmenu {
-    width: 100%;
-    background-color: #fafafa;
-    position: fixed;
-    z-index: 5;
-    margin-top: 29px;
-    border-bottom: 1px solid rgb(170, 170, 170);
-}
+
 
 #imgbg {
     width: 14.8cm;
@@ -278,9 +319,7 @@
 
 .pGreportBuilder {
     margin-top: 3px;
-    position: fixed;
     margin-right: 10px;
-    margin-left: 10px;
 }
 
 .head_Box1 {
@@ -294,7 +333,7 @@
     margin-top: 3px;
     padding: 0 !important;
     width: 100%;
-    background-color: white;
+    background-color: #fcfcfc;
     border: 1px solid #ccc;
     overflow-y: auto;
 }
@@ -302,11 +341,12 @@
 
 #eb-rpt-container {
     margin-top: 62px;
+    background-color: #f2f2f2;
 }
 
-#eb-rpt-container .toolbox li {
-    border: none;
-}
+    #eb-rpt-container .toolbox li {
+        border: none;
+    }
 
 .styl {
     list-style-type: none;
@@ -329,10 +369,8 @@
 #eb-rpt-container .side-toolbar {
     height: 518px;
     padding-left: 0;
-    background-color: white;
     margin-top: 48px;
     position: fixed;
-    
 }
 
 #eb-rpt-container .PGgrid {
@@ -340,6 +378,8 @@
     padding: 0;
     margin-top: 48px;
     z-index: 2;
+    background-color: #f2f2f2;
+    position: fixed;
 }
 
 #eb-rpt-container .title {
@@ -390,33 +430,7 @@
 .h-line .ui-resizable-e {
     margin-top: 0;
 }
-/*.v-line .ui-resizable-handle {
-   background-color: green;
-    width: 7px;
-    height: 7px;
-    left: -4px;
-}
-.v-line .ui-resizable-e{
-    margin-right:0;
-}
-.arrow-right {
-    width: 0;
-    height: 0;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 5px solid black;
-    float: right;
-    margin-top: -5px;
-}*/
-/*.arrow-r-draggable > .ui-resizable-e,.ui-resizable-w{
-    background-color: green;
-    width: 7px;
-    height: 7px;
-    margin-top: -4px;
-}
-.arrow-r-draggable .ui-resizable-e {
-    margin-right: -6px;
-}*/
+
 .arrow-left {
     width: 0;
     height: 0;
@@ -426,15 +440,7 @@
     float: left;
     margin-top: -5px;
 }
-/*.arrow-l-draggable .ui-resizable-e, .ui-resizable-w {
-    background-color: green;
-    width: 7px;
-    height: 7px;
-    margin-top: -4px;
-}
-.arrow-l-draggable .ui-resizable-w {
-    margin-left: -3px;
-}*/
+
 .arrow-up {
     width: 0;
     height: 0;
@@ -443,15 +449,7 @@
     border-bottom: 5px solid black;
     margin-left: -5px;
 }
-/*.arrow-u-draggable .ui-resizable-s, .ui-resizable-n {
-    background-color: green;
-    width: 7px;
-    height: 7px;
-    margin-left: -3px;
-}
-.arrow-u-draggable .ui-resizable-n{
-margin-top: -4px;
-}*/
+
 .arrow-down {
     width: 0;
     height: 0;
@@ -465,15 +463,7 @@ margin-top: -4px;
 .arrow-d-draggable {
     display: flex;
 }
-/*.arrow-d-draggable .ui-resizable-n, .ui-resizable-s {
-    background-color: green;
-    width: 7px;
-    height: 7px;
-    margin-left: -3px;
-}
-.arrow-d-draggable .ui-resizable-s{
-margin-bottom: -4px;
-}*/
+
 .arrow-By-dir-v-t {
     width: 0;
     height: 0;
@@ -493,16 +483,7 @@ margin-bottom: -4px;
     margin-left: -10px;
     align-self: flex-end;
 }
-/*.arrow-by-d-v-draggable .ui-resizable-s, .ui-resizable-n{
-    background-color: green;
-    width: 7px;
-    height: 7px;
-    margin-left: -3px;
 
-}
-.arrow-by-d-v-draggable .ui-resizable-s,.ui-resizable-n{
-margin: -4px;
-}*/
 .arrow-By-dir-h {
     width: 0;
     height: 0;
@@ -512,6 +493,7 @@ margin: -4px;
     float: right;
     margin-top: -5px;
 }
+
 .multiSplitHboxSub {
     display: flex;
     justify-content: center;
@@ -522,6 +504,7 @@ margin: -4px;
 .dropped {
     z-index: 2;
 }
-.marked{
-    background-color:#d8f7f6;
+
+.marked {
+    background-color: #d8f7f6;
 }

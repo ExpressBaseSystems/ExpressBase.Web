@@ -219,11 +219,12 @@
         var uploader = new imageUploader({
             Container: "modal-container",
             Controller: "@ViewBag.wc",
+            TenantId:"@ViewBag.cid",
             IsTag: true,
             IsMultiple:true
         });
     uploader.getFileId = function(res){
-    alert(res);        
+    alert(res);
     };
         DrawColTree = function (result) {
             $('#data-table-list').empty();

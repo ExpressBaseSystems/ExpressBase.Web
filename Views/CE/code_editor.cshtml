@@ -66,34 +66,24 @@
 </div>
 <div class="row codedit">
     <ul class="nav nav-tabs versionNav" id="versionNav">
-        <li class="active"><a data-toggle="tab" href="#code_edit0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
+        <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
     </ul>
-    <div class="tab-content " id="versionTab">
-        <div id="code_edit0" class="tab-pane fade in active code_edit" data-id="new">
-            @*<div class="form-inline inner_toolbar" style="margin-bottom:0px;">
-                    <div class="btn btn-group">
-                        <div class="dropdown fdlist btn-group" id="fdlist0">
-                            Parameter Div Name<select id="fd0" name="fd" class="fd selectpicker show-tick"></select>
-                            <i class="fa fa-circle-o-notch fa-spin fa-1x fa-fw" id="loader_fd0" style="display:none;color:dodgerblue;"></i>
-                        </div>
-                        <a href="#inner_well0" class="btn collapsed" id="execute0" data-toggle="collapse" title="Click to open Parameter dialog"><i class="fa fa-chevron-down fa-1x" aria-hidden="true">Render</i></a>
-                    </div>
-                    <div id="inner_well0" class="collapse well"></div>
-
-                </div>*@
-            <div id="paramdiv" class="col-md-2" style="z-index:-1; padding:0px; height:100px; display:none">
+    <div class="tab-content" id="versionTab">
+        <div id="vernav0" class="tab-pane fade in active code_edit" data-id="new">
+            <div id="paramdiv0" class="col-md-2" style="z-index:-1; padding:0px; height:100px; display:none">
                 <h6 class="smallfont" style="font-size: 12px;display:inline">Parameter Div</h6>
                 <button class='head-btn pull-right' id="close_paramdiv"><i class='fa fa-times' aria-hidden='true'></i></button>
             </div>
-            <div class="col-md-10" id="codewindow" style="margin:0;padding:0;">
+            <div class="col-md-10" id="codewindow0" style="margin:0;padding:0;">
                 <textarea id="code" name="code">@ViewBag.Code</textarea>
             </div>
             <div class="col-md-2">
-                <div id="dspropgrid" class="pull-right" style="padding:0px"></div>
+                <div id="dspropgrid0" class="pull-right" style="padding:0px"></div>
             </div>
         </div>
-    </div>
+    </div>    
 </div>
+
 <script>
 
     window.onload = function () {
@@ -102,11 +92,11 @@
             CodeMirror.showHint(cm, @ViewBag.EditorHint);
         };
 
-        var _readonly = "@ViewBag.ReadOnly";
-        if (_readonly === "True")
-        _readonly = true;
-        else
+        var _readonly = '@ViewBag.VersionNumber'.slice(-1);
+        if (_readonly === "w")
             _readonly = false;
+        else
+            _readonly = true;
 
         window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             mode: "@ViewBag.EditorMode",
@@ -277,7 +267,6 @@
     }
 
     .CodeMirror {
-        /*height: 413px;*/
         background-color: #dceae5;
         border: 1px solid #cccccc;
     }

@@ -120,7 +120,7 @@ namespace ExpressBase.Web.Controllers
                     uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                     uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", Tags);
                 }
-                uploadImageRequest.IsAsync = true;
+                uploadImageRequest.IsAsync = false;
 
                 foreach (var formFile in req.Files)
                 {

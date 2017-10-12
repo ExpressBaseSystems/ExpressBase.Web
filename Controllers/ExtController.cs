@@ -121,11 +121,10 @@ namespace ExpressBase.Web.Controllers
                 IServiceClient client = this.ServiceClient;
                 try
                 {
-                    var res = client.Post<RegisterResponse>(new Register { Email = req["email"], Password = req["password"], DisplayName = "expressbase" });
+                    var res = client.Post<RegisterResponse>(new RegisterRequest { Email = req["email"], Password = req["password"], DisplayName = "expressbase" });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
                     {
-                        client.Post<EmailServicesResponse>(new EmailServicesRequest { To = req["email"], Message = string.Format("http://expressbase.org/Ext/VerificationStatus?signup_tok={0}&email={1}", res.UserName, req["email"]), Subject = "EXPRESSbase Signup Confirmation" });
                         return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
                     }
 

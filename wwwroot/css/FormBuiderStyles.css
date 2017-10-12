@@ -1,5 +1,5 @@
 ﻿body {
-    --colorDDD: #dddddd;
+    --colorDDD: #ccf;
     --sild1pxDDD: solid 1px var(--colorDDD);
 }
 
@@ -89,6 +89,7 @@
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
+    direction: rtl;
 }
 
 .propgrid-table-cont input[type="color"] {
@@ -120,6 +121,21 @@
 .ctrlHead {
     display: none;
     cursor: move;
+}
+
+.propgrid-helpbox {
+    display:none;
+    vertical-align: bottom;
+    height: 45px;
+    border-radius: 0px 0px 4px 4px;
+    color: black;
+    overflow-y: auto;
+    font-size: 11px;
+    background-color: #ddd;
+}
+
+.pgCXEditor-Cont .propgrid-helpbox {
+    border-radius: 0px;
 }
 
 .property-grid-cont .bs-searchbox .form-control {
@@ -234,10 +250,14 @@
 }
 
 .pgGroupRow {
-    background-color: var(--colorDDD) !important;
+    background-color: #369 !important;
+    color: white;
     border-bottom: solid 2px white;
 }
 
+    .pgGroupRow > td:hover {
+        background-color: #369 !important;
+    }
 
 .controls-dd-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
     display: block !important;
@@ -563,4 +583,20 @@
     font-size: 18px;
     margin-top: -1px;
     color: #000;
+}
+
+.propgrid-table-cont .pg-table tr:focus {
+    background-color: #c8d4ef;
+    outline: unset;
+}
+
+.pg-wraper {
+    color: #114;
+}
+.form-buider-cont {
+    color: #114;
+}
+
+.pgRow:hover {
+    background-color: #c8d4ef !important;
 }

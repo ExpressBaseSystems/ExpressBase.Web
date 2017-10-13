@@ -211,7 +211,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Name = obj.Name;
                 ds.Description = obj.Description;
                 ds.Json = req["json"];
-                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Status = ObjectLifeCycleStatus.Dev;
                 ds.Relations = req["rel_obj"];
                 ds.IsSave = false;
                 ds.Tags = req["tags"];
@@ -252,7 +252,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Name = obj.Name;
                 ds.Description = obj.Description;
                 ds.Json = req["json"];
-                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Status = ObjectLifeCycleStatus.Dev;
                 ds.Relations = req["rel_obj"];
                 ds.IsSave = true;
                 ds.Tags = req["tags"];
@@ -324,8 +324,11 @@ namespace ExpressBase.Web.Controllers
             {
                 if (_EbObjectType == EbObjectType.DataSource)
                 {
+                    var obj = new EbObjectWrapper();
                     dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
-                    ViewBag.Code =dsobj.Sql;
+                    ViewBag.Code = dsobj.Sql;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                 }
             }
             return dsobj;

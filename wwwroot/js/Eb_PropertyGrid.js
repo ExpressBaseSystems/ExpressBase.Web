@@ -37,7 +37,7 @@ var Eb_PropertyGrid = function (id) {
         var arrow = "&nbsp;";
         var isExpandedAttr = '';
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
-            valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + value + '"' + (value ? ' checked' : '') + ' />';
+            valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + (value || false) + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
         }
@@ -47,23 +47,23 @@ var Eb_PropertyGrid = function (id) {
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', value); };
         }
         else if (type === 2) {    // If number 
-            valueHTML = '<input type="number" id="' + elemId + '" value="' + value + '" style="width:100%" />';
+            valueHTML = '<input type="number" id="' + elemId + '" value="' + (value || 0) + '" style="width:100%" />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return ($('#' + elemId).val() === "") ? "" : parseInt($('#' + elemId).val()); };
         }
         else if (type === 3) {    // If color use color picker 
-            valueHTML = '<input type="color" id="' + elemId + '" value="' + value + '" style="width:100%; height: 21px;" />';
+            valueHTML = '<input type="color" id="' + elemId + '" value="' + (value || "#ffffff") + '" style="width:100%; height: 21px;" />';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
-            valueHTML = '<span style="vertical-align: sub;" for="' + elemId + '" editor="' + type + '">' + value + '</span>';
+            valueHTML = '<span style="vertical-align: sub;" for="' + elemId + '" editor="' + type + '">' + (value || "") + '</span>';
         }
         else if (type === 5) {    //  If string editor textbox
-            valueHTML = '<input type="text" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
+            valueHTML = '<input type="text" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 6) {    //  If date&time date
-            valueHTML = '<input type="date" id="' + elemId + '" value="' + value + '"style="width:100%"></div>';
+            valueHTML = '<input type="date" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type > 6 && type < 11) {    //  If collection editor
@@ -79,7 +79,7 @@ var Eb_PropertyGrid = function (id) {
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 13) {  //  If Object Selector editor
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + value + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 15) {  //  If expandable
@@ -179,7 +179,7 @@ var Eb_PropertyGrid = function (id) {
             return;
         var $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
         var isExpanded = $Tr.attr("is-showprop") === 'true';
-            $Tr.hide(300)
+            $Tr.hide()
             $Tr.attr("is-showprop", false);
             this.$hiddenProps[prop] = { "$Tr": $Tr };
     };
@@ -248,12 +248,11 @@ var Eb_PropertyGrid = function (id) {
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);;
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
+        alert();
         this.PropertyChanged(this.PropsObj, this.CurProp);
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
-
-        console.log("col :\n\n" + JSON.stringify(res) + '\n\n');
     };
 
     this.addToDD = function (obj) {

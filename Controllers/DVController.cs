@@ -556,6 +556,7 @@ namespace ExpressBase.Web.Controllers
                     ds.Json = json;
                     ds.Status = ObjectLifeCycleStatus.Live;
                     ds.Relations = "aaa";
+                    ds.Tags = "dddd";
                     var result = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                     SaveId = result.RefId;
                 }
@@ -568,25 +569,26 @@ namespace ExpressBase.Web.Controllers
                     ds.Description = req["description"];
                     ds.Relations = req["rel_obj"];
                     ds.RefId = req["id"];
+                    ds.Tags = "dddd";
                     ds.ChangeLog = req["changeLog"];
                     var result = ServiceClient.Post<EbObject_CommitResponse>(ds);
                     SaveId = result.RefId;
                 }
             }
-            if (ViewBag.wc == "uc")
-            {
-                if (type == "TableVisualization")
-                    this.Redis.Set<EbTableVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
-                else if (type == "ChartVisualization")
-                    this.Redis.Set<EbChartVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
-            }
-            else if (ViewBag.wc == "dc")
-            {
-                if (type == "TableVisualization")
-                    this.Redis.Set<EbTableVisualization>(SaveId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
-                else if (type == "ChartVisualization")
-                    this.Redis.Set<EbChartVisualization>(SaveId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
-            }
+            //if (ViewBag.wc == "uc")
+            //{
+            //    if (type == "TableVisualization")
+            //        this.Redis.Set<EbTableVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
+            //    else if (type == "ChartVisualization")
+            //        this.Redis.Set<EbChartVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
+            //}
+            //else if (ViewBag.wc == "dc")
+            //{
+            //    if (type == "TableVisualization")
+            //        this.Redis.Set<EbTableVisualization>(SaveId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
+            //    else if (type == "ChartVisualization")
+            //        this.Redis.Set<EbChartVisualization>(SaveId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
+            //}
             return Json("Success");
         }
 

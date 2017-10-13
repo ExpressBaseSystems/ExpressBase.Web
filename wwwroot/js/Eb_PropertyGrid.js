@@ -179,7 +179,7 @@ var Eb_PropertyGrid = function (id) {
             return;
         var $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
         var isExpanded = $Tr.attr("is-showprop") === 'true';
-            $Tr.hide(300)
+            $Tr.hide()
             $Tr.attr("is-showprop", false);
             this.$hiddenProps[prop] = { "$Tr": $Tr };
     };
@@ -248,12 +248,11 @@ var Eb_PropertyGrid = function (id) {
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);;
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
+        alert();
         this.PropertyChanged(this.PropsObj, this.CurProp);
 
         if (this.PropsObj.RenderMe)
             this.PropsObj.RenderMe();
-
-        console.log("col :\n\n" + JSON.stringify(res) + '\n\n');
     };
 
     this.addToDD = function (obj) {

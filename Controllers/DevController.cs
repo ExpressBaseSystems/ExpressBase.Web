@@ -153,7 +153,7 @@ namespace ExpressBase.Web.Controllers
                 //}
 
                 //(ds.EbObject as EbFilterDialog).EbObjectType = EbObjectType.FilterDialog;
-                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Status = ObjectLifeCycleStatus.Dev;
                 ds.Relations = "";
                 ds.IsSave = false;
 
@@ -189,7 +189,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Name = req["name"];
                 ds.Description = req["description"];
                 ds.Json = req["filterdialogjson"];
-                ds.Status = ObjectLifeCycleStatus.Development;
+                ds.Status = ObjectLifeCycleStatus.Dev;
                 ds.Relations = "";
                 ds.IsSave = true;
 

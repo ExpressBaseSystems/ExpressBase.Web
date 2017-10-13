@@ -20,12 +20,15 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     this.rel_arr = [];
     this.curr_status = cur_status;
     this.Cid = cid;
+    this.VersionCollection = {};
+    this.PropGCollection = {};
 
     this.Current_obj = dsobj;
-
-    var DSPropGrid = new Eb_PropertyGrid("dspropgrid");
+    this.VersionCollection["#vernav" + tabNum] = dsobj;
+    this.PropGCollection["#vernav" + tabNum] = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
     this.Init = function () {
+
         this.SaveBtn = $('#save');
         this.CommitBtn = $('#commit');
 
@@ -37,29 +40,36 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         $('#compare').off('click').on('click', this.Compare.bind(this));
         $('#status').off('click').on('click', this.StatusPage.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
+        $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         if (this.Current_obj === null) {
             this.Current_obj = new EbObjects["EbDataSource"]("EbDataSource1");
         }
-        DSPropGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
+        this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
         this.Name = this.Current_obj.Name;
 
     }
+    this.TabChangeSuccess = function (e) {
+        var target = $(e.target).attr("href");
+        this.Current_obj = this.VersionCollection[target];
+        this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
+    };
 
-    DSPropGrid.PropertyChanged = function (obj, pname) {
+    this.PropGCollection["#vernav" + tabNum].PropertyChanged = function (obj, pname) {
         this.Current_obj = obj;
+        this.VersionCollection["#vernav" + tabNum] = this.Current_obj;
         if (pname === "FilterDialogRefId") {
-            $('#paramdiv #filterBox').remove();
-            $('#paramdiv').show();
-            $('#codewindow').removeClass("col-md-10");
-            $('#codewindow').addClass("col-md-8");
+            $('#paramdiv' + tabNum + ' #filterBox').remove();
+            $('#paramdiv' + tabNum).show();
+            $('#codewindow' + tabNum).removeClass("col-md-10");
+            $('#codewindow' + tabNum).addClass("col-md-8");
 
             $.post("../CE/GetFilterBody", { "ObjId": obj.FilterDialogRefId },
                 function (result) {
-                    $('#paramdiv').append(result);
+                    $('#paramdiv' + tabNum).append(result);
                     $.LoadingOverlay("hide");
                 });
         }
-    };
+    }.bind(this);
 
     this.SetValues = function () {
         this.Code = window.editor.getValue();
@@ -71,9 +81,9 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         $('#versionNav').append(navitem);
         $('#versionTab').append(tabitem);
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));       
     }
-
+   
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");
         $(e.target).parent().parent().remove(); //remove li of tab
@@ -150,23 +160,40 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
 
     this.VersionCode_success = function (data) {
         this.Current_obj = data;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "' data-verNum='" + this.Version_num + "'>v." + this.Version_num + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' class='cetab' href='#vernav" + tabNum + "' data-verNum='" + this.Version_num + "'>v." + this.Version_num + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
+
         $('#vernav' + tabNum).append(
-            " <div>" +
-            "<textarea id='vercode" + tabNum + "' name='vercode' class='code'>" + atob(this.Current_obj.sql) + "</textarea>" +
+            "<div id='paramdiv" + tabNum + "' class='col-md-2' style='z-index:-1; padding:0px; height:100px; display:none'>" +
+               "<h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6> "+
+                "<button class='head-btn pull-right' id='close_paramdiv'><i class='fa fa-times' aria-hidden='true'></i></button>"+
+            "</div>"+
+            " <div class='col-md-10' id='codewindow" + tabNum + "' style='margin:0;padding: 0;'> " +
+            "<textarea id='code" + tabNum + "' name='code' class='code'>" + atob(this.Current_obj.sql) + "</textarea>" +
+            "</div>" +
+            "<div class='col-md-2'>" +
+            " <div id='dspropgrid" + tabNum + "' class='pull-right' style='padding:0px'></div>" +
             "</div>");
-        window.editor1 = CodeMirror.fromTextArea(document.getElementById("vercode" + tabNum), {
+
+        this.VersionCollection["#vernav" + tabNum] = this.Current_obj;
+        this.PropGCollection["#vernav" + tabNum] = new Eb_PropertyGrid("dspropgrid" + tabNum);
+        this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
+
+        var _readonly = this.Version_num.slice(-1);
+        if (_readonly === "w")
+            _readonly = false;
+        else
+            _readonly = true;
+        window.editor1 = CodeMirror.fromTextArea(document.getElementById("code" + tabNum), {
             mode: "text/x-sql",
             lineNumbers: true,
             lineWrapping: true,
             autoRefresh: true,
-            readOnly: true,
+            readOnly: _readonly,
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
-
         var getNav = $("#versionNav li.active a").attr("href");
         $(".selectpicker").selectpicker();
         $.LoadingOverlay("hide");
@@ -230,7 +257,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         var getNav = $("#versionNav li.active a").attr("href");
         $('#vernav' + tabNum).append("<div class=' well col-md-12'>" +
             "<div class='col-md-2 col-md-offset-1'>Current Status :" + this.curr_status + "<select class='selectpicker btn' id='status_drpdwn" + tabNum + "'></select></div>" +
-            "<div class='col-md-6' style='display:inline'><p>Changelog</p><textarea id='StatChlog" + tabNum + "' class='StatChlog' style='width:100%'></textarea></div>" +
+            "<div class='col-md-6' style='display:inline'><p>Changelog</p><textarea id='StatChlog" + tabNum + "' class='StatChlog' style='width:100%;height: 35px;border-radius: 6px;margin-top: -3px;'></textarea></div>" +
             "<div class='col-md-2' style='display:inline'><button class='btn btn-primary' id='confirm_stat_change" + tabNum + "'>Apply</button></div>" +
             "</div>" +
             "<div class='col-md-12 statwindow' id='statwindow" + tabNum + "'></div>");
@@ -274,7 +301,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
             $(getNav +' #statwindow' + tabNum).empty();
             $(getNav + ' #statwindow' + tabNum).append("<div class='container'>" +
                 "<div class='row'>" +
-                "<div class='col-md-12'>" +
+                "<div class='col-md-11'>" +
                 "<ul class='timeline' id='timeline" + tabNum + "'>" +
                 "</ul>" +
                 "</div>" +
@@ -326,8 +353,8 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
                 $(getNav +' #timeline-badge' + i).addClass(classname);
             });
             $.LoadingOverlay("hide");
-            var scrollPos = $('#statwindow' + tabNum).offset().top;
-            $(window).scrollTop(scrollPos);
+            //var scrollPos = $('#vernav' + tabNum).offset().top;
+            //$(window).scrollTop(scrollPos);
         });
     }
 
@@ -404,11 +431,11 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
             $.LoadingOverlay("hide");
         }
         else if (verRefid1 === "Current") {
-            var _code = $('#code_edit0 .code').text();
             $.LoadingOverlay("show");
             var v1 = this.Version_num;
             var v2 = $('#selected_Ver_2' + tabNum + ' option:selected').attr("data-tokens");
-            this.getSecondVersionCode(verRefid2, v1, v2, _code);
+            this.SetValues();
+            this.getSecondVersionCode(verRefid2, v1, v2, this.Code);
 
         }
         else {
@@ -599,6 +626,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     this.CallDiffer = function (data_1, selected_ver_number, curr_ver, data_2) {
         var getNav = $("#versionNav li.active a").attr("href");
         this.SetValues();
+        data_2 = atob(data_2.sql);
         if (selected_ver_number > curr_ver) {
             $.post("../CE/GetDiffer", {
                 NewText: data_1, OldText: data_2
@@ -645,7 +673,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
             var x = fnName.replace('(', "_v" + this.Version_num + '(');
             var v = this.Code.replace(result[1], x);
             $('#obj_name').val(x);
-            $('#code').val(v);
+            $('#code' + tabNum).val(v);
             editor.setValue(v);
         }
     };

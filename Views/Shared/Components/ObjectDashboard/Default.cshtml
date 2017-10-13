@@ -4,11 +4,9 @@
     .dashbord {
         background-color: white;
         width: 100%;
-        /*min-height: 147px;*/
-        /*border: 1px solid #d3c9c9;*/
         border-top: none;
         font-family: Tahoma;
-        margin-top: 3px;
+        margin-top: 19px
     }
 
     .row {
@@ -545,14 +543,14 @@
             $('#changelogPopup').css("display", "none");
         })
 
-        if ("@ViewBag._ReadOnly" == "True") {
+        @*if ("@ViewBag._ReadOnly" == "True") {
             $('#commit_outer').hide();
             $('#save').hide();
         }
          if ("@ViewBag._ReadOnly" == "False") {
              $('#_minor').remove();
              $('#_patch').remove();
-         }
+         }*@
         $('#create').on('change', function () {
             var selected = $(this).find("option:selected").val();
             var selected_opt = $(this).find("option:selected").attr("id");

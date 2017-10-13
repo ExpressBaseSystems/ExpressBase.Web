@@ -105,10 +105,10 @@
         }
         else if (this.editor === 10)
             this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
-        if (this.editor === 9 || this.editor === 8)
-            this.movingObj = getObjByval(this.allCols, "name", el.id);
         else
             this.movingObj = null;
+        if (this.editor === 9 || this.editor === 8)
+            this.movingObj = getObjByval(this.allCols, "name", el.id);
     };
 
     this.onDragendFn = function (el) {

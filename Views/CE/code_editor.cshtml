@@ -93,7 +93,7 @@
         };
 
         var _readonly = '@ViewBag.VersionNumber'.slice(-1);
-        if (_readonly === "w")
+        if (_readonly === "w" ||'@ViewBag.IsNew'==="True")
             _readonly = false;
         else
             _readonly = true;

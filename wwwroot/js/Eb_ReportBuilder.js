@@ -32,6 +32,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     this.height = null;
     this.width = null;
     this.type = "A4";
+
     this.idCounter = {
         EbCircleCounter: 0,
         EbReportColCounter: 0,
@@ -103,36 +104,53 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         }
     };//ajax for ds coloums
 
-    this.ruler = function () {
+    this.ruler = function (unit) {
+        var minor = "";
+        var major = "";
+        var label = "";
+        var len = "0";
+        if (unit === 'px') {
+            minor = "tickMinor";
+            major = "tickMajor";
+            label = "tickLabel";
+            len = 5;
+        }
+        else if (unit === 'cm') {
+            minor = "tickMinor-cm";
+            major = "tickMajor-cm";
+            label = "tickLabel-cm";
+            len = 1;
+        }
+
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": this.width });
-        for (var i = 0, step = 0; i < $ruler.innerWidth() / 5; i++ , step++) {
+        for (var i = 0, step = 0; i < $ruler.innerWidth() / len; i++ , step++) {
             var $tick = $('<div>');
             if (step === 0) {
-                $tick.addClass('tickLabel').html(i * 5);
+                $tick.addClass(label).html(i);
             } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass('tickMinor');
+                $tick.addClass(minor);
                 if (step === 9) {
                     step = -1;
                 }
             } else {
-                $tick.addClass('tickMajor');
+                $tick.addClass(major);
             }
             $ruler.append($tick);
         }
 
         var $rulerleft = $('.rulerleft').css({ "height": this.height });
-        for (i = 0, step = 0; i < $rulerleft.innerHeight() / 5; i++ , step++) {
+        for (i = 0, step = 0; i < $rulerleft.innerHeight()/len; i++ , step++) {
             $tick = $('<div>');
             if (step === 0) {
-                $tick.addClass('tickLabel').html(i * 5);
+                $tick.addClass(label).html(i);
             } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass('tickMinor');
+                $tick.addClass(minor);
                 if (step === 9) {
                     step = -1;
                 }
             } else {
-                $tick.addClass('tickMajor');
+                $tick.addClass(major);
             }
             $rulerleft.append($tick);
         }
@@ -693,10 +711,13 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             this.pg.setObject(this.report, AllMetas["EbReport"]);
             this.pg.addToDD(this.report);          
             $('#PageContainer,.ruler,.rulerleft').empty();
-            this.ruler();
+            this.ruler("cm");
             this.pgC = this.createPagecontainer();
             this.createPage(this.pgC);
-            this.DragDrop_Items();      
+            this.DragDrop_Items();
+            $("#rulerUnit").change(function () {
+                this.ruler($(this.value()));
+            }).bind(this);
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.Commitbtnid).on('click', this.Commit.bind(this));      
     };//report executioin start func

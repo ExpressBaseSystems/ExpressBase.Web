@@ -120,7 +120,7 @@ namespace ExpressBase.Web.Controllers
                     Name = req["name"],
                     Description = req["description"],
                     Json = req["json"],
-                    Status = ObjectLifeCycleStatus.Development,
+                    Status = ObjectLifeCycleStatus.Dev,
                     UserId = ViewBag.UId,
                     Relations = req["rel_obj"]
                 });

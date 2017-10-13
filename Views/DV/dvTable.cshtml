@@ -35,8 +35,10 @@
     @Html.Raw(ViewBag.EbObjectType)
     @Html.Raw(ViewBag.Meta)
     @Html.Raw(ViewBag.JsObjects);
+    var PcFlag = "False";
     var dvcontainerObj = new DvContainerObj({
-        ss_url: '@ViewBag.ServiceUrl'
+        ss_url: '@ViewBag.ServiceUrl',
+        dvRefId :'@ViewBag.Refid'
         });
 
     var split = new splitWindow("parent-div", "contBox");
@@ -61,6 +63,7 @@
         dvcontainerObj.currentObj = obj;
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
+                PcFlag = "True";
                 call2dv(obj);
             }
         }
@@ -80,13 +83,14 @@
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(obj), dvRefId: null },
+            data: { dvobj: JSON.stringify(obj), dvRefId: '@ViewBag.Refid', flag: PcFlag},
             success: ajaxSucc
         });
 
     };
 
     function ajaxSucc(text) {
+            PcFlag = "False";
             obj = dvcontainerObj.currentObj;
             $("#btnGo").css("display", "inline-block");
             var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter;
@@ -105,6 +109,7 @@
                 $(sideDivId).css("display", "inline");
                 $.LoadingOverlay("hide");
                 dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
+                $("#content_dv" + obj.EbSid + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
             }
             $(subDivId).focus();
     };

@@ -192,7 +192,7 @@ var EbDataTable = function (settings) {
         //    this.ebSettings.columns[1].visible = true;
         //}
         $.event.props.push('dataTransfer');
-        this.updateRenderFunc();
+        //this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         //this.collapseFilter();
@@ -302,7 +302,7 @@ var EbDataTable = function (settings) {
     this.createTblObject = function () {
         var o = new Object();
         //o.scrollY = this.ebSettings.scrollY+"px";
-        o.scrollY = "400px";
+        o.scrollY = "calc(100vh - 230px)";
         o.scrollX = "100%";
         if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
             if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
@@ -1764,7 +1764,6 @@ var EbDataTable = function (settings) {
                 this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
             }
             else if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
-                this.ebSettings.Columns.$values[i].LinkRefId = "695";
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
                 alert(this.linkDV);
@@ -1792,7 +1791,6 @@ var EbDataTable = function (settings) {
         }
         if (col.Type ==parseInt( gettypefromString("String")) || col.Type ==parseInt( gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
-                this.ebSettings.Columns.$values[i].LinkRefId = "695";
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);
@@ -1801,15 +1799,15 @@ var EbDataTable = function (settings) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
             }
         }
-        if (col.fontfamily !== 0) {
-            var style = document.createElement('style');
-            style.type = 'text/css';
-            var fontName = col.fontfamily.replace(/_/g, " ");
-            style.innerHTML = '.font_' + col.fontfamily + '{font-family: ' + fontName + ';}';
-            document.getElementsByTagName('body')[0].appendChild(style);
-            this.ebSettings.Columns.$values[i].className = "font_" + col.fontfamily + " tdheight";
-            this.ebSettings.Columns.$values[i].sClass = "font_" + col.fontfamily + " tdheight";
-        }
+        //if (col.fontfamily !== 0) {
+        //    var style = document.createElement('style');
+        //    style.type = 'text/css';
+        //    var fontName = col.fontfamily.replace(/_/g, " ");
+        //    style.innerHTML = '.font_' + col.fontfamily + '{font-family: ' + fontName + ';}';
+        //    document.getElementsByTagName('body')[0].appendChild(style);
+        //    this.ebSettings.Columns.$values[i].className = "font_" + col.fontfamily + " tdheight";
+        //    this.ebSettings.Columns.$values[i].sClass = "font_" + col.fontfamily + " tdheight";
+        //}
     };
 
     this.renderProgressCol = function (deci, data, type, row, meta) {

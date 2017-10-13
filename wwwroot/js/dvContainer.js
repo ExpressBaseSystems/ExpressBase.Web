@@ -3,6 +3,7 @@ var focusedId;
 var DvContainerObj = function (settings) {
     this.ssurl = settings.ss_url;
     this.wc = settings.wc;
+    this.dvRefid = settings.dvRefId;
     this.currentObj = null;
     this.dvcol = {};
     this.MainData = null;
@@ -197,9 +198,9 @@ var DvContainerObj = function (settings) {
     this.saveSettings = function () {
         $.LoadingOverlay("show");
         if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1)
-            $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvid, type: "TableVisualization" }, this.saveSuccess.bind(this));
+            $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvRefid, type: "TableVisualization" }, this.saveSuccess.bind(this));
         else
-            $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvid, type: "ChartVisualization" }, this.saveSuccess.bind(this));
+            $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvRefid, type: "ChartVisualization" }, this.saveSuccess.bind(this));
     };
 
     this.saveSuccess = function () {

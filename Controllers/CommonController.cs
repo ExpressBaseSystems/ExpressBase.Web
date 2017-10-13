@@ -32,5 +32,14 @@ namespace ExpressBase.Web.Controllers
             }
             return html;
         }
+
+        [HttpPost]
+        public string UniqueCheck(string text)
+        {
+            Dictionary<string, object> Dict = new Dictionary<string, object>();
+            Dict["email"] = text;
+            var fr = this.ServiceClient.Get<bool>(new UniqueRequest { Colvalues = Dict });
+            return fr.ToString();
+        }
     }
 }

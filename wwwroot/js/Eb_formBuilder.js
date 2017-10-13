@@ -70,9 +70,9 @@
         $(".eb-loaderFixed").hide();
         $('.alert').remove();
         $('.help').append("<div class='alert alert-success alert-dismissable'>" +
-    "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-    "<strong>Success!</strong>" +
-    "</div>");
+            "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+            "<strong>Success!</strong>" +
+            "</div>");
     };
 
     this.CreatePG = function (control) {
@@ -274,7 +274,7 @@
         $(".Eb-ctrlContainer").each(function (i, el) { this.initCtrl(el); }.bind(this));
         setTimeout(function () {
             Proc(JSON.parse(editModeObj), this.rootContainerObj);
-        }.bind(this), 1000);       
+        }.bind(this), 1000);
     };
 
     this.Init = function () {
@@ -295,6 +295,10 @@
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
         this.PGobj.Close = function () {
             slideRight('.form-save-wraper', '#form-buider-propGrid');
+        }
+        this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
+            console.log("PropsObj: " + JSON.stringify(PropsObj));
+            console.log("CurProp: " + CurProp);
         }
     };
     this.Init();

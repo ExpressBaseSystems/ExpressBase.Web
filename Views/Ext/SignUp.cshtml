@@ -83,7 +83,54 @@
             return this;
         };
         $('form').goValidate();
+
+        $("#email").focusout(function () {
+            var text1 = $('#email').val();
+            alert(text1);
+            var DataCollection = { "email": $('#email').val() };
+
+            $.post('http://localhost:8000/unique', {"Colvalues": JSON.stringify(DataCollection) },
+                function (result) {
+                    if (result) {
+                        alert(result); //document.getElementById('div5').innerHTML = "<img src='http://localhost:53125/images/CheckMark-24x32.png' width='32px'/>";
+                    }
+                    else {
+                        //document.getElementById('div5').innerHTML = "<img src='http://localhost:53125/images/Error-24x24.png' width='32px'/>";
+                    }
+                });
+            //$.post("../Common/UniqueCheck",{"text": text1}, function (result) { });
+        });
+
+        $(function () {
+            $('input[type=password]').each(function () {
+                $(this).attr('data-background-color', $(this).css('white'));
+                $(this).css('background-color', $(this).css('white'));
+                $(this).attr('type', 'text');
+
+                //$(this).focus(function () {
+                //    $(this).attr('type', 'password');
+                //    $(this).css('background-color', $(this).attr('data-background-color'));
+                //});
+
+                //$(this).blur(function () {
+                //    $(this).css('background-color', $(this).css('color'));
+                //    $(this).attr('type', 'text');
+                //});
+            });
+        });
     });
+        //function uniquecheck1()
+        //{
+        //        var text1 = $('#email').val();
+        //        alert(text1);
+        //        $.post("../Common/UniqueCheck",
+        //            {
+        //                "text": text1,
+
+        //            }, function (result) {
+
+        //            });
+        //}
 </script>
 <section id="signup" style="margin-top:100px;">
     <div class="container">
@@ -98,8 +145,8 @@
                         <div class="col-sm-12">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required onchange="validate()" />
-
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required />
+                              
                             </div>
                             <div class="help-block with-errors"></div>
                         </div>
@@ -161,6 +208,6 @@
 </section>
 <style>
     .popover {
-    width:200px;
-}
+        width: 200px;
+    }
 </style>

@@ -83,7 +83,37 @@
             return this;
         };
         $('form').goValidate();
-    });
+        $(function () {
+            $('input[type=password]').each(function () {
+                $(this).attr('data-background-color', $(this).css('white'));
+                $(this).css('background-color', $(this).css('white'));
+                $(this).attr('type', 'text');
+
+                //$(this).focus(function () {
+                //    $(this).attr('type', 'password');
+                //    $(this).css('background-color', $(this).attr('data-background-color'));
+                //});
+
+                //$(this).blur(function () {
+                //    $(this).css('background-color', $(this).css('color'));
+                //    $(this).attr('type', 'text');
+                //});
+            });
+        });
+        });
+        function uniquecheck()
+        {
+           
+            var timer;
+            clearTimeout(timer);
+            //timer = setTimeout(function (event) {
+                var text = $('#email').val();
+                alert(text);
+                $.post("../Common/uniquecheck", { "text": text }, function (result) {/* alert(result); */});
+            //}, 1000);
+
+
+        }
 </script>
 <section id="signup" style="margin-top:100px;">
     <div class="container">
@@ -98,7 +128,7 @@
                         <div class="col-sm-12">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required onchange="validate()" />
+                                <input type="email" class="form-control" onfocusout="uniquecheck()" id="email" name="email" placeholder="Email" data-error="email address is invalid" required />
 
                             </div>
                             <div class="help-block with-errors"></div>

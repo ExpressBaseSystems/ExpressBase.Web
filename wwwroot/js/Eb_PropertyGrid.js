@@ -179,9 +179,9 @@ var Eb_PropertyGrid = function (id) {
             return;
         var $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
         var isExpanded = $Tr.attr("is-showprop") === 'true';
-            $Tr.hide()
-            $Tr.attr("is-showprop", false);
-            this.$hiddenProps[prop] = { "$Tr": $Tr };
+        $Tr.hide()
+        $Tr.attr("is-showprop", false);
+        this.$hiddenProps[prop] = { "$Tr": $Tr };
     };
 
     this.ShowProperty = function (prop) {
@@ -189,9 +189,9 @@ var Eb_PropertyGrid = function (id) {
             return;
         var $Tr = this.$hiddenProps[prop].$Tr;
         var isExpanded = $Tr.attr("is-showprop") === 'true';
-            $Tr.show(300);
-            $Tr.attr("is-showprop", true);
-            this.$hiddenProps[prop] = null;
+        $Tr.show(300);
+        $Tr.attr("is-showprop", true);
+        this.$hiddenProps[prop] = null;
     };
 
     this.buildGrid = function () {
@@ -248,7 +248,7 @@ var Eb_PropertyGrid = function (id) {
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);;
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
-        alert();
+        //alert();
         this.PropertyChanged(this.PropsObj, this.CurProp);
 
         if (this.PropsObj.RenderMe)

@@ -64,7 +64,7 @@
     this.fileUploadSuccess = function (event, data, previewId, index) {
         $("#sub-upload").show();
         var objId = data.response.objId;      
-        $('#obj-id').attr('value', "http://"+ this.TenantId +".localhost:5000/static/images/" + objid + ".jpg");        
+        $('#obj-id').attr('value', "http://" + this.TenantId + ".localhost:5000/static/images/" + objId + ".jpg");        
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
         $("#sub-upload").on('click', this.getId.bind(this, objId));
@@ -122,9 +122,9 @@
     };
     
     this.init = function () {
-        this.getUplodedImgOnload();
+        //this.getUplodedImgOnload();
         this.CreateMOdalW();
-        //this.loadFileInput();       
+        this.loadFileInput();       
     };
     this.init();
 }

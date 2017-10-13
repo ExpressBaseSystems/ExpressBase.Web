@@ -8,16 +8,13 @@
     padding: 0;
     list-style: none;
 }
-
-    .tree ul {
+.tree ul {
         margin-left: 1em;
         position: relative;
     }
-
-        .tree ul ul {
+      .tree ul ul {
             margin-left: .5em;
         }
-
         .tree ul:before {
             content: "";
             display: block;
@@ -28,7 +25,6 @@
             left: 0;
             border-left: 1px solid;
         }
-
     .tree li {
         margin: 0;
         padding: 0 4%;
@@ -49,7 +45,6 @@
         top: 1em;
         left: 0;
     }
-
     .tree ul li:last-child:before {
         background: #fff;
         height: auto;
@@ -135,13 +130,11 @@
     margin-top: 29px;
     border-bottom: 1px solid rgb(170, 170, 170);
 }
-
     .reportmenu .btn {
         color: #eeecec !important;
         border: none;
         background-color: transparent;
     }
-
         .reportmenu .btn:hover {
             background-color: #30C2FF;
             border-radius:0;
@@ -151,7 +144,6 @@
             background-color: #30C2FF;
             border-radius: 0;
         }
-
 .Eb-shaps-title {
     font-size: 13px;   
 }
@@ -205,9 +197,7 @@
 .ruler {
     margin-top: 1px;
     color: #000;
-    font-family: arial;
-    font-size: 10px;
-    line-height: 14px;
+    font-size: 10px; 
     overflow: hidden;
     border: 1px solid #aaa;
     margin-left: 79px !important;
@@ -217,11 +207,24 @@
     z-index: 1;
     height: 20px;
 }
-
-    .ruler > div {
+.rulerleft {
+    position: absolute;
+    color: #000;
+    border: 1px solid #aaa;
+    font-size: 10px;
+    background-color: #fbf7f7;
+    margin-left: -19px;
+    margin-top: 20px;
+    width: 20px;
+    z-index: 2;
+}
+.ruler > div {
         display: inline-block;
         background: #000;
     }
+.rulerleft > div {
+    background: #000;
+}
 
     .ruler .tickLabel {
         position: relative;
@@ -232,23 +235,177 @@
         text-indent: 1px;
         line-height: 16px;
     }
+.ruler .tickLabel-cm {
+    position: relative;
+    top: -7px;
+    margin-left: 3px;
+    width: 1px;
+    height: 100%;
+    text-indent: 1px;
+    line-height: 16px;
+}
+.ruler .tickLabel-inch {
+    position: relative;
+    top: -7px;
+    margin-left: 3px;
+    width: 1px;
+    height: 100%;
+    text-indent: 1px;
+    line-height: 16px;
+}
+.ruler .tickLabel-mm {
+    position: relative;
+    top: -7px;
+    margin-left: 3px;
+    width: 1px;
+    height: 100%;
+    text-indent: 1px;
+    line-height: 16px;
+}
+  
 
-        .ruler .tickLabel:first-of-type {
+.ruler .tickLabel:first-of-type {
             margin-left: 0;
         }
-
+.ruler .tickLabel-cm:first-of-type {
+    margin-left: 0;
+}
+.ruler .tickLabel-inch:first-of-type {
+    margin-left: 0;
+}
+.ruler .tickLabel-mm:first-of-type {
+    margin-left: 0;
+}
     .ruler .tickMajor {
         margin-top: 12px;
         margin-left: 4px;
         width: 1px;
         height: 6px;
     }
+.ruler .tickMajor-cm {
+    margin-top: 12px;
+    margin-left: 3px;
+    width: 1px;
+    height: 6px;
+}
+.ruler .tickMajor-inch {
+    margin-top: 12px;
+    margin-left: 3px;
+    width: 1px;
+    height: 6px;
+}
+.ruler .tickMajor-mm {
+    margin-top: 12px;
+    margin-left: 3px;
+    width: 1px;
+    height: 6px;
+}
 
     .ruler .tickMinor {
-        margin-left: 4px;
+        margin-left: 3px;
+        width: 1px;
+        height: 4px;
+    }  
+    .ruler .tickMinor-cm {
+        margin-left: 3px;
         width: 1px;
         height: 4px;
     }
+.ruler .tickMinor-inch {
+    margin-left: 3px;
+    width: 1px;
+    height: 4px;
+}
+.ruler .tickMinor-mm {
+    margin-left: 3px;
+    width: 1px;
+    height: 4px;
+}
+       .rulerleft .tickLabel:first-of-type {
+            margin-left: 0;
+            margin-top: -1px;
+        }
+.rulerleft .tickLabel-cm:first-of-type {
+    margin-left: 0;
+    margin-top: -1px;
+}
+.rulerleft .tickLabel-inch:first-of-type {
+    margin-left: 0;
+    margin-top: -1px;
+}
+.rulerleft .tickLabel-mm:first-of-type {
+    margin-left: 0;
+    margin-top: -1px;
+}
+    .rulerleft .tickLabel {
+        margin-top: 4px;
+        width: 100%;
+        height: 1px;
+    }
+.rulerleft .tickLabel-cm {
+    margin-top: 3px;
+    width: 100%;
+    height: 1px;
+}
+.rulerleft .tickLabel-inch {
+    margin-top: 3px;
+    width: 100%;
+    height: 1px;
+}
+.rulerleft .tickLabel-mm {
+    margin-top: 3px;
+    width: 100%;
+    height: 1px;
+}
+
+    .rulerleft .tickMajor {
+        margin-top: 4px;
+        width: 6px;
+        height: 1px;
+        margin-left: 13px;
+    }
+.rulerleft .tickMajor-cm {
+    margin-top: 3px;
+    width: 6px;
+    height: 1px;
+    margin-left: 13px;
+}
+.rulerleft .tickMajor-inch {
+    margin-top: 4px;
+    width: 6px;
+    height: 1px;
+    margin-left: 13px;
+}
+.rulerleft .tickMajor-mm {
+    margin-top: 4px;
+    width: 6px;
+    height: 1px;
+    margin-left: 13px;
+}
+    .rulerleft .tickMinor {
+        margin-top: 4px;
+        width: 4px;
+        height: 1px;
+        margin-left: 14px;
+    }
+    .rulerleft .tickMinor-cm {
+        margin-top: 3px;
+        width: 4px;
+        height: 1px;
+        margin-left: 14px;
+    }
+.rulerleft .tickMinor-inch {
+    margin-top: 3px;
+    width: 4px;
+    height: 1px;
+    margin-left: 14px;
+}
+.rulerleft .tickMinor-mm {
+    margin-top: 3px;
+    width: 4px;
+    height: 1px;
+    margin-left: 14px;
+}
 
 .page {
     display: block;
@@ -268,50 +425,6 @@
     margin-bottom: 50px;
     overflow-x: auto;
 }
-
-.rulerleft {
-    position: absolute;
-    color: #000;
-    border: 1px solid #aaa;
-    font-size: 10px;
-    background-color: #fbf7f7;
-    margin-left: -19px;
-    margin-top: 20px;
-    width: 20px;
-    z-index: 2;
-}
-
-    .rulerleft > div {
-        background: #000;
-    }
-
-    .rulerleft .tickLabel {
-        margin-top: 4px;
-        width: 100%;
-        height: 1px;
-    }
-
-        .rulerleft .tickLabel:first-of-type {
-            margin-left: 0;
-            margin-top: -1px;
-        }
-
-    .rulerleft .tickMajor {
-        margin-top: 4px;
-        width: 6px;
-        height: 1px;
-        margin-left: 13px;
-    }
-
-    .rulerleft .tickMinor {
-        margin-top: 4px;
-        width: 4px;
-        height: 1px;
-        margin-left: 14px;
-    }
-
-
-
 #imgbg {
     width: 14.8cm;
     z-index: -1;
@@ -337,8 +450,6 @@
     border: 1px solid #ccc;
     overflow-y: auto;
 }
-
-
 #eb-rpt-container {
     margin-top: 62px;
     background-color: #f2f2f2;

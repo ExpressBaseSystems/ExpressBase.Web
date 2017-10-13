@@ -19,6 +19,7 @@
         <label class='dvname commonControls' style='color: #333;width:200px'></label>
         <button id='btnGo' class='tools commonControls' style='display:none'><i class="fa fa-play" aria-hidden="true"></i></button>
         <button id='Save_btn' class='tools commonControls' style="display:none">Save</button>
+        <button id='fd_toggle' class='tools commonControls' style="display:none">Toggle</button>
     </div>
 </div>
 <div class="row" id="parent-div" style="height:calc(100vh - 87px);">
@@ -28,17 +29,6 @@
             <div class="no-padd pull-right" id="ppgrid">
             </div>
         </div>*@
-</div>
-<div>
-    <div class="col-md-2">
-        <div style="height:50%"></div>
-        <div style="height:50%"></div>
-    </div>
-    <div class="col-md-10">
-        <div style="height:30px"></div>
-        <div style="height:30px"></div>
-        <
-    </div>
 </div>
 <script>
         //var counter = 0;
@@ -77,6 +67,9 @@
         else if (Pname == "Name") {
             dvcontainerObj.currentObj = obj;
             $("label.dvname").text(obj.Name);
+            console.log(obj);
+        }
+        else if (Pname == "Columns") {
             console.log(obj);
         }
     };

@@ -131,6 +131,8 @@ var EbDataTable = function (settings) {
     this.pg = null;
     this.ppgridChildren = null;
     this.columnDefDuplicate = null;
+    this.extraCol = [];
+
 
 
     this.getColumns = function () {
@@ -161,7 +163,7 @@ var EbDataTable = function (settings) {
         //    $("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
         //    return false;
         //}
-        //this.addSerialAndCheckboxColumns();
+        this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             //if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").length === 0) {
                 $("#Toolbar").children(":not(.commonControls)").remove();
@@ -206,11 +208,11 @@ var EbDataTable = function (settings) {
         //    $("#table_tabs li a[href='#dv" + this.dvid + "_tab_" + index + "']").text(this.dvName);
         //else
 
-        $.each(this.ebSettings.Columns.$values, this.CheckforColumnID.bind(this));
+        //$.each(this.ebSettings.Columns.$values, this.CheckforColumnID.bind(this));
 
         this.eb_agginfo = this.getAgginfo();
-        if (this.dtsettings.directLoad !== true)
-            this.table_jQO.append($(this.getFooterFromSettingsTbl()));
+        //if (this.dtsettings.directLoad !== true)
+        this.table_jQO.append($(this.getFooterFromSettingsTbl()));
 
         //if (this.ebSettings.hideSerial) {
         //    this.ebSettings.columns[0].visible = false;
@@ -268,29 +270,31 @@ var EbDataTable = function (settings) {
         var chkObj = new Object();
         chkObj.data = null;
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-        chkObj.width = 10;
+        chkObj.sWidth = "10px";
         chkObj.orderable = false;
-        chkObj.visible = false;
+        chkObj.bVisible = true;
         chkObj.name = "checkbox";
-        chkObj.type = "System.Boolean";
+        chkObj.Type = 3;
         chkObj.render = this.renderCheckBoxCol.bind(this);
         chkObj.pos = "-1";
-        this.ebSettings.columns.unshift(chkObj);
-        this.ebSettings.columnsext.unshift(JSON.parse('{"name":"checkbox"}'));
+        //this.ebSettings.columns.unshift(chkObj);
+        //this.ebSettings.columnsext.unshift(JSON.parse('{"name":"checkbox"}'));
+        //Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2
+        //
+        var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
 
-        this.ebSettings.columns.unshift(JSON.parse('{"width":10, "searchable": false, "orderable": false, "visible":true, "name":"serial", "title":"#", "type":"System.Int32"}'));
-
-
-        this.ebSettings.columnsext.unshift(JSON.parse('{"name":"serial"}'));
+       this.extraCol.push(serialObj);
+       this.extraCol.push(chkObj);
+        //this.ebSettings.columnsext.unshift(JSON.parse('{"name":"serial"}'));
     }
 
     this.CheckforColumnID = function (i, col) {
         if (col.name === "id") {
             //this.FlagPresentId = true;
             this.ebSettings.Columns.$values[i].bVisible = false;
-            this.ebSettings.Columns.$values[1].bVisible = true;
-            this.ebSettings.Columns.$values[1].sTitle = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-            this.ebSettings.Columns.$values[1].render = this.renderCheckBoxCol.bind(this);
+            //this.ebSettings.Columns.$values[1].bVisible = true;
+            //this.ebSettings.Columns.$values[1].sTitle = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
+            //this.ebSettings.Columns.$values[1].render = this.renderCheckBoxCol.bind(this);
             return false;
         }
     };
@@ -334,7 +338,7 @@ var EbDataTable = function (settings) {
             },
             lengthMenu: "_MENU_ / Page",
         };
-        o.aoColumns = this.ebSettings.Columns.$values;
+        o.aoColumns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
         o.deferRender = true;
         o.filter = true;
@@ -527,6 +531,12 @@ var EbDataTable = function (settings) {
 
     this.getFooterFromSettingsTbl = function () {
         var ftr_part = "";
+        $.each(this.extraCol, function (i, col) {
+            if (col.bVisible)
+                ftr_part += "<th style=\"padding: 0px; margin: 0px\"></th>";
+            else
+                ftr_part += "<th style=\"display:none;\"></th>";
+        });
         $.each(this.ebSettings.Columns.$values, function (i, col) {
             if (col.bVisible)
                 ftr_part += "<th style=\"padding: 0px; margin: 0px\"></th>";
@@ -644,8 +654,8 @@ var EbDataTable = function (settings) {
 
     this.drawCallBackFunc = function (settings) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
-        //if (this.ebSettings.rowGrouping !== null)
-        //    this.doRowgrouping();
+        if (this.ebSettings.rowGrouping.$values.length > 0)
+            this.doRowgrouping();
         this.summarize2();
         this.addFilterEventListeners();
         this.Api.columns.adjust();
@@ -681,7 +691,7 @@ var EbDataTable = function (settings) {
         var rows = this.Api.rows({ page: 'current' }).nodes();
         var last = null;
         var count = this.ebSettings.Columns.$values.length;
-        this.Api.column(this.Api.columns(this.ebSettings.rowGrouping + ':name').indexes()[0], { page: 'current' }).data().each(function (group, i) {
+        this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0], { page: 'current' }).data().each(function (group, i) {
             if (last !== group) {
                 $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");
                 last = group;
@@ -702,6 +712,7 @@ var EbDataTable = function (settings) {
 
     this.createFooter = function (pos) {
         var tx = this.ebSettings;
+        var aggFlag = false;
         var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');
         var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
         var scrollfoot = $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner table');
@@ -710,7 +721,18 @@ var EbDataTable = function (settings) {
             var eb_footer_controls_lfoot = this.GetAggregateControls(pos, 50);
         if (scrollfoot !== null)
             var eb_footer_controls_scrollfoot = this.GetAggregateControls(pos, 1);
-        $('#' + this.tableId + '_btntotalpage').show();
+        if (pos == 0) {
+            $.each(this.Api.settings().init().aoColumns, function (i, col) {
+                if (col.Aggregate) {
+                    $('#' + this.tableId + '_btntotalpage').show();
+                    aggFlag = true;
+                    return false;
+                }
+            });
+
+            if (!aggFlag)
+                $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
+        }
         if (pos === 1)
             $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
         var j = 0;
@@ -749,14 +771,16 @@ var EbDataTable = function (settings) {
         var ScrollY = this.ebSettings.scrollY;
         var ResArray = [];
         var tableId = this.tableId;
-        $.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        //$.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        $.each(this.Api.settings().init().aoColumns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
         return ResArray;
     };
 
     this.GetAggregateControls_inner = function (ResArray, footer_id, zidx, i, col) {
         var _ls;
         if (col.bVisible) {
-            if ((col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial") {
+            //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
+            if (col.Aggregate) {
                 var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = this.tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
@@ -765,7 +789,7 @@ var EbDataTable = function (settings) {
                 var data_decip = "data-decip=" + this.ebSettings.Columns.$values[i].DecimalPlaces;
 
                 _ls = "<div class='input-group input-group-sm'>" +
-                "<div class='input-group-btn'>" +
+                "<div class='input-group-btn dropup'>" +
                 "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
                " <ul class='dropdown-menu'>" +
                 "  <li><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + ">&sum;</a></li>" +
@@ -788,28 +812,20 @@ var EbDataTable = function (settings) {
         var scrollY = this.ebSettings.scrollY;
         var p;
         var ftrtxt;
-        $.each(this.eb_agginfo, function (index, agginfo) {
-            if (scrollY > 0) {
-                p = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxt = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-                //alert(p); alert(ftrtxt);
-            }
-            else {
-                p = $('#' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxt = '#' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-            }
-            var col = api.column(agginfo.colname + ':name');
+        $.each(this.Api.settings().init().aoColumns, function (index, agginfo) {
+            if (agginfo.Aggregate) {
+                p = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.name + '_ftr_sel0').text().trim();
+                ftrtxt = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.name + '_ftr_txt0';
+                var col = api.column(agginfo.name + ':name');
 
-            var summary_val = 0;
-            if (p === '∑')
-                summary_val = col.data().sum();
-            if (p === 'x̄') {
-                summary_val = col.data().average();
+                var summary_val = 0;
+                if (p === '∑')
+                    summary_val = col.data().sum();
+                if (p === 'x̄') {
+                    summary_val = col.data().average();
+                }
+                $(ftrtxt).val(summary_val.toFixed(agginfo.DecimalPlaces));
             }
-            // IF decimal places SET, round using toFixed
-            //  alert(summary_val + "," + summary_val);
-            //$(ftrtxt).val((agginfo.deci_val > 0) ? summary_val.toFixed(agginfo.deci_val) : summary_val.toFixed(2));
-            $(ftrtxt).val(summary_val.toFixed(agginfo.deci_val));
         });
     };
 
@@ -975,7 +991,8 @@ var EbDataTable = function (settings) {
         else if (this.zindex === 1)
             this.eb_filter_controls_4sb = [];
 
-        $.each(this.ebSettings.Columns.$values, this.GetFiltersFromSettingsTbl_inner.bind(this));
+        //$.each(this.ebSettings.Columns.$values, this.GetFiltersFromSettingsTbl_inner.bind(this));
+        $.each(this.Api.settings().init().aoColumns, this.GetFiltersFromSettingsTbl_inner.bind(this));
     };
 
     this.GetFiltersFromSettingsTbl_inner = function (i, col) {
@@ -1170,11 +1187,8 @@ var EbDataTable = function (settings) {
         var decip = $(e.target).attr('data-decip');
         var col = this.Api.column(colum + ':name');
         var ftrtxt;
-
-        if (this.ebSettings.scrollY > 0)
-            ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
-        else
-            ftrtxt = '#' + this.tableId + '_' + colum + '_ftr_txt0';
+        
+        ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
 
         if (selValue === '∑')
             pageTotal = col.data().sum();
@@ -1240,8 +1254,9 @@ var EbDataTable = function (settings) {
         this.cellData = $(e.target).text();
         var idx = this.Api.row($(e.target).parent().parent()).index();
         this.rowData = this.Api.row(idx).data();
-        this.filterValues = this.getFilterValues();
-        this.NewTableModal();
+        //this.filterValues = this.getFilterValues();
+        //this.NewTableModal();
+        //this.call2newTable();
     };
 
     this.NewTableModal = function () {
@@ -1315,15 +1330,25 @@ var EbDataTable = function (settings) {
 
     this.call2newTable = function () {
 
-        var EbDataTable_Newtable = new EbDataTable({
-            dv_id: this.linkDV,
-            ss_url: "https://expressbaseservicestack.azurewebsites.net",
-            tid: 'dv' + this.linkDV + '_' + index,
-            linktable: true,
-            cellData: this.cellData,
-            rowData: this.rowData,
-            filterValues: this.filterValues
-            //directLoad: true
+        //var EbDataTable_Newtable = new EbDataTable({
+        //    dv_id: this.linkDV,
+        //    ss_url: "https://expressbaseservicestack.azurewebsites.net",
+        //    tid: 'dv' + this.linkDV + '_' + index,
+        //    linktable: true,
+        //    cellData: this.cellData,
+        //    rowData: this.rowData,
+        //    filterValues: this.filterValues
+        //    //directLoad: true
+        //});
+        
+        $.ajax({
+            type: "POST",
+            url: "../DV/dvTable",
+            data: { objid: this.linkDV, objtype: 16 },
+            success: function (text) {
+                var myWindow = window.open("", "");
+                myWindow.document.write(text);
+            }
         });
     };
 
@@ -1735,10 +1760,16 @@ var EbDataTable = function (settings) {
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs === "Progressbar") {
-                this.ebSettings.Columns.$values[i].render = this.renderProgressCol;
+            if (this.ebSettings.Columns.$values[i].RenderAs === "ProgressBar") {
+                this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
             }
-            if (this.ebSettings.Columns.$values[i].DecimalPlaces > 0) {
+            else if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
+                this.ebSettings.Columns.$values[i].LinkRefId = "695";
+                this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
+                this.ebSettings.Columns.$values[i].render = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
+                alert(this.linkDV);
+            }
+            else if (this.ebSettings.Columns.$values[i].DecimalPlaces > 0) {
                 var deci = this.ebSettings.Columns.$values[i].DecimalPlaces;
                 this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) {
                     return parseFloat(data).toFixed(deci);
@@ -1747,31 +1778,42 @@ var EbDataTable = function (settings) {
         }
         if (col.Type ==parseInt( gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
-                this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol : this.renderEbVoidCol;
+                this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
             }
             else {
-                if (this.ebSettings.Columns.$values[i].IsEditable) {
-                    this.ebSettings.Columns.$values[i].render = this.renderEditableCol;
+                if (this.ebSettings.Columns.$values[i].RenderAs === "IsEditable") {
+                    this.ebSettings.Columns.$values[i].render = this.renderEditableCol.bind(this);
                 }
-                if (this.ebSettings.Columns.$values[i].RenderAs === "Icon") {
-                    this.ebSettings.Columns.$values[i].render = this.renderIconCol;
+                else if (this.ebSettings.Columns.$values[i].RenderAs === "Icon") {
+                    this.ebSettings.Columns.$values[i].render = this.renderIconCol.bind(this);
+                    //this.ebSettings.Columns.$values[i].mRender = this.renderIconCol.bind(this);
                 }
             }
         }
         if (col.Type ==parseInt( gettypefromString("String")) || col.Type ==parseInt( gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
-                this.linkDV = this.ebSettings.Columns.$values[i].linkDv;
+                this.ebSettings.Columns.$values[i].LinkRefId = "695";
+                this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);
             }
-            if (this.ebSettings.Columns.$values[i].RenderAs === "Chart") {
+            else if (this.ebSettings.Columns.$values[i].RenderAs === "Chart") {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
             }
         }
+        if (col.fontfamily !== 0) {
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            var fontName = col.fontfamily.replace(/_/g, " ");
+            style.innerHTML = '.font_' + col.fontfamily + '{font-family: ' + fontName + ';}';
+            document.getElementsByTagName('body')[0].appendChild(style);
+            this.ebSettings.Columns.$values[i].className = "font_" + col.fontfamily + " tdheight";
+            this.ebSettings.Columns.$values[i].sClass = "font_" + col.fontfamily + " tdheight";
+        }
     };
 
-    this.renderProgressCol = function (data, type, row, meta) {
-        return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + data.toString() + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + data.toString() + "</div></div>";
+    this.renderProgressCol = function (deci, data, type, row, meta) {
+        return "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='" + parseFloat(data.toString()).toFixed(deci) + "' aria-valuemin='0' aria-valuemax='100' style='width:" + data.toString() + "%'>" + parseFloat(data.toString()).toFixed(deci) + "</div></div>";
     };
 
     this.renderToDecimalPlace = function (data, type, row, meta) {
@@ -1796,6 +1838,10 @@ var EbDataTable = function (settings) {
 
     this.renderlink4NewTable = function (data) {
         return "<a href='#' class ='tablelink_" + this.tableId + "'>" + data + "</a>";
+    };
+
+    this.renderlinkandDecimal = function (deci, data) {
+        return "<a href='#' class ='tablelink_" + this.tableId + "'>" + parseFloat(data).toFixed(deci) + "</a>";
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {

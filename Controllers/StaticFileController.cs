@@ -23,7 +23,7 @@ namespace ExpressBase.Web.Controllers
             string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
             if (!System.IO.File.Exists(sFilePath))
             {
-                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = (FileTypes)Enum.Parse(typeof(FileTypes), filename.Split('.')[1]) } });
+                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = (FileTypes)Enum.Parse(typeof(FileTypes), filename.Split('.')[1].ToLower()) } });
                 EbFile.Bytea_ToFile(fileByte, sFilePath);
             }
 
@@ -43,7 +43,6 @@ namespace ExpressBase.Web.Controllers
         public async Task<JsonResult> UploadFileAsync(int i, string tags)
         {
             JsonResult resp = null;
-            
             try
             {
                 var req = this.HttpContext.Request.Form;
@@ -96,7 +95,6 @@ namespace ExpressBase.Web.Controllers
             {
                 resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
             }
-
             return resp;
         }
 
@@ -120,7 +118,7 @@ namespace ExpressBase.Web.Controllers
                     uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                     uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", Tags);
                 }
-                uploadImageRequest.IsAsync = true;
+                uploadImageRequest.IsAsync = false;
 
                 foreach (var formFile in req.Files)
                 {
@@ -140,6 +138,57 @@ namespace ExpressBase.Web.Controllers
 
                         uploadImageRequest.ImageInfo.FileName = formFile.FileName;
                         uploadImageRequest.ImageInfo.FileType = (FileTypes)Enum.Parse(typeof(ImageTypes), uploadImageRequest.ImageInfo.FileName.Split('.')[1]);
+
+                        if (Enum.IsDefined(typeof(ImageTypes), uploadImageRequest.ImageInfo.FileType.ToString()))
+                        {
+                            Id = this.ServiceClient.Post<string>(uploadImageRequest);
+                            url = string.Format("http://eb_roby_dev.localhost:5000/static/{0}.{1}", Id, Enum.GetName(typeof(FileTypes), uploadImageRequest.ImageInfo.FileType));
+                        }
+                        else url = "Error Because of the file type";
+                        resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
+            }
+
+            return resp;
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UploadDPAsync(int i, string userid)
+        {
+            JsonResult resp = null;
+            string Id = string.Empty;
+            string url = string.Empty;
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                UploadImageRequest uploadImageRequest = new UploadImageRequest();
+                uploadImageRequest.ImageInfo = new FileMeta();
+                
+                uploadImageRequest.IsAsync = false;
+
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        byte[] myFileContent;
+
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+
+                            uploadImageRequest.ImageByte = myFileContent;
+                        }
+
+                        uploadImageRequest.ImageInfo.FileType = (FileTypes)Enum.Parse(typeof(ImageTypes), formFile.FileName.Split('.')[1]);
+                        uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}_actual.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType.ToString());
 
                         if (Enum.IsDefined(typeof(ImageTypes), uploadImageRequest.ImageInfo.FileType.ToString()))
                         {

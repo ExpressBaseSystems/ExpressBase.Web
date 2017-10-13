@@ -169,6 +169,7 @@
          var uploader = imageUploader({
              Container: "promodal-container"          
         });
+         uploader.getFileId = function (res) { }
         $('#save').click(function () {
             $.post("../Tenant/ProfileSetup",
                 {

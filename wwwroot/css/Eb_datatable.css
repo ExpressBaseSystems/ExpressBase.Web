@@ -86,8 +86,8 @@ td.resizer {
 }
 
 .dataTables_scrollHead {
-    padding-bottom: 1px;
-    margin-bottom: -1px;
+    padding-bottom: 250px;
+    margin-bottom: -250px;
 }
 
 .dataTables_scrollFoot {

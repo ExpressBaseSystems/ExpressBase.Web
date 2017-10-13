@@ -20,8 +20,15 @@
         </div>
         <div class="row" style="margin:150px;">
             <div class="col-md-4 col-md-offset-6">
-                <button class="btn btn-primary">Continue</button>
+                <button class="btn btn-primary" id="btnclick">Continue</button>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $("#btnclick").click(function () {
+            window.location.href = '../Ext/SignIn';
+        })
+    });
+</script>

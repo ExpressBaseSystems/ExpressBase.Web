@@ -351,6 +351,7 @@
 
     this.colTileFocusFn = function (e) {
         var $e = $(e.target); var id = $e.attr("id");
+        $(':focus').blur();
         if (!$e.hasClass("colTile")) {
             this.colTileFocusFn.bind(this)({ target: $e.parent() });
             return 0;

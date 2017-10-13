@@ -83,6 +83,24 @@
             return this;
         };
         $('form').goValidate();
+
+        $("#email").focusout(function () {
+            var text1 = $('#email').val();
+            alert(text1);
+            var DataCollection = { "email": $('#email').val() };
+
+            $.post('http://localhost:8000/unique', {"Colvalues": JSON.stringify(DataCollection) },
+                function (result) {
+                    if (result) {
+                        alert(result); //document.getElementById('div5').innerHTML = "<img src='http://localhost:53125/images/CheckMark-24x32.png' width='32px'/>";
+                    }
+                    else {
+                        //document.getElementById('div5').innerHTML = "<img src='http://localhost:53125/images/Error-24x24.png' width='32px'/>";
+                    }
+                });
+            //$.post("../Common/UniqueCheck",{"text": text1}, function (result) { });
+        });
+
         $(function () {
             $('input[type=password]').each(function () {
                 $(this).attr('data-background-color', $(this).css('white'));
@@ -100,20 +118,19 @@
                 //});
             });
         });
-        });
-        function uniquecheck()
-        {
-           
-            var timer;
-            clearTimeout(timer);
-            //timer = setTimeout(function (event) {
-                var text = $('#email').val();
-                alert(text);
-                $.post("../Common/uniquecheck", { "text": text }, function (result) {/* alert(result); */});
-            //}, 1000);
+    });
+        //function uniquecheck1()
+        //{
+        //        var text1 = $('#email').val();
+        //        alert(text1);
+        //        $.post("../Common/UniqueCheck",
+        //            {
+        //                "text": text1,
 
+        //            }, function (result) {
 
-        }
+        //            });
+        //}
 </script>
 <section id="signup" style="margin-top:100px;">
     <div class="container">
@@ -128,8 +145,8 @@
                         <div class="col-sm-12">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                <input type="email" class="form-control" onfocusout="uniquecheck()" id="email" name="email" placeholder="Email" data-error="email address is invalid" required />
-
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-error="email address is invalid" required />
+                              
                             </div>
                             <div class="help-block with-errors"></div>
                         </div>
@@ -191,6 +208,6 @@
 </section>
 <style>
     .popover {
-    width:200px;
-}
+        width: 200px;
+    }
 </style>

@@ -37,11 +37,17 @@ namespace ExpressBase.Web.Controllers
         public async Task<JsonResult> UploadFileAsync(int i, string tags)
         {
             JsonResult resp = null;
+            string Id = string.Empty;
+            string url = string.Empty;
+
+            tags = String.IsNullOrEmpty(tags) ? "UnniTest,PGSQL,FilterSearch,UploadFileAsync" : tags;
+
             try
             {
                 var req = this.HttpContext.Request.Form;
                 UploadFileRequest uploadFileRequest = new UploadFileRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
+
                 if (!String.IsNullOrEmpty(tags))
                 {
                     var tagarray = tags.ToString().Split(',');
@@ -69,9 +75,10 @@ namespace ExpressBase.Web.Controllers
 
                         uploadFileRequest.FileDetails.FileName = formFile.FileName;
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.Split('.')[1];
+                        uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
 
-                        string Id = this.ServiceClient.Post<string>(uploadFileRequest);
-                        string url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadFileRequest.FileDetails.FileType);
+                        Id = this.ServiceClient.Post<string>(uploadFileRequest);
+                        url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadFileRequest.FileDetails.FileType);
 
                         resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });
                     }
@@ -91,7 +98,7 @@ namespace ExpressBase.Web.Controllers
             string Id = string.Empty;
             string url = string.Empty;
 
-            tags = String.IsNullOrEmpty(tags) ? tags : string.Empty;
+            tags = String.IsNullOrEmpty(tags) ? "UnniTest,PGSQL,FilterSearch,UploadImageAsync" : tags;
             try
             {
                 var req = this.HttpContext.Request.Form;
@@ -99,8 +106,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo = new FileMeta();
                 if (!String.IsNullOrEmpty(tags))
                 {
-                    var tagarray = tags.ToString().Split(',');
-                    List<string> Tags = new List<string>(tagarray);
+                    List<string> Tags = new List<string>(tags.Split(','));
                     uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                     uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", Tags);
                 }
@@ -124,6 +130,8 @@ namespace ExpressBase.Web.Controllers
 
                         uploadImageRequest.ImageInfo.FileName = formFile.FileName;
                         uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split('.')[1];
+                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+
                         Id = this.ServiceClient.Post<string>(uploadImageRequest);
                         url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadImageRequest.ImageInfo.FileType);
 
@@ -171,10 +179,10 @@ namespace ExpressBase.Web.Controllers
 
                         uploadImageRequest.ImageInfo.FileType = "jpg";
                         uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}_actual.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+
                         Id = this.ServiceClient.Post<string>(uploadImageRequest);
                         url = string.Format("http://{0}.localhost:5000/static/dp_{1}_actual.{2}", ViewBag.cid, ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
-
-                        
                     }
                     else url = "Error Because of the file type";
                     resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });
@@ -191,12 +199,8 @@ namespace ExpressBase.Web.Controllers
         public List<FileMeta> FindFilesByTags(int i, string tags, string bucketname)
         {
             FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
-            var tagCollection = tags.Split(',');
-            List<string> tagList = new List<string>(tagCollection);
-            bucketname = "images";
-
-            findFilesByTagRequest.Filter = new KeyValuePair<string, List<string>>("metadata.Tags", tagList);
-            findFilesByTagRequest.BucketName = bucketname;
+            tags = (string.IsNullOrEmpty(tags)) ?"Unni" :tags;
+            findFilesByTagRequest.Tags = new List<string>(tags.Split(','));
 
             List<FileMeta> FileInfoList = new List<FileMeta>();
 

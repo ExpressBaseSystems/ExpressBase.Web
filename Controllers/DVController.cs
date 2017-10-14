@@ -589,6 +589,7 @@ namespace ExpressBase.Web.Controllers
                     this.Redis.Set<EbChartVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
             }
             else if (ViewBag.wc == "dc")
+
             {
                 if (type == "TableVisualization")
                     this.Redis.Set<EbTableVisualization>(SaveId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));

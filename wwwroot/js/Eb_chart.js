@@ -412,6 +412,8 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
         else if ($(source).attr("id") === "measure" + this.tableId && $(target).attr("id") === "diamension" + this.tableId) {
             return true;
         }
+        else if (source === target)
+            return true;
         else {
             return false;
         }
@@ -763,80 +765,82 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
     this.init();
 };
 
-var eb_chart111 = function (columnInfo, ssurl, data, tableId) {
-    this.data = data;
-    this.columnInfo = columnInfo;
-    //this.type = (this.columnInfo.options === null || this.columnInfo.options === undefined) ? "bar" : this.columnInfo.options.type.trim().toLowerCase();
-    this.ssurl = ssurl;
-    this.chartJs = null;
-    this.tableId = tableId;
-    // functions
+{
+    //var eb_chart111 = function (columnInfo, ssurl, data, tableId) {
+    //    this.data = data;
+    //    this.columnInfo = columnInfo;
+    //    //this.type = (this.columnInfo.options === null || this.columnInfo.options === undefined) ? "bar" : this.columnInfo.options.type.trim().toLowerCase();
+    //    this.ssurl = ssurl;
+    //    this.chartJs = null;
+    //    this.tableId = tableId;
+    //    // functions
 
-    this.init = function () {
-        if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            $("#content_" + this.tableId).append("<div id='graphcontainer_tab" + this.tableId + "'>" +
-                "<table>" +
-                "<tr>" +
-                "<td colspan=2>" +
-                "<div id=id='xy" + this.tableId + "' style='vertical-align: top;width: 300%;'> " +
-                "<div class='input-group' > " +
-                "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
-                "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
-                "</div> " +
-                "<div class='input-group' style='padding-top: 1px;'> " +
-                "<span class='input-group-addon' id='basic-addon3'> Y - Axis</span> " +
-                "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
-                "</div> " +
-                "</div> " +
-                "</td>" +
-                "</tr>" +
-                "<tr>" +
-                "<td>" +
-                "<div id='columns4Drag" + this.tableId + "' style='width:200px'> " +
-                "<div>" +
-                "<label class='nav-header disabled' > <center><strong>Columns</strong></center> <center><font size='1'>Darg n Drop to X or Y Axis</font></center></label> " +
-                "<input id='searchColumn" + this.tableId + "' type='text' class='form-control' placeholder='search for column'/>" +
-                "<ul class='list-group' style='height: 450px; overflow-y: auto;' ></ul> " +
-                "</div> " +
-                "</div> " +
-                "</td > " +
-                "<td>" +
-                //"<canvas id='myChart" + this.tableId + "' width='80%' height='auto' ></canvas> " +
-                "</td > " +
-                "</tr>" +
-                "</table>" +
-                "</div>");
-            this.createButtons();
-            this.chartJs = new Eb_chartJSgraph( this.data, this.columnInfo, this.ssurl, tableId);
-        }
-    };
+    //    this.init = function () {
+    //        if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
+    //            $("#Toolbar").children(":not(.commonControls)").remove();
+    //            $("#content_" + this.tableId).append("<div id='graphcontainer_tab" + this.tableId + "'>" +
+    //                "<table>" +
+    //                "<tr>" +
+    //                "<td colspan=2>" +
+    //                "<div id=id='xy" + this.tableId + "' style='vertical-align: top;width: 300%;'> " +
+    //                "<div class='input-group' > " +
+    //                "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
+    //                "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
+    //                "</div> " +
+    //                "<div class='input-group' style='padding-top: 1px;'> " +
+    //                "<span class='input-group-addon' id='basic-addon3'> Y - Axis</span> " +
+    //                "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
+    //                "</div> " +
+    //                "</div> " +
+    //                "</td>" +
+    //                "</tr>" +
+    //                "<tr>" +
+    //                "<td>" +
+    //                "<div id='columns4Drag" + this.tableId + "' style='width:200px'> " +
+    //                "<div>" +
+    //                "<label class='nav-header disabled' > <center><strong>Columns</strong></center> <center><font size='1'>Darg n Drop to X or Y Axis</font></center></label> " +
+    //                "<input id='searchColumn" + this.tableId + "' type='text' class='form-control' placeholder='search for column'/>" +
+    //                "<ul class='list-group' style='height: 450px; overflow-y: auto;' ></ul> " +
+    //                "</div> " +
+    //                "</div> " +
+    //                "</td > " +
+    //                "<td>" +
+    //                //"<canvas id='myChart" + this.tableId + "' width='80%' height='auto' ></canvas> " +
+    //                "</td > " +
+    //                "</tr>" +
+    //                "</table>" +
+    //                "</div>");
+    //            this.createButtons();
+    //            this.chartJs = new Eb_chartJSgraph( this.data, this.columnInfo, this.ssurl, tableId);
+    //        }
+    //    };
 
-    this.createButtons = function () {
-        $("#Toolbar").append("<label class='dvname' style='color: #333;'>" + this.columnInfo.Name + "</label>" +
-            "<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
-            "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
-            "<span class='caret'></span>" +
-            "</button>" +
-            "<ul class='dropdown-menu'>" +
-            "<li><a href='#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
-            "<li><a href='#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
-            "<li><a href='#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
-            "<li><a href='#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
-            "<li><a href='#'> doughnut </a></li>" +
-            "<li><a href='#'> map </a></li>" +
-            "</ul>" +
-            "</div>" +
-            "<button id='reset_zoom" + this.tableId + "' class='tools'>Reset zoom</button>" +
-            "<button id='btnColumnCollapse" + this.tableId + "' class='tools' style='display: inline-block;'>" +
-            "<i class='fa fa-cog' aria-hidden='true'></i>" +
-            "</button>");
-        
-    };
+    //    this.createButtons = function () {
+    //        $("#Toolbar").append("<label class='dvname' style='color: #333;'>" + this.columnInfo.Name + "</label>" +
+    //            "<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
+    //            "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
+    //            "<span class='caret'></span>" +
+    //            "</button>" +
+    //            "<ul class='dropdown-menu'>" +
+    //            "<li><a href='#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
+    //            "<li><a href='#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
+    //            "<li><a href='#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
+    //            "<li><a href='#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
+    //            "<li><a href='#'> doughnut </a></li>" +
+    //            "<li><a href='#'> map </a></li>" +
+    //            "</ul>" +
+    //            "</div>" +
+    //            "<button id='reset_zoom" + this.tableId + "' class='tools'>Reset zoom</button>" +
+    //            "<button id='btnColumnCollapse" + this.tableId + "' class='tools' style='display: inline-block;'>" +
+    //            "<i class='fa fa-cog' aria-hidden='true'></i>" +
+    //            "</button>");
 
-    this.drawGraphHelper = function (datain) {
-        this.chartJs.drawGraphHelper(datain);
-    }
+    //    };
 
-    this.init();
+    //    this.drawGraphHelper = function (datain) {
+    //        this.chartJs.drawGraphHelper(datain);
+    //    }
+
+    //    this.init();
+    //}
 }

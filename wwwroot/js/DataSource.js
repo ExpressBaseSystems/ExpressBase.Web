@@ -321,7 +321,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
                     obj.commitUname +// "<img src= '../static/" + cid + "/thumbs/" + obj.profileImage + "_small.png" + "' class='img-circle pull-right' />" +
                     "<p><small class='text-muted'><i class='glyphicon glyphicon-time'></i>" + obj.commitTs + "</small></p>" +
                     "</div>" +
-                    "<div class='timeline-body' > "+
+                    "<div class='timeline-body' id='timeline-body"+i+"'> "+
                     "<p class='timeline-body-clickmore'>" + obj.changeLog + "</p>" +
                     "<a class='primary pull-right more'>more</a>"+
                     "</div> "+
@@ -344,8 +344,13 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
                 $(getNav + ' #timeline-badge' + i).addClass(classname);
 
                 $('#stat' + i + ' .more').on('click', function () {
-                var element = $('#stat' + i + ' .timeline-body p');
-                element.classList.toggle("timeline-body-clickmore");
+                    var p_element = $('#stat' + i + ' #timeline-body'+i+' p');
+                    p_element.toggleClass("timeline-body-clickmore");
+                    var p_element = $('#stat' + i + ' #timeline-body' + i + ' a');
+                    if (a_element.text() === 'more')
+                        a_element.text('less');
+                    else
+                        a_element.text('more')
                 });
             });
             $.LoadingOverlay("hide");

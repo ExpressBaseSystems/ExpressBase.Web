@@ -50,3 +50,13 @@ jQuery.fn.outerHTML = function (s) {
         ? this.before(s).remove()
         : jQuery("<p>").append(this.eq(0).clone()).html();
 };
+function getKeyByVal(Obj, val) {
+    var Key = null;
+    $.each(Obj, function (_key, _val) {
+        if (_val === val) {
+            Key = _key;
+            return;
+        }
+    });
+    return Key;
+};

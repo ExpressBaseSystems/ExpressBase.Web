@@ -42,11 +42,11 @@ var Eb_PropertyGrid = function (id) {
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
         }
         else if (type === 1) {    // If options create drop-down list
-            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions,);
-            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
-            this.postCreateInitFuncs[name] = function () {
-                $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]);
-            };
+            if (typeof value === "string")
+                value = parseInt(getKeyByVal(meta.enumoptions, value));
+            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, );
+            this.getValueFuncs[name] = function () { return parseInt( $('#' + elemId).val()); };
+            this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
         }
         else if (type === 2) {    // If number 
             valueHTML = '<input type="number" id="' + elemId + '" value="' + (value || 0) + '" style="width:100%" />';
@@ -212,7 +212,7 @@ var Eb_PropertyGrid = function (id) {
         }
         // Close the table and apply it to the div
         this.$PGcontainer.html(this.innerHTML);
-        $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token") ) });
+        $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) });
     };
 
     this.buildRows = function () {

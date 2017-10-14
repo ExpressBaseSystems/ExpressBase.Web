@@ -16,6 +16,26 @@
         height: '21cm'
     }
 };
+var ruler = {
+    px: {
+        minor :"tickMinor",
+        major : "tickMajor",
+        label : "tickLabel",
+        len :5
+    },
+    cm: {
+        minor :"tickMinor-cm",
+        major : "tickMajor-cm",
+        label : "tickLabel-cm",
+        len : 3.77
+    },
+    inch: {
+        minor : "tickMinor-inch",
+        major :"tickMajor-inch",
+        label : "tickLabel-inch",
+        len: 9.6
+    }
+}
 
 var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     this.edModObj = edModObj;
@@ -32,7 +52,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     this.height = null;
     this.width = null;
     this.type = "A4";
-
+    this.rulertype = "cm";
     this.idCounter = {
         EbCircleCounter: 0,
         EbReportColCounter: 0,
@@ -104,53 +124,49 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         }
     };//ajax for ds coloums
 
-    this.ruler = function (unit) {
-        var minor = "";
-        var major = "";
-        var label = "";
-        var len = "0";
-        if (unit === 'px') {
-            minor = "tickMinor";
-            major = "tickMajor";
-            label = "tickLabel";
-            len = 5;
-        }
-        else if (unit === 'cm') {
-            minor = "tickMinor-cm";
-            major = "tickMajor-cm";
-            label = "tickLabel-cm";
-            len = 1;
-        }
-
+    this.ruler = function () {        
+        var k = 0;
+        var j = 0;
+        var pxlabel = 1;
+        if (this.rulertype == "px") { pxlabel = 5;}
+        
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": this.width });
-        for (var i = 0, step = 0; i < $ruler.innerWidth() / len; i++ , step++) {
+        for (var i = 0, step = 0; i < $ruler.innerWidth() /ruler[this.rulertype].len; i++ , step++) {            
             var $tick = $('<div>');
             if (step === 0) {
-                $tick.addClass(label).html(i);
+                if (this.rulertype === "px") {
+                    $tick.addClass(ruler[this.rulertype].label).html(i*5);
+                }
+                else { $tick.addClass(ruler[this.rulertype].label).html(j++);}
+                
             } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass(minor);
+                $tick.addClass(ruler[this.rulertype].minor);
                 if (step === 9) {
                     step = -1;
                 }
             } else {
-                $tick.addClass(major);
+                $tick.addClass(ruler[this.rulertype].major);
             }
             $ruler.append($tick);
         }
 
         var $rulerleft = $('.rulerleft').css({ "height": this.height });
-        for (i = 0, step = 0; i < $rulerleft.innerHeight()/len; i++ , step++) {
+        for (i = 0, step = 0; i < $rulerleft.innerHeight() / ruler[this.rulertype].len; i++ , step++) {            
             $tick = $('<div>');
             if (step === 0) {
-                $tick.addClass(label).html(i);
+                if (this.rulertype === "px") {
+                    $tick.addClass(ruler[this.rulertype].label).html(i*5);
+                }
+                else { $tick.addClass(ruler[this.rulertype].label).html(k++);}
+               
             } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass(minor);
+                $tick.addClass(ruler[this.rulertype].minor);
                 if (step === 9) {
                     step = -1;
                 }
             } else {
-                $tick.addClass(major);
+                $tick.addClass(ruler[this.rulertype].major);
             }
             $rulerleft.append($tick);
         }
@@ -674,6 +690,11 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         $(obj).siblings(".gutter").remove();        
         this.objCollection[obj.id].SectionHeight = size + "%";
     };//section split for pg change
+    this.rulerChangeFn = function (e) {
+        this.rulertype = $(e.target).val();
+        $('.ruler,.rulerleft').empty();
+        this.ruler();
+    };
 
     this.init = function () {
         this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
@@ -711,13 +732,11 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             this.pg.setObject(this.report, AllMetas["EbReport"]);
             this.pg.addToDD(this.report);          
             $('#PageContainer,.ruler,.rulerleft').empty();
-            this.ruler("cm");
+            this.ruler();
             this.pgC = this.createPagecontainer();
             this.createPage(this.pgC);
             this.DragDrop_Items();
-            $("#rulerUnit").change(function () {
-                this.ruler($(this.value()));
-            }).bind(this);
+        $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));                         
         $(this.savebtnid).on('click', this.savefile.bind(this));
         $(this.Commitbtnid).on('click', this.Commit.bind(this));      
     };//report executioin start func

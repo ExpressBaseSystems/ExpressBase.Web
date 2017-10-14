@@ -193,23 +193,25 @@
     background-color: #cfcfcf;
     cursor: ns-resize;
 }
-
-.ruler {
-    margin-top: 1px;
-    color: #000;
-    font-size: 10px; 
-    overflow: hidden;
-    border: 1px solid #aaa;
-    margin-left: 79px !important;
-    border-left: 0;
-    background-color: #fbf7f7;
+.ruler-top {
     position: fixed;
-    z-index: 1;
-    height: 20px;
+    z-index: 3;
+    height: 20px;   
+    border-left: 0;
+    margin-left:-19px;
+}
+
+.ruler {    
+    font-size: 10px;
+    overflow: hidden;
+    background-color: #fbf7f7;
+    margin-top: 1px;
+    display: inline-block;
+    height: inherit;   
+    border: 1px solid #ccc;
 }
 .rulerleft {
-    position: absolute;
-    color: #000;
+    position: absolute;    
     border: 1px solid #aaa;
     font-size: 10px;
     background-color: #fbf7f7;
@@ -217,6 +219,7 @@
     margin-top: 20px;
     width: 20px;
     z-index: 2;
+    overflow: hidden;
 }
 .ruler > div {
         display: inline-block;
@@ -238,7 +241,7 @@
 .ruler .tickLabel-cm {
     position: relative;
     top: -7px;
-    margin-left: 3px;
+    margin-left: calc(1mm - 1px);
     width: 1px;
     height: 100%;
     text-indent: 1px;
@@ -247,23 +250,12 @@
 .ruler .tickLabel-inch {
     position: relative;
     top: -7px;
-    margin-left: 3px;
+    margin-left: calc(2.54mm - 1px);
     width: 1px;
     height: 100%;
     text-indent: 1px;
     line-height: 16px;
 }
-.ruler .tickLabel-mm {
-    position: relative;
-    top: -7px;
-    margin-left: 3px;
-    width: 1px;
-    height: 100%;
-    text-indent: 1px;
-    line-height: 16px;
-}
-  
-
 .ruler .tickLabel:first-of-type {
             margin-left: 0;
         }
@@ -271,9 +263,6 @@
     margin-left: 0;
 }
 .ruler .tickLabel-inch:first-of-type {
-    margin-left: 0;
-}
-.ruler .tickLabel-mm:first-of-type {
     margin-left: 0;
 }
     .ruler .tickMajor {
@@ -284,40 +273,28 @@
     }
 .ruler .tickMajor-cm {
     margin-top: 12px;
-    margin-left: 3px;
+    margin-left: calc(1mm - 1px);
     width: 1px;
     height: 6px;
 }
 .ruler .tickMajor-inch {
     margin-top: 12px;
-    margin-left: 3px;
+    margin-left: calc(2.54mm - 1px);
     width: 1px;
     height: 6px;
 }
-.ruler .tickMajor-mm {
-    margin-top: 12px;
-    margin-left: 3px;
-    width: 1px;
-    height: 6px;
-}
-
     .ruler .tickMinor {
-        margin-left: 3px;
-        width: 1px;
-        height: 4px;
-    }  
-    .ruler .tickMinor-cm {
-        margin-left: 3px;
+        margin-left: 4px;
         width: 1px;
         height: 4px;
     }
-.ruler .tickMinor-inch {
-    margin-left: 3px;
+.ruler .tickMinor-cm {
+    margin-left: calc(1mm - 1px);
     width: 1px;
     height: 4px;
 }
-.ruler .tickMinor-mm {
-    margin-left: 3px;
+.ruler .tickMinor-inch {
+    margin-left: calc(2.54mm - 1px);
     width: 1px;
     height: 4px;
 }
@@ -333,31 +310,21 @@
     margin-left: 0;
     margin-top: -1px;
 }
-.rulerleft .tickLabel-mm:first-of-type {
-    margin-left: 0;
-    margin-top: -1px;
-}
     .rulerleft .tickLabel {
         margin-top: 4px;
         width: 100%;
         height: 1px;
     }
 .rulerleft .tickLabel-cm {
-    margin-top: 3px;
+    margin-top: calc(1mm - 1px);
     width: 100%;
     height: 1px;
 }
 .rulerleft .tickLabel-inch {
-    margin-top: 3px;
+    margin-top: calc(2.54mm - 1px);
     width: 100%;
     height: 1px;
 }
-.rulerleft .tickLabel-mm {
-    margin-top: 3px;
-    width: 100%;
-    height: 1px;
-}
-
     .rulerleft .tickMajor {
         margin-top: 4px;
         width: 6px;
@@ -365,19 +332,13 @@
         margin-left: 13px;
     }
 .rulerleft .tickMajor-cm {
-    margin-top: 3px;
+    margin-top: calc(1mm - 1px);
     width: 6px;
     height: 1px;
     margin-left: 13px;
 }
 .rulerleft .tickMajor-inch {
-    margin-top: 4px;
-    width: 6px;
-    height: 1px;
-    margin-left: 13px;
-}
-.rulerleft .tickMajor-mm {
-    margin-top: 4px;
+    margin-top: calc(2.54mm - 1px);
     width: 6px;
     height: 1px;
     margin-left: 13px;
@@ -388,25 +349,18 @@
         height: 1px;
         margin-left: 14px;
     }
-    .rulerleft .tickMinor-cm {
-        margin-top: 3px;
-        width: 4px;
-        height: 1px;
-        margin-left: 14px;
-    }
+.rulerleft .tickMinor-cm {
+    margin-top: calc(1mm - 1px);
+    width: 4px;
+    height: 1px;
+    margin-left: 14px;
+}
 .rulerleft .tickMinor-inch {
-    margin-top: 3px;
+    margin-top: calc(2.54mm - 1px);
     width: 4px;
     height: 1px;
     margin-left: 14px;
 }
-.rulerleft .tickMinor-mm {
-    margin-top: 3px;
-    width: 4px;
-    height: 1px;
-    margin-left: 14px;
-}
-
 .page {
     display: block;
     margin-left: 79px;
@@ -494,14 +448,13 @@
 }
 
 #eb-rpt-container .title {
-    width: 99px;
+    width: 98px;
     height: 20px;
     background-color: #fbf7f7;
-    position: fixed;
-    top: 132px;
-    left: 224px;
     border: 1px solid #aaaaaa;
     z-index: 4;
+    display: inline-block;
+    float: left;
 }
 
 .measurement {
@@ -584,7 +537,6 @@
     margin-left: -5px;
     align-self: flex-start;
 }
-
 .arrow-By-dir-v-b {
     width: 0;
     height: 0;
@@ -611,7 +563,6 @@
     align-items: center;
     font-size: 11px;
 }
-
 .dropped {
     z-index: 2;
 }

@@ -43,7 +43,7 @@
 
     this.loadFileInput = function () {
         $("#input-id").fileinput({
-            uploadUrl: "../StaticFile/UploadFileAsync",
+            uploadUrl: "../StaticFile/UploadImageAsync",
             maxFileCount: 5,
             initialPreview: this.initialPrev,
             initialPreviewConfig: this.initialPrevConfig,
@@ -124,7 +124,7 @@
     this.init = function () {
         //this.getUplodedImgOnload();
         this.CreateMOdalW();
-        this.loadFileInput();       
+        //this.loadFileInput();       
     };
     this.init();
 }

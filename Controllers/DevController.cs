@@ -456,7 +456,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
                     Body = emailobj.Body,
-                    EbObjectType = emailobj.EbObjectType,
+                    //EbObjectType = emailobj.EbObjectType,
                     Name = emailobj.Name,
                     Subject = emailobj.Subject,
                     DataSourceRefId = emailobj.DataSourceRefId
@@ -477,7 +477,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
                     Body = emailobj.Body,
-                    EbObjectType = emailobj.EbObjectType,
+                    //EbObjectType = emailobj.EbObjectType,
                     Name = emailobj.Name,
                     Subject = emailobj.Subject,
                     DataSourceRefId = emailobj.DataSourceRefId
@@ -507,7 +507,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
                     Body = emailobj.Body,
-                    EbObjectType = emailobj.EbObjectType,
+                    //EbObjectType = emailobj.EbObjectType,
                     Name = emailobj.Name,
                     Subject = emailobj.Subject,
                     DataSourceRefId = emailobj.DataSourceRefId
@@ -530,7 +530,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
                     Body = emailobj.Body,
-                    EbObjectType = emailobj.EbObjectType,
+                    //EbObjectType = emailobj.EbObjectType,
                     Name = emailobj.Name,
                     Subject = emailobj.Subject,
                     DataSourceRefId = emailobj.DataSourceRefId

@@ -543,61 +543,61 @@ namespace ExpressBase.Web.Controllers
 
 
 
-        public JsonResult SaveSettings(string json, string RefId, string type)
-        {
-            var req = this.HttpContext.Request.Form;
-            EbDataVisualization obj = null;
-            if (type == "TableVisualization")
-                obj = EbSerializers.Json_Deserialize<EbTableVisualization>(json);
-            else if (type == "ChartVisualization")
-                obj = EbSerializers.Json_Deserialize<EbChartVisualization>(json);
-            string SaveId = "";
-            if (ViewBag.wc == "dc")
-            {
-                if (string.IsNullOrEmpty(RefId))
-                {
-                    var ds = new EbObject_Create_New_ObjectRequest();
-                    ds.EbObjectType = (type == "TableVisualization") ? (int)EbObjectType.TableVisualization : (int)EbObjectType.ChartVisualization;
-                    ds.Name = obj.Name;
-                    ds.Json = json;
-                    ds.Status = ObjectLifeCycleStatus.Live;
-                    ds.Relations = "aaa";
-                    ds.Tags = "dddd";
-                    ds.IsSave = true;
-                    var result = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-                    SaveId = result.RefId;
-                }
-                else
-                {
-                    var ds = new EbObject_CommitRequest();
-                    ds.EbObjectType = (type == "TableVisualization") ? (int)EbObjectType.TableVisualization : (int)EbObjectType.ChartVisualization;
-                    ds.Name = obj.Name;
-                    ds.Json = json;
-                    ds.Relations = "aaaaaa";
-                    ds.ChangeLog = "eee";
-                    ds.RefId = RefId;
-                    ds.Tags = "dddd";
-                    var result = ServiceClient.Post<EbObject_CommitResponse>(ds);
-                    SaveId = result.RefId;
-                }
-            }
-            if (ViewBag.wc == "uc")
-            {
-                if (type == "TableVisualization")
-                    this.Redis.Set<EbTableVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
-                else if (type == "ChartVisualization")
-                    this.Redis.Set<EbChartVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
-            }
-            else if (ViewBag.wc == "dc")
+        //public JsonResult SaveSettings(string json, string RefId, string type)
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    EbDataVisualization obj = null;
+        //    if (type == "TableVisualization")
+        //        obj = EbSerializers.Json_Deserialize<EbTableVisualization>(json);
+        //    else if (type == "ChartVisualization")
+        //        obj = EbSerializers.Json_Deserialize<EbChartVisualization>(json);
+        //    string SaveId = "";
+        //    if (ViewBag.wc == "dc")
+        //    {
+        //        if (string.IsNullOrEmpty(RefId))
+        //        {
+        //            var ds = new EbObject_Create_New_ObjectRequest();
+        //            ds.EbObjectType = (type == "TableVisualization") ? (int)EbObjectType.TableVisualization : (int)EbObjectType.ChartVisualization;
+        //            ds.Name = obj.Name;
+        //            ds.Json = json;
+        //            ds.Status = ObjectLifeCycleStatus.Live;
+        //            ds.Relations = "aaa";
+        //            ds.Tags = "dddd";
+        //            ds.IsSave = true;
+        //            var result = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+        //            SaveId = result.RefId;
+        //        }
+        //        else
+        //        {
+        //            var ds = new EbObject_CommitRequest();
+        //            ds.EbObjectType = (type == "TableVisualization") ? (int)EbObjectType.TableVisualization : (int)EbObjectType.ChartVisualization;
+        //            ds.Name = obj.Name;
+        //            ds.Json = json;
+        //            ds.Relations = "aaaaaa";
+        //            ds.ChangeLog = "eee";
+        //            ds.RefId = RefId;
+        //            ds.Tags = "dddd";
+        //            var result = ServiceClient.Post<EbObject_CommitResponse>(ds);
+        //            SaveId = result.RefId;
+        //        }
+        //    }
+        //    if (ViewBag.wc == "uc")
+        //    {
+        //        if (type == "TableVisualization")
+        //            this.Redis.Set<EbTableVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
+        //        else if (type == "ChartVisualization")
+        //            this.Redis.Set<EbChartVisualization>(SaveId + ViewBag.UId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
+        //    }
+        //    else if (ViewBag.wc == "dc")
 
-            {
-                if (type == "TableVisualization")
-                    this.Redis.Set<EbTableVisualization>(SaveId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
-                else if (type == "ChartVisualization")
-                    this.Redis.Set<EbChartVisualization>(SaveId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
-            }
-            return Json("Success");
-        }
+        //    {
+        //        if (type == "TableVisualization")
+        //            this.Redis.Set<EbTableVisualization>(SaveId, EbSerializers.Json_Deserialize<EbTableVisualization>(json));
+        //        else if (type == "ChartVisualization")
+        //            this.Redis.Set<EbChartVisualization>(SaveId, EbSerializers.Json_Deserialize<EbChartVisualization>(json));
+        //    }
+        //    return Json("Success");
+        //}
 
         // Get all DataSources
         private void FetchAllDataSources()

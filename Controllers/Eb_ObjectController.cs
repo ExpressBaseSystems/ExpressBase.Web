@@ -13,9 +13,9 @@ using ExpressBase.Common.Objects;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class EbObjectController : EbBaseNewController
+    public class Eb_ObjectController : EbBaseNewController
     {
-        public EbObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+        public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
         public IActionResult Index()
         {
             return View();

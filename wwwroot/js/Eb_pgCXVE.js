@@ -97,6 +97,7 @@
     this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10); };
 
     this.onDragFn = function (el, source) {
+        $(':focus').blur();
         if (source.id !== this.CE_all_ctrlsContId) {
             if (this.editor === 7)
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];

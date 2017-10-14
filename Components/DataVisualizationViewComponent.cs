@@ -35,19 +35,19 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId)
         {
-            EbDataVisualization dvobj = EbSerializers.Json_Deserialize<EbDataVisualization>(dvobjt);
+            var dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             if (dvobj != null)
             {
-                if (!string.IsNullOrEmpty(dvRefId))
-                {
-                    var dvObject = (ViewBag.wc == "dc") ? this.Redis.Get<EbDataVisualization>(dvRefId) : this.Redis.Get<EbDataVisualization>(dvRefId + ViewBag.UId);
-                    if (dvObject == null)
-                        dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
-                    dvObject.AfterRedisGet(this.Redis);
-                    ViewBag.data = dvObject;
-                }
-                else
+                //if (!string.IsNullOrEmpty(dvRefId))
+                //{
+                //    var dvObject = (ViewBag.wc == "dc") ? this.Redis.Get<EbDataVisualization>(dvRefId) : this.Redis.Get<EbDataVisualization>(dvRefId + ViewBag.UId);
+                //    if (dvObject == null)
+                //        dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
+                //    dvObject.AfterRedisGet(this.Redis);
+                //    ViewBag.data = dvObject;
+                //}
+                //else
                     ViewBag.data = getDVObject(dvobj);
             }
             //ViewBag.Meta = Meta.Replace("\\r\\n", string.Empty);

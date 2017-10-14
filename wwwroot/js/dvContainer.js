@@ -198,9 +198,9 @@ var DvContainerObj = function (settings) {
     this.saveSettings = function () {
         $.LoadingOverlay("show");
         if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1)
-            $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvRefid, type: "TableVisualization" }, this.saveSuccess.bind(this));
+            $.post('../Eb_Object/SaveEbObject', { _refid: this.dvRefid, _json: JSON.stringify(dvcontainerObj.currentObj), _rel_obj: "aaa", _tags: "aa"  }, this.saveSuccess.bind(this));
         else
-            $.post('../DV/SaveSettings', { json: JSON.stringify(dvcontainerObj.currentObj), RefId: this.dvRefid, type: "ChartVisualization" }, this.saveSuccess.bind(this));
+            $.post('../Eb_Object/SaveEbObject', { _refid: this.dvRefid, _json: JSON.stringify(dvcontainerObj.currentObj), _rel_obj: "aaa", _tags: "aaa"  }, this.saveSuccess.bind(this));
     };
 
     this.saveSuccess = function () {

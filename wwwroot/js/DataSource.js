@@ -316,15 +316,17 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
                 $('#timeline' + tabNum).append(" <li class='timeline-item' id= 'stat" + i + "' > " +
                     "<div class='timeline-badge' id='timeline-badge" + i + "'><i class='glyphicon glyphicon-check'></i></div>" +
                     "<div class='timeline-panel'> "+
-                    "<div class='timeline-heading'> "+
-                    "<h5 class='timeline-title'>" + obj.status + "</h5>" +
-                    obj.commitUname +// "<img src= '../static/" + cid + "/thumbs/" + obj.profileImage + "_small.png" + "' class='img-circle pull-right' />" +
-                    "<p><small class='text-muted'><i class='glyphicon glyphicon-time'></i>" + obj.commitTs + "</small></p>" +
+                    "<div class='timeline-heading col-md-12'> " +
+                    "<strong class='timeline-title col-md-1'>" + obj.status + "</strong>" +
+                     "<div class='timeline-time col-md-8'>"+
+                    "<p><small class='text-muted col-md-10'><i class='glyphicon glyphicon-time'></i>" + obj.commitTs + "</small><small class='pull-left col-md-2' > " + obj.commitUname + "</small ></p> " +
+                    "</div> " +
+                        "<img src= '../static/dp_29_micro.jpg" + "' class='img-circle pull-right col-md-2' />" +      
                     "</div>" +
-                    "<div class='timeline-body' > "+
-                    "<p class='timeline-body-clickmore'>" + obj.changeLog + "</p>" +
-                    "<a class='primary pull-right more'>more</a>"+
-                    "</div> "+
+                    "<div class='timeline-body' id='timeline-body"+i+"'> "+
+                            "<p class='timeline-body-clickmore'>" + obj.changeLog + "</p>" +
+                            "<a class='primary pull-right more'>more</a>" +
+                    "</div>" +
                     "</div> "+
                     "</li>");
                 var classname;
@@ -344,8 +346,13 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
                 $(getNav + ' #timeline-badge' + i).addClass(classname);
 
                 $('#stat' + i + ' .more').on('click', function () {
-                var element = $('#stat' + i + ' .timeline-body p');
-                element.classList.toggle("timeline-body-clickmore");
+                    var p_element = $('#stat' + i + ' #timeline-body'+i+' p');
+                    p_element.toggleClass("timeline-body-clickmore");
+                    var a_element = $('#stat' + i + ' #timeline-body' + i + ' a');
+                    if (a_element.text() === 'more')
+                        a_element.text('less');
+                    else
+                        a_element.text('more')
                 });
             });
             $.LoadingOverlay("hide");

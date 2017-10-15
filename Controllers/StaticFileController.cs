@@ -199,7 +199,7 @@ namespace ExpressBase.Web.Controllers
         public List<FileMeta> FindFilesByTags(int i, string tags, string bucketname)
         {
             FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
-            tags = (string.IsNullOrEmpty(tags)) ?"Unni" :tags;
+            tags = (string.IsNullOrEmpty(tags)) ? string.Empty : tags;
             findFilesByTagRequest.Tags = new List<string>(tags.Split(','));
 
             List<FileMeta> FileInfoList = new List<FileMeta>();

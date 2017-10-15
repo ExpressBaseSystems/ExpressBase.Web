@@ -42,9 +42,11 @@ var Eb_PropertyGrid = function (id) {
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
         }
         else if (type === 1) {    // If options create drop-down list
-            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.options);
-            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
-            this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', value); };
+            if (typeof value === "string")
+                value = parseInt(getKeyByVal(meta.enumoptions, value));
+            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, );
+            this.getValueFuncs[name] = function () { return parseInt( $('#' + elemId).val()); };
+            this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
         }
         else if (type === 2) {    // If number 
             valueHTML = '<input type="number" id="' + elemId + '" value="' + (value || 0) + '" style="width:100%" />';
@@ -130,10 +132,11 @@ var Eb_PropertyGrid = function (id) {
     };
 
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
-        selectedValue = selectedValue || options[0];
+        selectedValue = selectedValue || 0;
         var html = "<select class='selectpicker' >";
-        for (var i = 0; i < options.length; i++)
-            html += "<option data-tokens='" + options[i] + "'>" + options[i] + "</option>";
+        $.each(options, function (i, val) {
+            html += "<option data-token='" + i + "'>" + val + "</option>";
+        });
         html += "</select><input type='hidden' value='" + selectedValue + "' id='" + id + "'>";
         return html;
     };
@@ -209,7 +212,7 @@ var Eb_PropertyGrid = function (id) {
         }
         // Close the table and apply it to the div
         this.$PGcontainer.html(this.innerHTML);
-        $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").val()); });
+        $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) });
     };
 
     this.buildRows = function () {

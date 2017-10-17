@@ -186,18 +186,20 @@
                 </div>
             </div>
             <div class="col-md-8 col-md-offset-2" id="page-outer-cont">                
-                <div class="ruler-top">
-                    <div class="title" style="display:none">                        
+                <div class="page-outer-container">
+                    <div class="ruler-top">
+                        <div class="title" style="display:none">
                             <select id="rulerUnit">
                                 <option value="cm">cm</option>
                                 <option value="inch">inch</option>
                                 <option value="px">pixel</option>
-                            </select>                        
+                            </select>
+                        </div>
+                        <div class='ruler' style="display:none"></div>
                     </div>
-                    <div class='ruler' style="display:none"></div>
-                </div>              
-                <div class='rulerleft' style="display:none"></div>
-                <div id="pageCanvas">
+                    <div class='rulerleft' style="display:none"></div>
+                    <div id="pageCanvas">
+                    </div>
                 </div>
             </div>
             <div class="col-md-2 col-md-offset-10 PGgrid">
@@ -241,10 +243,7 @@
                 cancel: "a.ui-icon",
                 revert: "invalid",
                 helper: "clone",
-                cursor: "move",
-                drag: function (event, ui) {
-                    $(ui.draggable).css({ "background-color": "#000000","z-index":"1000"});
-                }
+                cursor: "move"              
             });
         }
 

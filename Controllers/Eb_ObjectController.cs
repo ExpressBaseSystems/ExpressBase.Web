@@ -89,6 +89,10 @@ namespace ExpressBase.Web.Controllers
             }
             return refid;
         }
+        public IActionResult GetLifeCycle(int _tabNum, string cur_status, string refid)
+        {
+            return ViewComponent("ObjectLifeCycle", new { _tabnum = _tabNum , _cur_status = cur_status , _refid  = refid });
+        }
 
         public IActionResult VersionHistory(string objid, int tabNum)
         {

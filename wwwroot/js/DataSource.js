@@ -93,37 +93,44 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
 
     this.VerHistory = function () {
         $.LoadingOverlay("show");
-        $.post("../CE/GetVersions",
-            {
-                objid: this.ver_Refid
-            }, this.Version_List.bind(this));
+        //tabNum++;
+        //$.post("../CE/GetVersions",
+        //    {
+        //        objid: this.ver_Refid
+        //    }, this.Version_List.bind(this));
+        //$.post("../Eb_Object/VersionHistory",{objid: this.ver_Refid, tabnum: tabNum}, this.Version_List.bind(this));
+        this.Version_List();
     }
 
-    this.Version_List = function (result) {
+    this.Version_List = function () {
         $.LoadingOverlay("hide");
         this.SetValues();
-        this.Versions = result;
+        //this.Versions = result;
         tabNum++;
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>" +
-            "<table class='table table-striped table-bordered col-md-12' id='versions" + tabNum + "'>" +
-            "<thead class='verthead" + tabNum + "'>" +
-            "<tr>" +
-            "<th class='col-md-1'>Version Number</th>" +
-            "<th class='col-md-4'>Change Log</th>" +
-            "<th class='col-md-1'>Committed By</th>" +
-            "<th class='col-md-2'>Committed At</th>" +
-            "<th class='col-md-1'> </th>" +
-            "</tr>" +
-            " </thead>" +
-            "<tbody id='vertbody" + tabNum + "' class='vertbody'></tbody>" +
-            "</table>" +
-            "</div>";
+        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'></div>";
+            //"<table class='table table-striped table-bordered col-md-12' id='versions" + tabNum + "'>" +
+            //"<thead class='verthead" + tabNum + "'>" +
+            //"<tr>" +
+            //"<th class='col-md-1'>Version Number</th>" +
+            //"<th class='col-md-4'>Change Log</th>" +
+            //"<th class='col-md-1'>Committed By</th>" +
+            //"<th class='col-md-2'>Committed At</th>" +
+            //"<th class='col-md-1'> </th>" +
+            //"</tr>" +
+            //" </thead>" +
+            //"<tbody id='vertbody" + tabNum + "' class='vertbody'></tbody>" +
+            //"</table>" +
+            //"</div>";
         this.AddVerNavTab(navitem, tabitem);
+        $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: tabNum }, function (result) {
+            console.log(result);
+            $("#vernav" + tabNum).append(result);
+        });
         var scrollPos = $('#versionTab').offset().top;
         $(window).scrollTop(scrollPos);
-
-        this.ShowVersions();
+        $("#vernav" + tabNum +" .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
+        //this.ShowVersions();
     }
 
     this.ShowVersions = function () {
@@ -131,14 +138,14 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     }
 
     this.ShowVersions_inner = function (i, obj) {
-        $('#vertbody' + tabNum).append("<tr>" +
-            "<td>" + obj.versionNumber + "</td> " +
-            "<td>" + obj.changeLog + "</td> " +
-            "<td>" + obj.commitUname + "</td> " +
-            "<td>" + obj.commitTs + "</td> " +
-            "<td><input type='button' id='view_code" + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
-            " </tr>");
-        $('#view_code' + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
+        //$('#vertbody' + tabNum).append("<tr>" +
+        //    "<td>" + obj.versionNumber + "</td> " +
+        //    "<td>" + obj.changeLog + "</td> " +
+        //    "<td>" + obj.commitUname + "</td> " +
+        //    "<td>" + obj.commitTs + "</td> " +
+        //    "<td><input type='button' id='view_code" + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
+        //    " </tr>");
+        //$('#view_code' + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
     };
 
     this.OpenPrevVer = function (e) {

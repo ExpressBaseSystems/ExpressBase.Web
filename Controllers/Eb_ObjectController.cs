@@ -90,5 +90,10 @@ namespace ExpressBase.Web.Controllers
             return refid;
         }
 
+        public IActionResult VersionHistory(string objid, int tabNum)
+        {
+            return ViewComponent("VersionHistory", new {objid = objid, tabnum = tabNum });
+        }
+
     }
 }

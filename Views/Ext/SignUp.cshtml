@@ -6,7 +6,7 @@
 <script>
     $('document').ready(function () {
         $("#signUpFree").hide();
-
+       
         function onSubmit(token) {
             document.getElementById("signup_form").submit();
         }
@@ -103,40 +103,12 @@
                         
 
                     }
-                });            
-            //$.post("../Common/UniqueCheck",{"text": text1}, function (result) { });
+                });                      
         });
-
-        $(function () {
-            $('input[type=password]').each(function () {
-                $(this).attr('data-background-color', $(this).css('white'));
-                $(this).css('background-color', $(this).css('white'));
-                $(this).attr('type', 'text');
-
-                //$(this).focus(function () {
-                //    $(this).attr('type', 'password');
-                //    $(this).css('background-color', $(this).attr('data-background-color'));
-                //});
-
-                //$(this).blur(function () {
-                //    $(this).css('background-color', $(this).css('color'));
-                //    $(this).attr('type', 'text');
-                //});
-            });
+     
         });
-    });
-        //function uniquecheck1()
-        //{
-        //        var text1 = $('#email').val();
-        //        alert(text1);
-        //        $.post("../Common/UniqueCheck",
-        //            {
-        //                "text": text1,
-
-        //            }, function (result) {
-
-        //            });
-        //}
+   
+       
 </script>
 <section id="signup" style="margin-top:100px;">
     <div class="container">
@@ -151,7 +123,8 @@
                         <div class="col-sm-12">
                             <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="email" autocomplete="off" name="email" placeholder="Email" data-error="email address is invalid" required />
+                                    <input type="email" class="form-control" id="email"  name="email" placeholder="Email" data-error="email address is invalid" required autocomplete="off" readonly 
+    onfocus="this.removeAttribute('readonly');"  />
                                 </div>
                             <i class="fa fa-spinner fa-spin fa-lg" id="loader" style="display:none;color:blue;float:right;margin-top:-25px;margin-right:-27px;"></i>
                             <div class="help-block with-errors"></div>
@@ -161,9 +134,11 @@
                         <div class="col-sm-12">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                <input type="password" class="form-control required pass" autocomplete="off" id="password" name="password" placeholder="Password" data-placement="right" data-trigger="manual" data-content="Must be   at least 8 characters long,contain at least one number, one uppercase and one lowercase letter." />
-
+                                <input type="password" class="form-control required pass" id="password" name="password" placeholder="Password" data-placement="right" data-trigger="manual" data-content="Must be   at least 8 characters long,contain at least one number, one uppercase and one lowercase letter." autocomplete="off" readonly 
+    onfocus="this.removeAttribute('readonly');" />
                             </div>
+
+                            <span id="result"></span>
                         </div>
                     </div>
                     <div class="row">

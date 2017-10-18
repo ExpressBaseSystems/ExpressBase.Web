@@ -122,7 +122,7 @@
     };
     
     this.init = function () {
-        this.getUplodedImgOnload();
+        //this.getUplodedImgOnload();
         this.CreateMOdalW();
         //this.loadFileInput();       
     };

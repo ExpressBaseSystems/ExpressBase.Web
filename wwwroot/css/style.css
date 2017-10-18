@@ -128,13 +128,24 @@ Navigation bar
     top: 20px !important;
     right: 30px !important;
 }
+
+.eb-banner {
+    height: 500px;
+    background: url(../images/pic.jpg) no-repeat center center fixed;
+}
+.bg-color-banner{
+width:inherit;
+height:inherit;
+background-color:black;
+opacity:0.3;
+}
 /*PARTNERS*/
 .img-responsive {
     margin: 20px auto;
 }
 
 #partners {
-    background-color: rgb(260, 260, 260);
+    background-color: #fafafa;
     padding-top: 20px;
     padding-bottom: 28px;
 }
@@ -154,7 +165,7 @@ Navigation bar
 }
 
 #work-shop {
-    background-color: rgb(260, 260, 260);
+    background-color:#fafafa;
     padding-bottom: 40px;
 }
 
@@ -223,15 +234,15 @@ Navigation bar
         }
 /*end team*/
 /*overlay2*/
-#overlay2 {
-    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.7);
-    color: #ffffff;
-    padding-bottom: 20px;
+.eb-banner2 {
+    height: 400px;
 }
-
-    #overlay2 h2 {
-        color: #ffffff !important;
-    }
+.eb-banner2-img {   
+  background-repeat: no-repeat; 
+}
+#overlay2 {       
+    padding-bottom: 20px;    
+}
 
 .bg-white {
     background-color: #fff !important;
@@ -390,6 +401,22 @@ footer {
     background: url('../images/aboutus.jpg') center center no-repeat scroll;
     background-size: cover;
     width: 100%;
+}
+.sign-in-ext {
+    margin-top: 50px;
+    background: url(../images/signinExt.jpg+) no-repeat center center fixed;
+    height: calc(100vh - 50px);
+    width: 100%;
+}
+.cont-signin{
+    height:inherit;
+}
+.row-sign-in {
+    height: inherit;
+}
+.log-form{
+height:inherit;
+background:white;
 }
 /*pricing*/
 #headerPricing {
@@ -594,9 +621,13 @@ footer {
     margin-right: 10px;
     background-color: #f2f2f2;
 }
-#layout_div .row {
-    margin-right: -10px;
-    margin-left: -10px;
+#layout_div #topmenu {
+    margin-right: -5px;
+    margin-left: -5px;
+}
+#layout_div #objlist-items {
+    margin-right: -15px;
+    margin-left: -8px;
 }
 .padd {
     padding-right: 7px;
@@ -615,17 +646,21 @@ footer {
 /*ebObject list*/
 
 .objitems {
-    border: 1px solid rgba(0,0,0,.15);  
+    
     padding-bottom: 5px;
     margin-top: 8px;
     background-color: white;
-    border-radius: 4px;
-    height:125px;
+    border-radius: 2px;
+    height: 74px;
+    margin-right: 8px;
+    width: 49.4%;
 }
-
-.bottpadd {
-    margin-bottom: 50px;
-}
+    .objitems:hover {
+        background-color: #e2ebff;
+    }
+    .bottpadd {
+        margin-bottom: 50px;
+    }
 
 #btnOpen {
     background: transparent;
@@ -652,9 +687,32 @@ footer {
 .objList-menu .search-icon {
     margin-left: -22px
 }
-#objlist-items{
-
+.objbox-footer{
+    display:flex;
+    height:inherit;
 }
+.objitems h4 {
+    margin: 3px 0 2px;
+}
+.objitems p {
+    margin:0;
+    height:20px;
+}
+.objbox-footer form {
+    align-self:center;
+}
+.obj-icon {
+    display:flex;
+    height:inherit;
+    padding:0;
+}
+    .obj-icon .obj-ic-cir {
+        align-self: center;             
+    }
+        .obj-icon .obj-ic-cir i {
+            font-size: 28px;
+            color: #4f4f5a;
+        }
 /*imageuploader*/
 #mdfooter .bootstrap-tagsinput {
     width: 100%;

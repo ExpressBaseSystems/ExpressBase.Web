@@ -1,7 +1,7 @@
 ﻿/*side menuBar*/
 .tool-box-items {
     margin-left: 0px !important;
-    margin-top: 10px !important;
+    margin-top: 2px !important;
 }
 .tree, .tree ul {
     padding: 0;
@@ -86,6 +86,9 @@
 }
 .toolbox .Eb-shaps {
     padding: 0;
+}
+.toolbox ul{
+    margin:0;
 }
 .Eb-shaps-title {
     padding: 4px 7px;

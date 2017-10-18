@@ -30,7 +30,9 @@
         ButtonCounter: 0,
         TableLayoutCounter: 0,
         TextBoxCounter: 0,
-        TableTdCounter: 0
+        TableTdCounter: 0,
+        RadioButtonCounter: 0,
+        RadioGroupCounter: 0
     };
     this.currentProperty = null;
     this.CurRowCount = 2;
@@ -264,7 +266,7 @@
         var id = type + (this.controlCounters[type + "Counter"])++;
         $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
         $ControlTile.attr("eb-type", type).attr("id", id);
-        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
+        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test///////////////
         $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
         $EbCtrl.wrap($ControlTile);
         $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);

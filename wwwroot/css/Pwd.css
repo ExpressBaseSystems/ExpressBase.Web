@@ -38,23 +38,23 @@ width: 272px;
 font-size: 1em;
 height: 25px;
 }*/
-#register .short{
-font-weight:bold;
-color:#FF0000;
-font-size:larger;
+.short {
+    font-weight: bold;
+    color: #FF0000;
+    font-size: larger;
 }
-#register .weak{
-font-weight:bold;
-color:orange;
-font-size:larger;
+.weak {
+    font-weight: bold;
+    color: orange;
+    font-size: larger;
 }
-#register .good{
-font-weight:bold;
-color:#2D98F3;
-font-size:larger;
+.good {
+    font-weight: bold;
+    color: #2D98F3;
+    font-size: larger;
 }
-#register .strong{
-font-weight:bold;
-color: limegreen;
-font-size:larger;
+.strong {
+    font-weight: bold;
+    color: limegreen;
+    font-size: larger;
 }

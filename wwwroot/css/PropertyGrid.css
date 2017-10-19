@@ -1,0 +1,289 @@
+﻿.pgTdval > input[type="text"], input[type="email"], input[type="number"], input[type="color"], input[type="password"], input[type="singleline"] {
+    height: 21px;
+    width: 110px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background-color: transparent;
+    border: none;
+    padding: 3px;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+.propgrid-table-cont input[type="color"] {
+    padding: 0px !important;
+}
+
+.propgrid-table-cont input[type="number"] {
+    direction: rtl;
+}
+
+.propgrid-table-cont {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    max-height: 526px;
+    background-color: white;
+    /*min-width: 250px;*/
+}
+
+.pg-wraper {
+    display: flex;
+    flex-flow: column;
+    height: inherit;
+    font-family: Tahoma;
+    width: 100%;
+    /*overflow-x: auto;*/
+    overflow-x: hidden;
+}
+
+
+.pg-table {
+    min-width: 100%;
+    overflow: auto;
+    width: 100%;
+}
+
+.pgHead {
+    background-image: var(--gbm);
+    color: white;
+    padding: 5px;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 4px 4px 0px 0px;
+}
+/*.controls-dd-cont {
+    border-bottom: var(--sild1pxDDD);
+}*/
+.OSE-DD-cont .btn-default {
+    padding: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: var(--colorDDD);
+    box-shadow: none;
+    border: none;
+    text-shadow: none;
+}
+
+.pgCX-Editor-Btn {
+    width: 13px;
+    padding: 0px 0px;
+    float: right;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    border: var(--sild1pxDDD);
+    margin: 3px;
+    font-size: 8px;
+    text-align: center;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+}
+
+.pgCXEditor-Cont {
+    border-radius: 3px;
+    width: 50%;
+    height: 70VH;
+    position: fixed;
+    left: 25%;
+    top: 15vh;
+    /*border: solid 1px #a2a2a0 !important;*/
+    background-color: white;
+    padding: 3px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+
+    .pgCXEditor-Cont .propgrid-table-cont {
+        height: 30.9vh;
+    }
+
+    .pgCXEditor-Cont .CodeMirror {
+        height: 46vh;
+    }
+
+.pgCXEditor-bg {
+    display: none;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.CE-controls-head, .inner-PG-Cont .pgHead {
+    padding: 8px;
+    font-weight: bold;
+    color:black;
+    background-color: #ddd;
+    background-image:none;
+    border-radius: unset;
+}
+
+.colTile {
+    padding: 4px 8px;
+    background-color: #c8d4ef;
+    margin: 3px 1px;
+    border-radius: 15px;
+    font-size: 13px;
+    /*border: solid 1px #d6d6d6;*/
+    cursor: pointer;
+    color: #111;
+}
+
+    .colTile:hover {
+        background-color: var(--colorDDD);
+        outline: none;
+        color: #000;
+    }
+
+    .colTile:focus {
+        background-color: #c2c8ce;
+        outline: none;
+        color: #000;
+    }
+
+.OSE-verTile-Cont .colTile:focus {
+    background-color: rgb(238, 238, 238);
+}
+
+.ColT-right-arrow {
+    visibility: hidden;
+    font-size: 19px;
+    color: white;
+}
+
+.colTile .ColT-right-arrow {
+    visibility: hidden;
+}
+
+.colTile:hover .ColT-right-arrow {
+    visibility: visible;
+}
+
+.ctrlHead {
+    display: none;
+    cursor: move;
+}
+
+.propgrid-helpbox {
+    display: none;
+    vertical-align: bottom;
+    height: 45px;
+    border-radius: 0px 0px 4px 4px;
+    color: black;
+    overflow-y: auto;
+    font-size: 11px;
+    background-color: #c4d1de;
+}
+
+.pgCXEditor-Cont .propgrid-helpbox {
+    border-radius: 0px;
+}
+
+.property-grid-cont .bs-searchbox .form-control {
+    height: 21px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    border-radius: 2px;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+.property-grid-cont {
+    width: 20%;
+    height: 95vh;
+    visibility: hidden;
+}
+
+.pin {
+    float: right;
+    margin-top: 1px;
+    cursor: default;
+    margin-right: 5px;
+}
+
+.pgTdval {
+    padding: 0px 3px;
+    text-align: center;
+}
+
+.pgTdName {
+    padding: 0px 4px;
+}
+
+.pg-wraper .pg-table td {
+    font-size: 12px;
+    border: var(--pgTdBorder);
+}
+
+.pgGroupCell {
+    padding: 1px 2px;
+}
+
+.pgGroupRow {
+    background-color: #369 !important;
+    /*background-image: var(--gbm);*/
+    color: white;
+    border-bottom: solid 2px white;
+}
+
+    .pgGroupRow > td:hover {
+        background-color: #369 !important;
+    }
+
+.pgTdval .property-grid-cont .btn {
+    padding: 3px 12px !important;
+    border: 1px solid rgba(34,36,38,.15);
+}
+
+.controls-dd-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    display: block !important;
+    height: 24px;
+}
+
+.pgTdval .dropdown-toggle {
+    padding: 0px 12px;
+    border-radius: 0px;
+    height: 22px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    border: none;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+    .pgTdval .dropdown-toggle:hover {
+        background-color: transparent;
+    }
+
+.pg-wraper .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+    width: 100%;
+}
+
+
+.sub-controls-DD-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 200px;
+}
+
+.pgCXEditor-Cont .btn {
+    border-radius: 1px !important;
+}
+
+.pgCXEditor-Cont .modal-body {
+    height: 51vh;
+}
+
+/*overridding*/
+.property-grid-cont .sp-preview {
+    width: calc(100% - 15px) !important;
+    height: 15px;
+}
+
+.property-grid-cont .sp-replacer {
+    width: 100% !important;
+    padding: 2px;
+}

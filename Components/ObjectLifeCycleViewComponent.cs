@@ -25,6 +25,7 @@ namespace ExpressBase.Web.Components
             ViewBag.tabNum = _tabnum;
             ViewBag.CurrStatus = _cur_status;
             ViewBag.StatusHistory = GetStatusHistory(_refid);
+            ViewBag.Curr_refid = _refid;
             return View();
         }
         public List<EbObjectWrapper> GetStatusHistory(string _refid)

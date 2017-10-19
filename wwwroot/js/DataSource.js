@@ -124,8 +124,8 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
             //"</div>";
         this.AddVerNavTab(navitem, tabitem);
         $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: tabNum }, function (result) {
-            console.log(result);
             $("#vernav" + tabNum).append(result);
+            $.LoadingOverlay("hide");
         });
         var scrollPos = $('#versionTab').offset().top;
         $(window).scrollTop(scrollPos);
@@ -262,7 +262,8 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         $.post("../Eb_Object/GetLifeCycle", { _tabnum: tabNum, cur_status: this.Current_obj.status,refid : this.ver_Refid }, function (text) {
-             $('#vernav' + tabNum).append(text);
+            $('#vernav' + tabNum).append(text);
+            $.LoadingOverlay("hide");
         });
     //    var getNav = $("#versionNav li.active a").attr("href");
     //    $('#vernav' + tabNum).append("<div class=' well col-md-12'>" +           
@@ -404,7 +405,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     //            $('.selectpicker').selectpicker('refresh');
     //            $('#loader_fd' + tabNum).hide();
     //        })
-        $.LoadingOverlay("hide");
+        
     };
 
     this.Compare = function () {

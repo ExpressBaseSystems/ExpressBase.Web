@@ -161,7 +161,7 @@
     min-height: 28.18px;
 }
 
-/*overriding*/
+/*overriding */
 .controls-dd-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
     width: 100%;
 }

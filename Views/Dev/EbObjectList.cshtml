@@ -87,8 +87,8 @@
 <script>
     $('#impexp').next().css("display", "inline-block");
 </script>
-<div class="row" id="topmenu" style="margin-top: 50px;">
-    <div class="objList-menu form-inline">
+<div class="row" id="topmenu">
+    <div class="form-inline objList-menu Eb-CommonMenuStyle">
         <div class="input-group-btn" style="display:inline">
             <button type="button" id="dropbuttn" class="btn dropdown-toggle objList-menu-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Name <span class="caret"></span></button>
             <ul class="dropdown-menu" id="MyDropDownId">
@@ -99,18 +99,18 @@
         <input type="text" class="" id="searchobj" aria-label="...">
         <i class="fa fa-search search-icon"></i>
         <div class="pull-right">
-            <button class="btn objList-menu-btn" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+            <button class="btn" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i></button>
             @if (ViewBag.wc == "dc")
             {
                 <div class="input-group" id="impexp">
                     <div class="input-group-btn">
-                        <button class="btn objList-menu-btn"><i class="fa fa-download" aria-hidden="true"></i></button>
-                        <button class="btn objList-menu-btn"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                        <button class="btn"><i class="fa fa-download" aria-hidden="true"></i></button>
+                        <button class="btn"><i class="fa fa-upload" aria-hidden="true"></i></button>
                     </div>
                 </div>
                 @using (Html.BeginForm(editor, whichController, FormMethod.Get, new { target = "_blank" }))
                 {
-                    <input type="submit" class="btn objList-menu-btn" value="&#xf055;" style="font-family: FontAwesome,sans-serif;" />
+                    <input type="submit" class="btn" value="&#xf055;" style="font-family: FontAwesome,sans-serif;" />
                     <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
                 }
             }
@@ -133,7 +133,7 @@
                     @*<i style="font-style:italic;">Last commit by @element.Value.CommitUname on @element.Value.CommitTs</i>*@
                     <a id="labels">
                         @*<span name="Version" class="label label-default">v @element.Value.VersionNumber</span>*@
-                        <span name="Application" class="label label-primary objbox-label">Application</span>
+                        <span name="Application" class="label objbox-label">Application</span>
                     </a>
                 </div>
                 <div class="col-md-1 objbox-footer">                                     

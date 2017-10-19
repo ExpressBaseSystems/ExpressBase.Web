@@ -489,7 +489,33 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         if (event.key === "Control"){
             $(event.target).toggleClass("marked");
         }
+        if (event.key === "D" || event.key ==="d") {
+            this.duplicateControl($(event.target));
+        }
     };
+
+    this.duplicateControl = function (control) {
+        var id = control.attr('id');
+        var Objtype = control.attr('eb-type');
+        var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
+        var objToClone = this.objCollection[id];
+        var objClone = $.extend(true, {}, objToClone);
+        objClone.EbSid = Objid;
+        objClone.Html = objToClone.Html;
+        this.dropLoc.append(objClone.Html());
+        objClone.Top = this.posTop - this.dropLoc.offset().top;
+        objClone.Left = this.posLeft - this.dropLoc.offset().left;       
+        this.objCollection[Objid] = objClone;
+        this.RefreshControl(objClone); 
+        //var Objtype = control.attr('eb-type');
+        //var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
+        //var obj = new EbObjects["Eb" + Objtype](Objid);
+        //this.dropLoc.append(obj.Html());
+        //obj.Top = this.posTop - this.dropLoc.offset().top;
+        //obj.Left = this.posLeft - this.dropLoc.offset().left;       
+        //this.objCollection[Objid] = obj;
+        //this.RefreshControl(obj);  
+    }
 
     this.removeElementFn = function () {
         if (!this.control.hasClass("pageHeaders")){

@@ -192,7 +192,7 @@ var EbDataTable = function (settings) {
         //    this.ebSettings.columns[1].visible = true;
         //}
         $.event.props.push('dataTransfer');
-        //this.updateRenderFunc();
+        this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         //this.collapseFilter();

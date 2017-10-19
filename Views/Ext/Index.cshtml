@@ -7,8 +7,11 @@
 <!--Slider-->
 <section class="slider">
     <div class="container-fluid">
-        <div class="row">           
-            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+        <div class="row eb-banner"> 
+            <div class="bg-color-banner">
+
+            </div>
+            @*<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                <ol class="carousel-indicators">
                     <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
                     <li data-target="#carousel-example-generic" data-slide-to="1"></li>
@@ -25,7 +28,7 @@
                         <img src="~/images/bgpic.jpg" alt="First slide" class="img-responsive">
                     </div>
                 </div>
-            </div>
+            </div>*@
         </div>
     </div>
 </section>
@@ -108,14 +111,20 @@
 </section>
 <!--/ work-shop-->
 <section id="overlay2" class="section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="header-section text-center">
-                <form>                   
-                    <h2 class="white">Get Started for FREE</h2>
-                    <p class="white">No Credit card required.</p>
+    <div class="container-fluid">
+        <div class="row eb-banner2">            
+            <img class="col-md-8 eb-banner2-img" src="~/images/wall3.jpg">           
+            <div class="col-md-4 header-section">
+                <div class="eb-banner2-text">                   
+                    <h2 class="text-center">Get Started for FREE</h2>
+                    <p>specifically focusing on customer retention and ultimately driving sales growth.
+                        One important aspect of the CRM approach is the systems of CRM that compile data
+                    from a range of different communication channels, including a company's website, 
+                    telephone, email, live chat, marketing materials, and more recently, social media.
+                    Through the CRM approach and the systems used to facilitate it, businesses learn more
+                    </p>
                     <a href="SignUp" class="btn btn-primary">Sign Up</a>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -141,6 +150,14 @@
     </div>
 </section>
 <!--partners/-->
+<section class="getStarted">
+    <div class="container">
+        <div class="col-md-6 col-md-offset-3">
+            <h3 class="text-center">Try ExpressBASE For FREE</h3>
+            <button class="btn btn-trial">Get Free Trial</button>
+        </div>
+    </div>
+</section>
 @{
     Html.RenderPartial("PageFooter");
 }

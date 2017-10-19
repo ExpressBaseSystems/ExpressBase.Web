@@ -1,0 +1,138 @@
+﻿@{
+    var tabNum = ViewBag.tabNum;
+    var cur_stat = ViewBag.CurrStatus;
+    @using Newtonsoft.Json;
+    var dvobj = JsonConvert.SerializeObject(ViewBag.StatusHistory);
+}
+<script>
+
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker({
+            size: 4
+        });
+        $('.selectpicker').selectpicker('refresh');
+        $.each(@Html.Raw(dvobj), function (i, obj) {
+            $('#timeline' + @tabNum).append(" <li class='timeline-item' id= 'stat" + i + "' > " +
+                "<div class='timeline-badge' id='timeline-badge" + i + "'><i class='glyphicon glyphicon-check'></i></div>" +
+                "<div class='timeline-panel' style='min-height: 92px;'> " +
+                    "<div class='timeline-heading col-md-10'> " +
+                        "<div class='col-md-12'>" +
+                            "<div class='timeline-title col-md-1' style='display:inline'>" + obj.Status + "</div>" +
+                            "<div class='timeline-time col-md-8' style='display:inline'>" +
+                                "<p><small class='text-muted'><i class='glyphicon glyphicon-time'></i>" + obj.CommitTs + "</small>" +
+                            "</div> " +
+                            "<small class='col-md-2 style='display:inline' > " + obj.CommitUname + "</small></p >" +
+                        "</div>" +
+                        "<div class='timeline-body' id='timeline-body" + i + "'> " +
+                            "<p class='timeline-body-clickmore'>" + obj.ChangeLog + "</p>" +
+                "</div>" +
+                "<a class='primary pull-right more' style='position:absolute; bottom: 0; right: 0;' id='more" + i + "'>more</a>" +
+                    "</div>" +
+
+                    "<div class='col-md-2'>" +
+                        "<div> " +
+                            "<img class='img-circle pull-right' src= '../static/dp_29_micro.jpg" + "'/>" +
+                          
+                        "</div> " +
+                    "</div> " +
+                "</div> " +
+
+                "</li>");
+            var classname;
+            if (obj.Status === "Test")
+                classname = "info";
+            if (obj.Status === "UAT")
+                classname = "primary";
+            if (obj.Status === "Live") {
+                classname = "success";
+                $('#stat' + i).addClass("livestat");
+            }
+            if (obj.Status === "Offline")
+                classname = "warning";
+            if (obj.Status === "Obsolete")
+                classname = "danger";
+            $('#timeline-badge' + i).addClass(classname);
+
+            $('#stat' + i + ' .more').on('click', function () {
+                var p_element = $('#stat' + i + ' #timeline-body' + i + ' p');
+                p_element.toggleClass("timeline-body-clickmore");
+                var more = $('#more' + i);
+                if (more.text() === 'more')
+                    more.text('less');
+                else
+                    more.text('more')
+            });
+        });
+    });
+
+    $('#confirm_stat_change' + tabNum).on("click", function () {
+        $.LoadingOverlay("show");
+        var _chlog = $('#StatChlog' + tabNum).val();
+        var _stat = $('#status_drpdwn' + tabNum + ' option:selected').val();
+
+        $.post('../CE/ChangeStatus', { _refid: '@ViewBag.Curr_refid', _changelog: _chlog, _status: _stat }, function () {
+            $('#vernav' + tabNum).empty();
+            $.post("../Eb_Object/GetLifeCycle", { _tabnum: @tabNum, cur_status: _stat, refid: '@ViewBag.Curr_refid' }, function (text) {
+                $('#vernav' + tabNum).append(text);
+                $.LoadingOverlay("hide");
+            });
+        });
+    });
+</script>
+<div class='container'>
+    <div class='row statwindow col-md-12' id="statwindow@(tabNum)">
+        <ul class='timeline' id='timeline@(tabNum)'>
+            <li class='timeline-item' id='stat'>
+                <div class='timeline-badge' id='timeline-badge'>
+                    <i class='glyphicon glyphicon-check'></i>
+                </div>
+                <div class='timeline-panel'>
+                    <div class='timeline-heading'>
+                        <h5 class='timeline-title' style='display:inline'> Current Status :@(cur_stat)</h5>
+                        <select class='selectpicker btn' id='status_drpdwn@(tabNum)' style='display:inline'>
+                            <option value='Select Status'>Select Status</option>
+                            @{
+                                if (cur_stat == "Dev")
+                                {
+                                    <option value='Test'>Test</option>
+                                }
+                                if (cur_stat == "Test")
+                                {
+                                    <option value='Dev'> Dev </option>
+                                    <option value='UAT' id='uat'> UAT </option>
+                                    <option value='Live'> Live </option>
+                                }
+                                if (cur_stat == "UAT")
+                                {
+                                    <option value='Live'> Live </option>
+                                }
+                                if (cur_stat == "Live")
+                                {
+                                    <option value='Dev'> Dev </option>
+                                    <option value='Test'> Test </option>
+                                    <option value='Offline'> Offline </option>
+                                }
+                                if (cur_stat == "Offline")
+                                {
+                                    <option value='Dev'> Dev </option>
+                                    <option value='Test'> Test </option>
+                                    <option value='Obsolete'> Obsolete </option>
+                                }
+                                if (cur_stat == "Obsolete")
+                                {
+                                    @*do something*@
+                                }
+                            }
+                        </select>
+                        <div class='' style='display:inline'><button class='btn pull-right' id='confirm_stat_change@(tabNum)'><i class="fa fa-arrow-right fa-1x" aria-hidden="true"></i></button></div>
+                    </div>
+                    <div class='timeline-body'>
+                        <div class='st_chnglog'>
+                            <textarea id='StatChlog@(tabNum)' class='StatChlog' style='width:100%;height: 35px;border-radius: 6px;margin-top: -3px;' placeholder='Change log'></textarea>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

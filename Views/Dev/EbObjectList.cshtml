@@ -87,80 +87,69 @@
 <script>
     $('#impexp').next().css("display", "inline-block");
 </script>
-<div class="row" id="topmenu" style="margin-top: 67px;">
-    <div class="form-inline">
-        <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
-        @if (ViewBag.wc == "dc")
-        {
-            <div class="input-group" id="impexp">
-                <div class="input-group-btn">
-                    <button class="btn btn-default"><i class="fa fa-download" aria-hidden="true"></i> Import</button>
-                    <button class="btn btn-default"><i class="fa fa-upload" aria-hidden="true"></i> Export</button>
-                </div>
-            </div>
-            @using (Html.BeginForm(editor, whichController, FormMethod.Get, new { target = "_blank" }))
+<div class="row" id="topmenu">
+    <div class="form-inline objList-menu Eb-CommonMenuStyle">
+        <div class="input-group-btn" style="display:inline">
+            <button type="button" id="dropbuttn" class="btn dropdown-toggle objList-menu-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Name <span class="caret"></span></button>
+            <ul class="dropdown-menu" id="MyDropDownId">
+                <li><a href="#">Name</a></li>
+                <li><a href="#">Application</a></li>
+            </ul>
+        </div>
+        <input type="text" class="" id="searchobj" aria-label="...">
+        <i class="fa fa-search search-icon"></i>
+        <div class="pull-right">
+            <button class="btn" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+            @if (ViewBag.wc == "dc")
             {
-                <input type="submit" class="btn btn-primary fa-input" value="&#xf055; New" style="font-family: FontAwesome,sans-serif;" />
-                <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
+                <div class="input-group" id="impexp">
+                    <div class="input-group-btn">
+                        <button class="btn"><i class="fa fa-download" aria-hidden="true"></i></button>
+                        <button class="btn"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+                @using (Html.BeginForm(editor, whichController, FormMethod.Get, new { target = "_blank" }))
+                {
+                    <input type="submit" class="btn" value="&#xf055;" style="font-family: FontAwesome,sans-serif;" />
+                    <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
+                }
             }
-        }
-        <div class="input-group pull-right">
-            <div class="input-group-btn">
-                <button type="button" id="dropbuttn" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Name <span class="caret"></span></button>
-                <ul class="dropdown-menu" id="MyDropDownId">
-                    <li><a href="#">Name</a></li>
-                    <li><a href="#">Application</a></li>
-                    <li><a href="#">Module</a></li>
-                    <li><a href="#">Status</a></li>
-                    <li><a href="#">Version</a></li>
-                </ul>
-            </div>
-            <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
         </div>
     </div>
 </div>
-@{
-    foreach (var element in Objlist)
-    {
-        <div class="row objitems" name="objBox" id="searchid+@element.Value.Name">
-            <div class="col-md-1">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input">
-
+<div class="row" name="objBox" id="objlist-items">
+    @{
+        foreach (var element in Objlist)
+        {
+            <div class="col-md-6 objitems" name="objBox" id="searchid+@element.Value.Name">
+                <div class="col-md-1 obj-icon">
+                    <div class="obj-ic-cir">
+                        <i class="fa fa-file-text" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <h4 name="head4" style="color:black;">@element.Value.Name</h4>
+                    <p class="text-justify">@element.Value.Description</p>
+                    @*<i style="font-style:italic;">Last commit by @element.Value.CommitUname on @element.Value.CommitTs</i>*@
+                    <a id="labels">
+                        @*<span name="Version" class="label label-default">v @element.Value.VersionNumber</span>*@
+                        <span name="Application" class="label objbox-label">Application</span>
+                    </a>
+                </div>
+                <div class="col-md-1 objbox-footer">                                     
+                        @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
+                            {
+                            <input type="hidden" class="obj-list-edit-btn-items" name="objid" value="@element.Value.Id" />
+                            <input type="hidden" class="obj-list-edit-btn-items" name="tacid" value="@ViewBag.cid" />
+                            <input type="hidden" class="obj-list-edit-btn-items" name="objtype" id="objtype" value="@ObjectType" />
+                            <input type="submit" class="btn fa-input fa-lg" value="&#xf054;" style="font-family: FontAwesome;" id="btnOpen">
+                            }                   
                 </div>
             </div>
-            <div class="col-md-8">
-                <h4 name="head4" style="color:black;">@element.Value.Name</h4>
-                <p class="text-justify">@element.Value.Description</p>
-                <h6>
-                    @*<i style="font-style:italic;">Last commit by @element.Value.CommitUname on @element.Value.CommitTs</i>*@
-                    <a style="margin-left:10px;" id="labels">
-                        <span name="Status" class="label label-primary">Status</span>
-                        @*<span name="Version" class="label label-default">v @element.Value.VersionNumber</span>*@
-                        @if (ViewBag.wc == "dc")
-                        {
-                            <span class="label label-success">Dependency</span>
-                        }
-                        <span name="Application" class="label label-danger">Application</span>
-                        <span name="Module" class="label label-default">Module</span>
-                    </a>
-                </h6>
-            </div>
-            <div class="col-md-2 pull-right">
-                @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
-
-                {
-                   <input type="hidden" name="objid" value="@element.Value.Id" />
-                    <input type="hidden" name="tacid" value="@ViewBag.cid" />
-                    <input type="hidden" name="objtype" id="objtype" value="@ObjectType" />
-                    <input type="submit" class="btn btn-primary fa-input" value="Open &#xf054;" style="font-family: FontAwesome;" id="btnOpen">
-                }
-            </div>
-        </div>
+        }
+        <div class="text-center" id="notfound" style="margin-top:230px;"> </div>
     }
-    <div class="text-center" id="notfound" style="margin-top:230px;">
-    </div>
-}
+</div>
 <script>
     $(document).ready(function () {
         $('#MyDropDownId li').click(function () {

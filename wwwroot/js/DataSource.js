@@ -93,37 +93,44 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
 
     this.VerHistory = function () {
         $.LoadingOverlay("show");
-        $.post("../CE/GetVersions",
-            {
-                objid: this.ver_Refid
-            }, this.Version_List.bind(this));
+        //tabNum++;
+        //$.post("../CE/GetVersions",
+        //    {
+        //        objid: this.ver_Refid
+        //    }, this.Version_List.bind(this));
+        //$.post("../Eb_Object/VersionHistory",{objid: this.ver_Refid, tabnum: tabNum}, this.Version_List.bind(this));
+        this.Version_List();
     }
 
-    this.Version_List = function (result) {
+    this.Version_List = function () {
         $.LoadingOverlay("hide");
         this.SetValues();
-        this.Versions = result;
+        //this.Versions = result;
         tabNum++;
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>" +
-            "<table class='table table-striped table-bordered col-md-12' id='versions" + tabNum + "'>" +
-            "<thead class='verthead" + tabNum + "'>" +
-            "<tr>" +
-            "<th class='col-md-1'>Version Number</th>" +
-            "<th class='col-md-4'>Change Log</th>" +
-            "<th class='col-md-1'>Committed By</th>" +
-            "<th class='col-md-2'>Committed At</th>" +
-            "<th class='col-md-1'> </th>" +
-            "</tr>" +
-            " </thead>" +
-            "<tbody id='vertbody" + tabNum + "' class='vertbody'></tbody>" +
-            "</table>" +
-            "</div>";
+        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'></div>";
+            //"<table class='table table-striped table-bordered col-md-12' id='versions" + tabNum + "'>" +
+            //"<thead class='verthead" + tabNum + "'>" +
+            //"<tr>" +
+            //"<th class='col-md-1'>Version Number</th>" +
+            //"<th class='col-md-4'>Change Log</th>" +
+            //"<th class='col-md-1'>Committed By</th>" +
+            //"<th class='col-md-2'>Committed At</th>" +
+            //"<th class='col-md-1'> </th>" +
+            //"</tr>" +
+            //" </thead>" +
+            //"<tbody id='vertbody" + tabNum + "' class='vertbody'></tbody>" +
+            //"</table>" +
+            //"</div>";
         this.AddVerNavTab(navitem, tabitem);
+        $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: tabNum }, function (result) {
+            $("#vernav" + tabNum).append(result);
+            $.LoadingOverlay("hide");
+        });
         var scrollPos = $('#versionTab').offset().top;
         $(window).scrollTop(scrollPos);
-
-        this.ShowVersions();
+        $("#vernav" + tabNum +" .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
+        //this.ShowVersions();
     }
 
     this.ShowVersions = function () {
@@ -131,14 +138,14 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     }
 
     this.ShowVersions_inner = function (i, obj) {
-        $('#vertbody' + tabNum).append("<tr>" +
-            "<td>" + obj.versionNumber + "</td> " +
-            "<td>" + obj.changeLog + "</td> " +
-            "<td>" + obj.commitUname + "</td> " +
-            "<td>" + obj.commitTs + "</td> " +
-            "<td><input type='button' id='view_code" + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
-            " </tr>");
-        $('#view_code' + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
+        //$('#vertbody' + tabNum).append("<tr>" +
+        //    "<td>" + obj.versionNumber + "</td> " +
+        //    "<td>" + obj.changeLog + "</td> " +
+        //    "<td>" + obj.commitUname + "</td> " +
+        //    "<td>" + obj.commitTs + "</td> " +
+        //    "<td><input type='button' id='view_code" + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
+        //    " </tr>");
+        //$('#view_code' + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
     };
 
     this.OpenPrevVer = function (e) {
@@ -254,146 +261,151 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> status " + this.Current_obj.versionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
-        var getNav = $("#versionNav li.active a").attr("href");
-        $('#vernav' + tabNum).append("<div class=' well col-md-12'>" +           
-            "</div>" +
-            "<div class='col-md-12 statwindow' id='statwindow" + tabNum + "'></div>");
-        $(getNav + ' #statwindow' + tabNum).empty();
-        $(getNav + ' #statwindow' + tabNum).append("<div class='container'>" +
-            "<div class='row'>" +
-            "<div class=''>" +
-            "<ul class='timeline' id='timeline" + tabNum + "'>" +
-            "<li class='timeline-item' id='stat0' > " +
-            "<div class='timeline-badge' id='timeline-badge0'><i class='glyphicon glyphicon-check'></i></div>" +
-            "<div class='timeline-panel'> " +
-            "<div class='timeline-heading'> " +
-            "<h5 class='timeline-title' style='display:inline'> Current Status :" + this.Current_obj.status + "</h5>" +
-            "<select class='selectpicker btn' id='status_drpdwn" + tabNum + "' style='display:inline'></select>" +
-            "</div>" +
-            "<div class='timeline-body' > " +
-            "<div class='st_chnglog' ><textarea id='StatChlog" + tabNum + "' class='StatChlog' style='width:100%;height: 35px;border-radius: 6px;margin-top: -3px; placeholder='Change log'></textarea></div>" +
-            "<div class=''><button class='btn btn-primary pull-right' id='confirm_stat_change'>Apply</button></div>" +
-            "</div> " +
-            "</div> " +
-            "</li>" +
-            "</ul>" +
-            "</div>" +
-            "</div>" +
-            "</div>");
-        $('#status_drpdwn' + tabNum).append("<option value='Select Status'>Select Status</option>");
-        if (this.Current_obj.status === "Dev") {
-            $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Test'>Test</option>");
-        }
-        if (this.Current_obj.status === "Test") {
-            $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Dev'>Dev</option>" +
-                "<option value='UAT' id='uat'>UAT</option>" +
-                "<option value='Live'>Live</option>");
-        }
-        if (this.Current_obj.status === "UAT") {
-            $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Live'>Live</option>");
-        }
-        if (this.Current_obj.status === "Live") {
-            $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Dev'>Dev</option>" +
-                "<option value='Test'>Test</option>" +
-                "<option value='Offline'>Offline</option>");
-        }
-        if (this.Current_obj.status === "Offline") {
-            $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Dev'>Dev</option>" +
-                "<option value='Test'>Test</option>" +
-                "<option value='Obsolete'>Obsolete</option>");
-        }
-        if (this.Current_obj.status === "Obsolete") {
-            //do something
-        }
-        $('.selectpicker').selectpicker({
-            size: 4
-        });
-        $('.selectpicker').selectpicker('refresh');
-        var cid = this.Cid;
-        $.post("../CE/GetStatusHistory", { _refid: this.ver_Refid }, function (data) {
-            
-            $.each(data, function (i, obj) {
-                $('#timeline' + tabNum).append(" <li class='timeline-item' id= 'stat" + i + "' > " +
-                    "<div class='timeline-badge' id='timeline-badge" + i + "'><i class='glyphicon glyphicon-check'></i></div>" +
-                    "<div class='timeline-panel'> "+
-                    "<div class='timeline-heading col-md-12'> " +
-                    "<strong class='timeline-title col-md-1'>" + obj.status + "</strong>" +
-                     "<div class='timeline-time col-md-8'>"+
-                    "<p><small class='text-muted col-md-10'><i class='glyphicon glyphicon-time'></i>" + obj.commitTs + "</small><small class='pull-left col-md-2' > " + obj.commitUname + "</small ></p> " +
-                    "</div> " +
-                        "<img src= '../static/dp_29_micro.jpg" + "' class='img-circle pull-right col-md-2' />" +      
-                    "</div>" +
-                    "<div class='timeline-body' id='timeline-body"+i+"'> "+
-                            "<p class='timeline-body-clickmore'>" + obj.changeLog + "</p>" +
-                            "<a class='primary pull-right more'>more</a>" +
-                    "</div>" +
-                    "</div> "+
-                    "</li>");
-                var classname;
-                if (obj.status === "Test")
-                    classname = "info";
-                if (obj.status === "UAT")
-                   classname = "primary";
-                if (obj.status === "Live")
-                {
-                    classname = "success";
-                    $(getNav + ' #stat' + i).addClass("livestat");
-                }
-                if (obj.status === "Offline")
-                    classname = "warning";
-                if (obj.status === "Obsolete")
-                    classname = "danger";
-                $(getNav + ' #timeline-badge' + i).addClass(classname);
-
-                $('#stat' + i + ' .more').on('click', function () {
-                    var p_element = $('#stat' + i + ' #timeline-body'+i+' p');
-                    p_element.toggleClass("timeline-body-clickmore");
-                    var a_element = $('#stat' + i + ' #timeline-body' + i + ' a');
-                    if (a_element.text() === 'more')
-                        a_element.text('less');
-                    else
-                        a_element.text('more')
-                });
-            });
+        $.post("../Eb_Object/GetLifeCycle", { _tabnum: tabNum, cur_status: this.Current_obj.status,refid : this.ver_Refid }, function (text) {
+            $('#vernav' + tabNum).append(text);
             $.LoadingOverlay("hide");
-           
-            //var scrollPos = $('#vernav' + tabNum).offset().top;
-            //$(window).scrollTop(scrollPos);
         });
-        $(getNav + ' #confirm_stat_change').off("click").on("click", this.ChangeStatus.bind(this));
-    }
+    //    var getNav = $("#versionNav li.active a").attr("href");
+    //    $('#vernav' + tabNum).append("<div class=' well col-md-12'>" +           
+    //        "</div>" +
+    //        "<div class='col-md-12 statwindow' id='statwindow" + tabNum + "'></div>");
+    //    $(getNav + ' #statwindow' + tabNum).empty();
+    //    $(getNav + ' #statwindow' + tabNum).append("<div class='container'>" +
+    //        "<div class='row'>" +
+    //        "<div class=''>" +
+    //        "<ul class='timeline' id='timeline" + tabNum + "'>" +
+    //        "<li class='timeline-item' id='stat0' > " +
+    //        "<div class='timeline-badge' id='timeline-badge0'><i class='glyphicon glyphicon-check'></i></div>" +
+    //        "<div class='timeline-panel'> " +
+    //        "<div class='timeline-heading'> " +
+    //        "<h5 class='timeline-title' style='display:inline'> Current Status :" + this.Current_obj.status + "</h5>" +
+    //        "<select class='selectpicker btn' id='status_drpdwn" + tabNum + "' style='display:inline'></select>" +
+    //        "</div>" +
+    //        "<div class='timeline-body' > " +
+    //        "<div class='st_chnglog' ><textarea id='StatChlog" + tabNum + "' class='StatChlog' style='width:100%;height: 35px;border-radius: 6px;margin-top: -3px; placeholder='Change log'></textarea></div>" +
+    //        "<div class=''><button class='btn btn-primary pull-right' id='confirm_stat_change'>Apply</button></div>" +
+    //        "</div> " +
+    //        "</div> " +
+    //        "</li>" +
+    //        "</ul>" +
+    //        "</div>" +
+    //        "</div>" +
+    //        "</div>");
+    //    $('#status_drpdwn' + tabNum).append("<option value='Select Status'>Select Status</option>");
+    //    if (this.Current_obj.status === "Dev") {
+    //        $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Test'>Test</option>");
+    //    }
+    //    if (this.Current_obj.status === "Test") {
+    //        $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Dev'>Dev</option>" +
+    //            "<option value='UAT' id='uat'>UAT</option>" +
+    //            "<option value='Live'>Live</option>");
+    //    }
+    //    if (this.Current_obj.status === "UAT") {
+    //        $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Live'>Live</option>");
+    //    }
+    //    if (this.Current_obj.status === "Live") {
+    //        $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Dev'>Dev</option>" +
+    //            "<option value='Test'>Test</option>" +
+    //            "<option value='Offline'>Offline</option>");
+    //    }
+    //    if (this.Current_obj.status === "Offline") {
+    //        $(getNav + ' #status_drpdwn' + tabNum).append("<option value='Dev'>Dev</option>" +
+    //            "<option value='Test'>Test</option>" +
+    //            "<option value='Obsolete'>Obsolete</option>");
+    //    }
+    //    if (this.Current_obj.status === "Obsolete") {
+    //        //do something
+    //    }
+    //    $('.selectpicker').selectpicker({
+    //        size: 4
+    //    });
+    //    $('.selectpicker').selectpicker('refresh');
+    //    var cid = this.Cid;
+    //    $.post("../CE/GetStatusHistory", { _refid: this.ver_Refid }, function (data) {
+            
+    //        $.each(data, function (i, obj) {
+    //            $('#timeline' + tabNum).append(" <li class='timeline-item' id= 'stat" + i + "' > " +
+    //                "<div class='timeline-badge' id='timeline-badge" + i + "'><i class='glyphicon glyphicon-check'></i></div>" +
+    //                "<div class='timeline-panel'> "+
+    //                "<div class='timeline-heading col-md-12'> " +
+    //                "<strong class='timeline-title col-md-1'>" + obj.status + "</strong>" +
+    //                 "<div class='timeline-time col-md-8'>"+
+    //                "<p><small class='text-muted col-md-10'><i class='glyphicon glyphicon-time'></i>" + obj.commitTs + "</small><small class='pull-left col-md-2' > " + obj.commitUname + "</small ></p> " +
+    //                "</div> " +
+    //                    "<img src= '../static/dp_29_micro.jpg" + "' class='img-circle pull-right col-md-2' />" +      
+    //                "</div>" +
+    //                "<div class='timeline-body' id='timeline-body"+i+"'> "+
+    //                        "<p class='timeline-body-clickmore'>" + obj.changeLog + "</p>" +
+    //                        "<a class='primary pull-right more'>more</a>" +
+    //                "</div>" +
+    //                "</div> "+
+    //                "</li>");
+    //            var classname;
+    //            if (obj.status === "Test")
+    //                classname = "info";
+    //            if (obj.status === "UAT")
+    //               classname = "primary";
+    //            if (obj.status === "Live")
+    //            {
+    //                classname = "success";
+    //                $(getNav + ' #stat' + i).addClass("livestat");
+    //            }
+    //            if (obj.status === "Offline")
+    //                classname = "warning";
+    //            if (obj.status === "Obsolete")
+    //                classname = "danger";
+    //            $(getNav + ' #timeline-badge' + i).addClass(classname);
 
-    this.ChangeStatus = function () {
-        $.LoadingOverlay("show");
-        var _chlog = $('#StatChlog' + tabNum).val();
-        var _stat = $('#status_drpdwn' + tabNum + ' option:selected').val();
+    //            $('#stat' + i + ' .more').on('click', function () {
+    //                var p_element = $('#stat' + i + ' #timeline-body'+i+' p');
+    //                p_element.toggleClass("timeline-body-clickmore");
+    //                var a_element = $('#stat' + i + ' #timeline-body' + i + ' a');
+    //                if (a_element.text() === 'more')
+    //                    a_element.text('less');
+    //                else
+    //                    a_element.text('more')
+    //            });
+    //        });
+    //        $.LoadingOverlay("hide");
+           
+    //        //var scrollPos = $('#vernav' + tabNum).offset().top;
+    //        //$(window).scrollTop(scrollPos);
+    //    });
+    //    $(getNav + ' #confirm_stat_change').off("click").on("click", this.ChangeStatus.bind(this));
+    //}
 
-        $.post('../CE/ChangeStatus', { _refid: this.ver_Refid, _changelog: _chlog, _status: _stat }, this.ChangeStatusSuccess.bind(this, _stat));
-    }
+    //this.ChangeStatus = function () {
+    //    $.LoadingOverlay("show");
+    //    var _chlog = $('#StatChlog' + tabNum).val();
+    //    var _stat = $('#status_drpdwn' + tabNum + ' option:selected').val();
 
-    this.ChangeStatusSuccess = function (_stat) {
-        $.LoadingOverlay("hide");
-        this.Current_obj.status = _stat;
-        this.LoadStatusPage();
-    };
+    //    $.post('../CE/ChangeStatus', { _refid: this.ver_Refid, _changelog: _chlog, _status: _stat }, this.ChangeStatusSuccess.bind(this, _stat));
+    //}
 
-    this.Load_version_list = function () {
-        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        $('#loader_fd' + tabNum).show();
-        $.post('../CE/GetVersions', { objid: this.ver_Refid },
-            function (data) {
-                $('#selected_Ver_1' + tabNum).append("<option value='Current' data-tokens='Select Version'>Current</option>");
-                $('#selected_Ver_2' + tabNum).append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
-                $.each(data, function (i, obj) {
-                    $('#selected_Ver_1' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> v " + obj.versionNumber + "</option>");
-                    $('#selected_Ver_2' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> v " + obj.versionNumber + "</option>");
-                });
-                $('.selectpicker').selectpicker({
-                    size: 4
-                });
-                $('.selectpicker').selectpicker('refresh');
-                $('#loader_fd' + tabNum).hide();
-            })
+    //this.ChangeStatusSuccess = function (_stat) {
+    //    $.LoadingOverlay("hide");
+    //    this.Current_obj.status = _stat;
+    //    this.LoadStatusPage();
+    //};
+
+    //this.Load_version_list = function () {
+    //    $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+    //    $('#loader_fd' + tabNum).show();
+    //    $.post('../CE/GetVersions', { objid: this.ver_Refid },
+    //        function (data) {
+    //            $('#selected_Ver_1' + tabNum).append("<option value='Current' data-tokens='Select Version'>Current</option>");
+    //            $('#selected_Ver_2' + tabNum).append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
+    //            $.each(data, function (i, obj) {
+    //                $('#selected_Ver_1' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> v " + obj.versionNumber + "</option>");
+    //                $('#selected_Ver_2' + tabNum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> v " + obj.versionNumber + "</option>");
+    //            });
+    //            $('.selectpicker').selectpicker({
+    //                size: 4
+    //            });
+    //            $('.selectpicker').selectpicker('refresh');
+    //            $('#loader_fd' + tabNum).hide();
+    //        })
+        
     };
 
     this.Compare = function () {
@@ -705,11 +717,9 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         this.Current_obj.Sql = btoa(this.Code);
         var tagvalues = $('#tags').val();
         if (issave === true) {
-            $.post("../CE/SaveEbDataSource",
+            $.post("../Eb_ObjectController/SaveEbObject",
                 {
                     "Id": this.ver_Refid,
-                    "ObjectType": this.ObjectType,
-                    "isSave": "true",
                     "json": JSON.stringify(this.Current_obj),
                     "rel_obj": this.Rel_object,
                     "tags": tagvalues
@@ -717,7 +727,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         }
         else {
 
-            $.post("../CE/CommitEbDataSource", {
+            $.post("../Eb_ObjectController/CommitEbObject", {
                 "id": this.ver_Refid,
                 "changeLog": this.changeLog,
                 "json": JSON.stringify(this.Current_obj),

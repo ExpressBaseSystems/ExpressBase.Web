@@ -213,7 +213,7 @@ opacity:0.3;
 /*end team*/
 /*overlay2*/
 .eb-banner2 {
-    height: 400px;
+    height: inherit;
 }
 .eb-banner2-img {   
   background-repeat: no-repeat; 
@@ -224,6 +224,9 @@ opacity:0.3;
 
 .bg-white {
     background-color: #fff !important;
+}
+.eb-banner2-text{
+    margin-top:20%;
 }
 /*Footer*/
 footer {
@@ -358,7 +361,7 @@ footer {
         width: 300px;
     }
 
-    .login-box-body {
+    .login-box-body {        
         padding: 15px 20px;
     }
 
@@ -372,7 +375,9 @@ footer {
         font-weight: normal;
     }
 }
-
+.login-box-body {
+    margin-top: 100px;   
+}
 .aboutus-header {
     min-height: 500px;
     background: url('../images/aboutus.jpg') center center no-repeat scroll;
@@ -381,7 +386,7 @@ footer {
 }
 .sign-in-ext {
     margin-top: 50px;
-    background: url(../images/signinExt.jpg+) no-repeat center center fixed;
+    background: url(../images/signinExt.jpg) no-repeat center center fixed;
     height: calc(100vh - 50px);
     width: 100%;
 }

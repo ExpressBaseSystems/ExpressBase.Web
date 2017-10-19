@@ -88,16 +88,16 @@
     $('#impexp').next().css("display", "inline-block");
 </script>
 <div class="row" id="topmenu" style="margin-top: 50px;">
-    <div class="objList-menu form-inline">                        
+    <div class="objList-menu form-inline">
         <div class="input-group-btn" style="display:inline">
             <button type="button" id="dropbuttn" class="btn dropdown-toggle objList-menu-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Name <span class="caret"></span></button>
             <ul class="dropdown-menu" id="MyDropDownId">
                 <li><a href="#">Name</a></li>
-                <li><a href="#">Application</a></li>                
+                <li><a href="#">Application</a></li>
             </ul>
-        </div> 
+        </div>
         <input type="text" class="" id="searchobj" aria-label="...">
-        <i class="fa fa-search search-icon"></i> 
+        <i class="fa fa-search search-icon"></i>
         <div class="pull-right">
             <button class="btn objList-menu-btn" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i></button>
             @if (ViewBag.wc == "dc")
@@ -122,67 +122,73 @@
         foreach (var element in Objlist)
         {
             <div class="col-md-6 objitems" name="objBox" id="searchid+@element.Value.Name">
-                <h4 name="head4" style="color:black;">@element.Value.Name</h4>
-                <p class="text-justify">@element.Value.Description</p>
-                <h6>
+                <div class="col-md-1 obj-icon">
+                    <div class="obj-ic-cir">
+                        <i class="fa fa-file-text" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <h4 name="head4" style="color:black;">@element.Value.Name</h4>
+                    <p class="text-justify">@element.Value.Description</p>
                     @*<i style="font-style:italic;">Last commit by @element.Value.CommitUname on @element.Value.CommitTs</i>*@
-                    <a style="margin-left:10px;" id="labels">                      
+                    <a id="labels">
                         @*<span name="Version" class="label label-default">v @element.Value.VersionNumber</span>*@
-                        <span name="Application" class="label label-primary">Application</span>
+                        <span name="Application" class="label label-primary objbox-label">Application</span>
                     </a>
-                </h6> 
-                @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
-
-                {
-                    <input type="hidden" class="obj-list-edit-btn-items" name="objid" value="@element.Value.Id" />
-                    <input type="hidden" class="obj-list-edit-btn-items" name="tacid" value="@ViewBag.cid" />
-                    <input type="hidden" class="obj-list-edit-btn-items" name="objtype" id="objtype" value="@ObjectType" />
-                    <input type="submit" class="btn fa-input fa-lg pull-right" value="&#xf054;" style="font-family: FontAwesome;" id="btnOpen">                             
-                 }
-            </div>                                      
+                </div>
+                <div class="col-md-1 objbox-footer">                                     
+                        @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
+                            {
+                            <input type="hidden" class="obj-list-edit-btn-items" name="objid" value="@element.Value.Id" />
+                            <input type="hidden" class="obj-list-edit-btn-items" name="tacid" value="@ViewBag.cid" />
+                            <input type="hidden" class="obj-list-edit-btn-items" name="objtype" id="objtype" value="@ObjectType" />
+                            <input type="submit" class="btn fa-input fa-lg" value="&#xf054;" style="font-family: FontAwesome;" id="btnOpen">
+                            }                   
+                </div>
+            </div>
         }
         <div class="text-center" id="notfound" style="margin-top:230px;"> </div>
     }
-    </div>
-    <script>
-        $(document).ready(function () {
-            $('#MyDropDownId li').click(function () {
-                $('#dropbuttn').text($(this).text());
-            });
-            $("#searchobj").on("keyup", function (e) {
-                if ($('#dropbuttn').text() === 'Name ') {
-                    var f = false;
-                    var srch = $(this).val().toLowerCase();
-                    $('[name=head4]').each(function () {
-                        $(this).parent().parent().hide();
-                        var head = $(this).text().toLowerCase();
-                        if (head.match(srch)) {
-                            $(this).parent().parent().show();
-                            f = true;
-                        }
-                    });
-                    if (!f)
-                        $("#notfound").text('Item not found.......');
-                    else
-                        $("#notfound").text('');
-                }
-                else {
-                    var searchBy = $('#dropbuttn').text();
-                    var f = false;
-                    var srch = $(this).val().toLowerCase();
-                    $('[name=' + searchBy + ']').each(function () {
-                        $(this).parent().parent().parent().parent().hide();
-                        var head = $(this).text().toLowerCase();
-                        if (head.match(srch)) {
-                            $(this).parent().parent().parent().parent().show();
-                            f = true;
-                        }
-                    });
-                    if (!f)
-                        $("#notfound").text('Item not found.......');
-                    else
-                        $("#notfound").text('');
-                }
-            });
+</div>
+<script>
+    $(document).ready(function () {
+        $('#MyDropDownId li').click(function () {
+            $('#dropbuttn').text($(this).text());
         });
-    </script>
+        $("#searchobj").on("keyup", function (e) {
+            if ($('#dropbuttn').text() === 'Name ') {
+                var f = false;
+                var srch = $(this).val().toLowerCase();
+                $('[name=head4]').each(function () {
+                    $(this).parent().parent().hide();
+                    var head = $(this).text().toLowerCase();
+                    if (head.match(srch)) {
+                        $(this).parent().parent().show();
+                        f = true;
+                    }
+                });
+                if (!f)
+                    $("#notfound").text('Item not found.......');
+                else
+                    $("#notfound").text('');
+            }
+            else {
+                var searchBy = $('#dropbuttn').text();
+                var f = false;
+                var srch = $(this).val().toLowerCase();
+                $('[name=' + searchBy + ']').each(function () {
+                    $(this).parent().parent().parent().parent().hide();
+                    var head = $(this).text().toLowerCase();
+                    if (head.match(srch)) {
+                        $(this).parent().parent().parent().parent().show();
+                        f = true;
+                    }
+                });
+                if (!f)
+                    $("#notfound").text('Item not found.......');
+                else
+                    $("#notfound").text('');
+            }
+        });
+    });
+</script>

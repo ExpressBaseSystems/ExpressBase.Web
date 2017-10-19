@@ -35,6 +35,17 @@
         dvRefId :'@ViewBag.Refid'
     });
     var split = new splitWindow("parent-div", "contBox");
+
+    split.windowOnFocus = function (ev) {
+        if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
+            var id = $(ev.target).attr("id");
+            focusedId = id;
+            var type = $(ev.target).attr("eb-type");
+            var dvobj = dvcontainerObj.dvcol[id];
+            pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter].setObject(dvobj, AllMetas[type]);
+        }
+    }
+
     var pg = {};
     if ('@ViewBag.dvObject'.indexOf("EbChartVisualization") === -1) {
         var dvTableObj = new EbObjects["EbChartVisualization"]("chart_" + Date.now());
@@ -51,11 +62,14 @@
         pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter].setObject(dvTableObj, AllMetas["EbChartVisualization"]);
         call2dv(dvTableObj);
     }
+
     pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter].PropertyChanged = function (obj, Pname) {
         dvcontainerObj.currentObj = obj;
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 PcFlag = "True";
+                obj.Xaxis.$values = [];
+                obj.Yaxis.$values = [];
                 call2dv(obj);
             }
         }
@@ -80,6 +94,9 @@
     function ajaxSucc(text) {
         PcFlag = "False";
         obj = dvcontainerObj.currentObj;
+        $("#Toolbar").children("div").remove();
+        $("#fd_toggle").css("display", "none");
+        $("#Save_btn").css("display", "none");
         $("#btnGo").css("display", "inline-block");
         var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + counter;
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + counter;
@@ -92,6 +109,7 @@
             $.LoadingOverlay("hide");
             dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
             $("#content_dv" + obj.EbSid + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
+            $("#btnGo").click();
         }
         else {
             $(sideDivId).css("display", "inline");
@@ -99,16 +117,8 @@
             dvcontainerObj.dvcol["sub_window_dv" + obj.EbSid + "_" + counter] = dvcontainerObj.currentObj;
             $("#content_dv" + obj.EbSid + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
         }
-        $(subDivId).focus();
+        $(subDivId).focusin();
     };
 
-    split.windowOnFocus = function (ev) {
-        if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
-            var id = $(ev.target).attr("id");
-            focusedId = id;
-            var type = $(ev.target).attr("eb-type");
-            var dvobj = dvcontainerObj.dvcol[id];
-            pg.setObject(dvobj, AllMetas[type]);
-        }
-    }
+    
 </script>

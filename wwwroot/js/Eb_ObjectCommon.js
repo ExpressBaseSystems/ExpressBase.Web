@@ -4,6 +4,7 @@
     this.Current_obj.status = cur_status;
     this.Current_obj.versionNumber = ver_num;
     this.tabNum = tabNum;
+    this.ObjectType = type;
 
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
@@ -16,10 +17,12 @@
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> status " + this.Current_obj.versionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
-        $.post("../Eb_Object/GetLifeCycle", { _tabnum: this.tabNum, cur_status: this.Current_obj.status, refid: this.ver_Refid }, function (text) {
-            $('#vernav' + this.tabNum).append(text);
-            $.LoadingOverlay("hide");
-        });
+        $.post("../Eb_Object/GetLifeCycle", { _tabnum: this.tabNum, cur_status: this.Current_obj.status, refid: this.ver_Refid }, this.getLifecyleInner.bind(this) );
+    };
+
+    this.getLifecyleInner = function (text) {
+        $('#vernav' + this.tabNum).append(text);
+        $.LoadingOverlay("hide");
     };
 
     this.AddVerNavTab = function (navitem, tabitem) {
@@ -49,14 +52,17 @@
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'></div>";
         this.AddVerNavTab(navitem, tabitem);
-        $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: this.tabNum, Objtype: type }, function (result) {
-            $("#vernav" + this.tabNum).append(result);
-            $.LoadingOverlay("hide");
-        });
+        $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: this.tabNum, Objtype: type }, this.versionHistoryInner.bind(this));
+        
+    };
+
+    this.versionHistoryInner = function (result) {
+        $("#vernav" + this.tabNum).append(result);
         var scrollPos = $('#versionTab').offset().top;
         $(window).scrollTop(scrollPos);
         $("#vernav" + this.tabNum + " .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
-    }
+        $.LoadingOverlay("hide");
+    };
 
     this.SetValues = function () {
         this.Code = window.editor.getValue();

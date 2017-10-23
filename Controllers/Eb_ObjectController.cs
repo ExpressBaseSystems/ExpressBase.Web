@@ -18,13 +18,14 @@ namespace ExpressBase.Web.Controllers
     public class Eb_ObjectController : EbBaseNewController
     {
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
-        public IActionResult Index()
+        public IActionResult Index(string objid, int objtype)
         {
-            var req = this.HttpContext.Request.Form;
-            int obj_id = Convert.ToInt32(req["objid"]);
-
-            ViewBag.Obj_id = obj_id;
-            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
+            //var req = this.HttpContext.Request.Form;
+            //int obj_id = Convert.ToInt32(req["objid"]);
+            //int objtype = Convert.ToInt32(req["objtype"]);
+            var type = (EbObjectType)(objtype);
+            ViewBag.Obj_id = objid;
+            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
             var rlist = resultlist.Data;
             foreach (var element in rlist)
             {
@@ -33,7 +34,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.ObjectDesc = element.Description;
                 ViewBag.Status = element.Status;
                 ViewBag.VersionNumber = element.VersionNumber;
-                ViewBag.ObjType = (int)EbObjectType.DataSource;
+                ViewBag.ObjType = objtype;
                 ViewBag.Refid = element.RefId;
                 ViewBag.Majorv = element.MajorVersionNumber;
                 ViewBag.Minorv = element.MinorVersionNumber;
@@ -142,21 +143,13 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public string VersionCodes(string objid, int objtype)
         {
-            EbDataSource dsobj = null;
             var _EbObjectType = (EbObjectType)objtype;
             var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = objid });
-            var rlist = resultlist.Data;
-            foreach (var element in rlist)
-            {
-                if (_EbObjectType == EbObjectType.DataSource)
-                {
-                    var obj = new EbObjectWrapper();
-                    dsobj = EbSerializers.Json_Deserialize(element.Json);
-                    ViewBag.Code = dsobj.Sql;
-                    dsobj.Status = element.Status;
-                    dsobj.VersionNumber = element.VersionNumber;
-                }
-            }
+            var dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+            ViewBag.Code = dsobj.Sql;
+            dsobj.Status = resultlist.Data[0].Status;
+            dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
+
             return EbSerializers.Json_Serialize(dsobj);
         }
 

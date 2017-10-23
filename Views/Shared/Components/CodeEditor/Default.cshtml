@@ -53,5 +53,5 @@
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
     };
-    var DsObject = new DataSource('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(dsObj), '@ViewBag.Status', 0);
+    var DsObject = new DataSource('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(dsObj), '@ViewBag.Status', @ViewBag.ObjType);
     </script>

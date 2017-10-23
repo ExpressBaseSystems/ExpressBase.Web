@@ -1,4 +1,7 @@
-﻿
+﻿@{ 
+    @using ExpressBase.Common;
+    var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
+}
 <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css">
 <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
@@ -16,25 +19,30 @@
 <script src="~/lib/codemirror/mode/xml/xml.js"></script>
 
 
-<div id='paramdiv" + tabNum + "' class='col-md-2' style='z-index:-1; padding:0px; height:100px; display:none'>
+<div id='paramdiv@(ViewBag.tabnum)' class='col-md-2' style='z-index:-1; padding:0px; height:100px; display:none'>
     <h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6> 
     <button class='head-btn pull-right' id='close_paramdiv'><i class='fa fa-times' aria-hidden='true'></i></button>
 </div>
-<div class='col-md-10' id='codewindow" + tabNum + "' style='margin:0;padding: 0;'>
-    "<textarea id='code" + tabNum + "' name='code' class='code'>" + atob(this.Current_obj.sql) + "</textarea>
+<div class='col-md-10' id='codewindow@(ViewBag.tabnum)' style='margin:0;padding: 0;'>
+    <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
 </div>
 <div class='col-md-2'>
-    <div id='dspropgrid" + tabNum + "' class='pull-right' style='padding:0px'></div>
-</div>
-<div class="col-md-10" id="codewindow0" style="margin:0;padding:0;">
-    <textarea id="code" name="code"></textarea>
+    <div id='dspropgrid@(ViewBag.tabnum)' class='pull-right' style='padding:0px'></div>
 </div>
 <script>
+
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+
+    $(document).ready(function () {
+        $("#code@(ViewBag.tabnum)").empty().append(atob('@dsObj.Sql'));
+    });
     window.onload = function () {
         CodeMirror.commands.autocomplete = function (cm) {
             CodeMirror.showHint(cm, "CodeMirror.hint.sql");
         };
-        window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        window.editor = CodeMirror.fromTextArea(document.getElementById("code@(ViewBag.tabnum)"), {
             mode: "text/x-pgsql",
             lineNumbers: true,
             lineWrapping: false,
@@ -43,6 +51,7 @@
             readOnly: false,
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        }); 
+        });
     };
+    var DsObject = new DataSource('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(dsObj), '@ViewBag.Status', 0);
     </script>

@@ -1,8 +1,7 @@
 ﻿var tabNum = 0;
-var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur_status, cid) {
+var DataSource = function (refid, ver_num, type, dsobj, cur_status) {
     this.Code;
     this.ObjectType = type;
-    this.Is_New = is_new;
     this.CommitBtn;
     this.SaveBtn;
     this.Versions;
@@ -14,16 +13,14 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
     this.Filter_Params;
     this.Parameter_Count;
     this.SelectedFdId;
-    this.FilterDId = fd_id;
     this.Rel_object;
     this.rel_arr = [];
-    this.Cid = cid;
     this.VersionCollection = {};
     this.PropGCollection = {};
 
     this.Current_obj = dsobj;
-    this.Current_obj.status = cur_status;
-    this.Current_obj.versionNumber = ver_num;
+    //this.Current_obj.status = cur_status;
+    //this.Current_obj.versionNumber = ver_num;
     this.VersionCollection["#vernav" + tabNum] = dsobj;
     this.PropGCollection["#vernav" + tabNum] = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
@@ -32,13 +29,13 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         this.SaveBtn = $('#save');
         this.CommitBtn = $('#commit');
 
-        $('#ver_his').off("click").on("click", this.VerHistory.bind(this));
+        //$('#ver_his').off("click").on("click", this.VerHistory.bind(this));
         $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $(".selectpicker").selectpicker();
         $('#compare').off('click').on('click', this.Compare.bind(this));
-        $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
+        //$('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         if (this.Current_obj === null) {
@@ -156,7 +153,7 @@ var DataSource = function (refid, name, is_new, ver_num, type, fd_id, dsobj, cur
         //this.changeLog = $(e.target).attr("data-changeLog");
         // this.commitUname = $(e.target).attr("data-commitUname");
         //this.commitTs = $(e.target).attr("data-commitTs");
-        $.post('../CE/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
+        $.post('../CE/Call_codeEditor', { refid: this.ver_Refid, objtype: this.ObjectType })
             .done(this.VersionCode_success.bind(this));
     }
 

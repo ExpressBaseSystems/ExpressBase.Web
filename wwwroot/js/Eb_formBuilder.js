@@ -45,12 +45,11 @@
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
-        $.post("../Dev/SaveFormBuilder", {
-            "Id": null,
-            "FilterDialogJson": JSON.stringify(this.rootContainerObj),
-            "Name": $('#save_txtBox').val(),
-            "Description": "",
-            "Obj_type": Eb_objType
+        $.post("../Eb_Object/CommitEbObject", {
+            "_refid": this._refid,
+            "_json": JSON.stringify(this.rootContainerObj),
+            "_rel_obj": "_rel_obj1",
+            "_tags": "tag1"
         }, this.Save_Success.bind(this));
     };
     this.commit = function () {
@@ -59,12 +58,11 @@
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
-        $.post("../Dev/CommitFormBuilder", {
-            "Id": null,
-            "FilterDialogJson": JSON.stringify(this.rootContainerObj),
-            "Name": $('#save_txtBox').val(),
-            "Description": "",
-            "Obj_type": Eb_objType
+        $.post("../Eb_Object/SaveEbObject", {
+            "_refid": this._refid,
+            "_json": JSON.stringify(this.rootContainerObj),
+            "_rel_obj": "aaa",
+            "_tags":"aaaa"
         }, this.Save_Success.bind(this));
     };
     this.Save_Success = function (result) {

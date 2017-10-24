@@ -62,6 +62,10 @@
     overflow-y: auto;
 }
 
+    .form-buider-form:focus {
+        border:solid 1px green;
+    }
+
     .form-buider-form input[type="text"], .form-buider-form input[type="email"], .form-buider-form input[type="number"], .form-buider-form input[type="password"], .form-buider-form input[type="singleline"] {
         height: auto !important;
         min-height: 28px;
@@ -122,6 +126,7 @@
 .tdDropable {
     height: 30px;
 }
+
 .radiog-cont {
     border: dashed 1px #ddd;
 }
@@ -168,9 +173,9 @@
 /*overridding*/
 
 .form-buider-form .btn {
-        /*padding: 3px 12px !important;
+    /*padding: 3px 12px !important;
         width: 100%;*/
-    }
+}
 
 .form-buider-form .controlTile table td {
     border: 1px dashed #cccccc;

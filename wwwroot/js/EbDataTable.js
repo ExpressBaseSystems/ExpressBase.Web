@@ -192,7 +192,7 @@ var EbDataTable = function (settings) {
         //    this.ebSettings.columns[1].visible = true;
         //}
         $.event.props.push('dataTransfer');
-        //this.updateRenderFunc();
+        this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.filterBox = $('#filterBox');
         //this.collapseFilter();
@@ -712,6 +712,7 @@ var EbDataTable = function (settings) {
 
     this.createFooter = function (pos) {
         var tx = this.ebSettings;
+        var tid = this.tableId;
         var aggFlag = false;
         var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');
         var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
@@ -724,7 +725,7 @@ var EbDataTable = function (settings) {
         if (pos == 0) {
             $.each(this.Api.settings().init().aoColumns, function (i, col) {
                 if (col.Aggregate) {
-                    $('#' + this.tableId + '_btntotalpage').show();
+                    $('#' + tid + '_btntotalpage').css("display","inline");
                     aggFlag = true;
                     return false;
                 }
@@ -923,7 +924,7 @@ var EbDataTable = function (settings) {
         $("#Toolbar").append(
             "<div style= 'display: inline;float: right;' > " +
             //"<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
-            "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' data-table='@tableId'>&sum;</button>" +
+            "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' data-table='@tableId' style='display:none;'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
              "<div class='btn-group'>" +
                 "<div class='btn-group'>" +
@@ -1245,7 +1246,7 @@ var EbDataTable = function (settings) {
 
     this.showOrHideAggrControl = function (e) {
         //if (this.ebSettings.scrollY !== 0)
-            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
+            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)').toggle();
         //else
         //    $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
     };

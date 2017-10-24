@@ -266,13 +266,14 @@ namespace ExpressBase.Web.Controllers
             {
                 try
                 {
+                    string tenantid = ViewBag.cid;
                     var authClient = this.ServiceClient;
                     authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = req["uname"],
                         Password = req["pass"],
-                        Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", ViewBag.cid } },
+                        Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", tenantid } },
                         //UseTokenCookie = true
                     });
 

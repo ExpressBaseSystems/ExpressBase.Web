@@ -314,26 +314,26 @@ namespace ExpressBase.Web.Controllers
             var res = this.ServiceClient.Post<EbObject_Create_Patch_VersionResponse>(ds);
             return res.RefId;
         }
-        [HttpPost]
-        public EbDataSource VersionCodes(string objid, int objtype)
-        {
-            EbDataSource dsobj = null;
-            var _EbObjectType = (EbObjectType)objtype;
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = objid });
-            var rlist = resultlist.Data;
-            foreach (var element in rlist)
-            {
-                if (_EbObjectType == EbObjectType.DataSource)
-                {
-                    var obj = new EbObjectWrapper();
-                    dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
-                    ViewBag.Code = dsobj.Sql;
-                    dsobj.Status = element.Status;
-                    dsobj.VersionNumber = element.VersionNumber;
-                }
-            }
-            return dsobj;
-        }
+        //[HttpPost]
+        //public EbDataSource VersionCodes(string objid, int objtype)
+        //{
+        //    EbDataSource dsobj = null;
+        //    var _EbObjectType = (EbObjectType)objtype;
+        //    var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = objid });
+        //    var rlist = resultlist.Data;
+        //    foreach (var element in rlist)
+        //    {
+        //        if (_EbObjectType == EbObjectType.DataSource)
+        //        {
+        //            var obj = new EbObjectWrapper();
+        //            dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
+        //            ViewBag.Code = dsobj.Sql;
+        //            dsobj.Status = element.Status;
+        //            dsobj.VersionNumber = element.VersionNumber;
+        //        }
+        //    }
+        //    return dsobj;
+        //}
 
         public IActionResult GetFilterBody()
         {
@@ -402,65 +402,65 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public List<string> GetDiffer(string OldText, string NewText)
-        {
-            List<string> Diff = new List<string>();
-            var inlineBuilder = new SideBySideDiffBuilder(new Differ());
+        //public List<string> GetDiffer(string OldText, string NewText)
+        //{
+        //    List<string> Diff = new List<string>();
+        //    var inlineBuilder = new SideBySideDiffBuilder(new Differ());
 
-            var diffmodel = inlineBuilder.BuildDiffModel(OldText, NewText);
-            Diff.Add(Differ(diffmodel.OldText));
-            Diff.Add(Differ(diffmodel.NewText));
+        //    var diffmodel = inlineBuilder.BuildDiffModel(OldText, NewText);
+        //    Diff.Add(Differ(diffmodel.OldText));
+        //    Diff.Add(Differ(diffmodel.NewText));
 
-            return Diff;
-        }
+        //    return Diff;
+        //}
 
-        private string Differ(DiffPaneModel text)
-        {
-            string spaceValue = "\u00B7";
-            string tabValue = "\u00B7\u00B7";
-            string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
+        //private string Differ(DiffPaneModel text)
+        //{
+        //    string spaceValue = "\u00B7";
+        //    string tabValue = "\u00B7\u00B7";
+        //    string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
 
-            foreach (var diffLine in text.Lines)
-            {
-                html += "<tr>";
-                html += "<td class='lineNumber'>";
-                html += diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;";
-                html += "</td>";
-                html += "<td class='line " + diffLine.Type.ToString() + "Line'>";
-                html += "<span class='lineText'>";
+        //    foreach (var diffLine in text.Lines)
+        //    {
+        //        html += "<tr>";
+        //        html += "<td class='lineNumber'>";
+        //        html += diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;";
+        //        html += "</td>";
+        //        html += "<td class='line " + diffLine.Type.ToString() + "Line'>";
+        //        html += "<span class='lineText'>";
 
-                if (diffLine.Type == ChangeType.Deleted || diffLine.Type == ChangeType.Inserted || diffLine.Type == ChangeType.Unchanged)
-                {
-                    html += diffLine.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
-                }
-                else if (diffLine.Type == ChangeType.Modified)
-                {
-                    foreach (var character in diffLine.SubPieces)
-                    {
-                        if (character.Type == ChangeType.Imaginary) continue;
-                        else
-                        {
-                            html += "<span class='" + character.Type.ToString() + "Character'>";
-                            html += character.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
-                            html += "</span>";
-                        }
-                    }
-                }
+        //        if (diffLine.Type == ChangeType.Deleted || diffLine.Type == ChangeType.Inserted || diffLine.Type == ChangeType.Unchanged)
+        //        {
+        //            html += diffLine.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+        //        }
+        //        else if (diffLine.Type == ChangeType.Modified)
+        //        {
+        //            foreach (var character in diffLine.SubPieces)
+        //            {
+        //                if (character.Type == ChangeType.Imaginary) continue;
+        //                else
+        //                {
+        //                    html += "<span class='" + character.Type.ToString() + "Character'>";
+        //                    html += character.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+        //                    html += "</span>";
+        //                }
+        //            }
+        //        }
 
-                html += "</span>";
-                html += "</td>";
-                html += "</tr>";
-            }
+        //        html += "</span>";
+        //        html += "</td>";
+        //        html += "</tr>";
+        //    }
 
-            html += "</table></div>";
+        //    html += "</table></div>";
 
-            return html;
-        }
+        //    return html;
+        //}
 
-        public ActionResult Diff()
-        {
-            return View();
-        }
+        //public ActionResult Diff()
+        //{
+        //    return View();
+        //}
 
 
     }

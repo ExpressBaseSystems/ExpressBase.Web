@@ -79,6 +79,18 @@
     transition: box-shadow .1s ease,border-color .1s ease;
 }
 
+.fup .pgCXEditor-Cont .modal-body {
+    height: 68vh;
+}
+
+.fup .pgCXEditor-Cont {
+    border-radius: 3px;
+    width: 80%;
+    height: 90VH;
+    left: 10%;
+    top: 5vh;
+}
+
 .pgCXEditor-Cont {
     border-radius: 3px;
     width: 50%;

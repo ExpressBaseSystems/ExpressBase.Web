@@ -401,7 +401,7 @@
             + '<h4 class="modal-title"> </h4>'
             + '</div>'
 
-            + '<div class="modal-body" id="mb_' + this.PGobj.wraperId +'"> </div>'
+            + '<div class="modal-body"> </div>'
             + '<div class="modal-footer">'
             + '<div class="modal-footer-body">'
             + '</div>'
@@ -412,6 +412,8 @@
             + '</div>';
         $(this.PGobj.$wraper).append(CXVE_html);
         $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.CE_AddFn.bind(this));
+        
+        $('body').append('<div id="mb_' + this.PGobj.wraperId + '"> </div>');
     }
     this.Init();
 };

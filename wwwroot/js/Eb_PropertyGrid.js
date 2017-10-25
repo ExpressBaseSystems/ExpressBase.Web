@@ -2,7 +2,9 @@
 
 
 
-var Eb_PropertyGrid = function (id) {
+var Eb_PropertyGrid = function (id, wc, cid) {
+    this.wc = wc;
+    this.cid = cid;
     this.$wraper = $("#" + id);
     this.wraperId = id;
     this.$controlsDD = $(".controls-dd-cont select");
@@ -11,6 +13,7 @@ var Eb_PropertyGrid = function (id) {
     this.PropsObj = {};
     this.CXVE = {};
     this.$hiddenProps = {};
+    this.imgSlctrs = {};
     this.IsSortByGroup = true;
     this.PropertyChanged = function (obj) { };
     this.DD_onChange = function (e) { };
@@ -83,6 +86,16 @@ var Eb_PropertyGrid = function (id) {
         else if (type === 13) {  //  If Object Selector editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
+        else if (type === 16) {  //  If string editor
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+            this.imgSlctrs[elemId] = new imageUploader({
+                Container: "mb_" + this.wraperId,
+                Controller: this.wc,
+                TenantId: this.cid,
+                IsTag: true              
+            });
         }
         else if (type === 15) {  //  If expandable
             valueHTML = '<input type="text" for="' + name + '" readonly value="' + this.getExpandedValue(value) + '" style="width:100%; direction: rtl;" />';
@@ -357,8 +370,8 @@ var Eb_PropertyGrid = function (id) {
     this.rowFocus = function (e) {
         var $e = $(e.target);
         var prop = $e.attr("name").slice(0, -2);
-        var ht = this.Metas[this.propNames.indexOf(prop.toLowerCase())].helpText;
-        $("#" + this.wraperId + "_HelpBox").text(ht);
+        var ht = prop + " : &nbsp;&nbsp;"+ this.Metas[this.propNames.indexOf(prop.toLowerCase())].helpText;
+        $("#" + this.wraperId + "_HelpBox").html(ht);
     }.bind(this);
 
     this.collapsGroup = function (e) {

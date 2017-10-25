@@ -18,6 +18,7 @@ namespace ExpressBase.Web.Controllers
     public class Eb_ObjectController : EbBaseNewController
     {
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+
         public IActionResult Index(string objid, int objtype)
         {
             //var req = this.HttpContext.Request.Form;
@@ -46,6 +47,8 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.ReadOnly = true;
                     var dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
                     ViewBag.dsObj = dsobj;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                     ViewBag.Workingcopy = element.Wc_All;
                 }
                 else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
@@ -53,13 +56,22 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.ReadOnly = false;
                     var dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
                     ViewBag.dsObj = dsobj;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                     ViewBag.Workingcopy = element.Wc_All;
                 }
             }
             
 
+            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+
             return View();
         }
+
         public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags)
         {
             string refid;
@@ -129,6 +141,7 @@ namespace ExpressBase.Web.Controllers
             }
             return refid;
         }
+
         public IActionResult GetLifeCycle(int _tabNum, string cur_status, string refid)
         {
             return ViewComponent("ObjectLifeCycle", new { _tabnum = _tabNum , _cur_status = cur_status , _refid  = refid });
@@ -138,7 +151,6 @@ namespace ExpressBase.Web.Controllers
         {
             return ViewComponent("VersionHistory", new {objid = objid, tabnum = tabNum });
         }
-
 
         [HttpPost]
         public string VersionCodes(string objid, int objtype)
@@ -152,7 +164,6 @@ namespace ExpressBase.Web.Controllers
 
             return EbSerializers.Json_Serialize(dsobj);
         }
-
 
         [HttpPost]
         public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype)

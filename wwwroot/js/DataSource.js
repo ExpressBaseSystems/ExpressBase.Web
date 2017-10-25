@@ -1,5 +1,5 @@
-﻿var tabNum = 0;
-var DataSource = function (refid, ver_num, type, dsobj, cur_status) {
+﻿//var tabNum = 0;
+var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
     this.Code;
     this.ObjectType = type;
     this.CommitBtn;
@@ -15,14 +15,11 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status) {
     this.SelectedFdId;
     this.Rel_object;
     this.rel_arr = [];
-    this.VersionCollection = {};
-    this.PropGCollection = {};
 
     this.Current_obj = dsobj;
-    //this.Current_obj.status = cur_status;
-    //this.Current_obj.versionNumber = ver_num;
-    this.VersionCollection["#vernav" + tabNum] = dsobj;
-    this.PropGCollection["#vernav" + tabNum] = new Eb_PropertyGrid("dspropgrid" + tabNum);
+    this.Current_obj.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
+
+    //commonObj.ObjCollection["#vernav" + tabNum] = this.Current_obj;
 
     this.Init = function () {
 
@@ -37,11 +34,12 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status) {
         $('#compare').off('click').on('click', this.Compare.bind(this));
         //$('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
-        $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
+        //$('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         if (this.Current_obj === null) {
             this.Current_obj = new EbObjects["EbDataSource"]("EbDataSource1");
         }
-        this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
+        //this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
+        this.Current_obj.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
         this.Name = this.Current_obj.Name;
 
     }
@@ -51,7 +49,7 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status) {
         this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
     };
 
-    this.PropGCollection["#vernav" + tabNum].PropertyChanged = function (obj, pname) {
+    this.Current_obj.propGrid.PropertyChanged = function (obj, pname) {
         this.Current_obj = obj;
         this.VersionCollection["#vernav" + tabNum] = this.Current_obj;
         if (pname === "FilterDialogRefId") {

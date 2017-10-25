@@ -76,13 +76,12 @@
     padding: 0px 0px 0px 0px;
     outline: 0;
 }
-.toolbox .draggable {
-    margin-left: 6px;
+.toolbox .draggable {   
     cursor: pointer;
     font-size: 13px;
 }
 .toolbox .Eb-shaps {
-    padding: 0;
+    padding: 0;   
 }
 .toolbox ul {
     margin: 0;  
@@ -90,10 +89,16 @@
 .Eb-shaps-title {
     padding: 4px 7px;
 }
-.draggable:hover {
+.draggable{
+    list-style-type:none;
+}
+.dropped:hover{
+    cursor:pointer;   
+}
+/*.draggable:hover {
     background-color: #a2dce4;
     border-radius: 4px;
-}
+}*/
 /*end side menuBar*/
 .tab-section {
     position: fixed;
@@ -523,10 +528,10 @@
     align-items: center;
     font-size: 11px;
 }
-.dropped {
-    z-index: 2;
-}
-
 .marked {
     background-color: #d8f7f6;
+}
+.tool-box-div {
+    padding: 4px 6px 4px 25px;  
+    
 }

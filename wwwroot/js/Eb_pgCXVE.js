@@ -26,8 +26,16 @@
             this.initJE();
         else if (this.editor === 13)
             this.initOSE();
+        else if (this.editor === 16)
+            this.initStrE();
         $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+    };
+
+    this.initStrE = function () {
+        var StrEbody = '<textarea id="StrE_txtEdtr' + this.PGobj.wraperId + '" class="strE-texarea" rows="15" cols="85" ></textarea>'
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("String Editor");
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(StrEbody);
     };
 
     this.initCE = function () {
@@ -393,7 +401,7 @@
             + '<h4 class="modal-title"> </h4>'
             + '</div>'
 
-            + '<div class="modal-body"> </div>'
+            + '<div class="modal-body" id="mb_' + this.PGobj.wraperId +'"> </div>'
             + '<div class="modal-footer">'
             + '<div class="modal-footer-body">'
             + '</div>'

@@ -1,4 +1,6 @@
-﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType) {
+﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid) {
+    this.wc = wc;
+    this.cid = cid;
     this.Name = formid;
     this.toolBoxid = toolBoxid;
     this.rootContainerObj = null;
@@ -19,7 +21,7 @@
     //else if (builderType === 3)
     //    this.rootContainerObj = new EbObjects.ReportObj(formid);
 
-    this.PGobj = new Eb_PropertyGrid("pgWraper");
+    this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
     this.curControl = null;
     this.drake = null;
 
@@ -65,7 +67,7 @@
             "_refid": this._refid,
             "_json": JSON.stringify(this.rootContainerObj),
             "_rel_obj": "aaa",
-            "_tags":"aaaa"
+            "_tags": "aaaa"
         }, this.Save_Success.bind(this));
     };
     this.Save_Success = function (result) {
@@ -79,10 +81,10 @@
     };
 
     this.CreatePG = function (control) {
-            console.log("CreatePG called for:" + control.Name);
-            this.$propGrid.css("visibility", "visible");
-            this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
-            $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
+        console.log("CreatePG called for:" + control.Name);
+        this.$propGrid.css("visibility", "visible");
+        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
+        $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
     };
 
     this.saveObj = function () {

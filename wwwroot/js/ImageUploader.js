@@ -20,7 +20,7 @@
     this.getFileId = function (res) { };
 
     this.CreateMOdalW = function () {
-        var modalW = $("<div class='modal fade modalstyle' id='"+ this.toggleId +"' role='dialog'>"
+        var modalW = $("<div class='modal fade modalstyle' id='Eb-fup-MW' role='dialog'>"
             + "<div class='modal-dialog modal-lg'>"
             + "<div class='modal-content wstyle' style='border-radius:0;'>"
             + "<div class='modal-header'>"
@@ -41,6 +41,10 @@
         $("#" + this.params.Container).append(modalW);
       
     }; //modal creation and fileinput initialized
+
+    this.toggleModal = function () {
+        $("#Eb-fup-MW").modal('toggle');
+    };
 
     this.loadFileInput = function () {
         $("#input-id").fileinput({
@@ -119,13 +123,14 @@
 
     this.getId = function (fileId) {
         this.getFileId(fileId);
-        $('#up-modal').modal('toggle');
+        $("#Eb-fup-MW").modal('toggle');
     };
     
     this.init = function () {
         //this.getUplodedImgOnload();
         this.CreateMOdalW();
-        this.loadFileInput();       
+        this.loadFileInput();
+        $("#" + this.toggleId).on("click", this.toggleModal.bind(this));
     };
     this.init();
 }

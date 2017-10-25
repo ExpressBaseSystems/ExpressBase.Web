@@ -434,7 +434,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
         } 
         else {
-            Title = "Text";
+            Title = this.col.text().trim();
         }
         if (!this.col.hasClass('dropped')) {
             var obj = new EbObjects["Eb" + this.Objtype](Objid);            
@@ -474,7 +474,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         var curObject = this.objCollection[id];       
         var type = curControl.attr('eb-type');        
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
-        this.editElement(curControl);
+        this.editElement(curControl);       
     };//obj send to pg on focus
 
     this.editElement = function (control) {                                         

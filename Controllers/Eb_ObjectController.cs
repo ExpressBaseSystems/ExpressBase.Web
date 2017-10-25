@@ -21,6 +21,7 @@ namespace ExpressBase.Web.Controllers
     public class Eb_ObjectController : EbBaseNewController
     {
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+
         public IActionResult Index(string objid, int objtype)
         {
             //var req = this.HttpContext.Request.Form;
@@ -49,6 +50,8 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.ReadOnly = true;
                     var dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
                     ViewBag.dsObj = dsobj;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                     ViewBag.Workingcopy = element.Wc_All;
                 }
                 else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
@@ -56,10 +59,18 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.ReadOnly = false;
                     var dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
                     ViewBag.dsObj = dsobj;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                     ViewBag.Workingcopy = element.Wc_All;
                 }
             }
             
+
+            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
 
             return View();
         }

@@ -209,7 +209,7 @@ namespace ExpressBase.Web.Controllers
             string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
 
             foreach (var diffLine in text.Lines)
-            {
+            {  
                 html += "<tr>";
                 html += "<td class='lineNumber'>";
                 html += diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;";
@@ -219,7 +219,7 @@ namespace ExpressBase.Web.Controllers
 
                 if (diffLine.Type == ChangeType.Deleted || diffLine.Type == ChangeType.Inserted || diffLine.Type == ChangeType.Unchanged)
                 {
-                    html += diffLine.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+                    html += diffLine.Text;//.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
                 }
                 else if (diffLine.Type == ChangeType.Modified)
                 {
@@ -229,7 +229,7 @@ namespace ExpressBase.Web.Controllers
                         else
                         {
                             html += "<span class='" + character.Type.ToString() + "Character'>";
-                            html += character.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+                            html += character.Text;//.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());//.Replace(",", ",</br>"); ;
                             html += "</span>";
                         }
                     }
@@ -240,8 +240,8 @@ namespace ExpressBase.Web.Controllers
                 html += "</tr>";
             }
 
-            html += "</table></div>";
-
+            html += "</table></div>";  
+            
             return html;
         }
 

@@ -162,9 +162,10 @@
     };
 
     this.CallDiffer = function (data_1, selected_ver_number, curr_ver, data_2) {
+        data_1 = JSON.stringify(JSON.parse(data_1), null, 2);
+        data_2 = JSON.stringify(JSON.parse(data_2), null, 2);
         var getNav = $("#versionNav li.active a").attr("href");
         this.SetValues();
-        data_2 = atob(data_2.sql);
         if (selected_ver_number > curr_ver) {
             $.post("../Eb_Object/GetDiffer", {
                 NewText: data_1, OldText: data_2

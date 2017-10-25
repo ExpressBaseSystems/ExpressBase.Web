@@ -70,10 +70,10 @@
         var _chlog = $('#StatChlog@(ViewBag.tabNum)').val();
         var _stat = $('#status_drpdwn@(ViewBag.tabNum) option:selected').val();
 
-        $.post('../CE/ChangeStatus', { _refid: '@ViewBag.Curr_refid', _changelog: _chlog, _status: _stat }, function () {
+        $.post('../Eb_Object/ChangeStatus', { _refid: '@ViewBag.Curr_refid', _changelog: _chlog, _status: _stat }, function () {
             $('#vernav@(ViewBag.tabNum)').empty();
             $.post("../Eb_Object/GetLifeCycle", { _tabnum: @ViewBag.tabNum, cur_status: _stat, refid: '@ViewBag.Curr_refid' }, function (text) {
-                $('#vernav' + tabNum).append(text);
+                $('#vernav@(ViewBag.tabNum)').append(text);
                 $.LoadingOverlay("hide");
             });
         });

@@ -35,7 +35,7 @@
             + "</div>"
             + "<div class='modal-footer' id='mdfooter' style='height:auto;border:none;padding-top:0;'>"
             + "<div class='col-md-11' id='tag-section' style='padding:0;'></div>"
-            + "<div class='col-md-1' id='sub-section'><button class='btn btn-default' id='sub-upload' style='display:none;margin-top:34px;'>OK</button></div>"
+            + "<div class='col-md-1' id='sub-section' style='padding-right:0;'><button class='btn btn-default' id='sub-upload' style='margin-top:34px;'>OK</button></div>"
             + "</div></div></div></div>");
 
         $("#" + this.params.Container).append(modalW);

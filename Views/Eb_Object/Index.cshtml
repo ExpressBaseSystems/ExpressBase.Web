@@ -1,9 +1,24 @@
-﻿@{
+﻿
+@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
-    @using Newtonsoft.Json
-    var versionObj = JsonConvert.SerializeObject(ViewBag.dsObj);
+    @using ExpressBase.Common;
+    var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
+<script>
+
+@Html.Raw(ViewBag.Meta);
+@Html.Raw(ViewBag.JsObjects);
+@Html.Raw(ViewBag.EbObjectTypes);
+
+var commonObj = null;
+$(document).ready(function () {
+    commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType);
+});
+</script>
+
 @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags })
+
+
 <div class="row codedit">
     <ul class="nav nav-tabs versionNav" id="versionNav">
         <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
@@ -14,7 +29,3 @@
         </div>
     </div>
 </div>
-<script>
-    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType);
-</script>
-

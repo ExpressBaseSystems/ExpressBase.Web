@@ -14,7 +14,6 @@
         $('#compare').off('click').on('click', this.Compare.bind(this));
         $('#save').off("click").on("click", this.Save.bind(this, false));
         $('#commit').off("click").on("click", this.Commit.bind(this, false));
-        //  $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
     }
@@ -38,7 +37,6 @@
         $('#versionTab').append(tabitem);
         $("#versionNav a[href='#vernav" + this.tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-        $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
     }
 
     this.deleteTab = function (e) {
@@ -84,6 +82,7 @@
         var navitem = "<li><a data-toggle='tab' class='cetab' href='#vernav" + this.tabNum + "' data-verNum='" + this.Current_obj.VersionNumber + "'>v." + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
+        $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('#vernav' + this.tabNum).append(data);
         $.LoadingOverlay("hide");
     };
@@ -94,6 +93,7 @@
         $.post('../Eb_Object/CallDifferVC', { _tabnum: this.tabNum })
             .done(this.Load_differ.bind(this));
     }
+
     this.Load_differ = function (data) {
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
@@ -155,8 +155,8 @@
     };
 
     this.CallDiffer = function (data_1, selected_ver_number, curr_ver, data_2) {
-        data_1 = JSON.stringify(JSON.parse(data_1), null, 2);
-        data_2 = JSON.stringify(JSON.parse(data_2), null, 2);
+        data_1 = JSON.stringify(data_1, null, 2);
+        data_2 = JSON.stringify(data_2, null, 2);
         var getNav = $("#versionNav li.active a").attr("href");
         if (selected_ver_number > curr_ver) {
             $.post("../Eb_Object/GetDiffer", {
@@ -197,27 +197,28 @@
         $.LoadingOverlay("hide");
     };
 
+    this.TabChangeSuccess = function (e) {
+        var target = $(e.target).attr("href");
+        this.ObjWrapper = this.ObjCollection[target];
+        this.ver_Refid = this.ObjWrapper.Refid;
+        this.Current_obj = this.ObjWrapper.DataSourceObj;
+        this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
+    };
+
     this.Save = function () {
         var tagvalues = $('#tags').val();
-        $.post("../Eb_ObjectController/SaveEbObject",
-            {
-                "Id": this.ver_Refid,
-                "json": JSON.stringify(this.Current_obj),
-                "rel_obj": "",
-                "tags": tagvalues
-            });
+        $.post("../Eb_Object/SaveEbObject", { _refid: this.ver_Refid, _json: JSON.stringify(this.Current_obj), _rel_obj: "", _tags: tagvalues});
     };
 
     this.Commit = function () {
         var tagvalues = $('#tags').val();
         var changeLog = $('#obj_changelog').val();
-        $.post("../Eb_ObjectController/CommitEbObject", {
-            "id": this.ver_Refid,
-            "changeLog": changeLog,
-            "json": JSON.stringify(this.Current_obj),
-            "rel_obj": "",
-            "tags": tagvalues
+        $.post("../Eb_Object/CommitEbObject", {
+            _refid: this.ver_Refid, _changeLog: changeLog, 
+            _json: JSON.stringify(this.Current_obj),
+            _rel_obj: "", _tags: tagvalues
         });
     };
+
     this.init();
 };

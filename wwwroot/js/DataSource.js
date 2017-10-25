@@ -18,26 +18,16 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
     this.Init = function () {
-
-    //    this.SaveBtn = $('#save');
-    //    this.CommitBtn = $('#commit');
-        
         $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keypress(this.SetCode.bind(this));
-      
-        if (this.Current_obj === null) {
-            this.Current_obj = new EbObjects["EbDataSource"]("EbDataSource1");
         $(".selectpicker").selectpicker();
-       // $('#compare').off('click').on('click', this.Compare.bind(this));
-        //$('#status').off('click').on('click', this.LoadStatusPage.bind(this));
-        //$('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
-        //$('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
+
         if (this.DataSourceObj === null) {
             this.DataSourceObj = new EbObjects["EbDataSource"]("EbDataSource1");
         }
-        //this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
+
         this.propGrid.setObject(this.DataSourceObj, AllMetas["EbDataSource"]);
         this.Name = this.DataSourceObj.Name;
 

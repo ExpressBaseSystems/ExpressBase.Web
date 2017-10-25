@@ -21,6 +21,7 @@ namespace ExpressBase.Web.Controllers
     public class Eb_ObjectController : EbBaseNewController
     {
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+
         public IActionResult Index(string objid, int objtype)
         {
             //var req = this.HttpContext.Request.Form;
@@ -49,6 +50,8 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.ReadOnly = true;
                     var dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
                     ViewBag.dsObj = dsobj;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                     ViewBag.Workingcopy = element.Wc_All;
                 }
                 else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
@@ -56,10 +59,18 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.ReadOnly = false;
                     var dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
                     ViewBag.dsObj = dsobj;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                     ViewBag.Workingcopy = element.Wc_All;
                 }
             }
             
+
+            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
 
             return View();
         }
@@ -209,7 +220,7 @@ namespace ExpressBase.Web.Controllers
             string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
 
             foreach (var diffLine in text.Lines)
-            {
+            {  
                 html += "<tr>";
                 html += "<td class='lineNumber'>";
                 html += diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;";
@@ -219,7 +230,7 @@ namespace ExpressBase.Web.Controllers
 
                 if (diffLine.Type == ChangeType.Deleted || diffLine.Type == ChangeType.Inserted || diffLine.Type == ChangeType.Unchanged)
                 {
-                    html += diffLine.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+                    html += diffLine.Text;//.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
                 }
                 else if (diffLine.Type == ChangeType.Modified)
                 {
@@ -229,7 +240,7 @@ namespace ExpressBase.Web.Controllers
                         else
                         {
                             html += "<span class='" + character.Type.ToString() + "Character'>";
-                            html += character.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+                            html += character.Text;//.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());//.Replace(",", ",</br>"); ;
                             html += "</span>";
                         }
                     }
@@ -240,8 +251,8 @@ namespace ExpressBase.Web.Controllers
                 html += "</tr>";
             }
 
-            html += "</table></div>";
-
+            html += "</table></div>";  
+            
             return html;
         }
 

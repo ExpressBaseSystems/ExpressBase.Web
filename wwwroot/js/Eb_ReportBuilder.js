@@ -61,7 +61,10 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         EbImgCounter: 0,
         EbDateTimeCounter: 0,
         EbPageXYCounter:0,
-        EbPageNoCounter: 0       
+        EbPageNoCounter: 0,
+        EbTextCounter: 0,
+        EbBarcodeCounter: 0,
+        EbQRcodeCounter: 0
     };
 
     this.subSecIdCounter = {
@@ -98,7 +101,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
-        $('.dropped').draggable({ cursor: "crosshair", containment: ".page", start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this)});
+        $('.dropped').draggable({ cursor: "crosshair", containment: ".page", stack: ".dropped", start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this)});
         $('.dropped').resizable({ containment: "parent", handles: "n, e, s, w", stop: this.onReSizeFn.bind(this) });
         if (obj.SectionHeight) {
             $("#" + obj.EbSid).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
@@ -405,9 +408,13 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             cancel: "a.ui-icon",
             revert: "invalid",
             helper: "clone",
-            cursor: "move",
+            cursor: "move",           
+            stack: ".draggable",
+            appendTo: "body",
             drag: function (event, ui) {
-                $(ui.helper).css({ "width": "100px", "background":"#8fd4df","height":"100px","z-index":"3"});
+                //$(ui.helper).css({ "width": "100px", "background": "#8fd4df", "height": "100px" });
+                $(ui.helper).children(".shape-text").remove();
+                $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
             }
         });     
     };//drag drop starting func
@@ -423,9 +430,12 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         if (this.Objtype === 'DateTime') {
             Title = this.addCurrentDateTime();
         }
-        else {          
-            Title = "Table" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
-        }       
+        else if (this.Objtype === 'ReportCol'){          
+            Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
+        } 
+        else {
+            Title = "Text";
+        }
         if (!this.col.hasClass('dropped')) {
             var obj = new EbObjects["Eb" + this.Objtype](Objid);            
             this.dropLoc.append(obj.Html());

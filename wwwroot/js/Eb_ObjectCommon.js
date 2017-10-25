@@ -6,12 +6,14 @@
     this.tabNum = tabNum;
     this.ObjectType = type;
     this.ObjCollection = {};
+    this.ObjWrapper = null;
 
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
-        $('#ver_his').off("click").on("click", this.VerHistory.bind(this));
+        $('#ver_his').off("click").on("click", this.Version_List.bind(this));
         $('#compare').off('click').on('click', this.Compare.bind(this));
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
+        $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
     }
 
     this.LoadStatusPage = function () {
@@ -33,6 +35,7 @@
         $('#versionTab').append(tabitem);
         $("#versionNav a[href='#vernav" + this.tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
     }
 
     this.deleteTab = function (e) {
@@ -41,13 +44,9 @@
         $(tabContentId).remove();
         $('#versionNav a:last').tab('show'); // Select first tab        
     };
-
-    this.VerHistory = function () {
-        $.LoadingOverlay("show");
-        this.Version_List();
-    }
-
+    
     this.Version_List = function () {
+        $.LoadingOverlay("show");
         this.tabNum++;
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'></div>";
@@ -72,15 +71,14 @@
     this.OpenPrevVer = function (e) {
         $.LoadingOverlay("show");
         this.ver_Refid = $(e.target).attr("data-id");
-        //this.Current_obj.VersionNumber = $(e.target).attr("data-verNum");
         $.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
             .done(this.VersionCode_success.bind(this));
     };
 
-    this.VersionCode_success = function (vernum, data) {
+    this.VersionCode_success = function (data) {
         this.tabNum++;
         this.Current_obj = JSON.parse(data);
-        $.post('../Eb_Object/CallObjectEditor', { _dsobj: data, _tabnum: this.tabNum, objtype: this.ObjectType })
+        $.post('../Eb_Object/CallObjectEditor', { _dsobj: data, _tabnum: this.tabNum, objtype: this.ObjectType, _refid: this.ver_Refid })
             .done(this.CallObjectEditor_success.bind(this));
     };
 
@@ -88,7 +86,6 @@
         var navitem = "<li><a data-toggle='tab' class='cetab' href='#vernav" + this.tabNum + "' data-verNum='" + this.Current_obj.VersionNumber + "'>v." + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
-
         $('#vernav' + this.tabNum).append(data);
         $.LoadingOverlay("hide");
     };
@@ -99,6 +96,7 @@
         $.post('../Eb_Object/CallDifferVC', { _tabnum: this.tabNum})
             .done(this.Load_differ.bind(this));
     }
+
     this.Load_differ =function(data){
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
@@ -201,6 +199,14 @@
         var scrollPos = $('#compare_result' + this.tabNum).offset().top;
         $(window).scrollTop(scrollPos);
         $.LoadingOverlay("hide");
+    };
+
+    this.TabChangeSuccess = function (e) {
+        var target = $(e.target).attr("href");
+        this.ObjWrapper = this.ObjCollection[target];
+        this.ver_Refid = this.ObjWrapper.Refid;
+        this.Current_obj = this.ObjWrapper.DataSourceObj;
+        this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
     };
 
     this.init();

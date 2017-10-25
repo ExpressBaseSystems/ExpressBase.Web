@@ -190,9 +190,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype)
+        public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype, string _refid)
         {
-            return ViewComponent("CodeEditor", new {dsobj = _dsobj, tabnum = _tabnum, type = Objtype });
+            return ViewComponent("CodeEditor", new {dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid });
         }
 
         [HttpPost]

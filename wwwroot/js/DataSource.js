@@ -1,11 +1,11 @@
 ﻿//var tabNum = 0;
-var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
+var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
     this.Code;
     this.ObjectType = type;
     this.CommitBtn;
     this.SaveBtn;
     this.Versions;
-    this.ver_Refid = refid;
+    this.Refid = refid;
     this.changeLog;
     this.commitUname;
     this.commitTs;
@@ -16,10 +16,8 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
     this.Rel_object;
     this.rel_arr = [];
 
-    this.Current_obj = dsobj;
-    this.Current_obj.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
-
-    //commonObj.ObjCollection["#vernav" + tabNum] = this.Current_obj;
+    this.DataSourceObj = dsobj;
+    this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
     this.Init = function () {
 
@@ -33,25 +31,24 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
         $(".selectpicker").selectpicker();
        // $('#compare').off('click').on('click', this.Compare.bind(this));
         //$('#status').off('click').on('click', this.LoadStatusPage.bind(this));
-        $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
+        //$('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         //$('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
-        if (this.Current_obj === null) {
-            this.Current_obj = new EbObjects["EbDataSource"]("EbDataSource1");
+        if (this.DataSourceObj === null) {
+            this.DataSourceObj = new EbObjects["EbDataSource"]("EbDataSource1");
         }
         //this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
-        this.Current_obj.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
-        this.Name = this.Current_obj.Name;
+        this.propGrid.setObject(this.DataSourceObj, AllMetas["EbDataSource"]);
+        this.Name = this.DataSourceObj.Name;
 
     }
     this.TabChangeSuccess = function (e) {
         var target = $(e.target).attr("href");
-        this.Current_obj = this.VersionCollection[target];
-        this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
+        this.DataSourceObj = this.VersionCollection[target];
+        this.PropGCollection["#vernav" + tabNum].setObject(this.DataSourceObj, AllMetas["EbDataSource"]);
     };
 
-    this.Current_obj.propGrid.PropertyChanged = function (obj, pname) {
-        this.Current_obj = obj;
-        this.VersionCollection["#vernav" + tabNum] = this.Current_obj;
+    this.propGrid.PropertyChanged = function (obj, pname) {
+        this.DataSourceObj = obj;
         if (pname === "FilterDialogRefId") {
             $('#paramdiv' + tabNum + ' #filterBox').remove();
             $('#paramdiv' + tabNum).show();
@@ -66,99 +63,99 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
         }
     }.bind(this);
 
-    this.SetValues = function () {
-        this.Code = window.editor.getValue();
-        this.changeLog = $('#obj_changelog').val();
-    }
+    //this.SetValues = function () {
+    //    this.Code = window.editor.getValue();
+    //    this.changeLog = $('#obj_changelog').val();
+    //}
 
-    this.AddVerNavTab = function (navitem, tabitem) {
-        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        $('#versionNav').append(navitem);
-        $('#versionTab').append(tabitem);
-        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));       
-    }
+    //this.AddVerNavTab = function (navitem, tabitem) {
+    //    $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+    //    $('#versionNav').append(navitem);
+    //    $('#versionTab').append(tabitem);
+    //    $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+    //    $('.closeTab').off("click").on("click", this.deleteTab.bind(this));       
+    //}
    
-    this.deleteTab = function (e) {
-        var tabContentId = $(e.target).parent().attr("href");
-        $(e.target).parent().parent().remove(); //remove li of tab
-        $(tabContentId).remove();
-        $('#versionNav a:last').tab('show'); // Select first tab        
-    };
+    //this.deleteTab = function (e) {
+    //    var tabContentId = $(e.target).parent().attr("href");
+    //    $(e.target).parent().parent().remove(); //remove li of tab
+    //    $(tabContentId).remove();
+    //    $('#versionNav a:last').tab('show'); // Select first tab        
+    //};
 
-    this.VerHistory = function () {
-        $.LoadingOverlay("show");
-        //tabNum++;
-        //$.post("../CE/GetVersions",
-        //    {
-        //        objid: this.ver_Refid
-        //    }, this.Version_List.bind(this));
-        //$.post("../Eb_Object/VersionHistory",{objid: this.ver_Refid, tabnum: tabNum}, this.Version_List.bind(this));
-        this.Version_List();
-    }
+    //this.VerHistory = function () {
+    //    $.LoadingOverlay("show");
+    //    //tabNum++;
+    //    //$.post("../CE/GetVersions",
+    //    //    {
+    //    //        objid: this.ver_Refid
+    //    //    }, this.Version_List.bind(this));
+    //    //$.post("../Eb_Object/VersionHistory",{objid: this.ver_Refid, tabnum: tabNum}, this.Version_List.bind(this));
+    //    this.Version_List();
+    //}
 
-    this.Version_List = function () {
-        $.LoadingOverlay("hide");
-        this.SetValues();
-        //this.Versions = result;
-        tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'></div>";
-            //"<table class='table table-striped table-bordered col-md-12' id='versions" + tabNum + "'>" +
-            //"<thead class='verthead" + tabNum + "'>" +
-            //"<tr>" +
-            //"<th class='col-md-1'>Version Number</th>" +
-            //"<th class='col-md-4'>Change Log</th>" +
-            //"<th class='col-md-1'>Committed By</th>" +
-            //"<th class='col-md-2'>Committed At</th>" +
-            //"<th class='col-md-1'> </th>" +
-            //"</tr>" +
-            //" </thead>" +
-            //"<tbody id='vertbody" + tabNum + "' class='vertbody'></tbody>" +
-            //"</table>" +
-            //"</div>";
-        this.AddVerNavTab(navitem, tabitem);
-        $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: tabNum }, function (result) {
-            $("#vernav" + tabNum).append(result);
-            $.LoadingOverlay("hide");
-        });
-        var scrollPos = $('#versionTab').offset().top;
-        $(window).scrollTop(scrollPos);
-        $("#vernav" + tabNum +" .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
-        //this.ShowVersions();
-    }
+    //this.Version_List = function () {
+    //    $.LoadingOverlay("hide");
+    //    this.SetValues();
+    //    //this.Versions = result;
+    //    tabNum++;
+    //    var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+    //    var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'></div>";
+    //        //"<table class='table table-striped table-bordered col-md-12' id='versions" + tabNum + "'>" +
+    //        //"<thead class='verthead" + tabNum + "'>" +
+    //        //"<tr>" +
+    //        //"<th class='col-md-1'>Version Number</th>" +
+    //        //"<th class='col-md-4'>Change Log</th>" +
+    //        //"<th class='col-md-1'>Committed By</th>" +
+    //        //"<th class='col-md-2'>Committed At</th>" +
+    //        //"<th class='col-md-1'> </th>" +
+    //        //"</tr>" +
+    //        //" </thead>" +
+    //        //"<tbody id='vertbody" + tabNum + "' class='vertbody'></tbody>" +
+    //        //"</table>" +
+    //        //"</div>";
+    //    this.AddVerNavTab(navitem, tabitem);
+    //    $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: tabNum }, function (result) {
+    //        $("#vernav" + tabNum).append(result);
+    //        $.LoadingOverlay("hide");
+    //    });
+    //    var scrollPos = $('#versionTab').offset().top;
+    //    $(window).scrollTop(scrollPos);
+    //    $("#vernav" + tabNum +" .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
+    //    //this.ShowVersions();
+    //}
 
-    this.ShowVersions = function () {
-        $.each(this.Versions, this.ShowVersions_inner.bind(this));
-    }
+    //this.ShowVersions = function () {
+    //    $.each(this.Versions, this.ShowVersions_inner.bind(this));
+    //}
 
-    this.ShowVersions_inner = function (i, obj) {
-        //$('#vertbody' + tabNum).append("<tr>" +
-        //    "<td>" + obj.versionNumber + "</td> " +
-        //    "<td>" + obj.changeLog + "</td> " +
-        //    "<td>" + obj.commitUname + "</td> " +
-        //    "<td>" + obj.commitTs + "</td> " +
-        //    "<td><input type='button' id='view_code" + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
-        //    " </tr>");
-        //$('#view_code' + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
-    };
+    //this.ShowVersions_inner = function (i, obj) {
+    //    //$('#vertbody' + tabNum).append("<tr>" +
+    //    //    "<td>" + obj.versionNumber + "</td> " +
+    //    //    "<td>" + obj.changeLog + "</td> " +
+    //    //    "<td>" + obj.commitUname + "</td> " +
+    //    //    "<td>" + obj.commitTs + "</td> " +
+    //    //    "<td><input type='button' id='view_code" + tabNum + i + "' class='view_code' value='View' data-id=" + obj.refId + " data-verNum=" + obj.versionNumber + " data-changeLog=" + obj.changeLog + " data-commitUname=" + obj.commitUname + " data-commitTs=" + obj.commitTs + "></td>" +
+    //    //    " </tr>");
+    //    //$('#view_code' + tabNum + i).off("click").on("click", this.OpenPrevVer.bind(this));
+    //};
 
-    this.OpenPrevVer = function (e) {
-        $.LoadingOverlay("show");
-        tabNum++;
-        this.ver_Refid = $(e.target).attr("data-id");
-        this.Current_obj.versionNumber = $(e.target).attr("data-verNum");
-        //this.changeLog = $(e.target).attr("data-changeLog");
-        // this.commitUname = $(e.target).attr("data-commitUname");
-        //this.commitTs = $(e.target).attr("data-commitTs");
-        $.post('../CE/Call_codeEditor', { refid: this.ver_Refid, objtype: this.ObjectType })
-            .done(this.VersionCode_success.bind(this));
-    }
+    //this.OpenPrevVer = function (e) {
+    //    $.LoadingOverlay("show");
+    //    tabNum++;
+    //    this.ver_Refid = $(e.target).attr("data-id");
+    //    this.Current_obj.versionNumber = $(e.target).attr("data-verNum");
+    //    //this.changeLog = $(e.target).attr("data-changeLog");
+    //    // this.commitUname = $(e.target).attr("data-commitUname");
+    //    //this.commitTs = $(e.target).attr("data-commitTs");
+    //    $.post('../CE/Call_codeEditor', { refid: this.ver_Refid, objtype: this.ObjectType })
+    //        .done(this.VersionCode_success.bind(this));
+    //}
 
-    this.VersionCode_drpListItem = function (i, version) {
-        var vnum = version.versionNumber;
-        $('#vernav' + tabNum + " select").append("<option value='" + version.id + "' data-tokens='" + vnum + "'> v " + version.versionNumber + "</option>");
-    };
+    //this.VersionCode_drpListItem = function (i, version) {
+    //    var vnum = version.versionNumber;
+    //    $('#vernav' + tabNum + " select").append("<option value='" + version.id + "' data-tokens='" + vnum + "'> v " + version.versionNumber + "</option>");
+    //};
 
     //this.VersionCode_success = function (data) {
     //    this.Current_obj = data;
@@ -708,7 +705,7 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
         this.SetValues();
         this.rel_arr.push(filter_dialog_refid);
         this.Rel_object = this.rel_arr.toString();
-        this.Current_obj.Sql = btoa(this.Code);
+        this.DataSourceObj.Sql = btoa(this.Code);
         var tagvalues = $('#tags').val();
         if (issave === true) {
             $.post("../Eb_ObjectController/SaveEbObject",

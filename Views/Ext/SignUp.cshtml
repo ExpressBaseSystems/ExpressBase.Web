@@ -6,7 +6,7 @@
 <script>
     $('document').ready(function () {
         $("#signUpFree").hide();
-       
+
         function onSubmit(token) {
             document.getElementById("signup_form").submit();
         }
@@ -89,10 +89,10 @@
             var text1 = $('#email').val();
             var DataCollection = { "email": $('#email').val() };
             $('#loader').show();
-            $.post('http://localhost:8000/unique', { "Colvalues": JSON.stringify(DataCollection) },             
+            $.post('https://expressbaseservicestack.azurewebsites.net/unique', { "Colvalues": JSON.stringify(DataCollection) },
                 function (result) {
                     if (!result) {
-                     
+
                         $('#email').css("border", "2px solid #008000");
                         $('#loader').hide();
 
@@ -100,15 +100,15 @@
                     else {
                         $('#email').css("border", "2px solid #dd2626");
                         $('#loader').hide();
-                        
+
 
                     }
-                });                      
+                });
         });
-     
+
         });
-   
-       
+
+
 </script>
 <section id="signup" style="margin-top:90px;">
     <div class="container">

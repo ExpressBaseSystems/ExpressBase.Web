@@ -1,4 +1,5 @@
-﻿using ExpressBase.Objects.ServiceStack_Artifacts;
+﻿using ExpressBase.Common.Extensions;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [AllowCrossSiteIFrame]  // for web forwarding with masking
         public IActionResult SignIn()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -68,6 +70,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [AllowCrossSiteIFrame]
         public IActionResult SignUp()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -268,11 +271,11 @@ namespace ExpressBase.Web.Controllers
                 {
                     string tenantid = ViewBag.cid;
                     var authClient = this.ServiceClient;
-                    authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+                    authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = req["uname"],
-                        Password = req["pass"],
+                        Password = (req["pass"] + req["uname"]).ToMD5Hash(),
                         Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", tenantid } },
                         //UseTokenCookie = true
                     });
@@ -324,10 +327,10 @@ namespace ExpressBase.Web.Controllers
                         }
                         else
                         {
-                            if (subdomain.Length == 2 && authResponse.User.HasSystemRole() && whichconsole == "dc")
+                            if (subdomain.Length == 3 && authResponse.User.HasSystemRole() && whichconsole == "dc")
                                 return RedirectToAction("DevConsole", "Dev");
 
-                            else if (subdomain.Length == 2 && whichconsole == "uc") // USER CONSOLE
+                            else if (subdomain.Length == 3 && whichconsole == "uc") // USER CONSOLE
                                 return RedirectToAction("UserDashboard", "TenantUser");
 
                             else if (authResponse.User.loginattempts <= 2) // TENANT CONSOLE

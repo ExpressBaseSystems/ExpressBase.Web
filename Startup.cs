@@ -119,6 +119,13 @@ namespace ExpressBase.Web2
 
             });
 
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Remove("X-Frame-Options");
+                context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM http://expressbase.com");
+                await next();
+            }); // for web forwarding with masking
+
 
         }
     }

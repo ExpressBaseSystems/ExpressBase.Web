@@ -12,8 +12,8 @@
         });
         $('.selectpicker').selectpicker('refresh');
         $.each(@Html.Raw(dvobj), function (i, obj) {
-            $('#timeline' + @tabNum).append(" <li class='timeline-item' id= 'stat" + i + "' > " +
-                "<div class='timeline-badge' id='timeline-badge" + i + "'><i class='glyphicon glyphicon-check'></i></div>" +
+            $('#timeline@(ViewBag.tabNum)').append("<li class='timeline-item' id= 'stat" + i + "_" + @(ViewBag.tabNum) + "' > " +
+                "<div class='timeline-badge' id='timeline-badge" + i + "_" + @(ViewBag.tabNum) + "'><i class='glyphicon glyphicon-check'></i></div>" +
                 "<div class='timeline-panel' style='min-height: 92px;'> " +
                     "<div class='timeline-heading col-md-10'> " +
                         "<div class='col-md-12'>" +
@@ -23,16 +23,16 @@
                             "</div> " +
                             "<small class='col-md-2 style='display:inline' > " + obj.CommitUname + "</small></p >" +
                         "</div>" +
-                        "<div class='timeline-body' id='timeline-body" + i + "'> " +
+                        "<div class='timeline-body' id='timeline-body" + i + "_" + @(ViewBag.tabNum) + "'> " +
                             "<p class='timeline-body-clickmore'>" + obj.ChangeLog + "</p>" +
                 "</div>" +
-                "<a class='primary pull-right more' style='position:absolute; bottom: 0; right: 0;' id='more" + i + "'>more</a>" +
+                "<a class='primary pull-right more' style='position:absolute; bottom: 0; right: 0;' id='more" + i + "_" + @(ViewBag.tabNum) + "'>more</a>" +
                     "</div>" +
 
                     "<div class='col-md-2'>" +
                         "<div> " +
                             "<img class='img-circle pull-right' src= '../static/dp_29_micro.jpg" + "'/>" +
-                          
+
                         "</div> " +
                     "</div> " +
                 "</div> " +
@@ -45,18 +45,18 @@
                 classname = "primary";
             if (obj.Status === "Live") {
                 classname = "success";
-                $('#stat' + i).addClass("livestat");
+                $('#stat' + i + "_" + @(ViewBag.tabNum)).addClass("livestat");
             }
             if (obj.Status === "Offline")
                 classname = "warning";
             if (obj.Status === "Obsolete")
                 classname = "danger";
-            $('#timeline-badge' + i).addClass(classname);
+            $('#timeline-badge' + i + "_" + @(ViewBag.tabNum)).addClass(classname);
 
-            $('#stat' + i + ' .more').on('click', function () {
-                var p_element = $('#stat' + i + ' #timeline-body' + i + ' p');
+            $('#stat' + i + "_" + @(ViewBag.tabNum) + ' .more').on('click', function () {
+                var p_element = $('#timeline-body' + i + "_" + @(ViewBag.tabNum) + ' p');
                 p_element.toggleClass("timeline-body-clickmore");
-                var more = $('#more' + i);
+                var more = $('#more' + i + "_" + @(ViewBag.tabNum));
                 if (more.text() === 'more')
                     more.text('less');
                 else
@@ -65,14 +65,14 @@
         });
     });
 
-    $('#confirm_stat_change' + tabNum).on("click", function () {
+    $('#confirm_stat_change@(ViewBag.tabNum)').on("click", function () {
         $.LoadingOverlay("show");
-        var _chlog = $('#StatChlog' + tabNum).val();
-        var _stat = $('#status_drpdwn' + tabNum + ' option:selected').val();
+        var _chlog = $('#StatChlog@(ViewBag.tabNum)').val();
+        var _stat = $('#status_drpdwn@(ViewBag.tabNum) option:selected').val();
 
         $.post('../CE/ChangeStatus', { _refid: '@ViewBag.Curr_refid', _changelog: _chlog, _status: _stat }, function () {
-            $('#vernav' + tabNum).empty();
-            $.post("../Eb_Object/GetLifeCycle", { _tabnum: @tabNum, cur_status: _stat, refid: '@ViewBag.Curr_refid' }, function (text) {
+            $('#vernav@(ViewBag.tabNum)').empty();
+            $.post("../Eb_Object/GetLifeCycle", { _tabnum: @ViewBag.tabNum, cur_status: _stat, refid: '@ViewBag.Curr_refid' }, function (text) {
                 $('#vernav' + tabNum).append(text);
                 $.LoadingOverlay("hide");
             });
@@ -82,7 +82,7 @@
 <div class='container'>
     <div class='row statwindow col-md-12' id="statwindow@(tabNum)">
         <ul class='timeline' id='timeline@(tabNum)'>
-            <li class='timeline-item' id='stat'>
+            <li class='timeline-item' id='stat@(tabNum)'>
                 <div class='timeline-badge' id='timeline-badge'>
                     <i class='glyphicon glyphicon-check'></i>
                 </div>

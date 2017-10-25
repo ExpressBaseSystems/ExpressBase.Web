@@ -44,7 +44,7 @@
             <button id="commit" type="submit" class="btn btn-default">Commit</button>
         </div>
 
-        <div id="form-buider-form" class="formB-box form-buider-form">
+        <div id="form-buider-form" eb-type="Form" tabindex="1"  class="formB-box form-buider-form">
             @Html.Raw(@ViewBag.html)
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
             @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
@@ -74,9 +74,9 @@
     if(objid){
         var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
         //$.each(editModeFormObj, funcion(i, obj) {  });
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
-        formBuilderObj.InitEditModeCtrls(editModeObj);
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
+        formBuilderObj.InitEditModeCtrls(JSON.parse(editModeObj));
     }
     else
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
 </script>

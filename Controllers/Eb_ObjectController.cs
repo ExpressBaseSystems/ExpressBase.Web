@@ -10,6 +10,9 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using System.Reflection;
+using DiffPlex.DiffBuilder;
+using DiffPlex;
+using DiffPlex.DiffBuilder.Model;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,6 +21,7 @@ namespace ExpressBase.Web.Controllers
     public class Eb_ObjectController : EbBaseNewController
     {
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+
         public IActionResult Index(string objid, int objtype)
         {
             //var req = this.HttpContext.Request.Form;
@@ -46,6 +50,8 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.ReadOnly = true;
                     var dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
                     ViewBag.dsObj = dsobj;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                     ViewBag.Workingcopy = element.Wc_All;
                 }
                 else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
@@ -53,13 +59,22 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.ReadOnly = false;
                     var dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
                     ViewBag.dsObj = dsobj;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
                     ViewBag.Workingcopy = element.Wc_All;
                 }
             }
             
 
+            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+            ViewBag.Meta = _jsResult.Meta;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+
             return View();
         }
+
         public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags)
         {
             string refid;
@@ -129,6 +144,7 @@ namespace ExpressBase.Web.Controllers
             }
             return refid;
         }
+
         public IActionResult GetLifeCycle(int _tabNum, string cur_status, string refid)
         {
             return ViewComponent("ObjectLifeCycle", new { _tabnum = _tabNum , _cur_status = cur_status , _refid  = refid });
@@ -138,7 +154,6 @@ namespace ExpressBase.Web.Controllers
         {
             return ViewComponent("VersionHistory", new {objid = objid, tabnum = tabNum });
         }
-
 
         [HttpPost]
         public string VersionCodes(string objid, int objtype)
@@ -153,11 +168,104 @@ namespace ExpressBase.Web.Controllers
             return EbSerializers.Json_Serialize(dsobj);
         }
 
+        [HttpPost]
+        public dynamic VersionCodesAsObj(string objid, int objtype)
+        {
+            EbDataSource dsobj = null;
+            var _EbObjectType = (EbObjectType)objtype;
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = objid });
+            var rlist = resultlist.Data;
+            foreach (var element in rlist)
+            {
+                if (_EbObjectType == EbObjectType.DataSource)
+                {
+                    var obj = new EbObjectWrapper();
+                    dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
+                    ViewBag.Code = dsobj.Sql;
+                    dsobj.Status = element.Status;
+                    dsobj.VersionNumber = element.VersionNumber;
+                }
+            }
+            return dsobj;
+        }
 
         [HttpPost]
         public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype)
         {
             return ViewComponent("CodeEditor", new {dsobj = _dsobj, tabnum = _tabnum, type = Objtype });
+        }
+
+        [HttpPost]
+        public IActionResult CallDifferVC(int _tabnum)
+        {
+            return ViewComponent("ObjectDiffer", new {tabnum = _tabnum });
+        }
+
+        public List<string> GetDiffer(string OldText, string NewText)
+        {
+            List<string> Diff = new List<string>();
+            var inlineBuilder = new SideBySideDiffBuilder(new Differ());
+
+            var diffmodel = inlineBuilder.BuildDiffModel(OldText, NewText);
+            Diff.Add(Differ(diffmodel.OldText));
+            Diff.Add(Differ(diffmodel.NewText));
+
+            return Diff;
+        }
+
+        private string Differ(DiffPaneModel text)
+        {
+            string spaceValue = "\u00B7";
+            string tabValue = "\u00B7\u00B7";
+            string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
+
+            foreach (var diffLine in text.Lines)
+            {  
+                html += "<tr>";
+                html += "<td class='lineNumber'>";
+                html += diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;";
+                html += "</td>";
+                html += "<td class='line " + diffLine.Type.ToString() + "Line'>";
+                html += "<span class='lineText'>";
+
+                if (diffLine.Type == ChangeType.Deleted || diffLine.Type == ChangeType.Inserted || diffLine.Type == ChangeType.Unchanged)
+                {
+                    html += diffLine.Text;//.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+                }
+                else if (diffLine.Type == ChangeType.Modified)
+                {
+                    foreach (var character in diffLine.SubPieces)
+                    {
+                        if (character.Type == ChangeType.Imaginary) continue;
+                        else
+                        {
+                            html += "<span class='" + character.Type.ToString() + "Character'>";
+                            html += character.Text;//.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());//.Replace(",", ",</br>"); ;
+                            html += "</span>";
+                        }
+                    }
+                }
+
+                html += "</span>";
+                html += "</td>";
+                html += "</tr>";
+            }
+
+            html += "</table></div>";  
+            
+            return html;
+        }
+
+        public ActionResult Diff()
+        {
+            return View();
+        }
+
+        public List<EbObjectWrapper> GetVersions(string objid)
+        {
+            var resultlist = this.ServiceClient.Get<EbObjectAllVersionsResponse>(new EbObjectAllVersionsRequest { RefId = objid });
+            var rlist = resultlist.Data;
+            return rlist;
         }
 
     }

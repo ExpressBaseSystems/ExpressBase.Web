@@ -11,7 +11,9 @@
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('#ver_his').off("click").on("click", this.VerHistory.bind(this));
         $('#compare').off('click').on('click', this.Compare.bind(this));
-        $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
+        $('#save').off("click").on("click", this.Save.bind(this, false));
+        $('#commit').off("click").on("click", this.Commit.bind(this, false));
+        //  $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
     }
 
     this.LoadStatusPage = function () {
@@ -20,7 +22,7 @@
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> status " + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
-        $.post("../Eb_Object/GetLifeCycle", { _tabNum: this.tabNum, cur_status: this.Current_obj.Status, refid: this.ver_Refid }, this.getLifecyleInner.bind(this) );
+        $.post("../Eb_Object/GetLifeCycle", { _tabNum: this.tabNum, cur_status: this.Current_obj.Status, refid: this.ver_Refid }, this.getLifecyleInner.bind(this));
     };
 
     this.getLifecyleInner = function (text) {
@@ -63,12 +65,7 @@
         $("#vernav" + this.tabNum + " .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
         $.LoadingOverlay("hide");
     };
-
-    this.SetValues = function () {
-        this.Code = window["editor"+this.tabNum].getValue();
-        this.changeLog = $('#obj_changelog').val();
-    }
-
+    
     this.OpenPrevVer = function (e) {
         $.LoadingOverlay("show");
         this.ver_Refid = $(e.target).attr("data-id");
@@ -96,10 +93,10 @@
     this.Compare = function () {
 
         this.tabNum++;
-        $.post('../Eb_Object/CallDifferVC', { _tabnum: this.tabNum})
+        $.post('../Eb_Object/CallDifferVC', { _tabnum: this.tabNum })
             .done(this.Load_differ.bind(this));
     }
-    this.Load_differ =function(data){
+    this.Load_differ = function (data) {
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
@@ -123,7 +120,6 @@
             $.LoadingOverlay("show");
             var v1 = this.Current_obj.versionNumber;
             var v2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').attr("data-tokens");
-            this.SetValues();
             this.getSecondVersionCode(verRefid2, v1, v2, this.Code);
 
         }
@@ -164,7 +160,6 @@
         data_1 = JSON.stringify(JSON.parse(data_1), null, 2);
         data_2 = JSON.stringify(JSON.parse(data_2), null, 2);
         var getNav = $("#versionNav li.active a").attr("href");
-        this.SetValues();
         if (selected_ver_number > curr_ver) {
             $.post("../Eb_Object/GetDiffer", {
                 NewText: data_1, OldText: data_2
@@ -204,5 +199,27 @@
         $.LoadingOverlay("hide");
     };
 
+    this.Save = function () {
+        var tagvalues = $('#tags').val();
+        $.post("../Eb_ObjectController/SaveEbObject",
+            {
+                "Id": this.ver_Refid,
+                "json": JSON.stringify(this.Current_obj),
+                "rel_obj": "",
+                "tags": tagvalues
+            });
+    };
+
+    this.Commit = function () {
+        var tagvalues = $('#tags').val();
+        var changeLog = $('#obj_changelog').val();
+        $.post("../Eb_ObjectController/CommitEbObject", {
+            "id": this.ver_Refid,
+            "changeLog": changeLog,
+            "json": JSON.stringify(this.Current_obj),
+            "rel_obj": "",
+            "tags": tagvalues
+        });
+    };
     this.init();
 };

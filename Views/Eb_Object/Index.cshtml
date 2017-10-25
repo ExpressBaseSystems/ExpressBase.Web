@@ -10,10 +10,14 @@
 @Html.Raw(ViewBag.JsObjects);
 @Html.Raw(ViewBag.EbObjectTypes);
 
-var commonObj = null;
-$(document).ready(function () {
-    commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType);
-});
+    $(document).ready(function () {
+        commonObj.init();
+    });
+
+    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType);
+    $("#layout_div").data("commonObj", commonObj);
+    alert("top:" + JSON.stringify(commonObj))
+
 </script>
 
 @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags })
@@ -25,7 +29,7 @@ $(document).ready(function () {
     </ul>
     <div class="tab-content" id="versionTab">
         <div id="vernav0" class="tab-pane fade in active code_edit" data-id="new">
-            @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj , tabnum = 0, type = ViewBag.ObjType })
+            @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj , tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid })
         </div>
     </div>
 </div>

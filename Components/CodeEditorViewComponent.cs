@@ -11,12 +11,12 @@ namespace ExpressBase.Web.Components
 {
     public class CodeEditorViewComponent: ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type)
+        public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid)
         {
             ViewBag.dsObj = dsobj;
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;
-
+            ViewBag.Refid = refid;
             return View();
         }
     }

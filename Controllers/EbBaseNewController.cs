@@ -17,6 +17,16 @@ using System.Net.Http;
 
 namespace ExpressBase.Web.Controllers
 {
+    public class AllowCrossSiteIFrameAttribute : ActionFilterAttribute
+    {
+        public override void OnResultExecuted(ResultExecutedContext filterContext)
+        {
+            filterContext.HttpContext.Response.Headers.Remove("X-Frame-Options");
+            filterContext.HttpContext.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM http://expressbase.com/");
+            base.OnResultExecuted(filterContext);
+        }
+    }  // for web forwarding with masking
+
     public class EbBaseNewController : Controller
     {
         protected JsonServiceClient ServiceClient { get; set; }

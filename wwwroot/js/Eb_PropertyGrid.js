@@ -89,12 +89,13 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         }
         else if (type === 16) {  //  If string editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
-                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+                + '<button id="pgCXbtn_' + elemId +'" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             this.imgSlctrs[elemId] = new imageUploader({
                 Container: "mb_" + this.wraperId,
                 Controller: this.wc,
                 TenantId: this.cid,
-                IsTag: true              
+                IsTag: true,
+                toggleId: "pgCXbtn_" + elemId      
             });
         }
         else if (type === 15) {  //  If expandable

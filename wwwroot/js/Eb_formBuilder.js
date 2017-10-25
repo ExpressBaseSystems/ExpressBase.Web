@@ -4,6 +4,7 @@
     this.rootContainerObj = null;
     this.formid = formid;
     this.$propGrid = $("#" + propGridId);
+    this.$form = $("#" + formid);
 
     //if (builderType === 1)
     //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
@@ -21,6 +22,8 @@
     this.PGobj = new Eb_PropertyGrid("pgWraper");
     this.curControl = null;
     this.drake = null;
+
+    this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
 
     // need to change
     this.controlCounters = {
@@ -45,12 +48,11 @@
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
-        $.post("../Dev/SaveFormBuilder", {
-            "Id": null,
-            "FilterDialogJson": JSON.stringify(this.rootContainerObj),
-            "Name": $('#save_txtBox').val(),
-            "Description": "",
-            "Obj_type": Eb_objType
+        $.post("../Eb_Object/CommitEbObject", {
+            "_refid": this._refid,
+            "_json": JSON.stringify(this.rootContainerObj),
+            "_rel_obj": "_rel_obj1",
+            "_tags": "tag1"
         }, this.Save_Success.bind(this));
     };
     this.commit = function () {
@@ -59,12 +61,11 @@
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
-        $.post("../Dev/CommitFormBuilder", {
-            "Id": null,
-            "FilterDialogJson": JSON.stringify(this.rootContainerObj),
-            "Name": $('#save_txtBox').val(),
-            "Description": "",
-            "Obj_type": Eb_objType
+        $.post("../Eb_Object/SaveEbObject", {
+            "_refid": this._refid,
+            "_json": JSON.stringify(this.rootContainerObj),
+            "_rel_obj": "aaa",
+            "_tags":"aaaa"
         }, this.Save_Success.bind(this));
     };
     this.Save_Success = function (result) {
@@ -78,10 +79,10 @@
     };
 
     this.CreatePG = function (control) {
-        console.log("CreatePG called for:" + control.Name);
-        this.$propGrid.css("visibility", "visible");
-        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
-        $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
+            console.log("CreatePG called for:" + control.Name);
+            this.$propGrid.css("visibility", "visible");
+            this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
+            $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
     };
 
     this.saveObj = function () {
@@ -275,7 +276,7 @@
     this.InitEditModeCtrls = function (editModeObj) {
         $(".Eb-ctrlContainer").each(function (i, el) { this.initCtrl(el); }.bind(this));
         setTimeout(function () {
-            Proc(JSON.parse(editModeObj), this.rootContainerObj);
+            Proc(editModeObj, this.rootContainerObj);
         }.bind(this), 1000);
     };
 

@@ -31,7 +31,7 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $(".selectpicker").selectpicker();
-        $('#compare').off('click').on('click', this.Compare.bind(this));
+       // $('#compare').off('click').on('click', this.Compare.bind(this));
         //$('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         //$('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
@@ -160,55 +160,55 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
         $('#vernav' + tabNum + " select").append("<option value='" + version.id + "' data-tokens='" + vnum + "'> v " + version.versionNumber + "</option>");
     };
 
-    this.VersionCode_success = function (data) {
-        this.Current_obj = data;
-        var navitem = "<li><a data-toggle='tab' class='cetab' href='#vernav" + tabNum + "' data-verNum='" + this.Current_obj.versionNumber + "'>v." + this.Current_obj.versionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
-        this.AddVerNavTab(navitem, tabitem);
+    //this.VersionCode_success = function (data) {
+    //    this.Current_obj = data;
+    //    var navitem = "<li><a data-toggle='tab' class='cetab' href='#vernav" + tabNum + "' data-verNum='" + this.Current_obj.versionNumber + "'>v." + this.Current_obj.versionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+    //    var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
+    //    this.AddVerNavTab(navitem, tabitem);
 
-        $('#vernav' + tabNum).append(
-            "<div id='paramdiv" + tabNum + "' class='col-md-2' style='z-index:-1; padding:0px; height:100px; display:none'>" +
-               "<h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6> "+
-                "<button class='head-btn pull-right' id='close_paramdiv'><i class='fa fa-times' aria-hidden='true'></i></button>"+
-            "</div>"+
-            " <div class='col-md-10' id='codewindow" + tabNum + "' style='margin:0;padding: 0;'> " +
-            "<textarea id='code" + tabNum + "' name='code' class='code'>" + atob(this.Current_obj.sql) + "</textarea>" +
-            "</div>" +
-            "<div class='col-md-2'>" +
-            " <div id='dspropgrid" + tabNum + "' class='pull-right' style='padding:0px'></div>" +
-            "</div>");
+    //    $('#vernav' + tabNum).append(
+    //        "<div id='paramdiv" + tabNum + "' class='col-md-2' style='z-index:-1; padding:0px; height:100px; display:none'>" +
+    //           "<h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6> "+
+    //            "<button class='head-btn pull-right' id='close_paramdiv'><i class='fa fa-times' aria-hidden='true'></i></button>"+
+    //        "</div>"+
+    //        " <div class='col-md-10' id='codewindow" + tabNum + "' style='margin:0;padding: 0;'> " +
+    //        "<textarea id='code" + tabNum + "' name='code' class='code'>" + atob(this.Current_obj.sql) + "</textarea>" +
+    //        "</div>" +
+    //        "<div class='col-md-2'>" +
+    //        " <div id='dspropgrid" + tabNum + "' class='pull-right' style='padding:0px'></div>" +
+    //        "</div>");
 
-        this.VersionCollection["#vernav" + tabNum] = this.Current_obj;
-        this.PropGCollection["#vernav" + tabNum] = new Eb_PropertyGrid("dspropgrid" + tabNum);
-        this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
+    //    this.VersionCollection["#vernav" + tabNum] = this.Current_obj;
+    //    this.PropGCollection["#vernav" + tabNum] = new Eb_PropertyGrid("dspropgrid" + tabNum);
+    //    this.PropGCollection["#vernav" + tabNum].setObject(this.Current_obj, AllMetas["EbDataSource"]);
 
-        var _readonly = this.Current_obj.versionNumber.slice(-1);
-        if (_readonly === "w")
-            _readonly = false;
-        else
-            _readonly = true;
-        window.editor1 = CodeMirror.fromTextArea(document.getElementById("code" + tabNum), {
-            mode: "text/x-sql",
-            lineNumbers: true,
-            lineWrapping: true,
-            autoRefresh: true,
-            readOnly: _readonly,
-            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-        var getNav = $("#versionNav li.active a").attr("href");
-        $(".selectpicker").selectpicker();
-        $.LoadingOverlay("hide");
-        setTimeout(function () {
-            window.editor1.refresh();
-        }, 500);
-        $('.selectpicker').selectpicker({
-            size: 4
-        });
+    //    var _readonly = this.Current_obj.versionNumber.slice(-1);
+    //    if (_readonly === "w")
+    //        _readonly = false;
+    //    else
+    //        _readonly = true;
+    //    window.editor1 = CodeMirror.fromTextArea(document.getElementById("code" + tabNum), {
+    //        mode: "text/x-sql",
+    //        lineNumbers: true,
+    //        lineWrapping: true,
+    //        autoRefresh: true,
+    //        readOnly: _readonly,
+    //        foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+    //        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    //    });
+    //    var getNav = $("#versionNav li.active a").attr("href");
+    //    $(".selectpicker").selectpicker();
+    //    $.LoadingOverlay("hide");
+    //    setTimeout(function () {
+    //        window.editor1.refresh();
+    //    }, 500);
+    //    $('.selectpicker').selectpicker({
+    //        size: 4
+    //    });
 
-        $('.selectpicker').selectpicker('refresh');
-        this.Init();
-    };
+    //    $('.selectpicker').selectpicker('refresh');
+    //    this.Init();
+    //};
 
     this.Execute = function () {
         if (!$('#execute' + tabNum).hasClass('collapsed')) {
@@ -250,16 +250,16 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
         alert("Test");
     }
 
-    this.LoadStatusPage = function () {
-        $.LoadingOverlay("show");
-        tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> status " + this.Current_obj.versionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
-        this.AddVerNavTab(navitem, tabitem);
-        $.post("../Eb_Object/GetLifeCycle", { _tabnum: tabNum, cur_status: this.Current_obj.status,refid : this.ver_Refid }, function (text) {
-            $('#vernav' + tabNum).append(text);
-            $.LoadingOverlay("hide");
-        });
+    //this.LoadStatusPage = function () {
+    //    $.LoadingOverlay("show");
+    //    tabNum++;
+    //    var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> status " + this.Current_obj.versionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+    //    var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
+    //    this.AddVerNavTab(navitem, tabitem);
+    //    $.post("../Eb_Object/GetLifeCycle", { _tabnum: tabNum, cur_status: this.Current_obj.status,refid : this.ver_Refid }, function (text) {
+    //        $('#vernav' + tabNum).append(text);
+    //        $.LoadingOverlay("hide");
+    //    });
     //    var getNav = $("#versionNav li.active a").attr("href");
     //    $('#vernav' + tabNum).append("<div class=' well col-md-12'>" +           
     //        "</div>" +
@@ -367,7 +367,7 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
     //        //$(window).scrollTop(scrollPos);
     //    });
     //    $(getNav + ' #confirm_stat_change').off("click").on("click", this.ChangeStatus.bind(this));
-    //}
+  //  }
 
     //this.ChangeStatus = function () {
     //    $.LoadingOverlay("show");
@@ -401,68 +401,67 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
     //            $('#loader_fd' + tabNum).hide();
     //        })
         
-    };
+    //};
 
-    this.Compare = function () {
-        tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
-        this.AddVerNavTab(navitem, tabitem);
-        $('#vernav' + tabNum).append("<div>" +
-            "<div class='well'>" +
-            " <div>" +
-            " <div class='col-md-4 col-md-offset-3'>" +
-            "<div class='verlist input-group col-md-6' style='display:inline-block'>" +
-            "<select id='selected_Ver_1" + tabNum + "' class='selectpicker' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
-            "</select>" +
-            "</div>" +
-            "<div class='verlist input-group col-md-6' style='display:inline-block'>" +
-            "<select id='selected_Ver_2" + tabNum + "' class='selectpicker' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
-            "</select>" +
-            "</div>" +
-            "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd" + tabNum + "' style='display:none;color:dodgerblue;'></i>" +
-            "</div>" +
-            " </div>" +
-            "<button id='compare_inner" + tabNum + "' class='compare_inner btn btn-primary'>Comapre</button>" +
-            "</div>" +
-            "<div id='compare_result" + tabNum + "'></div>" +
-            " </div>");
-        $('#compare_inner' + tabNum).off("click").on("click", this.Differ.bind(this));
-        this.Load_version_list();
-        $('.selectpicker').selectpicker({
-            size: 4
-        });
+    //this.Compare = function () {
+    //    tabNum++;
+    //    var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+    //    var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
+    //    this.AddVerNavTab(navitem, tabitem);
+    //    $('#vernav' + tabNum).append("<div>" +
+    //        "<div class='well'>" +
+    //        " <div>" +
+    //        " <div class='col-md-4 col-md-offset-3'>" +
+    //        "<div class='verlist input-group col-md-6' style='display:inline-block'>" +
+    //        "<select id='selected_Ver_1" + tabNum + "' class='selectpicker' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
+    //        "</select>" +
+    //        "</div>" +
+    //        "<div class='verlist input-group col-md-6' style='display:inline-block'>" +
+    //        "<select id='selected_Ver_2" + tabNum + "' class='selectpicker' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>" +
+    //        "</select>" +
+    //        "</div>" +
+    //        "<i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd" + tabNum + "' style='display:none;color:dodgerblue;'></i>" +
+    //        "</div>" +
+    //        " </div>" +
+    //        "<button id='compare_inner" + tabNum + "' class='compare_inner btn btn-primary'>Comapre</button>" +
+    //        "</div>" +
+    //        "<div id='compare_result" + tabNum + "'></div>" +
+    //        " </div>");
+    //    $('#compare_inner' + tabNum).off("click").on("click", this.Differ.bind(this));
+    //    this.Load_version_list();
+    //    $('.selectpicker').selectpicker({
+    //        size: 4
+    //    });
 
-    };
+    //};
 
-    this.Differ = function () {
-        var verRefid1 = $('#selected_Ver_1' + tabNum + ' option:selected').val();
-        var verRefid2 = $('#selected_Ver_2' + tabNum + ' option:selected').val();
-        if (verRefid2 === "Select Version") {
-            alert("Please Select A Version");
-            $.LoadingOverlay("hide");
-        }
-        else if (verRefid1 === "Current") {
-            $.LoadingOverlay("show");
-            var v1 = this.Current_obj.versionNumber;
-            var v2 = $('#selected_Ver_2' + tabNum + ' option:selected').attr("data-tokens");
-            this.SetValues();
-            this.getSecondVersionCode(verRefid2, v1, v2, this.Code);
+    //this.Differ = function () {
+    //    var verRefid1 = $('#selected_Ver_1' + tabNum + ' option:selected').val();
+    //    var verRefid2 = $('#selected_Ver_2' + tabNum + ' option:selected').val();
+    //    if (verRefid2 === "Select Version") {
+    //        alert("Please Select A Version");
+    //        $.LoadingOverlay("hide");
+    //    }
+    //    else if (verRefid1 === "Current") {
+    //        $.LoadingOverlay("show");
+    //        var v1 = this.Current_obj.versionNumber;
+    //        var v2 = $('#selected_Ver_2' + tabNum + ' option:selected').attr("data-tokens");
+    //        this.SetValues();
+    //        this.getSecondVersionCode(verRefid2, v1, v2, this.Code);
 
-        }
-        else {
-            $.LoadingOverlay("show");
-            var data_1;
-            v1 = $('#selected_Ver_1' + tabNum + ' option:selected').attr("data-tokens");
-            v2 = $('#selected_Ver_2' + tabNum + ' option:selected').attr("data-tokens");
-            $.post('../CE/VersionCodes', { "objid": verRefid1, "objtype": this.ObjectType }, this.getSecondVersionCode.bind(this, verRefid2, v1, v2));
-        }
-        //  }
-    }
+    //    }
+    //    else {
+    //        $.LoadingOverlay("show");
+    //        var data_1;
+    //        v1 = $('#selected_Ver_1' + tabNum + ' option:selected').attr("data-tokens");
+    //        v2 = $('#selected_Ver_2' + tabNum + ' option:selected').attr("data-tokens");
+    //        $.post('../CE/VersionCodes', { "objid": verRefid1, "objtype": this.ObjectType }, this.getSecondVersionCode.bind(this, verRefid2, v1, v2));
+    //    }
+    //}
 
-    this.getSecondVersionCode = function (verRefid2, selected_ver_number_1, selected_ver_number_2, result) {
-        $.post('../CE/VersionCodes', { "objid": verRefid2, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, result, selected_ver_number_1, selected_ver_number_2));
-    }
+    //this.getSecondVersionCode = function (verRefid2, selected_ver_number_1, selected_ver_number_2, result) {
+    //    $.post('../CE/VersionCodes', { "objid": verRefid2, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, result, selected_ver_number_1, selected_ver_number_2));
+    //}
 
     this.Init();
 
@@ -635,48 +634,48 @@ var DataSource = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
 
     $("#run").off("click").on("click", this.RunDs.bind(this));
 
-    this.CallDiffer = function (data_1, selected_ver_number, curr_ver, data_2) {
-        var getNav = $("#versionNav li.active a").attr("href");
-        this.SetValues();
-        data_2 = atob(data_2.sql);
-        if (selected_ver_number > curr_ver) {
-            $.post("../CE/GetDiffer", {
-                NewText: data_1, OldText: data_2
-            })
-                .done(this.showDiff.bind(this, selected_ver_number, curr_ver));
-        }
-        else {
-            $.post("../CE/GetDiffer", {
-                NewText: data_2, OldText: data_1
-            })
-                .done(this.showDiff.bind(this, curr_ver, selected_ver_number));
-        }
-    };
+    //this.CallDiffer = function (data_1, selected_ver_number, curr_ver, data_2) {
+    //    var getNav = $("#versionNav li.active a").attr("href");
+    //    this.SetValues();
+    //    data_2 = atob(data_2.sql);
+    //    if (selected_ver_number > curr_ver) {
+    //        $.post("../CE/GetDiffer", {
+    //            NewText: data_1, OldText: data_2
+    //        })
+    //            .done(this.showDiff.bind(this, selected_ver_number, curr_ver));
+    //    }
+    //    else {
+    //        $.post("../CE/GetDiffer", {
+    //            NewText: data_2, OldText: data_1
+    //        })
+    //            .done(this.showDiff.bind(this, curr_ver, selected_ver_number));
+    //    }
+    //};
 
-    this.showDiff = function (new_ver_num, old_ver_num, data) {
-        var getNav = $("#versionNav li.active a").attr("href");
+    //this.showDiff = function (new_ver_num, old_ver_num, data) {
+    //    var getNav = $("#versionNav li.active a").attr("href");
 
-        $('#versionNav li.active a').text().replace('compare', "v." + old_ver_num + " v/s v." + new_ver_num);
+    //    $('#versionNav li.active a').text().replace('compare', "v." + old_ver_num + " v/s v." + new_ver_num);
 
-        $('#compare_result' + tabNum).empty();
-        $('#compare_result' + tabNum).append("<div id='oldtext" + tabNum + "'class='leftPane'>" +
-            "</div>" +
-            "  <div id='newtext" + tabNum + "' class='rightPane'>" +
-            "</div>");
-        $('#oldtext' + tabNum).html("<div class='diffHeader'>v." + old_ver_num + "</div>" + data[0]);
-        $('#newtext' + tabNum).html("<div class='diffHeader'>v." + new_ver_num + "</div>" + data[1]);
-        $('.leftPane').scroll(function () {
-            $('.rightPane').scrollTop($(this).scrollTop());
-            $('.rightPane').scrollLeft($(this).scrollLeft());
-        });
-        $('.rightPane').scroll(function () {
-            $('.leftPane').scrollTop($(this).scrollTop());
-            $('.leftPane').scrollLeft($(this).scrollLeft());
-        });
-        var scrollPos = $('#compare_result' + tabNum).offset().top;
-        $(window).scrollTop(scrollPos);
-        $.LoadingOverlay("hide");
-    };
+    //    $('#compare_result' + tabNum).empty();
+    //    $('#compare_result' + tabNum).append("<div id='oldtext" + tabNum + "'class='leftPane'>" +
+    //        "</div>" +
+    //        "  <div id='newtext" + tabNum + "' class='rightPane'>" +
+    //        "</div>");
+    //    $('#oldtext' + tabNum).html("<div class='diffHeader'>v." + old_ver_num + "</div>" + data[0]);
+    //    $('#newtext' + tabNum).html("<div class='diffHeader'>v." + new_ver_num + "</div>" + data[1]);
+    //    $('.leftPane').scroll(function () {
+    //        $('.rightPane').scrollTop($(this).scrollTop());
+    //        $('.rightPane').scrollLeft($(this).scrollLeft());
+    //    });
+    //    $('.rightPane').scroll(function () {
+    //        $('.leftPane').scrollTop($(this).scrollTop());
+    //        $('.leftPane').scrollLeft($(this).scrollLeft());
+    //    });
+    //    var scrollPos = $('#compare_result' + tabNum).offset().top;
+    //    $(window).scrollTop(scrollPos);
+    //    $.LoadingOverlay("hide");
+    //};
 
     this.SetSqlFnName = function () {
         var result = this.Code.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);

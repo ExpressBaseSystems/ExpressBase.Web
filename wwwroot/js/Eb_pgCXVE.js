@@ -71,7 +71,7 @@
             }
 
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
-            this.setColTiles();
+            this.setColTiles(true);
         }
         else if (this.editor > 7 && this.editor < 11) {
             if (this.editor === 8)
@@ -314,7 +314,7 @@
         }
     };
 
-    this.setColTiles = function () {
+    this.setColTiles = function (f) {
         var options = "";
         var SubTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].options;
         $("#" + this.CEctrlsContId).empty();
@@ -335,6 +335,7 @@
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
         $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn);
+        if (f) setTimeout(function () { $("#" + this.CEctrlsContId + " .colTile:eq(0)").click(); }.bind(this), 451);
     };
 
     this.colTileCloseFn = function (e) {

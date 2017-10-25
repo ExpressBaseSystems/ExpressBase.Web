@@ -267,6 +267,15 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data;
             return rlist;
         }
+        public string ChangeStatus(string _refid, string _changelog, string _status)
+        {
+            var ds = new EbObjectChangeStatusRequest();
+            ds.RefId = _refid;
+            ds.Status = (ObjectLifeCycleStatus)Enum.Parse(typeof(ObjectLifeCycleStatus), _status);
+            ds.ChangeLog = _changelog;
+            var res = this.ServiceClient.Post<EbObjectChangeStatusResponse>(ds);
+            return "success";
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using ExpressBase.Common;
+﻿    using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
@@ -199,7 +199,9 @@ namespace ExpressBase.Web.Controllers
         public List<FileMeta> FindFilesByTags(int i, string tags, string bucketname)
         {
             FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
-            tags = (string.IsNullOrEmpty(tags)) ? string.Empty : tags;
+            //tags = (string.IsNullOrEmpty(tags)) ? string.Empty : tags;
+            if (string.IsNullOrEmpty(tags))
+                return null;
             findFilesByTagRequest.Tags = new List<string>(tags.Split(','));
 
             List<FileMeta> FileInfoList = new List<FileMeta>();

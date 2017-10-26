@@ -55,11 +55,11 @@
             uploadAsync: true,
             uploadExtraData: this.uploadtag.bind(this)
         }).on('fileuploaded', this.fileUploadSuccess.bind(this))
-            .on('fileloaded', this.addtagButton.bind(this))
-            .on('fileclear', function (event) {
+          .on('fileloaded', this.addtagButton.bind(this))
+          .on('fileclear', function (event) {
                 $("#" + this.ContainerId + "tag-section").empty();
                 $('#' + this.ContainerId + 'obj-id').attr('value', " ");
-            });
+          });
         $(".file-drop-zone").css({ "height": '280px', "overflow-y": "auto" });
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
@@ -68,7 +68,7 @@
     this.fileUploadSuccess = function (event, data, previewId, index) {
         $("#" + this.ContainerId + "sub-upload").show();
         var objId = data.response.objId;
-        $('#' + this.ContainerId + 'obj-id').attr('value', "http://" + this.TenantId + ".localhost:5000/static/images/" + objId + ".jpg");
+        $('#' + this.ContainerId + 'obj-id').attr('value', "http://" + this.TenantId + ".localhost:5000/static/" + objId + ".jpg");
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
         $("#" + this.ContainerId + "sub-upload").on('click', this.getId.bind(this, objId));
@@ -100,7 +100,8 @@
 
     this.tagimageOnClick = function () {
         $("#" + this.ContainerId + "tag-section").empty();
-        $("#" + this.ContainerId + "tag-section").append("<div class='form-group'><div style='text-align:left;'>Tags(" + this.filename + ")</div></div><div class='form-group'>"
+        $("#" + this.ContainerId + "tag-section").append("<div class='form-group'><div style='text-align:left;'>Tags(" + this.filename + ")"
+            + "</div></div><div class='form-group'>"
             + "<input type= 'text' style='width:100%' data-role='tagsinput' id= '" + this.ContainerId + "tagval' value='' class='form-control'></div>");
         $("#" + this.ContainerId + "tagval").tagsinput('refresh');
     };//tag btn onclick

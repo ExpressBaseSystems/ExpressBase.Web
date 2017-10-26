@@ -98,7 +98,7 @@ namespace ExpressBase.Web.Controllers
             string Id = string.Empty;
             string url = string.Empty;
 
-            tags = String.IsNullOrEmpty(tags) ? "UnniTest,PGSQL,FilterSearch,UploadImageAsync" : tags;
+            //tags = String.IsNullOrEmpty(tags) ? "UnniTest,PGSQL,FilterSearch,UploadImageAsync" : tags;
             try
             {
                 var req = this.HttpContext.Request.Form;
@@ -114,7 +114,7 @@ namespace ExpressBase.Web.Controllers
 
                 foreach (var formFile in req.Files)
                 {
-                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split('.')[1]))
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split('.')[1].ToLower()))
                     {
                         byte[] myFileContent;
 

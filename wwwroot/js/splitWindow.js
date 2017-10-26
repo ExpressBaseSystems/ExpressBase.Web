@@ -54,7 +54,6 @@
         $("#" + this.parent_div).append("<div class='sub-windows no-padd col-md-12' id= 'sub_window_dv" + id + "' tabindex= '1' eb- type = " + type + "> "
                
             + "<div class='col-md-2 padd-2 fd' id= 'sub_windows_sidediv_dv" + id + "' style= 'display:block'>"
-                    //+ "<button class='close' type='button' style='float:right;font-size: 15px;' >x</button>"
                     + "</div>"
                     + "<div class='col-md-8 padd-2' id='content_dv"+id+"'>"
                     + "</div>"

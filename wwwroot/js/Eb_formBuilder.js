@@ -1,9 +1,12 @@
-﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType) {
+﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid) {
+    this.wc = wc;
+    this.cid = cid;
     this.Name = formid;
     this.toolBoxid = toolBoxid;
     this.rootContainerObj = null;
     this.formid = formid;
     this.$propGrid = $("#" + propGridId);
+    this.$form = $("#" + formid);
 
     //if (builderType === 1)
     //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
@@ -18,9 +21,11 @@
     //else if (builderType === 3)
     //    this.rootContainerObj = new EbObjects.ReportObj(formid);
 
-    this.PGobj = new Eb_PropertyGrid("pgWraper");
+    this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
     this.curControl = null;
     this.drake = null;
+
+    this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
 
     // need to change
     this.controlCounters = {
@@ -30,7 +35,9 @@
         ButtonCounter: 0,
         TableLayoutCounter: 0,
         TextBoxCounter: 0,
-        TableTdCounter: 0
+        TableTdCounter: 0,
+        RadioButtonCounter: 0,
+        RadioGroupCounter: 0
     };
     this.currentProperty = null;
     this.CurRowCount = 2;
@@ -43,12 +50,11 @@
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
-        $.post("../Dev/SaveFormBuilder", {
-            "Id": null,
-            "FilterDialogJson": JSON.stringify(this.rootContainerObj),
-            "Name": $('#save_txtBox').val(),
-            "Description": "",
-            "Obj_type": Eb_objType
+        $.post("../Eb_Object/CommitEbObject", {
+            "_refid": this._refid,
+            "_json": JSON.stringify(this.rootContainerObj),
+            "_rel_obj": "_rel_obj1",
+            "_tags": "tag1"
         }, this.Save_Success.bind(this));
     };
     this.commit = function () {
@@ -57,12 +63,11 @@
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
-        $.post("../Dev/CommitFormBuilder", {
-            "Id": null,
-            "FilterDialogJson": JSON.stringify(this.rootContainerObj),
-            "Name": $('#save_txtBox').val(),
-            "Description": "",
-            "Obj_type": Eb_objType
+        $.post("../Eb_Object/SaveEbObject", {
+            "_refid": this._refid,
+            "_json": JSON.stringify(this.rootContainerObj),
+            "_rel_obj": "aaa",
+            "_tags": "aaaa"
         }, this.Save_Success.bind(this));
     };
     this.Save_Success = function (result) {
@@ -264,7 +269,7 @@
         var id = type + (this.controlCounters[type + "Counter"])++;
         $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
         $ControlTile.attr("eb-type", type).attr("id", id);
-        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test
+        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test///////////////
         $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
         $EbCtrl.wrap($ControlTile);
         $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
@@ -273,7 +278,7 @@
     this.InitEditModeCtrls = function (editModeObj) {
         $(".Eb-ctrlContainer").each(function (i, el) { this.initCtrl(el); }.bind(this));
         setTimeout(function () {
-            Proc(JSON.parse(editModeObj), this.rootContainerObj);
+            Proc(editModeObj, this.rootContainerObj);
         }.bind(this), 1000);
     };
 

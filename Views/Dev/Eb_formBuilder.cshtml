@@ -44,7 +44,7 @@
             <button id="commit" type="submit" class="btn btn-default">Commit</button>
         </div>
 
-        <div id="form-buider-form" class="formB-box form-buider-form">
+        <div id="form-buider-form" eb-type="Form" tabindex="1"  class="formB-box form-buider-form">
             @Html.Raw(@ViewBag.html)
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
             @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
@@ -74,61 +74,9 @@
     if(objid){
         var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
         //$.each(editModeFormObj, funcion(i, obj) {  });
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
-        formBuilderObj.InitEditModeCtrls(editModeObj);
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
+        formBuilderObj.InitEditModeCtrls(JSON.parse(editModeObj));
     }
     else
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt);
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
 </script>
-
-
-<style>
-    /*overridding*/
-
-
-
-    .property-grid-cont .sp-preview {
-        width: calc(100% - 15px) !important;
-        height: 15px;
-    }
-
-    .property-grid-cont .sp-replacer {
-        width: 100% !important;
-        padding: 2px;
-    }
-
-    .form-buider-form .btn {
-        padding: 3px 12px !important;
-        width: 100%;
-    }
-
-    .form-buider-form table td {
-        border: 1px dashed #cccccc;
-        padding: 1px;
-        vertical-align: initial;
-    }
-
-    .moveBtn {
-        font-size: 10px;
-        vertical-align: top;
-        margin-left: 6px;
-        margin-top: 3px;
-        opacity: .9;
-    }
-
-        .moveBtn:hover, .moveBtn:focus {
-            color: #fff !important;
-            background-color: black;
-            opacity: 1;
-        }
-
-    .close {
-        margin-top: -3px;
-        height: 17px;
-    }
-
-        .close:hover, .close:focus {
-            color: #f00 !important;
-            opacity: .6 !important;
-        }
-</style>

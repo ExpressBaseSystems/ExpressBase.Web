@@ -61,7 +61,10 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         EbImgCounter: 0,
         EbDateTimeCounter: 0,
         EbPageXYCounter:0,
-        EbPageNoCounter: 0       
+        EbPageNoCounter: 0,
+        EbTextCounter: 0,
+        EbBarcodeCounter: 0,
+        EbQRcodeCounter: 0
     };
 
     this.subSecIdCounter = {
@@ -98,7 +101,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
-        $('.dropped').draggable({ cursor: "crosshair", containment: ".page", start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this)});
+        $('.dropped').draggable({ cursor: "crosshair", containment: ".page", stack: ".dropped", start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this)});
         $('.dropped').resizable({ containment: "parent", handles: "n, e, s, w", stop: this.onReSizeFn.bind(this) });
         if (obj.SectionHeight) {
             $("#" + obj.EbSid).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
@@ -175,7 +178,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     this.createPagecontainer = function () {
         var $pageCanvas = $('#pageCanvas');
         $pageCanvas.empty();       
-        var PageContainer = $("<div id='PageContainer'></div>");
+        var PageContainer = $("<div id='PageContainer' style='margin-top: 20px;'></div>");
         $pageCanvas.append(PageContainer);
         this.createHeaderBox();
         return PageContainer;
@@ -295,8 +298,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     };
 
     this.addButton = function (i, obj) {             
-        $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
-        $('#btn2').css('display', 'none');
+        $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");       
         $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
     };//split button
 
@@ -406,9 +408,13 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             cancel: "a.ui-icon",
             revert: "invalid",
             helper: "clone",
-            cursor: "move",
+            cursor: "move",           
+            stack: ".draggable",
+            appendTo: "body",
             drag: function (event, ui) {
-                $(ui.helper).css({ "width": "100px", "background":"#8fd4df","height":"100px","z-index":"3"});
+                //$(ui.helper).css({ "width": "100px", "background": "#8fd4df", "height": "100px" });
+                $(ui.helper).children(".shape-text").remove();
+                $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
             }
         });     
     };//drag drop starting func
@@ -424,9 +430,12 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         if (this.Objtype === 'DateTime') {
             Title = this.addCurrentDateTime();
         }
-        else {          
-            Title = "Table" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
-        }       
+        else if (this.Objtype === 'ReportCol'){          
+            Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
+        } 
+        else {
+            Title = this.col.text().trim();
+        }
         if (!this.col.hasClass('dropped')) {
             var obj = new EbObjects["Eb" + this.Objtype](Objid);            
             this.dropLoc.append(obj.Html());
@@ -465,12 +474,10 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         var curObject = this.objCollection[id];       
         var type = curControl.attr('eb-type');        
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
-        this.editElement(curControl);
+        this.editElement(curControl);       
     };//obj send to pg on focus
 
-    this.editElement = function (control) {        
-        this.control = control;
-        this.control.on('keyup',this.keyBoardShortcuts.bind(this));                  
+    this.editElement = function (control) {                                         
         $("#delete").on('click',this.removeElementFn.bind(this));
         $("#alg-R").on('click', this.alignRightFn.bind(this));
         $("#alg-C").on('click', this.alignCenterFn.bind(this));
@@ -479,6 +486,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             $("#img-upload").click();
             this.addImageFn();                    
         }
+        control.on('keydown', this.keyBoardShortcuts.bind(this)); 
 
     };//control edit options
 
@@ -486,9 +494,29 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         if (event.key === "Delete") {
             $(event.target).remove();
         }
-        if (event.key === "Control"){
+        else if (event.key === "Control"){
             $(event.target).toggleClass("marked");
         }
+        else if (event.ctrlKey && event.keyCode === 67) {
+            this.duplicateControl($(event.target));
+            return false;
+        }
+    };
+
+    this.duplicateControl = function (control) {
+        //document.execCommand('copy', true, control);       
+        var id = control.attr('id');
+        var Objtype = control.attr('eb-type');
+        var Objid = Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
+        var objToClone = this.objCollection[id];
+        var objClone = $.extend(true, {}, objToClone);
+        objClone.EbSid = Objid;
+        objClone.Name = Objid;
+        objClone.Html = objToClone.Html;
+        control.parent().append(objClone.Html());
+        this.objCollection[Objid] = objClone;
+        this.RefreshControl(objClone);
+        
     };
 
     this.removeElementFn = function () {

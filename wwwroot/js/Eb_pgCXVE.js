@@ -15,7 +15,7 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
-        $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450);
+        //$("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450);
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
@@ -26,8 +26,16 @@
             this.initJE();
         else if (this.editor === 13)
             this.initOSE();
+        else if (this.editor === 16)
+            this.initStrE();
         $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+    };
+
+    this.initStrE = function () {
+        var StrEbody = '<textarea id="StrE_txtEdtr' + this.PGobj.wraperId + '" class="strE-texarea" rows="15" cols="85" ></textarea>'
+        $(this.pgCXE_Cont_Slctr + " .modal-title").text("String Editor");
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(StrEbody);
     };
 
     this.initCE = function () {
@@ -71,7 +79,7 @@
             }
 
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
-            this.setColTiles();
+            this.setColTiles(true);
         }
         else if (this.editor > 7 && this.editor < 11) {
             if (this.editor === 8)
@@ -314,7 +322,7 @@
         }
     };
 
-    this.setColTiles = function () {
+    this.setColTiles = function (f) {
         var options = "";
         var SubTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].options;
         $("#" + this.CEctrlsContId).empty();
@@ -335,6 +343,7 @@
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
         $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn);
+        if (f) setTimeout(function () { $("#" + this.CEctrlsContId + " .colTile:eq(0)").click(); }.bind(this), 451);
     };
 
     this.colTileCloseFn = function (e) {
@@ -403,6 +412,8 @@
             + '</div>';
         $(this.PGobj.$wraper).append(CXVE_html);
         $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.CE_AddFn.bind(this));
+        
+        $('body').append('<div id="mb_' + this.PGobj.wraperId + '"> </div>');
     }
     this.Init();
 };

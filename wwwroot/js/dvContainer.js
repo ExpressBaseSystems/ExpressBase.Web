@@ -26,7 +26,11 @@ var DvContainerObj = function (settings) {
 
 
     this.btnGoClick = function () {
-        $("#fd_toggle").css("display", "inline");
+        if ($("#" + focusedId).children(".fd").children("#filterBox").length > 0) {
+            $("#fd_toggle").css("display", "inline");
+            $("#" + focusedId).children(".fd").css("display", "none");
+            $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-8").addClass("col-md-10");
+        }
         $("#Settings").css("display", "inline");
         $("#Save_btn").css("display", "inline");
         this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
@@ -204,8 +208,8 @@ var DvContainerObj = function (settings) {
     };
 
     this.saveSuccess = function () {
-        $.LoadingOverlay("hide");
         alert("Success!!!!!!!");
+        $.LoadingOverlay("hide");
     }
 
     this.ToggleParamDiv = function () {

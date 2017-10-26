@@ -1,0 +1,514 @@
+﻿.pgTdval > input[type="text"], input[type="email"], input[type="number"], input[type="color"], input[type="password"], input[type="singleline"] {
+    height: 21px;
+    width: 110px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background-color: transparent;
+    border: none;
+    padding: 3px;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+.propgrid-table-cont input[type="color"] {
+    padding: 0px !important;
+}
+
+.propgrid-table-cont input[type="number"] {
+    direction: rtl;
+}
+
+.propgrid-table-cont {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    max-height: 526px;
+    background-color: white;
+    /*min-width: 250px;*/
+}
+
+.pg-wraper {
+    display: flex;
+    flex-flow: column;
+    height: inherit;
+    font-family: Tahoma;
+    width: 100%;
+    /*overflow-x: auto;*/
+    overflow-x: hidden;
+}
+
+
+.pg-table {
+    min-width: 100%;
+    overflow: auto;
+    width: 100%;
+}
+
+.pgHead {
+    background-image: var(--gbm);
+    color: white;
+    padding: 5px;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 4px 4px 0px 0px;
+}
+/*.controls-dd-cont {
+    border-bottom: var(--sild1pxDDD);
+}*/
+.OSE-DD-cont .btn-default {
+    padding: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: var(--colorDDD);
+    box-shadow: none;
+    border: none;
+    text-shadow: none;
+}
+
+.pgCX-Editor-Btn {
+    width: 13px;
+    padding: 0px 0px;
+    float: right;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    border: var(--sild1pxDDD);
+    margin: 3px;
+    font-size: 8px;
+    text-align: center;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+}
+
+.fup .pgCXEditor-Cont .modal-body {
+    height: 68vh;
+}
+
+.fup .pgCXEditor-Cont {
+    border-radius: 3px;
+    width: 80%;
+    height: 90VH;
+    left: 10%;
+    top: 5vh;
+}
+
+.pgCXEditor-Cont {
+    border-radius: 3px;
+    width: 50%;
+    height: 70VH;
+    position: fixed;
+    left: 25%;
+    top: 15vh;
+    /*border: solid 1px #a2a2a0 !important;*/
+    background-color: white;
+    padding: 3px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+
+    .pgCXEditor-Cont .propgrid-table-cont {
+        height: 30.9vh;
+    }
+
+    .pgCXEditor-Cont .CodeMirror {
+        height: 46vh;
+    }
+
+.pgCXEditor-bg {
+    display: none;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.CE-controls-head, .inner-PG-Cont .pgHead {
+    padding: 8px;
+    font-weight: bold;
+    color: black;
+    background-color: #ddd;
+    background-image: none;
+    border-radius: unset;
+}
+
+.colTile {
+    padding: 4px 8px;
+    background-color: #c8d4ef;
+    margin: 3px 1px;
+    border-radius: 15px;
+    font-size: 13px;
+    /*border: solid 1px #d6d6d6;*/
+    cursor: pointer;
+    color: #111;
+}
+
+    .colTile:hover {
+        background-color: var(--colorDDD);
+        outline: none;
+        color: #000;
+    }
+
+    .colTile:focus {
+        background-color: #c2c8ce;
+        outline: none;
+        color: #000;
+    }
+
+.OSE-verTile-Cont .colTile:focus {
+    background-color: rgb(238, 238, 238);
+}
+
+.ColT-right-arrow {
+    visibility: hidden;
+    font-size: 19px;
+    color: white;
+}
+
+.colTile .ColT-right-arrow {
+    visibility: hidden;
+}
+
+.colTile:hover .ColT-right-arrow {
+    visibility: visible;
+}
+
+.ctrlHead {
+    display: none;
+    cursor: move;
+}
+
+.propgrid-helpbox {
+    display: none;
+    vertical-align: bottom;
+    height: 50px;
+    border-radius: 0px 0px 4px 4px;
+    border: solid 1px white;
+    color: #333;
+    overflow-y: auto;
+    font-size: 10px;
+    padding:3px;
+    background-color: #c4d1de;
+}
+
+.pgCXEditor-Cont .propgrid-helpbox {
+    border-radius: 0px;
+}
+
+.property-grid-cont .bs-searchbox .form-control {
+    height: 21px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    border-radius: 2px;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+.property-grid-cont {
+    width: 20%;
+    height: 95vh;
+    visibility: hidden;
+}
+
+.pin {
+    float: right;
+    margin-top: 1px;
+    cursor: default;
+    margin-right: 5px;
+}
+
+.pgTdval {
+    padding: 0px 3px;
+    text-align: center;
+}
+
+.pgTdName {
+    padding: 0px 4px;
+}
+
+.pg-wraper .pg-table td {
+    font-size: 12px;
+    border: var(--pgTdBorder);
+}
+
+.pgGroupCell {
+    padding: 1px 2px;
+}
+
+.pgGroupRow {
+    background-color: #369 !important;
+    /*background-image: var(--gbm);*/
+    color: white;
+    border-bottom: solid 2px white;
+}
+
+    .pgGroupRow > td:hover {
+        background-color: #369 !important;
+    }
+
+.pgTdval .property-grid-cont .btn {
+    padding: 3px 12px !important;
+    border: 1px solid rgba(34,36,38,.15);
+}
+
+.controls-dd-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    display: block !important;
+    height: 24px;
+}
+
+.pgTdval .dropdown-toggle {
+    padding: 0px 12px;
+    border-radius: 0px;
+    height: 22px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    border: none;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+    .pgTdval .dropdown-toggle:hover {
+        background-color: transparent;
+    }
+
+.pg-wraper .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+    width: 100%;
+}
+
+
+.sub-controls-DD-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 200px;
+}
+
+.pgCXEditor-Cont .btn {
+    border-radius: 1px !important;
+}
+
+.pgCXEditor-Cont .modal-body {
+    height: 51vh;
+}
+
+/*overridding*/
+.property-grid-cont .sp-preview {
+    width: calc(100% - 15px) !important;
+    height: 15px;
+}
+
+.property-grid-cont .sp-replacer {
+    width: 100% !important;
+    padding: 2px;
+}
+
+
+.controls-dd-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 100%;
+}
+
+.editTbl {
+    table-layout: fixed;
+    height: 46.7vh;
+}
+
+.CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont, .CE-all-ctrlsCont {
+    overflow-y: auto;
+    height: 40vh;
+}
+
+    .CE-all-ctrlsCont .close {
+        display: none;
+    }
+
+.pgCXEditor-Cont .modal-footer {
+    padding: 10px 15px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+
+.pgCXEditor-Cont .pgHead .fa-times {
+    display: none;
+}
+
+.inner-PG-Cont {
+    /*border-bottom: var(--sild1pxDDD);*/
+}
+
+    .inner-PG-Cont .pin {
+        display: none;
+    }
+
+/*.inner-PG-Cont .pgHead {
+        background-color: var(--colorDDD);
+        padding: 11px;
+    }*/
+
+.CE-add {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-left: none !important;
+}
+
+    .CE-add:hover {
+        background-color: #eee;
+    }
+
+    .CE-add:focus {
+        outline: none;
+        /*border: solid 1px #cdcdcd;*/
+    }
+
+
+
+.sub-controls-DD-cont .btn-group > .btn:first-child {
+    margin-left: 0;
+    background-color: transparent;
+    color: black;
+    padding: 7px;
+    font-size: 13px;
+    box-shadow: none;
+    border: none;
+    border-right: solid 1PX #e5e5e5;
+}
+
+    .sub-controls-DD-cont .btn-group > .btn:first-child:hover {
+        background-color: #e5e5e5;
+    }
+
+.sub-controls-DD-cont {
+    background-color: white;
+    border: var(--sild1pxDDD);
+}
+
+.icon-cont {
+    display: inline-block;
+    padding: 0px 4px;
+    width: 20.99px;
+}
+
+    .icon-cont:hover {
+        color: black;
+        background-color: #aaaaaa;
+    }
+
+.DD-refresh {
+    margin-right: 20px;
+    margin-top: 2.4px;
+    float: right;
+    font-size: 14px;
+}
+
+.controls-dd-cont .dropdown-toggle {
+    height: 24px !important;
+    padding: 2px !important;
+    border: 1px solid rgba(34,36,38,.08);
+    margin-left: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0px !important;
+    border-bottom: var(--pgTdBorder) !important;
+}
+
+.pgCXEditor-Cont div.controls-dd-cont > div > button > span.filter-option.pull-left {
+    text-align: center !important;
+}
+
+.pgCXEditor-Cont div.controls-dd-cont > div > button:focus, .controls-dd-cont .dropdown-toggle:hover {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    /*border-bottom: var(--sild1pxDDD) !important;*/
+}
+
+.pgCXEditor-Cont .controls-dd-cont .open, .pgCXEditor-Cont .controls-dd-cont .caret {
+    display: none !important;
+    outline: none !important;
+}
+
+.pgCXEditor-Cont .controls-dd-cont button:focus {
+    background-color: white !important;
+}
+
+.pgTdName .fa-caret-right {
+    font-size: 14px;
+    margin-left: -4px;
+    padding: 4px 2px;
+}
+
+    .pgTdName .fa-caret-right:hover {
+        background-color: rgba(0, 0, 0, 0.32);
+        padding: 4px 4px;
+    }
+
+.colTile .close {
+    font-size: 18px;
+    margin-top: -1px;
+    color: #000;
+}
+
+.propgrid-table-cont .pg-table tr:focus {
+    background-color: #c8d4ef;
+    outline: unset;
+}
+
+    .propgrid-table-cont .pg-table tr:focus td {
+        border: solid 1px #c8d4ef;
+    }
+
+.propgrid-table-cont .pg-table tr:hover td {
+    border: solid 1px #ddf;
+}
+
+.pg-wraper {
+    color: #114;
+}
+
+.form-buider-cont {
+    color: #114;
+}
+
+.pgRow:hover {
+    background-color: #c8d4ef !important;
+}
+
+.pg-wraper .table-hover > tbody > tr:hover > td, .pg-wraper .table-hover > tbody > tr:hover > th {
+    background-color: #ddf;
+}
+
+.pg-wraper ::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+    background-color: #F5F5F5;
+    border-radius: 10px;
+}
+
+.pg-wraper ::-webkit-scrollbar {
+    width: 6px;
+    background-color: #F5F5F5;
+}
+
+.pg-wraper ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-image: var(--gbm);
+}
+
+.strE-texarea {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #e5e5e5;
+    background: #edf1f5;
+    padding: 5px;
+    font-family: Tahoma, sans-serif;
+}
+.strE-texarea:focus{
+    outline:none;
+}

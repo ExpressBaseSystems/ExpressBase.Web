@@ -254,16 +254,17 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
     this.createChartDivs = function () {
         if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
             $("#Toolbar").children(":not(.commonControls)").remove();
+            $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append(
-                "<div class='row' id='graphcontainer_tab" + this.tableId + "'>" +
-                    "<div class='col-md-2 no-padd'>" +
+                "<div id='graphcontainer_tab" + this.tableId + "'>" +
+                    "<div class='col-md-2 no-padd' id='columnsDisplay" + this.tableId + "'>" +
                         "<div class='tag-cont'>" +
                 "  <div class='tag-wraper'><div class='pgHead'>Dimensions</div><div class='tag-scroll'><div id='diamension" + this.tableId + "'></div></div></div>" +
                 "  <div class='tag-wraper'><div class='pgHead'>Measures</div><div class='tag-scroll'><div id='measure" + this.tableId + "'></div></div></div>" +
                         "</div>" +
                     "</div> " +
-                    "<div class='col-md-10'>" +
-                        "<div id=id='xy" + this.tableId + "' style='vertical-align: top;'> " +
+                    "<div class='col-md-10' id='canvasParentDiv" + this.tableId + "'>" +
+                        "<div id='xy" + this.tableId + "' style='vertical-align: top;'> " +
                             "<div class='input-group' > " +
                                 "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
                                 "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
@@ -689,9 +690,13 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
     };
 
     this.collapseGraph = function () {
-        $("#columns4Drag" + this.tableId).toggle();
-        //$("#xy" + this.tableId).toggle();
-        //this.modifyChart();
+        $("#columnsDisplay" + this.tableId).toggle();
+        $("#xy" + this.tableId).toggle();
+        if ($("#columnsDisplay" + this.tableId).css("display") === "none") {
+            $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+        }
+        else
+            $("#canvasParentDiv" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
     };
 
     this.modifyChart = function () {

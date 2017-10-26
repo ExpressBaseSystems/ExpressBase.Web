@@ -1,0 +1,45 @@
+﻿@{ 
+    @using ExpressBase.Common;
+    var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
+}
+
+<div id='paramdiv@(ViewBag.tabnum)' class='col-md-2' style='z-index:-1; padding:0px; height:100px; display:none'>
+    <h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6> 
+    <button class='head-btn pull-right' id='close_paramdiv'><i class='fa fa-times' aria-hidden='true'></i></button>
+</div>
+<div class='col-md-10' id='codewindow@(ViewBag.tabnum)' style='margin:0;padding: 0;'>
+    <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
+</div>
+<div class='col-md-2'>
+    <div id='dspropgrid@(ViewBag.tabnum)' class='pull-right' style='padding:0px'></div>
+</div>
+<script>
+    if (@ViewBag.tabnum === 0) {
+        var commonO = $("#layout_div").data("commonObj");
+    }
+    $(document).ready(function () {
+        alert("component:" + commonO.ver_Refid);
+
+        $("#code@(ViewBag.tabnum)").empty().append('@dsObj.Sql');
+        if (@ViewBag.tabnum === 0) {
+            CodeMirror.commands.autocomplete = function (cm) {
+                CodeMirror.showHint(cm, "CodeMirror.hint.sql");
+            };
+        }
+        window["editor@(ViewBag.tabnum)"] = CodeMirror.fromTextArea(document.getElementById("code@(ViewBag.tabnum)"), {
+            mode: "text/x-pgsql",
+            lineNumbers: true,
+            lineWrapping: false,
+            extraKeys: { "Ctrl-Space": "autocomplete" },
+            autoRefresh: true,
+            readOnly: false,
+            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+        setTimeout(function () {
+            window["editor@(ViewBag.tabnum)"].refresh();
+        }, 500);
+    });
+    //alert("comp111:" + JSON.stringify(commonObj));commonO.ObjCollection["vernav@(ViewBag.tabnum)"]
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataSourceWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum);
+</script>

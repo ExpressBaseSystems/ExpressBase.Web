@@ -15,7 +15,7 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
-        $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450);
+        //$("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450);
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;

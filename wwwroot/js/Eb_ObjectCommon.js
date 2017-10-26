@@ -99,36 +99,13 @@
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         $('#vernav' + this.tabNum).append(data);
-        $('#compare_inner' + this.tabNum).off("click").on("click", this.Differ.bind(this));
         this.Load_version_list();
         $('.selectpicker').selectpicker({
             size: 4
         });
 
+        $('#compare_inner' + this.tabNum).off("click").on("click", this.Differ.bind(this));
     };
-
-    this.Differ = function () {
-        var verRefid1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').val();
-        var verRefid2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').val();
-        if (verRefid2 === "Select Version") {
-            alert("Please Select A Version");
-            $.LoadingOverlay("hide");
-        }
-        else if (verRefid1 === "Current") {
-            $.LoadingOverlay("show");
-            var v1 = this.Current_obj.versionNumber;
-            var v2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').attr("data-tokens");
-            this.getSecondVersionCode(verRefid2, v1, v2, this.Code);
-
-        }
-        else {
-            $.LoadingOverlay("show");
-            var data_1;
-            v1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').attr("data-tokens");
-            v2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').attr("data-tokens");
-            $.post('../Eb_Object/VersionCodesAsObj', { "objid": verRefid1, "objtype": this.ObjectType }, this.getSecondVersionCode.bind(this, verRefid2, v1, v2));
-        }
-    }
 
     this.Load_version_list = function () {
         $('#loader_fd' + this.tabNum).show();
@@ -150,31 +127,30 @@
 
     };
 
-    this.getSecondVersionCode = function (verRefid2, selected_ver_number_1, selected_ver_number_2, result) {
-        $.post('../Eb_Object/VersionCodesAsObj', { "objid": verRefid2, "objtype": this.ObjectType }).done(this.CallDiffer.bind(this, result, selected_ver_number_1, selected_ver_number_2));
-    };
-
-    this.CallDiffer = function (data_1, selected_ver_number, curr_ver, data_2) {
-        data_1 = JSON.stringify(data_1, null, 2);
-        data_2 = JSON.stringify(data_2, null, 2);
-        var getNav = $("#versionNav li.active a").attr("href");
-        if (selected_ver_number > curr_ver) {
-            $.post("../Eb_Object/GetDiffer", {
-                NewText: data_1, OldText: data_2
-            })
-                .done(this.showDiff.bind(this, selected_ver_number, curr_ver));
+    this.Differ = function () {
+        var Refid1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').val();
+        var Refid2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').val();
+        var v1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').attr("data-tokens");
+        var v2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').attr("data-tokens");
+        if (v1 > v2) {
+            var vernum1 = v1;
+            var vernum2 = v2;
         }
         else {
-            $.post("../Eb_Object/GetDiffer", {
-                NewText: data_2, OldText: data_1
-            })
-                .done(this.showDiff.bind(this, curr_ver, selected_ver_number));
+            var vernum1 = v2;
+            var vernum2 = v1;
+        }
+        if (Refid2 === "Select Version") {
+            alert("Please Select A Version");
+            $.LoadingOverlay("hide");
+        }
+        else {
+            $.LoadingOverlay("show");
+            $.post('../Eb_Object/GetObjectsToDiff', { ver1refid: Refid1, ver2refid: Refid2 }).done(this.showDiff.bind(this, vernum1, vernum2));
         }
     };
-
+   
     this.showDiff = function (new_ver_num, old_ver_num, data) {
-        var getNav = $("#versionNav li.active a").attr("href");
-
         $('#versionNav li.active a').text().replace('compare', "v." + old_ver_num + " v/s v." + new_ver_num);
 
         $('#compare_result' + this.tabNum).empty();

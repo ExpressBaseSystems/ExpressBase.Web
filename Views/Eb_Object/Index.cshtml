@@ -14,7 +14,7 @@
         commonObj.init();
     });
 
-    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType);
+    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv);
     $("#layout_div").data("commonObj", commonObj);
     alert("top:" + JSON.stringify(commonObj))
 

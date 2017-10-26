@@ -1,4 +1,4 @@
-﻿var Eb_ObjectCommon = function (refid, dsobj, cur_status, ver_num, tabNum, type) {
+﻿var Eb_ObjectCommon = function (refid, dsobj, cur_status, ver_num, tabNum, type, major) {
     this.ver_Refid = refid;
     this.Current_obj = dsobj;
     this.Current_obj.Status = cur_status;
@@ -84,11 +84,11 @@
         this.AddVerNavTab(navitem, tabitem);
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('#vernav' + this.tabNum).append(data);
+        this.UpdateCreateVersionDD();
         $.LoadingOverlay("hide");
     };
 
     this.Compare = function () {
-
         this.tabNum++;
         $.post('../Eb_Object/CallDifferVC', { _tabnum: this.tabNum })
             .done(this.Load_differ.bind(this));
@@ -203,6 +203,7 @@
         this.ver_Refid = this.ObjWrapper.Refid;
         this.Current_obj = this.ObjWrapper.DataSourceObj;
         this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
+        this.UpdateCreateVersionDD();
     };
 
     this.Save = function () {
@@ -219,6 +220,22 @@
             _rel_obj: "", _tags: tagvalues
         });
     };
+
+    this.UpdateCreateVersionDD = function () {
+        $('#create option').remove()
+        $('#create').selectpicker('destroy');
+        $('#create').selectpicker('refresh');
+        var arr = this.Current_obj.VersionNumber.split(".")
+        var vNumMajor = ("v." + (parseInt(major) + 1) + "." + arr[1] + "." + arr[2] + ".w");
+        var vNumMinor = ("v." + arr[0] + "." + (parseInt(arr[1]) + 1) + "." + arr[2] + ".w");
+        var vNumPatch = ("v." + arr[0] + "." + arr[1] + "." + (parseInt(arr[2]) + 1) + ".w");
+
+        $("#create").append("<option>Create</option>"+
+            "<option id='_major'> Major Version - (" + vNumMajor + ") from(v." + this.Current_obj.VersionNumber+")</option >"+
+            "<option id= '_minor'> Minor Version - (" + vNumMinor + ") from(v." + this.Current_obj.VersionNumber +")</option > "+
+            "<option id='_patch'>Patch Version - (" + vNumPatch + ") from (v." + this.Current_obj.VersionNumber + ")</option>");
+        $('#create').selectpicker('refresh');
+    }
 
     this.init();
 };

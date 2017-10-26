@@ -13,6 +13,7 @@ using System.Reflection;
 using DiffPlex.DiffBuilder;
 using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -64,7 +65,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Workingcopy = element.Wc_All;
                 }
             }
-            
+
 
             var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
             var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
@@ -147,60 +148,73 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult GetLifeCycle(int _tabNum, string cur_status, string refid)
         {
-            return ViewComponent("ObjectLifeCycle", new { _tabnum = _tabNum , _cur_status = cur_status , _refid  = refid });
+            return ViewComponent("ObjectLifeCycle", new { _tabnum = _tabNum, _cur_status = cur_status, _refid = refid });
         }
 
         public IActionResult VersionHistory(string objid, int tabNum)
         {
-            return ViewComponent("VersionHistory", new {objid = objid, tabnum = tabNum });
+            return ViewComponent("VersionHistory", new { objid = objid, tabnum = tabNum });
         }
 
         [HttpPost]
         public string VersionCodes(string objid, int objtype)
         {
-            var _EbObjectType = (EbObjectType)objtype;
             var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = objid });
             var dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-            ViewBag.Code = dsobj.Sql;
             dsobj.Status = resultlist.Data[0].Status;
             dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
 
             return EbSerializers.Json_Serialize(dsobj);
         }
 
+
         [HttpPost]
-        public dynamic VersionCodesAsObj(string objid, int objtype)
+        public dynamic GetVersionObj(string refid)
         {
-            EbDataSource dsobj = null;
-            var _EbObjectType = (EbObjectType)objtype;
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = objid });
-            var rlist = resultlist.Data;
-            foreach (var element in rlist)
-            {
-                if (_EbObjectType == EbObjectType.DataSource)
-                {
-                    var obj = new EbObjectWrapper();
-                    dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
-                    ViewBag.Code = dsobj.Sql;
-                    dsobj.Status = element.Status;
-                    dsobj.VersionNumber = element.VersionNumber;
-                }
-            }
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+            var dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+            dsobj.Status = resultlist.Data[0].Status;
+            dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
             return dsobj;
         }
 
         [HttpPost]
         public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype, string _refid)
         {
-            return ViewComponent("CodeEditor", new {dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid });
+            return ViewComponent("CodeEditor", new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid });
         }
 
         [HttpPost]
         public IActionResult CallDifferVC(int _tabnum)
         {
-            return ViewComponent("ObjectDiffer", new {tabnum = _tabnum });
+            return ViewComponent("ObjectDiffer", new { tabnum = _tabnum });
         }
 
+        [HttpPost]
+        public List<string> GetObjectsToDiff(string ver1refid, string ver2refid)
+        {
+            var first_obj = GetVersionObj(ver1refid);
+            var second_obj = GetVersionObj(ver2refid);
+            List<string> result = new List<string>();
+            var v1 = first_obj.VersionNumber.Replace(".w", "");
+            var v2 = second_obj.VersionNumber.Replace(".w", "");
+            var version1 = new Version(v1);
+            var version2 = new Version(v2);
+            var res = version1.CompareTo(version2);
+            if (res>0)
+            {
+                first_obj = JsonConvert.SerializeObject(first_obj, Formatting.Indented);
+                second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);
+                result = GetDiffer(second_obj, first_obj);
+            }
+            else
+            {
+                first_obj = JsonConvert.SerializeObject(first_obj, Formatting.Indented);
+                second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);
+                result = GetDiffer(first_obj, second_obj);
+            }
+            return result;
+        }
         public List<string> GetDiffer(string OldText, string NewText)
         {
             List<string> Diff = new List<string>();
@@ -215,12 +229,10 @@ namespace ExpressBase.Web.Controllers
 
         private string Differ(DiffPaneModel text)
         {
-            string spaceValue = "\u00B7";
-            string tabValue = "\u00B7\u00B7";
             string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
 
             foreach (var diffLine in text.Lines)
-            {  
+            {
                 html += "<tr>";
                 html += "<td class='lineNumber'>";
                 html += diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;";
@@ -251,8 +263,8 @@ namespace ExpressBase.Web.Controllers
                 html += "</tr>";
             }
 
-            html += "</table></div>";  
-            
+            html += "</table></div>";
+
             return html;
         }
 

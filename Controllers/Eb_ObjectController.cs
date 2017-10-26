@@ -14,6 +14,7 @@ using DiffPlex.DiffBuilder;
 using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
 using Newtonsoft.Json;
+using System.Text;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -203,9 +204,9 @@ namespace ExpressBase.Web.Controllers
             var res = version1.CompareTo(version2);
             if (res>0)
             {
-                first_obj = JsonConvert.SerializeObject(first_obj, Formatting.Indented);
-                second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);
-                result = GetDiffer(second_obj, first_obj);
+                //first_obj = JsonConvert.SerializeObject(first_obj, Formatting.Indented);
+                //second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);
+                result = GetDiffer(ToJSONusingReflection(second_obj), ToJSONusingReflection(first_obj));
             }
             else
             {
@@ -213,8 +214,51 @@ namespace ExpressBase.Web.Controllers
                 second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);
                 result = GetDiffer(first_obj, second_obj);
             }
+
             return result;
         }
+
+        private const char CURLY_BRACE_OPEN = '{';
+        private const char CURLY_BRACE_CLOSE = '}';
+        private const char NEW_LINE = '\n';
+        private const char TAB = '\t';
+        private const char COLON = ':';
+        private const char COMMA = ',';
+        private const char DOUBLE_QUOTE = '"';
+        private const char SPACE = ' ';
+
+        private string ToJSONusingReflection(object o)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(CURLY_BRACE_OPEN);
+
+            var props = o.GetType().GetTypeInfo().GetProperties();
+            foreach (var prop in props)
+            {
+                sb.Append(NEW_LINE);
+                sb.Append(TAB);
+                sb.Append(prop.Name);
+                sb.Append(COLON);
+                sb.Append(SPACE);
+                if (prop.PropertyType == typeof(int))
+                {
+                    sb.Append(prop.GetValue(o).ToString());
+                    sb.Append(COMMA);
+                }
+                else if (prop.PropertyType == typeof(string))
+                {
+                    sb.Append(DOUBLE_QUOTE);
+                    sb.Append(prop.GetValue(o).ToString());
+                    sb.Append(DOUBLE_QUOTE);
+                    sb.Append(COMMA);
+                }
+            }
+
+            sb.Append(NEW_LINE);
+            sb.Append(CURLY_BRACE_CLOSE);
+            return sb.ToString();
+        }
+
         public List<string> GetDiffer(string OldText, string NewText)
         {
             List<string> Diff = new List<string>();

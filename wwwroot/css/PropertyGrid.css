@@ -59,7 +59,7 @@
     padding: 8px;
     font-size: 12px;
     font-weight: bold;
-    background-color: var(--colorDDD);
+    background-color: #ddd;
     box-shadow: none;
     border: none;
     text-shadow: none;
@@ -498,7 +498,8 @@
 
 .pg-wraper ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background-image: var(--gbm);
+    /*background-image: var(--gbm);*/
+    background-color:#777;
 }
 
 .strE-texarea {

@@ -478,69 +478,20 @@
 
 
 <script>
-
+    var commonO = $("#layout_div").data("commonObj");
+    commonO.UpdateCreateVersionDD();
     $(document).ready(function(){
         $('#commit_outer').on('click', function () {
             $('#changelogPopup').show();
         });
         $('#close_popup').on('click', function () {
             $('#changelogPopup').css("display", "none");
-        })
-
-        @*if ("@ViewBag._ReadOnly" == "True") {
-            $('#commit_outer').hide();
-            $('#save').hide();
-        }
-         if ("@ViewBag._ReadOnly" == "False") {
-             $('#_minor').remove();
-             $('#_patch').remove();
-         }*@
-        $('#create').on('change', function () {
-            var selected = $(this).find("option:selected").val();
-            var selected_opt = $(this).find("option:selected").attr("id");
-
-            if (selected_opt === "_major")
-            {
-                if (confirm('Are you sure you want to create Major version?')) {
-                    $.LoadingOverlay("show");
-                    $.post("../CE/Create_Major_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
-                        function () {
-                            alert("Created Major version");
-                            $.LoadingOverlay("hide");
-                        })
-                }
-            }
-              if (selected_opt === "_minor")
-              {
-                  if (confirm('Are you sure you want to create Minor version?')) {
-                      $.LoadingOverlay("show");
-                      $.post("../CE/Create_Minor_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
-                          function () {
-                              alert("Created Minor version");
-                              $.LoadingOverlay("hide");
-                          })
-                  }
-            }
-            if (selected_opt === "_patch")
-            {
-                if (confirm('Are you sure you want to create Patch version?')) {
-                    $.LoadingOverlay("show");
-                    $.post("../CE/Create_Patch_Version", { _refId: '@ViewBag._Refid', _type: @ViewBag._objtype},
-                        function () {
-                            alert("Created patch version");
-                            $.LoadingOverlay("hide");
-                        })
-                }
-            }
-
         });
-       // alert('@ViewBag._isUI');
-       // console.log('@ViewBag.Tags');
         $('#tags').tagsinput('add', '@ViewBag.Tags');
     });
     $(function () {
         $('#minmize').click(function () {
-            $tool = $("<div class='form-group'><button class='btn btn-default'><i class='fa fa-align-left'></i></button> </div>");
+            var t = $('.dashbord').toggle();
         });
     });
 </script>

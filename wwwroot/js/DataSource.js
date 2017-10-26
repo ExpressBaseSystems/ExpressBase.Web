@@ -14,7 +14,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Rel_object;
     this.rel_arr = [];
 
-    this.DataSourceObj = dsobj;
+    this.EbObject = dsobj;
     this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
     this.Init = function () {
@@ -24,12 +24,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keypress(this.SetCode.bind(this));
         $(".selectpicker").selectpicker();
 
-        if (this.DataSourceObj === null) {
-            this.DataSourceObj = new EbObjects["EbDataSource"]("EbDataSource1");
+        if (this.EbObject === null) {
+            this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
         }
 
-        this.propGrid.setObject(this.DataSourceObj, AllMetas["EbDataSource"]);
-        this.Name = this.DataSourceObj.Name;
+        this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
+        this.Name = this.EbObject.Name;
 
     }
     
@@ -40,7 +40,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
 
     this.propGrid.PropertyChanged = function (obj, pname) {
-        this.DataSourceObj = obj;
+        this.EbObject = obj;
         if (pname === "FilterDialogRefId") {
             $('#paramdiv' + tabNum + ' #filterBox').remove();
             $('#paramdiv' + tabNum).show();
@@ -308,7 +308,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
         this.rel_arr.push(filter_dialog_refid);
         this.Rel_object = this.rel_arr.toString();
-        this.DataSourceObj.Sql = btoa(this.Code);
+        this.EbObject.Sql = btoa(this.Code);
         var tagvalues = $('#tags').val();
         if (issave === true) {
             $.post("../Eb_ObjectController/SaveEbObject",

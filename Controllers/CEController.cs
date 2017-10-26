@@ -285,35 +285,36 @@ namespace ExpressBase.Web.Controllers
             return refid;
         }
 
-        public string Create_Major_Version(string _refId, int _type)
-        {
-            var ds = new EbObject_Create_Major_VersionRequest();
-            ds.RefId = _refId;
-            ds.EbObjectType = _type;
-            ds.Relations = null;
-            var res = this.ServiceClient.Post<EbObject_Create_Major_VersionResponse>(ds);
-            return res.RefId;
-        }
+        //public string Create_Major_Version(string _refId, int _type)
+        //{
+        //    var ds = new EbObject_Create_Major_VersionRequest();
+        //    ds.RefId = _refId;
+        //    ds.EbObjectType = _type;
+        //    ds.Relations = null;
+        //    var res = this.ServiceClient.Post<EbObject_Create_Major_VersionResponse>(ds);
+        //    return res.RefId;
+        //}
 
-        public string Create_Minor_Version(string _refId, int _type)
-        {
-            var ds = new EbObject_Create_Minor_VersionRequest();
-            ds.RefId = _refId;
-            ds.EbObjectType = _type;
-            ds.Relations = null;
-            var res = this.ServiceClient.Post<EbObject_Create_Minor_VersionResponse>(ds);
-            return res.RefId;
-        }
+        //public string Create_Minor_Version(string _refId, int _type)
+        //{
+        //    var ds = new EbObject_Create_Minor_VersionRequest();
+        //    ds.RefId = _refId;
+        //    ds.EbObjectType = _type;
+        //    ds.Relations = null;
+        //    var res = this.ServiceClient.Post<EbObject_Create_Minor_VersionResponse>(ds);
+        //    return res.RefId;
+        //}
 
-        public string Create_Patch_Version(string _refId, int _type)
-        {
-            var ds = new EbObject_Create_Patch_VersionRequest();
-            ds.RefId = _refId;
-            ds.EbObjectType = _type;
-            ds.Relations = null;
-            var res = this.ServiceClient.Post<EbObject_Create_Patch_VersionResponse>(ds);
-            return res.RefId;
-        }
+        //public string Create_Patch_Version(string _refId, int _type)
+        //{
+        //    var ds = new EbObject_Create_Patch_VersionRequest();
+        //    ds.RefId = _refId;
+        //    ds.EbObjectType = _type;
+        //    ds.Relations = null;
+        //    var res = this.ServiceClient.Post<EbObject_Create_Patch_VersionResponse>(ds);
+        //    return res.RefId;
+        //}
+
         //[HttpPost]
         //public EbDataSource VersionCodes(string objid, int objtype)
         //{

@@ -19,25 +19,31 @@
     this.getFileId = function (res) { };
 
     this.CreateMOdalW = function () {
-        var modalW = $("<div class='modal fade modalstyle' id='Eb-fup-MW' role='dialog'>"
-            + "<div class='modal-dialog modal-lg'>"
-            + "<div class='modal-content wstyle' style='border-radius:0;'>"
-            + "<div class='modal-header'>"
-            + "<h4 class='modal-title' style='display: inline-block;'>Upload File</h4>"
-            + "<button type='button' class='close' data-dismiss='modal'>&times;</button>"
-            + "</div>"
-            + "<div class='modal-body' id='imgUBody' style=''>"
-            + "<div class='input-group'><span class='input-group-addon'>Image URL</span>"
-            + "<input type='text' id='obj-id' class='form-control'>"
-            + "</div>"
-            + "<div id-'img-upload-body' style='margin-top:15px;'><input id='input-id' type='file' class='file' data-preview-file-type='text' " + this.multiple + "></div>"
-            + "</div>"
-            + "<div class='modal-footer' id='mdfooter' style='height:auto;border:none;padding-top:0;'>"
-            + "<div class='col-md-11' id='tag-section' style='padding:0;'></div>"
-            + "<div class='col-md-1' id='sub-section'><button class='btn btn-default' id='sub-upload' style='display:none;margin-top:34px;'>OK</button></div>"
-            + "</div></div></div></div>");
+        var modalHTML = '<div class="fup" id="bg_' + this.ContainerId + '"><div class="pgCXEditor-bg">'
+                            + '<div class="pgCXEditor-Cont">'
 
-        //$("#" + this.ContainerId).append(modalW);
+                                + '<div class="modal-header">'
+                                    + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'
+                                    + '<h4 class="modal-title" style="display:inline;">Image Selector </h4>'
+                                    + '<p style="display:inline;float:right;margin-right: 20px;" id="' + this.ContainerId +'obj-id"></p>'
+                                + '</div>'
+
+                                + '<div class="modal-body">'                                   
+                                    + "<div id-'img-upload-body' style='margin-top:15px;'><input id='" + this.ContainerId + "input-id' type='file' class='file' data-preview-file-type='text' " + this.multiple + "></div>"
+                                    + "<h6>Tags</h6>"
+                                    + "<input type= 'text' data-role='tagsinput' id= '" + this.ContainerId + "tagval' value='' class='form-control' style='display:none;width:100%;'>"
+                                + '</div>'
+
+                                + '<div class="modal-footer">'
+                                     + '<div class="modal-footer-body">'                                             
+                                        + '<button type="button" name="CXE_OK" id="' + this.ContainerId +'_close" class="btn"  onclick="$(\'#' + this.ContainerId + ' .pgCXEditor-bg\').hide(500);">OK</button>'           
+                                     + '</div>'
+                                + '</div>'
+                            + '</div>'
+                        + '</div>'               
+                    + '</div>';
+
+        $("#" + this.ContainerId).append(modalHTML);
 
     }; //modal creation and fileinput initialized
 
@@ -58,7 +64,7 @@
             .on('fileloaded', this.addtagButton.bind(this))
             .on('fileclear', function (event) {
                 $("#" + this.ContainerId + "tag-section").empty();
-                $('#' + this.ContainerId + 'obj-id').attr('value', " ");
+                $('#' + this.ContainerId + 'obj-id').text(" ");
             });
         $(".file-drop-zone").css({ "height": '280px', "overflow-y": "auto" });
         $(".file-preview-initial").attr("tabindex", "1");
@@ -68,10 +74,10 @@
     this.fileUploadSuccess = function (event, data, previewId, index) {
         $("#" + this.ContainerId + "sub-upload").show();
         var objId = data.response.objId;
-        $('#' + this.ContainerId + 'obj-id').attr('value', "http://" + this.TenantId + ".localhost:5000/static/images/" + objId + ".jpg");
+        $('#' + this.ContainerId + 'obj-id').text(objId);
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
-        $("#" + this.ContainerId + "sub-upload").on('click', this.getId.bind(this, objId));
+        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, objId));
     };
 
     this.addtagButton = function (event, file, previewId, index, reader) {
@@ -84,7 +90,7 @@
     };//tadd tag btn
 
     this.imageOnSelect = function (e) {
-        $("#" + this.ContainerId + 'obj-id').attr('value', $(e.target).children().find("img").attr("src"));
+        $("#" + this.ContainerId + 'obj-id').text('value', $(e.target).children().find("img").attr("src"));
     }
 
     this.uploadtag = function (previewId, index) {
@@ -98,11 +104,8 @@
         return { "tags": tagnames };
     };
 
-    this.tagimageOnClick = function () {
-        $("#" + this.ContainerId + "tag-section").empty();
-        $("#" + this.ContainerId + "tag-section").append("<div class='form-group'><div style='text-align:left;'>Tags(" + this.filename + ")</div></div><div class='form-group'>"
-            + "<input type= 'text' style='width:100%' data-role='tagsinput' id= '" + this.ContainerId + "tagval' value='' class='form-control'></div>");
-        $("#" + this.ContainerId + "tagval").tagsinput('refresh');
+    this.tagimageOnClick = function () {      
+        $("#" + this.ContainerId + "tagval").show().tagsinput('refresh');
     };//tag btn onclick
 
     this.getUplodedImgOnload = function () {

@@ -138,9 +138,17 @@
 .reportmenu {   
     position: fixed;
     z-index: 5;      
-}            
+}
+.side-toolbar-head {
+    background-image: var(--gbm);
+    color: white;
+    padding: 5px;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 4px 4px 0px 0px;
+}
 .Eb-shaps-title {
-    font-size: 13px;   
+    font-size: 13px;
 }
 .Eb-shaps li{
     border-radius:0;

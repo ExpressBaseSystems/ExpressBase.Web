@@ -95,10 +95,7 @@
             <div class="form-group">
                 <input type="file" id="img-upload" style="display:none">
             </div>
-            <div class="pull-right" style="margin-right: 5px;">
-                <div class="form-group">
-                    <button class="btn" id="up-modal" data-toggle="modal">upload</button>
-                </div>
+            <div class="pull-right" style="margin-right: 5px;">                
                 <div class="form-group">
                     <button class="btn" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
                 </div>
@@ -122,8 +119,13 @@
     </div>
     <div class="tab-content">
         <div class="tab-pane active" id="home" role="tabpanel">
-            <div class="col-md-2 side-toolbar">
+            <div class="col-md-2 side-toolbar">                
                 <div class="toolbox">
+                    <div class="side-toolbar-head">
+                        Toolbox
+                        <i class="fa fa-wrench" aria-hidden="true"></i>
+                        <i class="fa fa-times pin" aria-hidden="true"></i>
+                    </div>
                     <div id="get-col-loader" style="display:none;margin-left: 50%;margin-top: 10%;"><i class="fa fa-spinner fa-spin fa-lg" style='color:blue' aria-hidden="true"></i></div>
                     <ul id="data-table-list" class="tool-box-items"></ul>
                     <ul id="running-summary" class="tool-box-items">

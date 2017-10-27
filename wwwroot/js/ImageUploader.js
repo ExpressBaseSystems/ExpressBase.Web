@@ -75,8 +75,7 @@
         $("#" + this.ContainerId + "sub-upload").show();
         var objId = data.response.objId;
         $('#' + this.ContainerId + 'obj-id').text(objId);
-        $(".file-preview-initial").attr("tabindex", "1");
-        $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
+        $(".file-preview-initial").attr("tabindex", "1").on("focus", this.imageOnSelect.bind(this));;        
         $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, objId));
     };
 

@@ -22,7 +22,7 @@
         $.LoadingOverlay("show");
         this.tabNum++;
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> status " + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
+        var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade vernav'>";
         this.AddVerNavTab(navitem, tabitem);
         $.post("../Eb_Object/GetLifeCycle", { _tabNum: this.tabNum, cur_status: this.Current_obj.Status, refid: this.ver_Refid }, this.getLifecyleInner.bind(this));
     };

@@ -3,7 +3,13 @@
     @using Newtonsoft.Json
     var versionObj = JsonConvert.SerializeObject(ViewBag.versions);
 }
-    
+   <style>
+       .view_code {
+           background: #5bc0de;
+           color: white;
+           border: none;
+       } 
+   </style> 
 <table class='table table-striped table-bordered col-md-12' id='versions_@(ViewBag.tabNum)'>
     <thead class='verthead_@(ViewBag.tabNum)'>
         <tr>

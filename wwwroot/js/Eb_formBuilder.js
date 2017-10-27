@@ -120,7 +120,7 @@
     };
 
     this.controlOnFocus = function (e) {
-        this.curControl = $(e.target).closest(".controlTile");
+        this.curControl = $(e.target).closest(".Eb-ctrlContainer");
         var id = this.curControl.attr("id");
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
@@ -171,26 +171,59 @@
             }
 
         }
+
     };
+
+    //this.onDropFn = function (el, target, source, sibling) {
+
+    //    if (target) {
+    //        //drop from toolbox to form
+    //        if ($(source).attr("id") === "form-buider-toolBox") {
+    //            el.className = 'controlTile';
+    //            var ctrl = $(el);
+    //            var type = ctrl.attr("eb-type").trim();
+    //            var id = type + (this.controlCounters[type + "Counter"])++;
+    //            ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+    //            ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+    //            ctrl.attr("id", id);
+    //            this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
+    //            ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
+    //                + new EbObjects["Eb" + type](id).Html());
+
+    //            ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+    //            ctrl.focus();
+    //        }
+    //        else
+    //            console.log("ondrop else : removed");
+    //        this.saveObj();
+    //    }
+    //};
+
 
     this.onDropFn = function (el, target, source, sibling) {
 
         if (target) {
             //drop from toolbox to form
             if ($(source).attr("id") === "form-buider-toolBox") {
-                el.className = 'controlTile';
-                var ctrl = $(el);
-                var type = ctrl.attr("eb-type").trim();
+                var $el = $(el);
+                var type = $el.attr("eb-type").trim();
                 var id = type + (this.controlCounters[type + "Counter"])++;
-                ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-                ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-                ctrl.attr("id", id);
-                this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
-                ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
-                    + new EbObjects["Eb" + type](id).Html());
+                var $ctrl = $(new EbObjects["Eb" + type](id).Html());
+                $el.remove();
 
-                ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
-                ctrl.focus();
+                if (sibling)
+                    $ctrl.insertBefore($(sibling));
+                else
+                    $(target).append($ctrl);
+
+                $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+                $ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+                $ctrl.attr("id", id);
+                $ctrl.attr("eb-type", type);
+                this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
+
+                $ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
+                $ctrl.focus();
             }
             else
                 console.log("ondrop else : removed");

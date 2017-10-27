@@ -6,75 +6,92 @@
         width: 100%;
         border-top: none;
         font-family: Tahoma;
-        height: 200px;
+        height: 145px;
         color: #949ba2;
+        margin-top: 84px;
     }
 
-    .box2, .box4 {
+    .dashbord .box2, .box4 {
         height: 100%;
         padding: 0;
     }
 
-    .box3 {
-        padding-right: 0;
-    }
+        .dashbord .box3 {
+            padding-right: 0;
+        }
 
-    .box4 > .bootstrap-select {
-        padding: 0px;
-    }
-
+        .dashbord .box4 > .bootstrap-select {
+            padding: 0px;
+        }
+        .dashbord .box4 .bootstrap-select .btn {
+            height: 25px;
+            border: none;
+            border-radius: 0;
+            background: white;
+            color: black;
+            padding: 0px 0px 0px 7px;
+        }
     .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
         width: 183px;
     }
-
-    .box5 > .bootstrap-tagsinput {
-        height: 116px;
-        overflow-y: scroll;
-        background-color: rgba(68, 70, 79, 0.5);
+    .dashbord .box4 > h6 {
+        margin-top: 5px;
+    }
+    .dashbord .box5 > .bootstrap-tagsinput {
+        height: 97px;
+        overflow-y: auto;
+        background-color: #fafafa;
         border: none;
         box-shadow: none;
+        width: 100%;
     }
 
-    .card1 {
-        background-color: rgba(68, 70, 79, 0.5);
-        /* border-radius: 4px; */
-        /* border: 1px solid #cccccc; */
+    .dashbord .card1 {
+        background-color: #fafafa;
         margin-left: 15px;
-        height: 140px;
+        height: 120px;
         margin-top: 10px;
         padding: 0;
         font-weight: normal;
+        border-radius: 4px;
     }
-
-    .count {
+    .dashbord .count {
         font-size: 15px;
-        color: #f6f6f6;
+        color: #949ba2;
     }
 
-    .head {
-        font-size: 18px;
+    .dashbord .head {
+        font-size: 15px;
+        color: #ffffff;
+        background: #54575e;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
     }
 
-    .icons {
+    .dashbord .icons {
         margin-right: 10px;
     }
 
-    .txtarea {
+    .dashbord .txtarea {
         width: 100%;
         height: 180px !important;
     }
 
-    .toolbar {
+    .objectDashB-toolbar {
         width: 100%;
         background-color: #2f323b;
         margin-top: 50px;
         padding-left: 10px;
         padding-right: 10px;
+        position: fixed;
+        z-index: 10;
     }
-
-    .mr-0 {
-        margin: 0;
-    }
+        .objectDashB-toolbar .brdCrumb {
+            font-size: 11px;
+        }
+        .mr-0 {
+            margin: 0;
+        }
 
     .pd-0 {
         padding: 0;
@@ -99,38 +116,46 @@
             border-radius: 0;
         }
 
-    .userimg {
+    .dashbord .userimg {
         float: left;
         display: inline;
     }
 
-    .profileInfo {
+    .dashbord .profileInfo {
         margin-left: 35px;
     }
 
-    .firstcommit {
+    .dashbord .firstcommit {
         width: 100%;
         min-height: 60px;
         padding-right: 20%;
     }
 
-    .workcopies {
-        overflow-y: scroll;
+    .dashbord .workcopies {
+        overflow-y: auto;
+        height: 80%;
     }
+        .workcopies::-webkit-scrollbar-track {
+            background-color: #F5F5F5;
+        }
 
-    .col-md-3 {
+        .workcopies::-webkit-scrollbar {
+            width: 10px;
+            background-color: #605b5b;
+        }
+
+        .workcopies::-webkit-scrollbar-thumb {
+            background-color: #6f6f6f;
+            border-radius: 6px;            
+        }
+    .dashbord .col-md-3 {
         width: 23% !important;
     }
-
-    .col-md-1 {
-        width: 9% !important;
-    }
-
-    .smallfont {
+    .dashbord .smallfont {
         font-size: 12px;
     }
 
-    .xtrasmall {
+    .dashbord .xtrasmall {
         font-size: 10px;
         margin-bottom: 5px;
     }
@@ -174,22 +199,36 @@
         font-size: 12px;
     }
 
-    .card1-botm {
+    .dashbord .card1-botm {
         height: 40%;
+        padding-left: 5px;
     }
 
-    .card1-mid {
+    .dashbord .card1-mid {
         height: 40%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
+    .codedit .nav > li > a {        
+        padding: 2px 15px;
+    }
+    .codedit{
+        margin-top:5px;
+    }
+    .vernav{
+
+    }
+
 </style>
 <div class="row">
-    <div class="toolbar">
+    <div class="toolbar objectDashB-toolbar">
         <div class="col-md-4 pd-0">
             <div class="brdCrumb col-md-12 pd-0">
                 <a href="#"> Home/</a>
             </div>
             <div class="col-md-12 pd-0">
-                <h5 class="mr-0" style="color:white"> @ViewBag.ObjName</h5>
+                <h4 class="mr-0" style="color:white"> @ViewBag.ObjName</h4>
             </div>
         </div>
         <div class="col-md-8 pd-0">
@@ -222,11 +261,11 @@
 <div class="row">
     <div class="dashbord">
         <div class="col-md-7 box2">
-            <div class="col-md-3 card1 workcopies">
+            <div class="col-md-3 card1">
                 <div class="head text-center">
                     Working Copy(s)
                 </div>
-                <div class="count text-center">
+                <div class="count text-center workcopies">
                     @using Newtonsoft.Json;
                     @{
                         string[] wrkcpy = ViewBag.Workingcopy;
@@ -275,36 +314,37 @@
             <div class="col-md-3 card1">
                 <div class="head text-center">
                     Live Version
-                </div>
-                <div class="card1-mid">
-                    <div style="color:#0db71b" class="count text-center">
-                        v.x.0.0
+                </div>              
+                    <div class="card1-mid">
+                        <div style="color:#0db71b" class="count text-center">
+                            v.x.0.0
+                        </div>
+                    </div>               
+                    <div class="card1-botm" style="display:block">
+                        <div class="userimg">
+                            <img src="~/images/proimg.jpg" style="width:30px" />
+                        </div>
+                        <div class="profileInfo">
+                            <h6 class="xtrasmall">Mr X</h6>
+                            commit time
+                        </div>
                     </div>
                 </div>
-                <div class="card1-botm" style="display:block">
-                    <div class="userimg">
-                        <img src="~/images/proimg.jpg" style="width:30px" />
-                    </div>
-                    <div class="profileInfo">
-                        <h6 class="xtrasmall">Mr X</h6>
-                        commit time
-                    </div>
-                </div>
-            </div>
             <div class="col-md-3 card1">
                 <div class="head text-center">
                     Issues
                 </div>
-                <div class="count text-center">
-                    10
+                <div class="card1-mid">
+                    <div class="count text-center" style="font-size:32px">
+                        10
+                    </div>
                 </div>
-            </div>
+             </div>
         </div>
 
-        <div class="col-md-2">
-            <div class="col-md-1 box3">
+        <div class="col-md-2">            
                 <div class="firstcommit">
-                    <h6 class="smallfont">Owner/Assignee</h6>
+                    <h6 class="smallfont">Owner/Assignee</h6>                   
                     <div style="display:block">
                         <div class="userimg">
                             <img src="~/images/proimg.jpg" style="width:30px" />
@@ -321,8 +361,7 @@
                         <option id="">app2</option>
                         <option id="">app3</option>
                     </select>
-                </div>
-            </div>
+                </div>           
         </div>
 
         <div class="col-md-3 box5">
@@ -357,7 +396,13 @@
     });
     $(function () {
         $('#minmize').click(function () {
-            var t = $('.dashbord').toggle();
+            var t = $('.dashbord').animate({ height: 'toggle' });
+            if ($('.dashbord').css("display") === "block") {
+                $('.codedit').css("margin-top", "0px");
+            }              
+            else if ($('.dashbord').css("display") === "none"){              
+                $('.codedit').css("margin-top", "102px");
+            }
         });
     });
 </script>

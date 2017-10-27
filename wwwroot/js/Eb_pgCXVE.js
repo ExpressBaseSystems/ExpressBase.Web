@@ -12,6 +12,7 @@
     this.CXE_OKclicked = function () {
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
+        this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.imgSlctrs[this.PGobj.CurProp].getFileId();
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -269,7 +270,7 @@
     this.OTileClick = function (data) {
         var $e = $(event.target);
         $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeAttr("style");
-        $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
+        $e.css("background-color", "#b1bfc1").css("color", "#222");
         var ObjName = $e.attr("name");
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".ColT-right-arrow").removeAttr("style");
         $e.attr("is-selected", true).find(".ColT-right-arrow").css("visibility", "visible");

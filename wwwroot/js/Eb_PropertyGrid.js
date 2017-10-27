@@ -94,7 +94,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         else if (type === 17) {  //  If string editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-            this.imgSlctrs[elemId] = new imageUploader({
+            this.imgSlctrs[name] = new imageUploader({
                 Container: "mb_" + this.wraperId,
                 Controller: this.wc,
                 TenantId: this.cid,
@@ -273,7 +273,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.PropertyChanged(this.PropsObj, this.CurProp);
 
         if (this.PropsObj.RenderMe)
-            this.PropsObj.RenderMe();
+            RefreshControl(this.PropsObj);
     };
 
     this.addToDD = function (obj) {
@@ -370,8 +370,21 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", this.nameChangedFn);
         $("#" + this.wraperId + " .pgGroupCell").on("click", this.collapsGroup);
         $("#" + this.wraperId + " .pgRow").on("focus", this.rowFocus);
+        this.bindFns();
     };
 
+    this.bindFns = function () {
+        $.each(this.Metas, function (i, meta) {
+            if (meta.IsUnique) {
+                console.log(meta.name);
+
+            }
+            if (meta.IsRequired) {
+                console.log(meta.name);
+            }
+        });
+    };
+    
     this.rowFocus = function (e) {
         var $e = $(e.target);
         var prop = $e.attr("name").slice(0, -2);

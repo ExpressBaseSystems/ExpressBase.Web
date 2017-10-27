@@ -53,6 +53,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     this.width = null;
     this.type = "A4";
     this.rulertype = "cm";
+    this.copyStack = null;
+    this.copyORcut = null;
     this.idCounter = {
         EbCircleCounter: 0,
         EbReportColCounter: 0,
@@ -474,8 +476,64 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         var curObject = this.objCollection[id];       
         var type = curControl.attr('eb-type');        
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
-        this.editElement(curControl);       
+        this.editElement(curControl);
+        this.contextMenu(curControl);
     };//obj send to pg on focus
+
+    this.contextMenu = function (curControl) {
+        var selector = curControl.attr('id');
+        $.contextMenu({
+            selector: '#' + selector,
+            autoHide: true,
+            items: {                
+                "copy": { name: "Copy", icon: "copy", callback:this.contextMenucopy.bind(this) },
+                "cut": { name: "Cut", icon: "cut", callback: this.contextMenucut.bind(this)},               
+                "paste": { name: "Paste", icon: "paste", callback: this.contextMenupaste.bind(this) },
+                "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) }                
+            }
+        });
+    };
+
+    this.contextMenucopy = function (eType, selector, action, originalEvent) {        
+        if (!$(selector.selector).hasClass("pageHeaders")) {
+            this.copyStack = this.objCollection[$(selector.selector).attr('id')];
+            this.copyORcut = 'copy';
+        }
+        else
+            alert("section cannot copy!")
+    };
+    this.contextMenucut = function (eType, selector, action, originalEvent) {
+        if (!$(selector.selector).hasClass("pageHeaders")) {
+            this.copyStack = this.objCollection[$(selector.selector).attr('id')];
+            this.copyORcut = 'cut';
+            $(selector.selector).remove();
+        }
+        else
+            alert("section cannot cut!")
+    };
+    this.contextMenupaste = function (eType, selector, action, originalEvent) {
+        if (this.copyStack === null) { alert('no item copied'); }
+        else {
+            var copy = this.copyStack;            
+            var Objtype = $("#" + copy.EbSid).attr('eb-type');
+            var Objid = Objtype + (this.idCounter["Eb" + Objtype + "Counter"])++;
+            if (this.copyORcut === 'copy') { copy.EbSid = Objid; }                       
+            copy.Top = action.originalEvent.pageY - $(selector.selector).offset().top;
+            copy.Left = action.originalEvent.pageX - $(selector.selector).offset().left;
+            $(selector.selector).append(copy.Html());
+            if (this.copyORcut === 'copy') { this.objCollection[Objid] = copy; }          
+            this.RefreshControl(copy);
+            this.copyStack = null;
+            this.copyORcut = null;
+        }        
+    };
+    this.contextMenudelete = function (eType, selector, action, originalEvent) {
+        if (!$(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).remove();
+        }
+        else
+            alert('no permission');
+    };
 
     this.editElement = function (control) {                                         
         $("#delete").on('click',this.removeElementFn.bind(this));
@@ -496,28 +554,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         }
         else if (event.key === "Control"){
             $(event.target).toggleClass("marked");
-        }
-        else if (event.ctrlKey && event.keyCode === 67) {
-            this.duplicateControl($(event.target));
-            return false;
-        }
-    };
-
-    this.duplicateControl = function (control) {
-        //document.execCommand('copy', true, control);       
-        var id = control.attr('id');
-        var Objtype = control.attr('eb-type');
-        var Objid = Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
-        var objToClone = this.objCollection[id];
-        var objClone = $.extend(true, {}, objToClone);
-        objClone.EbSid = Objid;
-        objClone.Name = Objid;
-        objClone.Html = objToClone.Html;
-        control.parent().append(objClone.Html());
-        this.objCollection[Objid] = objClone;
-        this.RefreshControl(objClone);
-        
-    };
+        }       
+    };   
 
     this.removeElementFn = function () {
         if (!this.control.hasClass("pageHeaders")){

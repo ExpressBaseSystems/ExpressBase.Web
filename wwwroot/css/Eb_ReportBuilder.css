@@ -138,9 +138,17 @@
 .reportmenu {   
     position: fixed;
     z-index: 5;      
-}            
+}
+.side-toolbar-head {
+    background-image: var(--gbm);
+    color: white;
+    padding: 5px;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 4px 4px 0px 0px;
+}
 .Eb-shaps-title {
-    font-size: 13px;   
+    font-size: 13px;
 }
 .Eb-shaps li{
     border-radius:0;
@@ -556,3 +564,14 @@
 .page .ui-resizable-e {right:0;}
 .page .ui-resizable-w {left:0;}
 .page .ui-resizable-s {bottom:0;}
+
+.context-menu-item {    
+    color: #ffffff;    
+    background-color: transparent; 
+}
+.context-menu-list {    
+    background: #2c2c3c;
+    border: none;   
+    -webkit-box-shadow:none;
+    box-shadow:none;
+}

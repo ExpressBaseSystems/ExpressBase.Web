@@ -16,8 +16,6 @@
         this.currtag = "tenantresource";
     }
 
-    this.getFileId = function (res) { };
-
     this.CreateMOdalW = function () {
         var modalHTML = '<div class="fup" id="bg_' + this.ContainerId + '"><div class="pgCXEditor-bg">'
                             + '<div class="pgCXEditor-Cont">'
@@ -73,11 +71,11 @@
 
     this.fileUploadSuccess = function (event, data, previewId, index) {
         $("#" + this.ContainerId + "sub-upload").show();
-        var objId = data.response.objId;
-        $('#' + this.ContainerId + 'obj-id').text(objId);
+        this.FleId = data.response.objId;
+        $('#' + this.ContainerId + 'obj-id').text(this.FleId);
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
-        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, objId));
+        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, this.FleId));
     };
 
     this.addtagButton = function (event, file, previewId, index, reader) {
@@ -123,8 +121,8 @@
         });
     };
 
-    this.getId = function (fileId) {
-        this.getFileId(fileId);
+    this.getId = function (fileId) {      
+        return this.FleId;
     };
 
     this.init = function () {

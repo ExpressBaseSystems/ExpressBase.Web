@@ -45,8 +45,10 @@
     this.movingObj = {};
 
     this.save = function () {
-        if ($('#save_txtBox').val().trim() === '')
+        if (this.rootContainerObj.Name.trim() === '') {
+            alert("Enter a Name");
             return false;
+        }
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
@@ -58,8 +60,10 @@
         }, this.Save_Success.bind(this));
     };
     this.commit = function () {
-        if ($('#save_txtBox').val().trim() === '')
+        if (this.rootContainerObj.Name.trim() === '') {
+            alert("Enter a Name");
             return false;
+        }
         if (this.PGobj)
             this.saveObj();
         $(".eb-loaderFixed").show();
@@ -211,18 +215,19 @@
                 var $ctrl = $(new EbObjects["Eb" + type](id).Html());
                 $el.remove();
 
+                var t = $("<div class='controlTile'>" + $ctrl.outerHTML() + "</div>");
+
                 if (sibling)
                     $ctrl.insertBefore($(sibling));
                 else
                     $(target).append($ctrl);
 
                 $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-                $ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+                $ctrl.on("focus", this.controlOnFocus.bind(this));
                 $ctrl.attr("id", id);
                 $ctrl.attr("eb-type", type);
                 this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
 
-                $ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
                 $ctrl.focus();
             }
             else
@@ -231,17 +236,17 @@
         }
     };
 
-    this.controlCloseOnClick = function (e) {
-        var ControlTile = $(e.target).parent().parent();
-        var id = ControlTile.attr("id");
-        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
-        this.PGobj.clear();
-        this.rootContainerObj.Controls.DelByName(id);
-        ControlTile.siblings().focus();
-        ControlTile.remove();
-        e.preventDefault();
-        this.saveObj();
-    };
+    //this.controlCloseOnClick = function (e) {
+    //    var ControlTile = $(e.target).parent().parent();
+    //    var id = ControlTile.attr("id");
+    //    this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
+    //    this.PGobj.clear();
+    //    this.rootContainerObj.Controls.DelByName(id);
+    //    ControlTile.siblings().focus();
+    //    ControlTile.remove();
+    //    e.preventDefault();
+    //    this.saveObj();
+    //};
 
     this.updateHTML = function (e) {
         if (this.curControl.attr("id").toString().substr(0, 8) === "GridView") {
@@ -295,21 +300,33 @@
 
     };
 
+    //this.initCtrl = function (el) {
+    //    var $EbCtrl = $(el);
+    //    var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
+    //    var type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
+    //    var id = type + (this.controlCounters[type + "Counter"])++;
+    //    $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
+    //    $ControlTile.attr("eb-type", type).attr("id", id);
+    //    $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test///////////////
+    //    $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
+    //    $EbCtrl.wrap($ControlTile);
+    //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
+    //};
+
     this.initCtrl = function (el) {
-        var $EbCtrl = $(el);
-        var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
-        var type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
+        var $el = $(el);
+        var type = $el.attr("ctype").trim();
         var id = type + (this.controlCounters[type + "Counter"])++;
-        $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-        $ControlTile.attr("eb-type", type).attr("id", id);
-        $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test///////////////
-        $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
-        $EbCtrl.wrap($ControlTile);
-        $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
+        $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+        $el.on("focus", this.controlOnFocus.bind(this));
+        $el.attr("eb-type", type);
+        $el.attr("eb-type", type).attr("id", id);
     };
 
     this.InitEditModeCtrls = function (editModeObj) {
-        $(".Eb-ctrlContainer").each(function (i, el) { this.initCtrl(el); }.bind(this));
+        $(".Eb-ctrlContainer").each(function (i, el) {
+            this.initCtrl(el);
+        }.bind(this));
         setTimeout(function () {
             Proc(editModeObj, this.rootContainerObj);
         }.bind(this), 1000);

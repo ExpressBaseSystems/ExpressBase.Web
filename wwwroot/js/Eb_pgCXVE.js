@@ -12,7 +12,7 @@
     this.CXE_OKclicked = function () {
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
-        this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.imgSlctrs[elemId].getFileId();
+        this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.imgSlctrs[this.PGobj.CurProp].getFileId();
     };
 
     this.pgCXE_BtnClicked = function (e) {

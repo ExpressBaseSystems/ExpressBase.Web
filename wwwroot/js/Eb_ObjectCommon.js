@@ -177,7 +177,7 @@
         var target = $(e.target).attr("href");
         this.ObjWrapper = this.ObjCollection[target];
         this.ver_Refid = this.ObjWrapper.Refid;
-        this.Current_obj = this.ObjWrapper.DataSourceObj;
+        this.Current_obj = this.ObjWrapper.EbObject;
         this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
         this.UpdateCreateVersionDD();
     };
@@ -202,8 +202,8 @@
         $('#create').selectpicker('destroy');
         $('#create').selectpicker('refresh');
         var arr = this.Current_obj.VersionNumber.split(".")
-        var vNumMajor = ("v." + (parseInt(major) + 1) + "." + arr[1] + "." + arr[2] + ".w");
-        var vNumMinor = ("v." + arr[0] + "." + (parseInt(arr[1]) + 1) + "." + arr[2] + ".w");
+        var vNumMajor = ("v." + (parseInt(major) + 1) + ".0.0.w");
+        var vNumMinor = ("v." + arr[0] + "." + (parseInt(arr[1]) + 1) + ".0.w");
         var vNumPatch = ("v." + arr[0] + "." + arr[1] + "." + (parseInt(arr[2]) + 1) + ".w");
 
         $("#create").append("<option>Create</option>"+
@@ -211,7 +211,41 @@
             "<option id= '_minor'> Minor Version - (" + vNumMinor + ") from(v." + this.Current_obj.VersionNumber +")</option > "+
             "<option id='_patch'>Patch Version - (" + vNumPatch + ") from (v." + this.Current_obj.VersionNumber + ")</option>");
         $('#create').selectpicker('refresh');
+
+        $('#create').off('change').on("change", this.createVersion.bind(this));
     }
+
+    this.createVersion = function (e) {
+        var selected_opt = $(e.target).find("option:selected").attr("id");
+
+        if (selected_opt === "_major") {
+            if (confirm('Are you sure you want to create Major version?')) {
+                $.LoadingOverlay("show");
+                $.post("../Eb_Object/Create_Major_Version", { _refId: this.ver_Refid, _type : type }, function () {
+                    alert("Created Major version");
+                    $.LoadingOverlay("hide");
+                });
+            }
+        }
+        if (selected_opt === "_minor") {
+            if (confirm('Are you sure you want to create Minor version?')) {
+                $.LoadingOverlay("show");
+                $.post("../Eb_Object/Create_Minor_Version", { _refId: this.ver_Refid, _type: type }, function () {
+                    alert("Created Minor version");
+                    $.LoadingOverlay("hide");
+                });
+            }
+        }
+        if (selected_opt === "_patch") {
+            if (confirm('Are you sure you want to create Patch version?')) {
+                $.LoadingOverlay("show");
+                $.post("../Eb_Object/Create_Patch_Version", { _refId: this.ver_Refid, _type: type }, function () {
+                    alert("Created patch version");
+                    $.LoadingOverlay("hide");
+                });
+            }
+        }
+    };
 
     this.init();
 };

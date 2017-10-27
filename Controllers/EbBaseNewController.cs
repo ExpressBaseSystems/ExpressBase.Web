@@ -73,7 +73,7 @@ namespace ExpressBase.Web.Controllers
                 controller.ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
                 controller.ViewBag.email = tokenS.Claims.First(claim => claim.Type == "email").Value;
                 controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
-
+                controller.ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
                 base.OnActionExecuting(context);
             }
             catch (System.ArgumentNullException ane)

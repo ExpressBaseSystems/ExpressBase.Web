@@ -2,21 +2,12 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" />
 <style>
     .dashbord {
-        background-color: white;
+        background-color: #2f323b;
         width: 100%;
         border-top: none;
         font-family: Tahoma;
-        margin-top: 19px
-    }
-
-    .row {
-        padding-top: 33px;
-        margin-top: -4px;
-    }
-
-    .box1 {
-        height: 100%;
-        padding-right: 0;
+        height: 200px;
+        color: #949ba2;
     }
 
     .box2, .box4 {
@@ -39,30 +30,29 @@
     .box5 > .bootstrap-tagsinput {
         height: 116px;
         overflow-y: scroll;
+        background-color: rgba(68, 70, 79, 0.5);
+        border: none;
+        box-shadow: none;
     }
 
     .card1 {
-        background-color: #fafafa;
-        border-radius: 4px;
-        border: 1px solid #cccccc;
+        background-color: rgba(68, 70, 79, 0.5);
+        /* border-radius: 4px; */
+        /* border: 1px solid #cccccc; */
         margin-left: 15px;
         height: 140px;
         margin-top: 10px;
         padding: 0;
-        font-weight: 300;
-    }
-
-    .form1 {
-        margin-top: 10px;
+        font-weight: normal;
     }
 
     .count {
         font-size: 15px;
+        color: #f6f6f6;
     }
 
     .head {
         font-size: 18px;
-        border-bottom: 1px solid #eee;
     }
 
     .icons {
@@ -74,19 +64,20 @@
         height: 180px !important;
     }
 
-    .btn-labls {
-        background-color: white;
+    .toolbar {
+        width: 100%;
+        background-color: #2f323b;
+        margin-top: 50px;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
-    .toolbar {
-        background-color: white;
-        width: 100%;
-        min-height: 50px;
-        margin-top: -37px;
-        padding-top: 10px;
-        position: fixed;
-        z-index: 50;
-        border-bottom: 1px solid #ccc;
+    .mr-0 {
+        margin: 0;
+    }
+
+    .pd-0 {
+        padding: 0;
     }
 
     .toolbar2 {
@@ -94,18 +85,19 @@
     }
 
     .toolicons .btn {
-        border: none !important;
-        background-color: white !important;
-        color: black;
+        background-color: transparent;
+        color: white;
     }
 
-    .toolAlign {
-        margin-left: 35px;
-    }
+        .toolicons .btn:hover {
+            background-color: #30C2FF;
+            border-radius: 0;
+        }
 
-    .med-font {
-        font-size: 14px;
-    }
+        .toolicons .btn:focus {
+            background-color: #30C2FF;
+            border-radius: 0;
+        }
 
     .userimg {
         float: left;
@@ -122,9 +114,8 @@
         padding-right: 20%;
     }
 
-    .lastCommit {
-        width: 100%;
-        min-height: 60px;
+    .workcopies {
+        overflow-y: scroll;
     }
 
     .col-md-3 {
@@ -141,6 +132,7 @@
 
     .xtrasmall {
         font-size: 10px;
+        margin-bottom: 5px;
     }
 
     .changlogTxtArea {
@@ -164,173 +156,43 @@
         -webkit-box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
         box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
     }
-    /* Timeline */
-    .timeline{
-        list-style: none;
-        /*padding: 20px;*/
-        position: relative;
+
+    .toolicons .bootstrap-select {
+        padding: 0;
     }
 
-        .timeline:before {
-            top: 40px;
-            bottom: 0;
-            position: absolute;
-            content: ' ';
-            width: 3px;
-            background-color: #eeeeee;
-            left: 50%;
-            margin-left: -1.5px;
+        .toolicons .bootstrap-select .btn {
+            height: 25px;
+            border: none;
+            border-radius: 0;
+            background: white;
+            color: black;
+            padding: 0px 0px 0px 7px;
         }
 
-        .timeline .timeline-item {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-            .timeline .timeline-item:before,
-            .timeline .timeline-item:after {
-                content: '';
-                display: table;
-            }
-
-            .timeline .timeline-item:after {
-                clear: both;
-            }
-
-            .timeline .timeline-item .timeline-badge {
-                color: #fff;
-                width: 54px;
-                height: 54px;
-                line-height: 52px;
-                font-size: 22px;
-                text-align: center;
-                position: absolute;
-                top: 18px;
-                left: 50%;
-                margin-left: -25px;
-                background-color: #7c7c7c;
-                border: 3px solid #ffffff;
-                z-index: 100;
-                border-top-right-radius: 50%;
-                border-top-left-radius: 50%;
-                border-bottom-right-radius: 50%;
-                border-bottom-left-radius: 50%;
-            }
-
-                .timeline .timeline-item .timeline-badge i,
-                .timeline .timeline-item .timeline-badge .fa,
-                .timeline .timeline-item .timeline-badge .glyphicon {
-                    top: 2px;
-                    left: 0px;
-                }
-
-                .timeline .timeline-item .timeline-badge.primary {
-                    background-color: #1f9eba;
-                }
-
-                .timeline .timeline-item .timeline-badge.info {
-                    background-color: #5bc0de;
-                }
-
-                .timeline .timeline-item .timeline-badge.success {
-                    background-color: #59ba1f;
-                }
-
-                .timeline .timeline-item .timeline-badge.warning {
-                    background-color: #d1bd10;
-                }
-
-                .timeline .timeline-item .timeline-badge.danger {
-                    background-color: #ba1f1f;
-                }
-
-            .timeline .timeline-item .timeline-panel {
-                position: relative;
-                width: 46%;
-                float: left;
-                right: 16px;
-                border: 1px solid #c0c0c0;
-                background: #ffffff;
-                border-radius: 2px;
-                padding: 5px;
-                -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
-                box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
-            }
-
-                .timeline .timeline-item .timeline-panel:before {
-                    position: absolute;
-                    top: 26px;
-                    right: -16px;
-                    display: inline-block;
-                    border-top: 16px solid transparent;
-                    border-left: 16px solid #c0c0c0;
-                    border-right: 0 solid #c0c0c0;
-                    border-bottom: 16px solid transparent;
-                    content: ' ';
-                }
-
-                .timeline .timeline-item .timeline-panel .timeline-title {
-                    margin-top: 0;
-                    color: inherit;
-                }
-
-                .timeline .timeline-item .timeline-panel .timeline-body > p,
-                .timeline .timeline-item .timeline-panel .timeline-body > ul {
-                    margin-bottom: 0;
-                    margin-top: 5px;
-                }
-
-                    .timeline .timeline-item .timeline-panel .timeline-body > p + p {
-                        margin-top: 5px;
-                    }
-    /*li*/
-    .livestat:last-child:nth-child(even) {
-        float: right;
+    .toolicons .open li {
+        font-size: 12px;
     }
 
-    .livestat:nth-child(even) .timeline-panel {
-        float: right;
-        left: 16px;
+    .card1-botm {
+        height: 40%;
     }
 
-        .livestat:nth-child(even) .timeline-panel:before {
-            border-left-width: 0;
-            border-right-width: 14px;
-            left: -14px;
-            right: auto;
-        }
-        /**/
-
-    .livestat:nth-child(odd) .timeline-panel {
-        float: right;
-        left: 16px;
-    }
-
-        .livestat:nth-child(odd) .timeline-panel:before {
-            border-left-width: 0;
-            border-right-width: 14px;
-            left: -14px;
-            right: auto;
-        }
-     
-    .timeline-body-clickmore {
-        white-space: nowrap;
-        width: 25em;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .card1-mid {
+        height: 40%;
     }
 </style>
 <div class="row">
     <div class="toolbar">
-        <div class="col-md-4">
-            <div class="brdCrumb col-md-12">
+        <div class="col-md-4 pd-0">
+            <div class="brdCrumb col-md-12 pd-0">
                 <a href="#"> Home/</a>
             </div>
-            <div class="col-md-12">
-                <h4> @ViewBag.ObjName</h4>
+            <div class="col-md-12 pd-0">
+                <h5 class="mr-0" style="color:white"> @ViewBag.ObjName</h5>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8 pd-0">
             <div class='toolicons form-inline pull-right'>
                 <div class='form-group'>
                     <button class='btn save' id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
@@ -360,7 +222,7 @@
 <div class="row">
     <div class="dashbord">
         <div class="col-md-7 box2">
-            <div class="col-md-3 card1">
+            <div class="col-md-3 card1 workcopies">
                 <div class="head text-center">
                     Working Copy(s)
                 </div>
@@ -392,13 +254,15 @@
                 <div class="head text-center">
                     Last Commit
                 </div>
-                <div class="count text-center">
-                    v.x.0.0
+                <div class="card1-mid">
+                    <div class="count text-center">
+                        v.x.0.0
+                    </div>
+                    <div class="count text-center">
+                        @ViewBag.Status
+                    </div>
                 </div>
-                <div class="count text-center">
-                    @ViewBag.Status
-                </div>
-                <div style="display:block">
+                <div class="card1-botm" style="display:block">
                     <div class="userimg">
                         <img src="~/images/proimg.jpg" style="width:30px" />
                     </div>
@@ -412,10 +276,12 @@
                 <div class="head text-center">
                     Live Version
                 </div>
-                <div style="color:#0db71b" class="count text-center">
-                    v.x.0.0
+                <div class="card1-mid">
+                    <div style="color:#0db71b" class="count text-center">
+                        v.x.0.0
+                    </div>
                 </div>
-                <div style="display:block">
+                <div class="card1-botm" style="display:block">
                     <div class="userimg">
                         <img src="~/images/proimg.jpg" style="width:30px" />
                     </div>

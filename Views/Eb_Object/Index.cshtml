@@ -2,6 +2,7 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
     @using ExpressBase.Common;
+    @using ExpressBase.Common.Objects;
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
 <script>
@@ -14,9 +15,8 @@
         commonObj.init();
     });
 
-    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv);
+    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl');
     $("#layout_div").data("commonObj", commonObj);
-    alert("top:" + JSON.stringify(commonObj))
 
 </script>
 
@@ -29,7 +29,18 @@
     </ul>
     <div class="tab-content" id="versionTab">
         <div id="vernav0" class="tab-pane fade in active code_edit" data-id="new">
-            @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj , tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid })
+            @{
+                if (ViewBag.ObjType ==(int) EbObjectType.DataSource)
+                {
+                    @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
+                else if (ViewBag.ObjType == (int)EbObjectType.TableVisualization)
+                {
+                    @await Component.InvokeAsync("DVTable", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
+            }
         </div>
     </div>
 </div>

@@ -5,6 +5,30 @@ $(document).ready(function () {
     $('#password').keyup(function () {
         $('#result').html(checkStrength($('#password').val()))
     })
+
+    $("#password").focusout(function () {
+       
+        var password = $('#password').val();
+        var result = checkStrength($('#password').val());
+       
+        if (result != "Strong")
+        {
+            $('#msgbox h5').text('The password must contain at least 6 characters long,contain at least one number, one uppercase and one lowercase letter and atleast one special character');
+            $('#msgbox').show();
+            $('#passloader').removeClass();
+            $('#passloader').addClass('fa fa-times fa-lg');
+            $('#passloader').show();
+        }
+        
+        else {
+            $('#msgbox').hide();
+            $('#passloader').removeClass();
+            $('#passloader').addClass('fa fa-check fa-lg');
+            $('#passloader').show();
+        }
+       
+
+    })
     function checkStrength(password) {
         var strength = 0
         if (password.length < 6) {

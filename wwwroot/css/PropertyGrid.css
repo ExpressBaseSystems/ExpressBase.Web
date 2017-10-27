@@ -45,7 +45,7 @@
 }
 
 .pgHead {
-    background-image: var(--gbm);
+    background-color:#369;
     color: white;
     padding: 5px;
     font-weight: bold;

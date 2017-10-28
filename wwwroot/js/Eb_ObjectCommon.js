@@ -1,4 +1,4 @@
-﻿var Eb_ObjectCommon = function (refid, dsobj, cur_status, ver_num, tabNum, type, major) {
+﻿var Eb_ObjectCommon = function (refid, dsobj, cur_status, ver_num, tabNum, type, major, ssurl) {
     this.ver_Refid = refid;
     this.Current_obj = dsobj;
     this.Current_obj.Status = cur_status;
@@ -7,6 +7,7 @@
     this.ObjectType = type;
     this.ObjCollection = {};
     this.ObjWrapper = null;
+    this.ssurl = ssurl;
 
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
@@ -74,7 +75,7 @@
     this.VersionCode_success = function (data) {
         this.tabNum++;
         this.Current_obj = JSON.parse(data);
-        $.post('../Eb_Object/CallObjectEditor', { _dsobj: data, _tabnum: this.tabNum, objtype: this.ObjectType, _refid: this.ver_Refid })
+        $.post('../Eb_Object/CallObjectEditor', { _dsobj: data, _tabnum: this.tabNum, objtype: this.ObjectType, _refid: this.ver_Refid, _ssurl: this.ssurl })
             .done(this.CallObjectEditor_success.bind(this));
     };
 
@@ -178,7 +179,7 @@
         this.ObjWrapper = this.ObjCollection[target];
         this.ver_Refid = this.ObjWrapper.Refid;
         this.Current_obj = this.ObjWrapper.EbObject;
-        this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
+        //this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
         this.UpdateCreateVersionDD();
     };
 
@@ -198,6 +199,7 @@
     };
 
     this.UpdateCreateVersionDD = function () {
+        $("#objname").text(this.Current_obj.Name);
         $('#create option').remove()
         $('#create').selectpicker('destroy');
         $('#create').selectpicker('refresh');

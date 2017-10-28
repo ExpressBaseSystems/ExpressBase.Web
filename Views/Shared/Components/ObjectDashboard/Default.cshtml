@@ -11,10 +11,10 @@
         margin-top: 84px;
     }
 
-    .dashbord .box2, .box4 {
-        height: 100%;
-        padding: 0;
-    }
+        .dashbord .box2, .box4 {
+            height: 100%;
+            padding: 0;
+        }
 
         .dashbord .box3 {
             padding-right: 0;
@@ -23,6 +23,7 @@
         .dashbord .box4 > .bootstrap-select {
             padding: 0px;
         }
+
         .dashbord .box4 .bootstrap-select .btn {
             height: 25px;
             border: none;
@@ -31,12 +32,15 @@
             color: black;
             padding: 0px 0px 0px 7px;
         }
+
     .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
         width: 183px;
     }
+
     .dashbord .box4 > h6 {
         margin-top: 5px;
     }
+
     .dashbord .box5 > .bootstrap-tagsinput {
         height: 97px;
         overflow-y: auto;
@@ -55,6 +59,7 @@
         font-weight: normal;
         border-radius: 4px;
     }
+
     .dashbord .count {
         font-size: 15px;
         color: #949ba2;
@@ -86,12 +91,14 @@
         position: fixed;
         z-index: 10;
     }
+
         .objectDashB-toolbar .brdCrumb {
             font-size: 11px;
         }
-        .mr-0 {
-            margin: 0;
-        }
+
+    .mr-0 {
+        margin: 0;
+    }
 
     .pd-0 {
         padding: 0;
@@ -135,22 +142,25 @@
         overflow-y: auto;
         height: 80%;
     }
-        .workcopies::-webkit-scrollbar-track {
-            background-color: #F5F5F5;
-        }
 
-        .workcopies::-webkit-scrollbar {
-            width: 10px;
-            background-color: #605b5b;
-        }
+    .workcopies::-webkit-scrollbar-track {
+        background-color: #F5F5F5;
+    }
 
-        .workcopies::-webkit-scrollbar-thumb {
-            background-color: #6f6f6f;
-            border-radius: 6px;            
-        }
+    .workcopies::-webkit-scrollbar {
+        width: 10px;
+        background-color: #605b5b;
+    }
+
+    .workcopies::-webkit-scrollbar-thumb {
+        background-color: #6f6f6f;
+        border-radius: 6px;
+    }
+
     .dashbord .col-md-3 {
         width: 23% !important;
     }
+
     .dashbord .smallfont {
         font-size: 12px;
     }
@@ -210,16 +220,17 @@
         align-items: center;
         justify-content: center;
     }
-    .codedit .nav > li > a {        
+
+    .codedit .nav > li > a {
         padding: 2px 15px;
     }
-    .codedit{
-        margin-top:5px;
-    }
-    .vernav{
 
+    .codedit {
+        margin-top: 5px;
     }
 
+    .vernav {
+    }
 </style>
 <div class="row">
     <div class="toolbar objectDashB-toolbar">
@@ -228,7 +239,7 @@
                 <a href="#"> Home/</a>
             </div>
             <div class="col-md-12 pd-0">
-                <h4 class="mr-0" style="color:white"> @ViewBag.ObjName</h4>
+                <h4 class="mr-0" style="color:white"> <label id="objname">@ViewBag.ObjName</label></h4>
             </div>
         </div>
         <div class="col-md-8 pd-0">
@@ -280,8 +291,7 @@
                                 var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
                                 foreach (var k in wcpy)
                                 {
-                                    <a href="#" class="wrkcpylink" data-id="@k.Value" data-verNum="@k.Key">@k.Key</a><br />
-
+                                    <a href="#" class="wrkcpylink" data-id="@k.Value" data-verNum="@k.Key">@k.Key, </a>
                                 }
                             }
                         }
@@ -303,7 +313,7 @@
                 </div>
                 <div class="card1-botm" style="display:block">
                     <div class="userimg">
-                        <img src="~/images/proimg.jpg" style="width:30px" />
+                        <img src="../static/dp_29_micro.jpg" style="width:30px" />
                     </div>
                     <div class="profileInfo">
                         <h6 class="xtrasmall">Mr X</h6>
@@ -314,58 +324,60 @@
             <div class="col-md-3 card1">
                 <div class="head text-center">
                     Live Version
-                </div>              
-                    <div class="card1-mid">
-                        <div style="color:#0db71b" class="count text-center">
-                            v.x.0.0
-                        </div>
-                    </div>               
-                    <div class="card1-botm" style="display:block">
-                        <div class="userimg">
-                            <img src="~/images/proimg.jpg" style="width:30px" />
-                        </div>
-                        <div class="profileInfo">
-                            <h6 class="xtrasmall">Mr X</h6>
-                            commit time
-                        </div>
+                </div>
+                <div class="card1-mid">
+                    <div style="color:#0db71b" class="count text-center">
+                        v.x.0.0
                     </div>
                 </div>
+                <div class="card1-botm" style="display:block">
+                    <div class="userimg">
+                        <img src="../static/dp_29_micro.jpg" style="width:30px" />
+                    </div>
+                    <div class="profileInfo">
+                        <h6 class="xtrasmall">Mr X</h6>
+                        commit time
+                    </div>
+                </div>
+            </div>
             <div class="col-md-3 card1">
                 <div class="head text-center">
-                    Issues
+                    <i class="fa fa-bug" aria-hidden="true"></i> Issues
                 </div>
                 <div class="card1-mid">
                     <div class="count text-center" style="font-size:32px">
                         10
                     </div>
                 </div>
-             </div>
+            </div>
         </div>
 
-        <div class="col-md-2">            
-                <div class="firstcommit">
-                    <h6 class="smallfont">Owner/Assignee</h6>                   
-                    <div style="display:block">
-                        <div class="userimg">
-                            <img src="~/images/proimg.jpg" style="width:30px" />
-                        </div>
-                        <div class="profileInfo">
-                            <h6 class="xtrasmall">Mr X</h6>
-                        </div>
+        <div class="col-md-2">
+            <div class="firstcommit">
+                <h6 class="smallfont">Owner/Assignee</h6>
+                <div style="display:block">
+                    <div class="userimg">
+                        <img src="~/images/proimg.jpg" style="width:30px" />
+                    </div>
+                    <div class="profileInfo">
+                        <h6 class="xtrasmall">Mr X</h6>
                     </div>
                 </div>
-                <div class="col-md-1 box4">
-                    <h6 class="smallfont">Application</h6>
-                    <select class="selectpicker btn" id="apps">
-                        <option id="">app1</option>
-                        <option id="">app2</option>
-                        <option id="">app3</option>
-                    </select>
-                </div>           
-        </div>
+            </div>
+            <div class="col-md-1 box4">
+                <h6 class="smallfont">Application</h6>
+                <select class="selectpicker btn" id="apps">
+                    <option id="">app1</option>
+                    <option id="">app2</option>
+                    <option id="">app3</option>
+                </select>
+            </div>
+        </div>  
 
-        <div class="col-md-3 box5">
-            <h6 class="smallfont">Tags </h6>
+        <div class="col-md-2 box5 card1">
+            <div class="head text-center">
+                <i class="fa fa-tags" aria-hidden="true"></i> Tags
+            </div>
             <input type="text" class="tags" id="tags" data-role="tagsinput" />
         </div>
     </div>
@@ -399,8 +411,8 @@
             var t = $('.dashbord').animate({ height: 'toggle' });
             if ($('.dashbord').css("display") === "block") {
                 $('.codedit').css("margin-top", "0px");
-            }              
-            else if ($('.dashbord').css("display") === "none"){              
+            }
+            else if ($('.dashbord').css("display") === "none"){
                 $('.codedit').css("margin-top", "102px");
             }
         });

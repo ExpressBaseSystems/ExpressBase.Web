@@ -2,12 +2,12 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" />
 <style>
     .dashbord {
-        background-color: #2f323b;
+        background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.16, rgb(35, 81, 135)), color-stop(0.44, rgb(51, 102, 137)), color-stop(0.92, rgb(61, 115, 140)));
         width: 100%;
         border-top: none;
         font-family: Tahoma;
         height: 145px;
-        color: #949ba2;
+        color: #ffffff;
         margin-top: 84px;
     }
 
@@ -51,13 +51,14 @@
     }
 
     .dashbord .card1 {
-        background-color: #fafafa;
+        background-color: #ffffff;
         margin-left: 15px;
         height: 120px;
         margin-top: 10px;
         padding: 0;
-        font-weight: normal;
-        border-radius: 4px;
+        box-shadow: 0px 1px 3px 1px #3e6183;
+        color: #2f323b;
+        border-radius: 3px;
     }
 
     .dashbord .count {
@@ -66,11 +67,11 @@
     }
 
     .dashbord .head {
-        font-size: 15px;
+        font-size: 13px;
+        padding: 2px;
         color: #ffffff;
-        background: #54575e;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
+        background: #2f323b;
+        border-radius: 2px 2px 0px 0px;
     }
 
     .dashbord .icons {
@@ -84,7 +85,7 @@
 
     .objectDashB-toolbar {
         width: 100%;
-        background-color: #2f323b;
+        background-color: #2c2d27;
         margin-top: 50px;
         padding-left: 10px;
         padding-right: 10px;
@@ -231,6 +232,12 @@
 
     .vernav {
     }
+
+    .workcopies a {
+        color: #194877;
+        text-decoration: none;
+        font-family: times;
+    }
 </style>
 <div class="row">
     <div class="toolbar objectDashB-toolbar">
@@ -239,7 +246,7 @@
                 <a href="#"> Home/</a>
             </div>
             <div class="col-md-12 pd-0">
-                <h4 class="mr-0" style="color:white"> <label id="objname">@ViewBag.ObjName</label></h4>
+                <h5 class="mr-0" style="color:white"> <label id="objname">@ViewBag.ObjName</label></h5>
             </div>
         </div>
         <div class="col-md-8 pd-0">
@@ -374,7 +381,7 @@
             </div>
         </div>  
 
-        <div class="col-md-2 box5 card1">
+        <div class="col-md-3 box5 card1">
             <div class="head text-center">
                 <i class="fa fa-tags" aria-hidden="true"></i> Tags
             </div>

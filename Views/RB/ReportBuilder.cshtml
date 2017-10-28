@@ -6,7 +6,8 @@
 @using ExpressBase.Common.Objects;
 @using ExpressBase.Common;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
-<script src="~/js/ImageUploader.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -95,6 +96,9 @@
             <div class="form-group">
                 <input type="file" id="img-upload" style="display:none">
             </div>
+            <div class="form-group">
+                <button class="btn" id="mini-map-rep" ><i class="fa fa-desktop" aria-hidden="true"></i></button>
+            </div>
             <div class="pull-right" style="margin-right: 5px;">                
                 <div class="form-group">
                     <button class="btn" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
@@ -119,91 +123,106 @@
     </div>
     <div class="tab-content">
         <div class="tab-pane active" id="home" role="tabpanel">
-            <div class="col-md-2 side-toolbar">                
-                <div class="toolbox">
+            <div class="col-md-2 side-toolbar">                                
+                <div class="toolbox eb-toolBoxReport">
                     <div class="side-toolbar-head">
                         Toolbox
                         <i class="fa fa-wrench" aria-hidden="true"></i>
                         <i class="fa fa-times pin" aria-hidden="true"></i>
                     </div>
-                    <div id="get-col-loader" style="display:none;margin-left: 50%;margin-top: 10%;"><i class="fa fa-spinner fa-spin fa-lg" style='color:blue' aria-hidden="true"></i></div>
-                    <ul id="data-table-list" class="tool-box-items"></ul>
-                    <ul id="running-summary" class="tool-box-items">
-                        <li>
-                            <a>Summary</a>
-                            <ul>
-                                <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-                                <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-                            </ul>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item active">
+                            <a class="nav-link" data-toggle="tab" href="#common" role="tab">Common</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#context" role="tab">Context</a>
                         </li>
                     </ul>
-                    <ul id="calculated-fields" class="tool-box-items">
-                        <li>
-                            <a>Calculated Fields</a>
-                            <ul>
-                                <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-                                <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="common" role="tabpanel">                           
+                            <div id="get-col-loader" style="display:none;margin-left: 50%;margin-top: 10%;"><i class="fa fa-spinner fa-spin fa-lg" style='color:blue' aria-hidden="true"></i></div>
+                            <ul id="data-table-list" class="tool-box-items"></ul>
+                            <ul id="running-summary" class="tool-box-items">
+                                <li>
+                                    <a>Summary</a>
+                                    <ul>
+                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                    </ul>
+                                </li>
                             </ul>
-                        </li>
-                    </ul>
-                    <ul id="special-fields" class="tool-box-items">
-                        <li>
-                            <a>Special Fields</a>
-                            <ul>
-                                <li class="styl"><div eb-type='DateTime' class='coloums draggable textval'>CurrentDateTime</div></li>
-                                <li class="styl"><div eb-type='PageNo' class='coloums draggable textval'>Page No</div></li>
-                                <li class="styl"><div eb-type='PageXY' class='coloums draggable textval'>Page X/Y</div></li>
-                                <li class="styl"><div eb-type='UserName' class='coloums draggable textval'>Username</div></li>
+                            <ul id="calculated-fields" class="tool-box-items">
+                                <li>
+                                    <a>Calculated Fields</a>
+                                    <ul>
+                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                    </ul>
+                                </li>
                             </ul>
-                        </li>
-                    </ul>
-                    <ul class="Eb-shaps">
-                        <li>
-                            <a href="#" class="list-group-item collapsed Eb-shaps-title" data-toggle="collapse" data-target="#dropdownShapes">
-                                <i class="fa fa-chevron-right" style="padding-right:5px"></i> Shapes
-                            </a>
-                            <ul class="Eb-shaps shapes-tank collapse" id="dropdownShapes">
-                                <li class="draggable" eb-type="Circle"><button class="btn btn-sm"><i class="fa fa-circle-thin fa-lg"></i></button><div class="shape-text">Circle Tool</div></li>
-                                <li class="draggable" eb-type="Rect"><button class="btn btn-sm"><i class="fa fa-square-o fa-lg"></i></button><div class="shape-text">Rectangle</div></li>
-                                <li class="draggable" eb-type="ArrR"><button class="btn btn-sm"><i class="fa fa-long-arrow-right fa-lg"></i></button><div class="shape-text">Right Arrow</div></li>
-                                <li class="draggable" eb-type="ArrL"><button class="btn btn-sm"><i class="fa fa-long-arrow-left fa-lg"></i></button><div class="shape-text">Left Arrow</div></li>
-                                <li class="draggable" eb-type="ArrU"><button class="btn btn-sm"><i class="fa fa-long-arrow-up fa-lg"></i></button><div class="shape-text">Up Arrow</div></li>
-                                <li class="draggable" eb-type="ArrD"><button class="btn btn-sm"><i class="fa fa-long-arrow-down fa-lg"></i></button><div class="shape-text">Down Arrow</div></li>
-                                <li class="draggable" eb-type="ByArrH"><button class="btn btn-sm"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button><div class="shape-text">By Dir Hori Arrow</div></li>
-                                <li class="draggable" eb-type="ByArrV"><button class="btn btn-sm"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button><div class="shape-text">By Dir Vert Arrow</div></liclass="draggable">
-                                <li class="draggable" eb-type="Hl"><button class="btn btn-sm"><i> __ </i></button><div class="shape-text">Horrizontal Line</div></li>
-                                <li class="draggable" eb-type="Vl"><button class="btn btn-sm"><i> | </i></button><div class="shape-text">Vertical Line</div></liclass="draggable">
+                            <ul id="special-fields" class="tool-box-items">
+                                <li>
+                                    <a>Special Fields</a>
+                                    <ul>
+                                        <li class="styl"><div eb-type='DateTime' class='coloums draggable textval'>CurrentDateTime</div></li>
+                                        <li class="styl"><div eb-type='PageNo' class='coloums draggable textval'>Page No</div></li>
+                                        <li class="styl"><div eb-type='PageXY' class='coloums draggable textval'>Page X/Y</div></li>
+                                        <li class="styl"><div eb-type='UserName' class='coloums draggable textval'>Username</div></li>
+                                    </ul>
+                                </li>
                             </ul>
-                        </li>
-                    </ul>
-                    <div class="draggable tool-box-div" eb-type="Text">Text <i class="fa fa-text-width pull-right" aria-hidden="true"></i></div>
-                    <div class="draggable tool-box-div" eb-type="Barcode">Barcode <i class="fa fa-barcode pull-right" aria-hidden="true"></i></div>
-                    <div class="draggable tool-box-div" eb-type="QRcode">QR Code <i class="fa fa-qrcode pull-right" aria-hidden="true"></i></div>
-                </div>
-            </div>
-            <div class="col-md-8 col-md-offset-2" id="page-outer-cont">
-                <div class="page-outer-container">
-                    <div class="ruler-top">
-                        <div class="title" style="display:none">
-                            <select id="rulerUnit">
-                                <option value="cm">cm</option>
-                                <option value="inch">inch</option>
-                                <option value="px">pixel</option>
-                            </select>
+                            <ul class="Eb-shaps">
+                                <li>
+                                    <a href="#" class="list-group-item collapsed Eb-shaps-title" data-toggle="collapse" data-target="#dropdownShapes">
+                                        <i class="fa fa-chevron-right" style="padding-right:5px"></i> Shapes
+                                    </a>
+                                    <ul class="Eb-shaps shapes-tank collapse" id="dropdownShapes">
+                                        <li class="draggable" eb-type="Circle"><button class="btn btn-sm"><i class="fa fa-circle-thin fa-lg"></i></button><div class="shape-text">Circle Tool</div></li>
+                                        <li class="draggable" eb-type="Rect"><button class="btn btn-sm"><i class="fa fa-square-o fa-lg"></i></button><div class="shape-text">Rectangle</div></li>
+                                        <li class="draggable" eb-type="ArrR"><button class="btn btn-sm"><i class="fa fa-long-arrow-right fa-lg"></i></button><div class="shape-text">Right Arrow</div></li>
+                                        <li class="draggable" eb-type="ArrL"><button class="btn btn-sm"><i class="fa fa-long-arrow-left fa-lg"></i></button><div class="shape-text">Left Arrow</div></li>
+                                        <li class="draggable" eb-type="ArrU"><button class="btn btn-sm"><i class="fa fa-long-arrow-up fa-lg"></i></button><div class="shape-text">Up Arrow</div></li>
+                                        <li class="draggable" eb-type="ArrD"><button class="btn btn-sm"><i class="fa fa-long-arrow-down fa-lg"></i></button><div class="shape-text">Down Arrow</div></li>
+                                        <li class="draggable" eb-type="ByArrH"><button class="btn btn-sm"><i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i></button><div class="shape-text">By Dir Hori Arrow</div></li>
+                                        <li class="draggable" eb-type="ByArrV"><button class="btn btn-sm"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></button><div class="shape-text">By Dir Vert Arrow</div></liclass="draggable">
+                                        <li class="draggable" eb-type="Hl"><button class="btn btn-sm"><i> __ </i></button><div class="shape-text">Horrizontal Line</div></li>
+                                        <li class="draggable" eb-type="Vl"><button class="btn btn-sm"><i> | </i></button><div class="shape-text">Vertical Line</div></liclass="draggable">
+                                    </ul>
+                                </li>
+                            </ul>
+                            <div class="draggable tool-box-div" eb-type="Text">Text <i class="fa fa-text-width pull-right" aria-hidden="true"></i></div>
+                            <div class="draggable tool-box-div" eb-type="Barcode">Barcode <i class="fa fa-barcode pull-right" aria-hidden="true"></i></div>
+                            <div class="draggable tool-box-div" eb-type="QRcode">QR Code <i class="fa fa-qrcode pull-right" aria-hidden="true"></i></div>
                         </div>
-                        <div class='ruler' style="display:none"></div>
-                    </div>
-                    <div class='rulerleft' style="display:none"></div>
-                    <div id="pageCanvas">
+                        <div class="tab-pane" id="context" role="tabpanel">
+
+                        </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-2 col-md-offset-10 PGgrid">
-                <div class="pGreportBuilder">
-                    <div id="propGrid"></div>
+                    <div class="col-md-8 col-md-offset-2" id="page-outer-cont">
+                        <div class="page-outer-container">
+                            <div class="ruler-top">
+                                <div class="title" style="display:none">
+                                    <select id="rulerUnit">
+                                        <option value="cm">cm</option>
+                                        <option value="inch">inch</option>
+                                        <option value="px">pixel</option>
+                                    </select>
+                                </div>
+                                <div class='ruler' style="display:none"></div>
+                            </div>
+                            <div class='rulerleft' style="display:none"></div>
+                            <div id="pageCanvas">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-md-offset-10 PGgrid">
+                        <div class="pGreportBuilder">
+                            <div id="propGrid"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
         <div class="tab-pane" id="Preview" role="tabpanel">...</div>
     </div>
 </div>

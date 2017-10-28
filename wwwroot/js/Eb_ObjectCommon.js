@@ -8,6 +8,8 @@
     this.ObjCollection = {};
     this.ObjWrapper = null;
     this.ssurl = ssurl;
+    this.ControlCollection = {};
+    this.tabchangeFlag = false;
 
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
@@ -175,12 +177,14 @@
     };
 
     this.TabChangeSuccess = function (e) {
+        this.tabchangeFlag = true;
         var target = $(e.target).attr("href");
         this.ObjWrapper = this.ObjCollection[target];
         this.ver_Refid = this.ObjWrapper.Refid;
         this.Current_obj = this.ObjWrapper.EbObject;
         //this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
         this.UpdateCreateVersionDD();
+        this.ObjWrapper.GenerateButtons();
     };
 
     this.Save = function () {

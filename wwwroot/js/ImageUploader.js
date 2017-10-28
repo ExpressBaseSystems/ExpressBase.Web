@@ -71,11 +71,11 @@
 
     this.fileUploadSuccess = function (event, data, previewId, index) {
         $("#" + this.ContainerId + "sub-upload").show();
-        this.FleId = data.response.objId;
-        $('#' + this.ContainerId + 'obj-id').text(this.FleId);
+        var objId = data.response.objId;
+        $('#' + this.ContainerId + 'obj-id').text(objId);
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
-        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, this.FleId));
+        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, objId));
     };
 
     this.addtagButton = function (event, file, previewId, index, reader) {

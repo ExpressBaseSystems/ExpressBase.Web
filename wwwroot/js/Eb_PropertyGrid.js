@@ -350,10 +350,12 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.CurEditor = null;
         this.$hiddenProps = {};
         this.OSElist = {};
+        this.uniqueProps = [];
+        this.requiredProps = [];
         this.innerHTML = '<table class="table-bordered table-hover pg-table">';
         this.$PGcontainer.empty();
-        for (var i = 0; i < this.Metas.length; i++)
-            this.propNames.push(this.Metas[i].name.toLowerCase());
+
+        this.setBasic();
 
         this.buildRows();
         this.buildGrid();
@@ -373,15 +375,37 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.bindFns();
     };
 
-    this.bindFns = function () {
+    this.setBasic = function () {
         $.each(this.Metas, function (i, meta) {
-            if (meta.IsUnique) {
-                console.log(meta.name);
+            this.propNames.push(meta.name.toLowerCase());
 
+            var Name = meta.name;
+            var InpId = '#' + this.wraperId + Name;
+            $('#' + this.wraperId).off("change", InpId);
+            if (meta.IsUnique) {
+                this.uniqueProps.push(Name);
+                if ($(InpId).length === 0)
+                    $('#' + this.wraperId).on("change", InpId, this.checkUnique);
             }
             if (meta.IsRequired) {
-                console.log(meta.name);
+                this.requiredProps.push(Name);
+                if ($(InpId).length === 0)
+                    $('#' + this.wraperId).on("change", InpId, this.checkRequired);
             }
+        }.bind(this));
+    };
+
+    this.checkUnique = function () {
+        alert(this.id + "100");
+    };
+
+    this.checkRequired = function () {
+        alert(this.id + "2000");
+    };
+
+    this.bindFns = function () {
+        $.each(this.Metas, function (i, meta) {
+            
         });
     };
     
@@ -458,6 +482,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.Metas = metas;
         this.PropsObj = props;
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
+        this.imgSlctrs = {};
         this.InitPG();
         $("#" + this.wraperId + " .propgrid-helpbox").show();
     };

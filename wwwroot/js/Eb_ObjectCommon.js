@@ -61,8 +61,8 @@
 
     this.versionHistoryInner = function (result) {
         $("#vernav" + this.tabNum).append(result);
-        var scrollPos = $('#versionTab').offset().top;
-        $(window).scrollTop(scrollPos);
+        //var scrollPos = $('#versionTab').offset().top;
+        //$(window).scrollTop(scrollPos);
         $("#vernav" + this.tabNum + " .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
         $.LoadingOverlay("hide");
     };
@@ -189,16 +189,25 @@
 
     this.Save = function () {
         var tagvalues = $('#tags').val();
-        $.post("../Eb_Object/SaveEbObject", { _refid: this.ver_Refid, _json: JSON.stringify(this.Current_obj), _rel_obj: "", _tags: tagvalues});
+        var appid = $("#apps").find("option:selected").val();
+        $.post("../Eb_Object/SaveEbObject", {
+            _refid: this.ver_Refid,
+            _json: JSON.stringify(this.Current_obj),
+            _rel_obj: "",
+            _tags: tagvalues,
+            _appid: appid
+        });
     };
 
     this.Commit = function () {
         var tagvalues = $('#tags').val();
+        var appid = $("#apps").find("option:selected").val();
         var changeLog = $('#obj_changelog').val();
         $.post("../Eb_Object/CommitEbObject", {
             _refid: this.ver_Refid, _changeLog: changeLog, 
             _json: JSON.stringify(this.Current_obj),
-            _rel_obj: "", _tags: tagvalues
+            _rel_obj: "", _tags: tagvalues,
+            _appid: appid
         });
     };
 

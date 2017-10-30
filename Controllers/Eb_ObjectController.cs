@@ -48,6 +48,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Minorv = element.MinorVersionNumber;
                     ViewBag.Patchv = element.PatchVersionNumber;
                     ViewBag.Tags = element.Tags;
+                    ViewBag.AppId = element.AppId;
 
                     if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                     {
@@ -92,7 +93,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags)
+        public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, int _appid)
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
@@ -106,6 +107,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Relations = _rel_obj;
                 ds.IsSave = false;
                 ds.Tags = _tags;
+                ds.AppId = _appid;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -121,6 +123,8 @@ namespace ExpressBase.Web.Controllers
                 ds.RefId = _refid;
                 ds.ChangeLog = _changeLog;
                 ds.Tags = _tags;
+                ds.AppId = _appid;
+
                 var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
                 refid = res.RefId;
             }
@@ -128,7 +132,7 @@ namespace ExpressBase.Web.Controllers
             return refid;
         }
 
-        public string SaveEbObject(string _refid, string _json, string _rel_obj, string _tags)
+        public string SaveEbObject(string _refid, string _json, string _rel_obj, string _tags, int _appid)
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
@@ -142,6 +146,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Relations = _rel_obj;
                 ds.IsSave = true;
                 ds.Tags = _tags;
+                ds.AppId = _appid;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -155,6 +160,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = _json;
                 ds.Relations = _rel_obj;
                 ds.Tags = _tags;
+                ds.AppId = _appid;
 
                 var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
                 refid = res.RefId;

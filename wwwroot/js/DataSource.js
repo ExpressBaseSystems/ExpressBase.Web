@@ -34,9 +34,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     }
     
     this.SetCode = function (e) {
-        alert($(e.target));
-        alert($(e.target).getValue());
-        this.Current_obj.Sql = $(e.target).getValue();
+        this.EbObject.Sql = window["editor" + tabNum].getValue();
     };
 
     this.propGrid.PropertyChanged = function (obj, pname) {

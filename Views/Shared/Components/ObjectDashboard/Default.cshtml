@@ -205,8 +205,10 @@
             color: black;
             padding: 0px 0px 0px 7px;
         }
-
-    .toolicons .open li {
+    .bootstrap-select .btn {
+        font-size: 12px;
+    }
+       .open li {
         font-size: 12px;
     }
 
@@ -299,7 +301,7 @@
                                 var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
                                 foreach (var k in wcpy)
                                 {
-                                    <a href="#" class="wrkcpylink tag label label-warning" data-id="@k.Value" data-verNum="@k.Key">@k.Key</a>
+                                    <a href="#" class="wrkcpylink tag label label-warning" data-id="@k.Value" data-verNum="@k.Key">@k.Key.Replace(".w", " w")</a>
                                 }
                             }
                         }
@@ -374,10 +376,12 @@
             </div>
             <div class="col-md-1 box4">
                 <h6 class="smallfont">Application</h6>
-                <select class="selectpicker btn" id="apps">
-                    <option id="">app1</option>
-                    <option id="">app2</option>
-                    <option id="">app3</option>
+                <select class="selectpicker btn" id="apps" name="Apps">
+                @{
+                    foreach (KeyValuePair<string, object> entry in ViewBag.Apps) { 
+                        <option id="" value="@entry.Key">@entry.Value</option>
+                    }
+                }
                 </select>
             </div>
         </div>  
@@ -413,6 +417,9 @@
             $('#changelogPopup').css("display", "none");
         });
         $('#tags').tagsinput('add', '@ViewBag.Tags');
+
+        $('select[name=Apps]').val(@ViewBag.AppId);
+        $('.selectpicker').selectpicker('refresh');
     });
     $(function () {
         $('#minmize').click(function () {

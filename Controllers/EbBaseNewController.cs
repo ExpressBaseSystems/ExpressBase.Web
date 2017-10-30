@@ -60,11 +60,14 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
+                var path = context.HttpContext.Request.Path;
                 var controller = context.Controller as Controller;
-                this.ServiceClient.BearerToken = context.HttpContext.Request.Cookies["Token"];
-                this.ServiceClient.RefreshToken = context.HttpContext.Request.Cookies["rToken"];
+                string bearertoken = context.HttpContext.Request.Cookies["bToken"];
+                string refreshtoken = context.HttpContext.Request.Cookies["rToken"];
+                this.ServiceClient.BearerToken = bearertoken;
+                this.ServiceClient.RefreshToken = refreshtoken; 
 
-                var tokenS = (new JwtSecurityTokenHandler()).ReadToken(context.HttpContext.Request.Cookies["Token"]) as JwtSecurityToken;
+                var tokenS = (new JwtSecurityTokenHandler()).ReadToken(context.HttpContext.Request.Cookies["bToken"]) as JwtSecurityToken;
                 
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
@@ -75,12 +78,32 @@ namespace ExpressBase.Web.Controllers
                 controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
                 controller.ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
                 base.OnActionExecuting(context);
+
+               if(path.ToString().StartsWith("/Ext/", true, null))
+                {
+                    if(!string.IsNullOrEmpty(bearertoken))
+                    {
+                        if(controller.ViewBag.wc == "tc")
+                        {
+                            context.Result = new RedirectResult("~/Tenant/TenantDashboard");
+                        }
+                        else if(controller.ViewBag.wc == "dc")
+                        {
+                            context.Result = new RedirectResult("~/Dev/DevConsole");
+                        }
+                        else
+                        {
+                            context.Result = new RedirectResult("~/TenantUser/UserDashboard");
+                        }
+                    }
+                }
+
             }
             catch (System.ArgumentNullException ane)
             {
                 if (!(context.Controller is ExpressBase.Web.Controllers.ExtController))
                 {
-                    if (ane.ParamName == "token" || ane.ParamName == "rToken")
+                    if (ane.ParamName == "bToken" || ane.ParamName == "rToken")
                     {
                         context.Result = new RedirectResult("~/Ext/Index");
                         return;
@@ -93,7 +116,7 @@ namespace ExpressBase.Web.Controllers
         {
             var tok = this.ServiceClient.BearerToken;
             if (!string.IsNullOrEmpty(tok))
-                Response.Cookies.Append("Token", this.ServiceClient.BearerToken, new CookieOptions());
+                Response.Cookies.Append("bToken", this.ServiceClient.BearerToken, new CookieOptions());
 
             base.OnActionExecuted(context);
         }

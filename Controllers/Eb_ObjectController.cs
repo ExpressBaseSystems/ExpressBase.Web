@@ -24,6 +24,8 @@ namespace ExpressBase.Web.Controllers
     {
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
+        [HttpGet]
+        [HttpPost]
         public IActionResult Index(string objid, int objtype)
         {
             dynamic dsobj = null;
@@ -48,6 +50,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Minorv = element.MinorVersionNumber;
                     ViewBag.Patchv = element.PatchVersionNumber;
                     ViewBag.Tags = element.Tags;
+                    ViewBag.AppId = element.AppId;
 
                     if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                     {
@@ -69,12 +72,27 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
+            else
+            {
+                ViewBag.Refid = string.Empty;
+                ViewBag.ObjectName = string.Empty;
+                ViewBag.Status = string.Empty;
+                ViewBag.ObjectDesc = string.Empty;
+                ViewBag.ReadOnly = false;
+                ViewBag.ObjType = objtype;
+                ViewBag.Majorv = 0;
+                ViewBag.Minorv = 0;
+                ViewBag.Patchv = 0;
+                ViewBag.Workingcopy = new string[0];
+                ViewBag.Tags = string.Empty;
+                ViewBag.AppId = 0;
+            }
             if (type == EbObjectType.DataSource)
             {
                 var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
                 _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
             }
-            else if(type == EbObjectType.TableVisualization)
+            else if (type == EbObjectType.TableVisualization)
             {
                 var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
                 _jsResult = CSharpToJs.GenerateJs<EbDataVisualizationObject>(BuilderType.DVBuilder, typeArray);
@@ -92,7 +110,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags)
+        public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, int _appid)
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
@@ -106,6 +124,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Relations = _rel_obj;
                 ds.IsSave = false;
                 ds.Tags = _tags;
+                ds.AppId = _appid;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -121,6 +140,8 @@ namespace ExpressBase.Web.Controllers
                 ds.RefId = _refid;
                 ds.ChangeLog = _changeLog;
                 ds.Tags = _tags;
+                ds.AppId = _appid;
+
                 var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
                 refid = res.RefId;
             }
@@ -128,7 +149,7 @@ namespace ExpressBase.Web.Controllers
             return refid;
         }
 
-        public string SaveEbObject(string _refid, string _json, string _rel_obj, string _tags)
+        public string SaveEbObject(string _refid, string _json, string _rel_obj, string _tags, int _appid)
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
@@ -142,6 +163,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Relations = _rel_obj;
                 ds.IsSave = true;
                 ds.Tags = _tags;
+                ds.AppId = _appid;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -155,6 +177,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = _json;
                 ds.Relations = _rel_obj;
                 ds.Tags = _tags;
+                ds.AppId = _appid;
 
                 var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
                 refid = res.RefId;
@@ -202,7 +225,7 @@ namespace ExpressBase.Web.Controllers
                 VCName = "CodeEditor";
             else if (Objtype == (int)EbObjectType.TableVisualization)
                 VCName = "DVTable";
-            return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl= _ssurl });
+            return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl = _ssurl });
 
         }
 
@@ -223,7 +246,7 @@ namespace ExpressBase.Web.Controllers
             var version1 = new Version(v1);
             var version2 = new Version(v2);
             var res = version1.CompareTo(version2);
-            if (res>0)
+            if (res > 0)
             {
                 //first_obj = JsonConvert.SerializeObject(first_obj, Formatting.Indented);
                 //second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);

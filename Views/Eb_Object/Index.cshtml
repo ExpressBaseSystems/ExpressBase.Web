@@ -20,7 +20,7 @@
 
 </script>
 
-@await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, @*totVer = ViewBag.VersionNumber,*@ status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags })
+@await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId })
 
 
 <div class="row codedit">
@@ -43,6 +43,11 @@
                 else if (ViewBag.ObjType == (int)EbObjectType.ChartVisualization)
                 {
                     @await Component.InvokeAsync("DVChart", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
+                else if (ViewBag.ObjType == (int)EbObjectType.Report)
+                {
+                    @await Component.InvokeAsync("ReportBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
             }

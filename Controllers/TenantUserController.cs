@@ -235,8 +235,8 @@ namespace ExpressBase.Web2.Controllers
         {
             ViewBag.Fname = null;
            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var abc = this.ServiceClient.Post(new Authenticate { provider = "logout", Meta = new Dictionary<string, string> { { "wc", ViewBag.wc }, { "cid", ViewBag.cid } } });
-            HttpContext.Response.Cookies.Delete("Token");
+            var abc = this.ServiceClient.Post(new Authenticate { provider = "logout" });
+            HttpContext.Response.Cookies.Delete("bToken");
             HttpContext.Response.Cookies.Delete("rToken");
             return RedirectToAction("UsrSignIn", "Ext");
 

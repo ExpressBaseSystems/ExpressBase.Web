@@ -426,8 +426,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         this.posTop = event.pageY;
         this.dropLoc = $(event.target);
         this.col = $(ui.draggable);              
-        this.Objtype = this.col.attr('eb-type');
-        var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
+        this.Objtype = this.col.attr('eb-type');        
         var Title = "";
         if (this.Objtype === 'DateTime') {
             Title = this.addCurrentDateTime();
@@ -439,6 +438,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             Title = this.col.text().trim();
         }
         if (!this.col.hasClass('dropped')) {
+            var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
             var obj = new EbObjects["Eb" + this.Objtype](Objid);            
             this.dropLoc.append(obj.Html());
             obj.Top = this.posTop - this.dropLoc.offset().top;          
@@ -762,6 +762,19 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         this.ruler();
     };
 
+    this.minimap = function () {
+        var previewPage = $('.page').minimap({            
+            heightRatio: 0.4,
+            widthRatio: 0.1,
+            offsetHeightRatio: 0.1,
+            offsetWidthRatio: 0.035,
+            position: "right",
+            touch: true,
+            smoothScroll: true,
+            smoothScrollDelay: 200,            
+        });
+    };
+
     this.init = function () {
         this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
         this.pg.PropertyChanged = function (obj,pname) {
@@ -804,7 +817,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             this.DragDrop_Items();
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));                         
         $(this.savebtnid).on('click', this.savefile.bind(this));
-        $(this.Commitbtnid).on('click', this.Commit.bind(this));      
+        $(this.Commitbtnid).on('click', this.Commit.bind(this));
+        $('#mini-map-rep').on('click', this.minimap.bind(this));
     };//report executioin start func
 
     this.init();

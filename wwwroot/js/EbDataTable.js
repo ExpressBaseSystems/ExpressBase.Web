@@ -148,9 +148,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.ajaxSucc = function (text) {
         PcFlag = "False";
         obj = this.EbObject;
-        $("#Toolbar").children("div").remove();
-        $("#fd_toggle").css("display", "none");
-        $("#Save_btn").css("display", "none");
+        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this, this.EbObject));
         var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
         $("#content_dv" + obj.EbSid + "_" + this.tabNum).empty();
@@ -161,7 +160,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
             $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-8").addClass("col-md-10");
-            $("#btnGo").click();
         }
         else {
             $(sideDivId).css("display", "inline");
@@ -196,22 +194,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.start = function () {
-        //if (this.EbObject === null) {
-        //    this.EbObject = new EbObjects["EbTableVisualization"]("table_" + Date.now());
-        //    split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbTableVisualization");
-        //    this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
-        //    this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-        //}
-        //else {
-        //    split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbTableVisualization");
-        //    this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
-        //    this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-        //    this.call2FD();
-        //}
-
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
-        $("#btnGo"+ this.tabNum).css("display", "inline-block");
-        $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this, this.EbObject));
+       
     }
 
     this.propGrid.PropertyChanged = function (obj, Pname) {
@@ -233,7 +217,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
 
     this.getColumnsSuccess = function (data) {
-        //$(".tablecontainer").toggle();
+        this.extraCol = [];
         console.log(data);
         this.ebSettings = data;
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
@@ -245,11 +229,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
-            //if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").length === 0) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            //$("#sub_window_" + this.tableId).children("#"+this.tableId + "_Container").remove();
+            //$("#Toolbar"+this.tabNum).children(":not(.commonControls)").remove();
+            //$("#obj_icons")
             $("#content_" + this.tableId).empty();
-            //$("#sub_window_" + this.tableId).children("button").insertAfter("<div class='col-md-10' id='"+this.tableId+"_Container'><div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div></div>");
             $("#content_" + this.tableId).append("<div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div>");
             this.Init();
             //}
@@ -936,24 +918,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsWindow.bind(this));
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
         //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
-        //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
-        $("#dvnametxt").off("keyup").on("keyup", this.ModifyDvname.bind(this));
-        $("#TableHeighttxt").off("keyup").on("keyup", this.ModifyTableHeight.bind(this));
-        //$("input[name=renderAs]").off("click").on("click", this.graphSettings.bind(this));
         $("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
+        $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this, this.EbObject));
     };
 
 
     this.GenerateButtons = function () {
-        //$("#sub_windows_head_" + this.tableId).prepend("<label class='dvname' style= 'color: white;'>" + this.dvName+"</label>"+
-        $("#Toolbar"+this.tabNum).append(
-            "<div style= 'display: inline;float: right;' > " +
-            //"<a id='showgraphbtn" + this.tableId + "' class='btn btn-default' href='#graphcontainer_tab" + this.tableId + "'><i class='fa fa-line-chart'></i></a>" +
-            "<button type='button' id='" + this.tableId + "_btntotalpage' class='tools' data-table='@tableId' style='display:none;'>&sum;</button>" +
+        $("#obj_icons").empty();
+        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn'><i class='fa fa-play' aria-hidden='true'></i></button>"+
+            "<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +
             "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
             "<div class='btn-group'>" +
             "<div class='btn-group'>" +
-            " <button id='btnPrint" + this.tableId + "' class='tools'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
+            " <button id='btnPrint" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
             " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
             "   <span class='caret'></span>  <!-- caret --></div>" +
             "   <ul class='dropdown-menu' role='menu'>" +
@@ -961,16 +938,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
             "</ul>" +
             "</div>" +
-            "<button id='btnExcel" + this.tableId + "' class='tools'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
-            "<button id='btnPdf" + this.tableId + "' class='tools'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
-            "<button id='btnCsv" + this.tableId + "' class='tools'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
-            "<button id='btnCopy" + this.tableId + "' class='tools'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
+            "<button id='btnExcel" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
+            "<button id='btnPdf" + this.tableId + "' class='btn'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
+            "<button id='btnCsv" + this.tableId + "' class='btn'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
+            "<button id='btnCopy" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
             "</div>" +
             "</div>" +
-            //"<button id='" + this.tableId + "_btnSettings' class='tools'><i class='fa fa-cog' aria-hidden='true'></i></button>" +
-            //"<div id ='btnCollapse" + this.tableId + "' class='btn btn-default'>" +
-            //       " <i class='fa fa-chevron-down' aria-hidden='true'></i>" +
-            //   " </div>" +
             "</div>");
         //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
         //if (this.dtsettings.login == "uc") {

@@ -575,3 +575,57 @@
     -webkit-box-shadow:none;
     box-shadow:none;
 }
+.minimap {
+    -webkit-box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);
+    -moz-box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);
+    box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);
+}
+/*report toolbox tab*/
+.eb-toolBoxReport .nav-tabs {
+    border-bottom: 2px solid #DDD;
+}
+
+    .eb-toolBoxReport .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+        border-width: 0;
+    }
+
+    .eb-toolBoxReport .nav-tabs > li > a {
+        border: none;
+        color: #666;
+    }
+
+    .eb-toolBoxReport .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+        border: none;
+        color: #4285F4 !important;
+        background: transparent;
+    }
+
+    .eb-toolBoxReport .nav-tabs > li > a::after {
+        content: "";
+        background: #4285F4;
+        height: 2px;
+        position: absolute;
+        width: 100%;
+        left: 0px;
+        bottom: -1px;
+        transition: all 250ms ease 0s;
+        transform: scale(0);
+    }
+
+    .eb-toolBoxReport .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
+        transform: scale(1);
+    }
+
+.eb-toolBoxReport .tab-nav > li > a::after {
+    background: #21527d none repeat scroll 0% 0%;
+    color: #fff;
+}
+
+.eb-toolBoxReport .tab-pane {
+    padding: 15px 0;
+}
+.eb-toolBoxReport .nav > li > a {
+    padding: 3px 15px;
+    font-size: 12px;
+}
+/*report toolbox tab*/

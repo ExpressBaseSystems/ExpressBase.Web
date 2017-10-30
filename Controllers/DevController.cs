@@ -355,8 +355,8 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.Fname = null;
             IServiceClient client = this.ServiceClient;
-            var abc = client.Post(new Authenticate { provider = "logout", Meta = new Dictionary<string, string> { { "wc", ViewBag.wc }, { "cid", ViewBag.cid } } });
-            HttpContext.Response.Cookies.Delete("Token");
+            var abc = client.Post(new Authenticate { provider = "logout" });
+            HttpContext.Response.Cookies.Delete("bToken");
             HttpContext.Response.Cookies.Delete("rToken");
             return RedirectToAction("DevSignIn", "Ext");
 

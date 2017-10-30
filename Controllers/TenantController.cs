@@ -138,9 +138,9 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Fname = null;
             IServiceClient client = this.ServiceClient;
             var abc = client.Post(new Authenticate { provider = "logout" });
-            HttpContext.Response.Cookies.Delete("Token");
+            HttpContext.Response.Cookies.Delete("bToken");
             HttpContext.Response.Cookies.Delete("rToken");
-            return RedirectToAction("TenantSignup", "TenantExt");
+            return RedirectToAction("Index", "Ext");
 
         }
 

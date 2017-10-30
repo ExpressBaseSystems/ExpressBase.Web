@@ -13,62 +13,10 @@
 @{ 
     if (ViewBag.data.EbDataSource.FilterDialog != null)
     {
-            @*<div class="min-btn">
-                <button class="btn-tb-com pull-right" onclick="fdBoxMin();" id='fd-min-btn'><i class="fa fa-caret-left fa-lg" aria-hidden="true"></i></button>
-            </div>*@
-            @*<div style="float: right;">
-            <button class='close'><i class='fa fa-times' aria-hidden='true'></i></button>
-            </div>*@
             @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
                                
     }
 }
-@*<button id='btnGo' class='btn btn-primary' style='float: right;margin-top: 4px;'>Run</button>*@
-
-
-            @*<div id='graphcontainer_tab@(tableId+"_1")'>
-                    <div style='height: 50px;margin-bottom: 5px!important;' class='well well-sm'>
-                        <label class="dvname">@ViewBag.data.Name</label>
-                        <div id='btnColumnCollapse@(tableId+"_1")' class='btn btn-default' style='float: right;'>
-                            <i class='fa fa-cog' aria-hidden='true'></i>
-                        </div>
-                        <div class='dropdown' id='graphDropdown_tab@(tableId+"_1")' style='display: inline-block;padding-top: 1px;float:right'>
-                            <button class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
-                                <span class='caret'></span>
-                            </button>
-                            <ul class='dropdown-menu'>
-                                <li><a href='#'><i class='fa fa-line-chart custom'></i> Line</a></li>
-                                <li><a href='#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>
-                                <li><a href='#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>
-                                <li><a href='#'><i class='fa fa-pie-chart custom'></i> pie </a></li>
-                                <li><a href='#'> doughnut </a></li>
-                            </ul>
-                        </div>
-                        <button id='reset_zoom@(tableId+"_1")' class='btn btn-default' style='float: right;'>Reset zoom</button>
-
-                    </div>
-                    <div id='columns4Drag@(tableId+"_1")' style='display:none;'>
-                        <div style='display: inline-block;'>
-                            <label class='nav-header disabled'><center><strong>Columns</strong></center><center><font size='1'>Darg n Drop to X or Y Axis</font></center></label>
-                            <input id='searchColumn@(tableId+"_1")' type='text' class='form-control' placeholder='search for column' />
-                            <ul class='list-group' style='height: 450px; overflow-y: auto;'></ul>
-                        </div>
-                        <div style='display: inline-block;vertical-align: top;width: 806px;'>
-                            <div class='input-group'>
-                                <span class='input-group-addon' id='basic-addon3'>X-Axis</span>
-                                <div class='form-control' style='padding: 4px;height:33px' id='X_col_name@(tableId+"_1")'></div>
-                            </div>
-                            <div class='input-group' style='padding-top: 1px;'>
-                                <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>
-                                <div class='form-control' style='padding: 4px;height:33px' id='Y_col_name@(tableId+"_1")'></div>
-                            </div>
-                        </div>
-                    </div>
-                    <canvas id='myChart@(tableId+"_1")' width='auto' height='auto'></canvas>
-                </div>*@
-        @*</div>
-    </div>
-</div>*@
 
 @*@section EbHead {
         <script>
@@ -78,29 +26,7 @@
 <script>
     @Html.Raw(ViewBag.HtmlHead)
     //var sett = @Html.Raw(dvobj);
-    $.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));
-    //dvcontainerObj.currentObj = sett;
-    @*dvcontainerObj.dvcol["sub_window_dv" + @dvobj.EbSid] = sett;*@
-    @*var meta = @Html.Raw(ViewBag.meta);*@
-    @*var dvCommon = new DvCommonObj({
-        ss_url: '@ViewBag.ServiceUrl',
-        login: '@ViewBag.wc',
-        dvobj: sett,
-    });*@
-    @*if ("@ViewBag.data.$type".indexOf("EbTableVisualization") !== -1) {
-        var ebdtable = new EbDataTable({
-            ds_id: '@ViewBag.data.DataSourceRefId',
-            ss_url: '@ViewBag.ServiceUrl',
-            tid: '@(tableId)',
-            login: '@ViewBag.wc',
-            settings: sett,
-            //meta: meta,
-            dvRefId: '@ViewBag.dvRefId'
-            //fnKeyUpCallback:
-        });
-    }
-    else if ("@ViewBag.data.$type".indexOf("EbChartVisualization") !== -1) {
-        var chartJs = new eb_chart(sett,'@ViewBag.ServiceUrl',"",'@(tableId)');
-    }*@
+    //$.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));
+    
 </script>
 

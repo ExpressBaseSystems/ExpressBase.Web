@@ -40,6 +40,11 @@
                     @await Component.InvokeAsync("DVTable", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
+                else if (ViewBag.ObjType == (int)EbObjectType.ChartVisualization)
+                {
+                    @await Component.InvokeAsync("DVChart", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
             }
         </div>
     </div>

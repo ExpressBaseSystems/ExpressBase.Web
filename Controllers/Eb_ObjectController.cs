@@ -74,7 +74,7 @@ namespace ExpressBase.Web.Controllers
                 var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
                 _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
             }
-            else if(type == EbObjectType.TableVisualization)
+            else if(type == EbObjectType.TableVisualization || type == EbObjectType.ChartVisualization)
             {
                 var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
                 _jsResult = CSharpToJs.GenerateJs<EbDataVisualizationObject>(BuilderType.DVBuilder, typeArray);

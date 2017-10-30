@@ -17,9 +17,7 @@
     if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
     }
-    //$(document).ready(function () {
-
-        $("#code@(ViewBag.tabnum)").empty().append('@dsObj.Sql');
+       @*$("#code@(ViewBag.tabnum)").empty().append('@dsObj.Sql');*@
         if (@ViewBag.tabnum === 0) {
             CodeMirror.commands.autocomplete = function (cm) {
                 CodeMirror.showHint(cm, "CodeMirror.hint.sql");
@@ -38,8 +36,6 @@
         setTimeout(function () {
             window["editor@(ViewBag.tabnum)"].refresh();
         }, 500);
-    //});
-    //alert("comp111:" + JSON.stringify(commonObj));commonO.ObjCollection["vernav@(ViewBag.tabnum)"]
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataSourceWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum);
 </script>
 <style>

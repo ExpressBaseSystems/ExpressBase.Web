@@ -24,6 +24,8 @@ namespace ExpressBase.Web.Controllers
     {
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
+        [HttpGet]
+        [HttpPost]
         public IActionResult Index(string objid, int objtype)
         {
             dynamic dsobj = null;
@@ -70,12 +72,27 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
+            else
+            {
+                ViewBag.Refid = string.Empty;
+                ViewBag.ObjectName = string.Empty;
+                ViewBag.Status = string.Empty;
+                ViewBag.ObjectDesc = string.Empty;
+                ViewBag.ReadOnly = false;
+                ViewBag.ObjType = objtype;
+                ViewBag.Majorv = 0;
+                ViewBag.Minorv = 0;
+                ViewBag.Patchv = 0;
+                ViewBag.Workingcopy = new string[0];
+                ViewBag.Tags = string.Empty;
+                ViewBag.AppId = 0;
+            }
             if (type == EbObjectType.DataSource)
             {
                 var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
                 _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
             }
-            else if(type == EbObjectType.TableVisualization)
+            else if (type == EbObjectType.TableVisualization)
             {
                 var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
                 _jsResult = CSharpToJs.GenerateJs<EbDataVisualizationObject>(BuilderType.DVBuilder, typeArray);
@@ -208,7 +225,7 @@ namespace ExpressBase.Web.Controllers
                 VCName = "CodeEditor";
             else if (Objtype == (int)EbObjectType.TableVisualization)
                 VCName = "DVTable";
-            return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl= _ssurl });
+            return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl = _ssurl });
 
         }
 
@@ -229,7 +246,7 @@ namespace ExpressBase.Web.Controllers
             var version1 = new Version(v1);
             var version2 = new Version(v2);
             var res = version1.CompareTo(version2);
-            if (res>0)
+            if (res > 0)
             {
                 //first_obj = JsonConvert.SerializeObject(first_obj, Formatting.Indented);
                 //second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);

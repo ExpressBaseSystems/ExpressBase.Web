@@ -16,8 +16,8 @@
 
     $.fn.extend({
         treed: function (o) {
-            var openedClass = 'fa-chevron-down';
-            var closedClass = 'fa-chevron-right';
+            var openedClass = 'fa-minus';
+            var closedClass = 'fa-plus';
 
             if (typeof o !== 'undefined') {
                 if (typeof o.openedClass !== 'undefined') {
@@ -96,9 +96,6 @@
             <div class="form-group">
                 <input type="file" id="img-upload" style="display:none">
             </div>
-            <div class="form-group">
-                <button class="btn" id="mini-map-rep" ><i class="fa fa-desktop" aria-hidden="true"></i></button>
-            </div>
             <div class="pull-right" style="margin-right: 5px;">                
                 <div class="form-group">
                     <button class="btn" id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
@@ -132,34 +129,15 @@
                     </div>
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item active">
-                            <a class="nav-link" data-toggle="tab" href="#common" role="tab">Common</a>
+                            <a class="nav-link" data-toggle="tab" href="#genaral" role="tab">General</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#context" role="tab">Context</a>
+                            <a class="nav-link" data-toggle="tab" href="#data" role="tab">Data</a>
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane active" id="common" role="tabpanel">                           
-                            <div id="get-col-loader" style="display:none;margin-left: 50%;margin-top: 10%;"><i class="fa fa-spinner fa-spin fa-lg" style='color:blue' aria-hidden="true"></i></div>
-                            <ul id="data-table-list" class="tool-box-items"></ul>
-                            <ul id="running-summary" class="tool-box-items">
-                                <li>
-                                    <a>Summary</a>
-                                    <ul>
-                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            <ul id="calculated-fields" class="tool-box-items">
-                                <li>
-                                    <a>Calculated Fields</a>
-                                    <ul>
-                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
-                                    </ul>
-                                </li>
-                            </ul>
+                        <div class="tab-pane active" id="genaral" role="tabpanel">                           
+                            <div id="get-col-loader" style="display:none;margin-left: 50%;margin-top: 10%;"><i class="fa fa-spinner fa-spin fa-lg" style='color:blue' aria-hidden="true"></i></div>                           
                             <ul id="special-fields" class="tool-box-items">
                                 <li>
                                     <a>Special Fields</a>
@@ -174,7 +152,7 @@
                             <ul class="Eb-shaps">
                                 <li>
                                     <a href="#" class="list-group-item collapsed Eb-shaps-title" data-toggle="collapse" data-target="#dropdownShapes">
-                                        <i class="fa fa-chevron-right" style="padding-right:5px"></i> Shapes
+                                        <i class="fa fa-plus" style="padding-right:5px"></i> Shapes
                                     </a>
                                     <ul class="Eb-shaps shapes-tank collapse" id="dropdownShapes">
                                         <li class="draggable" eb-type="Circle"><button class="btn btn-sm"><i class="fa fa-circle-thin fa-lg"></i></button><div class="shape-text">Circle Tool</div></li>
@@ -194,8 +172,26 @@
                             <div class="draggable tool-box-div" eb-type="Barcode">Barcode <i class="fa fa-barcode pull-right" aria-hidden="true"></i></div>
                             <div class="draggable tool-box-div" eb-type="QRcode">QR Code <i class="fa fa-qrcode pull-right" aria-hidden="true"></i></div>
                         </div>
-                        <div class="tab-pane" id="context" role="tabpanel">
-
+                        <div class="tab-pane" id="data" role="tabpanel">
+                            <ul id="data-table-list" class="tool-box-items"></ul>
+                            <ul id="running-summary" class="tool-box-items">
+                                <li>
+                                    <a>Summary</a>
+                                    <ul>
+                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <ul id="calculated-fields" class="tool-box-items">
+                                <li>
+                                    <a>Calculated Fields</a>
+                                    <ul>
+                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                        <li class="styl"><div id="fd1" class="draggable textval">Coloumn</div></li>
+                                    </ul>
+                                </li>
+                            </ul>
                         </div>
                         </div>
                     </div>

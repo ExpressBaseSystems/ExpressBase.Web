@@ -103,13 +103,16 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
-        $('.dropped').draggable({ cursor: "crosshair", containment: ".page", stack: ".dropped", start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this)});
-        $('.dropped').resizable({ containment: "parent", handles: "n, e, s, w", stop: this.onReSizeFn.bind(this) });
-        if (obj.SectionHeight) {
+
+        if (!('SectionHeight' in obj)) {
+            $("#" + obj.EbSid).draggable({ cursor: "crosshair", containment: ".page", stack: ".dropped", start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this) });                       
+            $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));            
+        }           
+        if ('SectionHeight' in obj) {
             $("#" + obj.EbSid).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
         }        
         $("#" + obj.EbSid).attr("tabindex", "1");
-        $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this)); 
+        $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));        
     };//render after pgchange
 
     this.getDataSourceColoums = function (refid) {
@@ -206,8 +209,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             var sec = "Eb" + i;
             var obj = new EbObjects[sec](this.ReportSections[i]);
             $("#page").append(obj.Html());
-            obj.BackColor = "transparent";
-            this.RefreshControl(obj);
+            //obj.BackColor = "transparent";
+            //this.RefreshControl(obj);
             this.sectionArray.push("#" + this.ReportSections[i]);           
         }
         this.headerBox1_Split();
@@ -228,8 +231,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             direction: 'vertical',
             cursor: 'row-resize',
             sizes: [20, 20, 20, 20, 20],
-            minSize: 0,
-            gutterSize: 3,
+            minSize: 33,
+            gutterSize: 5,
             onDrag: function (e) {
                 $('#box0,#rptheadHbox').css("height", $('#rpthead').height());
                 $('#box1,#pgheadHbox').css("height", $('#pghead').height());
@@ -243,8 +246,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             direction: 'vertical',
             cursor: 'row-resize',
             sizes: [20, 20, 20, 20, 20],
-            minSize: 0,
-            gutterSize: 3,
+            minSize: 33,
+            gutterSize: 5,
             onDrag: function (e) {
                 $('#box0,#rpthead').css("height", $('#rptheadHbox').height());
                 $('#box1,#pghead').css("height", $('#pgheadHbox').height());
@@ -258,8 +261,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             direction: 'vertical',
             cursor: 'row-resize',
             sizes: [20, 20, 20, 20, 20],
-            minSize: 0,
-            gutterSize: 3,
+            minSize: 33,
+            gutterSize: 5,
             onDrag: function (e) {
                 $('#rptheadHbox,#rpthead').css("height", $('#box0').height());
                 $('#pgheadHbox,#pghead').css("height", $('#box1').height());
@@ -290,9 +293,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         SubSec_obj.BackColor = "transparent";        
         this.objCollection[id] = SubSec_obj;        
         this.RefreshControl(SubSec_obj);
-        this.pg.addToDD(SubSec_obj);
-        $("#" + id).on("focus", this.elementOnFocus.bind(this));
-        $("#" + id).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });       
+        this.pg.addToDD(SubSec_obj);                       
     }; //first sub section auto
 
     this.splitButton = function () {
@@ -322,18 +323,16 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             this.objCollection[id] = SubSec_obj;                                 
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
-            $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));           
-            $("#" + id).droppable({ accept: ".draggable,.dropped,.shapes,.special-field", drop: this.onDropFn.bind(this) });            
+            $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));                                  
             Split(this.splitarray, {
                 direction: 'vertical',
                 cursor: 'row-resize',
-                minSize: 5,
-                gutterSize: 3,
+                minSize: 30,
+                gutterSize: 5,
                 onDrag: this.splitterOndragFn.bind(this)
             });
             $.each($("#" + id).siblings().not(".gutter"), this.setSectionHeight.bind(this,id));                       
-            this.multiSplitBoxinner();
-            $('#' + id).on("focus", this.elementOnFocus.bind(this));
+            this.multiSplitBoxinner();           
         }
     };//split sections multipple
 
@@ -382,8 +381,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             Split(temp1, {
                 direction: 'vertical',
                 cursor: 'row-resize',
-                minSize: 10,
-                gutterSize: 3                
+                minSize: 30,
+                gutterSize: 5                
             });
         }        
     };
@@ -410,11 +409,10 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             cancel: "a.ui-icon",
             revert: "invalid",
             helper: "clone",
-            cursor: "move",           
-            stack: ".draggable",
+            cursor: "move",                       
             appendTo: "body",
             drag: function (event, ui) {
-                //$(ui.helper).css({ "width": "100px", "background": "#8fd4df", "height": "100px" });
+                $(ui.helper).css({ "background": "white" ,"border":"1px dotted black"});
                 $(ui.helper).children(".shape-text").remove();
                 $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
             }
@@ -445,19 +443,14 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             obj.Left = this.posLeft - this.dropLoc.offset().left;
             obj.Title = Title;            
             this.objCollection[Objid] = obj;           
-            this.RefreshControl(obj);
-            //$('#' + Objid).attr("tabindex", "1").attr("onclick", "$(this).focus()");
-            //$('#' + Objid).on("focus", this.elementOnFocus.bind(this));
+            this.RefreshControl(obj);           
         }
         else if (this.col.hasClass('dropped')) {            
             this.dropLoc.append(this.col.css({ left: (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop}));
             var obj1 = this.objCollection[this.col.attr('id')];
             obj1.Top = this.col.position().top;
-            obj1.Left = this.col.position().left;
-            $('#'+this.col.attr('id')).resizable({ containment: "parent", handles: "n, e, s, w", stop: this.onReSizeFn.bind(this) });
-        }
-        $('.dropped').draggable({ cursor: "crosshair", containment: ".page",start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this)});       
-        $('.dropped').resizable({ containment: "parent", handles: "n, e, s, w", stop:this.onReSizeFn.bind(this)});        
+            obj1.Left = this.col.position().left;            
+        }                
     };//on drop func of dropable
 
     this.onReSizeFn = function (event, ui) {        
@@ -476,9 +469,29 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         var curObject = this.objCollection[id];       
         var type = curControl.attr('eb-type');        
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
-        this.editElement(curControl);
-        this.contextMenu(curControl);
+        if (!curControl.hasClass("pageHeaders")) {
+            this.editElement(curControl);
+            this.contextMenu(curControl);
+            this.Resizable(curControl);
+        }
     };//obj send to pg on focus
+
+    this.Resizable = function (object) {
+        if (object.hasClass('arrow')) {
+            object.resizable({
+                containment: "parent", handles: "e,w", stop: this.onReSizeFn.bind(this)
+            });
+        }
+        else {
+            object.resizable({
+                containment: "parent", handles: "n, s,e,w, ne, se, sw, nw", stop: this.onReSizeFn.bind(this)
+            });
+        }
+    }
+
+    this.destroyResizable = function (event) {
+        $(event.target).resizable("destroy");
+    }
 
     this.contextMenu = function (curControl) {
         var selector = curControl.attr('id');
@@ -535,7 +548,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             alert('no permission');
     };
 
-    this.editElement = function (control) {                                         
+    this.editElement = function (control) {
+        this.control = control;
         $("#delete").on('click',this.removeElementFn.bind(this));
         $("#alg-R").on('click', this.alignRightFn.bind(this));
         $("#alg-C").on('click', this.alignCenterFn.bind(this));
@@ -550,15 +564,15 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
 
     this.keyBoardShortcuts = function (event) {
         if (event.key === "Delete") {
-            $(event.target).remove();
+            this.control.remove();
         }
         else if (event.key === "Control"){
-            $(event.target).toggleClass("marked");
+            this.control.toggleClass("marked");
         }       
     };   
 
-    this.removeElementFn = function () {
-        if (!this.control.hasClass("pageHeaders")){
+    this.removeElementFn = function (e) {
+        if (!$(e.target).hasClass("pageHeaders")){
             this.control.remove();
         }
         else {
@@ -566,19 +580,19 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         }
     };
 
-    this.alignRightFn = function () {
+    this.alignRightFn = function (e) {
         this.control.css("text-align", "right");
     };
 
-    this.alignCenterFn = function () {
+    this.alignCenterFn = function (e) {
         this.control.css("text-align", "center");
     };
 
-    this.alignLeftFn = function () {
+    this.alignLeftFn = function (e) {
         this.control.css("text-align", "left");
     };
 
-    this.addImageFn = function () {                       
+    this.addImageFn = function (e) {                       
         var imgDiv = this.control;
         $("#img-upload").change(function () {           
             var input = this;
@@ -764,21 +778,21 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
 
     this.minimap = function () {
         var previewPage = $('.page').minimap({            
-            heightRatio: 0.4,
+            heightRatio: 0.25,
             widthRatio: 0.1,
-            offsetHeightRatio: 0.1,
-            offsetWidthRatio: 0.035,
-            position: "right",
+            offsetHeightRatio: 0.7,
+            offsetWidthRatio: 0.02,
+            position: "left",
             touch: true,
             smoothScroll: true,
             smoothScrollDelay: 200,            
-        });
+        });       
     };
 
     this.init = function () {
         this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
         this.pg.PropertyChanged = function (obj,pname) {
-            if (obj.SectionHeight) {
+            if ('SectionHeight' in obj) {
                 this.sizeArray = [];
                 this.idArray = []
                 $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
@@ -787,11 +801,11 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
                     direction: 'vertical',
                     cursor: 'row-resize',
                     sizes: this.sizeArray,
-                    minSize: 5,
-                    gutterSize: 3,
+                    minSize: 30,
+                    gutterSize: 5,
                     onDrag: this.splitterOndragFn.bind(this)
                 });                
-                $("#" + obj.EbSid).on("focus", this.elementOnFocus.bind(this));
+                //$("#" + obj.EbSid).on("focus", this.elementOnFocus.bind(this));
             }           
             if (pname === "DataSourceRefId") {             
                     this.getDataSourceColoums(obj.DataSourceRefId);                                                             
@@ -815,10 +829,10 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             this.pgC = this.createPagecontainer();
             this.createPage(this.pgC);
             this.DragDrop_Items();
+            //this.minimap();
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));                         
         $(this.savebtnid).on('click', this.savefile.bind(this));
-        $(this.Commitbtnid).on('click', this.Commit.bind(this));
-        $('#mini-map-rep').on('click', this.minimap.bind(this));
+        $(this.Commitbtnid).on('click', this.Commit.bind(this));        
     };//report executioin start func
 
     this.init();

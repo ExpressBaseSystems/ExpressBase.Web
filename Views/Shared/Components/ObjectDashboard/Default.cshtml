@@ -408,7 +408,8 @@
 
 <script>
     var commonO = $("#layout_div").data("commonObj");
-    commonO.UpdateCreateVersionDD();
+    if('@ViewBag.ObjName'.length > 0)
+        commonO.UpdateCreateVersionDD();
     $(document).ready(function(){
         $('#commit_outer').on('click', function () {
             $('#changelogPopup').show();

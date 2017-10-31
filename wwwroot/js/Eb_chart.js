@@ -201,10 +201,9 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     };
 };
 
-var eb_chart = function (columnInfo, ssurl, data, tableId) {
-    this.type = columnInfo.Type;
-    this.columnInfo = columnInfo;
-    this.data = data;
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
+    this.columnInfo = null;
+    this.data = null;
     this.ssurl = ssurl;
     this.XLabel = [];
     this.YLabel = [];
@@ -213,27 +212,106 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
     this.gdata = null;
     this.goptions = null;
     this.Xax = []; this.Yax = [];
-    this.tableId = tableId;
+    this.tableId = null;
     this.sourceElement = null;
     this.flagAppendColumns = false;
-    this.dvid = null;
     this.drake = null;
+    this.EbObject = dsobj;
+    this.Refid = null;
+    this.tabNum = tabNum;
+    this.type = null;
+    this.PcFlag = false;
+
+    var split = new splitWindow("parent-div" + this.tabNum, "contBox");
+
+    this.call2FD = function () {
+        $.LoadingOverlay("show");
+        $.ajax({
+            type: "POST",
+            url: "../DV/dvCommon",
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag },
+            success: this.ajaxSucc
+        });
+
+    };
+
+    this.ajaxSucc = function (text) {
+        this.PcFlag = "False";
+        obj = this.EbObject;
+        $("#obj_icons").empty();
+        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#btnGo" + this.tabNum).click(this.init.bind(this));
+        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
+        var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
+        $("#content_dv" + obj.EbSid + "_" + this.tabNum).empty();
+        $(sideDivId).empty();
+        $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
+        $(sideDivId).append(text);
+        if (text.indexOf("filterBox") === -1) {
+            $(sideDivId).css("display", "none");
+            $.LoadingOverlay("hide");
+            $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-8").addClass("col-md-10");
+        }
+        else {
+            $(sideDivId).css("display", "inline");
+            $.LoadingOverlay("hide");
+            $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-10").addClass("col-md-8");
+        }
+        $(subDivId).focusin();
+    }.bind(this);
+
+    if (this.EbObject === null) {
+        this.EbObject = new EbObjects["EbChartVisualization"]("chart_" + Date.now());
+        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbChartVisualization");
+        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
+        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+    }
+    else {
+        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbChartVisualization");
+        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
+        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        this.call2FD();
+    }
+
+
+    split.windowOnFocus = function (ev) {
+        if ($(ev.target).attr("class") !== undefined) {
+            if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
+                var id = $(ev.target).attr("id");
+                focusedId = id;
+                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+            }
+        }
+    }.bind(this);
+    
+
+    this.propGrid.PropertyChanged = function (obj, Pname) {
+        this.EbObject = obj;
+        if (Pname == "DataSourceRefId") {
+            if (obj[Pname] !== null) {
+                this.PcFlag = "True";
+                this.call2FD();
+            }
+        }
+        else if (Pname == "Name") {
+            $("label.dvname").text(obj.Name);
+            console.log(obj);
+        }
+        else if (Pname == "Columns") {
+            console.log(obj);
+        }
+    };
 
     this.init = function () {
+        this.columnInfo = this.EbObject;
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
         $.event.props.push('dataTransfer');
         this.createChartDivs();
-        this.bindEvents();
-        if (!this.flagAppendColumns) {
+        //if (!this.flagAppendColumns) {
             this.appendColumns();
             this.appendXandYAxis();
-        }
-        //$("#X_col_name" + this.tableId).off("drop").on("drop", this.colDrop.bind(this));
-        //$("#X_col_name" + this.tableId).off("dragover").on("dragover", this.colAllowDrop.bind(this));
-        //$("#Y_col_name" + this.tableId).off("drop").on("drop", this.colDrop.bind(this));
-        //$("#Y_col_name" + this.tableId).off("dragover").on("dragover", this.colAllowDrop.bind(this));
-        //$("#searchColumn" + this.tableId).off("keyup").on("keyup", this.searchDragNDropColumn.bind(this));
-        if (data) {
-            this.data = data;
+        //}
+        if (this.data) {
             this.drawGraphHelper(this.data)
         }
         else {
@@ -253,7 +331,6 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
 
     this.createChartDivs = function () {
         if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append(
                 "<div id='graphcontainer_tab" + this.tableId + "'>" +
@@ -274,23 +351,22 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
                                 "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
                             "</div> " +
                         "</div> " +
-                        //"<div id='columns4Drag" + this.tableId + "' style='width:200px'> " +
-                        //"<div>" +
-                        //"<label class='nav-header disabled' > <center><strong>Columns</strong></center> <center><font size='1'>Darg n Drop to X or Y Axis</font></center></label> " +
-                        //"<input id='searchColumn" + this.tableId + "' type='text' class='form-control' placeholder='search for column'/>" +
                 
                         "<div id='canvasDiv'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
                     "</div> " +
-                    //"<canvas id='myChart" + this.tableId + "' width='80%' height='auto' ></canvas> " +
                 "</div>");
-            this.createButtons();
+            this.GenerateButtons();
         }
     };
 
-    this.createButtons = function () {
-        $("#Toolbar").append("<div style='display: inline;float:right'>"+
+    this.GenerateButtons = function () {
+        $("#obj_icons").empty();
+        //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
+        $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#btnGo" + this.tableId).click(this.init.bind(this));
+        $("#obj_icons").append("<div style='display: inline;'>"+
             "<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
-            "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
+            "<button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>" +
             "<span class='caret'></span>" +
             "</button>" +
             "<ul class='dropdown-menu'>" +
@@ -302,10 +378,13 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
             "<li><a href='#'> map </a></li>" +
             "</ul>" +
             "</div>" +
-            "<button id='reset_zoom" + this.tableId + "' class='tools'>Reset zoom</button>" +
-            "<button id='btnColumnCollapse" + this.tableId + "' class='tools' style='display: inline-block;'>" +
+            "<button id='reset_zoom" + this.tableId + "' class='btn'>Reset zoom</button>" +
+            "<button id='btnColumnCollapse" + this.tableId + "' class='btn' style='display: inline-block;'>" +
             "<i class='fa fa-cog' aria-hidden='true'></i>" +
             "</button>");
+        if(this.EbObject !== null && this.EbObject.Type !== null)
+            $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.EbObject.Type.trim() + "&nbsp;<span class = 'caret'></span>");
+        this.bindEvents();
 
     };
 
@@ -313,7 +392,6 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
         $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
         $("#graphDropdown_tab" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
         $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
-        //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
     }
 
     this.appendColumns = function () {
@@ -427,7 +505,8 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
     };
 
     this.drawGraphHelper = function (datain) {
-        dvcontainerObj.currentObj.data = datain;
+       // dvcontainerObj.currentObj.data = datain;
+        $.LoadingOverlay("show");
         this.data = datain.data;
         if (this.columnInfo.Xaxis.$values.length >= 1 && this.columnInfo.Yaxis.$values.length >= 1)
             this.drawGeneralGraph();
@@ -575,6 +654,7 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
         });
 
         //this.modifyChart();
+        $.LoadingOverlay("hide");
     };
 
     this.ResetZoom = function () {
@@ -759,15 +839,7 @@ var eb_chart = function (columnInfo, ssurl, data, tableId) {
 
     };
 
-    this.saveSettings = function () {
-        $.post('../DV/SaveSettings', { json: JSON.stringify(this.columnInfo), RefId: this.dvid, type: "ChartVisualization" }, this.saveSuccess.bind(this));
-    };
-
-    this.saveSuccess = function () {
-        alert("Success!!!!!!!");
-    }
-
-    this.init();
+    
 };
 
 {

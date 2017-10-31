@@ -131,6 +131,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.ppgridChildren = null;
     this.columnDefDuplicate = null;
     this.extraCol = [];
+    this.PcFlag = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -139,22 +140,23 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: PcFlag },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag },
             success: this.ajaxSucc
         });
 
     };
 
     this.ajaxSucc = function (text) {
-        PcFlag = "False";
+        this.PcFlag = "False";
         obj = this.EbObject;
-        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this, this.EbObject));
+        $("#obj_icons").empty();
+        $("#obj_icons").append("<button id='btnGo"+this.tabNum+"' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#btnGo"+this.tabNum).click(this.getColumnsSuccess.bind(this));
         var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
         $("#content_dv" + obj.EbSid + "_" + this.tabNum).empty();
         $(sideDivId).empty();
-        $(sideDivId).append("<div class='pgHead'> Param window <button class='close' type='button' style='float:right;font-size: 15px;' >x</button></div >");
+        $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
         if (text.indexOf("filterBox") === -1) {
             $(sideDivId).css("display", "none");
@@ -195,14 +197,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.start = function () {
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
-       
     }
 
     this.propGrid.PropertyChanged = function (obj, Pname) {
         this.EbObject = obj;
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
-                PcFlag = "True";
+                this.PcFlag = "True";
                 this.call2FD();
             }
         }
@@ -216,10 +217,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
 
-    this.getColumnsSuccess = function (data) {
+    this.getColumnsSuccess = function () {
         this.extraCol = [];
-        console.log(data);
-        this.ebSettings = data;
+        this.ebSettings = this.EbObject;
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
         this.dvName = this.ebSettings.Name;
         //if (index !== 1)
@@ -919,45 +919,49 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
         //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
         $("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
-        $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this, this.EbObject));
+        
     };
 
 
     this.GenerateButtons = function () {
         $("#obj_icons").empty();
-        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn'><i class='fa fa-play' aria-hidden='true'></i></button>"+
-            "<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +
-            "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
-            "<div class='btn-group'>" +
-            "<div class='btn-group'>" +
-            " <button id='btnPrint" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
-            " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
-            "   <span class='caret'></span>  <!-- caret --></div>" +
-            "   <ul class='dropdown-menu' role='menu'>" +
-            "      <li><a href = '#' id='btnprintAll" + this.tableId + "'> Print All</a></li>" +
-            "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
-            "</ul>" +
-            "</div>" +
-            "<button id='btnExcel" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
-            "<button id='btnPdf" + this.tableId + "' class='btn'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
-            "<button id='btnCsv" + this.tableId + "' class='btn'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
-            "<button id='btnCopy" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
-            "</div>" +
-            "</div>" +
-            "</div>");
-        //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
-        //if (this.dtsettings.login == "uc") {
-        //    $("#Toolbar").append("<div class='dropdown' id='Related" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
-        //        "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
-        //        "<span class='caret'></span>" +
-        //        "</button>" +
-        //        "<ul class='dropdown-menu'>" +
-        //        "<li><a href='#' data-id='687' objtype='16'><i class='fa fa-line-chart custom'></i> Koii</a></li>" +
-        //        "<li><a href='#' data-id='689' objtype='17'><i class='fa fa-bar-chart custom'></i> eeeeeee </a></li>" +
-        //        "</ul>" +
-        //        "</div>");
-        //}
-        this.addFilterEventListeners();
+        //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
+        $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
+        if ($("#" + this.tableId).children().length > 0) {
+            $("#obj_icons").append("<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +
+                "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
+                "<div class='btn-group'>" +
+                "<div class='btn-group'>" +
+                " <button id='btnPrint" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
+                " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
+                "   <span class='caret'></span>  <!-- caret --></div>" +
+                "   <ul class='dropdown-menu' role='menu'>" +
+                "      <li><a href = '#' id='btnprintAll" + this.tableId + "'> Print All</a></li>" +
+                "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
+                "</ul>" +
+                "</div>" +
+                "<button id='btnExcel" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
+                "<button id='btnPdf" + this.tableId + "' class='btn'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
+                "<button id='btnCsv" + this.tableId + "' class='btn'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
+                "<button id='btnCopy" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
+                "</div>" +
+                "</div>" +
+                "</div>");
+            //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
+            //if (this.dtsettings.login == "uc") {
+            //    $("#Toolbar").append("<div class='dropdown' id='Related" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
+            //        "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
+            //        "<span class='caret'></span>" +
+            //        "</button>" +
+            //        "<ul class='dropdown-menu'>" +
+            //        "<li><a href='#' data-id='687' objtype='16'><i class='fa fa-line-chart custom'></i> Koii</a></li>" +
+            //        "<li><a href='#' data-id='689' objtype='17'><i class='fa fa-bar-chart custom'></i> eeeeeee </a></li>" +
+            //        "</ul>" +
+            //        "</div>");
+            //}
+            this.addFilterEventListeners();
+        }
     };
 
 

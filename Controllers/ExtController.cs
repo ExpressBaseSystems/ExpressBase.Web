@@ -228,10 +228,6 @@ namespace ExpressBase.Web.Controllers
                 }
             }
 
-
-
-
-
             MyAuthenticateResponse authResponse = null;
 
             string token = req["g-recaptcha-response"];
@@ -302,7 +298,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     CookieOptions options = new CookieOptions();
 
-                    Response.Cookies.Append("Token", authResponse.BearerToken, options);
+                    Response.Cookies.Append("bToken", authResponse.BearerToken, options);
                     Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
 
                     if (req.ContainsKey("remember"))
@@ -440,7 +436,7 @@ namespace ExpressBase.Web.Controllers
                 if (authResponse.User != null)
                 {
                     CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append("Token", authResponse.BearerToken, options);
+                    Response.Cookies.Append("bToken", authResponse.BearerToken, options);
                     Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
                     if (lg <= 1)
                     {

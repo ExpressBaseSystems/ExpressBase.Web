@@ -1,8 +1,8 @@
 ﻿var Eb_ObjectCommon = function (refid, dsobj, cur_status, ver_num, tabNum, type, major, ssurl) {
     this.ver_Refid = refid;
     this.Current_obj = dsobj;
-    this.Current_obj.Status = cur_status;
-    this.Current_obj.VersionNumber = ver_num;
+    //this.Current_obj.Status = cur_status;
+    //this.Current_obj.VersionNumber = ver_num;
     this.tabNum = tabNum;
     this.ObjectType = type;
     this.ObjCollection = {};
@@ -27,6 +27,8 @@
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> status " + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade vernav'>";
         this.AddVerNavTab(navitem, tabitem);
+        $('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
+        $("#obj_icons").empty();
         $.post("../Eb_Object/GetLifeCycle", { _tabNum: this.tabNum, cur_status: this.Current_obj.Status, refid: this.ver_Refid }, this.getLifecyleInner.bind(this));
     };
 
@@ -55,14 +57,16 @@
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'></div>";
         this.AddVerNavTab(navitem, tabitem);
+        $('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
+        $("#obj_icons").empty();
         $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: this.tabNum, Objtype: type }, this.versionHistoryInner.bind(this));
 
     };
 
     this.versionHistoryInner = function (result) {
         $("#vernav" + this.tabNum).append(result);
-        var scrollPos = $('#versionTab').offset().top;
-        $(window).scrollTop(scrollPos);
+        //var scrollPos = $('#versionTab').offset().top;
+        //$(window).scrollTop(scrollPos);
         $("#vernav" + this.tabNum + " .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
         $.LoadingOverlay("hide");
     };
@@ -87,7 +91,8 @@
         this.AddVerNavTab(navitem, tabitem);
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('#vernav' + this.tabNum).append(data);
-        this.UpdateCreateVersionDD();
+        if(this.Current_obj !== null)
+            this.UpdateCreateVersionDD();
         $.LoadingOverlay("hide");
     };
 
@@ -101,6 +106,8 @@
         var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
+        $('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
+        $("#obj_icons").empty();
         $('#vernav' + this.tabNum).append(data);
         this.Load_version_list();
         $('.selectpicker').selectpicker({
@@ -177,7 +184,8 @@
     };
 
     this.TabChangeSuccess = function (e) {
-        this.tabchangeFlag = true;
+        if ($(e.target).attr("data-vernum") !== undefined){
+            this.tabchangeFlag = true;
         var target = $(e.target).attr("href");
         this.ObjWrapper = this.ObjCollection[target];
         this.ver_Refid = this.ObjWrapper.Refid;
@@ -185,25 +193,37 @@
         //this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
         this.UpdateCreateVersionDD();
         this.ObjWrapper.GenerateButtons();
+    }
+        else
+            $("#obj_icons").empty();
     };
 
     this.Save = function () {
         var tagvalues = $('#tags').val();
-        $.post("../Eb_Object/SaveEbObject", { _refid: this.ver_Refid, _json: JSON.stringify(this.Current_obj), _rel_obj: "", _tags: tagvalues});
+        var appid = $("#apps").find("option:selected").val();
+        $.post("../Eb_Object/SaveEbObject", {
+            _refid: this.ver_Refid,
+            _json: JSON.stringify(this.Current_obj),
+            _rel_obj: "",
+            _tags: tagvalues,
+            _appid: appid
+        });
     };
 
     this.Commit = function () {
         var tagvalues = $('#tags').val();
+        var appid = $("#apps").find("option:selected").val();
         var changeLog = $('#obj_changelog').val();
         $.post("../Eb_Object/CommitEbObject", {
             _refid: this.ver_Refid, _changeLog: changeLog, 
             _json: JSON.stringify(this.Current_obj),
-            _rel_obj: "", _tags: tagvalues
+            _rel_obj: "", _tags: tagvalues,
+            _appid: appid
         });
     };
 
     this.UpdateCreateVersionDD = function () {
-        $("#objname").text(this.Current_obj.Name);
+        $("#objname").text(this.Current_obj.Name);        
         $('#create option').remove()
         $('#create').selectpicker('destroy');
         $('#create').selectpicker('refresh');

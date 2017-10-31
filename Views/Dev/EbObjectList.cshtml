@@ -77,15 +77,17 @@
     }
     else if (ObjectType == (int)EbObjectType.ChartVisualization)
     {
-        if (ViewBag.wc == "dc")
-        {
-            editor = "dvChart";
-        }
-        else
-        {
-            editor = "dv";
-        }
-        whichController = "DV";
+        //if (ViewBag.wc == "dc")
+        //{
+        //    editor = "dvChart";
+        //}
+        //else
+        //{
+        //    editor = "dv";
+        //}
+        //whichController = "DV";
+        editor = "Index";
+        whichController = "Eb_Object";
     }
 }
 <script>

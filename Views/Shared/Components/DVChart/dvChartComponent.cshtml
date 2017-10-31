@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     @using ExpressBase.Common;
     var dvobj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
@@ -21,6 +20,6 @@
         var commonO = $("#layout_div").data("commonObj");
     }
 
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EbDataTable('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new eb_chart('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
 
 </script>

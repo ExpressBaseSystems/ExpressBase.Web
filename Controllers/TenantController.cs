@@ -133,7 +133,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult TenantLogout()
+        public IActionResult Logout()
         {
             ViewBag.Fname = null;
             IServiceClient client = this.ServiceClient;

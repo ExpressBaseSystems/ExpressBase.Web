@@ -351,7 +351,7 @@ namespace ExpressBase.Web.Controllers
         //    }
         //}
 
-        public IActionResult DevLogout()
+        public IActionResult Logout()
         {
             ViewBag.Fname = null;
             IServiceClient client = this.ServiceClient;

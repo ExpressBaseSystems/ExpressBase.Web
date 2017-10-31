@@ -1,8 +1,8 @@
 ﻿var Eb_ObjectCommon = function (refid, dsobj, cur_status, ver_num, tabNum, type, major, ssurl) {
     this.ver_Refid = refid;
     this.Current_obj = dsobj;
-    this.Current_obj.Status = cur_status;
-    this.Current_obj.VersionNumber = ver_num;
+    //this.Current_obj.Status = cur_status;
+    //this.Current_obj.VersionNumber = ver_num;
     this.tabNum = tabNum;
     this.ObjectType = type;
     this.ObjCollection = {};
@@ -91,7 +91,8 @@
         this.AddVerNavTab(navitem, tabitem);
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('#vernav' + this.tabNum).append(data);
-        this.UpdateCreateVersionDD();
+        if(this.Current_obj !== null)
+            this.UpdateCreateVersionDD();
         $.LoadingOverlay("hide");
     };
 
@@ -222,7 +223,7 @@
     };
 
     this.UpdateCreateVersionDD = function () {
-        $("#objname").text(this.Current_obj.Name);
+        $("#objname").text(this.Current_obj.Name);        
         $('#create option').remove()
         $('#create').selectpicker('destroy');
         $('#create').selectpicker('refresh');

@@ -377,6 +377,7 @@
             <div class="col-md-1 box4">
                 <h6 class="smallfont">Application</h6>
                 <select class="selectpicker btn" id="apps" name="Apps">
+                    <option id="" value="0">Select Application</option>
                 @{
                     foreach (KeyValuePair<string, object> entry in ViewBag.Apps) { 
                         <option id="" value="@entry.Key">@entry.Value</option>
@@ -408,7 +409,14 @@
 
 <script>
     var commonO = $("#layout_div").data("commonObj");
-    commonO.UpdateCreateVersionDD();
+    if ('@ViewBag.Refid'.length > 0)
+        commonO.UpdateCreateVersionDD();
+    else {
+        $('#status').hide();
+        $('#ver_his').hide();
+        $('#compare').hide();
+        $('#rel_obj').hide();
+    }
     $(document).ready(function(){
         $('#commit_outer').on('click', function () {
             $('#changelogPopup').show();
@@ -416,6 +424,7 @@
         $('#close_popup').on('click', function () {
             $('#changelogPopup').css("display", "none");
         });
+         if ('@ViewBag.Tags'.length > 0)
         $('#tags').tagsinput('add', '@ViewBag.Tags');
 
         $('select[name=Apps]').val(@ViewBag.AppId);

@@ -26,6 +26,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
+            commonO.Current_obj = this.EbObject;
         }
 
         this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
@@ -34,7 +35,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     }
     
     this.SetCode = function (e) {
-        this.EbObject.Sql =atob(window["editor" + tabNum].getValue());
+        this.EbObject.Sql =btoa(window["editor" + tabNum].getValue());
         commonO.Current_obj = this.EbObject;
     };
 

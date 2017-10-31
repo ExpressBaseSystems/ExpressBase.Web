@@ -401,8 +401,7 @@
     border: 1px solid #ccc;
     overflow-y: auto;
 }
-#eb-rpt-container {
-    margin-top: 83px;
+#eb-rpt-container {   
     background-color: #f2f2f2;
 }
 

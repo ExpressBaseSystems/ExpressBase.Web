@@ -5,6 +5,11 @@
     @using ExpressBase.Common.Objects;
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
+<style>
+    .codedit .versionNav {
+    position:fixed;
+    }
+</style>
 <script>
 
 @Html.Raw(ViewBag.Meta);

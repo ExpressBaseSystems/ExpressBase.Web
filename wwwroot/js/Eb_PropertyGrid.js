@@ -48,7 +48,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
             if (typeof value === "string")
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, );
-            this.getValueFuncs[name] = function () { return parseInt( $('#' + elemId).val()); };
+            this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
         }
         else if (type === 2) {    // If number 
@@ -269,11 +269,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);;
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
-        //alert();
         this.PropertyChanged(this.PropsObj, this.CurProp);
-
-        if (this.PropsObj.RenderMe)
-            RefreshControl(this.PropsObj);
     };
 
     this.addToDD = function (obj) {
@@ -395,24 +391,46 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         }.bind(this));
     };
 
-    this.checkUnique = function () {
-        alert(this.id + "100");
-    };
+    this.checkUnique = function (e) {
+            var $e = $(e.target);
+            //$e.removeClass("Eb-invalid");
+        $.each(this.AllObjects, function (i, obj) {
+            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] === this.PropsObj[this.CurProp]) {
+                alert("This property is set as Unique. \n" + obj.Name + "'s " + this.CurProp + " property has the same value.");
+                $e.focus().select().addClass("Eb-invalid");
+            }
+        }.bind(this));
+    }.bind(this);
 
-    this.checkRequired = function () {
-        alert(this.id + "2000");
-    };
+    this.checkRequired = function (e) {
+        var $e = $(e.target);
+        if ($e.val().trim() === "") {
+            alert("This property is set as Required. \n ");
+
+            $('body').append(
+                '<div class="ebalert-cont eb-alertbox"></div >'
+            );
+
+            $('.ebalert-cont').append(
+                '<div class="alert alert-info alert-dismissable fade in">'
+                    + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+                    + '<strong>This property is set as Required!</strong> This alert box could indicate a neutral informative change or action.'
+                + '</div> ');
+            $e.focus().select();
+        }
+            
+    }.bind(this);
 
     this.bindFns = function () {
         $.each(this.Metas, function (i, meta) {
-            
+
         });
     };
-    
+
     this.rowFocus = function (e) {
         var $e = $(e.target);
         var prop = $e.attr("name").slice(0, -2);
-        var ht = prop + " : &nbsp;&nbsp;"+ this.Metas[this.propNames.indexOf(prop.toLowerCase())].helpText;
+        var ht = prop + " : &nbsp;&nbsp;" + this.Metas[this.propNames.indexOf(prop.toLowerCase())].helpText;
         $("#" + this.wraperId + "_HelpBox").html(ht);
     }.bind(this);
 

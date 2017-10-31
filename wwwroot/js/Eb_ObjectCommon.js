@@ -223,7 +223,7 @@
     };
 
     this.UpdateCreateVersionDD = function () {
-        $("#objname").text(this.Current_obj.Name);
+        $("#objname").text(this.Current_obj.Name);        
         $('#create option').remove()
         $('#create').selectpicker('destroy');
         $('#create').selectpicker('refresh');

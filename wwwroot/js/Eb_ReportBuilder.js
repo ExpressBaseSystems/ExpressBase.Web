@@ -412,12 +412,19 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             cursor: "move",                       
             appendTo: "body",
             drag: function (event, ui) {
-                $(ui.helper).css({ "background": "white" ,"border":"1px dotted black"});
+                $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width":"auto"});
                 $(ui.helper).children(".shape-text").remove();
                 $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
-            }
+            },
+            start:this.dragStartFirst.bind(this)
         });     
     };//drag drop starting func
+
+    this.dragStartFirst = function (event,ui) {
+        this.positionTandL = {};
+        this.positionTandL['left'] = event.pageX - $(event.target).offset().left;
+        this.positionTandL['top'] = event.pageY - $(event.target).offset().top;
+    };
 
     this.onDropFn = function (event, ui) {        
         this.posLeft = event.pageX;
@@ -439,8 +446,14 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
             var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
             var obj = new EbObjects["Eb" + this.Objtype](Objid);            
             this.dropLoc.append(obj.Html());
-            obj.Top = this.posTop - this.dropLoc.offset().top;          
-            obj.Left = this.posLeft - this.dropLoc.offset().left;
+            if (this.col.hasClass('coloums')) {                 
+                obj.Top = (this.posTop - this.dropLoc.offset().top) - PosOBjOFdrag['top'];
+                obj.Left = (this.posLeft - this.dropLoc.offset().left) - PosOBjOFdrag['left'];
+            }
+            else {
+                obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
+                obj.Left = (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];
+            }           
             obj.Title = Title;            
             this.objCollection[Objid] = obj;           
             this.RefreshControl(obj);           

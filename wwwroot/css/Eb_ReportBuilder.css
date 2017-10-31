@@ -81,7 +81,9 @@
     font-size: 13px;
 }
 .toolbox .Eb-shaps {
-    padding: 0;   
+    padding: 5px 4%;
+    font-size: 13px;
+    cursor: context-menu;
 }
 .toolbox ul {
     margin: 0;  
@@ -161,9 +163,8 @@
 .shapes-tank .btn:hover {
     background-color: #f5f5f5;
 }
-.shapes-tank .shape-text {
-    display: inline;
-    font-size: 13px;
+.shapes-tank{
+  border:1px solid #ccc; 
 }
 .shapes-tank li:hover {
     background-color: #f5f5f5;
@@ -400,8 +401,7 @@
     border: 1px solid #ccc;
     overflow-y: auto;
 }
-#eb-rpt-container {
-    margin-top: 83px;
+#eb-rpt-container {   
     background-color: #f2f2f2;
 }
 
@@ -566,9 +566,12 @@
     background-color: #d8f7f6;
 }
 .tool-box-div {
-    padding: 4px 6px 4px 25px;  
-    
+    padding: 5px 4%;
 }
+.tool-box-div i{
+    margin-right:4px;
+}
+
 .page .ui-resizable-handle {
     background: #89c5dc;
     height: 7px;

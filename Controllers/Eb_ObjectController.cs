@@ -15,6 +15,7 @@ using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
 using Newtonsoft.Json;
 using System.Text;
+using ExpressBase.Objects.ReportRelated;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -74,8 +75,9 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
+                ViewBag.IsNew = "true";
                 ViewBag.Refid = string.Empty;
-                ViewBag.ObjectName = string.Empty;
+                ViewBag.ObjectName = "*New";
                 ViewBag.Status = string.Empty;
                 ViewBag.ObjectDesc = string.Empty;
                 ViewBag.ReadOnly = false;
@@ -102,8 +104,13 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+            else if(type == EbObjectType.Report)
+            {
+                var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
+                _jsResult = CSharpToJs.GenerateJs<EbReportObject>(BuilderType.Report, typeArray);
+            }
 
-            ViewBag.Meta = _jsResult.Meta;
+                ViewBag.Meta = _jsResult.Meta;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
 

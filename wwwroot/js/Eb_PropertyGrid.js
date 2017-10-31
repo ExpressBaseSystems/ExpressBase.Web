@@ -1,4 +1,8 @@
-﻿var Eb_PropertyGrid = function (id, wc, cid) {
+﻿var Gcolumns = { "$type": "ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects", "IsPaged": "", "rowGrouping": ["serial", "checkbox"], "DataSourceRefId": "eb_roby_dev-eb_roby_dev-2-519-1165", "Ebsid": "set1_EbTableVisualization0_1", "Columns": { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [{ "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 0, "name": "serial", "Type": 12, "sTitle": "#", "bVisible": true, "Pos": -2, "sWidth": "10px", "className": null, "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 0, "name": "checkbox", "Type": 3, "sTitle": "checkbox", "bVisible": false, "Pos": -1, "sWidth": "10px", "className": null, "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 0, "name": "id", "Type": 11, "sTitle": "id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 1, "name": "xid", "Type": 16, "sTitle": "xid", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 2, "name": "trndate", "Type": 6, "sTitle": "trndate", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 3, "name": "cash_or_cre", "Type": 16, "sTitle": "cash_or_cre", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 4, "name": "cash2", "Type": 3, "sTitle": "cash2", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 5, "name": "lpo", "Type": 16, "sTitle": "lpo", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 6, "name": "dispname", "Type": 16, "sTitle": "dispname", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 7, "name": "discount", "Type": 7, "sTitle": "discount", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 8, "name": "grossamt", "Type": 7, "sTitle": "grossamt", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 9, "name": "netamt", "Type": 7, "sTitle": "netamt", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 10, "name": "submitter", "Type": 16, "sTitle": "submitter", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 11, "name": "routegroup", "Type": 16, "sTitle": "routegroup", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 12, "name": "sys_submitted_ts", "Type": 6, "sTitle": "sys_submitted_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 13, "name": "modifier", "Type": 16, "sTitle": "modifier", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 14, "name": "sys_last_modified_ts", "Type": 6, "sTitle": "sys_last_modified_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 15, "name": "device_id", "Type": 16, "sTitle": "device_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 16, "name": "forms_id", "Type": 16, "sTitle": "forms_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 17, "name": "sys_location_id", "Type": 16, "sTitle": "sys_location_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 18, "name": "sys_cancelled", "Type": 3, "sTitle": "sys_cancelled", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 19, "name": "sys_locked", "Type": 3, "sTitle": "sys_locked", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 20, "name": "sys_row_color", "Type": 11, "sTitle": "sys_row_color", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 21, "name": "verified", "Type": 16, "sTitle": "verified", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 22, "name": "appversion", "Type": 16, "sTitle": "appversion", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 23, "name": "appsubmit_ts", "Type": 6, "sTitle": "appsubmit_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }] }, "Name": "set1_EbTableVisualization0_1", "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null };
+
+
+
+var Eb_PropertyGrid = function (id, wc, cid) {
     this.wc = wc;
     this.cid = cid;
     this.$wraper = $("#" + id);
@@ -44,7 +48,7 @@
             if (typeof value === "string")
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, );
-            this.getValueFuncs[name] = function () { return parseInt( $('#' + elemId).val()); };
+            this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
         }
         else if (type === 2) {    // If number 
@@ -265,11 +269,7 @@
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);;
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
-        //alert();
         this.PropertyChanged(this.PropsObj, this.CurProp);
-
-        //if (this.PropsObj.RenderMe)
-        //    RefreshControl(this.PropsObj);
     };
 
     this.addToDD = function (obj) {
@@ -362,8 +362,8 @@
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table tr').find(".fa-caret-right").click(this.ExpandToggle.bind(this));
         this.addToDD(this.PropsObj);
-        //if (this.PropsObj.RenderMe)
-        //    this.PropsObj.RenderMe();
+        if (this.PropsObj.RenderMe)
+            this.PropsObj.RenderMe();
         $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", this.nameChangedFn);
         $("#" + this.wraperId + " .pgGroupCell").on("click", this.collapsGroup);
@@ -391,24 +391,46 @@
         }.bind(this));
     };
 
-    this.checkUnique = function () {
-        alert(this.id + "100");
-    };
+    this.checkUnique = function (e) {
+            var $e = $(e.target);
+            //$e.removeClass("Eb-invalid");
+        $.each(this.AllObjects, function (i, obj) {
+            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] === this.PropsObj[this.CurProp]) {
+                alert("This property is set as Unique. \n" + obj.Name + "'s " + this.CurProp + " property has the same value.");
+                $e.focus().select().addClass("Eb-invalid");
+            }
+        }.bind(this));
+    }.bind(this);
 
-    this.checkRequired = function () {
-        alert(this.id + "2000");
-    };
+    this.checkRequired = function (e) {
+        var $e = $(e.target);
+        if ($e.val().trim() === "") {
+            alert("This property is set as Required. \n ");
+
+            $('body').append(
+                '<div class="ebalert-cont eb-alertbox"></div >'
+            );
+
+            $('.ebalert-cont').append(
+                '<div class="alert alert-info alert-dismissable fade in">'
+                    + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+                    + '<strong>This property is set as Required!</strong> This alert box could indicate a neutral informative change or action.'
+                + '</div> ');
+            $e.focus().select();
+        }
+            
+    }.bind(this);
 
     this.bindFns = function () {
         $.each(this.Metas, function (i, meta) {
-            
+
         });
     };
-    
+
     this.rowFocus = function (e) {
         var $e = $(e.target);
         var prop = $e.attr("name").slice(0, -2);
-        var ht = prop + " : &nbsp;&nbsp;"+ this.Metas[this.propNames.indexOf(prop.toLowerCase())].helpText;
+        var ht = prop + " : &nbsp;&nbsp;" + this.Metas[this.propNames.indexOf(prop.toLowerCase())].helpText;
         $("#" + this.wraperId + "_HelpBox").html(ht);
     }.bind(this);
 

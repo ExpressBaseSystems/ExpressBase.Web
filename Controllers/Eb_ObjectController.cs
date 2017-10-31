@@ -75,7 +75,7 @@ namespace ExpressBase.Web.Controllers
             else
             {
                 ViewBag.Refid = string.Empty;
-                ViewBag.ObjectName = string.Empty;
+                ViewBag.ObjectName = "*New";
                 ViewBag.Status = string.Empty;
                 ViewBag.ObjectDesc = string.Empty;
                 ViewBag.ReadOnly = false;

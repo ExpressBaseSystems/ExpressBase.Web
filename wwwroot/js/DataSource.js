@@ -21,6 +21,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
+        $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste',(this.SetCode.bind(this)));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keypress(this.SetCode.bind(this));
         $(".selectpicker").selectpicker();
 
@@ -31,11 +32,20 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
         this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
         this.Name = this.EbObject.Name;
-
+        window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
     }
     
     this.SetCode = function (e) {
-        this.EbObject.Sql =btoa(window["editor" + tabNum].getValue());
+        try {
+            this.EbObject.Sql = btoa(window["editor" + tabNum].getValue());
+            ('#save').removeAttr('disabled');
+            $('#commit_outer').removeAttr('disabled');
+        }
+        catch (err) {
+            alert(err.message);
+            ('#save').attr('disabled', 'disabled');
+            $('#commit_outer').attr('disabled', 'disabled');
+        }
         commonO.Current_obj = this.EbObject;
     };
 

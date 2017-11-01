@@ -32,6 +32,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DevSignIn()
         {
+            ViewBag.errMsg = TempData["ErrorMessage"] as string;
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
@@ -52,10 +53,11 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [AllowCrossSiteIFrame]  // for web forwarding with masking
+       // [AllowCrossSiteIFrame]  // for web forwarding with masking
         public IActionResult SignIn()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+            ViewBag.errMsg = TempData["ErrorMessage"] as string;
             return View();
         }
 
@@ -66,11 +68,12 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult UsrSignIn()
         {
+            ViewBag.errMsg = TempData["ErrorMessage"] as string;
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 
-        [AllowCrossSiteIFrame]
+       // [AllowCrossSiteIFrame]
         public IActionResult SignUp()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -300,16 +303,18 @@ namespace ExpressBase.Web.Controllers
                 }
                 catch (WebServiceException wse)
                 {
-                   return errorredirect(1, whichconsole);
+                    TempData["ErrorMessage"] = wse.Message;
+                    return errorredirect(whichconsole);
                 }
                 catch (Exception wse)
                 {
-                    return errorredirect(1, whichconsole);
+                    TempData["ErrorMessage"] = wse.Message;
+                    return errorredirect(whichconsole);
                 }
                 if (authResponse != null && authResponse.ResponseStatus != null
                     && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
                 {
-                    return errorredirect(2, whichconsole);                  
+                    return errorredirect(whichconsole);                  
                 }
                 else
                 {
@@ -458,19 +463,22 @@ namespace ExpressBase.Web.Controllers
                 }
             }
         }
-        public IActionResult errorredirect(int errcode, string console)
+        public IActionResult errorredirect(string console)
         {
             if(console == "tc")
             {
-                return RedirectToAction("SignIn","Ext", new { errcode = errcode });
+                
+                return RedirectToAction("SignIn","Ext");
             }
             else if(console == "dc")
             {
-                return RedirectToAction("DevSignIn", "Ext",new{ errcode = errcode });
+               
+                return RedirectToAction("DevSignIn", "Ext");
             }  
             else
             {
-                return RedirectToAction("UsrSignIn", "Ext", new { errcode = errcode });
+              
+                return RedirectToAction("UsrSignIn", "Ext");
             }
         }
 
@@ -522,7 +530,6 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult VerificationStatus()
         {
-
             var email = HttpContext.Request.Query["email"];
             var token = HttpContext.Request.Query["signup_tok"];
             var authClient = this.ServiceClient;

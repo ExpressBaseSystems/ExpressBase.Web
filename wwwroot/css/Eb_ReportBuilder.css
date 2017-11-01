@@ -369,8 +369,7 @@
 }
 
 #page-outer-cont {
-    padding-right: 0;
-    margin-top: 50px;
+    padding-right: 0;    
 }
 #pageCanvas {
     position: relative;   
@@ -382,7 +381,6 @@
     z-index: -1;
 }
 .pGreportBuilder {
-    margin-top: 3px;
     margin-right: 10px;
 }
 
@@ -393,8 +391,7 @@
 }
 
 #eb-rpt-container .toolbox {
-    height: inherit;
-    margin-top: 3px;
+    height: inherit;    
     padding: 0 !important;
     width: 100%;
     background-color: #fcfcfc;
@@ -429,15 +426,13 @@
 
 #eb-rpt-container .side-toolbar {
     height: 518px;
-    padding-left: 0;
-    margin-top: 48px;
+    padding-left: 0;    
     position: fixed;
 }
 
 #eb-rpt-container .PGgrid {
     min-height: 1000px;
-    padding: 0;
-    margin-top: 48px;
+    padding: 0;   
     z-index: 2;
     background-color: #f2f2f2;
     position: fixed;

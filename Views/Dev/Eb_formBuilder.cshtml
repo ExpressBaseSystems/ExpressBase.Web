@@ -43,7 +43,7 @@
             <button id="commit" type="submit" class="btn btn-default">Commit</button>
         </div>
 
-        <div id="form-buider-form" eb-type="Form" tabindex="1"  class="formB-box form-buider-form">
+        <div id="form-buider-form" eb-type="@_builderType" tabindex="1"  class="formB-box form-buider-form">
             @Html.Raw(@ViewBag.html)
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
             @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@

@@ -37,18 +37,14 @@ var ruler = {
     }
 }
 
-var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
-    this.edModObj = edModObj;
-    this.savebtnid = saveBtnid; 
-    this.Commitbtnid = commit;
-    this.IsNew = Isnew;
+var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
+    this.EbObject = dsobj;
     this.Rel_object;
     this.objCollection = {};
     this.splitarray = [];
     this.btn_indx = null;
     this.sectionArray = [];
-    this.report = null;
-    this.refId = null;
+    this.RefId = refid;
     this.height = null;
     this.width = null;
     this.type = "A4";
@@ -77,7 +73,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         Countrptfooter: 1
     };
 
-    this.ReportSections = {
+    this.EbObjectSections = {
         ReportHeader: 'rpthead',
         PageHeader: 'pghead',
         ReportDetail: 'detail',
@@ -205,13 +201,13 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     };
 
     this.pageSplitters = function () {
-        for (var i in this.ReportSections) {
+        for (var i in this.EbObjectSections) {
             var sec = "Eb" + i;
-            var obj = new EbObjects[sec](this.ReportSections[i]);
+            var obj = new EbObjects[sec](this.EbObjectSections[i]);
             $("#page").append(obj.Html());
             //obj.BackColor = "transparent";
             //this.RefreshControl(obj);
-            this.sectionArray.push("#" + this.ReportSections[i]);           
+            this.sectionArray.push("#" + this.EbObjectSections[i]);           
         }
         this.headerBox1_Split();
     };//add page sections
@@ -510,12 +506,16 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         var selector = curControl.attr('id');
         $.contextMenu({
             selector: '#' + selector,
-            autoHide: true,
+            autoHide: true,                         
             items: {                
                 "copy": { name: "Copy", icon: "copy", callback:this.contextMenucopy.bind(this) },
                 "cut": { name: "Cut", icon: "cut", callback: this.contextMenucut.bind(this)},               
                 "paste": { name: "Paste", icon: "paste", callback: this.contextMenupaste.bind(this) },
-                "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) }                
+                "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) },                
+                "Align Left": { name: "Align Left", icon: "fa-align-left", callback: this.contextMenuLeft.bind(this) },
+                "Align Right": { name: "Align Right", icon: "fa-align-right", callback: this.contextMenuRight.bind(this) },
+                "Align Center": { name: "Align Center", icon: "fa-align-center", callback: this.contextMenuCenter.bind(this) },
+                "Align Justify": { name: "Align Justify", icon: "fa-align-justify", callback: this.contextMenuJustify.bind(this) }
             }
         });
     };
@@ -560,13 +560,21 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         else
             alert('no permission');
     };
+    this.contextMenuJustify = function (eType, selector, action, originalEvent) {
+        $(selector.selector).css("text-align", "justify");
+    };
+    this.contextMenuRight = function (eType, selector, action, originalEvent) {
+        $(selector.selector).css("text-align", "right");
+    };
+    this.contextMenuCenter = function (eType, selector, action, originalEvent) {
+        $(selector.selector).css("text-align", "center");
+    };
+    this.contextMenuLeft = function (eType, selector, action, originalEvent) {
+        $(selector.selector).css("text-align", "left");
+    };
 
     this.editElement = function (control) {
-        this.control = control;
-        $("#delete").on('click',this.removeElementFn.bind(this));
-        $("#alg-R").on('click', this.alignRightFn.bind(this));
-        $("#alg-C").on('click', this.alignCenterFn.bind(this));
-        $("#alg-L").on('click', this.alignLeftFn.bind(this));
+        this.control = control;       
         if (control.attr("eb-type") === "Img") {           
             $("#img-upload").click();
             this.addImageFn();                    
@@ -591,19 +599,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         else {
             alert("no permission");
         }
-    };
-
-    this.alignRightFn = function (e) {
-        this.control.css("text-align", "right");
-    };
-
-    this.alignCenterFn = function (e) {
-        this.control.css("text-align", "center");
-    };
-
-    this.alignLeftFn = function (e) {
-        this.control.css("text-align", "left");
-    };
+    };   
 
     this.addImageFn = function (e) {                       
         var imgDiv = this.control;
@@ -647,23 +643,11 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     };//drag stop fn of control
 
     this.savefile = function () {       
-        this.report.Height = $("#page").height();
-        this.report.Width = $("#page").width();
-        this.report.PaperSize = this.type;
-        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
-        if (this.IsNew === "true") {
-            var Obj_Id = null;
-        }
-        var Name = this.report.ReportName;
-        var Description = this.report.Description;
-        this.Rel_object = "";
-        $.post("../RB/SaveReport", {
-            "id": Obj_Id,
-            "name": Name,
-            "description": Description,
-            "json": JSON.stringify(this.report),
-            "rel_obj": this.Rel_object
-        });
+        this.EbObject.Height = $("#page").height();
+        this.EbObject.Width = $("#page").width();
+        this.EbObject.PaperSize = this.type;
+        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));        
+        commonO.Current_obj = this.EbObject;        
     };//save
   
     this.findPageSections = function (i, sections) {
@@ -678,19 +662,19 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         this.objCollection[this.subsec].Width = $("#" + this.subsec).width();
         this.objCollection[this.subsec].Height = $("#" + this.subsec).height();             
         if (eb_type === 'ReportHeader') {
-            this.report.ReportHeaders.push(this.objCollection[this.subsec]);
+            this.EbObject.ReportHeaders.push(this.objCollection[this.subsec]);
         }
         else if (eb_type === 'PageHeader') {
-            this.report.PageHeaders.push(this.objCollection[this.subsec]);
+            this.EbObject.PageHeaders.push(this.objCollection[this.subsec]);
         }
         else if (eb_type === 'ReportFooter') {
-            this.report.ReportFooters.push(this.objCollection[this.subsec]);
+            this.EbObject.ReportFooters.push(this.objCollection[this.subsec]);
         }
         else if (eb_type === 'PageFooter') {
-            this.report.PageFooters.push(this.objCollection[this.subsec]);
+            this.EbObject.PageFooters.push(this.objCollection[this.subsec]);
         }
         else if (eb_type === 'ReportDetail') {
-            this.report.Detail = this.objCollection[this.subsec];
+            this.EbObject.Detail = this.objCollection[this.subsec];
         }
 
         $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
@@ -700,41 +684,28 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         var elemId = $(elements).attr('id');
         var eb_typeCntl = $("#" + this.subsec).attr("eb-type");
         if (eb_typeCntl === 'ReportHeader') {
-            this.report.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
+            this.EbObject.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'PageHeader') {
-            this.report.PageHeaders[this.j].Fields.push(this.objCollection[elemId]);
+            this.EbObject.PageHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'ReportFooter') {
-            this.report.ReportFooters[this.j].Fields.push(this.objCollection[elemId]);
+            this.EbObject.ReportFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'PageFooter') {
-            this.report.PageFooters[this.j].Fields.push(this.objCollection[elemId]);
+            this.EbObject.PageFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'ReportDetail') {
-            this.report.Detail.Fields.push(this.objCollection[elemId]);
+            this.EbObject.Detail.Fields.push(this.objCollection[elemId]);
         }              
     };//........save/commit
 
     this.Commit = function () {
-        this.report.Height = $("#page").height();
-        this.report.Width = $("#page").width();
-        this.report.PaperSize = this.type;
-        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));      
-        if (this.IsNew === "true") {
-            var Obj_Id = null;
-        }
-        var Name = this.report.ReportName;
-        var Description = this.report.Description;
-        this.Rel_object = "";
-        $.post("../RB/CommitReport", {
-            "id": Obj_Id,
-            "name": Name,
-            "description": Description,
-            "changeLog": "changed",
-            "json": JSON.stringify(this.report),
-            "rel_obj": this.Rel_object
-        });
+        this.EbObject.Height = $("#page").height();
+        this.EbObject.Width = $("#page").width();
+        this.EbObject.PaperSize = this.type;
+        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));    
+        commonO.Current_obj = this.EbObject;        
     };//commit
 
     this.setpageSize = function (obj) {         
@@ -783,6 +754,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
         $(obj).siblings(".gutter").remove();        
         this.objCollection[obj.id].SectionHeight = size + "%";
     };//section split for pg change
+
     this.rulerChangeFn = function (e) {
         this.rulertype = $(e.target).val();
         $('.ruler,.rulerleft').empty();
@@ -803,7 +775,25 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
     };
 
     this.init = function () {
-        this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
+        this.pg = new Eb_PropertyGrid("propGrid");
+        if (this.EbObject === null) {
+            this.EbObject = new EbObjects["EbReport"]("Report1");
+            this.height = pages[this.type].height;
+            this.width = pages[this.type].width;
+            this.EbObject.PaperSize = this.type;
+            this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
+            this.pg.addToDD(this.EbObject);
+            $('#PageContainer,.ruler,.rulerleft').empty();
+            this.ruler();
+            this.pgC = this.createPagecontainer();
+            this.createPage(this.pgC);
+            this.DragDrop_Items();
+            //this.minimap();
+        }
+        else {
+
+        }
+        //this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
         this.pg.PropertyChanged = function (obj,pname) {
             if ('SectionHeight' in obj) {
                 this.sizeArray = [];
@@ -817,8 +807,7 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
                     minSize: 30,
                     gutterSize: 5,
                     onDrag: this.splitterOndragFn.bind(this)
-                });                
-                //$("#" + obj.EbSid).on("focus", this.elementOnFocus.bind(this));
+                });                               
             }           
             if (pname === "DataSourceRefId") {             
                     this.getDataSourceColoums(obj.DataSourceRefId);                                                             
@@ -830,22 +819,8 @@ var RptBuilder = function (saveBtnid, commit, Isnew,edModObj) {
                 this.setpageMode(obj);
             }
             this.RefreshControl(obj); 
-        }.bind(this);        
-            this.report = new EbObjects["EbReport"]("Report1");
-            this.report.Height,this.height = pages["A4"].height;
-            this.report.Width,this.width = pages["A4"].width;
-            this.report.PaperSize = this.type;
-            this.pg.setObject(this.report, AllMetas["EbReport"]);
-            this.pg.addToDD(this.report);          
-            $('#PageContainer,.ruler,.rulerleft').empty();
-            this.ruler();
-            this.pgC = this.createPagecontainer();
-            this.createPage(this.pgC);
-            this.DragDrop_Items();
-            //this.minimap();
-        $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));                         
-        $(this.savebtnid).on('click', this.savefile.bind(this));
-        $(this.Commitbtnid).on('click', this.Commit.bind(this));        
+        }.bind(this);                   
+        $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));                                    
     };//report executioin start func
 
     this.init();

@@ -21,8 +21,8 @@
 }
 @{
     //int typeInt = 0//(string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
-    EbObjectType type = EbObjectType.WebForm;
-    int typeInt = (int)type;
+    EbObjectType type = (EbObjectType) Convert.ToInt32(ViewBag.ObjType);
+    int typeInt = Convert.ToInt32(ViewBag.ObjType);
 
     var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
     var _toolBox = new EbToolbox(_builderType);

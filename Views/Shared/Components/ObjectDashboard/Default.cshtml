@@ -9,6 +9,8 @@
         height: 145px;
         color: #ffffff;
         margin-top: 84px;
+        position: fixed;
+        z-index: 100;
     }
 
         .dashbord .box2, .box4 {
@@ -52,7 +54,7 @@
 
     .dashbord .card1 {
         background-color: #ffffff;
-        margin-left: 15px;
+        margin-left: 10px;
         height: 120px;
         margin-top: 10px;
         padding: 0;
@@ -223,15 +225,10 @@
         align-items: center;
         justify-content: center;
     }
-
-    .codedit .nav > li > a {
-        padding: 2px 15px;
+    .box5{
+        margin-left:17px !important;
     }
-
-    .codedit {
-        margin-top: 5px;
-    }
-
+   
     .vernav {
     }
 
@@ -273,7 +270,7 @@
                     <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
                     <button class='btn status' id="status" data-toggle="tooltip" data-placement="bottom" title="status"><i class="fa fa-exchange" aria-hidden="true"></i></button>
                     <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
-                    <button class='btn' id="minmize"><i class="fa fa-caret-down" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
+                    <button class='btn' id="minmize"><i class="fa fa-caret-up" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                 </div>
             </div>
         </div>
@@ -387,7 +384,7 @@
             </div>
         </div>  
 
-        <div class="col-md-3 box5 card1">
+        <div class="col-md-3 card1 box5">
             <div class="head text-center">
                 <i class="fa fa-tags" aria-hidden="true"></i> Tags
             </div>
@@ -429,16 +426,34 @@
 
         $('select[name=Apps]').val(@ViewBag.AppId);
         $('.selectpicker').selectpicker('refresh');
+
+        //$(window).scroll(function () {                       
+        //    if ($('.dashbord').css("display") === "block") { 
+        //        $('.dashbord').hide();
+        //        $('.codedit').css("margin-top", "0px");
+        //        $('#minmize').css("transform", "none");
+        //    }  
+        //    else if ($('.dashbord').css("display") === "none") {
+        //        $('.codedit').css("margin-top", " 85px");
+        //        $('#minmize').css("transform", "rotate(180deg)");
+        //    }
+        //});
     });
-    $(function () {
         $('#minmize').click(function () {
-            var t = $('.dashbord').animate({ height: 'toggle' });
-            if ($('.dashbord').css("display") === "block") {
-                $('.codedit').css("margin-top", "0px");
-            }
-            else if ($('.dashbord').css("display") === "none"){
-                $('.codedit').css("margin-top", "102px");
-            }
+            $('.dashbord').animate({ height: 'toggle' }, minMaxDash.bind(this));                     
         });
-    });
+        minMaxDash = function() {
+            if ($('.dashbord').css("display") === "none") {               
+                $('.codedit').css("margin-top", " 85px");
+                $('#minmize').css("transform", "rotate(180deg)");
+                $(".tab-cont-common").css("height", "calc(100vh - 85px)");
+            }
+            else if ($('.dashbord').css("display") === "block") {
+                $('.codedit').css("margin-top", "229px");
+                $('#minmize').css("transform", "none");
+                $(".tab-cont-common").css("height","calc(100vh - 229px)");
+            }
+        }
+        
+        
 </script>

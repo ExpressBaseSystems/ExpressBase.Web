@@ -3,9 +3,16 @@
     Html.RenderPartial("ExtPageHeader2");
 }
 <script>
-    $('#prof').hide();
-    $('.noti').hide();
-    $('#submen').hide();
+    $(document).ready(function () {
+        $('#prof').hide();
+        $('.noti').hide();
+        $('#submen').hide();
+        if ($('#err').val() != '') {
+            $('#errdiv').show();
+
+        }
+    });
+   
     function onSubmit(token) {
             document.getElementById("log_form").submit();
         }
@@ -20,6 +27,10 @@
                 <br />
                 <br />
                 <div class="login-box-body">
+                    <div id="errdiv" class="alert alert-danger" style="display:none">
+                        @ViewBag.errMsg
+                    </div>
+                    <input type="hidden" id="err" value="@ViewBag.errMsg" />
                     <div class="login-box-msg">
                         <img id="profile-img" class="img-responsive img-cir" src="~/images/proimg.jpg" />
                         <p id="profile-name" class="profile-name-card"></p>

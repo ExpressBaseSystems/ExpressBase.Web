@@ -32,6 +32,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DevSignIn()
         {
+            ViewBag.errMsg = TempData["ErrorMessage"] as string;
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
@@ -52,10 +53,11 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [AllowCrossSiteIFrame]  // for web forwarding with masking
+       // [AllowCrossSiteIFrame]  // for web forwarding with masking
         public IActionResult SignIn()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+            ViewBag.errMsg = TempData["ErrorMessage"] as string;
             return View();
         }
 
@@ -66,11 +68,12 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult UsrSignIn()
         {
+            ViewBag.errMsg = TempData["ErrorMessage"] as string;
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             return View();
         }
 
-        [AllowCrossSiteIFrame]
+       // [AllowCrossSiteIFrame]
         public IActionResult SignUp()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -227,6 +230,27 @@ namespace ExpressBase.Web.Controllers
                     whichconsole = "tc";
                 }
             }
+            else
+            {
+                if (subdomain.Length == 7) // USER CONSOLE
+                {
+                    if (!string.IsNullOrEmpty(req["console"]))
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "dc";
+                    }
+                    else
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "uc";
+                    }
+                }
+                else
+                {
+                    ViewBag.cid = "expressbase";
+                    whichconsole = "tc";
+                }
+            }
 
             MyAuthenticateResponse authResponse = null;
 
@@ -279,20 +303,18 @@ namespace ExpressBase.Web.Controllers
                 }
                 catch (WebServiceException wse)
                 {
-                    ViewBag.errormsg = wse.Message;
-                    return View();
+                    TempData["ErrorMessage"] = wse.Message;
+                    return errorredirect(whichconsole);
                 }
                 catch (Exception wse)
                 {
-                    ViewBag.errormsg = wse.Message;
-                    return RedirectToAction("Error", "Ext");
+                    TempData["ErrorMessage"] = wse.Message;
+                    return errorredirect(whichconsole);
                 }
-
                 if (authResponse != null && authResponse.ResponseStatus != null
                     && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
                 {
-                    ViewBag.errormsg = "Please enter a valid Username/Password";
-                    return RedirectToAction("Error", "Ext");
+                    return errorredirect(whichconsole);                  
                 }
                 else
                 {
@@ -373,7 +395,7 @@ namespace ExpressBase.Web.Controllers
                             if (subdomain.Length == 7 && authResponse.User.HasEbSystemRole() && whichconsole == "dc")
                                 return RedirectToAction("DevConsole", "Dev");
 
-                            else if (subdomain.Length == 7  && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
+                            else if (subdomain.Length == 7 && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
                                 return RedirectToAction("UserDashboard", "TenantUser");
 
                             else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
@@ -396,7 +418,34 @@ namespace ExpressBase.Web.Controllers
                         }
                     }
                     else
-                        return RedirectToAction("Error", "Ext");
+                    {
+                        if (ViewBag.cid == "expressbase")
+                        {
+                            if (subdomain.Length == 4 && authResponse.User.HasEbSystemRole() && whichconsole == "dc")
+                                return RedirectToAction("DevConsole", "Dev");
+
+                            else if (subdomain.Length == 4 && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
+                                return RedirectToAction("UserDashboard", "TenantUser");
+
+                            else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
+                                return RedirectToAction("ProfileSetup", "Tenant");
+                            else
+                                return RedirectToAction("TenantDashboard", "Tenant");
+                        }
+                        else
+                        {
+                            if (subdomain.Length == 4 && authResponse.User.HasSystemRole() && whichconsole == "dc")
+                                return RedirectToAction("DevConsole", "Dev");
+
+                            else if (subdomain.Length == 4 && whichconsole == "uc") // USER CONSOLE
+                                return RedirectToAction("UserDashboard", "TenantUser");
+
+                            else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
+                                return RedirectToAction("ProfileSetup", "Tenant");
+                            else
+                                return RedirectToAction("TenantDashboard", "Tenant");
+                        }
+                    }
 
 
                     //if (subdomain.Length == 2)
@@ -414,7 +463,24 @@ namespace ExpressBase.Web.Controllers
                 }
             }
         }
-
+        public IActionResult errorredirect(string console)
+        {
+            if(console == "tc")
+            {
+                
+                return RedirectToAction("SignIn","Ext");
+            }
+            else if(console == "dc")
+            {
+               
+                return RedirectToAction("DevSignIn", "Ext");
+            }  
+            else
+            {
+              
+                return RedirectToAction("UsrSignIn", "Ext");
+            }
+        }
 
         [HttpGet]
         public IActionResult AfterSignInSocial(string provider, string providerToken,
@@ -464,7 +530,6 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult VerificationStatus()
         {
-
             var email = HttpContext.Request.Query["email"];
             var token = HttpContext.Request.Query["signup_tok"];
             var authClient = this.ServiceClient;

@@ -71,14 +71,14 @@ function isPrintable(e) {
     return valid;
 }
 
-//function RefreshControl(obj) {
-//    var NewHtml = obj.Html();
-//    var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
-//    $.each(metas, function (i, meta) {
-//        var name = meta.name;
-//        if (meta.IsUIproperty) {
-//            NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
-//        }
-//    });
-//    $("#" + obj.EbSid).html($(NewHtml).html());
-//};
+function RefreshControl(obj) {
+    var NewHtml = obj.Html();
+    var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
+    $.each(metas, function (i, meta) {
+        var name = meta.name;
+        if (meta.IsUIproperty) {
+            NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
+        }
+    });
+    $("#" + obj.EbSid).html($(NewHtml).html());
+};

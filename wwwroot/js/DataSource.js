@@ -22,7 +22,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste',(this.SetCode.bind(this)));
-        $('#codewindow' + tabNum + ' .CodeMirror textarea').keypress(this.SetCode.bind(this));
+        $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
         $(".selectpicker").selectpicker();
 
         if (this.EbObject === null) {
@@ -38,13 +38,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.SetCode = function (e) {
         try {
             this.EbObject.Sql = btoa(window["editor" + tabNum].getValue());
-            ('#save').removeAttr('disabled');
-            $('#commit_outer').removeAttr('disabled');
+            $('#save').removeClass('disabled');
+            $('#commit_outer').removeClass('disabled');
         }
         catch (err) {
             alert(err.message);
-            ('#save').attr('disabled', 'disabled');
-            $('#commit_outer').attr('disabled', 'disabled');
+            $('#save').addClass('disabled');
+            $('#commit_outer').addClass('disabled');
         }
         commonO.Current_obj = this.EbObject;
     };

@@ -203,6 +203,9 @@
         $.LoadingOverlay("show");
         var tagvalues = $('#tags').val();
         var appid = $("#apps").find("option:selected").val();
+        if (this.ObjCollection["#vernav" + this.tabNum].EbObject.$type.indexOf("Report") !== -1) {
+            this.ObjCollection["#vernav" + this.tabNum].savefile();
+        }           
         $.post("../Eb_Object/SaveEbObject", {
             _refid: this.ver_Refid,
             _json: JSON.stringify(this.Current_obj),
@@ -220,6 +223,9 @@
         var tagvalues = $('#tags').val();
         var appid = $("#apps").find("option:selected").val();
         var changeLog = $('#obj_changelog').val();
+        if (this.ObjCollection["#vernav" + this.tabNum].EbObject.$type.indexOf("Report") !== -1) {
+            this.ObjCollection["#vernav" + this.tabNum].Commit();
+        }   
         $.post("../Eb_Object/CommitEbObject", {
             _refid: this.ver_Refid, _changeLog: changeLog, 
             _json: JSON.stringify(this.Current_obj),

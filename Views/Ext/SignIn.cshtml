@@ -3,17 +3,29 @@
     Html.RenderPartial("ExtPageHeader");
 }
 <script>
+    $(document).ready(function () {
 
+        if ($('#err').val() != '')
+        {
+            $('#errdiv').show();
+
+        }
+   
+     });
     function onSubmit(token) {
         document.getElementById("log_form").submit();
     }
     $("#signIn").hide();
+
 </script>
 <section class="sign-in-ext">
     <div class="container-fluid cont-signin">
         <div class="row row-sign-in">
             <div class="col-md-4  col-sm-6 col-xs-12 pull-right log-form">
                 <div class="login-box-body">
+                    <div id="errdiv" class="alert alert-danger" style="display:none">
+                        @ViewBag.errMsg
+                    </div>
                     <div class="login-box-msg">
                         <img id="profile-img" class="img-responsive img-cir" src="~/images/proimg.jpg" />
                         <p id="profile-name" class="profile-name-card"></p>
@@ -31,6 +43,7 @@
                                 <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
                             </div>
                             <div class="checkbox icheck">
+                                <input type="hidden" id="err" value="@ViewBag.errMsg"/>
                                 <label>
                                     <input type="checkbox" id="loginrem"> Remember Me
                                 </label>

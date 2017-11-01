@@ -23,6 +23,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseNewController
     {
+        private Context2Js _c2js = new Context2Js();
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         [HttpGet]
@@ -30,7 +31,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index(string objid, int objtype)
         {
             dynamic dsobj = null;
-            CSharpToJs.JsResult _jsResult = new CSharpToJs.JsResult();
+            Context2Js _c2js = new Context2Js();
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             var type = (EbObjectType)(objtype);
             if (objid != null)
@@ -92,12 +93,12 @@ namespace ExpressBase.Web.Controllers
             if (type == EbObjectType.DataSource)
             {
                 var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-                _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+                _c2js = new Context2Js(typeArray, BuilderType.DataSource, typeof(EbDatasourceMain));
             }
             else if(type == EbObjectType.TableVisualization || type == EbObjectType.ChartVisualization)
             {
                 var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
-                _jsResult = CSharpToJs.GenerateJs<EbDataVisualizationObject>(BuilderType.DVBuilder, typeArray);
+                _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
                 if (dsobj != null)
                 {
                     dsobj.AfterRedisGet(this.Redis);
@@ -107,12 +108,12 @@ namespace ExpressBase.Web.Controllers
             else if(type == EbObjectType.Report)
             {
                 var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
-                _jsResult = CSharpToJs.GenerateJs<EbReportObject>(BuilderType.Report, typeArray);
+                _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
             }
 
-                ViewBag.Meta = _jsResult.Meta;
-            ViewBag.JsObjects = _jsResult.JsObjects;
-            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+            ViewBag.Meta = _c2js.AllMetas;
+            ViewBag.JsObjects = _c2js.JsObjects;
+            ViewBag.EbObjectTypes = _c2js.EbObjectTypes;
 
             return View();
         }

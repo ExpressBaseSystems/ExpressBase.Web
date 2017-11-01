@@ -24,9 +24,12 @@
         </script>
     }*@
 <script>
-    @Html.Raw(ViewBag.HtmlHead)
-    //var sett = @Html.Raw(dvobj);
-    //$.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));
+    @Html.Raw(ViewBag.HtmlHead);
+    @*$.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));*@
+    commonO = $("#layout_div").data("commonObj");
+    console.log(commonO);
     
+    commonO.Current_obj =  @Html.Raw(dvobj);
+
 </script>
 

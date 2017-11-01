@@ -138,6 +138,7 @@
     };
 
     this.Differ = function () {
+        $.LoadingOverlay("show");
         var Refid1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').val();
         var Refid2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').val();
         var v1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').attr("data-tokens");
@@ -199,6 +200,7 @@
     };
 
     this.Save = function () {
+        $.LoadingOverlay("show");
         var tagvalues = $('#tags').val();
         var appid = $("#apps").find("option:selected").val();
         $.post("../Eb_Object/SaveEbObject", {
@@ -207,18 +209,27 @@
             _rel_obj: "",
             _tags: tagvalues,
             _appid: appid
+        }).done( function () {
+            $.LoadingOverlay("hide");
+            alert('save success');
         });
     };
 
     this.Commit = function () {
+        $.LoadingOverlay("show");
         var tagvalues = $('#tags').val();
         var appid = $("#apps").find("option:selected").val();
         var changeLog = $('#obj_changelog').val();
         $.post("../Eb_Object/CommitEbObject", {
             _refid: this.ver_Refid, _changeLog: changeLog, 
             _json: JSON.stringify(this.Current_obj),
-            _rel_obj: "", _tags: tagvalues,
+            _rel_obj: "",
+            _tags: tagvalues,
             _appid: appid
+        }).done(function () {
+            $('#close_popup').trigger('click');
+            $.LoadingOverlay("hide");
+            alert("commit success");
         });
     };
 

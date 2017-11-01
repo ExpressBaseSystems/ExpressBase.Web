@@ -5,6 +5,25 @@
     @using ExpressBase.Common.Objects;
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
+<style>
+    .codedit .tab-section-common {
+        position: fixed;
+        width: 100%;
+        z-index: 100;
+        padding-top: 10px;       
+        background: white;
+        border-bottom: 13px solid #f2f2f2;
+    }
+        .codedit .tab-section-common .nav > li > a {
+            background: #f2f2f2;
+            width: 80px;
+            padding: 2px 15px;
+            text-align:center;
+        }
+    .codedit .tab-cont-common {
+        margin-top: 48px;
+    }
+</style>
 <script>
 
 @Html.Raw(ViewBag.Meta);
@@ -12,7 +31,7 @@
 @Html.Raw(ViewBag.EbObjectTypes);
 
     $(document).ready(function () {
-        commonObj.init();
+        commonObj.init();      
     });
 
     var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl');
@@ -23,16 +42,19 @@
 @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId })
 
 
-<div class="row codedit">
-    <ul class="nav nav-tabs versionNav" id="versionNav">
-        <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
-    </ul>
-    <div class="tab-content" id="versionTab">
+<div class="row codedit" style="margin-top:229px;">
+    <div class="tab-section-common">
+        <ul class="nav nav-tabs" id="versionNav">
+            <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
+        </ul>
+    </div>
+    <div class="tab-content tab-cont-common" id="versionTab">
         <div id="vernav0" class="tab-pane fade in active code_edit" data-id="new">
             @{
-                if (ViewBag.ObjType ==(int) EbObjectType.DataSource)
+                if (ViewBag.ObjType == (int)EbObjectType.DataSource)
                 {
                     @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
 
                 }
                 else if (ViewBag.ObjType == (int)EbObjectType.TableVisualization)

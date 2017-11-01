@@ -60,7 +60,10 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
+                var host = context.HttpContext.Request.Host.Host.Replace("www.", string.Empty);
                 var path = context.HttpContext.Request.Path;
+                string[] subdomain = host.Split('.');
+
                 var controller = context.Controller as Controller;
                 string bearertoken = context.HttpContext.Request.Cookies["bToken"];
                 string refreshtoken = context.HttpContext.Request.Cookies["rToken"];
@@ -79,10 +82,10 @@ namespace ExpressBase.Web.Controllers
                 controller.ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
                 base.OnActionExecuting(context);
 
-               if(path.ToString().StartsWith("/Ext/", true, null))
-                {
+               if(path.ToString().StartsWith("/Ext/", true, null) && !path.ToString().StartsWith("/Ext/Index", true, null))
+                {        
                     if(!string.IsNullOrEmpty(bearertoken))
-                    {
+                    {    
                         if(controller.ViewBag.wc == "tc")
                         {
                             context.Result = new RedirectResult("~/Tenant/TenantDashboard");
@@ -97,6 +100,31 @@ namespace ExpressBase.Web.Controllers
                         }
                     }
                 }
+                else if( path == "/" || path == "/Dev")
+                {
+                  
+                    if (!string.IsNullOrEmpty(bearertoken))
+                    {
+                      
+                        if (subdomain.Length == 3 || subdomain.Length == 2) // USER CONSOLE
+                        {
+                            if (controller.ViewBag.wc == "uc")
+                            {
+                                context.Result = new RedirectResult("~/TenantUser/UserDashboard");
+                            }
+                            else if (controller.ViewBag.wc == "dc")
+                            {
+                                context.Result = new RedirectResult("~/Dev/DevConsole");
+                            }
+                        }
+                        else // TENANT CONSOLE
+                        {
+                            context.Result = new RedirectResult("~/Ext/Index");
+                        }
+                    }
+
+                }
+              
 
             }
             catch (System.ArgumentNullException ane)
@@ -114,10 +142,12 @@ namespace ExpressBase.Web.Controllers
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            var tok = this.ServiceClient.BearerToken;
-            if (!string.IsNullOrEmpty(tok))
-                Response.Cookies.Append("bToken", this.ServiceClient.BearerToken, new CookieOptions());
-
+            if (ControllerContext.ActionDescriptor.ActionName != "Logout")
+            {
+                var tok = this.ServiceClient.BearerToken;
+                if (!string.IsNullOrEmpty(tok))
+                    Response.Cookies.Append("bToken", this.ServiceClient.BearerToken, new CookieOptions());
+            }
             base.OnActionExecuted(context);
         }
     }

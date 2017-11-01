@@ -17,11 +17,11 @@
     }
 
     this.CreateMOdalW = function () {
-        var modalHTML = '<div class="fup" id="bg_' + this.ContainerId + '"><div class="pgCXEditor-bg">'
-                            + '<div class="pgCXEditor-Cont">'
+        var modalHTML = '<div class="fup" id="bg_' + this.ContainerId + '"><div class="imgup-bg">'
+                            + '<div class="imgup-Cont">'
 
                                 + '<div class="modal-header">'
-                                    + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'
+            + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + ' .imgup-bg\').hide(500);" >&times;</button>'
                                     + '<h4 class="modal-title" style="display:inline;">Image Selector </h4>'
                                     + '<p style="display:inline;float:right;margin-right: 20px;" id="' + this.ContainerId +'obj-id"></p>'
                                 + '</div>'
@@ -34,7 +34,7 @@
 
                                 + '<div class="modal-footer">'
                                      + '<div class="modal-footer-body">'                                             
-                                        + '<button type="button" name="CXE_OK" id="' + this.ContainerId +'_close" class="btn"  onclick="$(\'#' + this.ContainerId + ' .pgCXEditor-bg\').hide(500);">OK</button>'           
+            + '<button type="button" name="CXE_OK" id="' + this.ContainerId + '_close" class="btn"  onclick="$(\'#' + this.ContainerId + ' .imgup-bg\').hide(500);">OK</button>'           
                                      + '</div>'
                                 + '</div>'
                             + '</div>'
@@ -46,7 +46,7 @@
     }; //modal creation and fileinput initialized
 
     this.toggleModal = function () {
-        $("#bg_" + this.ContainerId + " .pgCXEditor-bg").toggle(350);
+        $("#bg_" + this.ContainerId + " .imgup-bg").toggle(350);
     };
 
     this.loadFileInput = function () {
@@ -71,11 +71,11 @@
 
     this.fileUploadSuccess = function (event, data, previewId, index) {
         $("#" + this.ContainerId + "sub-upload").show();
-        var objId = data.response.objId;
-        $('#' + this.ContainerId + 'obj-id').text(objId);
+        this.FleId = data.response.objId;
+        $('#' + this.ContainerId + 'obj-id').text(this.FleId);
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
-        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, objId));
+        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, this.FleId));
     };
 
     this.addtagButton = function (event, file, previewId, index, reader) {
@@ -121,7 +121,7 @@
         });
     };
 
-    this.getId = function (fileId) {      
+    this.getId = function () {      
         return this.FleId;
     };
 

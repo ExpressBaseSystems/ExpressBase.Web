@@ -12,7 +12,8 @@
     this.CXE_OKclicked = function () {
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
-        this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.imgSlctrs[this.PGobj.CurProp].getFileId();
+        if (this.editor === 17)
+            this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.imgSlctrs[this.PGobj.CurProp].getId();
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -277,8 +278,8 @@
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
         $.each(data[ObjName], function (i, obj) {
             if (obj.versionNumber)
-            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
+                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
+                    + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
         }.bind(this));
         if (this.PGobj.PropsObj[this.PGobj.CurProp] && $e.attr("name") === this.OSECurVobj.name)
             $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
@@ -422,7 +423,7 @@
         $(this.PGobj.$wraper).append(CXVE_html);
         $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.CE_AddFn.bind(this));
 
-        $('body').append('<div id="mb_' + this.PGobj.wraperId + '"> </div>');
+        $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div>');
     }
     this.Init();
 };

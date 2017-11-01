@@ -231,7 +231,7 @@ namespace ExpressBase.Web2.Controllers
 
        
 
-        public IActionResult UserLogout()
+        public IActionResult Logout()
         {
             ViewBag.Fname = null;
            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);

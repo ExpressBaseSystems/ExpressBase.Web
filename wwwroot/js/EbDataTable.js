@@ -135,6 +135,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
+    split.windowOnFocus = function (ev) {
+        if ($(ev.target).attr("class") !== undefined) {
+            if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
+                var id = $(ev.target).attr("id");
+                focusedId = id;
+                this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            }
+        }
+    }.bind(this);
+
     this.call2FD = function () {
         $.LoadingOverlay("show");
         $.ajax({
@@ -158,6 +168,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
+        this.EbObject = commonO.Current_obj;
         if (text.indexOf("filterBox") === -1) {
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -183,18 +194,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.call2FD();
     }
-
-
-    split.windowOnFocus = function (ev) {
-        if ($(ev.target).attr("class") !== undefined) {
-            if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
-                var id = $(ev.target).attr("id");
-                focusedId = id;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-            }
-        }
-    }.bind(this);
-
+    
     this.start = function () {
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
     }
@@ -208,13 +208,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }
         else if (Pname == "Name") {
-            $("label.dvname").text(obj.Name);
+            $("#objname").text(obj.Name);
             console.log(obj);
         }
         else if (Pname == "Columns") {
             console.log(obj);
         }
-    };
+    }.bind(this);
 
 
     this.getColumnsSuccess = function () {
@@ -386,7 +386,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //else {
         o.ajax = {
             //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
-            url: this.ssurl + '/ds/data/' + this.dsid,
+            url: this.ssurl + 'ds/data/' + this.dsid,
             type: 'POST',
             timeout: 180000,
             data: this.ajaxData.bind(this),

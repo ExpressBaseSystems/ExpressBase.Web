@@ -146,9 +146,9 @@
 }
 
     .form-buider-form .Eb-ctrlContainer:focus {
-        outline:none;
-        border:1px solid red;
-        margin:1px;
+        outline: none;
+        border: 1px solid red;
+        margin: 1px;
     }
 
 /*rendering*/
@@ -179,7 +179,7 @@
 .form-buider-form .Eb-ctrlContainer table td {
     border: 1px dashed #cccccc;
     padding: 10px;
-    background:orange;
+    background: orange;
     vertical-align: initial;
 }
 
@@ -206,3 +206,16 @@
         color: #f00 !important;
         opacity: .6 !important;
     }
+
+.eb-alertbox {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 100000;
+}
+.Eb-invalid {
+    outline: none;
+    background: antiquewhite!important;
+    border: 1px solid maroon!important;
+    box-shadow: rgb(128, 0, 0) 0px 0px 2px 0px!important;
+}

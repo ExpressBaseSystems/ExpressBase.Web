@@ -224,6 +224,16 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
+    split.windowOnFocus = function (ev) {
+        if ($(ev.target).attr("class") !== undefined) {
+            if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
+                var id = $(ev.target).attr("id");
+                focusedId = id;
+                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+            }
+        }
+    }.bind(this);
+
     this.call2FD = function () {
         $.LoadingOverlay("show");
         $.ajax({
@@ -247,6 +257,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
+        this.EbObject = commonO.Current_obj;
         if (text.indexOf("filterBox") === -1) {
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -273,17 +284,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         this.call2FD();
     }
 
-
-    split.windowOnFocus = function (ev) {
-        if ($(ev.target).attr("class") !== undefined) {
-            if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
-                var id = $(ev.target).attr("id");
-                focusedId = id;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-            }
-        }
-    }.bind(this);
-    
+      
 
     this.propGrid.PropertyChanged = function (obj, Pname) {
         this.EbObject = obj;
@@ -294,13 +295,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
             }
         }
         else if (Pname == "Name") {
-            $("label.dvname").text(obj.Name);
+            $("#objname").text(obj.Name);
             console.log(obj);
         }
         else if (Pname == "Columns") {
             console.log(obj);
         }
-    };
+    }.bind(this);
 
     this.init = function () {
         this.columnInfo = this.EbObject;
@@ -311,7 +312,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
             this.appendColumns();
             this.appendXandYAxis();
         //}
-        if (this.data) {
+            if (this.data) {
             this.drawGraphHelper(this.data)
         }
         else {
@@ -501,13 +502,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
 
     
     this.getDataSuccess = function (result) {
-        this.drawGraphHelper(result);
+        this.drawGraphHelper(result.data);
     };
 
     this.drawGraphHelper = function (datain) {
-       // dvcontainerObj.currentObj.data = datain;
-        $.LoadingOverlay("show");
-        this.data = datain.data;
+        this.data = datain;
         if (this.columnInfo.Xaxis.$values.length >= 1 && this.columnInfo.Yaxis.$values.length >= 1)
             this.drawGeneralGraph();
     };
@@ -542,6 +541,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     };
 
     this.drawGeneralGraph = function () {
+        $.LoadingOverlay("show");
         this.getBarData();
         this.gdata = {
             labels: this.XLabel,
@@ -567,6 +567,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
                     },
                     gridLines: {
                         display: true
+                    },
+                    ticks: {
+                        fontSize: 10,
                     }
                 }]
             },
@@ -576,6 +579,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
 
                 // Zooming directions. Remove the appropriate direction to disable 
                 // Eg. 'y' would only allow zooming in the y direction
+                mode: 'x',
+            },
+            pan: {
+                enabled: true,
                 mode: 'x',
             },
         };

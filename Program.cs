@@ -14,8 +14,7 @@ namespace ExpressBase.Web2
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseUrls(urls: "http://localhost:5000/")
+                .UseUrls(urls: "http://*:5000/")
                 .UseStartup<Startup>()
                 .Build();
 

@@ -37,16 +37,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult AboutUs()
-        {
-            return View();
-        }
-
-        public IActionResult Platform()
-        {
-            return View();
-        }
-
+       
         public IActionResult SignupSuccess(string email)
         {
             ViewBag.SignupEmail = email;
@@ -61,10 +52,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult Pricing()
-        {
-            return View();
-        }
+       
 
         public IActionResult UsrSignIn()
         {
@@ -232,7 +220,7 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                if (subdomain.Length == 7) // USER CONSOLE
+                if (subdomain.Length == 5) // USER CONSOLE
                 {
                     if (!string.IsNullOrEmpty(req["console"]))
                     {
@@ -421,10 +409,10 @@ namespace ExpressBase.Web.Controllers
                     {
                         if (ViewBag.cid == "expressbase")
                         {
-                            if (subdomain.Length == 4 && authResponse.User.HasEbSystemRole() && whichconsole == "dc")
+                            if (subdomain.Length == 5 && authResponse.User.HasEbSystemRole() && whichconsole == "dc")
                                 return RedirectToAction("DevConsole", "Dev");
 
-                            else if (subdomain.Length == 4 && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
+                            else if (subdomain.Length == 5 && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
                                 return RedirectToAction("UserDashboard", "TenantUser");
 
                             else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
@@ -434,10 +422,10 @@ namespace ExpressBase.Web.Controllers
                         }
                         else
                         {
-                            if (subdomain.Length == 4 && authResponse.User.HasSystemRole() && whichconsole == "dc")
+                            if (subdomain.Length == 5 && authResponse.User.HasSystemRole() && whichconsole == "dc")
                                 return RedirectToAction("DevConsole", "Dev");
 
-                            else if (subdomain.Length == 4 && whichconsole == "uc") // USER CONSOLE
+                            else if (subdomain.Length == 5 && whichconsole == "uc") // USER CONSOLE
                                 return RedirectToAction("UserDashboard", "TenantUser");
 
                             else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  

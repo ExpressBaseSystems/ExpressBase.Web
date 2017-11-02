@@ -326,7 +326,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var o = new Object();
         //o.scrollY = this.ebSettings.scrollY+"px";
         o.scrollY = "calc(100vh - 230px)";
+        //o.deferLoading = 100;
         o.scrollX = "100%";
+        if (this.ebSettings.PageLength !== 0)
+        {
+            o.lengthMenu = this.generateLengthMenu();
+            //o.deferLoading = this.ebSettings.PageLength * 5;
+        }
         //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
             //if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
             //    o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
@@ -405,6 +411,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //alert(JSON.stringify(o));
         return o;
     };
+
+    this.generateLengthMenu = function () {
+        var ia = [];
+        for (var i = 0; i < 5; i++)
+            ia[i] = (this.ebSettings.PageLength * (i + 1));
+        return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
+    }
 
     this.ajaxData = function (dq) {
         //alert("xxxxxx");
@@ -1445,10 +1458,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs === "ProgressBar") {
+            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.ProgressBar) {
                 this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
             }
-            else if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
+            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.Link) {
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
                 alert(this.linkDV);
@@ -1459,28 +1472,29 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     return parseFloat(data).toFixed(deci);
                 }
             }
+            this.ebSettings.Columns.$values[i].sClass = this.ebSettings.Columns.$values[i].className;
         }
         if (col.Type == parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
             }
             else {
-                if (this.ebSettings.Columns.$values[i].RenderAs === "IsEditable") {
+                if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
                     this.ebSettings.Columns.$values[i].render = this.renderEditableCol.bind(this);
                 }
-                else if (this.ebSettings.Columns.$values[i].RenderAs === "Icon") {
+                else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.Icon) {
                     this.ebSettings.Columns.$values[i].render = this.renderIconCol.bind(this);
                     //this.ebSettings.Columns.$values[i].mRender = this.renderIconCol.bind(this);
                 }
             }
         }
         if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
+            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);
             }
-            else if (this.ebSettings.Columns.$values[i].RenderAs === "Chart") {
+            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
             }
         }

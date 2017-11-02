@@ -209,8 +209,6 @@
 
 .eb-alertbox {
     position: fixed;
-    top: 24px;
-    right: 24px;
     z-index: 100000;
 }
 .Eb-invalid {
@@ -218,4 +216,7 @@
     background: antiquewhite!important;
     border: 1px solid maroon!important;
     box-shadow: rgb(128, 0, 0) 0px 0px 2px 0px!important;
+}
+.alert {
+    margin-bottom: 7px!important;
 }

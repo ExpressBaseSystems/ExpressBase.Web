@@ -1,0 +1,65 @@
+﻿@using ExpressBase.Common.Objects;
+@using ExpressBase.Objects;
+@using ExpressBase.Common.Objects.Attributes;
+
+
+@{
+    //int typeInt = 0//(string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
+    EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
+    int typeInt = Convert.ToInt32(ViewBag.ObjType);
+
+    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
+    var _toolBox = new EbToolbox(_builderType);
+}
+<br /><br /><br /><br /><br /><br /><br />
+<div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
+<div id="con" class="form-buider-cont">
+    <div id="toolbox_cont" class='formB-box toolbox-cont'>
+        <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-times pin" onclick="slideLeft ('.form-save-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
+        <div id="form-buider-toolBox" class="form-buider-toolBox">
+            @Html.Raw(_toolBox.html)
+        </div>
+    </div>
+    <div class="form-save-wraper">
+
+        <div class="formB-box fb-cont">
+            <button id="save" type="submit" class="btn btn-default">Save</button>
+            <button id="commit" type="submit" class="btn btn-default">Commit</button>
+        </div>
+
+        <div id="form-buider-form" eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form">
+            @*@Html.Raw(@ViewBag.dsObj.GetHtml())*@
+            @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
+            @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
+        </div>
+    </div>
+    <input type="hidden" id="objtype" value="@type" />
+    <input type="hidden" id="objid" value="@ViewBag.Refid" />
+    <div id='form-buider-propGrid' class='formB-box property-grid-cont'>
+        <div id='pgWraper'></div>
+    </div>
+</div>
+
+<script>
+    @Html.Raw(_toolBox.EbObjectTypes);
+    @Html.Raw(_toolBox.AllControlls);
+    @Html.Raw(_toolBox.AllMetas);
+    @Html.Raw(_toolBox.JsonToJsObjectFuncs);
+    @Html.Raw(_toolBox.TypeRegister);
+
+    var formBuilderObj = null;
+    var objid =$("#objid").val();
+    var FBid = "form-buider-form";
+    var editModeFormObj = null;
+    var ToolBoxId = "form-buider-toolBox";
+    var PGid = "form-buider-propGrid";
+    // if edit mode
+    @*if(objid){
+        var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.dsObj));
+        //$.each(editModeFormObj, funcion(i, obj) {  });
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
+        formBuilderObj.InitEditModeCtrls(JSON.parse(editModeObj));
+    }
+    else
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");*@
+</script>

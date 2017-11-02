@@ -336,11 +336,11 @@ namespace ExpressBase.Web.Controllers
         //    return dsobj;
         //}
 
-        public IActionResult GetFilterBody()
+        public IActionResult GetFilterBody(string dvobj)
         {
-            var req = this.HttpContext.Request.Form;
-            var filterForm = this.Redis.Get<EbFilterDialog>(req["objid"]);
-            return ViewComponent("ParameterDiv", new { paramDiv = filterForm });
+            var dsObject = EbSerializers.Json_Deserialize(dvobj);
+            dsObject.AfterRedisGet(this.Redis);
+            return ViewComponent("ParameterDiv", new { paramDiv = dsObject.FilterDialog });
         }
 
         public List<EbObjectWrapper> GetStatusHistory(string _refid)

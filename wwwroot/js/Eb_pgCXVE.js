@@ -12,8 +12,11 @@
     this.CXE_OKclicked = function () {
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
-        if (this.editor === 17)
-            this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.imgSlctrs[this.PGobj.CurProp].getId();
+        if (this.editor === 17) {
+            var imgId = this.PGobj.imgSlctrs[this.PGobj.CurProp].getId();
+            this.PGobj.PropsObj[this.PGobj.CurProp] = imgId;
+            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(imgId);
+        }
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -36,7 +39,13 @@
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
         $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
-        $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+        $("#" + this.PGobj.wraperId +' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+        
+
+        if (this.PGobj.IsReadonly)
+            this.PGobj.ReadOnly();
+        else
+            this.PGobj.ReadWrite();
     };
 
     this.initStrE = function () {
@@ -86,6 +95,7 @@
             }
 
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+            this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
             this.setColTiles(true);
         }
         else if (this.editor > 7 && this.editor < 11) {
@@ -104,12 +114,12 @@
             this.setSelColtiles();
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
         }
-        this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this) });
+        this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
     };
 
-    this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10); };
+    this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10) && !this.PGobj.IsReadonly; };
 
     this.onDragFn = function (el, source) {
         $(':focus').blur();

@@ -479,10 +479,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         var type = curControl.attr('eb-type');        
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
         if (!curControl.hasClass("pageHeaders")) {
-            this.editElement(curControl);
-            this.contextMenu(curControl);
+            this.editElement(curControl);           
             this.Resizable(curControl);
         }
+        this.contextMenu(curControl);
     };//obj send to pg on focus
 
     this.Resizable = function (object) {

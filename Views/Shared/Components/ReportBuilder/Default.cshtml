@@ -4,6 +4,7 @@
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>
+<script type="text/javascript" src="~/js/Eb_FontEditor.js"></script>
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -153,6 +154,9 @@
                         <div class="draggable tool-box-div" eb-type="Text"><i class="fa fa-text-width" aria-hidden="true"></i> Text </div>
                         <div class="draggable tool-box-div" eb-type="Barcode"><i class="fa fa-barcode" aria-hidden="true"></i> Barcode </div>
                         <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-qrcode" aria-hidden="true"></i> QR Code </div>
+                        <div class="draggable tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Background </div>
+                        <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-map-marker" aria-hidden="true"></i> Water Mark </div>
+                        <button class="btn" id="font"><i> test </i></button>
                     </div>
                     <div class="tab-pane" id="data" role="tabpanel">
                         <ul id="data-table-list" class="tool-box-items"></ul>
@@ -201,6 +205,7 @@
             </div>
         </div>
     </div>
+    <div id="fontModal"></div>
 </div>
 <script>
     if (@ViewBag.tabnum === 0) {
@@ -214,6 +219,11 @@
         $('#calculated-fields').treed();
         $('#special-fields').treed();
         $('#other-fields').treed();
+
+        //var f = new FontEditor({
+        //    ContainerId: "fontModal",
+        //    ToggleId:"font",
+        //})
 
         DrawColTree = function (result) {
             $('#data-table-list').empty();

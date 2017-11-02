@@ -115,14 +115,14 @@ namespace ExpressBase.Web.Controllers
 
                 if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                 {
-                    EbForm dsobj = EbSerializers.Json_Deserialize<EbForm>(element.Json_lc);
+                    var dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
                     ViewBag.Name = dsobj.Name;
                     ViewBag.Json = element.Json_lc;
                     ViewBag.html = dsobj.GetHtml();
                 }
                 else
                 {
-                    EbForm dsobj = EbSerializers.Json_Deserialize<EbForm>(element.Json_wc);
+                    var dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
                     ViewBag.Name = dsobj.Name;
                     ViewBag.Json = element.Json_wc;
                     ViewBag.html = dsobj.GetHtml();

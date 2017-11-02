@@ -4,6 +4,7 @@
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>
+<script type="text/javascript" src="~/js/Eb_FontEditor.js"></script>
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -128,10 +129,10 @@
                             <li>
                                 <a>Special Fields</a>
                                 <ul>
-                                    <li class="styl"><div eb-type='DateTime' class='coloums draggable textval'>CurrentDateTime</div></li>
-                                    <li class="styl"><div eb-type='PageNo' class='coloums draggable textval'>Page No</div></li>
-                                    <li class="styl"><div eb-type='PageXY' class='coloums draggable textval'>Page X/Y</div></li>
-                                    <li class="styl"><div eb-type='UserName' class='coloums draggable textval'>Username</div></li>
+                                    <li class="styl"><div eb-type='DateTime' class='draggable textval'>CurrentDateTime</div></li>
+                                    <li class="styl"><div eb-type='PageNo' class='draggable textval'>Page No</div></li>
+                                    <li class="styl"><div eb-type='PageXY' class='draggable textval'>Page X/Y</div></li>
+                                    <li class="styl"><div eb-type='UserName' class='draggable textval'>Username</div></li>
                                 </ul>
                             </li>
                         </ul>
@@ -153,6 +154,9 @@
                         <div class="draggable tool-box-div" eb-type="Text"><i class="fa fa-text-width" aria-hidden="true"></i> Text </div>
                         <div class="draggable tool-box-div" eb-type="Barcode"><i class="fa fa-barcode" aria-hidden="true"></i> Barcode </div>
                         <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-qrcode" aria-hidden="true"></i> QR Code </div>
+                        <div class="draggable tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Background </div>
+                        <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-map-marker" aria-hidden="true"></i> Water Mark </div>
+                        <button class="btn" id="font"><i> test </i></button>
                     </div>
                     <div class="tab-pane" id="data" role="tabpanel">
                         <ul id="data-table-list" class="tool-box-items"></ul>
@@ -201,14 +205,25 @@
             </div>
         </div>
     </div>
+    <div id="fontModal"></div>
 </div>
 <script>
+    if (@ViewBag.tabnum === 0) {
+        var commonO = $("#layout_div").data("commonObj");
+    }
+
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new RptBuilder('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
     $(document).ready(function () {
 
         $('#running-summary').treed();
         $('#calculated-fields').treed();
         $('#special-fields').treed();
         $('#other-fields').treed();
+
+        //var f = new FontEditor({
+        //    ContainerId: "fontModal",
+        //    ToggleId:"font",
+        //})
 
         DrawColTree = function (result) {
             $('#data-table-list').empty();
@@ -241,17 +256,6 @@
             PosOBjOFdrag['left'] = event.pageX - $(event.target).offset().left;
             PosOBjOFdrag['top'] = event.pageY - $(event.target).offset().top;
         }
-
-        if (@ViewBag.IsNew === true){
-            var report = new RptBuilder(save, commit, @ViewBag.IsNew);
-        }        //edit mode
-        else if(@ViewBag.IsNew === false){
-            var editModeObj = @Html.Raw(EbSerializers.Json_Serialize(@ViewBag.Json));
-            var parseObj = JSON.parse(editModeObj);
-            //console.log(editModeObj);
-            var report = new RptBuilder(save, commit, @ViewBag.IsNew, parseObj);
-        }
-        @*var report = new RptBuilder('A4', save, commit, @ViewBag.IsNew);*@
             $("#Rptbgimg").change(function () {
                 setBackgroud(this);
             });

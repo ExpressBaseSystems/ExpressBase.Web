@@ -12,8 +12,11 @@
     this.CXE_OKclicked = function () {
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
-        if (this.editor === 17)
-            this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.imgSlctrs[this.PGobj.CurProp].getId();
+        if (this.editor === 17) {
+            var imgId = this.PGobj.imgSlctrs[this.PGobj.CurProp].getId();
+            this.PGobj.PropsObj[this.PGobj.CurProp] = imgId;
+            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(imgId);
+        }
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -36,7 +39,8 @@
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
         $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
-        $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+        $("#" + this.PGobj.wraperId +' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+        
 
         if (this.PGobj.IsReadonly)
             this.PGobj.ReadOnly();

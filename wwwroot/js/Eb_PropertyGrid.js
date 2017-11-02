@@ -367,8 +367,8 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table tr').find(".fa-caret-right").click(this.ExpandToggle.bind(this));
         this.addToDD(this.PropsObj);
-        if (this.PropsObj.RenderMe)
-            this.PropsObj.RenderMe();
+        //if (this.PropsObj.RenderMe)
+        //    RefreshControl(this.PropsObj);///////////////////////////////////////////////////////////////////////
         $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", this.nameChangedFn);
         $("#" + this.wraperId + " .pgGroupCell").on("click", this.collapsGroup);

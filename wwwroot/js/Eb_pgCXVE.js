@@ -37,6 +37,11 @@
 
         $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $(this.pgCXE_Cont_Slctr).off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+
+        if (this.PGobj.IsReadonly)
+            this.PGobj.ReadOnly();
+        else
+            this.PGobj.ReadWrite();
     };
 
     this.initStrE = function () {
@@ -86,6 +91,7 @@
             }
 
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+            this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
             this.setColTiles(true);
         }
         else if (this.editor > 7 && this.editor < 11) {
@@ -104,12 +110,12 @@
             this.setSelColtiles();
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
         }
-        this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this) });
+        this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
     };
 
-    this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10); };
+    this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10) && !this.PGobj.IsReadonly; };
 
     this.onDragFn = function (el, source) {
         $(':focus').blur();

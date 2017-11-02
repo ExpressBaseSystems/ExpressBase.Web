@@ -17,6 +17,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
     this.DD_onChange = function (e) { };
     this.nameChanged = function (e) { };
     this.Close = function (e) { };
+    this.IsReadonly = false;
 
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
@@ -303,7 +304,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
 
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
-        this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>Properties <div class="icon-cont  pull-right"><i class="fa fa-times" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
+        this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div><span>Properties </span><div class="icon-cont  pull-right"><i class="fa fa-times" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div><div id='" + this.wraperId + "_HelpBox' class='propgrid-helpbox'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
@@ -373,6 +374,9 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $("#" + this.wraperId + " .pgGroupCell").on("click", this.collapsGroup);
         $("#" + this.wraperId + " .pgRow").on("focus", this.rowFocus);
         this.bindFns();
+
+        if (this.IsReadonly)
+            this.ReadOnly();
     };
 
     this.setBasic = function () {
@@ -399,12 +403,13 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         var $e = $(e.target);
         //$e.removeClass("Eb-invalid");
         $.each(this.AllObjects, function (i, obj) {
-            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] === this.PropsObj[this.CurProp]) {
+            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
 
                 this.Ebalert.alert({
                     head: "This property is set as Unique.",
                     body: obj.Name + "'s " + this.CurProp + " property has the same value.",
-                    type: "danger"
+                    type: "danger",
+                    delay: 5000
                 });
                 $e.focus().select().addClass("Eb-invalid");
                 return false;
@@ -418,7 +423,8 @@ var Eb_PropertyGrid = function (id, wc, cid) {
             this.Ebalert.alert({
                 head: "This property is set as Required!",
                 body: "This field cannot be left blank.",
-                type: "info"
+                type: "info",
+                delay: 3000
             });
             $e.focus().addClass("Eb-invalid");
         }
@@ -509,4 +515,40 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $("#" + this.wraperId + " .propgrid-helpbox").show();
     };
     this.init();
+
+    this.ReadOnly = function () {
+        this.IsReadonly = true;
+        $('#' + this.wraperId + " .pgHead span").text('Property (ReadOnly)').css("color", "#ddd");
+        $('#' + this.wraperId + " input").attr('readonly', 'readonly').css("pointer-events", "none");
+        $('#' + this.wraperId + " .propgrid-table-cont select").prop('disabled', true);
+        $('#' + this.wraperId + " .propgrid-table-cont .btn").css("background-color", "#ddd").removeClass("disabled").css("cursor", "not-allowed");
+        $('#' + this.wraperId + " .propgrid-table-cont").css("background-color", "#ddd").css("cursor", "not-allowed");
+
+        $('#' + this.wraperId + " .controls-dd-cont .btn").removeClass('disabled');
+        $('#' + this.wraperId + " .pgCXEditor-Cont select").prop('disabled', true);// all select in cxve
+        $('#' + this.wraperId + " .OSE-DD-cont button").prop('disabled', true).css("cursor", "not-allowed");
+        $('#' + this.wraperId + " .OSE-DD-cont").css("cursor", "not-allowed");
+        $('#' + this.wraperId + " .modal-footer .btn").prop('disabled', true).css("cursor", "not-allowed");//ce TypeDD
+        $('#' + this.wraperId + " .CE-add").prop('disabled', true).css("color", "#5a5a5a").css("cursor", "not-allowed");// CE +
+        $('#' + this.wraperId + " .sub-controls-DD-cont").css("cursor", "not-allowed");// CE DD, + cont
+        $('#' + this.wraperId + ' .CEctrlsCont button').css("cursor", "not-allowed").prop('disabled', true);//coltile X
+
+    };
+    this.ReadWrite = function () {
+        this.IsReadonly = false;
+
+        $('#' + this.wraperId + " .pgHead span").text('Property').css("color", "inherit");
+        $('#' + this.wraperId + " input").removeAttr('readonly').css("pointer-events", "unset");
+        $('#' + this.wraperId + " .propgrid-table-cont select").prop('disabled', false);
+        $('#' + this.wraperId + " .propgrid-table-cont .btn").css("background-color", "#fff").css("cursor", "inherit");
+        $('#' + this.wraperId + " .propgrid-table-cont").css("background-color", "#fff").css("cursor", "inherit");
+
+        $('#' + this.wraperId + " .pgCXEditor-Cont select").prop('disabled', false);// all select in cxve
+        $('#' + this.wraperId + " .OSE-DD-cont button").prop('disabled', false).css("cursor", "inherit");
+        $('#' + this.wraperId + " .OSE-DD-cont").css("cursor", "inherit");
+        $('#' + this.wraperId + " .modal-footer .btn").prop('disabled', false).css("cursor", "inherit");//ce TypeDD
+        $('#' + this.wraperId + " .CE-add").prop('disabled', false).css("color", "#5a5a5a").css("cursor", "inherit");// CE +
+        $('#' + this.wraperId + " .sub-controls-DD-cont").css("cursor", "inherit");// CE DD, + cont
+        $('#' + this.wraperId + ' .CEctrlsCont button').css("cursor", "inherit").prop('disabled', false);//coltile X
+    };
 };

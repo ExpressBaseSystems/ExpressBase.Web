@@ -326,10 +326,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var o = new Object();
         //o.scrollY = this.ebSettings.scrollY+"px";
         o.scrollY = "calc(100vh - 230px)";
+        //o.deferLoading = 100;
         o.scrollX = "100%";
+        if (this.ebSettings.PageLength !== 0)
+        {
+            o.lengthMenu = this.generateLengthMenu();
+            //o.deferLoading = this.ebSettings.PageLength * 5;
+        }
         //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
-            //if (this.ebSettings.leftFixedColumns > 0 || this.ebSettings.rightFixedColumns > 0)
-            //    o.fixedColumns = { leftColumns: this.ebSettings.leftFixedColumns, rightColumns: this.ebSettings.rightFixedColumns };
+        if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
+            o.fixedColumns = { leftColumns: this.ebSettings.LeftFixedColumn, rightColumns: this.ebSettings.RightFixedColumn };
             //o.lengthMenu = this.ebSettings.lengthMenu;
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
             o.pagingType = "full";
@@ -405,6 +411,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //alert(JSON.stringify(o));
         return o;
     };
+
+    this.generateLengthMenu = function () {
+        var ia = [];
+        for (var i = 0; i < 5; i++)
+            ia[i] = (this.ebSettings.PageLength * (i + 1));
+        return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
+    }
 
     this.ajaxData = function (dq) {
         //alert("xxxxxx");
@@ -658,6 +671,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$("#contBox").removeClass('col-md-10').addClass('col-md-8');
         //$('#fd-min-btn').css('margin-right', '0').removeClass("rotated");
         this.Api.columns.adjust();
+        this.Api.fixedColumns().relayout();
+        this.Api.rows().recalcHeight()
     }
 
     this.drawCallBackFunc = function (settings) {
@@ -747,20 +762,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var j = 0;
         $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ') th').each(function (idx) {
             if (lfoot !== null) {
-                if (j < tx.leftFixedColumns)
+                if (j < tx.LeftFixedColumns)
                     $(this).html(eb_footer_controls_lfoot[idx]);
             }
 
             if (rfoot !== null) {
-                if (j === eb_footer_controls_lfoot.length - tx.rightFixedColumns) {
+                if (j === eb_footer_controls_lfoot.length - tx.RightFixedColumns) {
                     if (j < eb_footer_controls_lfoot.length)
                         $(this).html(eb_footer_controls_lfoot[idx]);
                 }
             }
 
             if (scrollfoot !== null) {
-                if (tx.leftFixedColumns + tx.rightFixedColumns > 0) {
-                    if (j < eb_footer_controls_scrollfoot.length - tx.rightFixedColumns)
+                if (tx.LeftFixedColumns + tx.RightFixedColumns > 0) {
+                    if (j < eb_footer_controls_scrollfoot.length - tx.RightFixedColumns)
                         $(this).html(eb_footer_controls_scrollfoot[idx]);
                 }
 
@@ -849,12 +864,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.GetFiltersFromSettingsTbl(50);
             if (fc_lh_tbl !== null) {
                 fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = 0; j < this.ebSettings.leftFixedColumns; j++)
+                for (var j = 0; j < this.ebSettings.LeftFixedColumns; j++)
                     $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
             if (fc_rh_tbl !== null) {
                 fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.rightFixedColumns; j < this.eb_filter_controls_4fc.length; j++)
+                for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.RightFixedColumns; j < this.eb_filter_controls_4fc.length; j++)
                     $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
         }
@@ -863,12 +878,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (sc_h_tbl !== null) {
             this.GetFiltersFromSettingsTbl(1);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-            if (this.ebSettings.leftFixedColumns + this.ebSettings.rightFixedColumns > 0) {
+            if (this.ebSettings.LeftFixedColumns + this.ebSettings.RightFixedColumns > 0) {
                 for (var j = 0; j < this.eb_filter_controls_4sb.length; j++) {
-                    if (j < this.ebSettings.leftFixedColumns)
+                    if (j < this.ebSettings.LeftFixedColumns)
                         $(sc_h_tbl.find("tr[class=addedbyeb]")).append("<th>&nbsp;</th>");
                     else {
-                        if (j < this.eb_filter_controls_4sb.length - this.ebSettings.rightFixedColumns)
+                        if (j < this.eb_filter_controls_4sb.length - this.ebSettings.RightFixedColumns)
                             $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
                         else
                             $(sc_h_tbl.find("tr[class=addedbyeb]")).append("<th>&nbsp;</th>");
@@ -1445,10 +1460,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs === "ProgressBar") {
+            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.ProgressBar) {
                 this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
             }
-            else if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
+            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.Link) {
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
                 alert(this.linkDV);
@@ -1459,28 +1474,29 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     return parseFloat(data).toFixed(deci);
                 }
             }
+            this.ebSettings.Columns.$values[i].sClass = this.ebSettings.Columns.$values[i].className;
         }
         if (col.Type == parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
             }
             else {
-                if (this.ebSettings.Columns.$values[i].RenderAs === "IsEditable") {
+                if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
                     this.ebSettings.Columns.$values[i].render = this.renderEditableCol.bind(this);
                 }
-                else if (this.ebSettings.Columns.$values[i].RenderAs === "Icon") {
+                else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.Icon) {
                     this.ebSettings.Columns.$values[i].render = this.renderIconCol.bind(this);
                     //this.ebSettings.Columns.$values[i].mRender = this.renderIconCol.bind(this);
                 }
             }
         }
         if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs === "Link") {
+            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);
             }
-            else if (this.ebSettings.Columns.$values[i].RenderAs === "Chart") {
+            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
             }
         }

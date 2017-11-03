@@ -15,13 +15,21 @@
         border-bottom: 13px solid #f2f2f2;
     }
         .codedit .tab-section-common .nav > li > a {
-            background: #f2f2f2;
-            width: 80px;
+            background: white;
+            width: 150px;
             padding: 2px 15px;
-            text-align:center;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-bottom: none;
+        }
+        .codedit .tab-section-common .nav > .active a{
+            background: #f2f2f2;          
         }
     .codedit .tab-cont-common {
         margin-top: 48px;
+    }
+    .codedit .tab-cont-common{
+        height:calc(100vh - 85px);
     }
 </style>
 <script>
@@ -70,6 +78,11 @@
                 else if (ViewBag.ObjType == (int)EbObjectType.Report)
                 {
                     @await Component.InvokeAsync("ReportBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
+                else if (ViewBag.ObjType == (int)EbObjectType.WebForm)
+                {
+                    @await Component.InvokeAsync("FormBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
             }

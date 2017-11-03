@@ -136,14 +136,14 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     this.drawLineGraph = function () {
         var dt = this.getCSV();
         new Dygraph(
-                document.getElementById('divgraph'),
-                dt,
+            document.getElementById('divgraph'),
+            dt,
             {
                 ylabel: 'Y Label',
                 xlabel: 'X Label',
                 legend: 'follow',
             }
-            );
+        );
         //var dt = this.getCSV();
         //var data = this.data;
         //new Dygraph(
@@ -211,7 +211,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     this.chartApi = null;
     this.gdata = null;
     this.goptions = null;
-    this.Xax = []; this.Yax = [];
+    this.Xindx = []; this.Yindx = [];
     this.tableId = null;
     this.sourceElement = null;
     this.flagAppendColumns = false;
@@ -284,7 +284,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         this.call2FD();
     }
 
-      
+
 
     this.propGrid.PropertyChanged = function (obj, Pname) {
         this.EbObject = obj;
@@ -309,10 +309,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         $.event.props.push('dataTransfer');
         this.createChartDivs();
         //if (!this.flagAppendColumns) {
-            this.appendColumns();
-            this.appendXandYAxis();
+        this.appendColumns();
+        this.appendXandYAxis();
         //}
-            if (this.data) {
+        if (this.data) {
             this.drawGraphHelper(this.data)
         }
         else {
@@ -335,26 +335,26 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append(
                 "<div id='graphcontainer_tab" + this.tableId + "'>" +
-                    "<div class='col-md-2 no-padd' id='columnsDisplay" + this.tableId + "'>" +
-                        "<div class='tag-cont'>" +
+                "<div class='col-md-2 no-padd' id='columnsDisplay" + this.tableId + "'>" +
+                "<div class='tag-cont'>" +
                 "  <div class='tag-wraper'><div class='pgHead'>Dimensions</div><div class='tag-scroll'><div id='diamension" + this.tableId + "'></div></div></div>" +
                 "  <div class='tag-wraper'><div class='pgHead'>Measures</div><div class='tag-scroll'><div id='measure" + this.tableId + "'></div></div></div>" +
-                        "</div>" +
-                    "</div> " +
-                    "<div class='col-md-10' id='canvasParentDiv" + this.tableId + "'>" +
-                        "<div id='xy" + this.tableId + "' style='vertical-align: top;'> " +
-                            "<div class='input-group' > " +
-                                "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
-                                "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
-                            "</div> " +
-                            "<div class='input-group' style='padding-top: 1px;'> " +
-                                "<span class='input-group-addon' id='basic-addon3'> Y - Axis</span> " +
-                                "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
-                            "</div> " +
-                        "</div> " +
-                
-                        "<div id='canvasDiv'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
-                    "</div> " +
+                "</div>" +
+                "</div> " +
+                "<div class='col-md-10' id='canvasParentDiv" + this.tableId + "'>" +
+                "<div id='xy" + this.tableId + "' style='vertical-align: top;'> " +
+                "<div class='input-group' > " +
+                "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
+                "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
+                "</div> " +
+                "<div class='input-group' style='padding-top: 1px;'> " +
+                "<span class='input-group-addon' id='basic-addon3'> Y - Axis</span> " +
+                "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
+                "</div> " +
+                "</div> " +
+                "<input type='color' id='fontSel' style='display:none;'>" +
+                "<div id='canvasDiv'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
+                "</div> " +
                 "</div>");
             this.GenerateButtons();
         }
@@ -365,7 +365,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tableId).click(this.init.bind(this));
-        $("#obj_icons").append("<div style='display: inline;'>"+
+        $("#obj_icons").append("<div style='display: inline;'>" +
             "<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
             "<button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>" +
             "<span class='caret'></span>" +
@@ -383,7 +383,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
             "<button id='btnColumnCollapse" + this.tableId + "' class='btn' style='display: inline-block;'>" +
             "<i class='fa fa-cog' aria-hidden='true'></i>" +
             "</button>");
-        if(this.EbObject !== null && this.EbObject.Type !== null)
+        if (this.EbObject !== null && this.EbObject.Type !== null)
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.EbObject.Type.trim() + "&nbsp;<span class = 'caret'></span>");
         this.bindEvents();
 
@@ -396,22 +396,17 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     }
 
     this.appendColumns = function () {
-        var colsAll_X = [], Xcol = [];
+        var colsAll_XY = [], Xcol = [], Ycol = [], colsAll_X = [];
         var tid = this.tableId;
-        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
+        if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
             $.each(this.columnInfo.Xaxis.$values, this.AddXcolumns.bind(this, Xcol));
             $.each(this.columnInfo.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
-            var colsAll_XY = [], Ycol = [];
             $.each(this.columnInfo.Yaxis.$values, this.AddYcolumns.bind(this, Ycol));
             $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
-            colsAll_XY = colsAll_XY.sort(function (a, b) {
-                return a.name.localeCompare(b.name);
-            });
             $("#diamension" + tid).empty();
             $("#measure" + tid).empty();
         }
-        else
-        {
+        else {
             colsAll_XY = this.columnInfo.Columns.$values;
             $("#diamension" + tid).empty();
             $("#measure" + tid).empty();
@@ -425,9 +420,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
             }
         });
 
-        //$("#diamension" + this.tableId + " .columnDrag").off("dragstart").on("dragstart", this.colDrag.bind(this));
-        //$("#measure" + this.tableId + " .columnDrag").off("dragstart").on("dragstart", this.colDrag.bind(this));
-
         this.drake = new dragula([document.getElementById("diamension" + tid), document.getElementById("measure" + tid), document.getElementById("X_col_name" + tid), document.getElementById("Y_col_name" + tid)], {
             accepts: this.acceptDrop.bind(this)
         });
@@ -437,12 +429,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
 
     this.AddXcolumns = function (Xcol, i, obj) {
         Xcol.push(obj.name);
-        this.Xax.push(obj);
     };
 
     this.AddYcolumns = function (Ycol, i, obj) {
         Ycol.push(obj.name);
-        this.Yax.push(obj);
     };
 
     this.RemoveXcolumns = function (colsAll_X, Xcol, i, obj) {
@@ -454,27 +444,23 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         if (!Ycol.contains(obj.name))
             colsAll_XY.push(obj);
     };
-
+    
     this.appendXandYAxis = function () {
         var tid = this.tableId;
-        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
+        if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
             $("#X_col_name" + tid).empty();
             $("#Y_col_name" + tid).empty();
             $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
-                $("#X_col_name" + tid).append("<div class='colTile columnDrag' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.index + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
-            });
+                $("#X_col_name" + tid).append("<div class='colTile columnDrag' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
+                this.Xindx.push(obj.data);
+            }.bind(this));
             $.each(this.columnInfo.Yaxis.$values, function (i, obj) {
-                $("#Y_col_name" + tid).append("<div class='colTile columnDrag' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.index + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
-            });
+                $("#Y_col_name" + tid).append("<div class='colTile columnDrag' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
+                this.Yindx.push(obj.data);
+            }.bind(this));
         }
         $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-
-        //$("#X_col_name" + this.tableId + " div[draggable=true]").off("dragstart").on("dragstart", this.colDrag.bind(this));
-        //$("#Y_col_name" + this.tableId + " div[draggable=true]").off("dragstart").on("dragstart", this.colDrag.bind(this));
-
-        //$("#X_col_name" + this.tableId + " div[draggable=true]").off("dragover").on("dragover", this.NocolAllowDrop.bind(this));
-        //$("#Y_col_name" + this.tableId + " div[draggable=true]").off("dragover").on("dragover", this.NocolAllowDrop.bind(this));
 
         this.flagAppendColumns = true;
     };
@@ -500,7 +486,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
 
     };
 
-    
     this.getDataSuccess = function (result) {
         this.drawGraphHelper(result.data);
     };
@@ -512,32 +497,32 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     };
 
     this.getBarData = function () {
-        var Xindx = [];
-        var Yindx = [];
+        //this.Xindx = [];
+        //this.Yindx = [];
         this.dataset = [];
         this.XLabel = [];
         this.YLabel = [];
-        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
-            $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
-                Xindx.push(obj.index);
-            });
-            $.each(this.columnInfo.Yaxis.$values, function (i, obj) {
-                Yindx.push(obj.index);
-            });
+        if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
+            //$.each(this.columnInfo.Xaxis.$values, function (i, obj) {
+            //    Xindx.push(obj.data);
+            //});
+            //$.each(this.columnInfo.Yaxis.$values, function (i, obj) {
+            //    Yindx.push(obj.data);
+            //});
 
-            $.each(this.data, this.getBarDataLabel.bind(this, Xindx, Yindx));
-            for (k = 0; k < Yindx.length; k++) {
+            $.each(this.data, this.getBarDataLabel.bind(this));
+            for (k = 0; k < this.Yindx.length; k++) {
                 this.YLabel = [];
                 for (j = 0; j < this.data.length; j++)
-                    this.YLabel.push(this.data[j][Yindx[k]]);
+                    this.YLabel.push(this.data[j][this.Yindx[k]]);
                 this.dataset.push(new datasetObj(this.columnInfo.Yaxis.$values[k].name, this.YLabel, getRandomColor(), false));
             }
         }
     };
 
-    this.getBarDataLabel = function (Xindx, Yindx, i, value) {
-        for (k = 0; k < Xindx.length; k++)
-            this.XLabel.push(value[Xindx[k]]);
+    this.getBarDataLabel = function (i, value) {
+        for (k = 0; k < this.Xindx.length; k++)
+            this.XLabel.push(value[this.Xindx[k]]);
     };
 
     this.drawGeneralGraph = function () {
@@ -585,6 +570,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
                 enabled: true,
                 mode: 'x',
             },
+            legend: {
+                onClick: this.legendClick.bind(this)
+            }
         };
 
         this.RemoveCanvasandCheckButton();
@@ -655,7 +643,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     this.drawGraph = function () {
         var canvas = document.getElementById("myChart" + this.tableId);
         this.chartApi = new Chart(canvas, {
-            type:this.columnInfo.Type.trim().toLowerCase(),
+            type: this.columnInfo.Type.trim().toLowerCase(),
             data: this.gdata,
             options: this.goptions
         });
@@ -684,7 +672,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
                 success: function (text) {
                     $("#graphcontainer_tab" + current.tableId).children("iframe").remove();
                     $("#myChart" + current.tableId).remove();
-                    $("#graphcontainer_tab" + current.tableId).children("table").css("display","none");
+                    $("#graphcontainer_tab" + current.tableId).children("table").css("display", "none");
                     $("#graphcontainer_tab" + current.tableId).append(text);
                 }
             });
@@ -700,72 +688,35 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
 
     this.colDrop = function (el, target, source, sibling) {
         if ($(target).attr("id") === "X_col_name" + this.tableId || $(target).attr("id") === "Y_col_name" + this.tableId) {
+            var temp;
             $(el).css("display", "inline-block");
             var name = $(el).text();
             $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 0px 0 0 4px;color: black !important;' >x</button>");
-            if ($(target).attr("id") == "X_col_name" + this.tableId)
-                this.columnInfo.Xaxis.$values.push(new axis($(el).attr("data-id"), name));
-            if ($(target).attr("id") == "Y_col_name" + this.tableId)
-                this.columnInfo.Yaxis.$values.push(new axis($(el).attr("data-id"), name));
+            if ($(target).attr("id") == "X_col_name" + this.tableId) {
+                //this.columnInfo.Xaxis.$values.push(new axis($(el).attr("data-id"), name));
+                temp = $.grep(this.columnInfo.Columns.$values, function (obj) { return obj.name === name });
+                this.columnInfo.Xaxis.$values.push(temp[0]);
+                this.Xindx.push(temp[0].data);
+            }
+            if ($(target).attr("id") == "Y_col_name" + this.tableId) {
+                //this.columnInfo.Yaxis.$values.push(new axis($(el).attr("data-id"), name));
+                temp = $.grep(this.columnInfo.Columns.$values, function (obj) { return obj.name === name });
+                this.columnInfo.Yaxis.$values.push(temp[0]);
+                this.Yindx.push(temp[0].data);
+            }
+
+            if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
+                this.drawGeneralGraph();
+            }
+            else {
+                $("#myChart" + this.tableId).remove();
+                $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
+            }
+            console.log(this.columnInfo.Xaxis); console.log(this.columnInfo.Yaxis);
+            $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
+            $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         }
-        
-        //var data = e.dataTransfer.getData("text");
-        //if (this.sourceElement === "UL") {
-        //    $(e.target).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='" + data + "' data-id='" + $("#" + data).attr("data-id") + "'>" + $("#" + data).text() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
-        //    if ($(e.target).attr("id") == "X_col_name" + this.tableId)
-        //        this.columnInfo.Xaxis.$values.push(new axis($("#" + data).attr("data-id"), $("#" + data).text().substring(0, $("#" + data).text().length-1)));
-        //    if ($(e.target).attr("id") == "Y_col_name" + this.tableId)
-        //        this.columnInfo.Yaxis.$values.push(new axis($("#" + data).attr("data-id"), $("#" + data).text().substring(0, $("#" + data).text().length - 1)));
-        //    //$("#" + data).remove();
-        //}
-        //else {
-        //    var str = $("#" + data).text();
-        //    $(e.target).append("<div class='alert alert-success' draggable='true' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='" + data + "' data-id='" + $("#" + data).attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></div>");
-        //    if ($(e.target).attr("id") == "X_col_name" + this.tableId) {
-        //        if (this.sourceElementId == "Y_col_name" + this.tableId)
-        //            $("#Y_col_name" + this.tableId + " #" + data).remove();
-        //        else
-        //            $("#" + data).remove();
-        //        $("#X_col_name" + this.tableId + " div").each(this.changeIndexIOfXColumns.bind(this));
-        //        $("#Y_col_name" + this.tableId + " div").each(this.changeIndexIOfYColumns.bind(this));
-        //    }
-        //    else if ($(e.target).attr("id") == "Y_col_name" + this.tableId) {
-        //        if (this.sourceElementId == "X_col_name" + this.tableId)
-        //            $("#X_col_name" + this.tableId + " #" + data).remove();
-        //        else
-        //            $("#" + data).remove();
-        //        $("#Y_col_name" + this.tableId + " div").each(this.changeIndexIOfYColumns.bind(this));
-        //        $("#X_col_name" + this.tableId + " div").each(this.changeIndexIOfXColumns.bind(this));
-        //    }
-        //}
-        
 
-        if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
-            this.drawGeneralGraph();
-        }
-        else {
-            $("#myChart" + this.tableId).remove();
-            $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
-        }
-        console.log(this.columnInfo.Xaxis); console.log(this.columnInfo.Yaxis);
-        $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-        $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-
-        //$("#X_col_name" + this.tableId + " div[draggable=true]").off("dragstart").on("dragstart", this.colDrag.bind(this));
-        //$("#Y_col_name" + this.tableId + " div[draggable=true]").off("dragstart").on("dragstart", this.colDrag.bind(this));
-
-        //$("#X_col_name" + this.tableId + " div[draggable=true]").off("dragover").on("dragover", this.NocolAllowDrop.bind(this));
-        //$("#Y_col_name" + this.tableId + " div[draggable=true]").off("dragover").on("dragover", this.NocolAllowDrop.bind(this));
-    };
-
-    this.changeIndexIOfXColumns = function (i, obj) {
-        var str = obj.innerText;
-        this.Xax.push(new axis(obj.getAttribute("data-id"), str.substring(0, str.length - 1).trim()));
-    };
-
-    this.changeIndexIOfYColumns = function (i, obj) {
-        var str = obj.innerText;
-        this.Yax.push(new axis(obj.getAttribute("data-id"), str.substring(0, str.length - 1).trim()));
     };
 
     this.colAllowDrop = function (e) {
@@ -807,18 +758,25 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
 
     this.RemoveAndAddToColumns = function (e) {
         var str = $(e.target).parent().text();
-        if ($(e.target).parent().parent().attr("id") === "X_col_name" + this.tableId)
+        var index = parseInt($(e.target).parent().attr("data-id"));
+        if ($(e.target).parent().parent().attr("id") === "X_col_name" + this.tableId) {
             $("#diamension" + this.tableId).append("<div class='colTile columnDrag' id='li" + str.substr(0, str.length - 1) + "' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substr(0, str.length - 1) + "</div>");
-        else if ($(e.target).parent().parent().attr("id") === "Y_col_name" + this.tableId)
+            //index = this.Xindx.indexOf($(e.target).parent().attr("data-id"));
+            this.Xindx.pop(index);
+        }
+        else if ($(e.target).parent().parent().attr("id") === "Y_col_name" + this.tableId) {
             $("#measure" + this.tableId).append("<div class='colTile columnDrag' id='li" + str.substr(0, str.length - 1) + "' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substr(0, str.length - 1) + "</div>");
-        //$("#columns4Drag" + this.tableId + " .list-group").append("<li class='alert alert-success columnDrag' id='" + $(e.target).parent().attr("id") + "' draggable='true' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "</li>");
+            //index = this.Yindx.indexOf($(e.target).parent().attr("data-id"));
+            this.Yindx.pop(index);
+        }
+            //$("#columns4Drag" + this.tableId + " .list-group").append("<li class='alert alert-success columnDrag' id='" + $(e.target).parent().attr("id") + "' draggable='true' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "</li>");
         $(e.target).parent().remove();
         //$("#columns4Drag" + this.tableId + " .columnDrag").off("dragstart").on("dragstart", this.colDrag.bind(this));
         this.columnInfo.Xaxis.$values = $.grep(this.columnInfo.Xaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
         this.columnInfo.Yaxis.$values = $.grep(this.columnInfo.Yaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
         //this.columnInfo.Xaxis = this.
-        this.Xax = $.grep(this.Xax, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
-        this.Yax = $.grep(this.Yax, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
+        //this.Xindx = $.grep(this.Xindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
+        //this.Yindx = $.grep(this.Yindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
 
         if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
             this.drawGeneralGraph();
@@ -846,7 +804,24 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
 
     };
 
-    
+    this.legendClick = function (event, legendItem) {
+        if (this.chartApi !== null) {
+            $("#fontSel").click();
+        }
+        $("#fontSel").off("change").on("change", this.reloadChart.bind(this, legendItem));
+    }
+
+    this.reloadChart = function (legendItem) {
+        $.each(this.gdata.datasets, this.reloadChart_inner.bind(this, legendItem));
+        this.RemoveCanvasandCheckButton();
+    };
+
+    this.reloadChart_inner = function (legendItem, i, obj) {
+        if (i === legendItem.datasetIndex)
+            this.gdata.datasets[i].backgroundColor = $("#fontSel").val();
+    };
+
+
 };
 
 {

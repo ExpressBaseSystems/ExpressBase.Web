@@ -199,91 +199,91 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
 
-        public string CommitEbDataSource()
-        {
-            var req = this.HttpContext.Request.Form;
-            string refid;
-            EbDataSource obj;
-            if (string.IsNullOrEmpty(req["id"]))
-            {
-                var ds = new EbObject_Create_New_ObjectRequest();
-                ds.EbObjectType = (int)EbObjectType.DataSource;
-                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = req["json"];
-                ds.Status = ObjectLifeCycleStatus.Dev;
-                ds.Relations = req["rel_obj"];
-                ds.IsSave = false;
-                ds.Tags = req["tags"];
+        //public string CommitEbDataSource()
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    string refid;
+        //    EbDataSource obj;
+        //    if (string.IsNullOrEmpty(req["id"]))
+        //    {
+        //        var ds = new EbObject_Create_New_ObjectRequest();
+        //        ds.EbObjectType = (int)EbObjectType.DataSource;
+        //        obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+        //        ds.Name = obj.Name;
+        //        ds.Description = obj.Description;
+        //        ds.Json = req["json"];
+        //        ds.Status = ObjectLifeCycleStatus.Dev;
+        //        ds.Relations = req["rel_obj"];
+        //        ds.IsSave = false;
+        //        ds.Tags = req["tags"];
 
-                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-                refid = res.RefId;
+        //        var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+        //        refid = res.RefId;
 
-            }
-            else
-            {
-                var ds = new EbObject_CommitRequest();
-                ds.EbObjectType = (int)EbObjectType.DataSource;
-                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = req["json"];
-                ds.Relations = req["rel_obj"];
-                ds.RefId = req["id"];
-                ds.ChangeLog = req["changeLog"];
-                ds.Tags = req["tags"];
-                var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
-                refid = res.RefId;
-            }
+        //    }
+        //    else
+        //    {
+        //        var ds = new EbObject_CommitRequest();
+        //        ds.EbObjectType = (int)EbObjectType.DataSource;
+        //        obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+        //        ds.Name = obj.Name;
+        //        ds.Description = obj.Description;
+        //        ds.Json = req["json"];
+        //        ds.Relations = req["rel_obj"];
+        //        ds.RefId = req["id"];
+        //        ds.ChangeLog = req["changeLog"];
+        //        ds.Tags = req["tags"];
+        //        var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
+        //        refid = res.RefId;
+        //    }
 
-            return refid;
-        }
+        //    return refid;
+        //}
 
-        public string SaveEbDataSource()
-        {
-            var req = this.HttpContext.Request.Form;
-            string refid;
-            EbDataSource obj;
-            if (string.IsNullOrEmpty(req["id"]))
-            {
-                var ds = new EbObject_Create_New_ObjectRequest();
-                ds.EbObjectType = (int)EbObjectType.DataSource;
-                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = req["json"];
-                ds.Status = ObjectLifeCycleStatus.Dev;
-                ds.Relations = req["rel_obj"];
-                ds.IsSave = true;
-                ds.Tags = req["tags"];
+        //public string SaveEbDataSource()
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    string refid;
+        //    EbDataSource obj;
+        //    if (string.IsNullOrEmpty(req["id"]))
+        //    {
+        //        var ds = new EbObject_Create_New_ObjectRequest();
+        //        ds.EbObjectType = (int)EbObjectType.DataSource;
+        //        obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+        //        ds.Name = obj.Name;
+        //        ds.Description = obj.Description;
+        //        ds.Json = req["json"];
+        //        ds.Status = ObjectLifeCycleStatus.Dev;
+        //        ds.Relations = req["rel_obj"];
+        //        ds.IsSave = true;
+        //        ds.Tags = req["tags"];
 
-                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-                refid = res.RefId;
-            }
-            else
-            {
+        //        var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+        //        refid = res.RefId;
+        //    }
+        //    else
+        //    {
 
-                var ds = new EbObject_SaveRequest();
-                var _EbObjectType = (EbObjectType)Convert.ToInt32(req["ObjectType"]);
-                ds.RefId = req["Id"];
-                obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
-                ds.Json = req["json"];
-                //if (_EbObjectType == EbObjectType.SqlFunction)
-                //{
-                //    ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
-                //}
-                ds.Relations = req["rel_obj"];
-                ds.Tags = req["tags"];
-                ViewBag.IsNew = "false";
-                var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
-                refid = res.RefId;
-            }
-            return refid;
-        }
+        //        var ds = new EbObject_SaveRequest();
+        //        var _EbObjectType = (EbObjectType)Convert.ToInt32(req["ObjectType"]);
+        //        ds.RefId = req["Id"];
+        //        obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
+        //        ds.Name = obj.Name;
+        //        ds.Description = obj.Description;
+        //        ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
+        //        ds.Json = req["json"];
+        //        //if (_EbObjectType == EbObjectType.SqlFunction)
+        //        //{
+        //        //    ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
+        //        //}
+        //        ds.Relations = req["rel_obj"];
+        //        ds.Tags = req["tags"];
+        //        ViewBag.IsNew = "false";
+        //        var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
+        //        refid = res.RefId;
+        //    }
+        //    return refid;
+        //}
 
         //public string Create_Major_Version(string _refId, int _type)
         //{

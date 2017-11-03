@@ -15,6 +15,7 @@
     else if (this.controller === "tc") {
         this.currtag = "tenantresource";
     }
+    this.FileId = null;
 
     this.CreateMOdalW = function () {
         var modalHTML = '<div class="fup" id="bg_' + this.ContainerId + '"><div class="imgup-bg">'
@@ -71,11 +72,11 @@
 
     this.fileUploadSuccess = function (event, data, previewId, index) {
         $("#" + this.ContainerId + "sub-upload").show();
-        this.FleId = data.response.objId;
-        $('#' + this.ContainerId + 'obj-id').text(this.FleId);
+        this.FileId = data.response.objId;
+        $('#' + this.ContainerId + 'obj-id').text(this.FileId);
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
-        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, this.FleId));
+        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, this.FileId));
     };
 
     this.addtagButton = function (event, file, previewId, index, reader) {
@@ -122,7 +123,7 @@
     };
 
     this.getId = function () {      
-        return this.FleId;
+        return this.FileId;
     };
 
     this.init = function () {

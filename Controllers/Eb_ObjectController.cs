@@ -94,6 +94,13 @@ namespace ExpressBase.Web.Controllers
             {
                 var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.DataSource, typeof(EbDatasourceMain));
+                //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(this.Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+               
             }
             else if(type == EbObjectType.TableVisualization || type == EbObjectType.ChartVisualization)
             {

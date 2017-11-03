@@ -10,17 +10,18 @@
     this.alert = function (alert) {
         this.head = alert.head;
         this.body = alert.body;
-        this.type = alert.type||"danger";
+        this.type = alert.type || "danger";
+        this.delay = alert.delay || 4000;
         this.$CurAlert = $('<div class="alert alert-' + this.type + ' alert-dismissable fade in">'
             + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
             + '<strong>' + alert.head + '</strong> &nbsp;' + alert.body
             + '</div> ');
         $('#' + this.id).append(this.$CurAlert);
         setTimeout(function () {
-            this.fadeTo(300, 0).slideUp(300, function () {
+            this.fadeTo(600, 0).slideUp(600, function () {
                 this.remove();
             });
-        }.bind(this.$CurAlert), 4000);
+        }.bind(this.$CurAlert), this.delay);
     };
     this.Init = function () {
         if (this.possition) {

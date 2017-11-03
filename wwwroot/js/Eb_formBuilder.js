@@ -11,7 +11,7 @@
     //if (builderType === 1)
     //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
     if (builderType === 0)
-        this.rootContainerObj = new EbObjects.EbForm(formid);
+        this.rootContainerObj = new EbObjects.EbWebForm(formid);
     else if (builderType === 12)
         this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
     //else if (builderType === 13)
@@ -25,7 +25,8 @@
     this.curControl = null;
     this.drake = null;
 
-    this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
+    //this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
+
 
     // need to change
     this.controlCounters = {
@@ -88,7 +89,7 @@
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");
         this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
-        $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));
+        $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));////////
     };
 
     this.saveObj = function () {
@@ -124,12 +125,19 @@
     };
 
     this.controlOnFocus = function (e) {
-        this.curControl = $(e.target).closest(".Eb-ctrlContainer");
+        if ($(e.target).hasClass("form-buider-form")) {
+            this.curControl = $(e.target);
+            this.CreatePG(this.rootContainerObj);
+            return;
+        }
+        else
+            this.curControl = $(e.target).closest(".Eb-ctrlContainer");
         var id = this.curControl.attr("id");
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
         this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
+        this.PGobj.ReadOnly();
     };
 
     this.makeTdsDropable = function () {
@@ -347,6 +355,7 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         $("#save").on("click", this.save.bind(this));
         $("#commit").on("click", this.commit.bind(this));
+        this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
         this.PGobj.Close = function () {
             slideRight('.form-save-wraper', '#form-buider-propGrid');

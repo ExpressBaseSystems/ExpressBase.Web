@@ -44,7 +44,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-       // [AllowCrossSiteIFrame]  // for web forwarding with masking
+        // [AllowCrossSiteIFrame]  // for web forwarding with masking
         public IActionResult SignIn()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-       
+
 
         public IActionResult UsrSignIn()
         {
@@ -61,7 +61,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-       // [AllowCrossSiteIFrame]
+        // [AllowCrossSiteIFrame]
         public IActionResult SignUp()
         {
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -302,7 +302,7 @@ namespace ExpressBase.Web.Controllers
                 if (authResponse != null && authResponse.ResponseStatus != null
                     && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
                 {
-                    return errorredirect(whichconsole);                  
+                    return errorredirect(whichconsole);
                 }
                 else
                 {
@@ -453,19 +453,19 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult errorredirect(string console)
         {
-            if(console == "tc")
+            if (console == "tc")
             {
-                
-                return RedirectToAction("SignIn","Ext");
+
+                return RedirectToAction("SignIn", "Ext");
             }
-            else if(console == "dc")
+            else if (console == "dc")
             {
-               
+
                 return RedirectToAction("DevSignIn", "Ext");
-            }  
+            }
             else
             {
-              
+
                 return RedirectToAction("UsrSignIn", "Ext");
             }
         }

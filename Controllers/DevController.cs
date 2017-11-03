@@ -115,14 +115,14 @@ namespace ExpressBase.Web.Controllers
 
                 if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                 {
-                    EbForm dsobj = EbSerializers.Json_Deserialize<EbForm>(element.Json_lc);
+                    EbWebForm dsobj = EbSerializers.Json_Deserialize<EbWebForm>(element.Json_lc);
                     ViewBag.Name = dsobj.Name;
                     ViewBag.Json = element.Json_lc;
                     ViewBag.html = dsobj.GetHtml();
                 }
                 else
                 {
-                    EbForm dsobj = EbSerializers.Json_Deserialize<EbForm>(element.Json_wc);
+                    EbWebForm dsobj = EbSerializers.Json_Deserialize<EbWebForm>(element.Json_wc);
                     ViewBag.Name = dsobj.Name;
                     ViewBag.Json = element.Json_wc;
                     ViewBag.html = dsobj.GetHtml();
@@ -223,7 +223,7 @@ namespace ExpressBase.Web.Controllers
             if (type == BuilderType.FilterDialog)
                 _form = EbSerializers.Json_Deserialize<EbFilterDialog>(rlist.Json) as EbControlContainer;
             else if (type == BuilderType.WebForm)
-                _form = EbSerializers.Json_Deserialize<EbForm>(rlist.Json) as EbControlContainer;
+                _form = EbSerializers.Json_Deserialize<EbWebForm>(rlist.Json) as EbControlContainer;
 
 
             if (_form != null)

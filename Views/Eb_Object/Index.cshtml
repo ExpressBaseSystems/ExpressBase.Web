@@ -80,6 +80,11 @@
                     @await Component.InvokeAsync("ReportBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
+                else if (ViewBag.ObjType == (int)EbObjectType.WebForm)
+                {
+                    @await Component.InvokeAsync("FormBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
             }
         </div>
     </div>

@@ -52,16 +52,17 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.propGrid.PropertyChanged = function (obj, pname) {
         this.EbObject = obj;
         if (pname === "FilterDialogRefId") {
+            if (obj[pname] !== null) {
+                $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject)},
+                    function (result) {
+                        $('#paramdiv' + tabNum).append(result);
+                        $.LoadingOverlay("hide");
+                    });
+            }
             $('#paramdiv' + tabNum + ' #filterBox').remove();
             $('#paramdiv' + tabNum).show();
             $('#codewindow' + tabNum).removeClass("col-md-10");
             $('#codewindow' + tabNum).addClass("col-md-8");
-
-            $.post("../CE/GetFilterBody", { "ObjId": obj.FilterDialogRefId },
-                function (result) {
-                    $('#paramdiv' + tabNum).append(result);
-                    $.LoadingOverlay("hide");
-                });
         }
     }.bind(this);
 
@@ -79,12 +80,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $(tabContentId).remove();
         $('#versionNav a:last').tab('show'); // Select first tab        
     };
-    
-
-    //this.VersionCode_drpListItem = function (i, version) {
-    //    var vnum = version.versionNumber;
-    //    $('#vernav' + tabNum + " select").append("<option value='" + version.id + "' data-tokens='" + vnum + "'> v " + version.versionNumber + "</option>");
-    //};
 
     this.Execute = function () {
         if (!$('#execute' + tabNum).hasClass('collapsed')) {

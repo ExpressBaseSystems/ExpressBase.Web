@@ -518,11 +518,11 @@ var Eb_PropertyGrid = function (id, wc, cid) {
 
     this.ReadOnly = function () {
         this.IsReadonly = true;
-        $('#' + this.wraperId + " .pgHead span").text('Property (ReadOnly)').css("color", "#ddd");
+        $('#' + this.wraperId + " .pgHead span").text('Property (ReadOnly)').css("opacity", "0.72");
         $('#' + this.wraperId + " input").attr('readonly', 'readonly').css("pointer-events", "none");
         $('#' + this.wraperId + " .propgrid-table-cont select").prop('disabled', true);
         $('#' + this.wraperId + " .propgrid-table-cont .btn").css("background-color", "#ddd").removeClass("disabled").css("cursor", "not-allowed");
-        $('#' + this.wraperId + " .propgrid-table-cont").css("background-color", "#ddd").css("cursor", "not-allowed");
+        $('#' + this.wraperId + " .propgrid-table-cont").css("background-color", "#e8e8e8").css("cursor", "not-allowed");
 
         $('#' + this.wraperId + " .controls-dd-cont .btn").removeClass('disabled');
         $('#' + this.wraperId + " .pgCXEditor-Cont select").prop('disabled', true);// all select in cxve
@@ -537,7 +537,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
     this.ReadWrite = function () {
         this.IsReadonly = false;
 
-        $('#' + this.wraperId + " .pgHead span").text('Property').css("color", "inherit");
+        $('#' + this.wraperId + " .pgHead span").text('Property').css("opacity", "1");
         $('#' + this.wraperId + " input").removeAttr('readonly').css("pointer-events", "unset");
         $('#' + this.wraperId + " .propgrid-table-cont select").prop('disabled', false);
         $('#' + this.wraperId + " .propgrid-table-cont .btn").css("background-color", "#fff").css("cursor", "inherit");

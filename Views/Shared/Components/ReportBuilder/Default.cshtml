@@ -3,6 +3,7 @@
 @using ExpressBase.Common;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/Eb_FontEditor.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>
 <script type="text/javascript" src="~/js/Eb_FontEditor.js"></script>
 <script>
@@ -220,10 +221,10 @@
         $('#special-fields').treed();
         $('#other-fields').treed();
 
-        //var f = new FontEditor({
-        //    ContainerId: "fontModal",
-        //    ToggleId:"font",
-        //})
+        var f = new FontEditor({
+            ContainerId: "fontModal",
+            ToggleId: "font",
+        });
 
         DrawColTree = function (result) {
             $('#data-table-list').empty();

@@ -1,0 +1,47 @@
+﻿
+.FEhead {
+    background:#abd7ec;
+    height: 30px;    
+    text-align: center;
+}
+.FEcol {
+    border: 1px solid #ccc;
+    margin-left: 20px;
+}
+
+.fup .FECont .modal-body:first-child {
+    margin-left:0px;
+}
+.fup .FECont {
+    border-radius: 3px;
+    width: 60%;
+    height: 75VH;
+    position: fixed;
+    left: 10%;
+    top: 10vh;
+    background-color: white;
+    padding: 3px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+.fup .FECont .modal-body {
+        height: 53vh;
+}
+.pd-0{
+    padding:0;
+}
+.FEcol-bdy {
+    overflow-y:auto;
+}
+.fup .FE-section {
+    width: inherit;
+    height: 150px;
+}
+.FEhead .fontSearch {
+    float: right;
+    margin: 2px;
+}
+.FE-sectionMprop {
+    width: inherit;
+    height: 50px;
+    margin-left:20px;
+}

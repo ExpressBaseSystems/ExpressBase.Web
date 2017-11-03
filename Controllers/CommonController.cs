@@ -41,5 +41,19 @@ namespace ExpressBase.Web.Controllers
             var fr = this.ServiceClient.Get<bool>(new UniqueRequest { Colvalues = Dict });
             return fr.ToString();
         }
+        public IActionResult Pricing()
+        {
+            return View();
+        }
+        public IActionResult AboutUs()
+        {
+            return View();
+        }
+
+        public IActionResult Platform()
+        {
+            return View();
+        }
+
     }
 }

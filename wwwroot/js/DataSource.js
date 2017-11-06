@@ -29,12 +29,22 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
             commonO.Current_obj = this.EbObject;
         }
+        else {
+            this.GetFD();
+            this.GenerateButtons();
+        }
 
         this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
     }
-    
+
+    this.GenerateButtons = function () {
+        $("#obj_icons").empty();
+        $("#obj_icons").append("<button class='btn run' id='run' data-toggle='tooltip' data-placement='bottom' title='Run'> <i class='fa fa-play' aria-hidden='true'></i></button >");
+        $("#run").off("click").on("click", this.RunDs.bind(this));
+    }
+
     this.SetCode = function (e) {
         try {
             this.EbObject.Sql = btoa(window["editor" + tabNum].getValue());
@@ -53,11 +63,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.EbObject = obj;
         if (pname === "FilterDialogRefId") {
             if (obj[pname] !== null) {
-                $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject)},
-                    function (result) {
-                        $('#paramdiv' + tabNum).append(result);
-                        $.LoadingOverlay("hide");
-                    });
+                this.GetFD();
             }
             $('#paramdiv' + tabNum + ' #filterBox').remove();
             $('#paramdiv' + tabNum).show();
@@ -65,6 +71,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $('#codewindow' + tabNum).addClass("col-md-8");
         }
     }.bind(this);
+
+    this.GetFD = function () {
+        $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) },
+            function (result) {
+                $('#paramdiv' + tabNum).append(result);
+                $.LoadingOverlay("hide");
+            });
+    };
 
     this.AddVerNavTab = function (navitem, tabitem) {
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
@@ -100,7 +114,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 this.Find_parameters(false, false, false);
                 // this.Save(false);
                 this.SelectedFdId = $('#fd' + tabNum + ' option:selected').val();
-                this.Load_Fd();
             }
         }
     }
@@ -118,8 +131,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $.LoadingOverlay("show");
         alert("Test");
     }
-
-   
     
 
     this.Save = function (needRun) {
@@ -139,7 +150,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     }
     
     this.Find_parameters = function (isCommitorSave, issave, needRun) {
-        var result = this.Code.match(/\@\w+/g);
+        var result = this.EbObject.Sql.match(/\@\w+/g);
         var filterparams = [];
         if (result !== null) {
             for (var i = 0; i < result.length; i++) {
@@ -254,20 +265,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         return dq;
     };
 
-    this.Load_Fd = function () {
-        var getNav = $("#versionNav li.active a").attr("href");
-        if ($(getNav + ' #inner_well' + tabNum).children().length === 0) {
-            $.post("../CE/GetFilterBody", { "ObjId": this.SelectedFdId },
-                function (result) {
-                    $(getNav + ' #inner_well' + tabNum).append(result);
-
-                }, $.LoadingOverlay("hide"));
-        }
-        else {
-            $.LoadingOverlay("hide");
-        }
-    };
-
     this.RunDs = function () {
         $.LoadingOverlay("show");
         if (this.Parameter_Count === 0) {
@@ -280,15 +277,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
     };
 
-
-    $("#run").off("click").on("click", this.RunDs.bind(this));
-
     this.SetSqlFnName = function () {
-        var result = this.Code.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
+        var result = this.EbObject.Sql.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
         if (result.length > 0) {
             var fnName = result[1].replace(/\s\s+/g, ' ');
             var x = fnName.replace('(', "_v" + this.Current_obj.versionNumber + '(');
-            var v = this.Code.replace(result[1], x);
+            var v = this.EbObject.Sql.replace(result[1], x);
             $('#obj_name').val(x);
             $('#code' + tabNum).val(v);
             editor.setValue(v);
@@ -311,29 +305,29 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (filter_dialog_refid === "Select Filter Dialog") {
             filter_dialog_refid = null;
         }
-        this.rel_arr.push(filter_dialog_refid);
-        this.Rel_object = this.rel_arr.toString();
-        this.EbObject.Sql = btoa(this.Code);
-        var tagvalues = $('#tags').val();
-        if (issave === true) {
-            $.post("../Eb_ObjectController/SaveEbObject",
-                {
-                    "Id": this.ver_Refid,
-                    "json": JSON.stringify(this.Current_obj),
-                    "rel_obj": "",
-                    "tags": tagvalues
-                }, this.CallDrawTable.bind(this, needRun));
-        }
-        else {
+        //this.rel_arr.push(filter_dialog_refid);
+        //this.Rel_object = this.rel_arr.toString();
+        //this.EbObject.Sql = btoa(this.EbObject.Sql);
+        //var tagvalues = $('#tags').val();
+        //if (issave === true) {
+        //    $.post("../Eb_ObjectController/SaveEbObject",
+        //        {
+        //            "Id": this.ver_Refid,
+        //            "json": JSON.stringify(this.Current_obj),
+        //            "rel_obj": "",
+        //            "tags": tagvalues
+        //        }, this.CallDrawTable.bind(this, needRun));
+        //}
+        //else {
 
-            $.post("../Eb_ObjectController/CommitEbObject", {
-                "id": this.ver_Refid,
-                "changeLog": this.changeLog,
-                "json": JSON.stringify(this.Current_obj),
-                "rel_obj": this.Rel_object,
-                "tags": tagvalues
-            }, this.CallDrawTable.bind(this, needRun));
-        }
+        //    $.post("../Eb_ObjectController/CommitEbObject", {
+        //        "id": this.ver_Refid,
+        //        "changeLog": this.changeLog,
+        //        "json": JSON.stringify(this.Current_obj),
+        //        "rel_obj": this.Rel_object,
+        //        "tags": tagvalues
+        //    }, this.CallDrawTable.bind(this, needRun));
+        //}
 
     };
 
@@ -354,7 +348,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
 
     this.FetchUsedSqlFns_inner = function (i, sqlFn) {
-        if (this.Code.indexOf(sqlFn.name) !== -1) {
+        if (this.EbObject.Sql.indexOf(sqlFn.name) !== -1) {
             this.rel_arr.push(i);
         }
     };

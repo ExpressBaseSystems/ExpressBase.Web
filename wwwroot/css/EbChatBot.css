@@ -1,0 +1,33 @@
+﻿.eb-chatBox {
+    display: none;
+    right: 0px;
+    position: fixed;
+    top: 50px;
+    height: 50%;
+    width: 40%;
+    z-index: 99999999999999;
+    min-width: 400px;
+    background-color: #2f323b;
+    box-shadow: inset 0px 0px 28px 0px rgba(36,39,46,1);
+    box-shadow: 0px 0px 28px 0px rgba(36,39,46,1);
+}
+
+.chat-icon {
+    font-size: 24px;
+    background-color: #fffff6;
+    color: #369;
+    padding: 8px 10px;
+    FLOAT: right;
+    position: absolute;
+    right: 111px;
+    text-shadow: 1px 1px 10px #939464;
+    box-shadow: 0px 0px 1px 1px rgba(51, 102, 153, 0.13);
+}
+
+.msg-cont {
+    background-color: white;
+    width: 100%;
+    margin-top: 10px;
+    text-align: right;
+    box-shadow: 0px 0px 10px 0px #a2a9bd;
+}

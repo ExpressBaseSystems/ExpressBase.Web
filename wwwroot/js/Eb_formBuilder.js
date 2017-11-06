@@ -1,4 +1,4 @@
-﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid) {
+﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
     this.wc = wc;
     this.cid = cid;
     this.Name = formid;
@@ -7,13 +7,25 @@
     this.formid = formid;
     this.$propGrid = $("#" + propGridId);
     this.$form = $("#" + formid);
-
+    this.EbObject = dsobj;
+    if (this.EbObject){
+        this.InitEditModeCtrls(this.EbObject);
+        commonO.Current_obj = this.EbObject;
+    }
+    if (this.EbObject === null) {
+        if (builderType === 0)
+            this.rootContainerObj = new EbObjects.EbWebForm(formid);
+        else if (builderType === 12)
+            this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
+        commonO.Current_obj = this.rootContainerObj;
+        this.EbObject = this.rootContainerObj;
+    }
     //if (builderType === 1)
     //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
-    if (builderType === 0)
-        this.rootContainerObj = new EbObjects.EbWebForm(formid);
-    else if (builderType === 12)
-        this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
+    //if (builderType === 0)
+    //    this.rootContainerObj = new EbObjects.EbWebForm(formid);
+    //else if (builderType === 12)
+    //    this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
     //else if (builderType === 13)
     //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
     //else if (builderType === 14)
@@ -45,45 +57,45 @@
     this.CurColCount = 2;
     this.movingObj = {};
 
-    this.save = function () {
-        if (this.rootContainerObj.Name.trim() === '') {
-            alert("Enter a Name");
-            return false;
-        }
-        if (this.PGobj)
-            this.saveObj();
-        $(".eb-loaderFixed").show();
-        $.post("../Eb_Object/CommitEbObject", {
-            "_refid": this._refid,
-            "_json": JSON.stringify(this.rootContainerObj),
-            "_rel_obj": "_rel_obj1",
-            "_tags": "tag1"
-        }, this.Save_Success.bind(this));
-    };
-    this.commit = function () {
-        if (this.rootContainerObj.Name.trim() === '') {
-            alert("Enter a Name");
-            return false;
-        }
-        if (this.PGobj)
-            this.saveObj();
-        $(".eb-loaderFixed").show();
-        $.post("../Eb_Object/SaveEbObject", {
-            "_refid": this._refid,
-            "_json": JSON.stringify(this.rootContainerObj),
-            "_rel_obj": "aaa",
-            "_tags": "aaaa"
-        }, this.Save_Success.bind(this));
-    };
-    this.Save_Success = function (result) {
-        alert("Saved");
-        $(".eb-loaderFixed").hide();
-        $('.alert').remove();
-        $('.help').append("<div class='alert alert-success alert-dismissable'>" +
-            "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-            "<strong>Success!</strong>" +
-            "</div>");
-    };
+    //this.save = function () {
+    //    if (this.rootContainerObj.Name.trim() === '') {
+    //        alert("Enter a Name");
+    //        return false;
+    //    }
+    //    if (this.PGobj)
+    //        this.saveObj();
+    //    $(".eb-loaderFixed").show();
+    //    $.post("../Eb_Object/CommitEbObject", {
+    //        "_refid": this._refid,
+    //        "_json": JSON.stringify(this.rootContainerObj),
+    //        "_rel_obj": "_rel_obj1",
+    //        "_tags": "tag1"
+    //    }, this.Save_Success.bind(this));
+    //};
+    //this.commit = function () {
+    //    if (this.rootContainerObj.Name.trim() === '') {
+    //        alert("Enter a Name");
+    //        return false;
+    //    }
+    //    if (this.PGobj)
+    //        this.saveObj();
+    //    $(".eb-loaderFixed").show();
+    //    $.post("../Eb_Object/SaveEbObject", {
+    //        "_refid": this._refid,
+    //        "_json": JSON.stringify(this.rootContainerObj),
+    //        "_rel_obj": "aaa",
+    //        "_tags": "aaaa"
+    //    }, this.Save_Success.bind(this));
+    //};
+    //this.Save_Success = function (result) {
+    //    alert("Saved");
+    //    $(".eb-loaderFixed").hide();
+    //    $('.alert').remove();
+    //    $('.help').append("<div class='alert alert-success alert-dismissable'>" +
+    //        "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+    //        "<strong>Success!</strong>" +
+    //        "</div>");
+    //};
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
@@ -137,7 +149,7 @@
         this.curControl.children('.ctrlHead').show();
         this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
-        this.PGobj.ReadOnly();
+      //  this.PGobj.ReadOnly();
     };
 
     this.makeTdsDropable = function () {
@@ -353,8 +365,8 @@
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
-        $("#save").on("click", this.save.bind(this));
-        $("#commit").on("click", this.commit.bind(this));
+        //$("#save").on("click", this.save.bind(this));
+        //$("#commit").on("click", this.commit.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
         this.PGobj.Close = function () {

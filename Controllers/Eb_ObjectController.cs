@@ -332,6 +332,8 @@ namespace ExpressBase.Web.Controllers
 
         private string Differ(DiffPaneModel text)
         {
+            const string spaceValue = "&nbsp;";
+            const string tabValue = "&#9;";
             string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
 
             foreach (var diffLine in text.Lines)
@@ -345,7 +347,7 @@ namespace ExpressBase.Web.Controllers
 
                 if (diffLine.Type == ChangeType.Deleted || diffLine.Type == ChangeType.Inserted || diffLine.Type == ChangeType.Unchanged)
                 {
-                    html += diffLine.Text;//.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+                    html += diffLine.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
                 }
                 else if (diffLine.Type == ChangeType.Modified)
                 {
@@ -355,7 +357,7 @@ namespace ExpressBase.Web.Controllers
                         else
                         {
                             html += "<span class='" + character.Type.ToString() + "Character'>";
-                            html += character.Text;//.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());//.Replace(",", ",</br>"); ;
+                            html += character.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
                             html += "</span>";
                         }
                     }

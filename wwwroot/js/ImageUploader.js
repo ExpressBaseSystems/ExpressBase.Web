@@ -28,7 +28,7 @@
                                 + '</div>'
 
                                 + '<div class="modal-body">'                                   
-                                    + "<div id-'img-upload-body' style='margin-top:15px;'><input id='" + this.ContainerId + "input-id' type='file' class='file' data-preview-file-type='text' " + this.multiple + "></div>"
+                                    + "<div id-'img-upload-body' style='margin-top:15px;'><input id='" + this.ContainerId + "input-id' type='file' data-preview-file-type='text' " + this.multiple + "></div>"
                                     + "<h6>Tags</h6>"
                                     + "<input type= 'text' data-role='tagsinput' id= '" + this.ContainerId + "tagval' value='' class='form-control' style='display:none;width:100%;'>"
                                 + '</div>'
@@ -90,6 +90,7 @@
 
     this.imageOnSelect = function (e) {
         $("#" + this.ContainerId + 'obj-id').text('value', $(e.target).children().find("img").attr("src"));
+        this.FileId = $(e.target).children().find("img").attr("src");
     }
 
     this.uploadtag = function (previewId, index) {

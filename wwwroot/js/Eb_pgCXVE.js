@@ -10,13 +10,14 @@
     this.editor = null;
 
     this.CXE_OKclicked = function () {
-        this.PGobj.OnInputchangedFn.bind(this.PGobj)();
-        this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
         if (this.editor === 17) {
             var imgId = this.PGobj.imgSlctrs[this.PGobj.CurProp].getId();
             this.PGobj.PropsObj[this.PGobj.CurProp] = imgId;
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(imgId);
         }
+
+        this.PGobj.OnInputchangedFn.bind(this.PGobj)();
+        this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
     };
 
     this.pgCXE_BtnClicked = function (e) {

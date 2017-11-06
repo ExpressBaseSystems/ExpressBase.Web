@@ -17,9 +17,9 @@
                     <button class='btn commit_outer' id="commit_outer" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
                     @{
                         if (ViewBag.Refid.Length > 0) {
-                        var vNumMajor = ("v." + (ViewBag._major + 1) + "." + ViewBag._minor + "." + ViewBag._patch + ".w");
-                        var vNumMinor = ("v." + ViewBag._major + "." + (ViewBag._minor + 1) + "." + ViewBag._patch + ".w");
-                        var vNumPatch = ("v." + ViewBag._major + "." + ViewBag._minor + "." + (ViewBag._patch + 1) + ".w");
+                            var vNumMajor = ("v." + (ViewBag._major + 1) + "." + ViewBag._minor + "." + ViewBag._patch + ".w");
+                            var vNumMinor = ("v." + ViewBag._major + "." + (ViewBag._minor + 1) + "." + ViewBag._patch + ".w");
+                            var vNumPatch = ("v." + ViewBag._major + "." + ViewBag._minor + "." + (ViewBag._patch + 1) + ".w");
                     <select class="selectpicker btn" id="create">
                         <option>Create</option>
                         <option id="_major">Major Version - (@vNumMajor) from (v.@ViewBag.VersionNumber)</option>
@@ -30,7 +30,6 @@
                     <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
                     <button class='btn status' id="status" data-toggle="tooltip" data-placement="bottom" title="status"><i class="fa fa-exchange" aria-hidden="true"></i></button>
                     <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
-                    <button class='btn run' id="run" data-toggle="tooltip" data-placement="bottom" title="Run"><i class="fa fa-play" aria-hidden="true"></i></button>
                         }
                     }
                     <button class='btn' id="minmize"><i class="fa fa-caret-up" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
@@ -40,7 +39,10 @@
     </div>
 </div>
 <div class="row">
-    <div class="dashbord">
+    <div class="dashbord">@{
+        if (ViewBag.Refid.Length > 0)
+        {
+
         <div class="col-md-7 box2">
             <div class="col-md-3 card1">
                 <div class="head text-center">
@@ -121,7 +123,8 @@
                 </div>
             </div>
         </div>
-
+                            } 
+                        }
         <div class="col-md-2">
             <div class="firstcommit">
                 <h6 class="smallfont">Owner/Assignee</h6>

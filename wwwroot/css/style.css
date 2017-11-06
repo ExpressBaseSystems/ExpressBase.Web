@@ -123,12 +123,11 @@ Navigation bar
     margin-top: 20px;
 }
 
-.img-cir {
+.login-box-msg .img-cir {
     width: 96px;
     height: 96px;
     margin: 0 auto 10px;
     display: block;
-    margin-right: 90px;
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;
     border-radius: 50%;

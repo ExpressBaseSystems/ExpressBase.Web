@@ -25,11 +25,15 @@
     }*@
 <script>
     @Html.Raw(ViewBag.HtmlHead);
-    @*$.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));*@
-    commonO = $("#layout_div").data("commonObj");
-    console.log(commonO);
-    
-    commonO.Current_obj =  @Html.Raw(dvobj);
+    if ('@ViewBag.wc' === 'uc') {
+        $.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));
+    }
+    else {
+        commonO = $("#layout_div").data("commonObj");
+        console.log(commonO);
+
+        commonO.Current_obj =  @Html.Raw(dvobj);
+    }
 
 </script>
 

@@ -664,3 +664,7 @@
     font-size: 12px;
 }
 /*report toolbox tab*/
+.wm-container:before {
+    content: "";  
+    opacity: 0.1;
+}

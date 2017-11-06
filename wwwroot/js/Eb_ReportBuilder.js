@@ -62,7 +62,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         EbPageNoCounter: 0,
         EbTextCounter: 0,
         EbBarcodeCounter: 0,
-        EbQRcodeCounter: 0
+        EbQRcodeCounter: 0,
+        EbWaterMarkCounter:0
     };
 
     this.subSecIdCounter = {
@@ -574,11 +575,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.editElement = function (control) {
-        this.control = control;       
-        if (control.attr("eb-type") === "Img") {           
-            $("#img-upload").click();
-            this.addImageFn();                    
-        }
+        this.control = control;               
         control.on('keydown', this.keyBoardShortcuts.bind(this)); 
 
     };//control edit options
@@ -601,20 +598,15 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         }
     };   
 
-    this.addImageFn = function (e) {                       
-        var imgDiv = this.control;
-        $("#img-upload").change(function () {           
-            var input = this;
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var img = $("<img id='demo' src='" + e.target.result + "' style='width:100px;height:inherit'/>");
-                    imgDiv.append(img.addClass('image-reSize'));                    
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        });            
+    this.addImageFn = function (obj) {                       
+        obj.Background = 'url(' + 'http://eb_roby_dev.localhost:5000/static/'+ obj.Image +'.JPG) center no-repeat';
+        RefreshControl(obj);
     };
+
+    this.addWaterMarkFn = function (obj) {
+        obj.Background = 'url(' + 'http://eb_roby_dev.localhost:5000/static/' + obj.Image + '.JPG) center no-repeat';
+        RefreshControl(obj);
+    }
 
     this.addCurrentDateTime = function () {
         var currentdate = new Date();
@@ -809,14 +801,20 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                     onDrag: this.splitterOndragFn.bind(this)
                 });                               
             }           
-            if (pname === "DataSourceRefId") {             
+            else if (pname === "DataSourceRefId") {             
                     this.getDataSourceColoums(obj.DataSourceRefId);                                                             
             }
-            if (pname === "PaperSize") {
+            else if (pname === "PaperSize") {
                 this.setpageSize(obj);
             }
-            if (pname === "IsLandscape") {
+            else if (pname === "IsLandscape") {
                 this.setpageMode(obj);
+            }
+            else if (pname === "Image"){
+                this.addImageFn(obj)
+            }
+            else if (pname === "WaterMark") {
+                this.addWaterMarkFn(obj)
             }
             this.RefreshControl(obj); 
         }.bind(this);                   

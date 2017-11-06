@@ -1,242 +1,4 @@
 ﻿
-<style>
-    .dashbord {
-        background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.16, rgb(35, 81, 135)), color-stop(0.44, rgb(51, 102, 137)), color-stop(0.92, rgb(61, 115, 140)));
-        width: 100%;
-        border-top: none;
-        font-family: Tahoma;
-        height: 145px;
-        color: #ffffff;
-        margin-top: 84px;
-        position: fixed;
-        z-index: 100;
-    }
-
-        .dashbord .box2, .box4 {
-            height: 100%;
-            padding: 0;
-        }
-
-        .dashbord .box3 {
-            padding-right: 0;
-        }
-
-        .dashbord .box4 > .bootstrap-select {
-            padding: 0px;
-        }
-
-        .dashbord .box4 .bootstrap-select .btn {
-            height: 25px;
-            border: none;
-            border-radius: 0;
-            background: white;
-            color: black;
-            padding: 0px 0px 0px 7px;
-        }
-
-    .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-        width: 183px;
-    }
-
-    .dashbord .box4 > h6 {
-        margin-top: 5px;
-    }
-
-    .dashbord .box5 > .bootstrap-tagsinput {
-        height: 97px;
-        overflow-y: auto;
-        background-color: #fafafa;
-        border: none;
-        box-shadow: none;
-        width: 100%;
-    }
-
-    .dashbord .card1 {
-        background-color: #ffffff;
-        margin-left: 10px;
-        height: 120px;
-        margin-top: 10px;
-        padding: 0;
-        box-shadow: 0px 1px 3px 1px #3e6183;
-        color: #2f323b;
-        border-radius: 3px;
-    }
-
-    .dashbord .count {
-        font-size: 15px;
-        color: #949ba2;
-    }
-
-    .dashbord .head {
-        font-size: 13px;
-        padding: 2px;
-        color: #ffffff;
-        background: #2f323b;
-        border-radius: 2px 2px 0px 0px;
-    }
-
-    .dashbord .icons {
-        margin-right: 10px;
-    }
-
-    .dashbord .txtarea {
-        width: 100%;
-        height: 180px !important;
-    }
-
-    .objectDashB-toolbar {
-        width: 100%;
-        background-color: #2c2d27;
-        margin-top: 50px;
-        padding-left: 10px;
-        padding-right: 10px;
-        position: fixed;
-        z-index: 10;
-    }
-
-        .objectDashB-toolbar .brdCrumb {
-            font-size: 11px;
-        }
-
-    .mr-0 {
-        margin: 0;
-    }
-
-    .pd-0 {
-        padding: 0;
-    }
-
-    .toolbar2 {
-        margin-top: 5px;
-    }
-
-    .toolicons .btn {
-        background-color: transparent;
-        color: white;
-    }
-
-        .toolicons .btn:hover {
-            background-color: #30C2FF;
-            border-radius: 0;
-        }
-
-        .toolicons .btn:focus {
-            background-color: #30C2FF;
-            border-radius: 0;
-        }
-
-    .dashbord .userimg {
-        float: left;
-        display: inline;
-    }
-
-    .dashbord .profileInfo {
-        margin-left: 35px;
-    }
-
-    .dashbord .firstcommit {
-        width: 100%;
-        min-height: 60px;
-        padding-right: 20%;
-    }
-
-    .dashbord .workcopies {
-        overflow-y: auto;
-        height: 80%;
-    }
-
-    .workcopies::-webkit-scrollbar-track {
-        background-color: #F5F5F5;
-    }
-
-    .workcopies::-webkit-scrollbar {
-        width: 10px;
-        background-color: #605b5b;
-    }
-
-    .workcopies::-webkit-scrollbar-thumb {
-        background-color: #6f6f6f;
-        border-radius: 6px;
-    }
-
-    .dashbord .col-md-3 {
-        width: 23% !important;
-    }
-
-    .dashbord .smallfont {
-        font-size: 12px;
-    }
-
-    .dashbord .xtrasmall {
-        font-size: 10px;
-        margin-bottom: 5px;
-    }
-
-    .changlogTxtArea {
-        height: 200px !important;
-        width: 94%;
-    }
-
-    .changelogPopup {
-        display: none;
-        position: fixed;
-        padding: 10px;
-        width: 500px;
-        left: 50%;
-        margin-left: -237px;
-        padding-left: 35px;
-        height: 300px;
-        top: 50%;
-        margin-top: -100px;
-        background: #FFF;
-        z-index: 20;
-        -webkit-box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
-        box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
-    }
-
-    .toolicons .bootstrap-select {
-        padding: 0;
-    }
-
-        .toolicons .bootstrap-select .btn {
-            height: 25px;
-            border: none;
-            border-radius: 0;
-            background: white;
-            color: black;
-            padding: 0px 0px 0px 7px;
-        }
-    .bootstrap-select .btn {
-        font-size: 12px;
-    }
-       .open li {
-        font-size: 12px;
-    }
-
-    .dashbord .card1-botm {
-        height: 40%;
-        padding-left: 5px;
-    }
-
-    .dashbord .card1-mid {
-        height: 40%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .box5{
-        margin-left:17px !important;
-    }
-   
-    .vernav {
-    }
-
-    .workcopies a {
-        color: #194877;
-        text-decoration: none;
-        font-family: times;
-    }
-</style>
 <div class="row">
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-4 pd-0">
@@ -255,9 +17,9 @@
                     <button class='btn commit_outer' id="commit_outer" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
                     @{
                         if (ViewBag.Refid.Length > 0) {
-                        var vNumMajor = ("v." + (ViewBag._major + 1) + "." + ViewBag._minor + "." + ViewBag._patch + ".w");
-                        var vNumMinor = ("v." + ViewBag._major + "." + (ViewBag._minor + 1) + "." + ViewBag._patch + ".w");
-                        var vNumPatch = ("v." + ViewBag._major + "." + ViewBag._minor + "." + (ViewBag._patch + 1) + ".w");
+                            var vNumMajor = ("v." + (ViewBag._major + 1) + "." + ViewBag._minor + "." + ViewBag._patch + ".w");
+                            var vNumMinor = ("v." + ViewBag._major + "." + (ViewBag._minor + 1) + "." + ViewBag._patch + ".w");
+                            var vNumPatch = ("v." + ViewBag._major + "." + ViewBag._minor + "." + (ViewBag._patch + 1) + ".w");
                     <select class="selectpicker btn" id="create">
                         <option>Create</option>
                         <option id="_major">Major Version - (@vNumMajor) from (v.@ViewBag.VersionNumber)</option>
@@ -268,7 +30,6 @@
                     <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
                     <button class='btn status' id="status" data-toggle="tooltip" data-placement="bottom" title="status"><i class="fa fa-exchange" aria-hidden="true"></i></button>
                     <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
-                    <button class='btn run' id="run" data-toggle="tooltip" data-placement="bottom" title="Run"><i class="fa fa-play" aria-hidden="true"></i></button>
                         }
                     }
                     <button class='btn' id="minmize"><i class="fa fa-caret-up" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
@@ -278,7 +39,10 @@
     </div>
 </div>
 <div class="row">
-    <div class="dashbord">
+    <div class="dashbord">@{
+        if (ViewBag.Refid.Length > 0)
+        {
+
         <div class="col-md-7 box2">
             <div class="col-md-3 card1">
                 <div class="head text-center">
@@ -359,7 +123,8 @@
                 </div>
             </div>
         </div>
-
+                            } 
+                        }
         <div class="col-md-2">
             <div class="firstcommit">
                 <h6 class="smallfont">Owner/Assignee</h6>

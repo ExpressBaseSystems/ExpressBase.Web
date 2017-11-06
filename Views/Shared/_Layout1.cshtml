@@ -46,6 +46,7 @@
     <link rel="stylesheet" type="text/css" href="~/css/style.css" />@*amal*@
     <link rel="stylesheet" type="text/css" href="~/css/EbChatBot.css" />@*jith*@
     <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />@*amal*@
+    <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css"/>  
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>@*jith*@
@@ -97,7 +98,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>@*amal*@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/js/fileinput.min.js"></script>@*amal*@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.js"></script>@*amal*@
-
+ 
     @* EB JS *@
     <script type="text/javascript" src="~/js/eb_common.js"></script>
     <script type="text/javascript" src="~/js/EbDataTable.js"></script>@*roby*@
@@ -198,6 +199,7 @@
 </style>
 <script>
     $('document').ready(function () {
+
         $('#submen').click(function () {
             $('#EbsideBar').animate({ width: 'toggle' });
         });
@@ -214,4 +216,10 @@
             $('.brdCrumb').html($bc.prepend('<a href="#"> Home</a>'));
         })
     })
+    EbFonts = {}; 
+    EbFontsCallback = function (data,status) {
+        EbFonts = data;        
+    };
 </script>
+@*<script src="https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBEWdu2IGQZ2dE2BK8v3BzEe2-Msb2jipA&callback=EbFontsCallback"></script>amal*@
+<script src="https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBWjEI20zK2D3RPFyTKd6v045OGHO0Mwvk&callback=EbFontsCallback"></script>

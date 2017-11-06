@@ -1,88 +1,515 @@
-﻿<style>
-    .objcetitems {
-       width:15%;
-        border:1px solid #ccc;
-        margin-left:10px;
-        float:left;
-        
-    }
-    .topsec {
-        height: 150px;
-        background: #b84cd3;
-        width: 100%;
-        font-size: 22px;
-        color: white;
-        padding: 56px;
-    }
-    .mid{
-        height:50px;
-        
-    }
-    .bott {
-        height: 50px;
-       
-    }
-</style>
+﻿@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+   
+}
+<div style="padding: 0 40px;">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-12">
+                <label>Available Fonts:</label>
+            </div>
+        </div>
 
-<div class="container-fluid">
-    <div class="objcetitems">
-        <div class="topsec">
-            heading
+        <div class="row" style="margin-bottom: 10px; ">
+            <div class="col-md-3">
+                <label>Types:</label>
+                <select name="fontType" id="fontType" class="form-control">
+                    <option value="">All Types</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label>Styles:</label>
+                <select name="fontVariant" id="fontVariant" class="form-control">
+                    <option value="">All Styles</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label>Search:</label>
+                <input id="searchText" type="text" value="" name="searchText" class="form-control">
+            </div>
         </div>
-        <div class="mid">
-            content gfdg
-            gfdgdfdsfdsfd           
-        </div>
-        <div class="bott">
-            configure
+        <div class="row">
+            <div class="col-md-12">
+                <select name="googleFont" id="googleFont" class="form-control" size="5"></select>
+            </div>
         </div>
     </div>
-    <div class="objcetitems">
-        
-        <div class="topsec">
-
-        </div>
-        <div class="mid">
-
-        </div>
-        <div class="bott">
-
-        </div>
-    </div>
-    <div class="objcetitems">
-        
-        <div class="topsec">
-
-        </div>
-        <div class="mid">
-
-        </div>
-        <div class="bott">
-
-        </div>
-    </div>
-    <div class="objcetitems">
-       
-        <div class="topsec">
-
-        </div>
-        <div class="mid">
-
-        </div>
-        <div class="bott">
-
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2">
+                <label>Font Color</label>
+                <input type="text" class="form-control" id="fontColor" value="#000000">
+            </div>
+            <div class="col-md-2">
+                <label>Background Color</label>
+                <input type="text" class="form-control" id="fontBGColor" value="#ffffff">
+            </div>
+            <div class="col-md-2">
+                <label>Font Size</label>
+                <input id="fontSize" type="text" value="18" name="fontSize" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label>Font Weight</label>
+                <select name="font-weight" id="font-weight" class="form-control">
+                    <option value="normal">normal</option>
+                    <option value="bold">bold</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label>Italic</label><br />
+                <input type="checkbox" name="italic" id="italic" value="1" class="btn btn-info" style="height: 28px; width: 28px;">
+            </div>
+            <div class="col-md-1">
+                <label> </label><br />
+                <input type="button" name="addfont" id="addfont" value="Add" class="btn btn-info">
+            </div>
         </div>
     </div>
-    <div class="objcetitems">
-        
-        <div class="topsec">
-
+    <div class="form-group">
+        <div class="row" style="padding: 10px 15px;">
+            <label>Preview Text:</label><br />
+            <textarea id="font-preview" class="form-control" style="font-size: 18px; font-weight: normal;">Pack my box with five dozen liquor jugs</textarea>
         </div>
-        <div class="mid">
-
-        </div>
-        <div class="bott">
-
-        </div>
-    </div>   
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-12">
+                <label>Selected Fonts:</label>
+            </div>
+        </div>       
+    </div>
 </div>
+
+<script>
+    var fonts = {};
+
+
+    function loadCSS(href) {
+        var cssLink = $("<link rel='stylesheet' type='text/css' href='" + href + "'>");
+        $("head").append(cssLink);
+    }
+
+
+    function loadJS(src) {
+        var jsLink = $("<script type='text/javascript' src='" + src + "'>");
+        $("head").append(jsLink);
+    }
+
+
+    function getFont(fontName) {
+        var ret = null;
+
+        $.each(fonts.items, function (idx, font) {
+            if (font.family == fontName) {
+                ret = font;
+            }
+        });
+
+        return ret;
+    }
+
+
+    function loadFont(fontName) {
+        loadCSS('http://fonts.googleapis.com/css?family=' + fontName);
+        $('#font-preview').css('font-family', fontName);
+        doesSupportItalics(fontName);
+        populateWeights(getFont(fontName));
+    }
+
+
+    function doesSupportItalics(fontName) {
+        if (fontSupports(getFont(fontName), "variants", "italic")) {
+            $("#italic").removeAttr("disabled");
+        } else {
+            $("#italic").prop('checked', false);
+            $("#italic").attr("disabled", "disabled");
+            $('#font-preview').css('font-style', 'normal');
+        }
+    }
+
+
+    function populateWeights(font) {
+        var pos = 2;
+
+        $('#font-weight option').remove();
+        $('#font-weight').empty();
+
+        $("#font-weight").append(
+            $("<option></option>", {
+                "id": "weight-0"
+            })
+                .attr("value", "normal")
+                .text("normal")
+        );
+
+        $.each(font.variants, function (idx, variant) {
+            if ($.isNumeric(variant)) {
+                $("#font-weight").append(
+                    $("<option></option>", {
+                        "id": "weight-" + pos++
+                    })
+                        .attr("value", variant)
+                        .text(variant)
+                );
+            }
+        });
+
+        $('#font-weight option:first-child').attr("selected", "selected");
+    }
+
+
+    function searchFonts(txt, cat, variant) {
+        $('#googleFont option').remove();
+        $('#googleFont').empty();
+
+        var pos = 0;
+        $.each(fonts.items, function (idx, font) {
+            if ((font.category == cat || cat == "") && (font.family.toLowerCase().indexOf(txt) > -1 || txt == "") && (font.variants.indexOf(variant) > -1 || variant == "")) {
+                $('#googleFont')
+                    .append(
+                    $("<option></option>", {
+                        "id": "font-" + pos++,
+                        "data-title": font.family,
+                        "data-content": "<b>Type: </b>" + font.category + "<br /><b>Variants: </b><br />" + font.variants.toString().replace(/,/g, ", ") + "<br /><b>Date:</b> " + font.lastModified + "<br /><b>Version:</b> " + font.version
+                    })
+                        .attr("value", font.family)
+                        .text(font.family)
+                    );
+            }
+        });
+
+        $('#googleFont option:first-child').attr("selected", "selected");
+        $('#googleFont option:first-child').removeAttr("selected");
+    }
+
+
+    function getFontTypes(fonts) {
+        var types = [];
+        var pos = 0;
+
+        $.each(fonts.items, function (idx, font) {
+            if ($.inArray(font.category, types) == -1) {
+                types.push(font.category);
+                $('#fontType')
+                    .append(
+                    $("<option></option>", {
+                        "id": "font-" + pos++,
+                        "data-title": font.category
+                    })
+                        .attr("value", font.category)
+                        .text(font.category)
+                    );
+            }
+        });
+    }
+
+
+    function getFontVariants(fonts) {
+        var variants = [];
+        var pos = 0;
+
+        $.each(fonts.items, function (idx, font) {
+            $.each(font.variants, function (vIdx, variant) {
+                if ($.inArray(variant, variants) == -1) {
+                    variants.push(variant);
+                    $('#fontVariant')
+                        .append(
+                        $("<option></option>", {
+                            "id": "variant-" + pos++,
+                            "data-title": variant
+                        })
+                            .attr("value", variant)
+                            .text(variant)
+                        );
+                }
+            });
+        });
+    }
+
+
+    function fontSupports(font, what, supports) {
+        var ret = false;
+
+        $.each(font[what], function (idx, whatItem) {
+            if (whatItem.toLowerCase().indexOf(supports.toLowerCase()) != -1) {
+                ret = true;
+            }
+        });
+
+        return ret;
+    }
+
+
+    $(document).ready(function () {
+        $.ajax({
+            url: "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBEWdu2IGQZ2dE2BK8v3BzEe2-Msb2jipA"
+        }).done(function (data, status) {
+            fonts = data;
+            getFontTypes(fonts);
+            getFontVariants(fonts);
+            searchFonts("", "", "");
+        });
+
+
+        $('#googleFont').on('change', function () {
+            loadFont($(this).val());
+        });
+
+
+        $("input#fontColor").on("keyup", function () {
+            $('#font-preview').css('color', $(this).val());
+        });
+
+
+        $("input#fontBGColor").on("keyup", function () {
+            $('#font-preview').css('background-color', $(this).val());
+        });
+
+
+        $('#fontSize').on('keyup', function () {
+            $('#font-preview').css('font-size', $(this).val() + 'px');
+        });
+
+
+        $('#italic').on('change', function () {
+            if ($(this).prop('checked') == true) {
+                $('#font-preview').css('font-style', 'italic');
+            } else {
+                $('#font-preview').css('font-style', 'normal');
+            }
+        });
+
+
+        $('#addfont').on('click', function () {
+            $('#Fonts')
+                .append($("<option></option>")
+                    .attr("value", $('#googleFont').val())
+                    .text($('#googleFont').val()));
+        });
+
+
+        $('#font-weight').on('change', function () {
+            $('#font-preview').css('font-weight', $(this).val());
+        });
+
+
+        $('#fontType').on('change', function () {
+            var cat = $('#fontType').val();
+            var txt = $('#searchText').val();
+            var variant = $('#fontVariant').val();
+
+            searchFonts(txt, cat, variant);
+        });
+
+
+        $('#searchText').on('keyup', function () {
+            var cat = $('#fontType').val();
+            var txt = $('#searchText').val();
+            var variant = $('#fontVariant').val();
+
+            searchFonts(txt, cat, variant);
+        });
+
+
+        $('#fontVariant').on('change', function () {
+            var cat = $('#fontType').val();
+            var txt = $('#searchText').val();
+            var variant = $('#fontVariant').val();
+
+            searchFonts(txt, cat, variant);
+        });
+
+
+        $('#Fonts').selectManager({
+            dst: '#Fonts'
+        });
+
+
+        $("#googleFont").on('mouseleave', function (e) {
+            $('#googleFont').popover('destroy');
+        });
+
+
+        $("#googleFont").on('mouseover', function (e) {
+            var $e = $(e.target);
+            if ($e.is('option')) {
+                $('#googleFont').popover('destroy');
+                $("#googleFont").popover({
+                    trigger: 'manual',
+                    placement: 'bottom',
+                    title: $e.attr("data-title"),
+                    content: $e.attr("data-content"),
+                    html: true
+                }).popover('show');
+            }
+        });
+
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // jQuery Plugin Boilerplate
+    // A boilerplate for jumpstarting jQuery plugins development
+    // version 1.1, May 14th, 2011
+    // by Stefan Gabos
+
+    // remember to change every instance of "pluginName" to the name of your plugin!
+    (function ($) {
+
+        // here we go!
+        $.selectManager = function (element, options) {
+
+            // plugin's default options
+            // this is private property and is  accessible only from inside the plugin
+            var defaults = {
+
+                src: null,
+                dst: null,
+                max: null,
+
+                addBtn: '#addBtn',
+                removeBtn: '#removeBtn',
+                upBtn: '#upBtn',
+                downBtn: '#downBtn',
+
+                // if your plugin is event-driven, you may provide callback capabilities
+                // for its events. execute these functions before or after events of your 
+                // plugin, so that users may customize those particular events without 
+                // changing the plugin's code
+                onFoo: function () { }
+            };
+
+            // to avoid confusions, use "plugin" to reference the 
+            // current instance of the object
+            var plugin = this;
+
+            // this will hold the merged default, and user-provided options
+            // plugin's properties will be available through this object like:
+            // plugin.settings.propertyName from inside the plugin or
+            // element.data('selectManager').settings.propertyName from outside the plugin, 
+            // where "element" is the element the plugin is attached to;
+            plugin.settings = {};
+
+            var $element = $(element), // reference to the jQuery version of DOM element
+                element = element;    // reference to the actual DOM element
+
+            // the "constructor" method that gets called when the object is created
+            plugin.init = function () {
+
+                // the plugin's final properties are the merged default and 
+                // user-provided options (if any)
+                plugin.settings = $.extend({}, defaults, options);
+
+                plugin.settings.form = $(plugin.settings.src).closest("form");
+                //console.log(plugin.settings.form);
+
+                $(plugin.settings.form).on('submit', function () {
+                    $(plugin.settings.dst + ' option').attr('selected', 'selected');
+                });
+
+                if (plugin.settings.src) {
+                    $(plugin.settings.addBtn).bind('click', moveToDst);
+                    $(plugin.settings.src).bind('dblclick', moveToDst);
+
+                    $(plugin.settings.removeBtn).on('click', moveToSrc);
+                }
+
+                $(plugin.settings.dst).on('dblclick', moveToSrc);
+
+                $(plugin.settings.upBtn).on('click', moveUp);
+                $(plugin.settings.downBtn).on('click', moveDown);
+                $(plugin.settings.removeBtn).on('click', remove);
+            };
+
+            // public methods
+            // these methods can be called like:
+            // plugin.methodName(arg1, arg2, ... argn) from inside the plugin or
+            // element.data('selectManager').publicMethod(arg1, arg2, ... argn) from outside 
+            // the plugin, where "element" is the element the plugin is attached to;
+
+            // a public method. for demonstration purposes only - remove it!
+            plugin.foo_public_method = function () {
+                // code goes here
+            };
+
+            // private methods
+            // these methods can be called only from inside the plugin like:
+            // methodName(arg1, arg2, ... argn)
+
+            // a private method. for demonstration purposes only - remove it!
+            var foo_private_method = function () {
+                // code goes here
+            };
+
+            var moveToDst = function () {
+                if (!plugin.settings.max || $(plugin.settings.dst + ' option').length + $(plugin.settings.src + ' option:selected').length <= plugin.settings.max) {
+                    return !$(plugin.settings.src + ' option:selected').remove().appendTo(plugin.settings.dst);
+                }
+            }
+
+            var moveToSrc = function () {
+                return !$(plugin.settings.dst + ' option:selected').remove().appendTo(plugin.settings.src);
+            }
+
+            var moveUp = function () {
+                $(plugin.settings.dst + ' option:selected:first-child').prop("selected", false);
+                before = $(plugin.settings.dst + ' option:selected:first').prev();
+                $(plugin.settings.dst + ' option:selected').detach().insertBefore(before);
+            }
+
+            var moveDown = function () {
+                $(plugin.settings.dst + ' option:selected:last-child').prop("selected", false);
+                after = $(plugin.settings.dst + ' option:selected:last').next();
+                $(plugin.settings.dst + ' option:selected').detach().insertAfter(after);
+            }
+
+            var remove = function () {
+                var action_list = $(plugin.settings.dst + ' option:selected').remove();
+            }
+
+            // fire up the plugin!
+            // call the "constructor" method
+            plugin.init();
+
+        };
+
+        // add the plugin to the jQuery.fn object
+        $.fn.selectManager = function (options) {
+
+            // iterate through the DOM elements we are attaching the plugin to
+            return this.each(function () {
+
+                // if plugin has not already been attached to the element
+                if (undefined == $(this).data('selectManager')) {
+
+                    // create a new instance of the plugin
+                    // pass the DOM element and the user-provided options as arguments
+                    var plugin = new $.selectManager(this, options);
+
+                    // in the jQuery version of the element
+                    // store a reference to the plugin object
+                    // you can later access the plugin and its methods and properties like
+                    // element.data('selectManager').publicMethod(arg1, arg2, ... argn) or
+                    // element.data('selectManager').settings.propertyName
+                    $(this).data('selectManager', plugin);
+                }
+            });
+        };
+    })(jQuery);
+
+
+</script>

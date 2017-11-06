@@ -3,8 +3,12 @@ var focusedId;
 var DvContainerObj = function (settings) {
     this.ssurl = settings.ss_url;
     this.wc = settings.wc;
-    this.dvRefid = settings.dvRefId;
-    this.currentObj = null;
+    this.dvRefid = settings.refid;
+    this.currentObj = settings.dsobj;
+    this.ver_num = settings.ver_num;
+    this.cur_status = settings.cur_status;
+    this.type = settings.type;
+    this.tabnum = 1;
     this.dvcol = {};
     this.MainData = null;
     this.UniqueId = null;
@@ -22,6 +26,7 @@ var DvContainerObj = function (settings) {
         //$("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
         $("#fd_toggle").off("click").on("click", this.ToggleParamDiv.bind(this));
         $("#Settings").off("click").on("click", this.TogglePPGrid.bind(this));
+        $("#btnGo").trigger("click");
     };
 
 
@@ -37,16 +42,22 @@ var DvContainerObj = function (settings) {
         console.log(this.dvcol[focusedId]);
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             //this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
-            this.ebdtable[focusedId] = new EbDataTable({
-                ds_id: this.currentObj.DataSourceRefId,
-                ss_url: this.ssurl,
-                tid: this.UniqueId,
-                login: this.wc,
-                settings: this.currentObj,
-                data: this.MainData,
-            });
-
-            this.ebdtable[focusedId].getColumnsSuccess(this.currentObj);
+            this.ebdtable[focusedId] = new EbDataTable(
+                refid = this.dvRefid,
+                ver_num =  this.ver_num,
+                type =  this.type,
+                dsobj = this.currentObj,
+                cur_status = this.cur_status,
+                tabNum = this.tabnum,
+                ss_url =  this.ssurl,
+                //ds_id: this.currentObj.DataSourceRefId,
+                //ss_url: this.ssurl,
+                //tid: this.UniqueId,
+                login =  this.wc,
+                data = this.MainData,
+            );
+            //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
+            //this.ebdtable[focusedId].getColumnsSuccess(this.currentObj);
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
             //this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
@@ -54,7 +65,7 @@ var DvContainerObj = function (settings) {
             this.chartJs[focusedId] = new eb_chart(this.currentObj, this.ssurl, this.MainData, this.UniqueId);
         }
         console.log("xxxxx", this.dvcol[focusedId]);
-        console.log("ccccc", dvcontainerObj.currentObj);
+        //console.log("ccccc", dvcontainerObj.currentObj);
     };
 
     this.gotoNext = function () {

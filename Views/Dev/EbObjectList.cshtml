@@ -67,31 +67,29 @@
     }
     else if (ObjectType == (int)EbObjectType.TableVisualization)
     {
-        //if (ViewBag.wc == "dc")
-        //{
-        //    editor = "dvTable";
-        //}
-        //else
-        //{
-        //    editor = "dv";
-        //}
-        //whichController = "DV";
-        editor = "Index";
-        whichController = "Eb_Object";
+        if (ViewBag.wc == "dc")
+        {
+            editor = "Index";
+            whichController = "Eb_Object";
+        }
+        else
+        {
+            editor = "dv";
+            whichController = "DV";
+        }
     }
     else if (ObjectType == (int)EbObjectType.ChartVisualization)
     {
-        //if (ViewBag.wc == "dc")
-        //{
-        //    editor = "dvChart";
-        //}
-        //else
-        //{
-        //    editor = "dv";
-        //}
-        //whichController = "DV";
-        editor = "Index";
-        whichController = "Eb_Object";
+        if (ViewBag.wc == "dc")
+        {
+            editor = "Index";
+            whichController = "Eb_Object";
+        }
+        else
+        {
+            editor = "dv";
+            whichController = "DV";
+        }
     }
 }
 <script>

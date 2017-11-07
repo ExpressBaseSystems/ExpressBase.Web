@@ -11,7 +11,6 @@
     var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
     var _toolBox = new EbToolbox(_builderType);
 }
-<br /><br /><br /><br /><br /><br /><br />
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
 <div id="con" class="form-buider-cont">
     <div id="toolbox_cont" class='formB-box toolbox-cont'>
@@ -53,13 +52,14 @@
     var editModeFormObj = null;
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
+     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
     // if edit mode
     @*if(objid){
-        var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.dsObj));
+        @*var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.dsObj));
         //$.each(editModeFormObj, funcion(i, obj) {  });
         formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
-        formBuilderObj.InitEditModeCtrls(JSON.parse(editModeObj));
-    }
+        formBuilderObj.InitEditModeCtrls(JSON.parse(editModeObj));*@
+    @*}
     else
         formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");*@
 </script>

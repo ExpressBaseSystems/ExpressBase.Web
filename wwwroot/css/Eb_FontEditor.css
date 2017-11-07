@@ -43,5 +43,8 @@
 .FE-sectionMprop {
     width: inherit;
     height: 50px;
-    margin-left:20px;
+    margin-left:20px;    
+}
+.FE-section select{
+    border-radius:0px;
 }

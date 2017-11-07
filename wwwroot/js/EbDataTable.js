@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, settings) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, data) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -92,6 +92,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.tableId = null;
     this.ebSettings = null;
     this.ssurl = ssurl;
+    this.login = login;
     //Controls & Buttons
     this.table_jQO = null;
     //this.btnGo = $('#btnGo');
@@ -150,7 +151,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag, login: this.login },
             success: this.ajaxSucc
         });
 
@@ -159,16 +160,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.ajaxSucc = function (text) {
         this.PcFlag = "False";
         obj = this.EbObject;
-        $("#obj_icons").empty();
-        $("#obj_icons").append("<button id='btnGo"+this.tabNum+"' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#btnGo"+this.tabNum).click(this.getColumnsSuccess.bind(this));
+        if (this.login === 'dc') {
+            $("#obj_icons").empty();
+            $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+            $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
+        }
         var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
         $("#content_dv" + obj.EbSid + "_" + this.tabNum).empty();
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
-        this.EbObject = commonO.Current_obj;
+        if(this.login === 'dc')
+            this.EbObject = commonO.Current_obj;
+        else
+            this.EbObject = dvcontainerObj.Current_obj;
         if (text.indexOf("filterBox") === -1) {
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -328,11 +334,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.scrollY = "calc(100vh - 230px)";
         //o.deferLoading = 100;
         o.scrollX = "100%";
-        if (this.ebSettings.PageLength !== 0)
-        {
-            o.lengthMenu = this.generateLengthMenu();
-            //o.deferLoading = this.ebSettings.PageLength * 5;
-        }
+        //if (this.ebSettings.PageLength !== 0)
+        //{
+        //    o.lengthMenu = this.generateLengthMenu();
+        //    //o.deferLoading = this.ebSettings.PageLength * 5;
+        //}
         //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
             o.fixedColumns = { leftColumns: this.ebSettings.LeftFixedColumn, rightColumns: this.ebSettings.RightFixedColumn };
@@ -369,7 +375,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         };
         o.aoColumns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
-        o.deferRender = true;
+        //o.deferRender = true;
         o.filter = true;
         //o.select = true;
         o.retrieve = true;
@@ -392,7 +398,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //else {
         o.ajax = {
             //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
-            url: this.ssurl + 'ds/data/' + this.dsid,
+            url: this.ssurl + '/ds/data/' + this.dsid,
             type: 'POST',
             timeout: 180000,
             data: this.ajaxData.bind(this),
@@ -400,7 +406,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + getToken());
             },
-
             crossDomain: true
         };
         //}
@@ -937,7 +942,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         
     };
 
-
     this.GenerateButtons = function () {
         $("#obj_icons").empty();
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
@@ -978,7 +982,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.addFilterEventListeners();
         }
     };
-
 
     this.setFilterboxValue = function (i, obj) {
         //if (this.dtsettings.filterParams !== null && this.dtsettings.filterParams !== undefined) {

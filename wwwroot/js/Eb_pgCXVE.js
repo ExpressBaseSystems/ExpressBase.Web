@@ -10,13 +10,14 @@
     this.editor = null;
 
     this.CXE_OKclicked = function () {
-        this.PGobj.OnInputchangedFn.bind(this.PGobj)();
-        this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
         if (this.editor === 17) {
             var imgId = this.PGobj.imgSlctrs[this.PGobj.CurProp].getId();
             this.PGobj.PropsObj[this.PGobj.CurProp] = imgId;
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(imgId);
         }
+
+        this.PGobj.OnInputchangedFn.bind(this.PGobj)();
+        this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -96,6 +97,7 @@
 
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
             this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
+            this.CE_PGObj.parentId = this.PGobj.wraperId;
             this.setColTiles(true);
         }
         else if (this.editor > 7 && this.editor < 11) {
@@ -291,7 +293,7 @@
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
                     + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
         }.bind(this));
-        if (this.PGobj.PropsObj[this.PGobj.CurProp] && $e.attr("name") === this.OSECurVobj.name)
+        if (this.PGobj.PropsObj[this.PGobj.CurProp] && this.OSECurVobj && $e.attr("name") === this.OSECurVobj.name)
             $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
     };
     this.VTileClick = function () {

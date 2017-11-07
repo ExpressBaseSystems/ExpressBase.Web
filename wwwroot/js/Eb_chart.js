@@ -206,7 +206,7 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     };
 };
 
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, data) {
     this.columnInfo = null;
     this.data = null;
     this.ssurl = ssurl;
@@ -226,6 +226,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     this.tabNum = tabNum;
     this.type = null;
     this.PcFlag = false;
+    this.login = login;
+    this.relatedObjects = null;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -240,6 +242,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     }.bind(this);
 
     this.call2FD = function () {
+        this.relatedObjects = this.EbObject.DataSourceRefId;
         $.LoadingOverlay("show");
         $.ajax({
             type: "POST",
@@ -262,7 +265,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
-        this.EbObject = commonO.Current_obj;
+        if (this.login === 'dc')
+            this.EbObject = commonO.Current_obj;
+        else
+            this.EbObject = dvcontainerObj.currentObj;
         if (text.indexOf("filterBox") === -1) {
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -277,7 +283,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     }.bind(this);
 
     if (this.EbObject === null) {
-        this.EbObject = new EbObjects["EbChartVisualization"]("chart_" + Date.now());
+        this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
         split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbChartVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
         this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);

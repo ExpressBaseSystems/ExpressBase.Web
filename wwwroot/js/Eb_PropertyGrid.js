@@ -5,6 +5,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
     this.cid = cid;
     this.$wraper = $("#" + id);
     this.wraperId = id;
+    this.parentId = null;
     this.$controlsDD = $(".controls-dd-cont select");
     this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
     this.AllObjects = {};
@@ -518,7 +519,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
 
     this.ReadOnly = function () {
         this.IsReadonly = true;
-        $('#' + this.wraperId + " .pgHead span").text('Property (ReadOnly)').css("opacity", "0.72");
+        $('<i class="fa fa-lock" aria-hidden="true"></i>').insertAfter($('#' + this.wraperId + " .pgHead span").html('Properties ').css("opacity", "0.72"));
         $('#' + this.wraperId + " input").attr('readonly', 'readonly').css("pointer-events", "none");
         $('#' + this.wraperId + " .propgrid-table-cont select").prop('disabled', true);
         $('#' + this.wraperId + " .propgrid-table-cont .btn").css("background-color", "#ddd").removeClass("disabled").css("cursor", "not-allowed");
@@ -528,6 +529,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $('#' + this.wraperId + " .pgCXEditor-Cont select").prop('disabled', true);// all select in cxve
         $('#' + this.wraperId + " .OSE-DD-cont button").prop('disabled', true).css("cursor", "not-allowed");
         $('#' + this.wraperId + " .OSE-DD-cont").css("cursor", "not-allowed");
+        $('#' + this.parentId + " .modal-body .colTile").css("cursor", "not-allowed");
         $('#' + this.wraperId + " .modal-footer .btn").prop('disabled', true).css("cursor", "not-allowed");//ce TypeDD
         $('#' + this.wraperId + " .CE-add").prop('disabled', true).css("color", "#5a5a5a").css("cursor", "not-allowed");// CE +
         $('#' + this.wraperId + " .sub-controls-DD-cont").css("cursor", "not-allowed");// CE DD, + cont

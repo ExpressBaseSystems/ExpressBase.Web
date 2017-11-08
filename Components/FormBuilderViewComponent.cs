@@ -12,8 +12,10 @@ namespace ExpressBase.Web.Components
             public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl)
             {
                 ViewBag.dsObj = dsobj;
+            if (dsobj != "null") { 
                 ViewBag.Html = EbSerializers.Json_Deserialize(dsobj).GetHtml();
-                ViewBag.tabnum = tabnum;
+            }
+            ViewBag.tabnum = tabnum;
                 ViewBag.ObjType = type;
                 ViewBag.Refid = refid;
                 return View();

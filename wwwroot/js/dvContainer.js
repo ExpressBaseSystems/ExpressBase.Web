@@ -31,11 +31,11 @@ var DvContainerObj = function (settings) {
 
 
     this.btnGoClick = function () {
-        if ($("#" + focusedId).children(".fd").children("#filterBox").length > 0) {
-            $("#fd_toggle").css("display", "inline");
-            $("#" + focusedId).children(".fd").css("display", "none");
-            $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-8").addClass("col-md-10");
-        }
+        //if ($("#" + focusedId).children(".fd").children("#filterBox").length > 0) {
+        //    $("#fd_toggle").css("display", "inline");
+        //    $("#" + focusedId).children(".fd").css("display", "none");
+        //    $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-8").addClass("col-md-10");
+        //}
         $("#Settings").css("display", "inline");
         $("#Save_btn").css("display", "inline");
         focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + counter; 
@@ -56,7 +56,7 @@ var DvContainerObj = function (settings) {
                 data = this.MainData,
             );
             //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
-            //this.ebdtable[focusedId].getColumnsSuccess(this.currentObj);
+            //this.dvcol[focusedId].getColumnsSuccess(this.currentObj);
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
             //this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;

@@ -135,7 +135,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.extraCol = [];
     this.PcFlag = false;
 
-    var split = new splitWindow("parent-div" + this.tabNum, "contBox");
+    var split = new splitWindow("parent-div0", "contBox");
 
     split.windowOnFocus = function (ev) {
         if ($(ev.target).attr("class") !== undefined) {
@@ -163,7 +163,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.PcFlag = "False";
         obj = this.EbObject;
         $("#obj_icons").empty();
-        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");     
+        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
         var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
@@ -171,7 +171,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
-        if(this.login === 'dc')
+        if (this.login === 'dc')
             this.EbObject = commonO.Current_obj;
         else
             this.EbObject = dvcontainerObj.currentObj;
@@ -185,9 +185,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $.LoadingOverlay("hide");
             $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-10").addClass("col-md-8");
         }
-        $(subDivId).focusin();
+        $(subDivId).focus();
     }.bind(this);
-    
+
     if (this.EbObject === null) {
         this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
         split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbTableVisualization");
@@ -200,10 +200,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.call2FD();
     }
-    
-    this.start = function () {
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
-    }
+
 
     this.propGrid.PropertyChanged = function (obj, Pname) {
         this.EbObject = obj;
@@ -221,6 +218,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             console.log(obj);
         }
     }.bind(this);
+    //}
+
+    this.start = function () {
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
+    }
 
 
     this.getColumnsSuccess = function () {
@@ -331,25 +333,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.createTblObject = function () {
         var o = new Object();
         //o.scrollY = this.ebSettings.scrollY+"px";
-        o.scrollY = "calc(100vh - 230px)";
+        o.scrollY = "inherit";
         //o.deferLoading = 100;
         o.scrollX = "100%";
-        if (this.ebSettings.PageLength !== 0)
-        {
+        if (this.ebSettings.PageLength !== 0) {
             o.lengthMenu = this.generateLengthMenu();
             //o.deferLoading = this.ebSettings.PageLength * 5;
         }
         //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
             o.fixedColumns = { leftColumns: this.ebSettings.LeftFixedColumn, rightColumns: this.ebSettings.RightFixedColumn };
-            //o.lengthMenu = this.ebSettings.lengthMenu;
-            o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
-            o.pagingType = "full";
-            if (this.ebSettings.IsPaged == "false") {
+        //o.lengthMenu = this.ebSettings.lengthMenu;
+        o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
+        o.pagingType = "full";
+        if (this.ebSettings.IsPaged == "false") {
 
-                o.dom = "<'col-md-12 noPadding'B>rt";
-            }
-            o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
+            o.dom = "<'col-md-12 noPadding'B>rt";
+        }
+        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         //}
         //else if (this.dtsettings.directLoad) {
         //    o.paging = false;
@@ -632,7 +633,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.initCompleteFunc = function (settings, json) {
         //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
         //    if (!this.flagAppendColumns)
-                this.GenerateButtons();
+        this.GenerateButtons();
         //}
         this.createFilterRowHeader();
         if (this.eb_agginfo.length > 0) {
@@ -675,7 +676,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$("#sidediv").toggleClass("toggled");
         //$("#contBox").removeClass('col-md-10').addClass('col-md-8');
         //$('#fd-min-btn').css('margin-right', '0').removeClass("rotated");
-        
+
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight()
@@ -940,7 +941,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
         //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
         //$("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
-        
+
     };
 
     this.GenerateButtons = function () {
@@ -978,10 +979,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.setFilterboxValue = function (i, obj) {
         //if (this.dtsettings.filterParams !== null && this.dtsettings.filterParams !== undefined) {
-            //var colum = $(obj).children('span').text();
-            //if (colum === this.dtsettings.filterParams.column) {
-            //    $(obj).children('div').children('.eb_finput').val(this.dtsettings.filterParams.key);
-            //}
+        //var colum = $(obj).children('span').text();
+        //if (colum === this.dtsettings.filterParams.column) {
+        //    $(obj).children('div').children('.eb_finput').val(this.dtsettings.filterParams.key);
+        //}
         //}
         //else
         $(obj).children('div').children('.eb_finput').off("keypress").on("keypress", this.call_filter);
@@ -1654,14 +1655,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
                 dvcontainerObj.dvRefid = dvObj.Refid;
                 $.LoadingOverlay("hide");
+                dvcontainerObj.btnGoClick();
                 //if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
-                //    pg.setObject(dvObj, AllMetas["EbTableVisualization"]);
                 //    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbTableVisualization");
+                //    pg["sub_window_dv" + dvObj.EbSid + "_" + counter].setObject(dvObj, AllMetas["EbTableVisualization"]);
                 //    call2dvView(dvObj);
                 //}
                 //else if (dvObj.$type.indexOf("EbChartVisualization") !== -1) {
-                //    pg.setObject(dvObj, AllMetas["EbChartVisualization"]);
                 //    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbChartVisualization");
+                //    pg["sub_window_dv" + dvObj.EbSid + "_" + counter].setObject(dvObj, AllMetas["EbChartVisualization"]);
                 //    call2dvView(dvObj);
                 //}
             }

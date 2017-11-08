@@ -189,7 +189,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.CreateObjString = function () {
         if (this.Parameter_Count !== 0) {
             var ObjString = "[";
-            var filter_control_list = "datefrom,dateto";
+            var filter_control_list = "";
             var myarray = filter_control_list.split(',');
             for (var i = 0; i < myarray.length; i++) {
                 console.log($("#" + myarray[i]).val());

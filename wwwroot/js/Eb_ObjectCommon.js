@@ -10,7 +10,12 @@
     this.ssurl = ssurl;
     this.ControlCollection = {};
     this.tabchangeFlag = false;
-
+    this.messg = new EbAlert(
+        {
+            id:"dshbrd_alert",
+            possition:"bottom-right"
+        });
+    
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('#ver_his').off("click").on("click", this.Version_List.bind(this));
@@ -20,6 +25,15 @@
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
     }
+
+    this.ShowMessage = function (msg, typ) {
+        this.messg.alert({
+            head: "alert",
+            body: msg,
+            type: typ
+        })
+        $.LoadingOverlay("hide");
+    };
 
     this.LoadStatusPage = function () {
         $.LoadingOverlay("show");
@@ -155,8 +169,7 @@
             alert("Please Select A Version");
             $.LoadingOverlay("hide");
         }
-        else {
-            $.LoadingOverlay("show");
+        else {            
             $.post('../Eb_Object/GetObjectsToDiff', { ver1refid: Refid1, ver2refid: Refid2 }).done(this.showDiff.bind(this, vernum1, vernum2));
         }
     };
@@ -212,10 +225,7 @@
             _rel_obj: this.ObjCollection["#vernav" + this.tabNum].relatedObjects,
             _tags: tagvalues,
             _appid: appid
-        }).done( function () {
-            $.LoadingOverlay("hide");
-            alert('save success');
-        });
+        }, this.ShowMessage.bind(this, "Saved Successfully", "success"))
     };
 
     this.Commit = function () {
@@ -227,16 +237,21 @@
             this.ObjCollection["#vernav" + this.tabNum].Commit();
         }   
         $.post("../Eb_Object/CommitEbObject", {
-            _refid: this.ver_Refid, _changeLog: changeLog, 
+            _refid: this.ver_Refid, _changeLog: changeLog,
             _json: JSON.stringify(this.Current_obj),
             _rel_obj: this.ObjCollection["#vernav" + this.tabNum].relatedObjects,
             _tags: tagvalues,
             _appid: appid
-        }).done(function () {
-            $('#close_popup').trigger('click');
-            $.LoadingOverlay("hide");
-            alert("commit success");
-        });
+        }, this.ShowMessage.bind(this, "Committed Successfully", "success"));
+        //}).done(function () {
+        //    $('#close_popup').trigger('click');
+        //    $.LoadingOverlay("hide");
+        //    this.messg.alert({
+        //        head: "alert",
+        //        body: "commit Success",
+        //        type: "primary"
+            ////});
+        //});
     };
 
     this.UpdateCreateVersionDD = function () {
@@ -264,28 +279,27 @@
         if (selected_opt === "_major") {
             if (confirm('Are you sure you want to create Major version?')) {
                 $.LoadingOverlay("show");
-                $.post("../Eb_Object/Create_Major_Version", { _refId: this.ver_Refid, _type : type }, function () {
-                    alert("Created Major version");
-                    $.LoadingOverlay("hide");
-                });
+                $.post("../Eb_Object/Create_Major_Version", {
+                    _refId: this.ver_Refid, _type: type
+                }, this.ShowMessage.bind(this, "Created Major Version Successfully", "success"));
             }
         }
         if (selected_opt === "_minor") {
             if (confirm('Are you sure you want to create Minor version?')) {
                 $.LoadingOverlay("show");
-                $.post("../Eb_Object/Create_Minor_Version", { _refId: this.ver_Refid, _type: type }, function () {
-                    alert("Created Minor version");
-                    $.LoadingOverlay("hide");
-                });
+                $.post("../Eb_Object/Create_Minor_Version", {
+                    _refId: this.ver_Refid,
+                    _type: type
+                }, this.ShowMessage.bind(this, "Created Minor Version Successfully", "success"));
             }
         }
         if (selected_opt === "_patch") {
             if (confirm('Are you sure you want to create Patch version?')) {
                 $.LoadingOverlay("show");
-                $.post("../Eb_Object/Create_Patch_Version", { _refId: this.ver_Refid, _type: type }, function () {
-                    alert("Created patch version");
-                    $.LoadingOverlay("hide");
-                });
+                $.post("../Eb_Object/Create_Patch_Version", {
+                    _refId: this.ver_Refid,
+                    _type: type
+                }, this.ShowMessage.bind(this, "Created Patch Version Successfully", "success"));
             }
         }
     };

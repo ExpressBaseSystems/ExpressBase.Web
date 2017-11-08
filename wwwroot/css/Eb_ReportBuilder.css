@@ -553,10 +553,21 @@
 
 .multiSplitHboxSub {
     display: flex;
-    justify-content: center;
+    position:relative;
     align-items: center;
     font-size: 11px;
 }
+    .multiSplitHboxSub .lock-icon {
+        align-self: flex-end;
+        position: absolute;
+        left: 35%;
+        font-size: 14px;
+        bottom: 3px;
+    }
+.multiSplitHbox .gutter {
+    pointer-events: none;
+}
+
 .marked {
     background-color: #d8f7f6;
 }
@@ -661,4 +672,14 @@
 /*report toolbox tab*/
 .page .wm-container .ui-resizable-handle {   
     opacity: 1;
+}
+.page .locked:hover:before {
+    background-color: #eaa6a6;
+    opacity:.5;
+}
+.page .locked:before {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
 }

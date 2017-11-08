@@ -8,6 +8,61 @@
     this.$propGrid = $("#" + propGridId);
     this.$form = $("#" + formid);
     this.EbObject = dsobj;
+
+
+    // need to change
+    this.controlCounters = {
+        ComboBoxCounter: 0,
+        NumericCounter: 0,
+        DateCounter: 0,
+        ButtonCounter: 0,
+        TableLayoutCounter: 0,
+        TextBoxCounter: 0,
+        TableTdCounter: 0,
+        RadioButtonCounter: 0,
+        RadioGroupCounter: 0
+    };
+    this.currentProperty = null;
+    this.CurRowCount = 2;
+    this.CurColCount = 2;
+    this.movingObj = {};
+    
+    this.controlOnFocus = function (e) {
+        if ($(e.target).hasClass("form-buider-form")) {
+            this.curControl = $(e.target);
+            this.CreatePG(this.rootContainerObj);
+            return;
+        }
+        else
+            this.curControl = $(e.target).closest(".Eb-ctrlContainer");
+        var id = this.curControl.attr("id");
+        e.stopPropagation();
+        this.curControl.children('.ctrlHead').show();
+        this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
+        this.CurColCount = $(e.target).val();
+        //  this.PGobj.ReadOnly();
+    };
+
+    this.InitEditModeCtrls = function (editModeObj) {
+        this.rootContainerObj = editModeObj;
+        $(".Eb-ctrlContainer").each(function (i, el) {
+            this.initCtrl(el);
+        }.bind(this));
+        setTimeout(function () {
+            Proc(editModeObj, this.rootContainerObj);
+        }.bind(this), 1000);
+    };
+
+    this.initCtrl = function (el) {
+        var $el = $(el);
+        var type = $el.attr("ctype").trim();
+        var id = type + (this.controlCounters[type + "Counter"])++;
+        $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+        $el.on("focus", this.controlOnFocus.bind(this));
+        $el.attr("eb-type", type);
+        $el.attr("eb-type", type).attr("id", id);
+    };
+    
     if (this.EbObject){
         this.InitEditModeCtrls(this.EbObject);
         commonO.Current_obj = this.EbObject;
@@ -39,23 +94,6 @@
 
     //this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
 
-
-    // need to change
-    this.controlCounters = {
-        ComboBoxCounter: 0,
-        NumericCounter: 0,
-        DateCounter: 0,
-        ButtonCounter: 0,
-        TableLayoutCounter: 0,
-        TextBoxCounter: 0,
-        TableTdCounter: 0,
-        RadioButtonCounter: 0,
-        RadioGroupCounter: 0
-    };
-    this.currentProperty = null;
-    this.CurRowCount = 2;
-    this.CurColCount = 2;
-    this.movingObj = {};
 
     //this.save = function () {
     //    if (this.rootContainerObj.Name.trim() === '') {
@@ -134,22 +172,6 @@
             return true;
         }
 
-    };
-
-    this.controlOnFocus = function (e) {
-        if ($(e.target).hasClass("form-buider-form")) {
-            this.curControl = $(e.target);
-            this.CreatePG(this.rootContainerObj);
-            return;
-        }
-        else
-            this.curControl = $(e.target).closest(".Eb-ctrlContainer");
-        var id = this.curControl.attr("id");
-        e.stopPropagation();
-        this.curControl.children('.ctrlHead').show();
-        this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
-        this.CurColCount = $(e.target).val();
-      //  this.PGobj.ReadOnly();
     };
 
     this.makeTdsDropable = function () {
@@ -333,24 +355,7 @@
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-    this.initCtrl = function (el) {
-        var $el = $(el);
-        var type = $el.attr("ctype").trim();
-        var id = type + (this.controlCounters[type + "Counter"])++;
-        $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-        $el.on("focus", this.controlOnFocus.bind(this));
-        $el.attr("eb-type", type);
-        $el.attr("eb-type", type).attr("id", id);
-    };
-
-    this.InitEditModeCtrls = function (editModeObj) {
-        $(".Eb-ctrlContainer").each(function (i, el) {
-            this.initCtrl(el);
-        }.bind(this));
-        setTimeout(function () {
-            Proc(editModeObj, this.rootContainerObj);
-        }.bind(this), 1000);
-    };
+    
 
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {

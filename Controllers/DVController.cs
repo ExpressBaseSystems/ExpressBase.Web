@@ -275,6 +275,25 @@ namespace ExpressBase.Web.Controllers
                 return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId });
         }
 
+        public List<EbObjectWrapper> getAllRelatedDV(string refid)
+        {
+            List<EbObjectWrapper> DvList = new List<EbObjectWrapper>();
+            if (refid != null)
+            {
+                var resultlist = this.ServiceClient.Get<EbObjectRelationsResponse>(new EbObjectRelationsRequest { DominantId = refid });
+                var rlist = resultlist.Data;
+                foreach (var element in rlist)
+                {
+                    if (element.EbObjectType == EbObjectType.TableVisualization || element.EbObjectType == EbObjectType.ChartVisualization)
+                    {
+                        DvList.Add(element);
+                    }
+                }
+
+            }
+            return DvList;
+        }
+
         public string getdv(string id, EbObjectType objtype)
         {
             EbDataVisualization dsobj = null;

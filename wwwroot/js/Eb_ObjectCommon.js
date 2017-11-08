@@ -209,7 +209,7 @@
         $.post("../Eb_Object/SaveEbObject", {
             _refid: this.ver_Refid,
             _json: JSON.stringify(this.Current_obj),
-            _rel_obj: "",
+            _rel_obj: this.ObjCollection["#vernav" + this.tabNum].relatedObjects,
             _tags: tagvalues,
             _appid: appid
         }).done( function () {
@@ -229,7 +229,7 @@
         $.post("../Eb_Object/CommitEbObject", {
             _refid: this.ver_Refid, _changeLog: changeLog, 
             _json: JSON.stringify(this.Current_obj),
-            _rel_obj: "",
+            _rel_obj: this.ObjCollection["#vernav" + this.tabNum].relatedObjects,
             _tags: tagvalues,
             _appid: appid
         }).done(function () {

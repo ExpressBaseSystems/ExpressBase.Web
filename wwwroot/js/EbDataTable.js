@@ -93,6 +93,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.ebSettings = null;
     this.ssurl = ssurl;
     this.login = login;
+    this.relatedObjects = null;
     //Controls & Buttons
     this.table_jQO = null;
     //this.btnGo = $('#btnGo');
@@ -147,6 +148,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.call2FD = function () {
+        this.relatedObjects = this.EbObject.DataSourceRefId;
         $.LoadingOverlay("show");
         $.ajax({
             type: "POST",
@@ -160,11 +162,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.ajaxSucc = function (text) {
         this.PcFlag = "False";
         obj = this.EbObject;
-        if (this.login === 'dc') {
-            $("#obj_icons").empty();
-            $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-            $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
-        }
+        $("#obj_icons").empty();
+        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");     
+        $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
         var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
         $("#content_dv" + obj.EbSid + "_" + this.tabNum).empty();
@@ -174,7 +174,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if(this.login === 'dc')
             this.EbObject = commonO.Current_obj;
         else
-            this.EbObject = dvcontainerObj.Current_obj;
+            this.EbObject = dvcontainerObj.currentObj;
         if (text.indexOf("filterBox") === -1) {
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -189,7 +189,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
     
     if (this.EbObject === null) {
-        this.EbObject = new EbObjects["EbTableVisualization"]("table_" + Date.now());
+        this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
         split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbTableVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -334,11 +334,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.scrollY = "calc(100vh - 230px)";
         //o.deferLoading = 100;
         o.scrollX = "100%";
-        //if (this.ebSettings.PageLength !== 0)
-        //{
-        //    o.lengthMenu = this.generateLengthMenu();
-        //    //o.deferLoading = this.ebSettings.PageLength * 5;
-        //}
+        if (this.ebSettings.PageLength !== 0)
+        {
+            o.lengthMenu = this.generateLengthMenu();
+            //o.deferLoading = this.ebSettings.PageLength * 5;
+        }
         //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
             o.fixedColumns = { leftColumns: this.ebSettings.LeftFixedColumn, rightColumns: this.ebSettings.RightFixedColumn };
@@ -675,6 +675,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$("#sidediv").toggleClass("toggled");
         //$("#contBox").removeClass('col-md-10').addClass('col-md-8');
         //$('#fd-min-btn').css('margin-right', '0').removeClass("rotated");
+        
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight()
@@ -938,7 +939,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsWindow.bind(this));
         $("#btnCollapse" + this.tableId).off("click").on("click", this.collapseFilter.bind(this));
         //$("#showgraphbtn" + this.tableId).off("click").on("click", this.showGraph.bind(this));
-        $("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
+        //$("#Related" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
         
     };
 
@@ -968,17 +969,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 "</div>" +
                 "</div>");
             //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
-            //if (this.dtsettings.login == "uc") {
-            //    $("#Toolbar").append("<div class='dropdown' id='Related" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
-            //        "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
-            //        "<span class='caret'></span>" +
-            //        "</button>" +
-            //        "<ul class='dropdown-menu'>" +
-            //        "<li><a href='#' data-id='687' objtype='16'><i class='fa fa-line-chart custom'></i> Koii</a></li>" +
-            //        "<li><a href='#' data-id='689' objtype='17'><i class='fa fa-bar-chart custom'></i> eeeeeee </a></li>" +
-            //        "</ul>" +
-            //        "</div>");
-            //}
+            if (this.login == "uc") {
+                this.appendRelatedDv();
+            }
             this.addFilterEventListeners();
         }
     };
@@ -1653,25 +1646,53 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.ajax({
             type: "POST",
             url: "../DV/getdv",
-            data: { id: $(e.target).attr("data-id"), objtype: $(e.target).attr("objtype") },
+            data: { refid: $(e.target).attr("data-refid"), objtype: $(e.target).attr("objtype") },
             success: function (dvObj) {
+                counter++;
                 dvObj = JSON.parse(dvObj);
                 dvcontainerObj.currentObj = dvObj;
                 dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
+                dvcontainerObj.dvRefid = dvObj.Refid;
                 $.LoadingOverlay("hide");
-                if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
-                    pg.setObject(dvObj, AllMetas["EbTableVisualization"]);
-                    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbTableVisualization");
-                    call2dvView(dvObj);
-                }
-                else if (dvObj.$type.indexOf("EbChartVisualization") !== -1) {
-                    pg.setObject(dvObj, AllMetas["EbChartVisualization"]);
-                    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbChartVisualization");
-                    call2dvView(dvObj);
-                }
+                //if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
+                //    pg.setObject(dvObj, AllMetas["EbTableVisualization"]);
+                //    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbTableVisualization");
+                //    call2dvView(dvObj);
+                //}
+                //else if (dvObj.$type.indexOf("EbChartVisualization") !== -1) {
+                //    pg.setObject(dvObj, AllMetas["EbChartVisualization"]);
+                //    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbChartVisualization");
+                //    call2dvView(dvObj);
+                //}
             }
         });
+    }.bind(this);
+
+    this.appendRelatedDv = function () {
+        $("#obj_icons").prepend("<div class='dropdown' id='Related" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
+            "<button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>" +
+            "<span class='caret'></span>" +
+            "</button>" +
+            "<ul class='dropdown-menu'>" +
+            "</ul>" +
+            "</div>");
+        $.ajax({
+            type: "POST",
+            url: "../DV/getAllRelatedDV",
+            data: { refid: this.dsid },
+            success: this.RealtedajaxSuccess
+        });
+        //$("#Related" + this.tableId + " .dropdown-menu ul")
     };
+
+    this.RealtedajaxSuccess = function (DvList) {
+        var tid = this.tableId;
+        $.each(DvList, function (i, obj) {
+            $("#Related" + tid + " .dropdown-menu").append("<li><a href='#' data-refid='" + obj.refId + "' objtype='" + obj.ebObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.name + "</a></li>");
+
+        });
+        $("#Related" + tid + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
+    }.bind(this);
 
     this.start();
 };

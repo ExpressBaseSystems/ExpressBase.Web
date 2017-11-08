@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ExpressBase.Common;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace ExpressBase.Web.Components
             public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl)
             {
                 ViewBag.dsObj = dsobj;
+                ViewBag.Html = EbSerializers.Json_Deserialize(dsobj).GetHtml();
                 ViewBag.tabnum = tabnum;
                 ViewBag.ObjType = type;
                 ViewBag.Refid = refid;

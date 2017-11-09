@@ -434,5 +434,11 @@ namespace ExpressBase.Web.Controllers
             return res.RefId;
         }
 
+        //public IActionResult UpdateObjectDashboard(string refid)
+        //{
+          
+        //    return ViewComponent("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId })
+        //}
+
     }
 }

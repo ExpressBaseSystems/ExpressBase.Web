@@ -27,8 +27,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
         else {
             this.GetFD();
-            this.GenerateButtons();
         }
+        this.GenerateButtons();
 
         this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
         this.Name = this.EbObject.Name;
@@ -146,7 +146,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //}
     this.RunDs = function () {
         $.LoadingOverlay("show");
-        commonO.Save();
+        if (this.EbObject.VersionNumber.slice(-1) ==="w") {
+            commonO.Save();
+        }
         //if (this.Parameter_Count === 0) {
         //    this.Save(false);
         //    this.Object_String_WithVal = "";
@@ -185,7 +187,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.CreateObjString = function () {
         if (this.Parameter_Count !== 0) {
             var ObjString = "[";
-            var filter_control_list = "";
+            var filter_control_list = "datefrom,dateto";
             var myarray = filter_control_list.split(',');
             for (var i = 0; i < myarray.length; i++) {
                 console.log($("#" + myarray[i]).val());
@@ -203,7 +205,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.Object_String_WithVal = ObjString;
         }
         else {
-            this.Object_String_WithVal = null;.2500014041
+            this.Object_String_WithVal = null;
         }
         console.log("Object_String_WithVal" + this.Object_String_WithVal);
     }

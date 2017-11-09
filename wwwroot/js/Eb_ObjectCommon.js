@@ -33,6 +33,7 @@
             type: typ
         })
         $.LoadingOverlay("hide");
+        $('#close_popup').trigger('click');
     };
 
     this.LoadStatusPage = function () {

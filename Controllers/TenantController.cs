@@ -88,17 +88,9 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult TenantAddAccount(int i)
         {
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.ServiceClient;
-            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insertaccount", Token = ViewBag.token });
-            if (res.id >= 0)
-            {
-                return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"], aid = res.id }));
-            }
-            else
-            {
-                return View();
-            }
+            
+              return View();
+          
         }
 
         [HttpGet]
@@ -256,7 +248,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult TenantAcc()
         {
             IServiceClient client = this.ServiceClient;
-            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = Convert.ToInt32(ViewBag.UId), Token = ViewBag.token });
+            var fr = client.Get<GetAccountResponse>(new GetAccountRequest());
             ViewBag.dict = fr.returnlist;
             return View();
         }

@@ -1757,7 +1757,7 @@ function GPointPopup(e) {
 
 function getFilterValues() {
     var fltr_collection = [];
-    var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
+    var paramstxt = "";//$('#hiddenparams').val().trim();datefrom,dateto
     if (paramstxt.length > 0) {
         var params = paramstxt.split(',');
         $.each(params, function (i, id) {

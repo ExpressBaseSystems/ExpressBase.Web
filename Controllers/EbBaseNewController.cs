@@ -82,7 +82,7 @@ namespace ExpressBase.Web.Controllers
                 controller.ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
                 base.OnActionExecuting(context);
 
-               if(path.ToString().StartsWith("/Ext/", true, null) && !path.ToString().StartsWith("/Ext/Index", true, null) &&!(context.Controller is ExpressBase.Web.Controllers.CommonController))
+               if(path.ToString().StartsWith("/Ext/", true, null) && !path.ToString().StartsWith("/Ext/Index", true, null) && !path.ToString().StartsWith("/Ext/test", true, null) && !(context.Controller is ExpressBase.Web.Controllers.CommonController))
                 {        
                     if(!string.IsNullOrEmpty(bearertoken))
                     {    

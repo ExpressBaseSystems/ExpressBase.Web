@@ -4,23 +4,19 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.ObjectType = type;
     this.Versions;
     this.Refid = refid;
-    this.changeLog;
-    this.commitUname;
-    this.commitTs;
-    this.Object_String_WithVal;
-    this.Filter_Params;
-    this.Parameter_Count;
-    this.SelectedFdId;
     this.Rel_object;
     this.rel_arr = [];
+    this.Filter_Params;
+    this.Parameter_Count;
+    this.Object_String_WithVal;
 
     this.EbObject = dsobj;
     this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
     this.Init = function () {
-        $('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
-        $('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
-        $('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
+        //$('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
+        //$('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
+        //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste',(this.SetCode.bind(this)));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
         $(".selectpicker").selectpicker();
@@ -95,62 +91,74 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#versionNav a:last').tab('show'); // Select first tab        
     };
 
-    this.Execute = function () {
-        if (!$('#execute' + tabNum).hasClass('collapsed')) {
-            //dasdsd
-        }
-        else {
-            this.Find_parameters(false, false, false);
-            $.LoadingOverlay("show");
-            if (this.Parameter_Count !== 0 && $('#fd' + tabNum + ' option:selected').text() === "Select Filter Dialog") {
-                alert("Please select a filter dialog");
-                $.LoadingOverlay("hide");
-            }
-            else if (this.Parameter_Count === 0) {
-                $.LoadingOverlay("hide");
-                var getNav = $("#versionNav li.active a").attr("href");
-            }
-            else {
-                this.Find_parameters(false, false, false);
-                // this.Save(false);
-                this.SelectedFdId = $('#fd' + tabNum + ' option:selected').val();
-            }
-        }
-    }
+    //this.Execute = function () {
+    //    if (!$('#execute' + tabNum).hasClass('collapsed')) {
+    //        //dasdsd
+    //    }
+    //    else {
+    //        this.Find_parameters(false, false, false);
+    //        $.LoadingOverlay("show");
+    //        if (this.Parameter_Count !== 0 && $('#fd' + tabNum + ' option:selected').text() === "Select Filter Dialog") {
+    //            alert("Please select a filter dialog");
+    //            $.LoadingOverlay("hide");
+    //        }
+    //        else if (this.Parameter_Count === 0) {
+    //            $.LoadingOverlay("hide");
+    //            var getNav = $("#versionNav li.active a").attr("href");
+    //        }
+    //        else {
+    //            this.Find_parameters(false, false, false);
+    //            // this.Save(false);
+    //            this.SelectedFdId = $('#fd' + tabNum + ' option:selected').val();
+    //        }
+    //    }
+    //}
 
-    this.RunSqlFn = function () {
-        $.LoadingOverlay("show");
-        if ($('.fd option:selected').text() === "Select Filter Dialog") {
-            alert("Please select a filter dialog");
-            $.LoadingOverlay("hide");
-        }
-        this.Save(true);
-    }
+    //this.RunSqlFn = function () {
+    //    $.LoadingOverlay("show");
+    //    if ($('.fd option:selected').text() === "Select Filter Dialog") {
+    //        alert("Please select a filter dialog");
+    //        $.LoadingOverlay("hide");
+    //    }
+    //    this.Save(true);
+    //}
 
-    this.TestSqlFn = function () {
-        $.LoadingOverlay("show");
-        alert("Test");
-    }
+    //this.TestSqlFn = function () {
+    //    $.LoadingOverlay("show");
+    //    alert("Test");
+    //}
     
 
-    this.Save = function (needRun) {
+    //this.Save = function (needRun) {
+    //    $.LoadingOverlay("show");
+    //    if (this.ObjectType === 5) {
+    //        this.SetSqlFnName();
+    //    }
+    //    this.Find_parameters(true, true, needRun);
+    //};
+
+    //this.Commit = function (needRun) {
+    //    $.LoadingOverlay("show");
+    //    if (this.ObjectType === 5) {
+    //        this.SetSqlFnName();
+    //    }
+    //    this.Find_parameters(true, false, needRun);
+    //}
+    this.RunDs = function () {
         $.LoadingOverlay("show");
-        if (this.ObjectType === 5) {
-            this.SetSqlFnName();
-        }
-        this.Find_parameters(true, true, needRun);
+        commonO.Save();
+        //if (this.Parameter_Count === 0) {
+        //    this.Save(false);
+        //    this.Object_String_WithVal = "";
+        //    // this.DrawTable();
+        //}
+        //else {
+        this.CountParameters(true, true, true);
+        //}
     };
 
-    this.Commit = function (needRun) {
-        $.LoadingOverlay("show");
-        if (this.ObjectType === 5) {
-            this.SetSqlFnName();
-        }
-        this.Find_parameters(true, false, needRun);
-    }
-    
-    this.Find_parameters = function (isCommitorSave, issave, needRun) {
-        var result = this.EbObject.Sql.match(/\@\w+/g);
+    this.CountParameters = function () {
+        var result = window["editor" + tabNum].getValue().match(/\@\w+/g);
         var filterparams = [];
         if (result !== null) {
             for (var i = 0; i < result.length; i++) {
@@ -170,26 +178,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         else {
             this.Parameter_Count = 0;
         }
-        if (isCommitorSave === true) {
-            var _json = null;
-            if (this.Parameter_Count !== 0 && ($('#fd' + tabNum + ' option:selected').text() === "Select Filter Dialog")) {
-                if (confirm('Are you sure you want to save this without selecting a filter dialog?')) {
-                    this.GetUsedSqlFns(needRun, issave);
-                }
-                else {
-                    $.LoadingOverlay("hide");
-                }
-            }
-            else {
-                this.GetUsedSqlFns(needRun, issave);
-            }
-        }
+        this.CreateObjString();
+        this.DrawTable();
     }
-
+   
     this.CreateObjString = function () {
         if (this.Parameter_Count !== 0) {
             var ObjString = "[";
-            var filter_control_list = "datefrom,dateto";
+            var filter_control_list = "";
             var myarray = filter_control_list.split(',');
             for (var i = 0; i < myarray.length; i++) {
                 console.log($("#" + myarray[i]).val());
@@ -207,22 +203,21 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.Object_String_WithVal = ObjString;
         }
         else {
-            this.Object_String_WithVal = null;
+            this.Object_String_WithVal = null;.2500014041
         }
         console.log("Object_String_WithVal" + this.Object_String_WithVal);
     }
 
     this.DrawTable = function () {
-        $.LoadingOverlay("show");
-        tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + tabNum + "'>Result-" + this.Current_obj.Name + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + tabNum + "' class='tab-pane fade'>";
+        commonO.tabNum++;
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
-        $('#vernav' + tabNum).append(" <div class=' filter_modal_body'>" +
-            "<table class='table table-striped table-bordered' id='sample" + tabNum + "'></table>" +
+        $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
+            "<table class='table table-striped table-bordered' id='sample" + commonO.tabNum + "'></table>" +
             "</div>");
-        $.post('GetColumns4Trial', {
-            ds_refid: this.ver_Refid,
+        $.post('CE/GetColumns4Trial', {
+            ds_refid: this.Refid,
             parameter: this.Object_String_WithVal
         }, this.Load_Table_Columns.bind(this));
     };
@@ -233,7 +228,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
         else {
             var cols = JSON.parse(result);
-            $("#sample" + tabNum).dataTable({
+            $("#sample" + commonO.tabNum).dataTable({
                 columns: cols,
                 serverSide: true,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -241,7 +236,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 scrollY: "300px",
                 processing: true,
                 ajax: {
-                    url: "http://localhost:8000/ds/data/" + this.ver_Refid,
+                    url: "http://localhost:8000/ds/data/" + this.Refid,
                     type: "POST",
                     data: this.Load_tble_Data.bind(this),
                     crossDomain: true,
@@ -252,9 +247,10 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 }
             });
 
-            $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-            $.LoadingOverlay("hide");
+            $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
         }
+
+        $.LoadingOverlay("hide");
     };
 
     this.Load_tble_Data = function (dq) {
@@ -265,18 +261,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         return dq;
     };
 
-    this.RunDs = function () {
-        $.LoadingOverlay("show");
-        if (this.Parameter_Count === 0) {
-            this.Save(false);
-            this.Object_String_WithVal = "";
-            // this.DrawTable();
-        }
-        else {
-            this.Find_parameters(true, true, true);
-        }
-    };
-
+   
     this.SetSqlFnName = function () {
         var result = this.EbObject.Sql.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
         if (result.length > 0) {

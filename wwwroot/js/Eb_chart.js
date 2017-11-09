@@ -1,7 +1,8 @@
-﻿var datasetObj = function (label, data, backgroundColor, fill) {
+﻿var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
     this.label = label;
     this.data = data;
     this.backgroundColor = backgroundColor;
+    this.borderColor = borderColor;
     this.fill = fill;
 };
 
@@ -206,7 +207,7 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     };
 };
 
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, data) {
     this.columnInfo = null;
     this.data = null;
     this.ssurl = ssurl;
@@ -226,6 +227,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     this.tabNum = tabNum;
     this.type = null;
     this.PcFlag = false;
+    this.login = login;
+    this.relatedObjects = null;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -240,6 +243,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     }.bind(this);
 
     this.call2FD = function () {
+        this.relatedObjects = this.EbObject.DataSourceRefId;
         $.LoadingOverlay("show");
         $.ajax({
             type: "POST",
@@ -262,7 +266,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
-        this.EbObject = commonO.Current_obj;
+        if (this.login === 'dc')
+            this.EbObject = commonO.Current_obj;
+        else
+            this.EbObject = dvcontainerObj.currentObj;
         if (text.indexOf("filterBox") === -1) {
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -277,7 +284,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     }.bind(this);
 
     if (this.EbObject === null) {
-        this.EbObject = new EbObjects["EbChartVisualization"]("chart_" + Date.now());
+        this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
         split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbChartVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
         this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
@@ -526,7 +533,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
                 this.YLabel = [];
                 for (j = 0; j < this.data.length; j++)
                     this.YLabel.push(this.data[j][ydx[k]]);
-                this.dataset.push(new datasetObj(this.columnInfo.Yaxis.$values[k].name, this.YLabel, this.columnInfo.LegendColor.$values[k].color, false));
+                this.dataset.push(new datasetObj(this.columnInfo.Yaxis.$values[k].name, this.YLabel, this.columnInfo.LegendColor.$values[k].color, this.columnInfo.LegendColor.$values[k].color, false));
             }
         }
     };
@@ -589,7 +596,30 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
             },
             legend: {
                 onClick: this.legendClick.bind(this)
-            }
+            },
+
+            tooltips: {
+                "enabled": false
+            },
+            "animation": {
+                "duration": 1,
+                "onComplete": function () {
+                    var chartInstance = this.chart,
+                        ctx = chartInstance.ctx;
+
+                    ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+
+                    this.data.datasets.forEach(function (dataset, i) {
+                        var meta = chartInstance.controller.getDatasetMeta(i);
+                        meta.data.forEach(function (bar, index) {
+                            var data = dataset.data[index];
+                            ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                        });
+                    });
+                }
+            },
         };
 
         this.RemoveCanvasandCheckButton();
@@ -662,7 +692,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
         this.chartApi = new Chart(canvas, {
             type: this.columnInfo.Type.trim().toLowerCase(),
             data: this.gdata,
-            options: this.goptions
+            options: this.goptions,
         });
 
         //this.modifyChart();
@@ -840,8 +870,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl)
     };
 
     this.reloadChart_inner = function (legendItem, i, obj) {
-        if (i === legendItem.datasetIndex)
+        if (i === legendItem.datasetIndex) {
             this.gdata.datasets[i].backgroundColor = $("#fontSel").val();
+            this.gdata.datasets[i].borderColor = $("#fontSel").val();
+        }
     };
 
 

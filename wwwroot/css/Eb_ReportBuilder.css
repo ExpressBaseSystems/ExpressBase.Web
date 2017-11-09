@@ -432,7 +432,7 @@
 
 #eb-rpt-container .PGgrid {
     min-height: 1000px;
-    padding: 0;   
+    padding: 0;
     z-index: 2;
     background-color: #f2f2f2;
     position: fixed;
@@ -553,10 +553,21 @@
 
 .multiSplitHboxSub {
     display: flex;
-    justify-content: center;
+    position:relative;
     align-items: center;
     font-size: 11px;
 }
+    .multiSplitHboxSub .lock-icon {
+        align-self: flex-end;
+        position: absolute;
+        left: 35%;
+        font-size: 14px;
+        bottom: 3px;
+    }
+.multiSplitHbox .gutter {
+    pointer-events: none;
+}
+
 .marked {
     background-color: #d8f7f6;
 }
@@ -599,16 +610,11 @@
     outline: none !important;
     border-color: #89c5dc;
 }
-.context-menu-item {    
+/*.context-menu-item {    
     color: #ffffff;    
     background-color: transparent; 
-}
-.context-menu-list {    
-    background: #2c2c3c;
-    border: none;   
-    -webkit-box-shadow:none;
-    box-shadow:none;
-}
+}*/
+
 .minimap {
     /*-webkit-box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);
     -moz-box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);
@@ -664,7 +670,16 @@
     font-size: 12px;
 }
 /*report toolbox tab*/
-.wm-container:before {
-    content: "";  
-    opacity: 0.1;
+.page .wm-container .ui-resizable-handle {   
+    opacity: 1;
+}
+.page .locked:hover:before {
+    background-color: #eaa6a6;
+    opacity:.5;
+}
+.page .locked:before {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
 }

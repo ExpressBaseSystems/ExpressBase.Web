@@ -275,55 +275,38 @@ namespace ExpressBase.Web.Controllers
                 return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId });
         }
 
-        public string getdv(string id, EbObjectType objtype)
+        public List<EbObjectWrapper> getAllRelatedDV(string refid)
         {
-            EbDataVisualization dsobj = null;
-            if (id != null)
+            List<EbObjectWrapper> DvList = new List<EbObjectWrapper>();
+            if (refid != null)
             {
-                var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(id) });
+                var resultlist = this.ServiceClient.Get<EbObjectRelationsResponse>(new EbObjectRelationsRequest { DominantId = refid });
                 var rlist = resultlist.Data;
                 foreach (var element in rlist)
                 {
-                    ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-                    List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-                    ViewBag.LifeCycle = lifeCycle;
-                    ViewBag.IsNew = "false";
-                    ViewBag.ObjectName = element.Name;
-                    ViewBag.ObjectDesc = element.Description;
-                    ViewBag.Status = element.Status;
-                    ViewBag.VersionNumber = element.VersionNumber;
-                    ViewBag.Icon = "fa fa-database";
-                    ViewBag.ObjType = (int)objtype;
-                    ViewBag.Refid = element.RefId;
-                    ViewBag.Majorv = element.MajorVersionNumber;
-                    ViewBag.Minorv = element.MinorVersionNumber;
-                    ViewBag.Patchv = element.PatchVersionNumber;
-
-                    
-
-                    if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+                    if (element.EbObjectType == EbObjectType.TableVisualization || element.EbObjectType == EbObjectType.ChartVisualization)
                     {
-                        ViewBag.ReadOnly = true;
-                        if (objtype == EbObjectType.TableVisualization)
-                            dsobj = EbSerializers.Json_Deserialize<EbTableVisualization>(element.Json_lc);
-                        else if (objtype == EbObjectType.ChartVisualization)
-                            dsobj = EbSerializers.Json_Deserialize<EbChartVisualization>(element.Json_lc);
+                        DvList.Add(element);
                     }
-                    else
-                    {
-                        ViewBag.ReadOnly = false;
-                        if (objtype == EbObjectType.TableVisualization)
-                            dsobj = EbSerializers.Json_Deserialize<EbTableVisualization>(element.Json_wc);
-                        else if (objtype == EbObjectType.ChartVisualization)
-                            dsobj = EbSerializers.Json_Deserialize<EbChartVisualization>(element.Json_wc);
-                    }
-
-                    dsobj.AfterRedisGet(this.Redis);
-                    ViewBag.dvObject = dsobj;
                 }
 
             }
-            return EbSerializers.Json_Serialize(ViewBag.dvObject);
+            return DvList;
+        }
+
+        public string getdv(string refid, EbObjectType objtype)
+        {
+            EbDataVisualization dsobj = null;
+            if (refid != null)
+            {
+                var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+                dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+                dsobj.Status = resultlist.Data[0].Status;
+                dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
+
+                
+            }
+             return EbSerializers.Json_Serialize(dsobj); 
         }
 
         public IActionResult dvgoogle()

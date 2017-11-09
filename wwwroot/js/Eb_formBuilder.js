@@ -8,36 +8,6 @@
     this.$propGrid = $("#" + propGridId);
     this.$form = $("#" + formid);
     this.EbObject = dsobj;
-    if (this.EbObject){
-        this.InitEditModeCtrls(this.EbObject);
-        commonO.Current_obj = this.EbObject;
-    }
-    if (this.EbObject === null) {
-        if (builderType === 0)
-            this.rootContainerObj = new EbObjects.EbWebForm(formid);
-        else if (builderType === 12)
-            this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
-        commonO.Current_obj = this.rootContainerObj;
-        this.EbObject = this.rootContainerObj;
-    }
-    //if (builderType === 1)
-    //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
-    //if (builderType === 0)
-    //    this.rootContainerObj = new EbObjects.EbWebForm(formid);
-    //else if (builderType === 12)
-    //    this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
-    //else if (builderType === 13)
-    //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
-    //else if (builderType === 14)
-    //    this.rootContainerObj = new EbObjects.UserControlObj(formid);
-    //else if (builderType === 3)
-    //    this.rootContainerObj = new EbObjects.ReportObj(formid);
-
-    this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
-    this.curControl = null;
-    this.drake = null;
-
-    //this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
 
 
     // need to change
@@ -56,6 +26,74 @@
     this.CurRowCount = 2;
     this.CurColCount = 2;
     this.movingObj = {};
+    
+    this.controlOnFocus = function (e) {
+        if (e.target.id ==="form-buider-form") {
+            this.curControl = $(e.target);
+            this.CreatePG(this.rootContainerObj);
+            return;
+        }
+        else
+            this.curControl = $(e.target).closest(".Eb-ctrlContainer");
+        var id = this.curControl.attr("id");
+        e.stopPropagation();
+        this.curControl.children('.ctrlHead').show();
+        this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
+        this.CurColCount = $(e.target).val();
+        //  this.PGobj.ReadOnly();
+    };
+
+    this.InitEditModeCtrls = function (editModeObj) {
+        this.rootContainerObj = editModeObj;
+        $(".Eb-ctrlContainer").each(function (i, el) {
+            this.initCtrl(el);
+        }.bind(this));
+        setTimeout(function () {
+            Proc(editModeObj, this.rootContainerObj);
+        }.bind(this), 1000);
+    };
+
+    this.initCtrl = function (el) {
+        var $el = $(el);
+        var type = $el.attr("ctype").trim();
+        var id = type + (this.controlCounters[type + "Counter"])++;
+        $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+        $el.on("focus", this.controlOnFocus.bind(this));
+        $el.attr("eb-type", type);
+        $el.attr("eb-type", type).attr("id", id);
+    };
+    
+    if (this.EbObject){
+        this.InitEditModeCtrls(this.EbObject);
+        commonO.Current_obj = this.EbObject;
+    }
+    if (this.EbObject === null) {
+        if (builderType === 0)
+            this.rootContainerObj = new EbObjects.EbWebForm(formid);
+        else if (builderType === 12)
+            this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
+        commonO.Current_obj = this.rootContainerObj;
+        this.EbObject = this.rootContainerObj;
+    }
+    //if (builderType === 1)
+    //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
+    if (builderType === 0)
+        this.rootContainerObj = new EbObjects.EbWebForm(formid);
+    //else if (builderType === 12)
+    //    this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
+    //else if (builderType === 13)
+    //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
+    //else if (builderType === 14)
+    //    this.rootContainerObj = new EbObjects.UserControlObj(formid);
+    //else if (builderType === 3)
+    //    this.rootContainerObj = new EbObjects.ReportObj(formid);
+
+    this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
+    this.curControl = null;
+    this.drake = null;
+
+    //this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
+
 
     //this.save = function () {
     //    if (this.rootContainerObj.Name.trim() === '') {
@@ -134,22 +172,6 @@
             return true;
         }
 
-    };
-
-    this.controlOnFocus = function (e) {
-        if ($(e.target).hasClass("form-buider-form")) {
-            this.curControl = $(e.target);
-            this.CreatePG(this.rootContainerObj);
-            return;
-        }
-        else
-            this.curControl = $(e.target).closest(".Eb-ctrlContainer");
-        var id = this.curControl.attr("id");
-        e.stopPropagation();
-        this.curControl.children('.ctrlHead').show();
-        this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
-        this.CurColCount = $(e.target).val();
-      //  this.PGobj.ReadOnly();
     };
 
     this.makeTdsDropable = function () {
@@ -333,24 +355,7 @@
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-    this.initCtrl = function (el) {
-        var $el = $(el);
-        var type = $el.attr("ctype").trim();
-        var id = type + (this.controlCounters[type + "Counter"])++;
-        $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-        $el.on("focus", this.controlOnFocus.bind(this));
-        $el.attr("eb-type", type);
-        $el.attr("eb-type", type).attr("id", id);
-    };
-
-    this.InitEditModeCtrls = function (editModeObj) {
-        $(".Eb-ctrlContainer").each(function (i, el) {
-            this.initCtrl(el);
-        }.bind(this));
-        setTimeout(function () {
-            Proc(editModeObj, this.rootContainerObj);
-        }.bind(this), 1000);
-    };
+    
 
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
@@ -376,6 +381,7 @@
             RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
+            commonO.Current_obj = this.PropsObj;
         }
     };
     this.Init();

@@ -1,4 +1,7 @@
-﻿.my-container {
+﻿.closebtn{
+    cursor:pointer;
+}
+.my-container {
     background-color: #2b95a8;
     width: 100%;
     height: 612px;
@@ -13,7 +16,7 @@
 .sub-windows {
     background-color: white;
     float: none;
-    //border: 1px solid #808080;
+    border: 1px solid #808080;
     display: inline-block;
     height: calc(100vh - 87px);
     width: 100%;
@@ -66,8 +69,8 @@
 
 .min-btn {
     width: 100%;
-    height: 30px;
-    border-bottom: 1px solid #e7e7e7;
+    height: 15px;
+    //border-bottom: 1px solid #e7e7e7;
 }
 
  .toggled {

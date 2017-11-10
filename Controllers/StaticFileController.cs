@@ -154,7 +154,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UploadDPAsync(int i, string userid)
+        public async Task<JsonResult> UploadDPAsync(int i,string base64)
         {
             JsonResult resp = null;
             string Id = string.Empty;
@@ -164,9 +164,8 @@ namespace ExpressBase.Web.Controllers
                 var req = this.HttpContext.Request.Form;
                 UploadImageRequest uploadImageRequest = new UploadImageRequest();
                 uploadImageRequest.ImageInfo = new FileMeta();
-
-                uploadImageRequest.IsAsync = false;
-
+                
+                uploadImageRequest.IsAsync = false;              
                 foreach (var formFile in req.Files)
                 {
                     if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split('.')[1]))
@@ -181,9 +180,9 @@ namespace ExpressBase.Web.Controllers
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
 
                             uploadImageRequest.ImageByte = myFileContent;
-                        }
+                        }                    
 
-                        uploadImageRequest.ImageInfo.FileType = "jpg";
+                uploadImageRequest.ImageInfo.FileType = "png";
                         uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}_actual.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 

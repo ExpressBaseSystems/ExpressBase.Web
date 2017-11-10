@@ -114,6 +114,7 @@
 .msg-wraper-bot .btn {
     margin: 1px 1px;
     width: 100%;
+    min-width: 222px;
     margin-bottom: 2px;
 }
 
@@ -124,4 +125,21 @@
     outline: none;
     margin-left: 10px;
     background-color: transparent;
+}
+.chat-ctrl-cont .Eb-ctrlContainer {
+    width: 235px;
+    display: inline-block;
+}
+
+.chat-ctrl-cont .btn {
+    font-size: 13px;
+    padding: 12px 0px;
+    width: 35px;
+    min-width: 25px;
+    border-radius: 0px 4px 4px 0px;
+    vertical-align: top;
+}
+
+.chat-ctrl-cont {
+    width: 272px;
 }

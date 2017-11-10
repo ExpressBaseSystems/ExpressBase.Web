@@ -26,9 +26,10 @@
         $(document).on('ready', function () {
 
             $("#input-44").fileinput({
-                uploadUrl: '/StaticFile/UploadImageAsync',
+                uploadUrl: '/StaticFile/UploadDPAsync',
                 uploadTitle: 'Photo',
                 uploadAsync: true,
+                initialPreview: '',
                 maxFilePreviewSize: 10240
             });
 

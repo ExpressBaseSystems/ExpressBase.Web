@@ -10,6 +10,9 @@
     this.ssurl = ssurl;
     this.ControlCollection = {};
     this.tabchangeFlag = false;
+    this.alertMsg = null;
+    this.alertType = null;
+    this.flagRun = false;
     this.messg = new EbAlert(
         {
             id:"dshbrd_alert",
@@ -26,14 +29,42 @@
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
     }
 
-    this.ShowMessage = function (msg, typ) {
+    this.ShowMessage = function (msg, typ, data) {
+        this.alertMsg = msg;
+        this.alertType = typ;
+        this.ver_Refid = data
+        this.UpadateTab();
+    };
+
+    this.UpadateTab = function (e) {
+        $.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
+            .done(this.UpadateTab_VersionCode_success.bind(this));
+    };
+
+    this.UpadateTab_VersionCode_success = function (data) {
+        this.Current_obj = JSON.parse(data);
+        $.post('../Eb_Object/CallObjectEditor', { _dsobj: data, _tabnum: this.tabNum, objtype: this.ObjectType, _refid: this.ver_Refid, _ssurl: this.ssurl })
+            .done(this.UpdateTab_CallObjectEditor_success.bind(this));
+    };
+
+    this.UpdateTab_CallObjectEditor_success = function (data) {
+        var getNav = $("#versionNav li.active a").attr("href");
+        $(getNav).attr("data-id", this.ver_Refid);
+        $("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
+        $("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
+        $('#vernav' + this.tabNum).empty().append(data);
+
+        if (this.flagRun) {
+            var target = $("#versionNav li.active a").attr("href");
+            this.ObjCollection[target].SaveSuccess();
+        }
         this.messg.alert({
             head: "alert",
-            body: msg,
-            type: typ
+            body: this.alertMsg,
+            type: this.alertType
         })
-        $.LoadingOverlay("hide");
         $('#close_popup').trigger('click');
+        $.LoadingOverlay("hide");
     };
 
     this.LoadStatusPage = function () {
@@ -158,13 +189,15 @@
         var Refid2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').val();
         var v1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').attr("data-tokens");
         var v2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').attr("data-tokens");
+        var vernum1;
+        var vernum2;
         if (v1 > v2) {
-            var vernum1 = v1;
-            var vernum2 = v2;
+            vernum1 = v1;
+            vernum2 = v2;
         }
         else {
-            var vernum1 = v2;
-            var vernum2 = v1;
+            vernum1 = v2;
+            vernum2 = v1;
         }
         if (Refid2 === "Select Version") {
             alert("Please Select A Version");

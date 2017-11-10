@@ -26,7 +26,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             commonO.Current_obj = this.EbObject;
         }
         else {
-            this.GetFD();
+            if(this.EbObject.FilterDialogRefId !== "")
+                this.GetFD();
         }
         this.GenerateButtons();
 
@@ -145,21 +146,27 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //    this.Find_parameters(true, false, needRun);
     //}
     this.RunDs = function () {
+        commonO.flagRun = true;
         $.LoadingOverlay("show");
-        if (this.EbObject.VersionNumber.slice(-1) ==="w") {
-            commonO.Save();
+        if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
+            if (this.EbObject.VersionNumber.slice(-1) === "w") {
+               commonO.Save();
+            }
+            else {
+                this.SaveSuccess();
+            }
         }
-        //if (this.Parameter_Count === 0) {
-        //    this.Save(false);
-        //    this.Object_String_WithVal = "";
-        //    // this.DrawTable();
-        //}
-        //else {
-        this.CountParameters(true, true, true);
-        //}
+        else
+            commonO.Save();
+    };
+
+    this.SaveSuccess = function () {
+        if (commonO.flagRun)
+            this.CountParameters();
     };
 
     this.CountParameters = function () {
+        this.flagRun = false;
         var result = window["editor" + tabNum].getValue().match(/\@\w+/g);
         var filterparams = [];
         if (result !== null) {

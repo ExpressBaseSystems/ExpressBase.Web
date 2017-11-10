@@ -72,6 +72,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public IActionResult Eb_ChatFormBuilder()
+        {
+            ViewBag.ObjType = this.HttpContext.Request.Query["objtype"];
+            return View();
+        }
+
         [HttpPost]
         public IActionResult Eb_formBuilder(int i, int objtype)
         {

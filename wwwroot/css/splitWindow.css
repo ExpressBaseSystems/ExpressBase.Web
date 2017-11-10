@@ -4,28 +4,28 @@
     height: 612px;
 }
 
-.dv .sub-windows-head {
+ .sub-windows-head {
         height: 30px;
         background-color: #489097;
         width: 100%;
     }
 
-.dv .sub-windows {
+.sub-windows {
     background-color: white;
     float: none;
     //border: 1px solid #808080;
     display: inline-block;
-    height: inherit;
+    height: calc(100vh - 87px);
     width: 100%;
 }
 
-.dv .head-btn {
+.head-btn {
     border: none;
     background-color: #489097;
     color: white;
 }
 
-.dv .fd {
+ .fd {
     background-color: white;
     height: inherit;
     //border-right: 1px solid;
@@ -50,7 +50,7 @@
     background-color: white;
 }
 
-.dv .cont-wnd {
+ .cont-wnd {
     overflow-x: scroll;
     white-space: nowrap;
     height: inherit;
@@ -70,7 +70,7 @@
     border-bottom: 1px solid #e7e7e7;
 }
 
-.dv .toggled {
+ .toggled {
     margin-left: -230px;
     z-index: 100;
 }
@@ -80,17 +80,21 @@
     z-index: 100;
 }
 
-.dv .sub-w {
+ .sub-w {
     width: 100%;
     height: inherit;
     background-color: #2b95a8;
     display: inline-block;
 }
 
-.dv .rotated {
+ .rotated {
     -webkit-transform: rotate(180deg); /* Chrome, Safari 3.1+ */
     -moz-transform: rotate(180deg); /* Firefox 3.5-15 */
     -ms-transform: rotate(180deg); /* IE 9 */
     -o-transform: rotate(180deg); /* Opera 10.50-12.00 */
     transform: rotate(180deg); /* Firefox 16+, IE 10+, Opera 12.10+ */
+}
+.splitdiv_parent {
+    white-space: nowrap;
+    margin-top: 87px;
 }

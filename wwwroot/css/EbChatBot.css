@@ -13,7 +13,8 @@
 
 .eb-chatBox {
     overflow-y: auto;
-    height: 88%;
+    height: 95%;
+    padding-bottom: 30px;
     background-color: #e8e8e8;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23bdbdbd' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
 }
@@ -36,7 +37,6 @@
 
 .msg-wraper-user, .msg-wraper-bot {
     background-color: white;
-    margin: 6px 10px;
     width: fit-content;
     text-align: left;
     font-size: 12px;
@@ -47,10 +47,14 @@
 
 .msg-wraper-user {
     border-radius: 4px 7px 0px 7px;
+    margin: 6px 8px 6px 50px;
+    background-color: #fffffc;
 }
 
 .msg-wraper-bot {
     border-radius: 7px 4px 7px 0px;
+    margin: 6px 50px 6px 8px;
+    background-color: #fcfdff;
 }
 
 .msg-cont-user {
@@ -77,36 +81,65 @@
 }
 
 .eb-chat-inp-cont {
-    background-color: white;
-    height: 40px;
-    padding: 3px;
-    border-radius: 0px 0px 3px 3px;
+    height: 29px;
+    position: absolute;
+    padding: 2px;
     background-color: #fafaff;
+    border-radius: 20px;
+    bottom: 0px;
+    width: calc(100% - 3px);
+    margin: 3px 2px;
+    border: solid 1px #dedede;
 }
 
 .eb-chat-head {
     background-color: #428bca;
     border-radius: 3px 3px 0px 0px;
     color: white;
-    padding: 7px 15px;
+    padding: 5px 15px;
 }
 
     .eb-chat-head span {
         font-weight: bold;
     }
 
-.eb-chat-inp-cont .btn {
-    border-radius: 2px;
-    padding: 4px 18px;
+.eb-chat-inp-cont .btn, .msg-wraper-bot .btn {
+    border-radius: 15px;
+    padding: 2px 12px;
+    color:white;
     background: #428bca;
     border: none;
+    outline: none;
 }
+.msg-wraper-bot .btn {
+    margin: 1px 1px;
+    width: 100%;
+    min-width: 222px;
+    margin-bottom: 2px;
+}
+
 .msg-inp {
     border: none;
     border-bottom: 2px solid #675dff;
-    width: calc(100% - 62px);
-    padding: 4px;
+    width: calc(100% - 48px);
     outline: none;
-    margin: 0px 3px;
-    background-color: #fafaff;
+    margin-left: 10px;
+    background-color: transparent;
+}
+.chat-ctrl-cont .Eb-ctrlContainer {
+    width: 235px;
+    display: inline-block;
+}
+
+.chat-ctrl-cont .btn {
+    font-size: 13px;
+    padding: 20px 0px;
+    width: 35px;
+    min-width: 25px;
+    border-radius: 0px 4px 4px 0px;
+    vertical-align: top;
+}
+
+.chat-ctrl-cont {
+    width: 272px;
 }

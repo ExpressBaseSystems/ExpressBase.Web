@@ -28,7 +28,7 @@
     this.movingObj = {};
     
     this.controlOnFocus = function (e) {
-        if ($(e.target).hasClass("form-buider-form")) {
+        if (e.target.id ==="form-buider-form") {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
             return;
@@ -77,8 +77,8 @@
     }
     //if (builderType === 1)
     //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
-    //if (builderType === 0)
-    //    this.rootContainerObj = new EbObjects.EbWebForm(formid);
+    if (builderType === 0)
+        this.rootContainerObj = new EbObjects.EbWebForm(formid);
     //else if (builderType === 12)
     //    this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
     //else if (builderType === 13)
@@ -381,6 +381,7 @@
             RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
+            commonO.Current_obj = this.PropsObj;
         }
     };
     this.Init();

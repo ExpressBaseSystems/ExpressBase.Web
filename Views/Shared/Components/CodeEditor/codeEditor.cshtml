@@ -3,16 +3,16 @@
     var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
 }
 
-<div id='paramdiv@(ViewBag.tabnum)' class='col-md-2'>
+<div id='paramdiv@(ViewBag.tabnum)' class='col-md-2 param-div'>
     <div class='pgHead'>
         <h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6>
         <div class="icon-cont  pull-right" id='close_paramdiv'><i class="fa fa-times" aria-hidden="true"></i></div>
     </div>
 </div>
-<div class='col-md-8' id='codewindow@(ViewBag.tabnum)' style='margin:0;padding: 0; height:450px'>
+<div class='col-md-8 col-md-offset-2 code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
     <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
 </div>
-<div class='col-md-2'>
+<div class='col-md-2 col-md-offset-10 ds-prop'>
     <div id='dspropgrid@(ViewBag.tabnum)' class='pull-right' style='padding:0px'></div>
 </div>
 <script>
@@ -41,6 +41,17 @@
 </script>
 <style>
     .CodeMirror{
-        height:100%;
+    }
+    .ds-prop {
+        position: fixed;
+    }
+    .param-div {
+        position: fixed;
+    }
+    .CodeMirror-gutters {
+        z-index: 2;
+    }
+    .CodeMirror-gutter-wrapper {
+        z-index: 3;
     }
 </style>

@@ -51,7 +51,7 @@
     this.createContentWindow = function (id, type) {
         //$("#" + this.contBox).prepend("<div class='col-md-2 no-padd fd' id='" + this.sidediv + "'><div>");
 
-        $("#" + this.parent_div).append("<div class='sub-windows col-md-12' id= 'sub_window_dv" + id + "' tabindex= '1' eb- type = " + type + "> "
+        $("#" + this.parent_div).append("<div class='sub-windows' id= 'sub_window_dv" + id + "' tabindex= '1' eb- type = " + type + "> "
                
             + "<div class='col-md-2 padd-2 fd' id= 'sub_windows_sidediv_dv" + id + "' style= 'display:block'>"
                     + "</div>"

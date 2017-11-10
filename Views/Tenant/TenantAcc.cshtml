@@ -7,13 +7,16 @@
         margin-top: 29px;
         padding-left: 5px;
     }
+    .maindiv {
+        margin-top: 90px;
+    }
 </style>
 <script>
     $(document).ready(function () {
 
 
         $('#newAcc').click(function () {
-            var addaccountwzd = new EbWizard("https://expressbase.org/Tenant/AddAccount2", "https://expressbaseservicestack.azurewebsites.net/infra/", 800, 600, "Add Account", "fa-database");
+            window.open('TenantAddAccount','_self');
         });
         $('.eb_acc_dbcon_btn').click(function () {
 
@@ -65,12 +68,8 @@
 </script>
 @{
     List<List<object>> list = new List<List<object>>();
-    list = ViewBag.dict;
-
-
-
-    
-        <div class="row center-block">
+    list = ViewBag.dict;  
+        <div class="row center-block maindiv">
             <div class="form-inline">
                 <label style="font-size:20px;">My Accounts</label>
                 <button class="btn btn-primary" id="newAcc">New Account</button>

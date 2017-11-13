@@ -17,6 +17,26 @@ namespace ExpressBase.Web.Controllers
         public StaticFileController(IServiceClient _ssclient) : base(_ssclient) { }
 
         // GET: /<controller>/
+
+        [HttpGet("static/dp/{filename}")]
+        public FileStream GetDP(string filename)
+        {
+            if (filename.StartsWith("dp") && filename.Split('.').Length == 2)
+            {
+                filename = filename.Split('.')[0] + ".jpg";
+                string sFilePath = string.Format("StaticFiles/{0}/dp/{1}", ViewBag.cid, filename);
+                if (!System.IO.File.Exists(sFilePath))
+                {
+                    byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = "jpg" } });
+                    EbFile.Bytea_ToFile(fileByte, sFilePath);
+                }
+                HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=604800";
+                return System.IO.File.OpenRead(sFilePath);
+            }
+            else
+                return null;
+        }
+
         [HttpGet("static/{filename}")]
         public FileStream GetFile(string filename)
         {
@@ -182,15 +202,15 @@ namespace ExpressBase.Web.Controllers
                             uploadImageRequest.ImageByte = myFileContent;
                         }                    
 
-                uploadImageRequest.ImageInfo.FileType = "png";
-                        uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}_actual.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                        uploadImageRequest.ImageInfo.FileType = "jpg";
+                        uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         Id = this.ServiceClient.Post<string>(uploadImageRequest);
                         if(ViewBag.cid == "expressbase")
-                            url = string.Format("http://localhost:5000/static/dp_{0}_actual.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                            url = string.Format("~/static/dp/dp_{0}.jpg", ViewBag.UId);
                         else
-                        url = string.Format("http://{0}.localhost:5000/static/dp_{1}_actual.{2}", ViewBag.cid, ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                        url = string.Format("http://{0}.localhost:5000/static/dp_{1}.{2}", ViewBag.cid, ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
                     }
                     else url = "Error Because of the file type";
                     resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });

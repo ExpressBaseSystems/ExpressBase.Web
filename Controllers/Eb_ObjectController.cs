@@ -53,6 +53,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Patchv = element.PatchVersionNumber;
                     ViewBag.Tags = element.Tags;
                     ViewBag.AppId = element.AppId;
+                    ViewBag.DashboardTiles = element.Dashboard_Tiles;
 
                     if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                     {
@@ -89,6 +90,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Workingcopy = new string[0];
                 ViewBag.Tags = string.Empty;
                 ViewBag.AppId = 0;
+                ViewBag.DashboardTiles = null;
             }
             if (type == EbObjectType.DataSource)
             {
@@ -434,11 +436,32 @@ namespace ExpressBase.Web.Controllers
             return res.RefId;
         }
 
-        //public IActionResult UpdateObjectDashboard(string refid)
-        //{
-          
-        //    return ViewComponent("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId })
-        //}
+        public IActionResult UpdateObjectDashboard(string refid)
+        { var resultlist = this.ServiceClient.Get<EbObjectUpdateDashboardResponse>(new EbObjectUpdateDashboardRequest { Refid = refid });
+            var rlist = resultlist.Data;
+            string _objname = "";
+            string _status = "";
+            string _vernum = "";
+            int? _major = null;
+            int? _minor = null;
+            int? _patch = null;
+            string[] _workcopies = { };
+            string _tags = "";
+            int? _appid = null;
+            foreach (var element in rlist)
+            {
+                _objname = element.Name;
+                _status = element.Status;
+                _vernum = element.VersionNumber;
+                _major = element.MajorVersionNumber;
+                _minor = element.MinorVersionNumber;
+                _patch = element.PatchVersionNumber;
+                _workcopies = element.Wc_All;
+                _tags = element.Tags;
+                _appid = element.AppId;
+            }
+            return ViewComponent("ObjectDashboard", new { refid = refid, objname = _objname, status = _status, vernum= _vernum, major = _major, minor = _minor, patch = _patch, workcopies = _workcopies, _tags =_tags, _appId = _appid });
+        }
 
     }
 }

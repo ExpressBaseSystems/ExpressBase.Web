@@ -229,6 +229,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.PcFlag = false;
     this.login = login;
     this.relatedObjects = null;
+    this.FD = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -271,16 +272,18 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else
             this.EbObject = dvcontainerObj.currentObj;
         if (text.indexOf("filterBox") === -1) {
+            this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
             $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-8").addClass("col-md-10");
         }
         else {
+            this.FD = true;
             $(sideDivId).css("display", "inline");
             $.LoadingOverlay("hide");
             $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-10").addClass("col-md-8");
         }
-        $(subDivId).focusin();
+        $(subDivId).focus();
     }.bind(this);
 
     if (this.EbObject === null) {
@@ -320,10 +323,18 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
         $.event.props.push('dataTransfer');
         this.createChartDivs();
-        //if (!this.flagAppendColumns) {
         this.appendColumns();
         this.appendXandYAxis();
-        //}
+        $("#ppgrid_" + this.tableId).css("display", "none");
+
+        if (this.FD) {
+            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
+            $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
+        }
+        else {
+            $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+        }
+
         if (this.data) {
             this.drawGraphHelper(this.data)
         }
@@ -396,6 +407,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             "<button id='btnColumnCollapse" + this.tableId + "' class='btn' style='display: inline-block;'>" +
             "<i class='fa fa-cog' aria-hidden='true'></i>" +
             "</button>");
+        if (this.FD) {
+            $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
+        }
+        $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'> <i class='fa fa-th' aria-hidden='true'></i></button>")
+
         if (this.EbObject !== null && this.EbObject.Type !== null)
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.EbObject.Type.trim() + "&nbsp;<span class = 'caret'></span>");
         this.bindEvents();
@@ -406,6 +422,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
         $("#graphDropdown_tab" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
         $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
+        $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
+        $("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
     }
 
     this.appendColumns = function () {
@@ -677,7 +695,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.GdataDSiterFn = function (j, obj) {
-
         var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim().toLowerCase();
         if (ty == "areafilled") {
             this.gdata.datasets[j].fill = true;
@@ -689,13 +706,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.drawGraph = function () {
         var canvas = document.getElementById("myChart" + this.tableId);
+
         this.chartApi = new Chart(canvas, {
             type: this.columnInfo.Type.trim().toLowerCase(),
             data: this.gdata,
             options: this.goptions,
         });
-
-        //this.modifyChart();
+        
+        this.collapseGraph();
         $.LoadingOverlay("hide");
     };
 
@@ -783,6 +801,40 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         else
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
+    };
+  
+    this.toggleFilterdialog = function () {
+        if ($("#sub_windows_sidediv_" + this.tableId).css("display") === "none") {
+            $("#sub_windows_sidediv_" + this.tableId).css("display", "inline");
+            if ($("#content_" + this.tableId).hasClass("col-md-12"))
+                $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
+            else
+                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
+        }
+        else {
+            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
+            if ($("#content_" + this.tableId).hasClass("col-md-10"))
+                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            else
+                $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
+        }
+    };
+
+    this.togglePPGrid = function () {
+        if ($("#ppgrid_" + this.tableId).css("display") === "none") {
+            $("#ppgrid_" + this.tableId).css("display", "inline");
+            if ($("#content_" + this.tableId).hasClass("col-md-12"))
+                $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
+            else
+                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
+        }
+        else {
+            $("#ppgrid_" + this.tableId).css("display", "none");
+            if ($("#content_" + this.tableId).hasClass("col-md-10"))
+                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            else
+                $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
+        }
     };
 
     this.modifyChart = function () {

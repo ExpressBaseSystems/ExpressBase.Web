@@ -190,17 +190,15 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.createPage = function (PageContainer) {
-        PageContainer.append("<div class='page' id='page' style='position:relative;width:" + this.width + ";height:" + this.height + "'>")
-        $('.title').show();
+        PageContainer.append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'>`);
         this.pageSplitters();
     };
 
-    this.createHeaderBox = function () {
-        $headersection = $("<div class='headersections' style='height:" + this.height + ";'></div>");
-        $("#PageContainer").append($headersection);
-        $("#PageContainer").append("<div class='multiSplit' style='height:" + this.height + ";'></div>");
+    this.createHeaderBox = function () {        
+        $("#PageContainer").append(`<div class='headersections' style='height:${this.height};'></div>
+                                    <div class='multiSplit' id='multiSplit' style='height:${ this.height};'></div>`);
         for (var i = 0; i < 5; i++) {
-            $(".multiSplit").append("<div class='multiSplitHbox' data_val='" + i + "' eb-type='MultiSplitBox' id='box" + i + "' style='width: 100%;'></div>");
+            $("#multiSplit").append(`<div class='multiSplitHbox' data_val='${i}' eb-type='MultiSplitBox' id='box${i }' style='width: 100%;'></div>`);
         }
     };
 

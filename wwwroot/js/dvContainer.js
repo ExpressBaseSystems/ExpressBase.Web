@@ -21,14 +21,15 @@ var DvContainerObj = function (settings) {
         $("#prev").off("click").on("click", this.gotoPrevious.bind(this));
         $("#first").off("click").on("click", this.gotoFirst.bind(this));
         $("#last").off("click").on("click", this.gotoLast.bind(this));
-        $("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
+        //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#btnGo" + counter).trigger("click");
     };
 
 
     this.btnGoClick = function () {
-        
-        $("#Save_btn").css("display", "inline");
+        $("#prev").css("display", "none");
+        $("#next").css("display", "none");
+        $("#Save_btn").css("display", "none");
 
         focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + counter;
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
@@ -66,14 +67,6 @@ var DvContainerObj = function (settings) {
         }
         console.log("xxxxx", this.dvcol[focusedId]);
         //console.log("ccccc", dvcontainerObj.currentObj);
-        if (counter >= 1) {
-            $("#prev").css("display", "inline-block");
-            $("#next").css("display", "inline-block");
-            if (counter > 2) {
-                $("#first").css("display", "inline-block");
-                $("#last").css("display", "inline-block");
-            }
-        }
     };
 
     this.gotoNext = function () {
@@ -243,6 +236,70 @@ var DvContainerObj = function (settings) {
         else
             $($("#" + focusedId).children()[2]).removeClass("col-md-12").addClass("col-md-10");
 
+    };
+
+    this.drawDv = function (e) {
+        this.dvRefid = $(e.target).attr("data-refid");
+        dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+        $.LoadingOverlay("show");
+        $.ajax({
+            type: "POST",
+            url: "../DV/getdv",
+            data: { refid: this.dvRefid, objtype: $(e.target).attr("objtype") },
+            success: function (dvObj) {
+                counter++;
+                dvObj = JSON.parse(dvObj);
+                dvcontainerObj.currentObj = dvObj;
+                dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
+                //dvcontainerObj.dvRefid = dvObj.Refid;
+                $.LoadingOverlay("hide");
+                dvcontainerObj.btnGoClick();
+            }
+        });
+    }.bind(this);
+
+    this.appendRelatedDv = function (tid) {
+        $("#obj_icons").prepend("<div class='dropdown' id='Related" + tid +"' style='display: inline-block;padding-top: 1px;'>" +
+            "<button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>" +
+            "<span class='caret'></span>" +
+            "</button>" +
+            "<ul class='dropdown-menu'>" +
+            "</ul>" +
+            "</div>");
+        $.ajax({
+            type: "POST",
+            url: "../DV/getAllRelatedDV",
+            data: { refid: this.currentObj.DataSourceRefId },
+            success: this.RealtedajaxSuccess.bind(this,tid)
+        });
+        //$("#Related" + this.tableId + " .dropdown-menu ul")
+    };
+
+    this.RealtedajaxSuccess = function (tid, DvList) {
+        //var tid = "dv" + this.currentObj.EbSid + "_" + counter;
+        $("#Related" + tid + " .dropdown-menu").empty();
+        $.each(DvList, function (i, obj) {
+            $("#Related" + tid + " .dropdown-menu").append("<li><a href='#' data-refid='" + obj.refId + "' objtype='" + obj.ebObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.name + "</a></li>");
+
+        });
+        $("#Related" + tid + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
+    }.bind(this);
+
+    this.createGoButton = function () {
+        $("#obj_icons").empty();
+        $("#obj_icons").append(`<button id='btnGo${counter}' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>`);
+    };
+
+    this.check4Navigation = function () {
+        $("#Save_btn").css("display", "inline");
+        if (counter >= 1) {
+            $("#prev").css("display", "inline-block");
+            $("#next").css("display", "inline-block");
+            //if (counter > 2) {
+            //    $("#first").css("display", "inline-block");
+            //    $("#last").css("display", "inline-block");
+            //}
+        }
     };
 
     this.init();

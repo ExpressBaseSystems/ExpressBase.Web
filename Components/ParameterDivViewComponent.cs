@@ -11,8 +11,11 @@ namespace ExpressBase.Web.Components
     {
         public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog paramDiv)
         {
-            ViewBag.HtmlHead = paramDiv.GetHead();
-            ViewBag.HtmlBody = paramDiv.GetHtml();
+            if (paramDiv != null)
+            {
+                ViewBag.HtmlHead = paramDiv.GetHead();
+                ViewBag.HtmlBody = paramDiv.GetHtml();
+            }
 
             return View();
         }

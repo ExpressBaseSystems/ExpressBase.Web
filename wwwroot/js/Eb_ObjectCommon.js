@@ -91,6 +91,14 @@
         $.LoadingOverlay("hide");
     };
 
+    this.UpdateDashboard = function () {
+        $.post("Eb_object/UpdateObjectDashboard", { refid: this.ver_Refid },
+            function (data) {
+                $('#object_Dashboard_main').empty().append(data);
+                commonObj.init();     
+            }
+        );
+    };
     this.LoadStatusPage = function () {
         $.LoadingOverlay("show");
         this.tabNum++;
@@ -135,8 +143,6 @@
 
     this.versionHistoryInner = function (result) {
         $("#vernav" + this.tabNum).append(result);
-        //var scrollPos = $('#versionTab').offset().top;
-        //$(window).scrollTop(scrollPos);
         $("#vernav" + this.tabNum + " .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
         $.LoadingOverlay("hide");
     };

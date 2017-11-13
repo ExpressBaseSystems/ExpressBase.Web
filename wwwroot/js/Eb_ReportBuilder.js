@@ -1,20 +1,24 @@
 ﻿var pages = {
-    A4: {
+    2: {
         width: '21cm',
         height: '29.7cm'
-    },
-    A3: {
+    },//A4
+    3: {
         width: '29.7cm',
         height: '42cm'
-    },
+    },//A3
     Letter: {
         width: '21.59cm',
         height: '27.94cm'
-    },
-    A5: {
+    },//letter
+    1: {
         width: '14.8cm',
         height: '21cm'
-    }
+    },//A5
+    4: {
+        width: '21.59cm',
+        height: '27.94cm'
+    },//A2
 };
 var ruler = {
     px: {
@@ -47,7 +51,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.RefId = refid;
     this.height = null;
     this.width = null;
-    this.type = "A4";
+    this.type = 2;
     this.rulertype = "cm";
     this.copyStack = null;
     this.copyORcut = null;
@@ -190,17 +194,15 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.createPage = function (PageContainer) {
-        PageContainer.append("<div class='page' id='page' style='position:relative;width:" + this.width + ";height:" + this.height + "'>")
-        $('.title').show();
+        PageContainer.append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'>`);
         this.pageSplitters();
     };
 
-    this.createHeaderBox = function () {
-        $headersection = $("<div class='headersections' style='height:" + this.height + ";'></div>");
-        $("#PageContainer").append($headersection);
-        $("#PageContainer").append("<div class='multiSplit' style='height:" + this.height + ";'></div>");
+    this.createHeaderBox = function () {        
+        $("#PageContainer").append(`<div class='headersections' style='height:${this.height};'></div>
+                                    <div class='multiSplit' id='multiSplit' style='height:${ this.height};'></div>`);
         for (var i = 0; i < 5; i++) {
-            $(".multiSplit").append("<div class='multiSplitHbox' data_val='" + i + "' eb-type='MultiSplitBox' id='box" + i + "' style='width: 100%;'></div>");
+            $("#multiSplit").append(`<div class='multiSplitHbox' data_val='${i}' eb-type='MultiSplitBox' id='box${i }' style='width: 100%;'></div>`);
         }
     };
 
@@ -227,51 +229,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.headerScaling = function () {
         var _this = this;
-        Split(this.sectionArray, {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
-            minSize: 33,
-            gutterSize: 5,
-            onDrag: function (e) {
-                $('#box0,#rptheadHbox').css("height", $('#rpthead').height());
-                $('#box1,#pgheadHbox').css("height", $('#pghead').height());
-                $('#box2,#detailHbox').css("height", $('#detail').height());
-                $('#box3,#pgfooterHbox').css("height", $('#pgfooter').height());
-                $('#box4,#rptfooterHbox').css("height", $('#rptfooter').height());
-                _this.splitterOndragFn();
-            }
-        });
-        Split(['#rptheadHbox', '#pgheadHbox', '#detailHbox', '#pgfooterHbox', '#rptfooterHbox'], {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
-            minSize: 33,
-            gutterSize: 5,
-            onDrag: function (e) {
-                $('#box0,#rpthead').css("height", $('#rptheadHbox').height());
-                $('#box1,#pghead').css("height", $('#pgheadHbox').height());
-                $('#box2,#detail').css("height", $('#detailHbox').height());
-                $('#box3,#pgfooter').css("height", $('#pgfooterHbox').height());
-                $('#box4,#rptfooter').css("height", $('#rptfooterHbox').height());
-                _this.splitterOndragFn();
-            }
-        });
-        Split(['#box0', '#box1', '#box2', '#box3', '#box4'], {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
-            minSize: 33,
-            gutterSize: 5,
-            onDrag: function (e) {
-                $('#rptheadHbox,#rpthead').css("height", $('#box0').height());
-                $('#pgheadHbox,#pghead').css("height", $('#box1').height());
-                $('#detailHbox,#detail').css("height", $('#box2').height());
-                $('#pgfooterHbox,#pgfooter').css("height", $('#box3').height());
-                $('#rptfooterHbox,#rptfooter').css("height", $('#box4').height());
-                _this.splitterOndragFn();
-            }
-        });
+        this.repExtern.headerSecSplitter(this.sectionArray);
+        this.repExtern.multisplit();
+        this.repExtern.box();        
         $("#page").children().not(".gutter").each(this.setFirstSubDiv.bind(this));
         $(".multiSplit").children().not(".gutter").each(this.setFirstMsSubBoxDiv.bind(this));
     };//page sections splited using split.js
@@ -324,13 +284,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
-            Split(this.splitarray, {
-                direction: 'vertical',
-                cursor: 'row-resize',
-                minSize: 30,
-                gutterSize: 5,
-                onDrag: this.splitterOndragFn.bind(this)
-            });
+            this.repExtern.splitGeneric(this.splitarray);           
             $.each($("#" + id).siblings().not(".gutter"), this.setSectionHeight.bind(this, id));
             this.multiSplitBoxinner();
         }
@@ -376,26 +330,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 return false;
         });
         if (temp1 !== null) {
-            Split(temp1, {
-                direction: 'vertical',
-                cursor: 'row-resize',
-                minSize: 30,
-                gutterSize: 5
-            });
+            this.repExtern.splitGeneric(temp1);            
         }
     };
-
-    this.splitterOndragFn = function () {
-        $('.multiSplit').children().not(".gutter").children().not(".gutter").each(function (i, obj1) {
-            $('.page').children().not(".gutter").children().not(".gutter").each(function (j, obj2) {
-                if ($(obj1).parent().attr("data_val") === $(obj2).parent().attr("data_val")) {
-                    if ($(obj1).index() === $(obj2).index()) {
-                        $(obj1).css("height", $(obj2).height());
-                    }
-                }
-            });
-        });
-    };//spliter ondrag func
 
     this.DragDrop_Items = function () {
         this.posLeft = null;
@@ -553,13 +490,20 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (this.copyStack === null) { alert('no item copied'); }
         else {
             var copy = this.copyStack;
-            var Objtype = $("#" + copy.EbSid).attr('eb-type');
-            var Objid = Objtype + (this.idCounter["Eb" + Objtype + "Counter"])++;
-            if (this.copyORcut === 'copy') { copy.EbSid = Objid; }
+            var Objid = null;
+            var Objtype = $("#" + copy.EbSid).attr('eb-type');          
+            if (this.copyORcut === 'copy') {
+                Objid = Objtype + (this.idCounter["Eb" + Objtype + "Counter"])++;
+                copy.EbSid = Objid;
+                copy.Name = Objid;
+            }
+            else if (this.copyORcut === 'cut') {
+                Objid = copy.EbSid;               
+            }
             copy.Top = action.originalEvent.pageY - $(selector.selector).offset().top;
             copy.Left = action.originalEvent.pageX - $(selector.selector).offset().left;
             $(selector.selector).append(copy.Html());
-            if (this.copyORcut === 'copy') { this.objCollection[Objid] = copy; }
+            this.objCollection[Objid] = copy;             
             this.RefreshControl(copy);
             this.copyStack = null;
             this.copyORcut = null;
@@ -583,6 +527,42 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
     this.contextMenuLeft = function (eType, selector, action, originalEvent) {
         $(selector.selector).css("text-align", "left");
+    };
+    this.lockControl = function (eType, selector, action, originalEvent) {
+        if (!$(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).addClass('locked').draggable('disable');
+        }
+        else if ($(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).addClass('locked').droppable({
+                disabled: true
+            });
+            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).addClass('locked').draggable('disable'); });
+            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
+            $('#' + locksymbDiv).append('<i class="fa fa-lock lock-icon" aria-hidden="true"></i>');
+            if ($(selector.selector).siblings().length === 0) {
+                $('#btn' + $(selector.selector).attr("data_val")).attr('disabled', 'disabled');
+            }
+            $(selector.selector).parent().next('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
+            $(selector.selector).parent().prev('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
+        }
+    };
+    this.unLockControl = function (eType, selector, action, originalEvent) {
+        if (!$(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).removeClass('locked').draggable('enable');
+        }
+        else if ($(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).removeClass('locked').droppable({
+                disabled: false
+            });
+            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).removeClass('locked').draggable('enable'); });
+            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
+            $('#' + locksymbDiv).children("i").remove();
+            if ($(selector.selector).siblings().length === 0) {
+                $('#btn' + $(selector.selector).attr("data_val")).removeAttr('disabled');
+            }
+            $(selector.selector).parent().next().css({ "cursor": "ns-resize", "pointer-events": "auto" });
+            $(selector.selector).parent().prev('.gutter').css({ "cursor": "ns-resize", "pointer-events": "auto" });
+        }
     };
 
     this.editElement = function (control) {
@@ -721,7 +701,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//commit
 
     this.setpageSize = function (obj) {
-        if (obj.PaperSize !== "Custom") {
+        if (obj.PaperSize !== 5) {
             this.height = pages[obj.PaperSize].height;
             this.width = pages[obj.PaperSize].width;
             $('.ruler,.rulerleft').empty();
@@ -730,7 +710,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $("#page").css({ "height": this.height, "width": this.width });
             this.type = obj.PaperSize;
         }
-        else if (obj.PaperSize === "Custom") {
+        else if (obj.PaperSize === 5) {
             if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
                 this.height = obj.CustomPaperHeight;
                 this.width = obj.CustomPaperWidth;
@@ -771,44 +751,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.rulertype = $(e.target).val();
         $('.ruler,.rulerleft').empty();
         this.ruler();
-    };
-
-    this.lockControl = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).addClass('locked').draggable('disable');
-        }
-        else if ($(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).addClass('locked').droppable({
-                disabled: true
-            });
-            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).addClass('locked').draggable('disable'); });
-            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
-            $('#' + locksymbDiv).append('<i class="fa fa-lock lock-icon" aria-hidden="true"></i>');
-            if ($(selector.selector).siblings().length === 0) {
-                $('#btn' + $(selector.selector).attr("data_val")).attr('disabled', 'disabled');
-            }
-            $(selector.selector).parent().next('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
-            $(selector.selector).parent().prev('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
-        }
-    };
-    this.unLockControl = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).removeClass('locked').draggable('enable');
-        }
-        else if ($(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).removeClass('locked').droppable({
-                disabled: false
-            });
-            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).removeClass('locked').draggable('enable'); });
-            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
-            $('#' + locksymbDiv).children("i").remove();
-            if ($(selector.selector).siblings().length === 0) {
-                $('#btn' + $(selector.selector).attr("data_val")).removeAttr('disabled');
-            }
-            $(selector.selector).parent().next().css({ "cursor": "ns-resize", "pointer-events": "auto" });
-            $(selector.selector).parent().prev('.gutter').css({ "cursor": "ns-resize", "pointer-events": "auto" });
-        }
-    };
+    };    
 
     this.minimap = function () {
         var previewPage = $('.page').minimap({
@@ -824,6 +767,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.init = function () {
+        this.repExtern = new ReportExtended();
         this.pg = new Eb_PropertyGrid("propGrid");
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbReport"]("Report1");
@@ -849,14 +793,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 this.idArray = []
                 $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
                 this.RefreshControl(obj);
-                Split(this.idArray, {
-                    direction: 'vertical',
-                    cursor: 'row-resize',
-                    sizes: this.sizeArray,
-                    minSize: 30,
-                    gutterSize: 5,
-                    onDrag: this.splitterOndragFn.bind(this)
-                });
+                this.repExtern.splitGeneric(this.idArray);                
             }
             else if (pname === "DataSourceRefId") {
                 this.getDataSourceColoums(obj.DataSourceRefId);
@@ -876,7 +813,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.RefreshControl(obj);
         }.bind(this);
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
-    };//report executioin start func
+    };//report execution start func
 
     this.init();
 };

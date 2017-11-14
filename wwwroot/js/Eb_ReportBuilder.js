@@ -124,7 +124,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $('#data-table-list').empty();
             $("#get-col-loader").show();
             $.ajax({
-                url: "../RB/GetColumns",
+                url: "../ReportBuilder/GetColumns",
                 type: "POST",
                 cache: false,
                 data: { refID: refid },

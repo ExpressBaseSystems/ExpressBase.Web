@@ -5,7 +5,8 @@
     this.crop = {};
 
     this.getFileSourse = function (input) {
-        $('#previewsec-outer').show();        
+        $('#previewsec-outer').show();
+        $('#' + this.cropperContainer).empty();
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
@@ -19,6 +20,7 @@
     this.cropper = function () {
         this.crop = $('#' + this.cropperContainer).croppie({
             url: this.fileurl,
+            viewport: { width: 150, height: 150 },
             enableOrientation: true
         });
         $('.cr-slider-wrap').append(' <button class="btn btn-sm" id="crop"><i class="fa fa-crop" aria-hidden="true"></i></button>'
@@ -38,18 +40,20 @@
     this.cropedImage = function (result) {
         if (result !== null) {
             this.uploadImgToserver(result);
-        }
-        $('#profimage').css('background', 'url(' + result + ') center center no-repeat');       
+        }       
     };
 
     this.uploadImgToserver = function (result) {
+        $.LoadingOverlay("show");
         $.post("../StaticFile/UploadDPAsync", {
             'base64': result
         }, function (url) {
             if (url !== null) {
-
+                $('#profimage').css('background', 'url(' + url + ') center center no-repeat');
+                $('#previewsec-outer').hide();
+                $.LoadingOverlay("hide");                
             }
-        });
+            });
     };
 
     this.rotateLeft = function () {

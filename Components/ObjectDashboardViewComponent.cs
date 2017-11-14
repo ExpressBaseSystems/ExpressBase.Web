@@ -37,18 +37,22 @@ namespace ExpressBase.Web.Components
             var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
             ViewBag.Apps = resultlist.Data;
             ViewBag.AppId = _appId;
-            ViewBag.LastCommitedVersionRefid = _dashbord_tiles.LastCommitedVersionRefid;
-            ViewBag.LastCommitedVersionNumber = _dashbord_tiles.LastCommitedVersionNumber;
-             ViewBag.LastCommitedVersionCommit_ts = _dashbord_tiles.LastCommitedVersionCommit_ts;
-            ViewBag.LastCommitedVersion_Status = _dashbord_tiles.LastCommitedVersion_Status;
-            ViewBag.LastCommitedby_Name = _dashbord_tiles.LastCommitedby_Name;
-            ViewBag.LastCommitedby_Id = _dashbord_tiles.LastCommitedby_Id;
-            ViewBag.LiveVersionRefid = _dashbord_tiles.LiveVersionRefid;
-            ViewBag.LiveVersionNumber = _dashbord_tiles.LiveVersionNumber;
-            ViewBag.LiveVersionCommit_ts = _dashbord_tiles.LiveVersionCommit_ts;
-            ViewBag.LiveVersion_Status = _dashbord_tiles.LiveVersion_Status;
-            ViewBag.LiveVersionCommitby_Name = _dashbord_tiles.LiveVersionCommitby_Name;
-            ViewBag.LiveVersionCommitby_Id = _dashbord_tiles.LiveVersionCommitby_Id;
+            if (_dashbord_tiles != null)
+            {
+                ViewBag.LastCommitedVersionRefid = _dashbord_tiles.LastCommitedVersionRefid;
+                ViewBag.LastCommitedVersionNumber = _dashbord_tiles.LastCommitedVersionNumber;
+                ViewBag.LastCommitedVersionCommit_ts = _dashbord_tiles.LastCommitedVersionCommit_ts;
+                ViewBag.LastCommitedVersion_Status = _dashbord_tiles.LastCommitedVersion_Status;
+                ViewBag.LastCommitedby_Name = _dashbord_tiles.LastCommitedby_Name;
+                ViewBag.LastCommitedby_Id = _dashbord_tiles.LastCommitedby_Id;
+                ViewBag.LiveVersionRefid = _dashbord_tiles.LiveVersionRefid;
+                ViewBag.LiveVersionNumber = _dashbord_tiles.LiveVersionNumber;
+                ViewBag.LiveVersionCommit_ts = _dashbord_tiles.LiveVersionCommit_ts;
+                ViewBag.LiveVersion_Status = _dashbord_tiles.LiveVersion_Status;
+                ViewBag.LiveVersionCommitby_Name = _dashbord_tiles.LiveVersionCommitby_Name;
+                ViewBag.LiveVersionCommitby_Id = _dashbord_tiles.LiveVersionCommitby_Id;
+            }
+            else{ }
             return View();
 
         }

@@ -21,12 +21,13 @@
                             var vNumMajor = ("v." + (ViewBag._major + 1) + "." + ViewBag._minor + "." + ViewBag._patch + ".w");
                             var vNumMinor = ("v." + ViewBag._major + "." + (ViewBag._minor + 1) + "." + ViewBag._patch + ".w");
                             var vNumPatch = ("v." + ViewBag._major + "." + ViewBag._minor + "." + (ViewBag._patch + 1) + ".w");
-                            <select class="selectpicker btn" id="create">
-                                <option>Create</option>
-                                <option id="_major">Major Version - (@vNumMajor) from (v.@ViewBag.VersionNumber)</option>
-                                <option id="_minor">Minor Version - (@vNumMinor) from (v.@ViewBag.VersionNumber)</option>
-                                <option id="_patch">Patch Version - (@vNumPatch) from (v.@ViewBag.VersionNumber)</option>
-                            </select>
+                            <div class="dropdown" style="display:inline">
+                                <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </button>
+                                <ul class="dropdown-menu" id="create">                                                                   
+                                </ul>
+                            </div>                           
                             <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
                             <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
                             <button class='btn status' id="status" data-toggle="tooltip" data-placement="bottom" title="status"><i class="fa fa-exchange" aria-hidden="true"></i></button>
@@ -82,7 +83,7 @@
                             {
                                 <div class="card1-mid">
                                     <div class="count text-center">
-                                        @ViewBag.LastCommitedVersionNumber
+                                        @ViewBag.LastCommitedVersionNumber      @ViewBag.LastCommitedVersion_Status
                                     </div>
                                     <div class="count text-center">
                                         @ViewBag.LastCommitedVersion_Status
@@ -110,10 +111,10 @@
                         </div>
                         <div class="card1-mid">
                             <div style="color:#0db71b" class="count text-center">
-                                @ViewBag.LiveVersionNumber
+                                @ViewBag.LiveVersionNumber       @ViewBag.LiveVersion_Status
                             </div>
                             <div class="count text-center">
-                                @ViewBag.LiveVersion_Status
+                               
                             </div>
                         </div>
                         <div class="card1-botm" style="display:block">

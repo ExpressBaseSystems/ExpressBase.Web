@@ -1,24 +1,24 @@
 ﻿var pages = {
-    2: {
-        width: '21cm',
-        height: '29.7cm'
-    },//A4
-    3: {
-        width: '29.7cm',
-        height: '42cm'
-    },//A3
-    Letter: {
-        width: '21.59cm',
-        height: '27.94cm'
-    },//letter
-    1: {
-        width: '14.8cm',
-        height: '21cm'
-    },//A5
-    4: {
+    0: {
         width: '21.59cm',
         height: '27.94cm'
     },//A2
+    1: {
+        width: '29.7cm',
+        height: '42cm'
+    },//A3
+    2: {
+        width: '21cm',
+        height: '29.7cm'
+    },//A4      
+    3: {
+        width: '14.8cm',
+        height: '21cm'
+    },//A5 
+    4: {
+        width: '21.59cm',
+        height: '27.94cm'
+    },//letter
 };
 var ruler = {
     px: {
@@ -129,21 +129,24 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 cache: false,
                 data: { refID: refid },
                 success: function (result) {
-                    $("#get-col-loader").hide();
+                    $("#get-col-loader").hide();                   
                     DrawColTree(result);
+                    $('.nav-tabs a[href="#data"]').tab('show');
                 }
             });
         }
     };//ajax for ds coloums
 
     this.ruler = function () {
+        var width = null;
         var k = 0;
         var j = 0;
         var pxlabel = 1;
         if (this.rulertype == "px") { pxlabel = 5; }
-
+        if (this.width.substring(0, this.width.length - 2) > 21) { width = ($('#pageCanvas').width() - 79) + 'px'; }
+        else { width = this.width;}
         $('.ruler,.rulerleft').show();
-        var $ruler = $('.ruler').css({ "width": this.width });
+        var $ruler = $('.ruler').css({ "width": width });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / ruler[this.rulertype].len; i++ , step++) {
             var $tick = $('<div>');
             if (step === 0) {
@@ -284,26 +287,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
-            this.repExtern.splitGeneric(this.splitarray);           
-            $.each($("#" + id).siblings().not(".gutter"), this.setSectionHeight.bind(this, id));
+            this.repExtern.splitGeneric(this.splitarray);                       
             this.multiSplitBoxinner();
         }
     };//split sections multipple
 
-    this.setSectionHeight = function (id, i, subsections) {
-        this.objCollection[subsections.id].SectionHeight = this.getOuterHtml($(subsections));
-        this.objCollection[id].SectionHeight = this.getOuterHtml($("#" + id));
-    };//set section height
-
     this.splitMore = function (i, obj) {
         this.splitarray.push("#" + obj.id);
     };//subsection pushed into split array 
-
-    this.getOuterHtml = function (obj) {
-        var html = obj.outerHTML();
-        var calcHgt = html.substring(html.lastIndexOf("height:") + 8).split(";")[0];
-        return calcHgt;
-    };//cut height of subsec frm html string
 
     this.multiSplitBoxinner = function () {
         var index = this.btn_indx;
@@ -701,14 +692,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//commit
 
     this.setpageSize = function (obj) {
-        if (obj.PaperSize !== 5) {
-            this.height = pages[obj.PaperSize].height;
-            this.width = pages[obj.PaperSize].width;
+        this.type = obj.PaperSize;
+        if (obj.PaperSize !== 5) {            
+            this.height = pages[this.type].height;
+            this.width = pages[this.type].width;
             $('.ruler,.rulerleft').empty();
             this.ruler();
             $(".headersections,.multiSplit").css({ "height": this.height });
-            $("#page").css({ "height": this.height, "width": this.width });
-            this.type = obj.PaperSize;
+            $("#page").css({ "height": this.height, "width": this.width });            
         }
         else if (obj.PaperSize === 5) {
             if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
@@ -717,20 +708,19 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 $('.ruler,.rulerleft').empty();
                 this.ruler();
                 $(".headersections,.multiSplit").css({ "height": this.height });
-                $("#page").css({ "height": this.height, "width": this.width });
-                this.type = obj.PaperSize;
+                $("#page").css({ "height": this.height, "width": this.width });               
             }
         }
     };//page size change fn
 
     this.setpageMode = function (obj) {
         if (obj.IsLandscape === true) {
-            this.height = pages[obj.PaperSize].width;
-            this.width = pages[obj.PaperSize].height;
+            this.height = pages[this.type].width;
+            this.width = pages[this.type].height;
         }
         else if (obj.IsLandscape === false) {
-            this.height = pages[obj.PaperSize].height;
-            this.width = pages[obj.PaperSize].width;
+            this.height = pages[this.type].height;
+            this.width = pages[this.type].width;
         }
         $('.ruler,.rulerleft').empty();
         this.ruler();
@@ -740,11 +730,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.setSplitArrayFSec = function (i, obj) {
         this.idArray.push("#" + obj.id);
-        var size = (($(obj).height() / $(obj).parent().height()) * 100) + .5;
+        var size = (($(obj).height() / $(obj).parent().height()) * 100) + 1.2 ;
         this.sizeArray.push(size);
-        console.log(this.sizeArray);
-        $(obj).siblings(".gutter").remove();
-        this.objCollection[obj.id].SectionHeight = size + "%";
+        $(obj).siblings(".gutter").remove();                      
     };//section split for pg change
 
     this.rulerChangeFn = function (e) {
@@ -783,34 +771,38 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.DragDrop_Items();
             //this.minimap();
         }
-        else {
-
-        }
-        //this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
+        else {}               
         this.pg.PropertyChanged = function (obj, pname) {
             if ('SectionHeight' in obj) {
                 this.sizeArray = [];
-                this.idArray = []
+                this.idArray = []                 
                 $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
                 this.RefreshControl(obj);
-                this.repExtern.splitGeneric(this.idArray);                
+                this.repExtern.splitGeneric(this.idArray, this.sizeArray);                
             }
             else if (pname === "DataSourceRefId") {
                 this.getDataSourceColoums(obj.DataSourceRefId);
+                this.RefreshControl(obj);
             }
             else if (pname === "PaperSize") {
                 this.setpageSize(obj);
+                this.RefreshControl(obj);
             }
             else if (pname === "IsLandscape") {
                 this.setpageMode(obj);
+                this.RefreshControl(obj);
             }
             else if (pname === "Image") {
                 this.addImageFn(obj);
+                this.RefreshControl(obj);
             }
             else if (pname === "WaterMark") {
                 this.addWaterMarkFn(obj)
+                this.RefreshControl(obj);
             }
-            this.RefreshControl(obj);
+            else {
+                this.RefreshControl(obj);
+            }
         }.bind(this);
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
     };//report execution start func

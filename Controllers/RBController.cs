@@ -18,7 +18,24 @@ namespace ExpressBase.Web.Controllers
 {
     public class RBController : EbBaseNewController
     {
-        public RBController(IServiceClient _client, IRedisClient _redis) : base (_client, _redis) { }              
+        public RBController(IServiceClient _client, IRedisClient _redis) : base (_client, _redis) { }
 
+        [HttpPost]
+        public DataSourceColumnsResponse GetColumns(String refID)
+        {
+            DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
+            cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", refID));
+            foreach (var columnCollection in cresp.Columns)
+            {
+                columnCollection.Sort(CompareEbDataColumn);
+            }
+
+            return cresp;
+        }
+
+        private int CompareEbDataColumn(object a, object b)
+        {
+            return (a as EbDataColumn).ColumnName.CompareTo((b as EbDataColumn).ColumnName);
+        }
     }
 }

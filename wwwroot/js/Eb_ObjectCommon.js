@@ -31,6 +31,7 @@
     }
 
     this.ShowMessage = function () {
+        this.UpdateDashboard();
         this.alertType = "success";
         this.messg.alert({
             head: "alert",
@@ -198,7 +199,7 @@
         var tabnum = this.tabNum;
         $.post('../Eb_Object/GetVersions', { objid: this.ver_Refid },
             function (data) {
-                $('#selected_Ver_1_' + tabnum).append("<option value='Current' data-tokens='Select Version'>Current</option>");
+                $('#selected_Ver_1_' + tabnum).append("<option value='Select Version' data-tokens='Select Version'>Select Version</option>");
                 $('#selected_Ver_2_' + tabnum).append("<option value='Select Version' data-tokens='Select Version'>Select version</option>");
                 $.each(data, function (i, obj) {
                     $('#selected_Ver_1_' + tabnum).append("<option value='" + obj.refId + "' data-tokens='" + obj.versionNumber + "'> v " + obj.versionNumber + "</option>");
@@ -312,25 +313,23 @@
 
     this.UpdateCreateVersionDD = function () {
         $("#objname").text(this.Current_obj.Name);        
-        $('#create option').remove()
-        $('#create').selectpicker('destroy');
-        $('#create').selectpicker('refresh');
+        $('#create li').remove()
         var arr = this.Current_obj.VersionNumber.split(".")
         var vNumMajor = ("v." + (parseInt(major) + 1) + ".0.0.w");
         var vNumMinor = ("v." + arr[0] + "." + (parseInt(arr[1]) + 1) + ".0.w");
         var vNumPatch = ("v." + arr[0] + "." + arr[1] + "." + (parseInt(arr[2]) + 1) + ".w");
 
-        $("#create").append("<option>Create</option>"+
-            "<option id='_major'> Major Version - (" + vNumMajor + ") from(v." + this.Current_obj.VersionNumber+")</option >"+
-            "<option id= '_minor'> Minor Version - (" + vNumMinor + ") from(v." + this.Current_obj.VersionNumber +")</option > "+
-            "<option id='_patch'>Patch Version - (" + vNumPatch + ") from (v." + this.Current_obj.VersionNumber + ")</option>");
+        $("#create").append(
+            "<li id='_major' class='list-group-item'> Major Version - (" + vNumMajor + ") from(v." + this.Current_obj.VersionNumber+")</li >"+
+            "<li id= '_minor' class='list-group-item'> Minor Version - (" + vNumMinor + ") from(v." + this.Current_obj.VersionNumber +")</li > "+
+            "<li id='_patch' class='list-group-item'>Patch Version - (" + vNumPatch + ") from (v." + this.Current_obj.VersionNumber + ")</li>");
         $('#create').selectpicker('refresh');
 
-        $('#create').off('change').on("change", this.createVersion.bind(this));
+        $('#create li').off('click').on("click", this.createVersion.bind(this));
     }
 
     this.createVersion = function (e) {
-        var selected_opt = $(e.target).find("option:selected").attr("id");
+        var selected_opt = $(e.target).attr("id");
 
         if (selected_opt === "_major") {
             if (confirm('Are you sure you want to create Major version?')) {

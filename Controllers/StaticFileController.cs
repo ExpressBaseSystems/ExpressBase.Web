@@ -43,7 +43,14 @@ namespace ExpressBase.Web.Controllers
             string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
             if (!System.IO.File.Exists(sFilePath))
             {
-                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType =  filename.Split('.')[1].ToLower() }});
+                byte[] fileByte = this.ServiceClient.Post<byte[]>
+                    (new DownloadFileRequest
+                    {
+                        FileDetails = new FileMeta
+                        {
+                            FileName = filename,
+                            FileType =  filename.Split('.')[1].ToLower() }
+                    });
                 EbFile.Bytea_ToFile(fileByte, sFilePath);
             }
 

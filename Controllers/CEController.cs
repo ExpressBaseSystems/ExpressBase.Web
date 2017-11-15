@@ -82,9 +82,9 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Icon = "fa fa-database";
                 ViewBag.ObjType = (int)EbObjectType.DataSource;
                 ViewBag.Refid = element.RefId;
-                ViewBag.Majorv = element.MajorVersionNumber;
-                ViewBag.Minorv = element.MinorVersionNumber;
-                ViewBag.Patchv = element.PatchVersionNumber;
+                //ViewBag.Majorv = element.MajorVersionNumber;
+                //ViewBag.Minorv = element.MinorVersionNumber;
+                //ViewBag.Patchv = element.PatchVersionNumber;
                 ViewBag.Tags = element.Tags;
 
                 if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))

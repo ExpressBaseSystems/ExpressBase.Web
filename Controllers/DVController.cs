@@ -66,9 +66,9 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Icon = "fa fa-database";
                     ViewBag.ObjType = (int)objtype;
                     ViewBag.Refid = element.RefId;
-                    ViewBag.Majorv = element.MajorVersionNumber;
-                    ViewBag.Minorv = element.MinorVersionNumber;
-                    ViewBag.Patchv = element.PatchVersionNumber;
+                    ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                    ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
+                    ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
 
                     EbDataVisualization dsobj = null;
 
@@ -142,9 +142,9 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Icon = "fa fa-database";
                     ViewBag.ObjType = (int)objtype;
                     ViewBag.Refid = element.RefId;
-                    ViewBag.Majorv = element.MajorVersionNumber;
-                    ViewBag.Minorv = element.MinorVersionNumber;
-                    ViewBag.Patchv = element.PatchVersionNumber;
+                    ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                    ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
+                    ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
 
                     EbDataVisualization dsobj = null;
 
@@ -206,9 +206,9 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Icon = "fa fa-database";
                     ViewBag.ObjType = (int)objtype;
                     ViewBag.Refid = element.RefId;
-                    ViewBag.Majorv = element.MajorVersionNumber;
-                    ViewBag.Minorv = element.MinorVersionNumber;
-                    ViewBag.Patchv = element.PatchVersionNumber;
+                    ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                    ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
+                    ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
 
                     EbDataVisualization dsobj = null;
 

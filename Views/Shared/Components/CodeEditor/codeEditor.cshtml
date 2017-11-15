@@ -71,6 +71,7 @@
 </script>
 <style>
     .CodeMirror{
+
     }
     .ds-prop {
         position: fixed;
@@ -79,9 +80,15 @@
         position: fixed;
     }
     .CodeMirror-gutters {
-        z-index: 2;
+        z-index: 0;
     }
     .CodeMirror-gutter-wrapper {
-        z-index: 3;
+        z-index: 2;
     }
+    div.CodeMirror-cursors {
+        z-index: 2;
+    }
+        .CodeMirror-gutter-elt {
+    /*z-index: 3;*/
+}
 </style>

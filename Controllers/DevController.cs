@@ -115,9 +115,9 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.VersionNumber = element.VersionNumber;
                 ViewBag.Icon = "fa fa-database";
                 ViewBag.Refid = element.RefId;
-                ViewBag.Majorv = element.MajorVersionNumber;
-                ViewBag.Minorv = element.MinorVersionNumber;
-                ViewBag.Patchv = element.PatchVersionNumber;
+                ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
+                ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
 
                 if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                 {
@@ -417,9 +417,9 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Icon = "fa fa-database";
                 ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
                 ViewBag.Refid = element.RefId;
-                ViewBag.Majorv = element.MajorVersionNumber;
-                ViewBag.Minorv = element.MinorVersionNumber;
-                ViewBag.Patchv = element.PatchVersionNumber;
+                ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
+                ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
                 if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                 {
                     ViewBag.ReadOnly = true;

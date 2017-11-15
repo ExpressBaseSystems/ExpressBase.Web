@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using ServiceStack;
 using ServiceStack.Auth;
 using ServiceStack.Redis;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -70,6 +71,55 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult test()
         {
+           
+            ViewBag.StripePublishKey = "pk_test_s1b6p5MmoOrYVcev3IPk3UMd";
+            return View();
+        }
+        [HttpPost]
+        public IActionResult StripeResponse()
+        {
+            var json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+            var stripeEvent = StripeEventUtility.ParseEvent(json);
+            return View();
+        }
+        public ActionResult Charge(string stripeEmail, string stripeToken)
+        {
+            var req = this.HttpContext.Request.Form;
+            var customers = new StripeCustomerService();
+            var charges = new StripeChargeService();
+
+            var customer = customers.Create(new StripeCustomerCreateOptions
+            {
+                Email = stripeEmail,
+                SourceToken = stripeToken
+            });
+
+            var charge = charges.Create(new StripeChargeCreateOptions
+            {
+                Amount = 500,//charge in cents
+                Description = "Sample Charge",
+                Currency = "usd",
+                CustomerId = customer.Id
+              
+            });
+
+            StripeSubscriptionService subscriptionSvc = new StripeSubscriptionService();
+            subscriptionSvc.Create(customer.Id, "EBSystems");
+
+            var subscriptionOptions = new StripeSubscriptionUpdateOptions()
+            {
+                PlanId = "EBSystems",
+                Prorate = false,
+                TrialEnd = DateTime.Now.AddMinutes(2)
+            };
+
+            var subscriptionService = new StripeSubscriptionService();
+            StripeSubscription subscription = subscriptionService.Update("sub_BlX0rziJyWis7k", subscriptionOptions);
+
+            //StripeSubscriptionService subscriptionSvc = new StripeSubscriptionService();
+            //subscriptionSvc.Create(customer.Id, "ebsystems_standard");
+            // further application specific code goes here
+
             return View();
         }
 

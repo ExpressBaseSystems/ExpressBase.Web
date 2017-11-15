@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
+<div class="container-fluid pd-0">
+    <div class="Eb-bot-header">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#"><img alt="Brand" src="~/images/EB_Logo.png"></a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">Sign In</a></li>                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="bot-banner">
+        <div class="col-md-4 pull-right bot-signup">
+            <div class="bot-signup-bdy">
+                <h4 class="both">
+                   Get Started for FREE
+                </h4>
+                <div class="form-group">
+                    <input type="email" class="form-control bot-signup-input" id="name" name="name" placeholder="Name" />
+                </div>
+                <div class="form-group">                  
+                        <input type="email" class="form-control bot-signup-input" id="email" name="email" placeholder="Email" />                  
+                </div>
+                <div class="form-group">                  
+                        <input type="password" class="form-control bot-signup-input" id="password" name="password" placeholder="Password" />                  
+                </div>
+                <div class="form-group">
+                    <h6 class="bot-s-agrement">By clicking 'Sign Up', you agree to the Terms of Service and Privacy Policy.</h6>
+                    <button type="submit" id="bot-signUP" class="btn bot-signup-btn">
+                        SIGN UP
+                    </button>
+                </div>
+                <div class="form-group text-center">
+                    <div class="col-sm-12">
+                        <p>
+                            Or Sign In with
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <div class="btn-group btn-group-justified">
+                        <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
+                            <i class="fa fa-facebook fa-lg"></i>
+                            <span class="hidden-xs"></span>
+                        </a>
+                        <a href="@ViewBag.ServiceUrl/auth/twitter" class="btn btn-lg btn-block">
+                            <i class="fa fa-twitter fa-lg text-info"></i>
+                            <span class="hidden-xs"></span>
+                        </a>
+                        <a href="#" class="btn btn-lg btn-block">
+                            <i class="fa fa-linkedin fa-lg"></i>
+                            <span class="hidden-xs"></span>
+                        </a>
+                        <a href="@ViewBag.ServiceUrl/auth/googleoauth" class="btn btn-lg btn-block">
+                            <i class="fa fa-google-plus fa-lg text-danger"></i>
+                            <span class="hidden-xs"></span>
+                        </a>
+                        <a href="@ViewBag.ServiceUrl/auth/github" class="btn btn-lg btn-block">
+                            <i class="fa fa-github fa-lg text-muted"></i>
+                            <span class="hidden-xs"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bot-desc">
+
+    </div>
+</div>

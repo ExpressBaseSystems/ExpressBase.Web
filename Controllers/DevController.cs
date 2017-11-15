@@ -72,13 +72,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-
-        [HttpGet]
-        public IActionResult Eb_chatBot()
-        {
-            return View();
-        }
-
         public IActionResult Eb_ChatFormBuilder()
         {
             ViewBag.ObjType = this.HttpContext.Request.Query["objtype"];

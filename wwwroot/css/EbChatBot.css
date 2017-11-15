@@ -1,13 +1,17 @@
-﻿.eb-chat-cont {
-    display: none;
-    right: 0px;
+﻿/*.eb-chat-frame {
     position: fixed;
-    top: 50px;
-    height: 90%;
-    width: 20%;
+    bottom: 0px;
+    right: 0px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.46);
     min-width: 300px;
     z-index: 99999999999999;
-    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.46);
+}*/
+
+.eb-chat-cont {
+    display: none;
+    position: fixed;
+    height: 100%;
+    width: 100%;
     border-radius: 3px;
 }
 
@@ -172,6 +176,7 @@
     margin-bottom: -6px;
     border-radius: 24px;
 }
+
 .bot-icon-user {
     background: url(../images/rob.jpg)center center no-repeat;
     width: 26px;
@@ -181,6 +186,7 @@
     margin-bottom: -6px;
     border-radius: 24px;
 }
+
 .msg-time {
     color: #999;
     font-size: 10px;
@@ -188,9 +194,11 @@
     margin-top: -10px;
     margin-right: -36px;
 }
+
 .chat-date {
     text-align: center;
 }
+
     .chat-date span {
         background: #ffffff;
         border-radius: 15px;
@@ -198,6 +206,7 @@
         padding: 2px 8px;
         font-size: 11px;
     }
-.chat-typing{
-    color:#999;
+
+.chat-typing {
+    color: #999;
 }

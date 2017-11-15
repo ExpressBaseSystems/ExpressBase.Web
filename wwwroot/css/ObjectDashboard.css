@@ -10,6 +10,11 @@
     z-index:4;
 }
 
+.prof_dp {
+    width: 40px;
+    margin-right: 15px;
+}
+
 .dashbord .box2, .box4 {
     height: 100%;
     padding: 0;
@@ -92,6 +97,14 @@
     z-index: 10;
 }
 
+.app_div {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+.app_div .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 219px;
+}
+
     .objectDashB-toolbar .brdCrumb {
         font-size: 11px;
     }
@@ -170,26 +183,8 @@
     margin-bottom: 5px;
 }
 
-.changlogTxtArea {
-    height: 200px !important;
-    width: 94%;
-}
-
-.changelogPopup {
-    display: none;
-    position: fixed;
-    padding: 10px;
-    width: 500px;
-    left: 50%;
-    margin-left: -237px;
-    padding-left: 35px;
-    height: 300px;
-    top: 50%;
-    margin-top: -100px;
-    background: #FFF;
-    z-index: 20;
-    -webkit-box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
-    box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
+li:hover {
+    cursor: pointer;
 }
 
 .toolicons .bootstrap-select {
@@ -237,3 +232,99 @@
     text-decoration: none;
     font-family: times;
 }
+
+.codedit .tab-section-common .nav > li > a {
+    background: #bf2c2c;
+    width: 150px;
+    padding: 2px 15px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-bottom: none;
+}
+.codedit .tab-section-common .nav > .active a {
+    background: white;
+}
+
+
+/*changelog*/
+.changLog-container {
+    display: none;
+    width: 500px;
+    height: auto;
+    border: 1px solid #ccc;
+    position: fixed;
+    left: 29%;
+    top: 20%;
+    background: #FFF;
+    z-index: 20;
+    -webkit-box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
+}
+
+.imagesec {
+    background: #ececec;
+    height: 300px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-sec {
+    height: 300px;
+}
+
+.txt-area {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+
+.textaerea-sec {
+    padding: 0;
+    height: inherit;
+}
+
+.chlog-top {
+    width: 100%;
+    background: black;
+    /* height: 30px; */
+    padding: 5px;
+}
+
+    .chlog-top .btn {
+        background-color: transparent;
+        border: none;
+        color: white;
+        display: inline-block;
+        float: right;
+        margin-top: -2px;
+    }
+
+.ch-l-title {
+    width: 200px;
+    color: white;
+    display: inline;
+    font-size: 16px;
+}
+
+.svgicon {
+    width: 100px;
+    height: 100px;
+}
+
+.submitsec-changeLog {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #5dddd3;
+    bottom: 10px;
+    right: 10px;
+    border-radius: 50%;
+    padding: 3px;
+}
+
+    .submitsec-changeLog i {
+        color: white;
+        font-size: 25px;
+    }

@@ -10,10 +10,11 @@
         position: fixed;
         width: 100%;
         z-index: 3;
-        padding-top: 10px;       
+        padding-top: 10px;
         background: white;
         border-bottom: 13px solid #f2f2f2;
     }
+
         .codedit .tab-section-common .nav > li > a {
             background: white;
             width: 150px;
@@ -22,14 +23,17 @@
             border: 1px solid #ccc;
             border-bottom: none;
         }
-        .codedit .tab-section-common .nav > .active a{
-            background: #f2f2f2;          
+
+        .codedit .tab-section-common .nav > .active a {
+            background: #f2f2f2;
         }
+
     .codedit .tab-cont-common {
         margin-top: 48px;
     }
-    .codedit .tab-cont-common{
-        height:calc(100vh - 85px);
+
+    .codedit .tab-cont-common {
+        height: calc(100vh - 85px);
     }
 </style>
 <script>
@@ -39,7 +43,7 @@
 @Html.Raw(ViewBag.EbObjectTypes);
 
     $(document).ready(function () {
-        commonObj.init();      
+        commonObj.init();
     });
 
     var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl');
@@ -47,13 +51,24 @@
 
 </script>
 <div id="object_Dashboard_main">
-    @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles })
+    @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles })
 </div>
 
-<div class="row codedit" id ="codedit" style="margin-top:229px;">
+<div class="row codedit" id="codedit" style="margin-top:229px;">
     <div class="tab-section-common" id="tab-section-common">
         <ul class="nav nav-tabs" id="versionNav">
-            <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
+            @{
+                var icon = "";               
+                if (ViewBag.VersionNumber.Substring(ViewBag.VersionNumber.Length - 1) == "w")
+                {
+                    icon = "fa-pencil";
+                }
+                else
+                {
+                    icon = "fa-lock";
+                }
+            }
+            <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber"><i class='fa @(icon)' aria-hidden='true'></i> v @ViewBag.VersionNumber</a></li>
         </ul>
     </div>
     <div class="tab-content tab-cont-common" id="versionTab">

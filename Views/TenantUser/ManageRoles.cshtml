@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
     @using ExpressBase.Objects.ServiceStack_Artifacts;
     @using ExpressBase.Common.Objects;
-    List<EbObjectWrapper> List = ViewBag.dict;
+    Dictionary<string, object> Dict = ViewBag.dict;
 }
 <style>
     table {
@@ -48,7 +48,7 @@
 </style>
 @using (Html.BeginForm(FormMethod.Post))
 {
-    <div class="row">
+    <div class="row" style="margin-top:95px">
         <div class="col-md-4">
             <div class="form-group">
                 <input type="text" class="form-control" id="role_name" name="role_name" placeholder="Role Name" value="@ViewBag.RoleName" />
@@ -57,11 +57,11 @@
                 <select class="form-control" id="appselect">
                     @{
                         <option selected="selected" value="@ViewBag.DominantRefId" data-applicationid="@ViewBag.ApplicationId">@ViewBag.ApplicationName</option>
-                        foreach (var element in List)
+                        foreach (var element in Dict.Keys)
                         {
-                            if (ViewBag.ApplicationId != element.Id.ToString())
+                            if (ViewBag.ApplicationId != element)
                             {
-                                <option value="@element.RefId" data-applicationid="@element.Id">@element.Name</option>
+                                <option value="@element">@Dict[element]</option>
                             }
                         }
                     }
@@ -98,10 +98,10 @@
                 </ul>
             </div>
             <input type="hidden" id="applicationid" />
-            <input type="hidden" id="dominantrefid" />
             <input type="hidden" id="roleid" name="roleid" value="@ViewBag.roleid" />
             
         </div>
+
         <div id="rolesdiv" class="tab-pane fade">
             <div id="roles" class="scrollable-menu">
                 <div class="form-inline" id="searchbar" style="width:100%">
@@ -145,10 +145,7 @@
 
         $("#appselect").change(function () {
             var selected = $(this).find('option:selected');
-            var extra = selected.data('applicationid');
-            alert(selected.val());
-            $('#dominantrefid').val(selected.val());
-            $('#applicationid').val(extra);
+            $('#applicationid').val(selected.val());
         });  
       
         $('#allsave').click(function () {
@@ -188,7 +185,7 @@
         $.post("../TenantUser/GetRowAndColumn",
            {
 
-               "DominantRefiid": $('#dominantrefid').val(),
+               "ApplicationId": $('#applicationid').val(),
                "ObjectType": type,
                "RoleId": $('#roleid').val()
 

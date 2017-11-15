@@ -1,20 +1,24 @@
 ﻿var pages = {
-    A4: {
-        width: '21cm',
-        height: '29.7cm'
-    },
-    A3: {
-        width: '29.7cm',
-        height: '42cm'
-    },
-    Letter: {
+    0: {
         width: '21.59cm',
         height: '27.94cm'
-    },
-    A5: {
+    },//A2
+    1: {
+        width: '29.7cm',
+        height: '42cm'
+    },//A3
+    2: {
+        width: '21cm',
+        height: '29.7cm'
+    },//A4      
+    3: {
         width: '14.8cm',
         height: '21cm'
-    }
+    },//A5 
+    4: {
+        width: '21.59cm',
+        height: '27.94cm'
+    },//letter
 };
 var ruler = {
     px: {
@@ -47,7 +51,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.RefId = refid;
     this.height = null;
     this.width = null;
-    this.type = "A4";
+    this.type = 2;
     this.rulertype = "cm";
     this.copyStack = null;
     this.copyORcut = null;
@@ -125,21 +129,24 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 cache: false,
                 data: { refID: refid },
                 success: function (result) {
-                    $("#get-col-loader").hide();
+                    $("#get-col-loader").hide();                   
                     DrawColTree(result);
+                    $('.nav-tabs a[href="#data"]').tab('show');
                 }
             });
         }
     };//ajax for ds coloums
 
     this.ruler = function () {
+        var width = null;
         var k = 0;
         var j = 0;
         var pxlabel = 1;
         if (this.rulertype == "px") { pxlabel = 5; }
-
+        if (this.width.substring(0, this.width.length - 2) > 21) { width = ($('#pageCanvas').width() - 79) + 'px'; }
+        else { width = this.width;}
         $('.ruler,.rulerleft').show();
-        var $ruler = $('.ruler').css({ "width": this.width });
+        var $ruler = $('.ruler').css({ "width": width });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / ruler[this.rulertype].len; i++ , step++) {
             var $tick = $('<div>');
             if (step === 0) {
@@ -225,51 +232,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.headerScaling = function () {
         var _this = this;
-        Split(this.sectionArray, {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
-            minSize: 33,
-            gutterSize: 5,
-            onDrag: function (e) {
-                $('#box0,#rptheadHbox').css("height", $('#rpthead').height());
-                $('#box1,#pgheadHbox').css("height", $('#pghead').height());
-                $('#box2,#detailHbox').css("height", $('#detail').height());
-                $('#box3,#pgfooterHbox').css("height", $('#pgfooter').height());
-                $('#box4,#rptfooterHbox').css("height", $('#rptfooter').height());
-                _this.splitterOndragFn();
-            }
-        });
-        Split(['#rptheadHbox', '#pgheadHbox', '#detailHbox', '#pgfooterHbox', '#rptfooterHbox'], {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
-            minSize: 33,
-            gutterSize: 5,
-            onDrag: function (e) {
-                $('#box0,#rpthead').css("height", $('#rptheadHbox').height());
-                $('#box1,#pghead').css("height", $('#pgheadHbox').height());
-                $('#box2,#detail').css("height", $('#detailHbox').height());
-                $('#box3,#pgfooter').css("height", $('#pgfooterHbox').height());
-                $('#box4,#rptfooter').css("height", $('#rptfooterHbox').height());
-                _this.splitterOndragFn();
-            }
-        });
-        Split(['#box0', '#box1', '#box2', '#box3', '#box4'], {
-            direction: 'vertical',
-            cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
-            minSize: 33,
-            gutterSize: 5,
-            onDrag: function (e) {
-                $('#rptheadHbox,#rpthead').css("height", $('#box0').height());
-                $('#pgheadHbox,#pghead').css("height", $('#box1').height());
-                $('#detailHbox,#detail').css("height", $('#box2').height());
-                $('#pgfooterHbox,#pgfooter').css("height", $('#box3').height());
-                $('#rptfooterHbox,#rptfooter').css("height", $('#box4').height());
-                _this.splitterOndragFn();
-            }
-        });
+        this.repExtern.headerSecSplitter(this.sectionArray);
+        this.repExtern.multisplit();
+        this.repExtern.box();        
         $("#page").children().not(".gutter").each(this.setFirstSubDiv.bind(this));
         $(".multiSplit").children().not(".gutter").each(this.setFirstMsSubBoxDiv.bind(this));
     };//page sections splited using split.js
@@ -322,32 +287,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
-            Split(this.splitarray, {
-                direction: 'vertical',
-                cursor: 'row-resize',
-                minSize: 30,
-                gutterSize: 5,
-                onDrag: this.splitterOndragFn.bind(this)
-            });
-            $.each($("#" + id).siblings().not(".gutter"), this.setSectionHeight.bind(this, id));
+            this.repExtern.splitGeneric(this.splitarray);                       
             this.multiSplitBoxinner();
         }
     };//split sections multipple
 
-    this.setSectionHeight = function (id, i, subsections) {
-        this.objCollection[subsections.id].SectionHeight = this.getOuterHtml($(subsections));
-        this.objCollection[id].SectionHeight = this.getOuterHtml($("#" + id));
-    };//set section height
-
     this.splitMore = function (i, obj) {
         this.splitarray.push("#" + obj.id);
     };//subsection pushed into split array 
-
-    this.getOuterHtml = function (obj) {
-        var html = obj.outerHTML();
-        var calcHgt = html.substring(html.lastIndexOf("height:") + 8).split(";")[0];
-        return calcHgt;
-    };//cut height of subsec frm html string
 
     this.multiSplitBoxinner = function () {
         var index = this.btn_indx;
@@ -374,26 +321,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 return false;
         });
         if (temp1 !== null) {
-            Split(temp1, {
-                direction: 'vertical',
-                cursor: 'row-resize',
-                minSize: 30,
-                gutterSize: 5
-            });
+            this.repExtern.splitGeneric(temp1);            
         }
     };
-
-    this.splitterOndragFn = function () {
-        $('.multiSplit').children().not(".gutter").children().not(".gutter").each(function (i, obj1) {
-            $('.page').children().not(".gutter").children().not(".gutter").each(function (j, obj2) {
-                if ($(obj1).parent().attr("data_val") === $(obj2).parent().attr("data_val")) {
-                    if ($(obj1).index() === $(obj2).index()) {
-                        $(obj1).css("height", $(obj2).height());
-                    }
-                }
-            });
-        });
-    };//spliter ondrag func
 
     this.DragDrop_Items = function () {
         this.posLeft = null;
@@ -551,13 +481,20 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (this.copyStack === null) { alert('no item copied'); }
         else {
             var copy = this.copyStack;
-            var Objtype = $("#" + copy.EbSid).attr('eb-type');
-            var Objid = Objtype + (this.idCounter["Eb" + Objtype + "Counter"])++;
-            if (this.copyORcut === 'copy') { copy.EbSid = Objid; }
+            var Objid = null;
+            var Objtype = $("#" + copy.EbSid).attr('eb-type');          
+            if (this.copyORcut === 'copy') {
+                Objid = Objtype + (this.idCounter["Eb" + Objtype + "Counter"])++;
+                copy.EbSid = Objid;
+                copy.Name = Objid;
+            }
+            else if (this.copyORcut === 'cut') {
+                Objid = copy.EbSid;               
+            }
             copy.Top = action.originalEvent.pageY - $(selector.selector).offset().top;
             copy.Left = action.originalEvent.pageX - $(selector.selector).offset().left;
             $(selector.selector).append(copy.Html());
-            if (this.copyORcut === 'copy') { this.objCollection[Objid] = copy; }
+            this.objCollection[Objid] = copy;             
             this.RefreshControl(copy);
             this.copyStack = null;
             this.copyORcut = null;
@@ -581,6 +518,42 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
     this.contextMenuLeft = function (eType, selector, action, originalEvent) {
         $(selector.selector).css("text-align", "left");
+    };
+    this.lockControl = function (eType, selector, action, originalEvent) {
+        if (!$(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).addClass('locked').draggable('disable');
+        }
+        else if ($(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).addClass('locked').droppable({
+                disabled: true
+            });
+            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).addClass('locked').draggable('disable'); });
+            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
+            $('#' + locksymbDiv).append('<i class="fa fa-lock lock-icon" aria-hidden="true"></i>');
+            if ($(selector.selector).siblings().length === 0) {
+                $('#btn' + $(selector.selector).attr("data_val")).attr('disabled', 'disabled');
+            }
+            $(selector.selector).parent().next('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
+            $(selector.selector).parent().prev('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
+        }
+    };
+    this.unLockControl = function (eType, selector, action, originalEvent) {
+        if (!$(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).removeClass('locked').draggable('enable');
+        }
+        else if ($(selector.selector).hasClass("pageHeaders")) {
+            $(selector.selector).removeClass('locked').droppable({
+                disabled: false
+            });
+            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).removeClass('locked').draggable('enable'); });
+            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
+            $('#' + locksymbDiv).children("i").remove();
+            if ($(selector.selector).siblings().length === 0) {
+                $('#btn' + $(selector.selector).attr("data_val")).removeAttr('disabled');
+            }
+            $(selector.selector).parent().next().css({ "cursor": "ns-resize", "pointer-events": "auto" });
+            $(selector.selector).parent().prev('.gutter').css({ "cursor": "ns-resize", "pointer-events": "auto" });
+        }
     };
 
     this.editElement = function (control) {
@@ -719,36 +692,35 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//commit
 
     this.setpageSize = function (obj) {
-        if (obj.PaperSize !== "Custom") {
-            this.height = pages[obj.PaperSize].height;
-            this.width = pages[obj.PaperSize].width;
+        this.type = obj.PaperSize;
+        if (obj.PaperSize !== 5) {            
+            this.height = pages[this.type].height;
+            this.width = pages[this.type].width;
             $('.ruler,.rulerleft').empty();
             this.ruler();
             $(".headersections,.multiSplit").css({ "height": this.height });
-            $("#page").css({ "height": this.height, "width": this.width });
-            this.type = obj.PaperSize;
+            $("#page").css({ "height": this.height, "width": this.width });            
         }
-        else if (obj.PaperSize === "Custom") {
+        else if (obj.PaperSize === 5) {
             if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
                 this.height = obj.CustomPaperHeight;
                 this.width = obj.CustomPaperWidth;
                 $('.ruler,.rulerleft').empty();
                 this.ruler();
                 $(".headersections,.multiSplit").css({ "height": this.height });
-                $("#page").css({ "height": this.height, "width": this.width });
-                this.type = obj.PaperSize;
+                $("#page").css({ "height": this.height, "width": this.width });               
             }
         }
     };//page size change fn
 
     this.setpageMode = function (obj) {
         if (obj.IsLandscape === true) {
-            this.height = pages[obj.PaperSize].width;
-            this.width = pages[obj.PaperSize].height;
+            this.height = pages[this.type].width;
+            this.width = pages[this.type].height;
         }
         else if (obj.IsLandscape === false) {
-            this.height = pages[obj.PaperSize].height;
-            this.width = pages[obj.PaperSize].width;
+            this.height = pages[this.type].height;
+            this.width = pages[this.type].width;
         }
         $('.ruler,.rulerleft').empty();
         this.ruler();
@@ -758,55 +730,16 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.setSplitArrayFSec = function (i, obj) {
         this.idArray.push("#" + obj.id);
-        var size = (($(obj).height() / $(obj).parent().height()) * 100) + .5;
+        var size = (($(obj).height() / $(obj).parent().height()) * 100) + 1.2 ;
         this.sizeArray.push(size);
-        console.log(this.sizeArray);
-        $(obj).siblings(".gutter").remove();
-        this.objCollection[obj.id].SectionHeight = size + "%";
+        $(obj).siblings(".gutter").remove();                      
     };//section split for pg change
 
     this.rulerChangeFn = function (e) {
         this.rulertype = $(e.target).val();
         $('.ruler,.rulerleft').empty();
         this.ruler();
-    };
-
-    this.lockControl = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).addClass('locked').draggable('disable');
-        }
-        else if ($(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).addClass('locked').droppable({
-                disabled: true
-            });
-            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).addClass('locked').draggable('disable'); });
-            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
-            $('#' + locksymbDiv).append('<i class="fa fa-lock lock-icon" aria-hidden="true"></i>');
-            if ($(selector.selector).siblings().length === 0) {
-                $('#btn' + $(selector.selector).attr("data_val")).attr('disabled', 'disabled');
-            }
-            $(selector.selector).parent().next('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
-            $(selector.selector).parent().prev('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
-        }
-    };
-    this.unLockControl = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).removeClass('locked').draggable('enable');
-        }
-        else if ($(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).removeClass('locked').droppable({
-                disabled: false
-            });
-            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).removeClass('locked').draggable('enable'); });
-            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
-            $('#' + locksymbDiv).children("i").remove();
-            if ($(selector.selector).siblings().length === 0) {
-                $('#btn' + $(selector.selector).attr("data_val")).removeAttr('disabled');
-            }
-            $(selector.selector).parent().next().css({ "cursor": "ns-resize", "pointer-events": "auto" });
-            $(selector.selector).parent().prev('.gutter').css({ "cursor": "ns-resize", "pointer-events": "auto" });
-        }
-    };
+    };    
 
     this.minimap = function () {
         var previewPage = $('.page').minimap({
@@ -822,6 +755,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.init = function () {
+        this.repExtern = new ReportExtended();
         this.pg = new Eb_PropertyGrid("propGrid");
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbReport"]("Report1");
@@ -837,44 +771,41 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.DragDrop_Items();
             //this.minimap();
         }
-        else {
-
-        }
-        //this.pg = new Eb_PropertyGrid("propGrid");//propGrid initialized        
+        else {}               
         this.pg.PropertyChanged = function (obj, pname) {
             if ('SectionHeight' in obj) {
                 this.sizeArray = [];
-                this.idArray = []
+                this.idArray = []                 
                 $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
                 this.RefreshControl(obj);
-                Split(this.idArray, {
-                    direction: 'vertical',
-                    cursor: 'row-resize',
-                    sizes: this.sizeArray,
-                    minSize: 30,
-                    gutterSize: 5,
-                    onDrag: this.splitterOndragFn.bind(this)
-                });
+                this.repExtern.splitGeneric(this.idArray, this.sizeArray);                
             }
             else if (pname === "DataSourceRefId") {
                 this.getDataSourceColoums(obj.DataSourceRefId);
+                this.RefreshControl(obj);
             }
             else if (pname === "PaperSize") {
                 this.setpageSize(obj);
+                this.RefreshControl(obj);
             }
             else if (pname === "IsLandscape") {
                 this.setpageMode(obj);
+                this.RefreshControl(obj);
             }
             else if (pname === "Image") {
                 this.addImageFn(obj);
+                this.RefreshControl(obj);
             }
             else if (pname === "WaterMark") {
                 this.addWaterMarkFn(obj)
+                this.RefreshControl(obj);
             }
-            this.RefreshControl(obj);
+            else {
+                this.RefreshControl(obj);
+            }
         }.bind(this);
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
-    };//report executioin start func
+    };//report execution start func
 
     this.init();
 };

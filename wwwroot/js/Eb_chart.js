@@ -223,7 +223,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.flagAppendColumns = false;
     this.drake = null;
     this.EbObject = dsobj;
-    this.Refid = null;
+    this.Refid = refid;
     this.tabNum = tabNum;
     this.type = null;
     this.PcFlag = false;
@@ -231,7 +231,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.relatedObjects = null;
     this.FD = false;
 
-    var split = new splitWindow("parent-div" + this.tabNum, "contBox");
+    var split = new splitWindow("parent-div0", "contBox");
 
     split.windowOnFocus = function (ev) {
         if ($(ev.target).attr("class") !== undefined) {
@@ -256,6 +256,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.ajaxSucc = function (text) {
+        $("#objname").text(this.EbObject.Name);
         this.PcFlag = "False";
         obj = this.EbObject;
         $("#obj_icons").empty();
@@ -271,7 +272,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.EbObject = commonO.Current_obj;
         else
             this.EbObject = dvcontainerObj.currentObj;
-        if (text.indexOf("filterBox") === -1) {
+        if ($("#filterBox").children().length ==  0) {
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -325,8 +326,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.createChartDivs();
         this.appendColumns();
         this.appendXandYAxis();
-        $("#ppgrid_" + this.tableId).css("display", "none");
+        if (this.login === "uc") {
+            this.collapseGraph();
+        }
 
+        $("#ppgrid_" + this.tableId).css("display", "none");
         if (this.FD) {
             $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
             $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
@@ -377,7 +381,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 "</div> " +
                 "</div> " +
                 "<input type='color' id='fontSel' style='display:none;'>" +
-                "<div id='canvasDiv'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
+                "<div id='canvasDiv" + this.tableId+"'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
                 "</div> " +
                 "</div>");
             this.GenerateButtons();
@@ -385,6 +389,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.GenerateButtons = function () {
+        $("#objname").text(this.columnInfo.Name);
         $("#obj_icons").empty();
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
@@ -414,6 +419,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
         if (this.EbObject !== null && this.EbObject.Type !== null)
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.EbObject.Type.trim() + "&nbsp;<span class = 'caret'></span>");
+        if (this.login == "uc") {
+            //this.appendRelatedDv();
+            dvcontainerObj.appendRelatedDv(this.tableId);
+            dvcontainerObj.check4Navigation();
+        }
         this.bindEvents();
 
     };
@@ -671,10 +681,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             else
                 this.columnInfo.Type = this.type;
         }
-        $("#graphcontainer_tab" + this.tableId).children("iframe").remove();
+        $("#canvasDiv" + this.tableId).children("iframe").remove();
         $("#myChart" + this.tableId).remove();
         //$("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
-        $("#canvasDiv").append("<canvas id='myChart" + this.tableId + "'></canvas>");
+        $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
 
         if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null)
             this.drawGraph();
@@ -712,8 +722,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             data: this.gdata,
             options: this.goptions,
         });
-        
-        this.collapseGraph();
+
+        //$("#columnsDisplay" + this.tableId).css("display", "none");
+        //$("#xy" + this.tableId).css("display", "none");
+        //$("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
         $.LoadingOverlay("hide");
     };
 
@@ -776,7 +788,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             else {
                 $("#myChart" + this.tableId).remove();
-                $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
+                $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
             }
             console.log(this.columnInfo.Xaxis); console.log(this.columnInfo.Yaxis);
             $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
@@ -884,7 +896,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         else {
             $("#myChart" + this.tableId).remove();
-            $("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
+            $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
         }
     };
 

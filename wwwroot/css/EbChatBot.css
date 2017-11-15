@@ -20,19 +20,21 @@
 }
 
 .chat-icon {
+    position: fixed;
+    right: 30px;
+    bottom: 15px;
     font-size: 24px;
-    background-color: #fffff6;
-    color: #369;
-    padding: 7px 10px;
+    background-color: #369;
+    color: #fff;
+    padding: 7px 12px;
     FLOAT: right;
-    position: absolute;
-    right: 111px;
-    text-shadow: 1px 1px 10px #939464;
-    box-shadow: 0px 0px 1px 1px rgba(51, 102, 153, 0.13);
+    border-radius: 24px;
+    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.39);
 }
 
 .msg-cont-bot, .msg-cont-user {
-    width: 100%;
+    width: 90%;
+    display: inline-block;
 }
 
 .msg-wraper-user, .msg-wraper-bot {
@@ -47,14 +49,21 @@
 
 .msg-wraper-user {
     border-radius: 4px 7px 0px 7px;
-    margin: 6px 8px 6px 50px;
+    margin: 6px 5px 5px 50px;
     background-color: #fffffc;
+    padding-right: 40px;
 }
 
 .msg-wraper-bot {
     border-radius: 7px 4px 7px 0px;
-    margin: 6px 50px 6px 8px;
+    margin: 6px 50px 6px 5px;
     background-color: #fcfdff;
+    padding-right: 40px;
+}
+
+.msg-cont {
+    /*display: inline-block;
+    min-width: 87%;*/
 }
 
 .msg-cont-user {
@@ -106,11 +115,20 @@
 .eb-chat-inp-cont .btn, .msg-wraper-bot .btn {
     border-radius: 15px;
     padding: 2px 12px;
-    color:white;
+    color: white;
     background: #428bca;
     border: none;
     outline: none;
 }
+
+
+.btn-box .btn {
+    color: #555;
+    background: #fcfdff;
+    font-size: 12px;
+    border: solid 1px #e0e0e0;
+}
+
 .msg-wraper-bot .btn {
     margin: 1px 1px;
     width: 100%;
@@ -126,8 +144,9 @@
     margin-left: 10px;
     background-color: transparent;
 }
+
 .chat-ctrl-cont .Eb-ctrlContainer {
-    width: 235px;
+    width: 197px;
     display: inline-block;
 }
 
@@ -141,5 +160,44 @@
 }
 
 .chat-ctrl-cont {
-    width: 272px;
+    width: 234px;
+}
+
+.bot-icon {
+    background: url(../images/robot2.png)center center no-repeat;
+    width: 26px;
+    background-size: cover;
+    height: 26px;
+    display: inline-block;
+    margin-bottom: -6px;
+    border-radius: 24px;
+}
+.bot-icon-user {
+    background: url(../images/rob.jpg)center center no-repeat;
+    width: 26px;
+    background-size: cover;
+    height: 26px;
+    display: inline-block;
+    margin-bottom: -6px;
+    border-radius: 24px;
+}
+.msg-time {
+    color: #999;
+    font-size: 10px;
+    text-align: right;
+    margin-top: -10px;
+    margin-right: -36px;
+}
+.chat-date {
+    text-align: center;
+}
+    .chat-date span {
+        background: #ffffff;
+        border-radius: 15px;
+        opacity: .8;
+        padding: 2px 8px;
+        font-size: 11px;
+    }
+.chat-typing{
+    color:#999;
 }

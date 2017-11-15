@@ -275,15 +275,11 @@ namespace ExpressBase.Web.Controllers
             var res = version1.CompareTo(version2);
             if (res > 0)
             {
-                //first_obj = JsonConvert.SerializeObject(first_obj, Formatting.Indented);
-                //second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);
                 result = GetDiffer(ToJSONusingReflection(second_obj), ToJSONusingReflection(first_obj));
             }
             else
             {
-                first_obj = JsonConvert.SerializeObject(first_obj, Formatting.Indented);
-                second_obj = JsonConvert.SerializeObject(second_obj, Formatting.Indented);
-                result = GetDiffer(first_obj, second_obj);
+                result = GetDiffer(ToJSONusingReflection(first_obj), ToJSONusingReflection(second_obj));
             }
 
             return result;
@@ -346,7 +342,7 @@ namespace ExpressBase.Web.Controllers
         {
             const string spaceValue = "&nbsp;";
             const string tabValue = "&#9;";
-            string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
+            string html = "<div class=" + "'diffpane col-md-12'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
 
             foreach (var diffLine in text.Lines)
             {

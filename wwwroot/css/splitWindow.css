@@ -20,6 +20,7 @@
     display: inline-block;
     height: calc(100vh - 87px);
     width: 100%;
+    margin: 3px;
 }
 
 .head-btn {
@@ -99,5 +100,6 @@
 }
 .splitdiv_parent {
     white-space: nowrap;
-    margin-top: 87px;
+    margin-top: 85px;
+    height: calc(100vh - 98px);
 }

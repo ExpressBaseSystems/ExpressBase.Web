@@ -247,9 +247,9 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult ManageRoles()
         {
-            //IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            //var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest { EbObjectType = (int)EbObjectType.Application});
-            //ViewBag.dict = resultlist.Data;    // get application from application table
+            
+            var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
+            ViewBag.dict = resultlist.Data;    // get application from application table
             return View();
         }
 
@@ -277,7 +277,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        public string GetRowAndColumn(string DominantRefiid, int ObjectType, int RoleId)
+        public string GetRowAndColumn(string ApplicationId, int ObjectType, int RoleId)
         {
            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             List<string> _permissionsData = new List<string>(); // FOR NEW MODE
@@ -288,24 +288,24 @@ namespace ExpressBase.Web2.Controllers
                 _permissionsData = fr.Permissions;
             }
 
-            var resultlist = this.ServiceClient.Get<EbObjectRelationsResponse>(new EbObjectRelationsRequest { DominantId = DominantRefiid, EbObjectType = ObjectType, TenantAccountId = ViewBag.cid });
+            var resultlist = this.ServiceClient.Get<GetApplicationObjectsResponse>(new GetApplicationObjectsRequest { Id = Convert.ToInt32(ApplicationId), objtype = ObjectType});
             ViewBag.dict = resultlist.Data;
             string html = @"<thead><tr><th>@Header</th></tr></thead><tbody>@tbody</tbody>";
             string header = string.Empty;
             string tbody = string.Empty;
 
-            if (ObjectType == 11)
+            if (ObjectType == 16)
             {
-                foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
+                foreach (var Op in Enum.GetValues(typeof(EbTableVisualization.Operations)))
                     header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
 
-                foreach (var obj in resultlist.Data)
+                foreach (var obj in resultlist.Data.Keys)
                 {
                     tbody += "<tr>";
-                    tbody += "<td>{0}</td>".Fmt(obj.Name);
-                    foreach (var Op in Enum.GetValues(typeof(EbDataVisualization.Operations)))
+                    tbody += "<td>{0}</td>".Fmt(resultlist.Data[obj]);
+                    foreach (var Op in Enum.GetValues(typeof(EbTableVisualization.Operations)))
                     {
-                        var perm = string.Format("{0}_{1}", obj.Id, (int)Op);
+                        var perm = string.Format("{0}_{1}", obj, (int)Op);
                         var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
                         tbody += "<td><input type = 'checkbox' name ='permissions' value='{0}' class='form-check-input' aria-label='...' {1}></td>".Fmt(perm, checked_string);
                     }

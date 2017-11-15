@@ -46,8 +46,8 @@
     this.appendFontPropsSec = function () {
         var Prophtml = (
             '<div class="col-md-7 pd-0 FEcol FEfont-family">'
-            + '<div class="FEhead" style="text-align:left">'
-            + 'Font<input type="text" id="fontSearch" class="fontSearch" placeholder="search font">'
+            + '<div class="FEhead-font" style="text-align:left">'
+            + '<div class="font-text">Font</div><input type="text" id="fontSearch" class="fontSearch" placeholder="search font">'
             + '</div > '
             + '<div class="FEcol-bdy" id="' + this.ContainerId + 'FEfamily-bdy">'
             + '<select name="googleFont" id="googleFont" class="form-control" size="5"></select>'

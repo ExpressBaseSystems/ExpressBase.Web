@@ -17,13 +17,40 @@ namespace ExpressBase.Web.Controllers
         public StaticFileController(IServiceClient _ssclient) : base(_ssclient) { }
 
         // GET: /<controller>/
+
+        [HttpGet("static/dp/{filename}")]
+        public FileStream GetDP(string filename)
+        {
+            if (filename.StartsWith("dp") && filename.Split('.').Length == 2)
+            {
+                filename = filename.Split('.')[0] + ".jpg";
+                string sFilePath = string.Format("StaticFiles/{0}/dp/{1}", ViewBag.cid, filename);
+                if (!System.IO.File.Exists(sFilePath))
+                {
+                    byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = "jpg" } });
+                    EbFile.Bytea_ToFile(fileByte, sFilePath);
+                }
+                HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=604800";
+                return System.IO.File.OpenRead(sFilePath);
+            }
+            else
+                return null;
+        }
+
         [HttpGet("static/{filename}")]
         public FileStream GetFile(string filename)
         {
             string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
             if (!System.IO.File.Exists(sFilePath))
             {
-                byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType =  filename.Split('.')[1].ToLower() }});
+                byte[] fileByte = this.ServiceClient.Post<byte[]>
+                    (new DownloadFileRequest
+                    {
+                        FileDetails = new FileMeta
+                        {
+                            FileName = filename,
+                            FileType =  filename.Split('.')[1].ToLower() }
+                    });
                 EbFile.Bytea_ToFile(fileByte, sFilePath);
             }
 
@@ -154,55 +181,35 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UploadDPAsync(int i, string userid)
-        {
-            JsonResult resp = null;
+        public async Task<string> UploadDPAsync(string base64)
+        {            
             string Id = string.Empty;
             string url = string.Empty;
+            byte[] myFileContent;
             try
-            {
-                var req = this.HttpContext.Request.Form;
+            {               
                 UploadImageRequest uploadImageRequest = new UploadImageRequest();
-                uploadImageRequest.ImageInfo = new FileMeta();
-
+                uploadImageRequest.ImageInfo = new FileMeta();               
                 uploadImageRequest.IsAsync = false;
-
-                foreach (var formFile in req.Files)
-                {
-                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split('.')[1]))
-                    {
-                        byte[] myFileContent;
-
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await formFile.CopyToAsync(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            myFileContent = new byte[memoryStream.Length];
-                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
-
-                            uploadImageRequest.ImageByte = myFileContent;
-                        }
-
-                        uploadImageRequest.ImageInfo.FileType = "jpg";
-                        uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}_actual.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                string base64Norm = base64.Replace("data:image/png;base64,", "");
+                myFileContent = System.Convert.FromBase64String(base64Norm);
+                uploadImageRequest.ImageByte = myFileContent;                           
+                uploadImageRequest.ImageInfo.FileType = "jpg";
+                        uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         Id = this.ServiceClient.Post<string>(uploadImageRequest);
                         if(ViewBag.cid == "expressbase")
-                            url = string.Format("http://localhost:5000/static/dp_{0}_actual.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                            url = string.Format("http://localhost:5000/static/dp/dp_{0}.jpg", ViewBag.UId);
                         else
-                        url = string.Format("http://{0}.localhost:5000/static/dp_{1}_actual.{2}", ViewBag.cid, ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
-                    }
-                    else url = "Error Because of the file type";
-                    resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });
-                }
+                        url = string.Format("http://{0}.localhost:5000/static/dp_{1}.{2}", ViewBag.cid, ViewBag.UId, uploadImageRequest.ImageInfo.FileType);              
             }
             catch (Exception e)
             {
-                resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
+                return "upload failed";
             }
 
-            return resp;
+            return url;
         }
 
         public List<FileMeta> FindFilesByTags(int i, string tags, string bucketname)

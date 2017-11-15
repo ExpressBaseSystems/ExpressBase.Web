@@ -26,9 +26,10 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             commonO.Current_obj = this.EbObject;
         }
         else {
-            this.GetFD();
-            this.GenerateButtons();
+            if(this.EbObject.FilterDialogRefId !== "")
+                this.GetFD();
         }
+        this.GenerateButtons();
 
         this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
         this.Name = this.EbObject.Name;
@@ -145,19 +146,27 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //    this.Find_parameters(true, false, needRun);
     //}
     this.RunDs = function () {
+        commonO.flagRun = true;
         $.LoadingOverlay("show");
-        commonO.Save();
-        //if (this.Parameter_Count === 0) {
-        //    this.Save(false);
-        //    this.Object_String_WithVal = "";
-        //    // this.DrawTable();
-        //}
-        //else {
-        this.CountParameters(true, true, true);
-        //}
+        if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
+            if (this.EbObject.VersionNumber.slice(-1) === "w") {
+               commonO.Save();
+            }
+            else {
+                this.SaveSuccess();
+            }
+        }
+        else
+            commonO.Save();
+    };
+
+    this.SaveSuccess = function () {
+        if (commonO.flagRun)
+            this.CountParameters();
     };
 
     this.CountParameters = function () {
+        this.flagRun = false;
         var result = window["editor" + tabNum].getValue().match(/\@\w+/g);
         var filterparams = [];
         if (result !== null) {
@@ -185,7 +194,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.CreateObjString = function () {
         if (this.Parameter_Count !== 0) {
             var ObjString = "[";
-            var filter_control_list = "";
+            var filter_control_list = "datefrom,dateto";
             var myarray = filter_control_list.split(',');
             for (var i = 0; i < myarray.length; i++) {
                 console.log($("#" + myarray[i]).val());
@@ -203,7 +212,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.Object_String_WithVal = ObjString;
         }
         else {
-            this.Object_String_WithVal = null;.2500014041
+            this.Object_String_WithVal = null;
         }
         console.log("Object_String_WithVal" + this.Object_String_WithVal);
     }

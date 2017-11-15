@@ -46,12 +46,12 @@
     $("#layout_div").data("commonObj", commonObj);
 
 </script>
+<div id="object_Dashboard_main">
+    @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles })
+</div>
 
-@await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, desc = ViewBag.ObjectDesc, _readonly = ViewBag.ReadOnly, _type = ViewBag.ObjType, major = ViewBag.Majorv, minor = ViewBag.Minorv, patch = ViewBag.Patchv, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId })
-
-
-<div class="row codedit" style="margin-top:229px;">
-    <div class="tab-section-common">
+<div class="row codedit" id ="codedit" style="margin-top:229px;">
+    <div class="tab-section-common" id="tab-section-common">
         <ul class="nav nav-tabs" id="versionNav">
             <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber">v @ViewBag.VersionNumber</a></li>
         </ul>

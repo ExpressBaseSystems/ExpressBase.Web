@@ -22,16 +22,13 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(string refid, string objname, string status, string desc, bool _readonly, int _type, int major, int minor, int patch, string[] workcopies, string _tags, int _appId)
+        public async Task<IViewComponentResult> InvokeAsync(string refid, string objname, string status, string vernum, int major, int minor, int patch, string[] workcopies, string _tags, int _appId, EbObjectWrapper_Dashboard _dashbord_tiles)
         {
-            ViewBag._Refid = refid;
+            ViewBag.Refid = refid;
             ViewBag.ObjName = objname;
-            //ViewBag.TotalVersions = totVer;
             ViewBag.Status = status;
-            ViewBag.description = desc;
-            ViewBag._ReadOnly = _readonly;
-            ViewBag._objtype = _type;
-            ViewBag._isUI = Enum.IsDefined(typeof(EbObjectTypesUI), _type);
+            //ViewBag._isUI = Enum.IsDefined(typeof(EbObjectTypesUI), _type);
+            ViewBag.VersionNumber = vernum;
             ViewBag._major = major;
             ViewBag._minor = minor;
             ViewBag._patch = patch;
@@ -40,6 +37,22 @@ namespace ExpressBase.Web.Components
             var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
             ViewBag.Apps = resultlist.Data;
             ViewBag.AppId = _appId;
+            if (_dashbord_tiles != null)
+            {
+                ViewBag.LastCommitedVersionRefid = _dashbord_tiles.LastCommitedVersionRefid;
+                ViewBag.LastCommitedVersionNumber = _dashbord_tiles.LastCommitedVersionNumber;
+                ViewBag.LastCommitedVersionCommit_ts = _dashbord_tiles.LastCommitedVersionCommit_ts;
+                ViewBag.LastCommitedVersion_Status = _dashbord_tiles.LastCommitedVersion_Status;
+                ViewBag.LastCommitedby_Name = _dashbord_tiles.LastCommitedby_Name;
+                ViewBag.LastCommitedby_Id = _dashbord_tiles.LastCommitedby_Id;
+                ViewBag.LiveVersionRefid = _dashbord_tiles.LiveVersionRefid;
+                ViewBag.LiveVersionNumber = _dashbord_tiles.LiveVersionNumber;
+                ViewBag.LiveVersionCommit_ts = _dashbord_tiles.LiveVersionCommit_ts;
+                ViewBag.LiveVersion_Status = _dashbord_tiles.LiveVersion_Status;
+                ViewBag.LiveVersionCommitby_Name = _dashbord_tiles.LiveVersionCommitby_Name;
+                ViewBag.LiveVersionCommitby_Id = _dashbord_tiles.LiveVersionCommitby_Id;
+            }
+            else{ }
             return View();
 
         }

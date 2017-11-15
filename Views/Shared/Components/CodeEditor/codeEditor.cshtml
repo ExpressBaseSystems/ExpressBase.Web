@@ -24,16 +24,46 @@
                 CodeMirror.showHint(cm, "CodeMirror.hint.sql");
             };
         }
+     var _readonly = '@ViewBag.VersionNumber'.slice(-1);
+        if (_readonly === "w" ||'@ViewBag.IsNew'==="True")
+            _readonly = false;
+        else
+            _readonly = true;
         window["editor@(ViewBag.tabnum)"] = CodeMirror.fromTextArea(document.getElementById("code@(ViewBag.tabnum)"), {
             mode: "text/x-pgsql",
             lineNumbers: true,
             lineWrapping: false,
             extraKeys: { "Ctrl-Space": "autocomplete" },
             autoRefresh: true,
-            readOnly: false,
+            readOnly: _readonly,
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
+     var orig = CodeMirror.hint.sql;
+        CodeMirror.hint.sql = function (editor) {
+            var inner = orig(editor) || {from: editor.getCursor(), to: editor.getCursor(), list: []};
+            var SqlFnList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SqlFns));
+            $.each(SqlFnList, function (i, fdj) {
+                inner.list.push(fdj);
+            });
+            var cursor = editor.getCursor();
+            var currentLine = editor.getLine(cursor.line);
+            var start = cursor.ch;
+            var end = start;
+            while (end < currentLine.length && /[\w$]+/.test(currentLine.charAt(end))) ++end;
+            while (start && /[\w$]+/.test(currentLine.charAt(start - 1))) --start;
+            var curWord = start != end && currentLine.slice(start, end);
+            var regex = new RegExp('^' + curWord, 'i');
+            var result = {
+                list: (!curWord ? inner.list : inner.list.filter(function (item) {
+                    return item.match(regex);
+                })).sort(),
+                from: CodeMirror.Pos(cursor.line, start),
+                to: CodeMirror.Pos(cursor.line, end)
+            };
+
+            return result;
+        };
         setTimeout(function () {
             window["editor@(ViewBag.tabnum)"].refresh();
         }, 500);
@@ -47,5 +77,11 @@
     }
     .param-div {
         position: fixed;
+    }
+    .CodeMirror-gutters {
+        z-index: 2;
+    }
+    .CodeMirror-gutter-wrapper {
+        z-index: 3;
     }
 </style>

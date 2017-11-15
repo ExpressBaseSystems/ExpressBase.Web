@@ -23,9 +23,9 @@
             viewport: { width: 150, height: 150 },
             enableOrientation: true
         });
-        $('.cr-slider-wrap').append(' <button class="btn btn-sm" id="crop"><i class="fa fa-crop" aria-hidden="true"></i></button>'
-            + '<button class="btn btn-sm" id= "crop-rotate-left" ><i class="fa fa-undo fa-lg" aria-hidden="true"></i></button>'
-            + '<button class="btn btn-sm" id="crop-rotate-right"><i class="fa fa-repeat fa-lg" aria-hidden="true"></i></button>');
+        $('.cr-slider-wrap').append(`<button class="btn btn-sm" id= "crop-rotate-left" ><i class="fa fa-undo fa-lg" aria-hidden="true"></i></button>
+            <button class="btn btn-sm" id="crop-rotate-right"><i class="fa fa-repeat fa-lg" aria-hidden="true"></i></button>'
+            <button class="btn btn-sm" id="crop"><i class="fa fa-crop" aria-hidden="true"></i></button>`);
 
         $('#crop').on('click', this.getCropedImg.bind(this));
         $('#crop-rotate-left').on('click', this.rotateLeft.bind(this));
@@ -49,9 +49,11 @@
             'base64': result
         }, function (url) {
             if (url !== null) {
+                $('.img-box-prof-picDiv').hide();
                 $('#profimage').css('background', 'url(' + url + ') center center no-repeat');
                 $('#previewsec-outer').hide();
-                $.LoadingOverlay("hide");                
+                $.LoadingOverlay("hide");
+                $('#save').removeAttr('disabled');
             }
             });
     };

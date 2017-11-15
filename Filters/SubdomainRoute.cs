@@ -50,8 +50,12 @@ namespace ExpressBase.Web.Filters
             var host = context.HttpContext.Request.Host.Host.Replace("www.", string.Empty);
             var path = context.HttpContext.Request.Path;
             string[] subdomain = host.Split('.');
-
-            if (path == "/")
+            if(subdomain[0] == "bot")
+            {
+                context.RouteData.Values["controller"] = "EBProducts"; //Goes to the relevant Controller  class
+                context.RouteData.Values["action"] = "Bot";
+            }
+            else if (path == "/")
             {
                 if (host.EndsWith("expressbase.com") || host.EndsWith("expressbase.org"))
                 {

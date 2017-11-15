@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols;
 using ServiceStack;
 using ServiceStack.Redis;
+using Stripe;
 
 namespace ExpressBase.Web2
 {
@@ -37,6 +39,11 @@ namespace ExpressBase.Web2
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
+            services.AddDataProtection(opts =>
+              {
+                opts.ApplicationDiscriminator = "expressbase.web";
+                            }); // for antiforgery checking 
+
             services.AddMvc();
 
 
@@ -54,7 +61,7 @@ namespace ExpressBase.Web2
             {
                 return new JsonServiceClient(connectionString);
             });
-
+            StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
             var redisServer = Configuration["EbSetupConfig:RedisServer"];
             var redisPassword = Configuration["EbSetupConfig:RedisPassword"];
             var redisPort = Configuration["EbSetupConfig:RedisPort"];

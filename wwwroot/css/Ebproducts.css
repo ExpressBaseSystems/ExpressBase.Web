@@ -1,0 +1,53 @@
+﻿.pd-0{
+    padding:0;
+}
+.Eb-bot-header .navbar {
+    height: auto;
+    padding: 10px 100px 10px 100px;
+}
+.Eb-bot-header .navbar-default {
+    background-color: transparent !important;
+    border-color: #27A1C5 !important;
+}
+.Eb-bot-header .navbar-default img {
+        height: 100%;
+        margin-top: 0; 
+        margin-bottom: 0; 
+        margin-right: 0; 
+}
+.Eb-bot-header .navbar-default .navbar-nav > li > a {
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 500;
+}
+.bot-banner {
+    height: 550px;
+    background: #27A1C5;
+}
+.bot-signup {
+    padding: 101px 50px 10px 10px;
+    height: inherit;
+}
+.bot-signup-bdy {
+    background: white;
+    padding: 10px;
+    height: 100%;
+}
+.bot-signup-input {
+    border-radius: 0;
+}
+.both {
+    margin-bottom: 20px;
+}
+.bot-signup-btn {
+    border-radius: 0;
+    width: 100%;
+    background: #27A1C5;
+}
+.bot-s-agrement {
+    font-size: 11px;
+    color: #7c8082;
+}
+.bot-desc {
+    height:300px;
+}

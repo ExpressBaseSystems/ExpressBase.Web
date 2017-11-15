@@ -16,10 +16,10 @@
     this.FlagSave = false;
     this.messg = new EbAlert(
         {
-            id:"dshbrd_alert",
-            possition:"bottom-right"
+            id: "dshbrd_alert",
+            possition: "bottom-right"
         });
-    
+
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('#ver_his').off("click").on("click", this.Version_List.bind(this));
@@ -56,7 +56,7 @@
         var target = $("#versionNav li.active a").attr("href");
         this.ver_Refid = data;
         var getNav = $("#versionNav li.active a").attr("href");
-        $(getNav).attr("data-id", this.ver_Refid);        
+        $(getNav).attr("data-id", this.ver_Refid);
         if (this.Current_obj.VersionNumber !== null && this.Current_obj.VersionNumber !== undefined) {
             if (!this.FlagSave) {
                 this.Current_obj.VersionNumber = this.Current_obj.VersionNumber.replace(/.w/g, '');
@@ -80,7 +80,7 @@
         }
         this.ObjCollection[target].EbObject = this.Current_obj;
         this.ObjCollection[target].Refid = this.ver_Refid;
-            
+
         $("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
         $("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
 
@@ -96,14 +96,14 @@
         $.post("Eb_object/UpdateObjectDashboard", { refid: this.ver_Refid },
             function (data) {
                 $('#object_Dashboard_main').empty().append(data);
-                commonObj.init();     
+                commonObj.init();
             }
         );
     };
     this.LoadStatusPage = function () {
         $.LoadingOverlay("show");
         this.tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> status " + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> Status " + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade vernav'>";
         this.AddVerNavTab(navitem, tabitem);
         $('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
@@ -129,7 +129,7 @@
         $(tabContentId).remove();
         $('#versionNav a:last').tab('show'); // Select first tab        
     };
-    
+
     this.Version_List = function () {
         $.LoadingOverlay("show");
         this.tabNum++;
@@ -147,7 +147,7 @@
         $("#vernav" + this.tabNum + " .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
         $.LoadingOverlay("hide");
     };
-    
+
     this.OpenPrevVer = function (e) {
         $.LoadingOverlay("show");
         this.ver_Refid = $(e.target).attr("data-id");
@@ -163,12 +163,20 @@
     };
 
     this.CallObjectEditor_success = function (data) {
-        var navitem = "<li><a data-toggle='tab' class='cetab' href='#vernav" + this.tabNum + "' data-verNum='" + this.Current_obj.VersionNumber + "'>v." + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var icon;
+        if (this.Current_obj.VersionNumber.slice(-1) === 'w') {
+            icon = "fa-pencil";
+        }
+        else {
+            icon = "fa-lock";
+        }
+
+        var navitem = "<li><a data-toggle='tab' class='cetab' href='#vernav" + this.tabNum + "' data-verNum='" + this.Current_obj.VersionNumber + "'><i class='fa " + icon + "' aria-hidden='true'></i>   v." + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
         this.AddVerNavTab(navitem, tabitem);
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('#vernav' + this.tabNum).append(data);
-        if(this.Current_obj !== null)
+        if (this.Current_obj !== null)
             this.UpdateCreateVersionDD();
         $.LoadingOverlay("hide");
     };
@@ -234,11 +242,11 @@
             alert("Please Select A Version");
             $.LoadingOverlay("hide");
         }
-        else {            
+        else {
             $.post('../Eb_Object/GetObjectsToDiff', { ver1refid: Refid1, ver2refid: Refid2 }).done(this.showDiff.bind(this, vernum1, vernum2));
         }
     };
-   
+
     this.showDiff = function (new_ver_num, old_ver_num, data) {
         $('#versionNav li.active a').text().replace('compare', "v." + old_ver_num + " v/s v." + new_ver_num);
 
@@ -263,16 +271,16 @@
     };
 
     this.TabChangeSuccess = function (e) {
-        if ($(e.target).attr("data-vernum") !== undefined){
+        if ($(e.target).attr("data-vernum") !== undefined) {
             this.tabchangeFlag = true;
-        var target = $(e.target).attr("href");
-        this.ObjWrapper = this.ObjCollection[target];
-        this.ver_Refid = this.ObjWrapper.Refid;
-        this.Current_obj = this.ObjWrapper.EbObject;
-        //this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
-        this.UpdateCreateVersionDD();
-        this.ObjWrapper.GenerateButtons();
-    }
+            var target = $(e.target).attr("href");
+            this.ObjWrapper = this.ObjCollection[target];
+            this.ver_Refid = this.ObjWrapper.Refid;
+            this.Current_obj = this.ObjWrapper.EbObject;
+            //this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
+            this.UpdateCreateVersionDD();
+            this.ObjWrapper.GenerateButtons();
+        }
         else
             $("#obj_icons").empty();
     };
@@ -284,14 +292,14 @@
         var appid = $("#apps").find("option:selected").val();
         if (this.ObjCollection["#vernav" + this.tabNum].EbObject.$type.indexOf("Report") !== -1) {
             this.ObjCollection["#vernav" + this.tabNum].savefile();
-        }           
+        }
         $.post("../Eb_Object/SaveEbObject", {
             _refid: this.ver_Refid,
             _json: JSON.stringify(this.Current_obj),
             _rel_obj: this.ObjCollection["#vernav" + this.tabNum].relatedObjects,
             _tags: tagvalues,
             _appid: appid
-        }, this.UpdateTab.bind(this));      
+        }, this.UpdateTab.bind(this));
     };
 
     this.Commit = function () {
@@ -301,18 +309,18 @@
         var changeLog = $('#obj_changelog').val();
         if (this.ObjCollection["#vernav" + this.tabNum].EbObject.$type.indexOf("Report") !== -1) {
             this.ObjCollection["#vernav" + this.tabNum].Commit();
-        }   
+        }
         $.post("../Eb_Object/CommitEbObject", {
             _refid: this.ver_Refid, _changeLog: changeLog,
             _json: JSON.stringify(this.Current_obj),
             _rel_obj: this.ObjCollection["#vernav" + this.tabNum].relatedObjects,
             _tags: tagvalues,
             _appid: appid
-        }, this.UpdateTab.bind(this));        
+        }, this.UpdateTab.bind(this));
     };
 
     this.UpdateCreateVersionDD = function () {
-        $("#objname").text(this.Current_obj.Name);        
+        $("#objname").text(this.Current_obj.Name);
         $('#create li').remove()
         var arr = this.Current_obj.VersionNumber.split(".")
         var vNumMajor = ("v." + (parseInt(major) + 1) + ".0.0.w");
@@ -320,8 +328,8 @@
         var vNumPatch = ("v." + arr[0] + "." + arr[1] + "." + (parseInt(arr[2]) + 1) + ".w");
 
         $("#create").append(
-            "<li id='_major' class='list-group-item'> Major Version - (" + vNumMajor + ") from(v." + this.Current_obj.VersionNumber+")</li >"+
-            "<li id= '_minor' class='list-group-item'> Minor Version - (" + vNumMinor + ") from(v." + this.Current_obj.VersionNumber +")</li > "+
+            "<li id='_major' class='list-group-item'> Major Version - (" + vNumMajor + ") from(v." + this.Current_obj.VersionNumber + ")</li >" +
+            "<li id= '_minor' class='list-group-item'> Minor Version - (" + vNumMinor + ") from(v." + this.Current_obj.VersionNumber + ")</li > " +
             "<li id='_patch' class='list-group-item'>Patch Version - (" + vNumPatch + ") from (v." + this.Current_obj.VersionNumber + ")</li>");
         $('#create').selectpicker('refresh');
 

@@ -48,9 +48,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.VersionNumber = element.VersionNumber;
                     ViewBag.ObjType = objtype;
                     ViewBag.Refid = element.RefId;
-                    ViewBag.Majorv = element.MajorVersionNumber;
-                    ViewBag.Minorv = element.MinorVersionNumber;
-                    ViewBag.Patchv = element.PatchVersionNumber;
+                    ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
                     ViewBag.Tags = element.Tags;
                     ViewBag.AppId = element.AppId;
                     ViewBag.DashboardTiles = element.Dashboard_Tiles;
@@ -79,18 +77,19 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.IsNew = "true";
                 ViewBag.Refid = string.Empty;
-                ViewBag.ObjectName = "*New";
+                ViewBag.ObjectName = "*Untitled";
                 ViewBag.Status = string.Empty;
                 ViewBag.ObjectDesc = string.Empty;
                 ViewBag.ReadOnly = false;
                 ViewBag.ObjType = objtype;
                 ViewBag.Majorv = 0;
-                ViewBag.Minorv = 0;
-                ViewBag.Patchv = 0;
                 ViewBag.Workingcopy = new string[0];
                 ViewBag.Tags = string.Empty;
                 ViewBag.AppId = 0;
                 ViewBag.DashboardTiles = null;
+                ViewBag.VersionNumber = "1.0.0.w";
+
+
             }
             if (type == EbObjectType.DataSource)
             {
@@ -439,25 +438,21 @@ namespace ExpressBase.Web.Controllers
             string _objname = "";
             string _status = "";
             string _vernum = "";
-            int? _major = null;
-            int? _minor = null;
-            int? _patch = null;
             string[] _workcopies = { };
             string _tags = "";
             int? _appid = null;
+            EbObjectWrapper_Dashboard _dashbord_tiles = new EbObjectWrapper_Dashboard();
             foreach (var element in rlist)
             {
                 _objname = element.Name;
                 _status = element.Status;
                 _vernum = element.VersionNumber;
-                _major = element.MajorVersionNumber;
-                _minor = element.MinorVersionNumber;
-                _patch = element.PatchVersionNumber;
                 _workcopies = element.Wc_All;
                 _tags = element.Tags;
                 _appid = element.AppId;
+                _dashbord_tiles = element.Dashboard_Tiles;
             }
-            return ViewComponent("ObjectDashboard", new { refid = refid, objname = _objname, status = _status, vernum= _vernum, major = _major, minor = _minor, patch = _patch, workcopies = _workcopies, _tags =_tags, _appId = _appid });
+            return ViewComponent("ObjectDashboard", new { refid = refid, objname = _objname, status = _status, vernum= _vernum, workcopies = _workcopies, _tags =_tags, _appId = _appid , _dashbord_tiles = _dashbord_tiles });
         }
 
     }

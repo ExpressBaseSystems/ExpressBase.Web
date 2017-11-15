@@ -1,163 +1,177 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    //Html.RenderPartial("ExtPageHeader");
+    Html.RenderPartial("ExtPageHeader");
 }
-<style>
-    .mt-89 {
-        margin-top: 89px;
-    }
+<link rel="stylesheet" type="text/css" href="~/css/StripesElement.css" data-rel-css="" />
 
-    .pd-0 {
-        padding: 0;
-    }
 
-    .profImageSec {
-        background: #6da49f;
-        height: calc(100vh - 89px);
-        padding: 30px;
-    }
-
-    .profSetupSec {
-        height: calc(100vh - 89px);
-        background: #eeeeee;
-    }
-
-    .prof-picDiv {
-        width: 100%;
-        background: white;
-        height: 150px;
-    }
-
-    .profDetailHead {
-        color: white;
-        font-size: 22px;
-        padding-left: 20px;
-    }
-
-    .profImagePrevSec {
-        background: #eeeeee;
-        height: calc(100vh - 89px);
-    }
-
-    .previewsec-outer {
-        width: 100%;
-        height: inherit;
-        background: white;
-        padding: 10px 10px 10px 20px;
-    }
-
-    .previewsec-outer-head {
-        width: 100%;
-        
-    }
-
-    .preview-img {
-        width: 100%;
-        height: 200px;
-        border: 1px solid #6da49f;
-    }
-
-    .submitsec .btn {
-        float: right;
-    }
-    .Eb-CommonMenuStyle{
-        height:32px;
-        border:none;
-    }
-    .Eb-CommonMenuStyle .btn{      
-        border: none;
-    }
-
-</style>
-<div class="Eb-CommonMenuStyle">
-    <div class="col-md-3 profDetailHead">Personal info</div>
-    <div class="pull-right">
-        <input type="button" class="btn btn-primary" id="save" value="Save">
-        <input type="button" class="btn btn-primary" value="Skip" style="margin-right:10px;">
-    </div>
-</div>
-<div class="container-fluid pd-0">   
-    <div class="col-md-2 profImageSec">
-        <div class="prof-picDiv">
-
-        </div>
-    </div>
-    <div class="col-md-6 profSetupSec">
-        <form class="form-horizontal" style="margin-top:35px">           
-            <div class="form-group">
-                <label for="name" class="col-md-2">Name:</label>
-                <div class="col-md-8 pd-0">
-                    <input class="form-control" type="text" name="Name" id="name" placeholder="Name">
-                </div>
+<div class="col-md-6 col-md-offset-1" style="margin-top:90px">
+    <div class="cell example example5">
+        <form action="~/Ext/Charge" method="post" id="payment-form">
+            <div id="example5-paymentRequest">
+                <!--Stripe paymentRequestButton Element inserted here-->
             </div>
-            <div class="form-group">
-                <label for="phone" class="col-md-2">Phone:</label>
-                <div class="col-md-8 pd-0">
-                    <input class="form-control" type="text" name="Phone" id="phone" placeholder="Phone">
+            <fieldset>
+                <legend class="card-only" data-tid="elements_examples.form.pay_with_card">Pay with card</legend>
+                <legend class="payment-request-available" data-tid="elements_examples.form.enter_card_manually">Or enter card details</legend>
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-name" data-tid="elements_examples.form.name_label">Name</label>
+                        <input id="example5-name" data-tid="elements_examples.form.name_placeholder" class="input" type="text" placeholder="Jane Doe" required="">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="company" class="col-md-2">Company:</label>
-                <div class="col-md-8 pd-0">
-                    <input class="form-control" type="text" name="Company" id="company" placeholder="Company">
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-email" data-tid="elements_examples.form.email_label">Email</label>
+                        <input id="example5-email" name="stripeEmail" data-tid="elements_examples.form.email_placeholder" class="input" type="text" placeholder="janedoe@gmail.com" required="">
+                    </div>
+                    <div class="field">
+                        <label for="example5-phone" data-tid="elements_examples.form.phone_label">Phone</label>
+                        <input id="example5-phone" data-tid="elements_examples.form.phone_placeholder" class="input" type="text" placeholder="(941) 555-0123" required="">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="designation" class="col-md-2">Designation:</label>
-                <div class="col-md-8 pd-0">
-                    <input class="form-control" type="text" name="Designation" id="designation" placeholder="Designation">
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-address" data-tid="elements_examples.form.address_label">Address</label>
+                        <input id="example5-address" data-tid="elements_examples.form.address_placeholder" class="input" type="text" placeholder="185 Berry St" required="">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="ui-select">
-                    <label for="employees" class="col-md-2">Employees:</label>
-                    <div class="col-md-8 pd-0">
-                        <select id="employees" name="Employees" class="form-control">
-                            <option value="0">Employees</option>
-                            <option value="1-10">1-10</option>
-                            <option value="11-50">11-50</option>
-                            <option value="51-100">51-100</option>
-                            <option value="101-250">101-250</option>
-                            <option value="251-500">250-500</option>
-                            <option value="greater than 500">greater than 500</option>
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-city" data-tid="elements_examples.form.city_label">City</label>
+                        <input id="example5-city" data-tid="elements_examples.form.city_placeholder" class="input" type="text" placeholder="San Francisco" required="">
+                    </div>
+                    <div class="field">
+                        <label for="example5-country" data-tid="elements_examples.form.country_label">Country</label>
+                        <select id="example5-country" data-tid="elements_examples.form.country_placeholder" class="input">
+                            <option selected="selected" value="US">United States</option>
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="upload" class="col-md-2">Image:</label>
-                <div class="col-md-8 pd-0">
-                    <input id="profImgUp" type="file" style="display:none"/>
-                    <button class="btn btn-success" onclick="$('#profImgUp').click();" style="width:100%">Browse</button>
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-card" data-tid="elements_examples.form.card_label">Card</label>
+                        <div id="example5-card" class="input"></div>
+                    </div>
                 </div>
-            </div>          
-            <input type="hidden" id="imgsrc" name="imgsrc" />
-            <div class="Img-upload-modal" id="promodal-container"></div>
-        </form>
-    </div>
-    <div class="col-md-4 pd-0 profImagePrevSec">
-        <div class="previewsec-outer" id="previewsec-outer">
-            <div class="previewsec-outer-head">
-                <i class="fa fa-times pull-right" aria-hidden="true"></i>
-            </div>
-            <h4>gfdgdfgdfh.jpg</h4>
-            <p>345.7 kb</p>
-            <div class="preview-img" id="preview-img">
-            </div>
-            <input type="button" class="btn btn-primary pull-right" id="up" value="Upload" style="margin-top:10px;">
-        </div>
+                <button type="submit" data-tid="elements_examples.form.pay_button">Pay $25</button>
+            </fieldset>
+           
+        </form>        
     </div>
 </div>
+
+<script src="https://js.stripe.com/v3/"></script>
+@*<script src="~/js/StripesElement.js"></script>*@
 <script>
-    $(document).ready(function () {
-        $('#profImgUp').change(function () {
-            alert();
-            $('#previewsec-outer').animate({ width: 'toggle' });
-            
-            previewAndUpload(this);
-        });
-        previewAndUpload = function (input) {
-            console.log();
-        };
+    var stripe = Stripe('pk_test_s1b6p5MmoOrYVcev3IPk3UMd');
+    var elements = stripe.elements();
+    var card = elements.create("card", {
+        iconStyle: "solid",
+        style: {
+            base: {
+                iconColor: "#fff",
+                color: "#fff",
+                fontWeight: 400,
+                fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                fontSize: "15px",
+                fontSmoothing: "antialiased",
+
+                "::placeholder": {
+                    color: "#BFAEF6"
+                },
+                ":-webkit-autofill": {
+                    color: "#fce883"
+                }
+            },
+            invalid: {
+                iconColor: "#FFC7EE",
+                color: "#FFC7EE"
+            }
+        }
     });
+    card.mount("#example5-card");
+
+    function stripeTokenHandler(token) {
+        // Insert the token ID into the form so it gets submitted to the server
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripeToken');
+        hiddenInput.setAttribute('value', token.id);
+        form.appendChild(hiddenInput);
+
+        // Submit the form
+        form.submit();
+    }
+
+    function createToken() {
+        stripe.createToken(card).then(function (result) {
+            if (result.error) {
+                // Inform the user if there was an error
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                // Send the token to your server
+                stripeTokenHandler(result.token);
+            }
+        });
+    };
+
+    // Create a token when the form is submitted.
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        createToken();
+    });
+
+    ///**
+    // * Payment Request Element
+    // */
+    //var paymentRequest = stripe.paymentRequest({
+    //    country: "US",
+    //    currency: "usd",
+    //    total: {
+    //        amount: 2500,
+    //        label: "Total"
+    //    },
+    //    requestShipping: true,
+    //    shippingOptions: [
+    //        {
+    //            id: "free-shipping",
+    //            label: "Free shipping",
+    //            detail: "Arrives in 5 to 7 days",
+    //            amount: 0
+    //        }
+    //    ]
+    //});
+    //paymentRequest.on("token", function (result) {
+    //    var example = document.querySelector(".example5");
+    //    example.querySelector(".token").innerText = result.token.id;
+    //    example.classList.add("submitted");
+    //    result.complete("success");
+    //});
+
+    //var paymentRequestElement = elements.create("paymentRequestButton", {
+    //    paymentRequest: paymentRequest,
+    //    style: {
+    //        paymentRequestButton: {
+    //            theme: "light"
+    //        }
+    //    }
+    //});
+
+    //paymentRequest.canMakePayment().then(function (result) {
+    //    if (result) {
+    //        document.querySelector(".example5 .card-only").style.display = "none";
+    //        document.querySelector(
+    //            ".example5 .payment-request-available"
+    //        ).style.display =
+    //            "block";
+    //        paymentRequestElement.mount("#example5-paymentRequest");
+    //    }
+    //});
+
+    ////registerElements([card], "example5");
+
 </script>

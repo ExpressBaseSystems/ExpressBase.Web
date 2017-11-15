@@ -1,16 +1,24 @@
 ﻿
 .FEhead {
-    background:#abd7ec;
-    height: 30px;    
+    background: #abd7ec;
+    height: 30px;
     text-align: center;
+    padding: 3px;
+    font-size: 15px;
+}
+.FEhead-font {
+    background: #abd7ec;
+    height: 30px;
 }
 .FEcol {
     border: 1px solid #ccc;
     margin-left: 20px;
 }
+.FEfont-family {
 
+} 
 .fup .FECont .modal-body:first-child {
-    margin-left:0px;
+    margin-left: 0px;
 }
 .fup .FECont {
     border-radius: 3px;
@@ -31,14 +39,16 @@
 }
 .FEcol-bdy {
     overflow-y:auto;
+    width:100%;
 }
 .fup .FE-section {
     width: inherit;
     height: 150px;
 }
-.FEhead .fontSearch {
+.FEhead-font .fontSearch {
     float: right;
     margin: 2px;
+    display: inline-block;
 }
 .FE-sectionMprop {
     width: inherit;
@@ -47,4 +57,10 @@
 }
 .FE-section select{
     border-radius:0px;
+}
+.font-text {
+    display: inline-block;
+    height: 30px;
+    padding: 3px;
+    font-size: 15px;
 }

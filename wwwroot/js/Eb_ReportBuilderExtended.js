@@ -6,6 +6,7 @@
             cursor: 'row-resize',
             sizes: [20, 20, 20, 20, 20],
             minSize: 33,
+            snapOffset: 20,
             gutterSize: 5,
             onDrag: function (e) {
                 $('#box0,#rptheadHbox').css("height", $('#rpthead').height());
@@ -53,6 +54,11 @@
             }.bind(this)
         });
     }
+    this.ondrag = function () {
+
+
+    };
+
     this.splitterOndragFn = function () {
         $('.multiSplit').children().not(".gutter").children().not(".gutter").each(function (i, obj1) {
             $('.page').children().not(".gutter").children().not(".gutter").each(function (j, obj2) {
@@ -65,9 +71,10 @@
         });
     };//spliter ondrag func
 
-    this.splitGeneric = function (array) {
+    this.splitGeneric = function (array,sizeArray) {
         Split(array, {
             direction: 'vertical',
+            sizes: sizeArray,
             cursor: 'row-resize',
             minSize: 30,
             gutterSize: 5,

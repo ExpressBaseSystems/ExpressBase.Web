@@ -1,515 +1,177 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-   
+    Html.RenderPartial("ExtPageHeader");
 }
-<div style="padding: 0 40px;">
-    <div class="form-group">
-        <div class="row">
-            <div class="col-md-12">
-                <label>Available Fonts:</label>
-            </div>
-        </div>
+<link rel="stylesheet" type="text/css" href="~/css/StripesElement.css" data-rel-css="" />
 
-        <div class="row" style="margin-bottom: 10px; ">
-            <div class="col-md-3">
-                <label>Types:</label>
-                <select name="fontType" id="fontType" class="form-control">
-                    <option value="">All Types</option>
-                </select>
+
+<div class="col-md-6 col-md-offset-1" style="margin-top:90px">
+    <div class="cell example example5">
+        <form action="~/Ext/Charge" method="post" id="payment-form">
+            <div id="example5-paymentRequest">
+                <!--Stripe paymentRequestButton Element inserted here-->
             </div>
-            <div class="col-md-3">
-                <label>Styles:</label>
-                <select name="fontVariant" id="fontVariant" class="form-control">
-                    <option value="">All Styles</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label>Search:</label>
-                <input id="searchText" type="text" value="" name="searchText" class="form-control">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <select name="googleFont" id="googleFont" class="form-control" size="5"></select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-md-2">
-                <label>Font Color</label>
-                <input type="text" class="form-control" id="fontColor" value="#000000">
-            </div>
-            <div class="col-md-2">
-                <label>Background Color</label>
-                <input type="text" class="form-control" id="fontBGColor" value="#ffffff">
-            </div>
-            <div class="col-md-2">
-                <label>Font Size</label>
-                <input id="fontSize" type="text" value="18" name="fontSize" class="form-control">
-            </div>
-            <div class="col-md-2">
-                <label>Font Weight</label>
-                <select name="font-weight" id="font-weight" class="form-control">
-                    <option value="normal">normal</option>
-                    <option value="bold">bold</option>
-                </select>
-            </div>
-            <div class="col-md-1">
-                <label>Italic</label><br />
-                <input type="checkbox" name="italic" id="italic" value="1" class="btn btn-info" style="height: 28px; width: 28px;">
-            </div>
-            <div class="col-md-1">
-                <label> </label><br />
-                <input type="button" name="addfont" id="addfont" value="Add" class="btn btn-info">
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row" style="padding: 10px 15px;">
-            <label>Preview Text:</label><br />
-            <textarea id="font-preview" class="form-control" style="font-size: 18px; font-weight: normal;">Pack my box with five dozen liquor jugs</textarea>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-md-12">
-                <label>Selected Fonts:</label>
-            </div>
-        </div>       
+            <fieldset>
+                <legend class="card-only" data-tid="elements_examples.form.pay_with_card">Pay with card</legend>
+                <legend class="payment-request-available" data-tid="elements_examples.form.enter_card_manually">Or enter card details</legend>
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-name" data-tid="elements_examples.form.name_label">Name</label>
+                        <input id="example5-name" data-tid="elements_examples.form.name_placeholder" class="input" type="text" placeholder="Jane Doe" required="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-email" data-tid="elements_examples.form.email_label">Email</label>
+                        <input id="example5-email" name="stripeEmail" data-tid="elements_examples.form.email_placeholder" class="input" type="text" placeholder="janedoe@gmail.com" required="">
+                    </div>
+                    <div class="field">
+                        <label for="example5-phone" data-tid="elements_examples.form.phone_label">Phone</label>
+                        <input id="example5-phone" data-tid="elements_examples.form.phone_placeholder" class="input" type="text" placeholder="(941) 555-0123" required="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-address" data-tid="elements_examples.form.address_label">Address</label>
+                        <input id="example5-address" data-tid="elements_examples.form.address_placeholder" class="input" type="text" placeholder="185 Berry St" required="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-city" data-tid="elements_examples.form.city_label">City</label>
+                        <input id="example5-city" data-tid="elements_examples.form.city_placeholder" class="input" type="text" placeholder="San Francisco" required="">
+                    </div>
+                    <div class="field">
+                        <label for="example5-country" data-tid="elements_examples.form.country_label">Country</label>
+                        <select id="example5-country" data-tid="elements_examples.form.country_placeholder" class="input">
+                            <option selected="selected" value="US">United States</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="example5-card" data-tid="elements_examples.form.card_label">Card</label>
+                        <div id="example5-card" class="input"></div>
+                    </div>
+                </div>
+                <button type="submit" data-tid="elements_examples.form.pay_button">Pay $25</button>
+            </fieldset>
+           
+        </form>        
     </div>
 </div>
 
+<script src="https://js.stripe.com/v3/"></script>
+@*<script src="~/js/StripesElement.js"></script>*@
 <script>
-    var fonts = {};
+    var stripe = Stripe('pk_test_s1b6p5MmoOrYVcev3IPk3UMd');
+    var elements = stripe.elements();
+    var card = elements.create("card", {
+        iconStyle: "solid",
+        style: {
+            base: {
+                iconColor: "#fff",
+                color: "#fff",
+                fontWeight: 400,
+                fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                fontSize: "15px",
+                fontSmoothing: "antialiased",
 
-
-    function loadCSS(href) {
-        var cssLink = $("<link rel='stylesheet' type='text/css' href='" + href + "'>");
-        $("head").append(cssLink);
-    }
-
-
-    function loadJS(src) {
-        var jsLink = $("<script type='text/javascript' src='" + src + "'>");
-        $("head").append(jsLink);
-    }
-
-
-    function getFont(fontName) {
-        var ret = null;
-
-        $.each(fonts.items, function (idx, font) {
-            if (font.family == fontName) {
-                ret = font;
-            }
-        });
-
-        return ret;
-    }
-
-
-    function loadFont(fontName) {
-        loadCSS('http://fonts.googleapis.com/css?family=' + fontName);
-        $('#font-preview').css('font-family', fontName);
-        doesSupportItalics(fontName);
-        populateWeights(getFont(fontName));
-    }
-
-
-    function doesSupportItalics(fontName) {
-        if (fontSupports(getFont(fontName), "variants", "italic")) {
-            $("#italic").removeAttr("disabled");
-        } else {
-            $("#italic").prop('checked', false);
-            $("#italic").attr("disabled", "disabled");
-            $('#font-preview').css('font-style', 'normal');
-        }
-    }
-
-
-    function populateWeights(font) {
-        var pos = 2;
-
-        $('#font-weight option').remove();
-        $('#font-weight').empty();
-
-        $("#font-weight").append(
-            $("<option></option>", {
-                "id": "weight-0"
-            })
-                .attr("value", "normal")
-                .text("normal")
-        );
-
-        $.each(font.variants, function (idx, variant) {
-            if ($.isNumeric(variant)) {
-                $("#font-weight").append(
-                    $("<option></option>", {
-                        "id": "weight-" + pos++
-                    })
-                        .attr("value", variant)
-                        .text(variant)
-                );
-            }
-        });
-
-        $('#font-weight option:first-child').attr("selected", "selected");
-    }
-
-
-    function searchFonts(txt, cat, variant) {
-        $('#googleFont option').remove();
-        $('#googleFont').empty();
-
-        var pos = 0;
-        $.each(fonts.items, function (idx, font) {
-            if ((font.category == cat || cat == "") && (font.family.toLowerCase().indexOf(txt) > -1 || txt == "") && (font.variants.indexOf(variant) > -1 || variant == "")) {
-                $('#googleFont')
-                    .append(
-                    $("<option></option>", {
-                        "id": "font-" + pos++,
-                        "data-title": font.family,
-                        "data-content": "<b>Type: </b>" + font.category + "<br /><b>Variants: </b><br />" + font.variants.toString().replace(/,/g, ", ") + "<br /><b>Date:</b> " + font.lastModified + "<br /><b>Version:</b> " + font.version
-                    })
-                        .attr("value", font.family)
-                        .text(font.family)
-                    );
-            }
-        });
-
-        $('#googleFont option:first-child').attr("selected", "selected");
-        $('#googleFont option:first-child').removeAttr("selected");
-    }
-
-
-    function getFontTypes(fonts) {
-        var types = [];
-        var pos = 0;
-
-        $.each(fonts.items, function (idx, font) {
-            if ($.inArray(font.category, types) == -1) {
-                types.push(font.category);
-                $('#fontType')
-                    .append(
-                    $("<option></option>", {
-                        "id": "font-" + pos++,
-                        "data-title": font.category
-                    })
-                        .attr("value", font.category)
-                        .text(font.category)
-                    );
-            }
-        });
-    }
-
-
-    function getFontVariants(fonts) {
-        var variants = [];
-        var pos = 0;
-
-        $.each(fonts.items, function (idx, font) {
-            $.each(font.variants, function (vIdx, variant) {
-                if ($.inArray(variant, variants) == -1) {
-                    variants.push(variant);
-                    $('#fontVariant')
-                        .append(
-                        $("<option></option>", {
-                            "id": "variant-" + pos++,
-                            "data-title": variant
-                        })
-                            .attr("value", variant)
-                            .text(variant)
-                        );
+                "::placeholder": {
+                    color: "#BFAEF6"
+                },
+                ":-webkit-autofill": {
+                    color: "#fce883"
                 }
-            });
-        });
-    }
-
-
-    function fontSupports(font, what, supports) {
-        var ret = false;
-
-        $.each(font[what], function (idx, whatItem) {
-            if (whatItem.toLowerCase().indexOf(supports.toLowerCase()) != -1) {
-                ret = true;
+            },
+            invalid: {
+                iconColor: "#FFC7EE",
+                color: "#FFC7EE"
             }
-        });
+        }
+    });
+    card.mount("#example5-card");
 
-        return ret;
+    function stripeTokenHandler(token) {
+        // Insert the token ID into the form so it gets submitted to the server
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripeToken');
+        hiddenInput.setAttribute('value', token.id);
+        form.appendChild(hiddenInput);
+
+        // Submit the form
+        form.submit();
     }
 
-
-    $(document).ready(function () {
-        $.ajax({
-            url: "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBEWdu2IGQZ2dE2BK8v3BzEe2-Msb2jipA"
-        }).done(function (data, status) {
-            fonts = data;
-            getFontTypes(fonts);
-            getFontVariants(fonts);
-            searchFonts("", "", "");
-        });
-
-
-        $('#googleFont').on('change', function () {
-            loadFont($(this).val());
-        });
-
-
-        $("input#fontColor").on("keyup", function () {
-            $('#font-preview').css('color', $(this).val());
-        });
-
-
-        $("input#fontBGColor").on("keyup", function () {
-            $('#font-preview').css('background-color', $(this).val());
-        });
-
-
-        $('#fontSize').on('keyup', function () {
-            $('#font-preview').css('font-size', $(this).val() + 'px');
-        });
-
-
-        $('#italic').on('change', function () {
-            if ($(this).prop('checked') == true) {
-                $('#font-preview').css('font-style', 'italic');
+    function createToken() {
+        stripe.createToken(card).then(function (result) {
+            if (result.error) {
+                // Inform the user if there was an error
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
             } else {
-                $('#font-preview').css('font-style', 'normal');
+                // Send the token to your server
+                stripeTokenHandler(result.token);
             }
         });
+    };
 
-
-        $('#addfont').on('click', function () {
-            $('#Fonts')
-                .append($("<option></option>")
-                    .attr("value", $('#googleFont').val())
-                    .text($('#googleFont').val()));
-        });
-
-
-        $('#font-weight').on('change', function () {
-            $('#font-preview').css('font-weight', $(this).val());
-        });
-
-
-        $('#fontType').on('change', function () {
-            var cat = $('#fontType').val();
-            var txt = $('#searchText').val();
-            var variant = $('#fontVariant').val();
-
-            searchFonts(txt, cat, variant);
-        });
-
-
-        $('#searchText').on('keyup', function () {
-            var cat = $('#fontType').val();
-            var txt = $('#searchText').val();
-            var variant = $('#fontVariant').val();
-
-            searchFonts(txt, cat, variant);
-        });
-
-
-        $('#fontVariant').on('change', function () {
-            var cat = $('#fontType').val();
-            var txt = $('#searchText').val();
-            var variant = $('#fontVariant').val();
-
-            searchFonts(txt, cat, variant);
-        });
-
-
-        $('#Fonts').selectManager({
-            dst: '#Fonts'
-        });
-
-
-        $("#googleFont").on('mouseleave', function (e) {
-            $('#googleFont').popover('destroy');
-        });
-
-
-        $("#googleFont").on('mouseover', function (e) {
-            var $e = $(e.target);
-            if ($e.is('option')) {
-                $('#googleFont').popover('destroy');
-                $("#googleFont").popover({
-                    trigger: 'manual',
-                    placement: 'bottom',
-                    title: $e.attr("data-title"),
-                    content: $e.attr("data-content"),
-                    html: true
-                }).popover('show');
-            }
-        });
-
-
+    // Create a token when the form is submitted.
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        createToken();
     });
 
+    ///**
+    // * Payment Request Element
+    // */
+    //var paymentRequest = stripe.paymentRequest({
+    //    country: "US",
+    //    currency: "usd",
+    //    total: {
+    //        amount: 2500,
+    //        label: "Total"
+    //    },
+    //    requestShipping: true,
+    //    shippingOptions: [
+    //        {
+    //            id: "free-shipping",
+    //            label: "Free shipping",
+    //            detail: "Arrives in 5 to 7 days",
+    //            amount: 0
+    //        }
+    //    ]
+    //});
+    //paymentRequest.on("token", function (result) {
+    //    var example = document.querySelector(".example5");
+    //    example.querySelector(".token").innerText = result.token.id;
+    //    example.classList.add("submitted");
+    //    result.complete("success");
+    //});
 
+    //var paymentRequestElement = elements.create("paymentRequestButton", {
+    //    paymentRequest: paymentRequest,
+    //    style: {
+    //        paymentRequestButton: {
+    //            theme: "light"
+    //        }
+    //    }
+    //});
 
+    //paymentRequest.canMakePayment().then(function (result) {
+    //    if (result) {
+    //        document.querySelector(".example5 .card-only").style.display = "none";
+    //        document.querySelector(
+    //            ".example5 .payment-request-available"
+    //        ).style.display =
+    //            "block";
+    //        paymentRequestElement.mount("#example5-paymentRequest");
+    //    }
+    //});
 
-
-
-
-
-
-
-
-
-
-
-
-
-    // jQuery Plugin Boilerplate
-    // A boilerplate for jumpstarting jQuery plugins development
-    // version 1.1, May 14th, 2011
-    // by Stefan Gabos
-
-    // remember to change every instance of "pluginName" to the name of your plugin!
-    (function ($) {
-
-        // here we go!
-        $.selectManager = function (element, options) {
-
-            // plugin's default options
-            // this is private property and is  accessible only from inside the plugin
-            var defaults = {
-
-                src: null,
-                dst: null,
-                max: null,
-
-                addBtn: '#addBtn',
-                removeBtn: '#removeBtn',
-                upBtn: '#upBtn',
-                downBtn: '#downBtn',
-
-                // if your plugin is event-driven, you may provide callback capabilities
-                // for its events. execute these functions before or after events of your 
-                // plugin, so that users may customize those particular events without 
-                // changing the plugin's code
-                onFoo: function () { }
-            };
-
-            // to avoid confusions, use "plugin" to reference the 
-            // current instance of the object
-            var plugin = this;
-
-            // this will hold the merged default, and user-provided options
-            // plugin's properties will be available through this object like:
-            // plugin.settings.propertyName from inside the plugin or
-            // element.data('selectManager').settings.propertyName from outside the plugin, 
-            // where "element" is the element the plugin is attached to;
-            plugin.settings = {};
-
-            var $element = $(element), // reference to the jQuery version of DOM element
-                element = element;    // reference to the actual DOM element
-
-            // the "constructor" method that gets called when the object is created
-            plugin.init = function () {
-
-                // the plugin's final properties are the merged default and 
-                // user-provided options (if any)
-                plugin.settings = $.extend({}, defaults, options);
-
-                plugin.settings.form = $(plugin.settings.src).closest("form");
-                //console.log(plugin.settings.form);
-
-                $(plugin.settings.form).on('submit', function () {
-                    $(plugin.settings.dst + ' option').attr('selected', 'selected');
-                });
-
-                if (plugin.settings.src) {
-                    $(plugin.settings.addBtn).bind('click', moveToDst);
-                    $(plugin.settings.src).bind('dblclick', moveToDst);
-
-                    $(plugin.settings.removeBtn).on('click', moveToSrc);
-                }
-
-                $(plugin.settings.dst).on('dblclick', moveToSrc);
-
-                $(plugin.settings.upBtn).on('click', moveUp);
-                $(plugin.settings.downBtn).on('click', moveDown);
-                $(plugin.settings.removeBtn).on('click', remove);
-            };
-
-            // public methods
-            // these methods can be called like:
-            // plugin.methodName(arg1, arg2, ... argn) from inside the plugin or
-            // element.data('selectManager').publicMethod(arg1, arg2, ... argn) from outside 
-            // the plugin, where "element" is the element the plugin is attached to;
-
-            // a public method. for demonstration purposes only - remove it!
-            plugin.foo_public_method = function () {
-                // code goes here
-            };
-
-            // private methods
-            // these methods can be called only from inside the plugin like:
-            // methodName(arg1, arg2, ... argn)
-
-            // a private method. for demonstration purposes only - remove it!
-            var foo_private_method = function () {
-                // code goes here
-            };
-
-            var moveToDst = function () {
-                if (!plugin.settings.max || $(plugin.settings.dst + ' option').length + $(plugin.settings.src + ' option:selected').length <= plugin.settings.max) {
-                    return !$(plugin.settings.src + ' option:selected').remove().appendTo(plugin.settings.dst);
-                }
-            }
-
-            var moveToSrc = function () {
-                return !$(plugin.settings.dst + ' option:selected').remove().appendTo(plugin.settings.src);
-            }
-
-            var moveUp = function () {
-                $(plugin.settings.dst + ' option:selected:first-child').prop("selected", false);
-                before = $(plugin.settings.dst + ' option:selected:first').prev();
-                $(plugin.settings.dst + ' option:selected').detach().insertBefore(before);
-            }
-
-            var moveDown = function () {
-                $(plugin.settings.dst + ' option:selected:last-child').prop("selected", false);
-                after = $(plugin.settings.dst + ' option:selected:last').next();
-                $(plugin.settings.dst + ' option:selected').detach().insertAfter(after);
-            }
-
-            var remove = function () {
-                var action_list = $(plugin.settings.dst + ' option:selected').remove();
-            }
-
-            // fire up the plugin!
-            // call the "constructor" method
-            plugin.init();
-
-        };
-
-        // add the plugin to the jQuery.fn object
-        $.fn.selectManager = function (options) {
-
-            // iterate through the DOM elements we are attaching the plugin to
-            return this.each(function () {
-
-                // if plugin has not already been attached to the element
-                if (undefined == $(this).data('selectManager')) {
-
-                    // create a new instance of the plugin
-                    // pass the DOM element and the user-provided options as arguments
-                    var plugin = new $.selectManager(this, options);
-
-                    // in the jQuery version of the element
-                    // store a reference to the plugin object
-                    // you can later access the plugin and its methods and properties like
-                    // element.data('selectManager').publicMethod(arg1, arg2, ... argn) or
-                    // element.data('selectManager').settings.propertyName
-                    $(this).data('selectManager', plugin);
-                }
-            });
-        };
-    })(jQuery);
-
+    ////registerElements([card], "example5");
 
 </script>

@@ -20,7 +20,7 @@
     display: inline-block;
     height: calc(100vh - 87px);
     width: 100%;
-    margin: 3px;
+    /*margin: 3px;*/
 }
 
 .head-btn {

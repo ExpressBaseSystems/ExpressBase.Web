@@ -11,6 +11,26 @@ var ChartColor = function (name, color) {
     this.color = color;
 };
 
+var animateObj = function (duration) {
+    this.duration = duration;
+    this.onComplete = function () {
+        var chartInstance = this.chart,
+            ctx = chartInstance.ctx;
+
+        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        this.data.datasets.forEach(function (dataset, i) {
+            var meta = chartInstance.controller.getDatasetMeta(i);
+            meta.data.forEach(function (bar, index) {
+                var data = dataset.data[index];
+                ctx.fillText(data, bar._model.x, bar._model.y - 5);
+            });
+        });
+    };
+}
+
 var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     this.type = type;
     this.columnInfo = columnInfo;
@@ -362,14 +382,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append(
-                "<div id='graphcontainer_tab" + this.tableId + "'>" +
-                "<div class='col-md-2 no-padd' id='columnsDisplay" + this.tableId + "'>" +
+                "<div id='graphcontainer_tab" + this.tableId + "' style='height:inherit;'>" +
+                "<div class='col-md-2 no-padd' id='columnsDisplay" + this.tableId + "' style='height:inherit;'>" +
                 "<div class='tag-cont'>" +
                 "  <div class='tag-wraper'><div class='pgHead'>Dimensions</div><div class='tag-scroll'><div id='diamension" + this.tableId + "'></div></div></div>" +
                 "  <div class='tag-wraper'><div class='pgHead'>Measures</div><div class='tag-scroll'><div id='measure" + this.tableId + "'></div></div></div>" +
                 "</div>" +
                 "</div> " +
-                "<div class='col-md-10' id='canvasParentDiv" + this.tableId + "'>" +
+                "<div class='col-md-10' id='canvasParentDiv" + this.tableId + "' style='height:inherit;'>" +
                 "<div id='xy" + this.tableId + "' style='vertical-align: top;'> " +
                 "<div class='input-group' > " +
                 "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
@@ -381,7 +401,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 "</div> " +
                 "</div> " +
                 "<input type='color' id='fontSel' style='display:none;'>" +
-                "<div id='canvasDiv" + this.tableId+"'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
+                "<div id='canvasDiv" + this.tableId +"' style='height:100%;padding-bottom:10px;'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
                 "</div> " +
                 "</div>");
             this.GenerateButtons();
@@ -578,6 +598,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             labels: this.XLabel,
             datasets: this.dataset,
         };
+        this.animateOPtions = (this.columnInfo.ShowValue) ? new animateObj(0) : false;
         this.goptions = {
             scales: {
                 yAxes: [{
@@ -627,27 +648,28 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             },
 
             tooltips: {
-                "enabled": false
+                enabled: this.columnInfo.ShowTooltip
             },
-            "animation": {
-                "duration": 1,
-                "onComplete": function () {
-                    var chartInstance = this.chart,
-                        ctx = chartInstance.ctx;
+            animation: this.animateOPtions
+            //{
+            //    duration:  1 ,
+            //    onComplete: function () {
+            //            var chartInstance = this.chart,
+            //                ctx = chartInstance.ctx;
 
-                    ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'bottom';
+            //            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+            //            ctx.textAlign = 'center';
+            //            ctx.textBaseline = 'bottom';
 
-                    this.data.datasets.forEach(function (dataset, i) {
-                        var meta = chartInstance.controller.getDatasetMeta(i);
-                        meta.data.forEach(function (bar, index) {
-                            var data = dataset.data[index];
-                            ctx.fillText(data, bar._model.x, bar._model.y - 5);
-                        });
-                    });
-                }
-            },
+            //            this.data.datasets.forEach(function (dataset, i) {
+            //                var meta = chartInstance.controller.getDatasetMeta(i);
+            //                meta.data.forEach(function (bar, index) {
+            //                    var data = dataset.data[index];
+            //                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+            //                });
+            //            });
+            //    }
+            //},
         };
 
         this.RemoveCanvasandCheckButton();
@@ -722,10 +744,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             data: this.gdata,
             options: this.goptions,
         });
-
-        //$("#columnsDisplay" + this.tableId).css("display", "none");
-        //$("#xy" + this.tableId).css("display", "none");
-        //$("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
         $.LoadingOverlay("hide");
     };
 
@@ -810,9 +828,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#xy" + this.tableId).toggle();
         if ($("#columnsDisplay" + this.tableId).css("display") === "none") {
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            $("#canvasDiv" + this.tableId).css("height", "100%");
+            //$("#myChart" + this.tableId).css("height", "inherit");
         }
-        else
+        else {
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
+            $("#canvasDiv" + this.tableId).css("height", "calc(100% - 67px)");
+        }
     };
   
     this.toggleFilterdialog = function () {
@@ -846,25 +868,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
             else
                 $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
-        }
-    };
-
-    this.modifyChart = function () {
-        if ($("#columns4Drag" + this.tableId).css("display") === "none") {
-            $("#myChart" + this.tableId).css("width", "99%");
-            $("#myChart" + this.tableId).css("margin-left", "0px");
-            $("#myChart" + this.tableId).css("margin-top", "0px");
-            $("#myChart" + this.tableId).css("height", "522px");
-            //$("#btnColumnCollapse" + this.tableId).children().remove();
-            //$("#btnColumnCollapse" + this.tableId).append("<i class='fa fa-chevron-down' aria-hidden='true'></i>")
-        }
-        else {
-            $("#myChart" + this.tableId).css("width", "80%");
-            $("#myChart" + this.tableId).css("height", "454px");
-            $("#myChart" + this.tableId).css("margin-left", "200px");
-            $("#myChart" + this.tableId).css("margin-top", "-410px");
-            //$("#btnColumnCollapse" + this.tableId).children().remove();
-            //$("#btnColumnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
         }
     };
 
@@ -940,7 +943,22 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
     };
 
+    this.animationOnComplete = function () {
+            var chartInstance = this.chart,
+                ctx = chartInstance.ctx;
 
+            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+
+            this.data.datasets.forEach(function (dataset, i) {
+                var meta = chartInstance.controller.getDatasetMeta(i);
+                meta.data.forEach(function (bar, index) {
+                    var data = dataset.data[index];
+                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                });
+            });
+    };
 };
 
 {

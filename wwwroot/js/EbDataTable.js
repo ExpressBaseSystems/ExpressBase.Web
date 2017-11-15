@@ -250,7 +250,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append("<div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div>");
+            $("#content_" + this.tableId).append("<div style='width:auto;height:inherit;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div>");
             this.Init();
         }
     };
@@ -943,7 +943,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
-        //$("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsWindow.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
     };
@@ -1446,42 +1445,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.printAll = function (e) {
         $('#' + this.tableId + '_wrapper').find('.buttons-print')[0].click();
     };
-
-    this.GetSettingsWindow = function (e) {
-        $("#" + this.tableId + "TableColumns4Drag").toggle();
-        $("#" + this.tableId + "ColumnsGrouping").toggle();
-        if ($("#" + this.tableId + "TableColumns4Drag").css("display") === "none") {
-            $("#" + this.tableId + "divcont").css("width", "100%");
-            //$("#" + this.tableId + "ColumnsDispalyCont").css("display", "none");
-            this.Api.columns.adjust();
-            $("#" + this.tableId + "ColumnsDispaly").css("display", "none");
-            //$("#" + this.tableId + "ColumnsDispaly").parent().removeClass("form-save-wraper");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("display", "none");
-            $("#" + this.tableId + "ColumnsGrouping").css("display", "none");
-        }
-        else {
-            $("#" + this.tableId + "divcont").css("width", "79%");
-            $("#" + this.tableId + "divcont").css("display", "inline-block");
-            $("#" + this.tableId + "divcont").css("vertical-align", "top");
-            this.Api.columns.adjust();
-            $("#" + this.tableId + "TableColumns4Drag").css("display", "inline-block");
-            $("#" + this.tableId + "TableColumns4Drag").css("width", "20%");
-            $("#" + this.tableId + "TableColumns4Drag").css("height", "500px");
-            $("#" + this.tableId + "TableColumns4Drag").css("vertical-align", "top");
-            //$("#" + this.tableId + "ColumnsDispalyCont").css("display", "inline-block");
-            $("#" + this.tableId + "ColumnsDispaly").show();
-            //$("#" + this.tableId + "ColumnsGrouping").show();
-            //$("#" + this.tableId + "ColumnsDispaly").css("height", "auto");
-            //$("#" + this.tableId + "ColumnsDispaly").css("width", "99%");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("display", "inline-block");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("border", "1px solid");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("height", "500px");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("width", "24%");
-            $("#" + this.tableId + "TableColumns4Drag").css("height", $("#" + this.tableId + "divcont").css("height"))
-            $("#" + this.tableId + "TableColumnsPPGrid").css("height", $("#" + this.tableId + "divcont").css("height"))
-        }
-    };
-
 
     this.collapseFilter = function () {
         this.filterBox.toggle();

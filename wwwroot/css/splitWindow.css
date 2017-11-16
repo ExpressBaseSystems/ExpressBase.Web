@@ -7,7 +7,7 @@
     height: 612px;
 }
 
- .sub-windows-head {
+.sub-windows-head {
         height: 30px;
         background-color: #489097;
         width: 100%;
@@ -20,7 +20,19 @@
     display: inline-block;
     height: calc(100vh - 87px);
     width: 100%;
-    margin: 3px;
+}
+
+.sub-window-first {
+    margin-right: 15px !important;
+}
+
+.sub-window-last {
+    margin-left: 15px !important;
+}
+
+.sub-window-middle {
+    margin-right: 15px !important;
+    margin-left: 15px !important;
 }
 
 .head-btn {
@@ -71,7 +83,7 @@
 .min-btn {
     width: 100%;
     height: 15px;
-    //border-bottom: 1px solid #e7e7e7;
+    /*border-bottom: 1px solid #e7e7e7;*/
 }
 
  .toggled {
@@ -102,4 +114,5 @@
     white-space: nowrap;
     margin-top: 85px;
     height: calc(100vh - 98px);
+    padding:15px;
 }

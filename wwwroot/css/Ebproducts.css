@@ -6,7 +6,6 @@
     padding: 10px 100px 10px 100px;
 }
 .Eb-bot-header .navbar-default {
-    background-color: transparent !important;
     border-color: #27A1C5 !important;
 }
 .Eb-bot-header .navbar-default img {
@@ -15,11 +14,11 @@
         margin-bottom: 0; 
         margin-right: 0; 
 }
-.Eb-bot-header .navbar-default .navbar-nav > li > a {
-        color: #ffffff;
+    .Eb-bot-header .navbar-default .navbar-nav > li > a {
+        color: #27a1c5;
         font-size: 15px;
         font-weight: 500;
-}
+    }
 .bot-banner {
     height: 550px;
     background: #27A1C5;
@@ -43,6 +42,7 @@
     border-radius: 0;
     width: 100%;
     background: #27A1C5;
+    color:white;
 }
 .bot-s-agrement {
     font-size: 11px;
@@ -50,4 +50,63 @@
 }
 .bot-desc {
     height:300px;
+}
+.Eb-bot-header .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover {
+    background-color: #27A1C5;
+    color: #ffffff;
+}
+
+/*login*/
+@import url(http://fonts.googleapis.com/css?family=Roboto);
+
+/****** LOGIN MODAL ******/
+.loginmodal-container {
+    padding: 15px;
+    max-width: 350px;
+    width: 100% !important;
+    background-color: #F7F7F7;
+    margin: 0 auto;
+    border-radius: 2px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    font-family: roboto;
+}
+
+    .loginmodal-container h1 {
+        text-align: center;
+        font-size: 1.8em;
+        font-family: roboto;
+        margin-bottom: 0;
+    }
+
+.loginmodal {
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    font-weight: 700;
+    height: 36px;
+    padding: 0 8px;
+    /* border-radius: 3px; */
+    /* -webkit-user-select: none;
+  user-select: none; */
+}
+
+.loginmodal-container a {
+    text-decoration: none;
+    color: #666;
+    font-weight: 400;
+    text-align: center;
+    display: inline-block;
+    opacity: 0.6;
+    transition: opacity ease 0.5s;
+}
+.login-sec-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.svg-section {
+    height: 100px;
+    width: 100px;    
 }

@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, data) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -136,7 +136,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.extraCol = [];
     this.PcFlag = false;
 
-    var split = new splitWindow("parent-div0", "contBox");
+    var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
     split.windowOnFocus = function (ev) {
         if ($(ev.target).attr("class") !== undefined) {
@@ -167,9 +167,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
-        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
-        var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
-        $("#content_dv" + obj.EbSid + "_" + this.tabNum).empty();
+        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
+        var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
+        $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).empty();
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
@@ -181,26 +181,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
-            $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-8").addClass("col-md-10");
+            $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
         }
         else {
             this.FD = true;
             $(sideDivId).css("display", "inline");
             $.LoadingOverlay("hide");
-            $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-10").addClass("col-md-8");
+            $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
         }
         $(subDivId).focus();
     }.bind(this);
 
     if (this.EbObject === null) {
         this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbTableVisualization");
-        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
+        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum+"_"+counter, "EbTableVisualization");
+        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
     }
     else {
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbTableVisualization");
-        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
+        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
+        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.call2FD();
     }
@@ -225,7 +225,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     //}
 
     this.start = function () {
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
     }
 
 
@@ -236,21 +236,22 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.dvName = this.ebSettings.Name;
 
         $("#objname").text(this.dvName);
+        if (this.login == "uc") {
+            $("#ppgrid_" + this.tableId).css("display", "none");
 
-        $("#ppgrid_" + this.tableId).css("display", "none"); 
-
-        if (this.FD) {
-            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-            $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
-        }
-        else {
-            $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            if (this.FD) {
+                $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
+                $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
+            }
+            else {
+                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            }
         }
 
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append("<div style='width:auto;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div>");
+            $("#content_" + this.tableId).append("<div style='width:auto;height:inherit;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered'></table></div>");
             this.Init();
         }
     };
@@ -943,7 +944,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
-        //$("#" + this.tableId + "_btnSettings").off("click").on("click", this.GetSettingsWindow.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
     };
@@ -1446,42 +1446,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.printAll = function (e) {
         $('#' + this.tableId + '_wrapper').find('.buttons-print')[0].click();
     };
-
-    this.GetSettingsWindow = function (e) {
-        $("#" + this.tableId + "TableColumns4Drag").toggle();
-        $("#" + this.tableId + "ColumnsGrouping").toggle();
-        if ($("#" + this.tableId + "TableColumns4Drag").css("display") === "none") {
-            $("#" + this.tableId + "divcont").css("width", "100%");
-            //$("#" + this.tableId + "ColumnsDispalyCont").css("display", "none");
-            this.Api.columns.adjust();
-            $("#" + this.tableId + "ColumnsDispaly").css("display", "none");
-            //$("#" + this.tableId + "ColumnsDispaly").parent().removeClass("form-save-wraper");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("display", "none");
-            $("#" + this.tableId + "ColumnsGrouping").css("display", "none");
-        }
-        else {
-            $("#" + this.tableId + "divcont").css("width", "79%");
-            $("#" + this.tableId + "divcont").css("display", "inline-block");
-            $("#" + this.tableId + "divcont").css("vertical-align", "top");
-            this.Api.columns.adjust();
-            $("#" + this.tableId + "TableColumns4Drag").css("display", "inline-block");
-            $("#" + this.tableId + "TableColumns4Drag").css("width", "20%");
-            $("#" + this.tableId + "TableColumns4Drag").css("height", "500px");
-            $("#" + this.tableId + "TableColumns4Drag").css("vertical-align", "top");
-            //$("#" + this.tableId + "ColumnsDispalyCont").css("display", "inline-block");
-            $("#" + this.tableId + "ColumnsDispaly").show();
-            //$("#" + this.tableId + "ColumnsGrouping").show();
-            //$("#" + this.tableId + "ColumnsDispaly").css("height", "auto");
-            //$("#" + this.tableId + "ColumnsDispaly").css("width", "99%");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("display", "inline-block");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("border", "1px solid");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("height", "500px");
-            $("#" + this.tableId + "TableColumnsPPGrid").css("width", "24%");
-            $("#" + this.tableId + "TableColumns4Drag").css("height", $("#" + this.tableId + "divcont").css("height"))
-            $("#" + this.tableId + "TableColumnsPPGrid").css("height", $("#" + this.tableId + "divcont").css("height"))
-        }
-    };
-
 
     this.collapseFilter = function () {
         this.filterBox.toggle();

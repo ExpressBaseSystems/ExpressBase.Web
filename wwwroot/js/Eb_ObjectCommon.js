@@ -93,13 +93,16 @@
     };
 
     this.UpdateDashboard = function () {
-        $.post("Eb_object/UpdateObjectDashboard", { refid: this.ver_Refid },
-            function (data) {
-                $('#object_Dashboard_main').empty().append(data);
-                commonObj.init();
-            }
-        );
+        $.post("Eb_object/UpdateObjectDashboard", { refid: this.ver_Refid }, this.UpdateDashboard_success.bind(this));
     };
+
+    this.UpdateDashboard_success = function (data) {
+        $('#object_Dashboard_main').empty().append(data);
+        commonObj.init();
+        this.ObjCollection["#vernav" + this.tabNum].GenerateButtons();
+        $.LoadingOverlay("hide");
+    };
+
     this.LoadStatusPage = function () {
         $.LoadingOverlay("show");
         this.tabNum++;
@@ -265,8 +268,6 @@
             $('.leftPane').scrollTop($(this).scrollTop());
             $('.leftPane').scrollLeft($(this).scrollLeft());
         });
-        var scrollPos = $('#compare_result' + this.tabNum).offset().top;
-        $(window).scrollTop(scrollPos);
         $.LoadingOverlay("hide");
     };
 

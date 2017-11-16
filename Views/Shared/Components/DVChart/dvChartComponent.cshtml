@@ -20,6 +20,6 @@
         var commonO = $("#layout_div").data("commonObj");
     }
 
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new eb_chart('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl', '@ViewBag.wc');
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new eb_chart('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl', '@ViewBag.wc', @ViewBag.counter);
 
 </script>

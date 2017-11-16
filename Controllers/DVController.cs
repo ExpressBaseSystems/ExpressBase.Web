@@ -25,6 +25,7 @@ using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using System.Reflection;
 using ExpressBase.Objects.Objects.DVRelated;
+using ExpressBase.Security;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -40,6 +41,10 @@ namespace ExpressBase.Web.Controllers
             //FetchAllDataSources();
             //FetchAllDataVisualizations();
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+
+
+            User _user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+            ViewBag.user = _user;
 
             var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
 

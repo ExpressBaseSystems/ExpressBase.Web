@@ -14,6 +14,7 @@ var DvContainerObj = function (settings) {
     this.ebdtable = {};
     this.chartJs = {};
     this.previousObj = null;
+    this.user = settings.user;
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -31,7 +32,7 @@ var DvContainerObj = function (settings) {
         $("#next").css("display", "none");
         $("#Save_btn").css("display", "none");
 
-        focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + counter;
+        focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + this.tabnum+"_"+counter;
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             //this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
             this.dvcol[focusedId] = new EbDataTable(
@@ -40,12 +41,13 @@ var DvContainerObj = function (settings) {
                 type = this.type,
                 dsobj = this.currentObj,
                 cur_status = this.cur_status,
-                tabNum = counter,
+                tabNum = this.tabnum,
                 ss_url = this.ssurl,
                 //ds_id: this.currentObj.DataSourceRefId,
                 //ss_url: this.ssurl,
                 //tid: this.UniqueId,
                 login = this.wc,
+                counter = counter,
                 data = this.MainData,
             );
             //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
@@ -60,10 +62,12 @@ var DvContainerObj = function (settings) {
                 type = this.type,
                 dsobj = this.currentObj,
                 cur_status = this.cur_status,
-                tabNum = counter,
+                tabNum = this.tabnum,
                 ss_url = this.ssurl,
                 login = this.wc,
-                data = this.MainData);
+                counter = counter,
+                data = this.MainData,
+            );
         }
         console.log("xxxxx", this.dvcol[focusedId]);
         //console.log("ccccc", dvcontainerObj.currentObj);

@@ -56,7 +56,7 @@
             <div class="form-group">
                 <select class="form-control" id="appselect">
                     @{
-                        <option selected="selected" value="@ViewBag.DominantRefId" data-applicationid="@ViewBag.ApplicationId">@ViewBag.ApplicationName</option>
+                        <option selected="selected" value="@ViewBag.ApplicationId">@ViewBag.ApplicationName</option>
                         foreach (var element in Dict.Keys)
                         {
                             if (ViewBag.ApplicationId != element)
@@ -64,7 +64,7 @@
                                 <option value="@element">@Dict[element]</option>
                             }
                         }
-                    }
+                    }                                 
                 </select>
             </div>
         </div>
@@ -136,8 +136,8 @@
     $('document').ready(function () {
         
 
-        $('#dominantrefid').val($('#appselect').val());
-        $('#applicationid').val($('#appselect').find('option:selected').data('applicationid'));
+        $('#applicationid').val($('#appselect').val());
+    
 
         $('a').click(function () {
             $(this).css("background-color", "#f5f5f5");

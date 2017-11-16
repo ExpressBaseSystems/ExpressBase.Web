@@ -1,6 +1,6 @@
 ﻿var Eb_chatBot = function () {
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
-    this.$chatHead = $('<div class="eb-chat-head"><span>EXPESSbase Bot <i class="fa fa-comment pull-right" aria-hidden="true"></i></span></div>');
+    this.$chatHead = $('<div class="eb-chat-head"><span>EXPESSbase Bot <i class="fa fa-window-minimize pull-right" aria-hidden="true"></i></span></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
@@ -13,13 +13,16 @@
     this.$form = null;
     this.formControls = [];
     this.formValues = {};
+    this.EXPRESSbase_SOLUTION_ID;
 
     this.init = function () {
+
+        //$("#chatbtn").click(this.chatBtn_click);
+
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatHead);
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
-        $("#chatbtn").click(this.chatBtn_click);
         this.$TypeAnim = $(`<div><span class="chat-typing">Typing</span><svg class="lds-typing" width="10%" height="10%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
                     <circle cx="27.5" cy="40.9532" r="5" fill="#999">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.5s"></animate>
@@ -36,8 +39,17 @@
         $("body").on("click", ".msg-cont [name=ctrledit]", this.ctrlEdit);
         $("body").on("click", ".eb-chatBox [name=formsubmit]", this.formSubmit);
         $("body").on("click", ".btn-box [name=form-opt]", this.startFormInteraction);
+        //$("body").on("click", ".eb-chat-head .btn", this.close);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
+        this.chatBtn_click();
     };
+
+    //this.close = function () {
+    //    alert(("id"));
+    //    var iframe = window.parent.document.getElementById('#ebbot_iframe');
+    //    iframe.hide(200);
+    //    alert(iframe.attr("id"));
+    //}.bind(this);
 
     this.txtboxKeyup = function (e) {
         if (e.ctrlKey && e.which === 10)/////////////////////////////
@@ -45,6 +57,12 @@
     }.bind(this);
 
     this.send_btn = function () {
+        window.onmessage = function (e) {
+            if (e.data == 'hello') {
+                alert('It works!8888888888888888888888');
+            }
+        };
+
         var $e = $('.msg-inp');
         var msg = $e.val().trim();
         if (!msg) {
@@ -60,7 +78,6 @@
     this.chatBtn_click = function (e) {
         this.$chatCont.toggle(200);
         this.showDate();
-        this.greetings();
         this.Query("What do you want to do ?", ["Apply Leave", "Claim for reimbursement"]);
 
         //this.getMsg('The setting for a paragraph continues down here.There is a blockquote next to it.');
@@ -68,7 +85,7 @@
 
     }.bind(this);
 
-    this.greetings = function () {
+    this.greetings = function (name) {
         var time = new Date().getHours();
         var greeting = null;
         if (time < 12) {
@@ -80,8 +97,7 @@
         else {
             greeting = 'Good evening!';
         }
-        this.getMsg('Hello Roby, ' + greeting);
-        this.getMsg('How can i help you ?');
+        this.getMsg(`Hello ${name}, ${greeting}`);
     }.bind(this);
 
     this.Query = function (query, OptArr) {
@@ -99,7 +115,8 @@
 
     this.getForm = function ($msg) {
         $.post('../Eb_Object/GetObjHtml', {
-            refid: "eb_roby_dev-eb_roby_dev-0-809-1488"
+            refid: "eb_roby_dev-eb_roby_dev-0-809-1488",
+            token: this.EXPRESSbase_SOLUTION_ID
         },
             function (data) {
                 this.$form = data;

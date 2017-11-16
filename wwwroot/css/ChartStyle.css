@@ -2,19 +2,24 @@
 
 
 .tag-cont {
-    height: 573px;
+    height: inherit;
 }
 
 .tag-wraper {
     border: solid 1px #eee;
-    height:286px;
+    height:48%;
     width:100%;
 }
 .tag-scroll {
     overflow-y: auto;
-    height: 255px;
+    height: calc(100% - 30px);
 }
-
-.tag-cont  .colTile:hover{
-    cursor:move;
+.tag-wraper:nth-child(2) {
+    margin-top:5px;
+}
+.tag-cont .colTile:hover {
+    cursor: move;
+}
+canvas{
+    height:100% !important;
 }

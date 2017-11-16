@@ -267,11 +267,11 @@ namespace ExpressBase.Web2.Controllers
                 ViewBag.ApplicationId = fr.Data["applicationid"];
                 ViewBag.ApplicationName = fr.Data["applicationname"];
                 ViewBag.Description = fr.Data["description"];
-                ViewBag.DominantRefId = fr.Data["dominantrefid"];
+                
             }
 
-            //var resultlist = this.ServiceClient.Get<EbObjectObjListResponse>(new EbObjectObjListRequest {EbObjectType = (int)EbObjectType.Application});
-            //ViewBag.dict = resultlist.Data;
+            var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
+            ViewBag.dict = resultlist.Data;    // get application from application table
             ViewBag.roleid = itemid;
 
             return View();
@@ -549,6 +549,19 @@ namespace ExpressBase.Web2.Controllers
 
             CreateUserResponse res = this.ServiceClient.Post<CreateUserResponse>(new CreateUserRequest {Id = userid, Colvalues = Dict });
 
+        }
+
+        public string GetAllUsers(string searchtext)
+        {
+            string html = string.Empty;
+            Dictionary<string, object> Dict = new Dictionary<string, object>();
+            Dict["searchtext"] = searchtext;
+            var fr = this.ServiceClient.Get<GetUsersResponse>(new GetUsersRequest { Colvalues = Dict, TenantAccountId = ViewBag.cid });
+            foreach (var key in fr.Data.Keys)
+            {
+                html += "<div id ='@userid' class='alert alert-success columnDrag'>@users</div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);
+            }
+            return html;
         }
 
     }

@@ -234,8 +234,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public string GetObjHtml(string refid)
+        public string GetObjHtml(string refid, string token)
         {
+            this.ServiceClient.BearerToken = token;
             var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             var dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
             dsobj.Status = resultlist.Data[0].Status;

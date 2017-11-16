@@ -48,22 +48,12 @@
         }       
     };
 
-    this.createContentWindow = function (id, type) {
-        //$("#" + this.contBox).prepend("<div class='col-md-2 no-padd fd' id='" + this.sidediv + "'><div>");
-
-        $("#" + this.parent_div).append("<div class='sub-windows' id='sub_window_dv" + id + "' tabindex= '1' eb-type=" + type + ">"
-            //+ "<div class='min-btn'><i class='pull-right fa fa-times fa-lg closebtn' aria-hidden='true'></i></div>"
-                //+"<div>"
-                    + "<div class='col-md-2 padd-2 fd' id= 'sub_windows_sidediv_dv" + id + "' style= 'display:block'>"
-                    + "</div>"
-                    + "<div class='col-md-8 padd-2' id='content_dv"+id+"'>"
-                    + "</div>"
-                    + "<div class='col-md-2 padd-2'>"
-                        + "<div class='no-padd pull-right' id='ppgrid_dv"+ id +"'>"
-                        + "</div>"
-                    + "</div>"
-                 //+ "</div>"
-            + "</div>");
+    this.createContentWindow = function (id, type, className) {
+        $("#" + this.parent_div).append(`<div class='sub-windows ${className}' style='height:inherit;' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
+                    <div class='col-md-2 padd-2 fd' id= 'sub_windows_sidediv_dv${id}' style= 'display:block'></div>
+                    <div class='col-md-8' id='content_dv${id}' style='height:inherit;'></div>
+                    <div class='col-md-2'><div class='no-padd pull-right' id='ppgrid_dv${id}'></div></div>
+           </div>`);
         
         $('#sub_window_dv' + id).focusin(this.windowOnFocus.bind(this));
     };

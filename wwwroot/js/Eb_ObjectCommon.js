@@ -265,8 +265,6 @@
             $('.leftPane').scrollTop($(this).scrollTop());
             $('.leftPane').scrollLeft($(this).scrollLeft());
         });
-        var scrollPos = $('#compare_result' + this.tabNum).offset().top;
-        $(window).scrollTop(scrollPos);
         $.LoadingOverlay("hide");
     };
 

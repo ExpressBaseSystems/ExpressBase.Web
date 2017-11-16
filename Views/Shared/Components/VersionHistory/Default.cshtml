@@ -21,37 +21,50 @@
            width: 40px;
            margin-right: 15px;
        }
-       .version_table{
+       .version_table {
            background-color : white;
        }
+       .table_container {
+           padding-right: 10px;
+           padding-left: 10px;          
+       }
    </style> 
-<table class='table table-hover table-responsive table-bordered version_table' id='versions_@(ViewBag.tabNum)'>
-    <thead class='verthead_@(ViewBag.tabNum)'>
-        <tr>
-            <th class='col-md-1'>Version Number</th>
-            <th class='col-md-4'>Change Log</th>
-            <th class='col-md-2'>Committed By</th>
-        </tr>
-    </thead>
-    <tbody id='vertbody_@(ViewBag.tabNum)' class='vertbody'>
-        @{
-            var i = 0;
-            foreach (var obj in ViewBag.versions)
-            {
-                i++;
-                <tr>
-                    <td>@obj.VersionNumber</td>
-                    <td>@obj.ChangeLog</td>
-                    <td><img src="../static/dp/dp_@(obj.CommitUId)_micro.jpg" class="img-thumbnail prof_dp"/> @obj.CommitUname    @obj.CommitTs
-                        <div class="view_code ViewCode_btn pull-right" id='view_code_@(ViewBag.tabNum)_@(i)' value='View' data-id="@obj.RefId" data-verNum="@obj.VersionNumber" data-changeLog="@obj.ChangeLog" data-commitUname="@obj.CommitUname" data-commitTs="@obj.CommitTs">
-                            <i class="fa fa-chevron-circle-right fa-2x" id="commit"></i>
-                        </div>
-                    </td>
-                </tr>
+<div class="table_container">
+    <table class='table table-hover table-responsive table-bordered version_table' id='versions_@(ViewBag.tabNum)'>
+        <thead class='verthead_@(ViewBag.tabNum)'>
+            <tr>
+                <th class='col-md-1 text-center'>Version</th>
+                <th class='col-md-4 text-center'>Change Log</th>
+                <th class='col-md-2 text-center'>Committed By</th>
+            </tr>
+        </thead>
+        <tbody id='vertbody_@(ViewBag.tabNum)' class='vertbody'>
+            @{
+                var i = 0;
+                foreach (var obj in ViewBag.versions)
+                {
+                    i++;
+                    <tr>
+                        <td>@obj.VersionNumber</td>
+                        <td>@obj.ChangeLog</td>
+                        <td>
+                            <div class="col-md-2">
+                                <img src="../static/dp/dp_@(obj.CommitUId)_micro.jpg" class="img-thumbnail img-circle prof_dp" />
+                            </div>
+                            <div class="col-md-7">
+                                <span class="col-md-12">@obj.CommitUname</span>
+                                <span class="col-md-12">@obj.CommitTs</span>
+                            </div>
+                            <div class="view_code ViewCode_btn pull-right" id='view_code_@(ViewBag.tabNum)_@(i)' value='View' data-id="@obj.RefId" data-verNum="@obj.VersionNumber" data-changeLog="@obj.ChangeLog" data-commitUname="@obj.CommitUname" data-commitTs="@obj.CommitTs">
+                                <i class="fa fa-chevron-circle-right fa-2x" id="commit"></i>
+                            </div>
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 <script>
                     function Openversion(){}

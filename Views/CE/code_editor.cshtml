@@ -39,13 +39,7 @@
             $('#codewindow').addClass("col-md-10");
         });
     });
-
-    $(document).keydown(function (e) {
-        if (e.keyCode == 83 && e.ctrlKey) {
-            e.preventDefault();
-            $("#save").trigger("click");
-        }
-    });
+    
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);

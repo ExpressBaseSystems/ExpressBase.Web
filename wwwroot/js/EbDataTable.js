@@ -208,6 +208,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.propGrid.PropertyChanged = function (obj, Pname) {
         this.EbObject = obj;
+        commonO.Current_obj = obj;
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";

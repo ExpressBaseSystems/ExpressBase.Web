@@ -161,6 +161,10 @@
             }
         </div>
         <div class="row">
+            <div id="layout_div" class="col-md-12 col-sm-12 col-xs-12 main-cont">
+                @RenderBody()
+                @RenderSection("EbHead", false)
+            </div>
             <div id="EbsideBar" style="display:none;">
                 @if (ViewBag.wc == "tc")
                 {
@@ -181,11 +185,7 @@
                     <div class="item">
                         <a href="#"> Home/</a>
                     </div>
-                </div>*@
-            <div id="layout_div" class="col-md-12 col-sm-12 col-xs-12 main-cont">
-                @RenderBody()
-                @RenderSection("EbHead", false)
-            </div>
+                </div>*@            
         </div>
     </div>
 </body>

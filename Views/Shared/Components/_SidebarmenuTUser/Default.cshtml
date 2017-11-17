@@ -1,33 +1,12 @@
-﻿@{
-    @using ExpressBase.Objects.ServiceStack_Artifacts;
+﻿<style>
+    #ObjModal .close {
+        margin-top: -25px;
+    }
+</style>
 
-    List<EbObjectWrapper> responselist = ViewBag.resultlist;
-}
 <div class="side-menu-container">
     <ul class="outer" style="padding-left:0;">
-        @{
-            foreach (var element in responselist)
-            {
-                <li>
-                    <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown1_@element.Id">
-                        <i class="fa fa-cog"></i> @element.Name <i class="fa fa-caret-down pull-right"></i>
-                    </a>
-                    <ul class="sub-menu collapse" id="dropdown1_@element.Id">
-                        <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Forms</a></li>
-                        <li>
-                            <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dv"><i class="fa fa-caret-right"></i> Data visualizations</a>
-                            <ul class="sub-menu collapse" id="dv">
-                                <li><a class="list-group-item" onclick="LoadObjectListUser(16)"><i class="fa fa-caret-right"></i> Table Visualization</a></li>
-                                <li><a class="list-group-item" onclick="LoadObjectListUser(17)"><i class="fa fa-caret-right"></i> Chart visualizations</a>
-                            </ul>
-                        </li>
-                        <li><a class="list-group-item" href="#"><i class="fa fa-caret-right"></i> Reports</a></li>
-                    </ul>
-                </li>
-            }
-        }
-
-        <li>
+        @*<li>
             <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown9">
                 <i class="fa fa-lock"></i>Security<i class="fa fa-caret-down pull-right"></i>
             </a>
@@ -36,26 +15,54 @@
                 <li><a class="list-group-item" onclick="LoadCommonList('usergroup')" href="CommonList?type='usergroup'"><i class="fa fa-caret-right"></i> User Groups</a></li>
                 <li><a class="list-group-item" onclick="LoadCommonList('roles')" href="CommonList?type='roles'"><i class="fa fa-caret-right"></i> Roles</a></li>
             </ul>
-        </li>
+        </li>*@
     </ul>
 </div>
 <script>
-    function LoadObjectListUser(type44) {
-        event.preventDefault();
-        var _container = $("#layout_div");
-        $.LoadingOverlay("show");
-        $.ajax({
-            url: "../Dev/EbObjectList",
-            type: "GET",
-            cache: false,
-            data: { "type": type44 },
-            success: function (result) {
-                _container.html(result);
-                $.LoadingOverlay("hide");
-                $('#EbsideBar').animate({ width: 'toggle' });
-            }
+
+    @*$(".outer").prepend(`@Html.Raw(ViewBag.menu)`);
+
+    $("#layout_div").append(`<div class="modal fade" tabindex="-1" role="dialog" id='ObjModal'>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>`);
+
+    $(".sub-menu a").click(function (e) {
+        var json = $(e.target).parent().next("div").attr("data-json");
+        var Obj = JSON.parse(json);
+        $("modal-title").text("Home/")
+        showModal(Obj);
+
+    });
+
+    function showModal(Obj) {
+        $(".modal-body").empty();
+        $.each(Obj, function (i, _obj) {
+            $(".modal-body").append(`<div class='row'>
+                    <div class="col-md-6 objitems" name="objBox">
+                    <div class="col-md-1 obj-icon">
+                        <div class="obj-ic-cir">
+                            <i class="fa fa-file-text" aria-hidden="true"></i>
+                        </div>
+                    </div>                
+                </div>
+             </div>`);
         });
-    }
+        $("#ObjModal").modal('show');
+    }*@
 
     function LoadCommonList(type) {
         event.preventDefault();

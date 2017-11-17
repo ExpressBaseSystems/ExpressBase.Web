@@ -263,7 +263,15 @@ namespace ExpressBase.Web.Controllers
         {
             return ViewComponent("GoogleRelated");
         }
-        
+
+        public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(EbObjectType type)
+        {
+            var resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = Convert.ToInt32(type) });
+            var ObjDVListAll = resultlist.Data;
+
+            return ObjDVListAll;
+        }
+
     }
 }
 

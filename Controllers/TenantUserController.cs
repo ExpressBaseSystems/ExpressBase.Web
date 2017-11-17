@@ -18,6 +18,7 @@ using ExpressBase.Common;
 using ExpressBase.Objects.ObjectContainers;
 using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
+using ExpressBase.Security;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,116 +26,21 @@ namespace ExpressBase.Web2.Controllers
 {
     public class TenantUserController : EbBaseNewController
     {
-     
+
         public TenantUserController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
-       
+
 
         // GET: /<controller>/
         public IActionResult Index()
         {
             return View();
         }
-
-
-        public IActionResult DataVisualizations()
-        {
-            //List<EbObjectWrapper> dvlist = new List<EbObjectWrapper>();
-            //EbObjectResponse fr = null;
-            //var EbConfig = ViewBag.EbConfig;
-            //// IServiceClient client = EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            //fr = this.ServiceClient.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, TenantAccountId = ViewBag.cid });
-            //foreach (var element in fr.Data)
-            //    //if (element.EbObjectType==EbObjectType.DataVisualization)
-            //    //    {
-            //    dvlist.Add(element);
-            ////    }
-            //ViewBag.dvlist = dvlist;
-            return View();
-        }
-
-
+        
         public IActionResult UserDashboard()
         {
-
+            this.HttpContext.Items["user"] = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
             return View();
         }
-
-        //[HttpGet]
-        //public IActionResult dv()
-        //{
-        //    IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-        //    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataSource, Token = ViewBag.token });
-        //    var rlist = resultlist.Data;
-        //    Dictionary<int, EbObjectWrapper> ObjDSList = new Dictionary<int, EbObjectWrapper>();
-        //    Dictionary<int, EbObjectWrapper> ObjDSListAll = new Dictionary<int, EbObjectWrapper>();
-        //    Dictionary<int, string> ObjDVListAll = new Dictionary<int, string>();
-        //    foreach (var element in rlist)
-        //    {
-        //        ObjDSListAll[element.Id] = element;
-        //    }
-        //    ViewBag.DSListAll = ObjDSListAll;
-        //    ViewBag.DSList = ObjDSList;
-        //    resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = 0, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.DataVisualization, Token = ViewBag.token });
-        //    rlist = resultlist.Data;
-        //    foreach (var element in rlist)
-        //    {
-        //        ObjDVListAll[element.Id] = element.Name;
-        //    }
-        //    ViewBag.DVListAll = ObjDVListAll;
-        //    ViewBag.Obj_id = 0;
-        //    ViewBag.dsid = 0;
-        //    ViewBag.tvpref = "{ }";
-        //    ViewBag.isFromuser = 0;
-
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public IActionResult dv(int objid)
-        //{
-        //    var token = Request.Cookies["Token"];
-        //    ViewBag.dvid = objid;
-        //    ViewBag.token = token;
-        //    ViewBag.EbConfig = this.EbConfig;
-
-        //    var redisClient = this.EbConfig.GetRedisClient();
-        //    //if (ViewBag.wc == "uc")
-        //    //{
-        //        var tvpref = redisClient.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, objid));
-        //        //var result = JsonConvert.DeserializeObject<Object>(tvpref);
-
-        //        Dictionary<string, object> _dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(tvpref);
-        //        ViewBag.dsid = _dict["dsId"];
-        //        ViewBag.dvname = _dict["dvName"];
-        //        int fdid = Convert.ToInt32(_dict["fdId"]);
-        //        //var obj = GetByteaEbObjects_json(fdid);
-        //        ViewBag.FDialog = GetByteaEbObjects_json(fdid);  //(obj.Value as Dictionary<int, EbFilterDialog>)[fdid];
-        //                                                         //ViewBag.EbForm38 = redisClient.Get<EbForm>(string.Format("form{0}", 47));
-        //    //}
-        //    //else if(ViewBag.wc == "dc")
-        //    //{
-
-        //    //}
-        //    return View();
-        //}
-
-        //public EbFilterDialog GetByteaEbObjects_json(int objId)
-        //{
-        //    IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-        //    var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { Id = objId, VersionId = Int32.MaxValue, EbObjectType = (int)EbObjectType.FilterDialog, TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-        //    var element = resultlist.Data[0];
-
-        //    //Dictionary<int, EbFilterDialog> ObjList = new Dictionary<int, EbFilterDialog>();
-
-        //    var dsobj = EbSerializers.ProtoBuf_DeSerialize<EbFilterDialog>(element.Bytea);
-        //    dsobj.Id = element.Id;
-        //    //dsobj.EbObjectType = element.EbObjectType;
-        //    //dsobj.Id = element.Id;
-        //    //ObjList[element.Id] = dsobj;
-
-        //    //return Json(ObjList);
-        //    return dsobj;
-        //}
 
         [HttpGet]
         public IActionResult UserPreferences()
@@ -160,94 +66,22 @@ namespace ExpressBase.Web2.Controllers
             var req = this.HttpContext.Request.Form;
             var res = this.ServiceClient.Post<UserPreferenceResponse>(new UserPreferenceRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)});
             return View();
-        }
-
-
-        public void TVPref4User(int tvid, string json)
-        {
-            this.Redis.Set(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, tvid, ViewBag.UId), json);
-        }
-
-        public string GetTVPref4User(int dvid, string parameters)
-        {
-           // var redis = this.EbConfig.GetRedisClient();
-           // var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-            var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
-
-            //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
-            //redis.Remove(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dvid, ViewBag.UId));
-
-            var tvpref = this.Redis.Get<string>(string.Format("{0}_TVPref_{1}_uid_{2}", ViewBag.cid, dvid, ViewBag.UId));
-
-            if (tvpref == null)
-            {
-                tvpref = this.Redis.Get<string>(string.Format("{0}_TVPref_{1}", ViewBag.cid, dvid));
-            }
-
-            return tvpref;
-        }
-
-        //private string GetColumn4DataTable(ColumnColletion __columnCollection)
-        //{
-        //    string colDef = string.Empty;
-        //    colDef = "{\"dvName\": \"<Untitled>\",\"hideSerial\": false, \"hideCheckbox\": false, \"lengthMenu\":[ [100, 200, 300, -1], [100, 200, 300, \"All\"] ],";
-        //    colDef += " \"scrollY\":300, \"rowGrouping\":\"\",\"leftFixedColumns\":0,\"rightFixedColumns\":0,\"columns\":[";
-        //    colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"serial\", \"title\":\"#\"},";
-        //    colDef += "{\"width\":10, \"searchable\": false, \"orderable\": false, \"visible\":true, \"name\":\"checkbox\"},";
-        //    foreach (EbDataColumn column in __columnCollection)
-        //    {
-        //        colDef += "{";
-        //        colDef += "\"data\": " + __columnCollection[column.ColumnName].ColumnIndex.ToString();
-        //        colDef += string.Format(",\"title\": \"{0}<span hidden>{0}</span>\"", column.ColumnName);
-        //        var vis = (column.ColumnName == "id") ? false.ToString().ToLower() : true.ToString().ToLower();
-        //        colDef += ",\"visible\": " + vis;
-        //        colDef += ",\"width\": " + 100;
-        //        colDef += ",\"name\": \"" + column.ColumnName + "\"";
-        //        colDef += ",\"type\": \"" + column.Type.ToString() + "\"";
-        //        //var cls = (column.Type.ToString() == "System.Boolean") ? "dt-center tdheight" : "tdheight";
-        //        colDef += ",\"className\": \"tdheight\"";
-        //        colDef += "},";
-        //    }
-        //    colDef = colDef.Substring(0, colDef.Length - 1) + "],";
-        //    string colext = "\"columnsext\":[";
-        //    colext += "{\"name\":\"serial\"},";
-        //    colext += "{\"name\":\"checkbox\"},";
-        //    foreach (EbDataColumn column in __columnCollection)
-        //    {
-        //        colext += "{";
-        //        if (column.Type.ToString() == "System.Int32" || column.Type.ToString() == "System.Decimal" || column.Type.ToString() == "System.Int16" || column.Type.ToString() == "System.Int64")
-        //            colext += "\"name\":\"" + column.ColumnName + "\",\"AggInfo\":true,\"DecimalPlace\":2,\"RenderAs\":\"Default\"";
-        //        else if (column.Type.ToString() == "System.Boolean")
-        //            colext += "\"name\":\"" + column.ColumnName + "\",\"IsEditable\":false,\"RenderAs\":\"Default\"";
-        //        else if (column.Type.ToString() == "System.DateTime")
-        //            colext += "\"name\":\"" + column.ColumnName + "\",\"Format\":\"Date\"";
-        //        else if (column.Type.ToString() == "System.String")
-        //            colext += "\"name\":\"" + column.ColumnName + "\",\"RenderAs\":\"Default\"";
-        //        colext += "},";
-        //    }
-        //    colext = colext.Substring(0, colext.Length - 1) + "]";
-        //    return colDef + colext + "}";
-        //}
-
-       
+        }     
 
         public IActionResult Logout()
         {
             ViewBag.Fname = null;
-           // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var abc = this.ServiceClient.Post(new Authenticate { provider = "logout" });
             HttpContext.Response.Cookies.Delete("bToken");
             HttpContext.Response.Cookies.Delete("rToken");
             return RedirectToAction("UsrSignIn", "Ext");
-
-        }
-
-     
+        }     
 
         [HttpGet]
         public IActionResult ManageRoles()
         {
-            
+
             var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
             ViewBag.dict = resultlist.Data;    // get application from application table
             return View();
@@ -267,7 +101,7 @@ namespace ExpressBase.Web2.Controllers
                 ViewBag.ApplicationId = fr.Data["applicationid"];
                 ViewBag.ApplicationName = fr.Data["applicationname"];
                 ViewBag.Description = fr.Data["description"];
-                
+
             }
 
             var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
@@ -279,7 +113,7 @@ namespace ExpressBase.Web2.Controllers
 
         public string GetRowAndColumn(string ApplicationId, int ObjectType, int RoleId)
         {
-           // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             List<string> _permissionsData = new List<string>(); // FOR NEW MODE
 
             if (RoleId > 0)
@@ -313,10 +147,29 @@ namespace ExpressBase.Web2.Controllers
                 }
             }
 
+            else if (ObjectType == 17)
+            {
+                foreach (var Op in Enum.GetValues(typeof(EbChartVisualization.Operations)))
+                    header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
+
+                foreach (var obj in resultlist.Data.Keys)
+                {
+                    tbody += "<tr>";
+                    tbody += "<td>{0}</td>".Fmt(resultlist.Data[obj]);
+                    foreach (var Op in Enum.GetValues(typeof(EbChartVisualization.Operations)))
+                    {
+                        var perm = string.Format("{0}_{1}", obj, (int)Op);
+                        var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
+                        tbody += "<td><input type = 'checkbox' name ='permissions' value='{0}' class='form-check-input' aria-label='...' {1}></td>".Fmt(perm, checked_string);
+                    }
+                    tbody += "</tr>";
+                }
+            }
+
             return html.Replace("@Header", header).Replace("@tbody", tbody);
 
         }
-        public string GetSubRoles(int roleid, int applicationid) 
+        public string GetSubRoles(int roleid, int applicationid)
         {
             string html = string.Empty;
             // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -348,9 +201,9 @@ namespace ExpressBase.Web2.Controllers
                 }
             }
             return html;
-        }       
+        }
 
-        public string SaveRoles(int RoleId, int ApplicationId,string RoleName, string Description, string users, string Permissions, string subrolesid) 
+        public string SaveRoles(int RoleId, int ApplicationId, string RoleName, string Description, string users, string Permissions, string subrolesid)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
@@ -383,13 +236,13 @@ namespace ExpressBase.Web2.Controllers
         {
             IServiceClient client = this.ServiceClient;
             ViewBag.ListType = type;
-            if (type== "user")
+            if (type == "user")
             {
                 var fr = this.ServiceClient.Get<GetUsersResponse>(new GetUsersRequest());
                 ViewBag.dict = fr.Data;
-               
+
             }
-            else if(type == "usergroup")
+            else if (type == "usergroup")
             {
                 var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
                 ViewBag.dict = fr.Data;
@@ -408,7 +261,7 @@ namespace ExpressBase.Web2.Controllers
         public string GetRoles(int userid)
         {
             string html = string.Empty;
-            var fr = this.ServiceClient.Get<GetUserRolesResponse>(new GetUserRolesRequest { id = userid, TenantAccountId = ViewBag.cid });      
+            var fr = this.ServiceClient.Get<GetUserRolesResponse>(new GetUserRolesRequest { id = userid, TenantAccountId = ViewBag.cid });
             List<string> subroles = fr.Data.ContainsKey("roles") ? fr.Data["roles"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : new List<string>();
 
             foreach (var key in fr.Data.Keys)
@@ -437,13 +290,13 @@ namespace ExpressBase.Web2.Controllers
 
         public string GetRoleUsers(int roleid)
         {
-           
+
             string html = string.Empty;
-            var fr = this.ServiceClient.Get<GetUsersRoleResponse>(new GetUsersRoleRequest {id = roleid, TenantAccountId = ViewBag.cid });
+            var fr = this.ServiceClient.Get<GetUsersRoleResponse>(new GetUsersRoleRequest { id = roleid, TenantAccountId = ViewBag.cid });
 
             foreach (var key in fr.Data.Keys)
             {
-                html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);              
+                html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);
             }
             return html;
         }
@@ -458,21 +311,21 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult UserGroups(int itemid)
         {
             var req = this.HttpContext.Request.Form;
-            if(itemid > 0)
+            if (itemid > 0)
             {
-                var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest { id = itemid,TenantAccountId = ViewBag.cid });
-                List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[","").Replace("]","").Split(',').Select(int.Parse).ToList(): new List<int>();
+                var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest { id = itemid, TenantAccountId = ViewBag.cid });
+                List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[", "").Replace("]", "").Split(',').Select(int.Parse).ToList() : new List<int>();
                 ViewBag.UGName = fr.Data["name"];
                 ViewBag.UGDescription = fr.Data["description"];
                 ViewBag.itemid = itemid;
                 string html = "";
                 if (fr.Data.ContainsKey("userslist"))
                 {
-                    foreach(var element in userlist)
+                    foreach (var element in userlist)
                     {
                         html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[element.ToString()].ToString()).Replace("@userid", element.ToString());
                     }
-                    
+
                 }
                 ViewBag.UserList = html;
 
@@ -480,15 +333,15 @@ namespace ExpressBase.Web2.Controllers
             else
             {
                 int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
-                CreateUserGroupResponse res = this.ServiceClient.Post<CreateUserGroupResponse>(new CreateUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),Id = groupid });
-            }          
+                CreateUserGroupResponse res = this.ServiceClient.Post<CreateUserGroupResponse>(new CreateUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Id = groupid });
+            }
             return View();
         }
 
         public string GetUserGroups(int userid)
         {
             string html = string.Empty;
-            var fr = this.ServiceClient.Get<GetUser2UserGroupResponse>(new GetUser2UserGroupRequest {id= userid, TenantAccountId = ViewBag.cid });
+            var fr = this.ServiceClient.Get<GetUser2UserGroupResponse>(new GetUser2UserGroupRequest { id = userid, TenantAccountId = ViewBag.cid });
             List<string> usergrouplist = fr.Data.ContainsKey("usergroups") ? fr.Data["usergroups"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : new List<string>();
 
             foreach (var key in fr.Data.Keys)
@@ -524,7 +377,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult CreateUser(int itemid)
         {
-            if(itemid > 0)
+            if (itemid > 0)
             {
                 var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = itemid, TenantAccountId = ViewBag.cid });
                 ViewBag.Name = fr.Data["name"];
@@ -534,11 +387,11 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        public void SaveUser(int userid,string roles,string usergroups)
+        public void SaveUser(int userid, string roles, string usergroups)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
-          
+
             Dict["firstname"] = req["firstname"];
             Dict["email"] = req["email"];
             Dict["pwd"] = req["pwd"];
@@ -547,7 +400,7 @@ namespace ExpressBase.Web2.Controllers
 
             //  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 
-            CreateUserResponse res = this.ServiceClient.Post<CreateUserResponse>(new CreateUserRequest {Id = userid, Colvalues = Dict });
+            CreateUserResponse res = this.ServiceClient.Post<CreateUserResponse>(new CreateUserRequest { Id = userid, Colvalues = Dict });
 
         }
 

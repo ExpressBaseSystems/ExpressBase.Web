@@ -20,7 +20,7 @@
 
     this.cropper = function () {
         this.crop = $('#' + this.cropperContainer).croppie({
-            url: this.fileurl,
+            url: 'http://localhost:5000/images/your-logo.png',
             viewport: { width: 150, height: 150 },
             enableOrientation: true
         });

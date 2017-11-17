@@ -1,6 +1,8 @@
 
 body {
     padding: 0 !important;
+    --ebbg: #0280db;
+    --ebbgimage: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
 }
 
 .nopadding {
@@ -783,11 +785,13 @@ footer {
     margin-top: 50px;
     padding-left: 10px;
     padding-right: 10px;
+    position:fixed;
 }
 
     .Eb-CommonMenuStyle .btn {
         background-color: transparent;
         color: white;
+        display:inline;
     }
 
         .Eb-CommonMenuStyle .btn:hover {
@@ -799,4 +803,11 @@ footer {
             background-color: #30C2FF;
             border-radius: 0;
         }
+    .Eb-CommonMenuStyle div {
+        display: inline;
+    }
+    .Eb-CommonMenuStyle form {       
+        display: inline;
+    }
+
 /*EB COMMON MENUBAR*/

@@ -19,19 +19,7 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-
-        public string GetAllUsers(string searchtext)
-        {
-            string html = string.Empty;
-            Dictionary<string, object> Dict = new Dictionary<string, object>();
-            Dict["searchtext"] = searchtext;
-            var fr = this.ServiceClient.Get<GetUsersResponse>(new GetUsersRequest { Colvalues = Dict, TenantAccountId = ViewBag.cid });
-            foreach (var key in fr.Data.Keys)
-            {
-                html += "<div id ='@userid' class='alert alert-success columnDrag'>@users</div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);
-            }
-            return html;
-        }
+     
 
         [HttpPost]
         public string UniqueCheck(string text)

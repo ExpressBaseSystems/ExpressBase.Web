@@ -55,11 +55,6 @@
         } else {
             // The person is not logged into your app or we are unable to tell.
             chatBotObj.getMsg($("<button class='btn' onclick='login();'>Login with Facebook</button>"));
-            var ebbot_fblogin_iframe = document.getElementById("ebbot_fblogin_iframe");
-            if (!ebbot_fblogin_iframe.getAttribute("src"))
-                ebbot_fblogin_iframe.setAttribute("src", "https://graph.facebook.com/oauth/authorize?client_id=1525758114176201&scope=publish_stream&redirect_uri=http://localhost:5000/bot/bot");
-
-            $(ebbot_fblogin_iframe).css("display", "block");
         }
     }
 
@@ -120,6 +115,5 @@
 
     </script>
 
-    <iframe id="ebbot_fblogin_iframe" width="25%" height="70%" class="eb-chat-frame" style="position: fixed;bottom: 65px!important; right: 24px!important; border-radius: 3.5px; box-shadow: 0 12px 40px 0 rgba(0,0,0,.175)!important; min-width: 300px; z-index: 199999999999999!important;" frameborder="0" allowfullscreen></iframe>
 </body>
 </html>

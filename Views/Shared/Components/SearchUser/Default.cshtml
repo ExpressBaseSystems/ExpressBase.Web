@@ -87,7 +87,7 @@
             timer = setTimeout(function (event) {
 
                 var text = $('#searchuser').val();
-                $.post("../Common/GetAllUsers",
+                $.post("../TenantUser/GetAllUsers",
                 {
                     "searchtext": text
                 }, function (result) {

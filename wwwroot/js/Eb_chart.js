@@ -227,7 +227,7 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     };
 };
 
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, data) {
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data ) {
     this.columnInfo = null;
     this.data = null;
     this.ssurl = ssurl;
@@ -251,7 +251,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.relatedObjects = null;
     this.FD = false;
 
-    var split = new splitWindow("parent-div0", "contBox");
+    var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
     split.windowOnFocus = function (ev) {
         if ($(ev.target).attr("class") !== undefined) {
@@ -282,9 +282,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tabNum).click(this.init.bind(this));
-        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
-        var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
-        $("#content_dv" + obj.EbSid + "_" + this.tabNum).empty();
+        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
+        var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
+        $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).empty();
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
@@ -296,26 +296,26 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
-            $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-8").addClass("col-md-10");
+            $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
         }
         else {
             this.FD = true;
             $(sideDivId).css("display", "inline");
             $.LoadingOverlay("hide");
-            $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-10").addClass("col-md-8");
+            $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
         }
         $(subDivId).focus();
     }.bind(this);
 
     if (this.EbObject === null) {
         this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbChartVisualization");
-        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
+        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
+        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
     }
     else {
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbChartVisualization");
-        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
+        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
+        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
         this.call2FD();
     }
@@ -341,7 +341,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.init = function () {
         this.columnInfo = this.EbObject;
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         $.event.props.push('dataTransfer');
         this.createChartDivs();
         this.appendColumns();

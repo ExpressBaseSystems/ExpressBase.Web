@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, data) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -136,7 +136,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.extraCol = [];
     this.PcFlag = false;
 
-    var split = new splitWindow("parent-div0", "contBox");
+    var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
     split.windowOnFocus = function (ev) {
         if ($(ev.target).attr("class") !== undefined) {
@@ -167,9 +167,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
-        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum;
-        var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum;
-        $("#content_dv" + obj.EbSid + "_" + this.tabNum).empty();
+        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
+        var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
+        $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).empty();
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
@@ -181,26 +181,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
-            $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-8").addClass("col-md-10");
+            $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
         }
         else {
             this.FD = true;
             $(sideDivId).css("display", "inline");
             $.LoadingOverlay("hide");
-            $("#content_dv" + obj.EbSid + "_" + this.tabNum).removeClass("col-md-10").addClass("col-md-8");
+            $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
         }
         $(subDivId).focus();
     }.bind(this);
 
     if (this.EbObject === null) {
         this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbTableVisualization");
-        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
+        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum+"_"+counter, "EbTableVisualization");
+        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
     }
     else {
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum, "EbTableVisualization");
-        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum);
+        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
+        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.call2FD();
     }
@@ -225,7 +225,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     //}
 
     this.start = function () {
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum;
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
     }
 
 
@@ -236,15 +236,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.dvName = this.ebSettings.Name;
 
         $("#objname").text(this.dvName);
+        if (this.login == "uc") {
+            $("#ppgrid_" + this.tableId).css("display", "none");
 
-        $("#ppgrid_" + this.tableId).css("display", "none"); 
-
-        if (this.FD) {
-            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-            $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
-        }
-        else {
-            $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            if (this.FD) {
+                $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
+                $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
+            }
+            else {
+                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            }
         }
 
         this.addSerialAndCheckboxColumns();

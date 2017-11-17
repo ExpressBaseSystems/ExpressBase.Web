@@ -1,0 +1,325 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .botlist-box {
+            box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+            float: left;
+            padding: 12px;
+            width: 250px;
+            background-color: #fff;
+            border-radius: 4px;
+            transition-duration: .15s;
+            margin: 18px 9px 0px 9px;
+        }
+
+            .botlist-box:hover {
+                margin-top: 10px;
+                /*zoom:1.02;*/
+            }
+
+        .bottile-icon {
+            height: 150px;
+            width: 150px;
+            margin: auto;
+            background-image: url(/images/robot.svg);
+        }
+
+        .container-fluid {
+            background-color: white;
+        }
+
+        .Bot-tile h4 {
+            text-align: center;
+            color: #8f6ed5;
+        }
+
+        .sitename {
+            text-align: center;
+        }
+
+        .created-lbl, .modified-lbl {
+            color: #32325d;
+        }
+
+        .created-date, .modified-date {
+            color: #888;
+            font-size: 13px;
+        }
+        .outer-row-profsetup{
+            background-color:#fff;
+            height:unset!important;
+        }
+    </style>
+
+
+    <style>
+        .mt-89 {
+            margin-top: 89px;
+        }
+
+        .h-inherit {
+            height: inherit;
+            background: white;
+        }
+
+        .pd-0 {
+            padding: 0;
+        }
+
+        .outer-row-profsetup {
+            height: calc(100vh - 89px);
+        }
+
+        .profImageSec {
+            background: #6da49f;
+            height: inherit;
+            padding: 30px;
+        }
+
+        .profSetupSec {
+            height: inherit;
+        }
+
+        .prof-picDiv {
+            width: 100%;
+            height: 150px;
+            padding: 20px;
+        }
+
+        .profDetailHead {
+            color: white;
+            font-size: 22px;
+            padding-left: 20px;
+        }
+
+        .profImagePrevSec {
+            height: inherit;
+        }
+
+        .previewsec-outer {
+            width: 100%;
+            height: inherit;
+            background: #efefef;
+            padding: 35px 10px 10px 20px;
+        }
+
+            .previewsec-outer .cropsection {
+                width: 100%;
+                height: 300px;
+            }
+
+        .submitsec .btn {
+            float: right;
+        }
+
+        .Eb-CommonMenuStyle {
+            height: 32px;
+            border: none;
+        }
+
+            .Eb-CommonMenuStyle .btn {
+                border: none;
+            }
+
+        .croppie-container .cr-slider-wrap {
+            width: 100%;
+            padding: 5px;
+            background-color: black;
+            margin: 0;
+            text-align: left;
+        }
+
+        .cr-slider {
+            max-width: 100%;
+            padding-top: 0;
+            padding-bottom: 3px;
+            background: white;
+        }
+
+        .cr-slider-wrap .btn {
+            display: inline;
+            margin-left: 5px;
+            color: #fff;
+            background-color: transparent;
+            border-color: none;
+        }
+
+        .cr-slider-wrap input[type=range] {
+            width: 99px;
+            display: inline;
+        }
+
+        .imgsec-text {
+            margin-top: 30px;
+            color: white;
+        }
+    </style>
+
+
+
+</head>
+<body>
+    <div class="row outer-row-profsetup">
+        <div class="Eb-CommonMenuStyle">
+            <div class="col-md-3 profDetailHead">Your Bots</div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botlist-box">
+            <div class="Bot-tile">
+                <h4>EXPRESSbase Bot</h4>
+                <div class="bottile-icon"></div>
+                <div class="sitename">WWWW.expressbasebot.com</div>
+                <div class="pull-left">
+                    <div class="created-lbl">Created</div>
+                    <div class="created-date">Created</div>
+                </div>
+                <div class="pull-right">
+
+                    <div class="modified-lbl">Modified</div>
+                    <div class="modified-date">Created</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

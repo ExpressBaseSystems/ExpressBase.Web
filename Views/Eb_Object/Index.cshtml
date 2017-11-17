@@ -82,12 +82,12 @@
                 }
                 else if (ViewBag.ObjType == (int)EbObjectType.TableVisualization)
                 {
-                    @await Component.InvokeAsync("DVTable", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+                    @await Component.InvokeAsync("DVTable", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, counter = 0 })
 
                 }
                 else if (ViewBag.ObjType == (int)EbObjectType.ChartVisualization)
                 {
-                    @await Component.InvokeAsync("DVChart", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+                    @await Component.InvokeAsync("DVChart", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, counter = 0 })
 
                 }
                 else if (ViewBag.ObjType == (int)EbObjectType.Report)

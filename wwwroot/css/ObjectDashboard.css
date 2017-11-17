@@ -227,8 +227,7 @@ li:hover {
 .vernav {
 }
 
-.workcopies a {
-    color: #194877;
+.wrkcpylink {
     text-decoration: none;
     font-family: times;
 }

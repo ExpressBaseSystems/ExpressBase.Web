@@ -24,13 +24,25 @@
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('#ver_his').off("click").on("click", this.Version_List.bind(this));
         $('#compare').off('click').on('click', this.Compare.bind(this));
-        $('#save').off("click").on("click", this.Save.bind(this, false));
+        $('#save').off("click").on("click", this.Save.bind(this));
         $('#commit').off("click").on("click", this.Commit.bind(this, false));
         $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
+        //$(window).bind('keydown', this.checkKeyDown.bind(this));
+        $(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
     }
 
+    this.checkKeyDown = function (event) {
+        if (event.ctrlKey || event.metaKey) {
+            if (event.which === 83) {
+                event.preventDefault();
+                this.Save();
+                //alert(111);
+            }
+        }
+    }
     this.ShowMessage = function () {
+        this.tags = $('#tags').val();
         this.UpdateDashboard();
         this.alertType = "success";
         this.messg.alert({
@@ -38,19 +50,9 @@
             body: this.alertMsg,
             type: this.alertType
         })
+        $.LoadingOverlay("hide");
         $('#close_popup').trigger('click');
     };
-
-    //this.UpdateTab = function (e) {
-    //    $.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
-    //        .done(this.UpdateTab_VersionCode_success.bind(this));
-    //};
-
-    //this.UpdateTab_VersionCode_success = function (data) {
-    //    this.Current_obj = JSON.parse(data);
-    //    $.post('../Eb_Object/CallObjectEditor', { _dsobj: data, _tabnum: this.tabNum, objtype: this.ObjectType, _refid: this.ver_Refid, _ssurl: this.ssurl })
-    //        .done(this.UpdateTab_CallObjectEditor_success.bind(this));
-    //};
 
     this.UpdateTab = function (data) {
         var target = $("#versionNav li.active a").attr("href");
@@ -93,14 +95,13 @@
     };
 
     this.UpdateDashboard = function () {
-        $.post("Eb_object/UpdateObjectDashboard", { refid: this.ver_Refid }, this.UpdateDashboard_success.bind(this));
+        $.post("Eb_object/UpdateObjectDashboard", { refid: this.ver_Refid }).done(this.UpdateDashboard_Success.bind(this));
     };
 
-    this.UpdateDashboard_success = function (data) {
+    this.UpdateDashboard_Success = function (data) {
         $('#object_Dashboard_main').empty().append(data);
         commonObj.init();
-        this.ObjCollection["#vernav" + this.tabNum].GenerateButtons();
-        $.LoadingOverlay("hide");
+        $('#tags').tagsinput('add', this.tags);
     };
 
     this.LoadStatusPage = function () {
@@ -182,6 +183,7 @@
         if (this.Current_obj !== null)
             this.UpdateCreateVersionDD();
         $.LoadingOverlay("hide");
+
     };
 
     this.Compare = function () {
@@ -191,7 +193,7 @@
     }
 
     this.Load_differ = function (data) {
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> compare <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> Diff <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         $('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
@@ -335,6 +337,9 @@
         $('#create').selectpicker('refresh');
 
         $('#create li').off('click').on("click", this.createVersion.bind(this));
+        if (this.Current_obj.Status != "Live") {
+            $('#_patch').hide();
+        }
     }
 
     this.createVersion = function (e) {
@@ -345,7 +350,7 @@
                 $.LoadingOverlay("show");
                 $.post("../Eb_Object/Create_Major_Version", {
                     _refId: this.ver_Refid, _type: type
-                }, this.ShowMessage.bind(this, "Created Major Version Successfully", "success"));
+                }, this.OpenVersionAfterCreate.bind(this));
             }
         }
         if (selected_opt === "_minor") {
@@ -354,7 +359,7 @@
                 $.post("../Eb_Object/Create_Minor_Version", {
                     _refId: this.ver_Refid,
                     _type: type
-                }, this.ShowMessage.bind(this, "Created Minor Version Successfully", "success"));
+                }, this.OpenVersionAfterCreate.bind(this));
             }
         }
         if (selected_opt === "_patch") {
@@ -363,10 +368,18 @@
                 $.post("../Eb_Object/Create_Patch_Version", {
                     _refId: this.ver_Refid,
                     _type: type
-                }, this.ShowMessage.bind(this, "Created Patch Version Successfully", "success"));
+                }, this.OpenVersionAfterCreate.bind(this));
             }
         }
     };
 
+    this.OpenVersionAfterCreate = function (_refid) {
+        $.LoadingOverlay("show");
+        this.ver_Refid = _refid;
+        $.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
+            .done(this.VersionCode_success.bind(this));
+        this.alertMsg = "Success";
+        this.ShowMessage();
+    }
     this.init();
 };

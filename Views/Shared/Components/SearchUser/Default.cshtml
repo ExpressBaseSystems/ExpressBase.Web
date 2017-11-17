@@ -19,6 +19,10 @@
 <script>
     $('document').ready(function () {
         var ids = "";
+
+        $.each($("#div2").children(), function (i, obj) {
+            ids += $(obj).attr("id") + ",";
+        });
         var temp = new dragula([document.getElementById("div1"), document.getElementById('@ViewBag.targetdiv')], {
             accepts: function (el, target, source, sibling) {
                 var bb = true;
@@ -30,7 +34,7 @@
             },
             copy: true
         });
-        temp.on("drop", function (el, target, source, sibling) {           
+        temp.on("drop", function (el, target, source, sibling) {
             if ($(target).children().length > 0) {
                 $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button>")
                 var Ids = "";
@@ -68,16 +72,17 @@
             else
                 return res;
         }
+
         $(document).on('click', '.close', function (e) {
-            var id = $(e.target).parent().attr("id");
-            var text = $(e.target).parent().text();
+            
+            var id = $(e.target).parent().attr("id");           
+            var text = $(e.target).parent().text();            
             text = text.substring(0, text.length - 1);
             $("#" + id).remove();
-            //$("#div1").append("<div id=" + id + " class='alert alert-success columnDrag'>" + text + "</div>");
             var txt = $("#userslist").val();
-            txt = txt.toString().replace(id + ",", "");
+            txt = txt.toString().replace(id, "");
             $("#userslist").val(txt);
-           
+      
         });
 
         var timer;

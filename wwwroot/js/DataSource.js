@@ -58,14 +58,20 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.propGrid.PropertyChanged = function (obj, pname) {
         this.EbObject = obj;
-        if (pname === "FilterDialogRefId") {
-            if (obj[pname] !== null) {
+        commonO.Current_obj = this.EbObject;
+        if (pname === "FilterDialogRefId")
+        {
+            if (obj[pname] !== null)
+            {
                 this.GetFD();
-            }
+            }           
             $('#paramdiv' + tabNum + ' #filterBox').remove();
             $('#paramdiv' + tabNum).show();
             $('#codewindow' + tabNum).removeClass("col-md-10");
             $('#codewindow' + tabNum).addClass("col-md-8");
+        }
+        if (pname === "Name") {
+            $("#objname").text(this.EbObject.Name);
         }
     }.bind(this);
 

@@ -19,7 +19,7 @@
                         "<div class='col-md-12'>" +
                             "<div class='timeline-title col-md-1' style='display:inline'>" + obj.Status + "</div>" +
                             "<div class='timeline-time col-md-8' style='display:inline'>" +
-                                "<p><small class='text-muted'><i class='glyphicon glyphicon-time'></i>" + obj.CommitTs + "</small>" +
+                                "<p style='backgroung-color:lightgrey'><small class='text-muted'><i class='glyphicon glyphicon-time'></i>" + obj.CommitTs + "</small>" +
                             "</div> " +
                             "<small class='col-md-2 style='display:inline' > " + obj.CommitUname + "</small></p >" +
                         "</div>" +
@@ -30,8 +30,8 @@
                     "</div>" +
 
                     "<div class='col-md-2'>" +
-                "<div> " + 
-                            "<img class='img-circle pull-right' src= '../static/dp/dp_"+ obj.CommitUId +"_micro.jpg" + "'/>" +
+                "<div> " +
+                            "<img class='img-circle img-thumbnail prof_dp pull-right' src= '../static/dp/dp_"+ obj.CommitUId +"_micro.jpg" + "'/>" +
 
                         "</div> " +
                     "</div> " +
@@ -64,19 +64,38 @@
             });
         });
     });
+    $('#st_chnglog@(ViewBag.tabNum)').on("focusout", function () {
+          var _chlog = $('#StatChlog@(ViewBag.tabNum)').val();
+        if (_chlog === "")
+             $('#st_chnglog@(ViewBag.tabNum)').addClass('has-error');
+        else
+             $('#st_chnglog@(ViewBag.tabNum)').removeClass('has-error');
+    });
+
+    $('#st_dd@(ViewBag.tabNum)').on("focusout", function () {
+         var _stat = $('#status_drpdwn@(ViewBag.tabNum) option:selected').val();
+        if (_stat === "Select Status")
+            $('#st_dd@(ViewBag.tabNum)').addClass('has-error');
+        else
+            $('#st_dd@(ViewBag.tabNum)').removeClass('has-error');
+    });
 
     $('#confirm_stat_change@(ViewBag.tabNum)').on("click", function () {
-        $.LoadingOverlay("show");
         var _chlog = $('#StatChlog@(ViewBag.tabNum)').val();
         var _stat = $('#status_drpdwn@(ViewBag.tabNum) option:selected').val();
-
-        $.post('../Eb_Object/ChangeStatus', { _refid: '@ViewBag.Curr_refid', _changelog: _chlog, _status: _stat }, function () {
-            $('#vernav@(ViewBag.tabNum)').empty();
-            $.post("../Eb_Object/GetLifeCycle", { _tabnum: @ViewBag.tabNum, cur_status: _stat, refid: '@ViewBag.Curr_refid' }, function (text) {
-                $('#vernav@(ViewBag.tabNum)').append(text);
-                $.LoadingOverlay("hide");
+        if (_stat != "Select Status" && _chlog != ""){
+            $('#st_chnglog@(ViewBag.tabNum)').removeClass('has-error');
+            $('#st_dd@(ViewBag.tabNum)').removeClass('has-error');
+            $.LoadingOverlay("show");
+            $.post('../Eb_Object/ChangeStatus', { _refid: '@ViewBag.Curr_refid', _changelog: _chlog, _status: _stat }, function () {
+                $('#vernav@(ViewBag.tabNum)').empty();
+                $.post("../Eb_Object/GetLifeCycle", { _tabnum: @ViewBag.tabNum, cur_status: _stat, refid: '@ViewBag.Curr_refid' }, function (text) {
+                    $('#vernav@(ViewBag.tabNum)').append(text);
+                    $.LoadingOverlay("hide");
+                });
             });
-        });
+        }
+
     });
 </script>
 <style>
@@ -242,49 +261,55 @@
                 <div class='timeline-badge' id='timeline-badge'>
                     <i class='glyphicon glyphicon-check'></i>
                 </div>
-                <div class='timeline-panel'>
+                <div class='timeline-panel' style="background-color:aliceblue">
                     <div class='timeline-heading'>
-                        <h5 class='timeline-title' style='display:inline'> Current Status :@(cur_stat)</h5>
-                        <select class='selectpicker btn' id='status_drpdwn@(tabNum)' style='display:inline'>
-                            <option value='Select Status'>Select Status</option>
-                            @{
-                                if (cur_stat == "Dev")
-                                {
-                                    <option value='Test'>Test</option>
+                         <h5 class='timeline-title text-center col-md-offset-4' style='display:inline'> Current Status :@(cur_stat)</h5>
+                        <div class="pull-right"id='confirm_stat_change@(tabNum)'>
+                            Apply  <i class="fa fa-save fa-1x"></i>
+                        </div>
+                        <div id="st_dd@(tabNum)" class="form-group">
+                            <select class='selectpicker btn form-control' id='status_drpdwn@(tabNum)' style='display:inline'>
+                                <option value='Select Status'>Select Status</option>
+                                @{
+                                    if (cur_stat == "Dev")
+                                    {
+                                        <option value='Test'>Test</option>
+                                    }
+                                    if (cur_stat == "Test")
+                                    {
+                                        <option value='Dev'> Dev </option>
+                                        <option value='UAT' id='uat'> UAT </option>
+                                        <option value='Live'> Live </option>
+                                    }
+                                    if (cur_stat == "UAT")
+                                    {
+                                        <option value='Live'> Live </option>
+                                    }
+                                    if (cur_stat == "Live")
+                                    {
+                                        <option value='Dev'> Dev </option>
+                                        <option value='Test'> Test </option>
+                                        <option value='Offline'> Offline </option>
+                                    }
+                                    if (cur_stat == "Offline")
+                                    {
+                                        <option value='Dev'> Dev </option>
+                                        <option value='Test'> Test </option>
+                                        <option value='Obsolete'> Obsolete </option>
+                                    }
+                                    if (cur_stat == "Obsolete")
+                                    {
+                                        @*do something*@
+                                    }
                                 }
-                                if (cur_stat == "Test")
-                                {
-                                    <option value='Dev'> Dev </option>
-                                    <option value='UAT' id='uat'> UAT </option>
-                                    <option value='Live'> Live </option>
-                                }
-                                if (cur_stat == "UAT")
-                                {
-                                    <option value='Live'> Live </option>
-                                }
-                                if (cur_stat == "Live")
-                                {
-                                    <option value='Dev'> Dev </option>
-                                    <option value='Test'> Test </option>
-                                    <option value='Offline'> Offline </option>
-                                }
-                                if (cur_stat == "Offline")
-                                {
-                                    <option value='Dev'> Dev </option>
-                                    <option value='Test'> Test </option>
-                                    <option value='Obsolete'> Obsolete </option>
-                                }
-                                if (cur_stat == "Obsolete")
-                                {
-                                    @*do something*@
-                                }
-                            }
-                        </select>
-                        <div class='' style='display:inline'><button class='btn pull-right' id='confirm_stat_change@(tabNum)'><i class="fa fa-arrow-right fa-1x" aria-hidden="true"></i></button></div>
+                            </select>
+                        </div>                       
                     </div>
                     <div class='timeline-body'>
-                        <div class='st_chnglog'>
-                            <textarea id='StatChlog@(tabNum)' class='StatChlog form-control' style='width:100%;height: 35px;border-radius: 6px;margin-top: -3px;' placeholder='Change log'></textarea>
+                        <div class=''>
+                            <div id="st_chnglog@(tabNum)" class="form-group st_chnglog">
+                                <textarea id='StatChlog@(tabNum)' class='StatChlog form-control' rows="5" placeholder='Change log' required></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>

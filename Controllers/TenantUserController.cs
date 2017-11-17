@@ -25,9 +25,9 @@ namespace ExpressBase.Web2.Controllers
 {
     public class TenantUserController : EbBaseNewController
     {
-     
+
         public TenantUserController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
-       
+
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -170,8 +170,8 @@ namespace ExpressBase.Web2.Controllers
 
         public string GetTVPref4User(int dvid, string parameters)
         {
-           // var redis = this.EbConfig.GetRedisClient();
-           // var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            // var redis = this.EbConfig.GetRedisClient();
+            // var sscli = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
 
             //redis.Remove(string.Format("{0}_ds_{1}_columns", "eb_roby_dev", dsid));
@@ -229,12 +229,12 @@ namespace ExpressBase.Web2.Controllers
         //    return colDef + colext + "}";
         //}
 
-       
+
 
         public IActionResult Logout()
         {
             ViewBag.Fname = null;
-           // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var abc = this.ServiceClient.Post(new Authenticate { provider = "logout" });
             HttpContext.Response.Cookies.Delete("bToken");
             HttpContext.Response.Cookies.Delete("rToken");
@@ -242,12 +242,12 @@ namespace ExpressBase.Web2.Controllers
 
         }
 
-     
+
 
         [HttpGet]
         public IActionResult ManageRoles()
         {
-            
+
             var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
             ViewBag.dict = resultlist.Data;    // get application from application table
             return View();
@@ -267,7 +267,7 @@ namespace ExpressBase.Web2.Controllers
                 ViewBag.ApplicationId = fr.Data["applicationid"];
                 ViewBag.ApplicationName = fr.Data["applicationname"];
                 ViewBag.Description = fr.Data["description"];
-                
+
             }
 
             var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
@@ -279,7 +279,7 @@ namespace ExpressBase.Web2.Controllers
 
         public string GetRowAndColumn(string ApplicationId, int ObjectType, int RoleId)
         {
-           // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+            // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             List<string> _permissionsData = new List<string>(); // FOR NEW MODE
 
             if (RoleId > 0)
@@ -313,10 +313,29 @@ namespace ExpressBase.Web2.Controllers
                 }
             }
 
+            else if (ObjectType == 17)
+            {
+                foreach (var Op in Enum.GetValues(typeof(EbChartVisualization.Operations)))
+                    header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
+
+                foreach (var obj in resultlist.Data.Keys)
+                {
+                    tbody += "<tr>";
+                    tbody += "<td>{0}</td>".Fmt(resultlist.Data[obj]);
+                    foreach (var Op in Enum.GetValues(typeof(EbChartVisualization.Operations)))
+                    {
+                        var perm = string.Format("{0}_{1}", obj, (int)Op);
+                        var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
+                        tbody += "<td><input type = 'checkbox' name ='permissions' value='{0}' class='form-check-input' aria-label='...' {1}></td>".Fmt(perm, checked_string);
+                    }
+                    tbody += "</tr>";
+                }
+            }
+
             return html.Replace("@Header", header).Replace("@tbody", tbody);
 
         }
-        public string GetSubRoles(int roleid, int applicationid) 
+        public string GetSubRoles(int roleid, int applicationid)
         {
             string html = string.Empty;
             // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
@@ -348,9 +367,9 @@ namespace ExpressBase.Web2.Controllers
                 }
             }
             return html;
-        }       
+        }
 
-        public string SaveRoles(int RoleId, int ApplicationId,string RoleName, string Description, string users, string Permissions, string subrolesid) 
+        public string SaveRoles(int RoleId, int ApplicationId, string RoleName, string Description, string users, string Permissions, string subrolesid)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
@@ -383,13 +402,13 @@ namespace ExpressBase.Web2.Controllers
         {
             IServiceClient client = this.ServiceClient;
             ViewBag.ListType = type;
-            if (type== "user")
+            if (type == "user")
             {
                 var fr = this.ServiceClient.Get<GetUsersResponse>(new GetUsersRequest());
                 ViewBag.dict = fr.Data;
-               
+
             }
-            else if(type == "usergroup")
+            else if (type == "usergroup")
             {
                 var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
                 ViewBag.dict = fr.Data;
@@ -408,7 +427,7 @@ namespace ExpressBase.Web2.Controllers
         public string GetRoles(int userid)
         {
             string html = string.Empty;
-            var fr = this.ServiceClient.Get<GetUserRolesResponse>(new GetUserRolesRequest { id = userid, TenantAccountId = ViewBag.cid });      
+            var fr = this.ServiceClient.Get<GetUserRolesResponse>(new GetUserRolesRequest { id = userid, TenantAccountId = ViewBag.cid });
             List<string> subroles = fr.Data.ContainsKey("roles") ? fr.Data["roles"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : new List<string>();
 
             foreach (var key in fr.Data.Keys)
@@ -437,13 +456,13 @@ namespace ExpressBase.Web2.Controllers
 
         public string GetRoleUsers(int roleid)
         {
-           
+
             string html = string.Empty;
-            var fr = this.ServiceClient.Get<GetUsersRoleResponse>(new GetUsersRoleRequest {id = roleid, TenantAccountId = ViewBag.cid });
+            var fr = this.ServiceClient.Get<GetUsersRoleResponse>(new GetUsersRoleRequest { id = roleid, TenantAccountId = ViewBag.cid });
 
             foreach (var key in fr.Data.Keys)
             {
-                html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);              
+                html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[key].ToString()).Replace("@userid", key);
             }
             return html;
         }
@@ -458,21 +477,21 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult UserGroups(int itemid)
         {
             var req = this.HttpContext.Request.Form;
-            if(itemid > 0)
+            if (itemid > 0)
             {
-                var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest { id = itemid,TenantAccountId = ViewBag.cid });
-                List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[","").Replace("]","").Split(',').Select(int.Parse).ToList(): new List<int>();
+                var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest { id = itemid, TenantAccountId = ViewBag.cid });
+                List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[", "").Replace("]", "").Split(',').Select(int.Parse).ToList() : new List<int>();
                 ViewBag.UGName = fr.Data["name"];
                 ViewBag.UGDescription = fr.Data["description"];
                 ViewBag.itemid = itemid;
                 string html = "";
                 if (fr.Data.ContainsKey("userslist"))
                 {
-                    foreach(var element in userlist)
+                    foreach (var element in userlist)
                     {
                         html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[element.ToString()].ToString()).Replace("@userid", element.ToString());
                     }
-                    
+
                 }
                 ViewBag.UserList = html;
 
@@ -480,15 +499,15 @@ namespace ExpressBase.Web2.Controllers
             else
             {
                 int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
-                CreateUserGroupResponse res = this.ServiceClient.Post<CreateUserGroupResponse>(new CreateUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),Id = groupid });
-            }          
+                CreateUserGroupResponse res = this.ServiceClient.Post<CreateUserGroupResponse>(new CreateUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Id = groupid });
+            }
             return View();
         }
 
         public string GetUserGroups(int userid)
         {
             string html = string.Empty;
-            var fr = this.ServiceClient.Get<GetUser2UserGroupResponse>(new GetUser2UserGroupRequest {id= userid, TenantAccountId = ViewBag.cid });
+            var fr = this.ServiceClient.Get<GetUser2UserGroupResponse>(new GetUser2UserGroupRequest { id = userid, TenantAccountId = ViewBag.cid });
             List<string> usergrouplist = fr.Data.ContainsKey("usergroups") ? fr.Data["usergroups"].ToString().Replace("[", "").Replace("]", "").Split(new char[] { ',' }).ToList() : new List<string>();
 
             foreach (var key in fr.Data.Keys)
@@ -524,7 +543,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult CreateUser(int itemid)
         {
-            if(itemid > 0)
+            if (itemid > 0)
             {
                 var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = itemid, TenantAccountId = ViewBag.cid });
                 ViewBag.Name = fr.Data["name"];
@@ -534,11 +553,11 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
 
-        public void SaveUser(int userid,string roles,string usergroups)
+        public void SaveUser(int userid, string roles, string usergroups)
         {
             var req = this.HttpContext.Request.Form;
             Dictionary<string, object> Dict = new Dictionary<string, object>();
-          
+
             Dict["firstname"] = req["firstname"];
             Dict["email"] = req["email"];
             Dict["pwd"] = req["pwd"];
@@ -547,7 +566,7 @@ namespace ExpressBase.Web2.Controllers
 
             //  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 
-            CreateUserResponse res = this.ServiceClient.Post<CreateUserResponse>(new CreateUserRequest {Id = userid, Colvalues = Dict });
+            CreateUserResponse res = this.ServiceClient.Post<CreateUserResponse>(new CreateUserRequest { Id = userid, Colvalues = Dict });
 
         }
 

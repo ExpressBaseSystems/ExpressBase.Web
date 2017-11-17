@@ -216,17 +216,21 @@
 
     function GetRoleUsers(roleid)
     {
-      
         $.post("../TenantUser/GetRoleUsers",
-              {
-                  "roleid": roleid,
-
-              }, function (result) {
-                  if (result) {
-                      document.getElementById("div2").innerHTML = result;
-                  }
-              });
-
+            { "roleid": roleid, },
+            function (result) {
+                if (result) {
+                    document.getElementById("div2").innerHTML = result;
+                    var Ids = "";
+                    $.each($('#div2').children(), function (i, obj) {
+                        Ids += $(obj).attr("id") + ",";
+                    });
+                    Ids = Ids.substring(0, Ids.length - 1);
+                    //var txt = $("#userslist").val();
+                    $("#userslist").val(Ids);
+                   
+                }
+        });
     }
   
 </script>

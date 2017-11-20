@@ -177,7 +177,7 @@
                 else
                 {
                     //<vc:_SidebarmenuTUser></vc:_SidebarmenuTUser>
-                    @await Component.InvokeAsync("_SidebarmenuTUser");
+                    @await Component.InvokeAsync("_SidebarmenuTUser", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
                 }
 
             </div>

@@ -1,13 +1,9 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
-}
-
-<!DOCTYPE html>
-<html>
-<head>
+}   
     <style>
         .botlist-box {
-            box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+            box-shadow: 0 15px 35px rgba(50,50,93,.05), 0 5px 15px rgba(0,0,0,.035);
             float: left;
             padding: 12px;
             width: 250px;
@@ -15,16 +11,19 @@
             border-radius: 4px;
             transition-duration: .15s;
             margin: 18px 9px 0px 9px;
+            height: 250px;
         }
 
             .botlist-box:hover {
                 margin-top: 10px;
+                box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
                 /*zoom:1.02;*/
             }
 
         .bottile-icon {
-            height: 150px;
-            width: 150px;
+            height: 90px;
+            width: 90px;
+            border-radius:50px;
             margin: auto;
             background-image: url(/images/robot.svg);
         }
@@ -37,18 +36,23 @@
             text-align: center;
             color: #8f6ed5;
         }
-
         .sitename {
             text-align: center;
+            font-size: 12px;
+            font-family: monospace;
+            margin: 8px 0px 35px 0px;
         }
 
         .created-lbl, .modified-lbl {
             color: #32325d;
+            font-size: 11px;
         }
 
         .created-date, .modified-date {
             color: #888;
-            font-size: 13px;
+            width: 57px;
+            font-size: 10px;
+            font-family: tahoma;
         }
         .outer-row-profsetup{
             background-color:#fff;
@@ -159,35 +163,31 @@
             color: white;
         }
     </style>
-
-
-
-</head>
-<body>
     <div class="row outer-row-profsetup">
         <div class="Eb-CommonMenuStyle">
             <div class="col-md-3 profDetailHead">Your Bots</div>
         </div>
 
-        @{
-        }
-
+        @Html.Raw(ViewBag.tileshtml);
+                            {
         <div class="botlist-box">
-            <div class="Bot-tile">
-                <h4>EXPRESSbase Bot</h4>
-                <div class="bottile-icon"></div>
-                <div class="sitename">WWWW.expressbasebot.com</div>
+        <div class="Bot-tile">
+            <h4>EXPRESSbase Bot</h4>
+            <div class="bottile-icon"></div>
+            <div class="sitename">WWWW.XXXXXXXXXXXXssbasebot.com</div>
+            <div class="meta-cont">
                 <div class="pull-left">
                     <div class="created-lbl">Created</div>
                     <div class="created-date">Created</div>
                 </div>
                 <div class="pull-right">
-
                     <div class="modified-lbl">Modified</div>
                     <div class="modified-date">Created</div>
                 </div>
             </div>
         </div>
+    </div>
+               
 
         <div class="botlist-box">
             <div class="Bot-tile">
@@ -325,5 +325,13 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+    <script>
+         $(".botlist-box").click(function (e) {
+             $tile = $(e.target).closest(".botlist-box");
+             $tile.removeAttr("tabindex");
+             console.log("10");
+             $tile.closest("form")[0].submit();
+             e.preventDefault();
+         });
+    </script>
+

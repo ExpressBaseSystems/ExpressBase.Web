@@ -170,7 +170,7 @@
 
         @Html.Raw(ViewBag.tileshtml);
                             {
-        <div class="botlist-box">
+        @*<div class="botlist-box">
         <div class="Bot-tile">
             <h4>EXPRESSbase Bot</h4>
             <div class="bottile-icon"></div>
@@ -323,15 +323,11 @@
                     <div class="modified-date">Created</div>
                 </div>
             </div>
-        </div>
+        </div>*@
     </div>
     <script>
-         $(".botlist-box").click(function (e) {
-             $tile = $(e.target).closest(".botlist-box");
-             $tile.removeAttr("tabindex");
-             console.log("10");
-             $tile.closest("form")[0].submit();
-             e.preventDefault();
+        $(".botlist-box").click(function (e) {
+            $(e.target).closest("form")[0].submit();
          });
     </script>
 

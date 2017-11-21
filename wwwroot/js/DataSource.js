@@ -9,6 +9,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Filter_Params;
     this.Parameter_Count;
     this.Object_String_WithVal;
+    this.FD = false;
 
     this.EbObject = dsobj;
     this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
@@ -24,10 +25,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
             commonO.Current_obj = this.EbObject;
+            this.FD = false;
         }
         else {
-            if(this.EbObject.FilterDialogRefId !== "")
-                this.GetFD();
+            if (this.EbObject.FilterDialogRefId !== "")
+                this.FD = true;
+            this.GetFD();
+            this.GenerateButtons();
         }
         this.GenerateButtons();
 
@@ -38,8 +42,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.GenerateButtons = function () {
         $("#obj_icons").empty();
-        $("#obj_icons").append("<button class='btn run' id='run' data-toggle='tooltip' data-placement='bottom' title='Run'> <i class='fa fa-play' aria-hidden='true'></i></button >");
+        $("#obj_icons").append(`
+            <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'> <i class='fa fa-play' aria-hidden='true'></i></button >
+            `);
+        if (this.FD === true) {
+            $("#obj_icons").append(`<button id='btnToggleFD' class='btn' data-toggle='tooltip' title='Toggle ParameterDiv'> <i class='fa fa-filter' aria-hidden='true'></i></button>`);
+        }
         $("#run").off("click").on("click", this.RunDs.bind(this));
+        $("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
     }
 
     this.SetCode = function (e) {
@@ -63,12 +73,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         {
             if (obj[pname] !== null)
             {
+                this.FD = true;
                 this.GetFD();
-            }           
-            $('#paramdiv' + tabNum + ' #filterBox').remove();
-            $('#paramdiv' + tabNum).show();
-            $('#codewindow' + tabNum).removeClass("col-md-10");
-            $('#codewindow' + tabNum).addClass("col-md-8");
+            }     
         }
         if (pname === "Name") {
             $("#objname").text(this.EbObject.Name);
@@ -76,11 +83,39 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     }.bind(this);
 
     this.GetFD = function () {
-        $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) },
-            function (result) {
-                $('#paramdiv' + tabNum).append(result);
-                $.LoadingOverlay("hide");
-            });
+        $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this));
+    };
+
+    this.AppendFD = function (result) {
+        $('#paramdiv' + tabNum).remove();
+        $('#ds-page' + tabNum).prepend(`
+                <div id='paramdiv${tabNum}' class='col-md-2 param-div'>
+                    <div class='pgHead'>
+                        <h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6>
+                        <div class="icon-cont  pull-right" id='close_paramdiv${tabNum}'><i class="fa fa-times" aria-hidden="true"></i></div>
+                    </div>
+                    </div>
+                `);
+        $('#paramdiv' + tabNum).show();
+        $('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
+        $('#paramdiv' + tabNum).append(result);
+        $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
+        $.LoadingOverlay("hide");
+        };
+
+    this.CloseParamDiv = function () {
+        $('#paramdiv' + tabNum).hide();  
+        $('#codewindow' + tabNum).removeClass("col-md-8 col-md-offset-2").addClass("col-md-10");
+    };
+
+    this.ToggleFD = function () {
+        if ($('#paramdiv' + tabNum).css("display") === "none") {
+            $('#paramdiv' + tabNum).show();
+            $('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
+        }
+        else {
+            this.CloseParamDiv();
+        }
     };
 
     this.AddVerNavTab = function (navitem, tabitem) {

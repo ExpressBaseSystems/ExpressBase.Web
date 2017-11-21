@@ -6,7 +6,7 @@
 
 <div class="side-menu-container">
     <ul class="outer" style="padding-left:0;">
-        @*<li>
+        <li>
             <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown9">
                 <i class="fa fa-lock"></i>Security<i class="fa fa-caret-down pull-right"></i>
             </a>
@@ -15,12 +15,12 @@
                 <li><a class="list-group-item" onclick="LoadCommonList('usergroup')" href="CommonList?type='usergroup'"><i class="fa fa-caret-right"></i> User Groups</a></li>
                 <li><a class="list-group-item" onclick="LoadCommonList('roles')" href="CommonList?type='roles'"><i class="fa fa-caret-right"></i> Roles</a></li>
             </ul>
-        </li>*@
+        </li>
     </ul>
 </div>
 <script>
 
-    @*$(".outer").prepend(`@Html.Raw(ViewBag.menu)`);
+    $(".outer").prepend(`@Html.Raw(ViewBag.menu)`);
 
     $("#layout_div").append(`<div class="modal fade" tabindex="-1" role="dialog" id='ObjModal'>
         <div class="modal-dialog" role="document">
@@ -62,7 +62,7 @@
              </div>`);
         });
         $("#ObjModal").modal('show');
-    }*@
+    }
 
     function LoadCommonList(type) {
         event.preventDefault();

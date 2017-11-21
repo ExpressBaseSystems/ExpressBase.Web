@@ -17,7 +17,7 @@
     this.messg = new EbAlert(
         {
             id: "dshbrd_alert",
-            possition: "bottom-right"
+            possition: "top-right"
         });
 
     this.init = function () {

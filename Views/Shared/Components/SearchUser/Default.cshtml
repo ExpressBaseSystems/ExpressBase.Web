@@ -18,11 +18,10 @@
 
 <script>
     $('document').ready(function () {
+        var i = 0;
         var ids = "";
-
-        $.each($("#div2").children(), function (i, obj) {
-            ids += $(obj).attr("id") + ",";
-        });
+        var arr = [];    
+        
         var temp = new dragula([document.getElementById("div1"), document.getElementById('@ViewBag.targetdiv')], {
             accepts: function (el, target, source, sibling) {
                 var bb = true;
@@ -34,28 +33,23 @@
             },
             copy: true
         });
+
         temp.on("drop", function (el, target, source, sibling) {
             if ($(target).children().length > 0) {
+                var text = $("#userslist").val();
+                arr = text.split(',');
+                var txt = arr.join();
                 $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button>")
-                var Ids = "";
-                $.each($(target).children(), function (i, obj) {
-                    Ids += $(obj).attr("id") + ",";
-                });
-                //ids = $(el).attr("id") + ",";
-                Ids = Ids.substring(0, Ids.length - 1);
-                //var txt = $("#userslist").val();
-                $("#userslist").val(Ids);
+                var id = $(el).attr("id");
+                var i = arr.indexOf(id);
+                if (i === -1) {
+                    arr.push(id);   
+                }                           
+                var txt = arr.join();
+                $("#userslist").val(arr.join());
             }
 
         });
-
-        //temp.on("cancel", function (el, container, source) {
-        //    var extids = $("#userslist").val();
-        //    var curid = $(el).attr("id");
-        //    extids.replace(curid + ",", "");
-        //    $("#userslist").val(extids);
-        //    alert("cancel:"+extids);
-        //});
 
         function Isexist(el, target) {
             var res = true;
@@ -74,15 +68,18 @@
         }
 
         $(document).on('click', '.close', function (e) {
-            
-            var id = $(e.target).parent().attr("id");           
-            var text = $(e.target).parent().text();            
+            var id = $(e.target).parent().attr("id");
+            var text = $(e.target).parent().text();
             text = text.substring(0, text.length - 1);
-            $("#" + id).remove();
+            $("#" + id).remove();               
             var txt = $("#userslist").val();
-            txt = txt.toString().replace(id, "");
-            $("#userslist").val(txt);
-      
+            var rm_arr = txt.split(',');
+            var i = rm_arr.indexOf(id);
+            if (i != -1) {
+                rm_arr.splice(i, 1);
+            }
+            $("#userslist").val(rm_arr.join());
+
         });
 
         var timer;

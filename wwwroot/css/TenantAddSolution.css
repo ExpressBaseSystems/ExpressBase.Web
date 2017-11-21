@@ -1,20 +1,18 @@
 ﻿.tier {
     padding: 10px;
 }
-
-.tier-cropie {    
-    padding: 10px;
-    height: 200px;
+.pd-0{
+padding:0;
 }
-
 .tier i {
     position: center;
 }
 .Eb-product-container-bdy {
-    border-radius: 4px;
     padding-bottom: 25px;
     background: white;
     padding-top: 25px;
+    text-align: center;
+    border: 1px solid #d7d7d7;
 }
 
 .pro-icon-bx {
@@ -24,16 +22,18 @@
 .pro-name-bx {
     font-size: 16px;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .client-id-sec {
     width: 100%;
     text-align: left;
+    margin-bottom: 15px;
 }
 
 .input-clientId {
-    width: 50%;
+    width: 65%;
     display: inline;
 }
 
@@ -47,13 +47,14 @@
     display: inline;
     float: right;
 }
-    .pricing-icon img {
-        height: 50px;
-    }
+.pricing-icon img {
+    height: 40px;
+}
 
 .T-add-amount {
-    font-size: 20px;
-    color: #7d7979;
+    font-size: 17px;
+    color: #8e8282;
+    font-weight: lighter;
 }
 
 .pricing-container {
@@ -62,7 +63,8 @@
 
 .tadd-pricing-head {
     text-align: center;
-    color: #9a9595;
+    color: #797878;
+    font-weight: 100;
 }
 
 .eb-common-price-modal-container {
@@ -83,11 +85,22 @@
 .tAddAcc {
     padding-top: 50px;
     font-family: sans-serif;
-    background-color: #e3e8ee;
+    background-color: #f8f8f8;
+    padding-bottom:50px;
 }
-.tAddAcc .detailsec {
-    margin-top:50px;
-}
+    .tAddAcc .btn {
+        border-radius: 0;
+        background: white;
+        border: 1px solid #e1e0e0;
+    }
+    .tAddAcc .form-control {
+        border-radius: 0;
+        -webkit-box-shadow: none; 
+        box-shadow: none; 
+    }
+    .tAddAcc .detailsec {
+        margin-top: 50px;
+    }
 .detailsec-name{
     height:inherit;
 }
@@ -101,61 +114,113 @@
     margin-top: 30px;
 }
 .products-head {
-    margin-top: 70px;
+    margin-top: 40px;
     color: #3ea8dc;
+    font-family: sans-serif;
 }
 .detailsec-name-desc{
     text-align:center;
 }
 .add-accPricing-sec {
-    padding: 30px 100px 10px 100px;
+    padding: 50px 140px 10px 140px;
 }
 .pricing-modal-btn {
-    background: #66cdcc;
-    color: white;
+    
 }
 .add-accPricing-sec-table{
     background:white;
 }
-.add-accPricing-sec-table td{
+    .add-accPricing-sec-table .btn {
+        background: white;
+        border: 1px solid #e1e0e0;
+        font-size: 12px;
+    }
+    .add-accPricing-sec-table td {            
+        border-top: 7px solid #f8f8f8 !important;
+        text-align: center;
+        cursor: pointer;
+    }
+.tAddAcc table td {
+    vertical-align: central !important;
+    width:200px;
+}
+.logo-upload-container {
+    padding: 10px 40px 0px 40px;
+    border-radius: 4px;
+}
+.logo-upload {
+    background: white;
+    height: 130px;
+    border: 1px solid #d7d7d7;
+}
+.eb-cropper .modal-dialog {
+   width: 500px;
+    margin: 100px auto;
+}
+.eb-cropper .eb-cropie-container {
+    height: 350px;
+    padding: 50px 50px 80px 50px;
+    background: white;
+    border-radius: 4px;
+}
+.subscribed {
+    background: #69ea69;
+    border: none;
+}
+.price-selected .T-add-amount {
+    font-size: 17px;
+    color: #ffffff;
+    font-weight: lighter;
+}
+.price-selected {
+    background: #69ea69;
+    border: none;
+}
+.review-container {
+    padding: 30px 100px 10px 100px;
+}
+.review-container-row-outer {
+    background: white;
+    padding: 15px;
+    border: 1px solid #d7d7d7;
+}
+.sol-name-review{
+    display:inline-block;
+}
+#solution-info-review {
+    background: #fafafa;
+    min-height: inherit;
+}
+.solution-info {
+    background: #fafafa;
+    padding: 10px;
+}
+.subscrib-info {
+    margin-top:10px;
+    background: #fafafa;
+    padding: 10px;
+}
+.tot-sec {
+    height: inherit;
+    /* padding: 10px; */
+    background: #fafafa;
     text-align: center;
 }
-.popular-td {
-    border-left: 2px solid #87c4f7;
-    border-right: 2px solid #87c4f7;
-}
-.tAddAcc-l-tool-bar {
-    position: fixed;
-    height: 100vh;
-    width: 50px;
-    background: #fafbfc;
-    padding: 5px;
-}
-.onboard-icons {
-    padding: 10px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border-radius: 50%;
-    background: linear-gradient(40deg,#ff6ec4,#7873f5) !important;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
-    color: white;
-    font-size: 20px;
-    display: flex;
-    justify-content: center;
-    z-index: 1;
-    cursor: pointer;
-}
-.onboard-icons img{
-    background:white;
-}
-    .onboard-icons:hover {
-        color: white;
-        -webkit-transform: scale(1.2);
-        -ms-transform: scale(1.2);
-        transform: scale(1.2);
+    .tot-sec total {
+        padding: 10px;
     }
-.Eb-product-container:hover {
-    -webkit-transform: scale(1.2);
-    -ms-transform: scale(1.2);
-    transform: scale(1.2);
+    .tot-sec h4 {
+        margin-top: 5px;
+        color: #3ea8dc;
+    }
+    .tot-sec .total-count-cont {
+        font-size:18px;
+
+    }
+    .tot-sec label {
+        color: #808588;
+        margin-right:10px;
+    }
+.subscrib-info label{
+    width:150px;
 }

@@ -31,11 +31,22 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand"><i class="fa fa-bars fa-lg" id="submen" alt="Brand"></i></a>
-            <a class="navbar-brand" href="#"><img alt="Brand" src="~/images/your_company_logo.png"></a>
+            <a class="navbar-brand" href="#"><img alt="Brand" src="~/images/EB_Logo.png"></a>
         </div>
         @*<div id="chatbtn" class="chat-icon"><i class="fa fa-comment-o" aria-hidden="true"></i></div>*@        
         <div class="collapse navbar-collapse" id="myNavbar">   
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown notifications">
+                    <i class="fa fa-lock fa-lg"style="margin-right:12px;margin-top:5px" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
+                    <ul class="dropdown-menu">
+                        <li><a class="list-group-item" onclick="LoadCommonList('user')" href="CommonList?type='user'"><i class="fa fa-caret-right"></i> Users</a></li>
+                        <li class="divider"></li>
+                        <li><a class="list-group-item" onclick="LoadCommonList('usergroup')" href="CommonList?type='usergroup'"><i class="fa fa-caret-right"></i> User Groups</a></li>
+                        <li class="divider"></li>
+                        <li><a class="list-group-item" onclick="LoadCommonList('roles')" href="CommonList?type='roles'"><i class="fa fa-caret-right"></i> Roles</a></li>
+                      
+                    </ul>
+                </li>
                 <li class="dropdown notifications">
                     <i class="fa fa-bell fa-lg" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i><span class="badge bg-green">6</span>
                     <ul class="dropdown-menu noti">
@@ -62,4 +73,21 @@
 </nav>
 <script>
     //var chatBotObj = new Eb_chatBot();
+
+    function LoadCommonList(type) {
+        event.preventDefault();
+        var _container = $("#layout_div");
+        $.LoadingOverlay("show");
+        $.ajax({
+            url: "../TenantUser/CommonList",
+            type: "GET",
+            cache: false,
+            data: { "type": type },
+            success: function (result) {
+                _container.html(result);
+                $.LoadingOverlay("hide");
+                $('#EbsideBar').animate({ width: 'toggle' });
+            }
+        });
+    }
 </script>

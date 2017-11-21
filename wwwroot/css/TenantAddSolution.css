@@ -1,121 +1,39 @@
-﻿
-.form-inline .form-group {
-    margin-right: 10px;
-}
-
-.well-primary {
-    color: rgb(255, 255, 255);
-    background-color: rgb(66, 139, 202);
-    border-color: rgb(53, 126, 189);
-}
-
-.glyphicon {
-    margin-right: 5px;
-}
-
-.tier {
+﻿.tier {
     padding: 10px;
 }
-
-.tier-cropie {    
-    padding: 10px;
-    height: 200px;
+.pd-0{
+padding:0;
 }
-
 .tier i {
     position: center;
 }
-
-.disable-anchor i {
-    color: grey;
-}
-
-.Eb-product-container {
-}
-
 .Eb-product-container-bdy {
-    height: 100%;
-    width: 100%;
+    padding-bottom: 25px;
+    background: white;
+    padding-top: 25px;
+    text-align: center;
+    border: 1px solid #d7d7d7;
 }
 
 .pro-icon-bx {
-    width: 100%;
-    height: auto;
-    padding: 10px 40px 20px 40px;
+    padding: 10px 60px 15px 60px;
 }
 
 .pro-name-bx {
-    font-size: 18px;
-    color: #696161;
-    font-family: robot;
-    padding: 0px 16px 5px 16px;
-}
-
-.prod-container-padd {
-    padding: 30px 0px 30px 0px;
-}
-
-.tAddAcc .panel-default > .panel-heading {
-    color: #757575;
-    background-color: white;
-    border-color: #ddd;
-    background-image: none;
-    text-align: left;
-}
-
-.addAccDesc {
-    position: fixed;
-    height: calc(100vh - 100px);
-    margin-top: 100px;
-}
-
-.Eb-CommonMenuStyle {
-    height: 30px;
-    z-index: 100;
-}
-
-.addAccCollapse {
-    margin-top: 100px;
-}
-
-.addAccDesc {
-    padding: 0px 10px 0px;
-    margin-top: 100px;
-}
-
-.addAccDesc-body {
-    width: 100%;
-    height: 100%;
-    background: white;
-}
-
-.Eb-product-container:hover {
-    cursor: pointer;
-    background: #cccccc;
-}
-
-.addAccDesc-head {
-    color: #fff;
-    background-color: var(--ebbg);
-    border-color: #ddd;
-    background-image: var(--ebbgimage);
-    padding: 10px 15px;
-    border-bottom: 1px solid transparent;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-}
-
-.solution-info-body {
-    height: 300px;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .client-id-sec {
     width: 100%;
     text-align: left;
+    margin-bottom: 15px;
 }
 
 .input-clientId {
-    width: 50%;
+    width: 65%;
     display: inline;
 }
 
@@ -129,17 +47,14 @@
     display: inline;
     float: right;
 }
-
-.pricing-icon {
+.pricing-icon img {
+    height: 40px;
 }
 
-    .pricing-icon img {
-        height: 50px;
-    }
-
 .T-add-amount {
-    font-size: 25px;
-    color: #7d7979;
+    font-size: 17px;
+    color: #8e8282;
+    font-weight: lighter;
 }
 
 .pricing-container {
@@ -148,7 +63,8 @@
 
 .tadd-pricing-head {
     text-align: center;
-    color: #9a9595;
+    color: #797878;
+    font-weight: 100;
 }
 
 .eb-common-price-modal-container {
@@ -167,12 +83,24 @@
 }
 /*cdgfdjhdtjykuflkjyh*/
 .tAddAcc {
-    padding-top:50px;
-    font-family:sans-serif;
+    padding-top: 50px;
+    font-family: sans-serif;
+    background-color: #f8f8f8;
+    padding-bottom:50px;
 }
-.tAddAcc .detailsec {
-    margin-top:50px;
-}
+    .tAddAcc .btn {
+        border-radius: 0;
+        background: white;
+        border: 1px solid #e1e0e0;
+    }
+    .tAddAcc .form-control {
+        border-radius: 0;
+        -webkit-box-shadow: none; 
+        box-shadow: none; 
+    }
+    .tAddAcc .detailsec {
+        margin-top: 50px;
+    }
 .detailsec-name{
     height:inherit;
 }
@@ -182,6 +110,117 @@
 .detailsec-name-head h4{
     color: #3ea8dc;
 }
-.eb-products{
-    margin-top:100px;
+.eb-products {
+    margin-top: 30px;
+}
+.products-head {
+    margin-top: 40px;
+    color: #3ea8dc;
+    font-family: sans-serif;
+}
+.detailsec-name-desc{
+    text-align:center;
+}
+.add-accPricing-sec {
+    padding: 50px 140px 10px 140px;
+}
+.pricing-modal-btn {
+    
+}
+.add-accPricing-sec-table{
+    background:white;
+}
+    .add-accPricing-sec-table .btn {
+        background: white;
+        border: 1px solid #e1e0e0;
+        font-size: 12px;
+    }
+    .add-accPricing-sec-table td {            
+        border-top: 7px solid #f8f8f8 !important;
+        text-align: center;
+        cursor: pointer;
+    }
+.tAddAcc table td {
+    vertical-align: central !important;
+    width:200px;
+}
+.logo-upload-container {
+    padding: 10px 40px 0px 40px;
+    border-radius: 4px;
+}
+.logo-upload {
+    background: white;
+    height: 130px;
+    border: 1px solid #d7d7d7;
+}
+.eb-cropper .modal-dialog {
+   width: 500px;
+    margin: 100px auto;
+}
+.eb-cropper .eb-cropie-container {
+    height: 350px;
+    padding: 50px 50px 80px 50px;
+    background: white;
+    border-radius: 4px;
+}
+.subscribed {
+    background: #69ea69;
+    border: none;
+}
+.price-selected .T-add-amount {
+    font-size: 17px;
+    color: #ffffff;
+    font-weight: lighter;
+}
+.price-selected {
+    background: #69ea69;
+    border: none;
+}
+.review-container {
+    padding: 30px 100px 10px 100px;
+}
+.review-container-row-outer {
+    background: white;
+    padding: 15px;
+    border: 1px solid #d7d7d7;
+}
+.sol-name-review{
+    display:inline-block;
+}
+#solution-info-review {
+    background: #fafafa;
+    min-height: inherit;
+}
+.solution-info {
+    background: #fafafa;
+    padding: 10px;
+}
+.subscrib-info {
+    margin-top:10px;
+    background: #fafafa;
+    padding: 10px;
+}
+.tot-sec {
+    height: inherit;
+    /* padding: 10px; */
+    background: #fafafa;
+    text-align: center;
+}
+    .tot-sec total {
+        padding: 10px;
+    }
+    .tot-sec h4 {
+        margin-top: 5px;
+        color: #3ea8dc;
+    }
+    .tot-sec .total-count-cont {
+        font-size:18px;
+
+    }
+    .tot-sec label {
+        color: #808588;
+        margin-right:10px;
+    }
+.subscrib-info label{
+    width:150px;
 }

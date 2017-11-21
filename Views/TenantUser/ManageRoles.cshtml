@@ -160,9 +160,8 @@
               
             });
           
-            var txt = $("#userslist").val();
-          
-          
+            var txt = $("#userslist").val().replace(/^,/, ''); 
+       
             $.post("../TenantUser/SaveRoles",
             {              
                 "Permissions": selected.substring(0, selected.length - 1),

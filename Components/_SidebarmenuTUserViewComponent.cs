@@ -24,9 +24,9 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
-            User user = (User)this.HttpContext.Items["user"];
+            User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
             var Ids = String.Join(",", user.EbObjectIds);
             var resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids = "{" + Ids + "}" });
 
@@ -44,7 +44,7 @@ namespace ExpressBase.Web.Components
                 {
                     sb.Append("<li><a class='list-group-item' href='#'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
                     var json = JsonConvert.SerializeObject(val.Value.Objects);
-                    sb.Append("<div id='EbType_" + val.Key + "' style='display:none' data-json='"+json+"' ></div>");
+                    sb.Append("<div id='EbType_" + val.Key + "' style='display:none' data-json='" + json + "' ></div>");
                 }
                 sb.Append("</ul></li>");
             }

@@ -31,7 +31,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             if (this.EbObject.FilterDialogRefId !== "")
                 this.FD = true;
             this.GetFD();
-            this.GenerateButtons();
         }
         this.GenerateButtons();
 
@@ -75,6 +74,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             {
                 this.FD = true;
                 this.GetFD();
+                this.GenerateButtons();
             }     
         }
         if (pname === "Name") {

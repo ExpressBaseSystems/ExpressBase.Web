@@ -62,8 +62,10 @@
     }
     else if (ObjectType == (int)EbObjectType.EmailBuilder)
     {
-        editor = "Eb_Emailbuilder";
-        whichController = "Dev";
+        //editor = "Eb_Emailbuilder";
+        //whichController = "Dev";
+        editor = "Index";
+        whichController = "Eb_Object";
     }
     else if (ObjectType == (int)EbObjectType.TableVisualization)
     {
@@ -125,7 +127,7 @@
         </div>
     </div>
 </div>
-<div class="row" name="objBox" id="objlist-items">
+<div class="row" name="objBox" id="objlist-items" style="padding-top: 100px;">
     @{
         foreach (var element in Objlist)
         {

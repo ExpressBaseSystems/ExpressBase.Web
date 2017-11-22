@@ -35,8 +35,9 @@ namespace ExpressBase.Web.Controllers
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
         [HttpGet][HttpPost]
-        public IActionResult dv(string objid, EbObjectType objtype)
+        public IActionResult dv( string refid)
         {
+            //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
 
             User _user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
@@ -49,46 +50,56 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
 
-            //Edit mode
-            if (objid != null)
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+            var dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+            dsobj.Status = resultlist.Data[0].Status;
+            dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
+            dsobj.AfterRedisGet(this.Redis);
+            ViewBag.dvObject = dsobj;
+
             {
-                var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
-                var rlist = resultlist.Data;
-                foreach (var element in rlist)
-                {
-                    ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-                    List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-                    ViewBag.LifeCycle = lifeCycle;
-                    ViewBag.IsNew = "false";
-                    ViewBag.ObjectName = element.Name;
-                    ViewBag.ObjectDesc = element.Description;
-                    ViewBag.Status = element.Status;
-                    ViewBag.VersionNumber = element.VersionNumber;
-                    ViewBag.Icon = "fa fa-database";
-                    ViewBag.ObjType = (int)objtype;
-                    ViewBag.Refid = element.RefId;
-                    ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
-                    ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
-                    ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
+                //Edit mode
+                //if (objid != null)
+                //{
+                //    var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
+                //    var rlist = resultlist.Data;
+                //    foreach (var element in rlist)
+                //    {
+                //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+                //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+                //        ViewBag.LifeCycle = lifeCycle;
+                //        ViewBag.IsNew = "false";
+                //        ViewBag.ObjectName = element.Name;
+                //        ViewBag.ObjectDesc = element.Description;
+                //        ViewBag.Status = element.Status;
+                //        ViewBag.VersionNumber = element.VersionNumber;
+                //        ViewBag.Icon = "fa fa-database";
+                //        ViewBag.ObjType = (int)objtype;
+                //        ViewBag.Refid = element.RefId;
+                //        ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                //        ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
+                //        ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
 
-                    EbDataVisualization dsobj = null;
+                //        EbDataVisualization dsobj = null;
 
-                    if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-                    {
-                        ViewBag.ReadOnly = true;
-                        dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
-                    }
-                    else
-                    {
-                        ViewBag.ReadOnly = false;
-                        dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
-                    }
+                //        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+                //        {
+                //            ViewBag.ReadOnly = true;
+                //            dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
+                //        }
+                //        else
+                //        {
+                //            ViewBag.ReadOnly = false;
+                //            dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
+                //        }
 
-                    dsobj.AfterRedisGet(this.Redis);
-                    ViewBag.dvObject = dsobj;
-                }
+                //        dsobj.AfterRedisGet(this.Redis);
+                //        ViewBag.dvObject = dsobj;
+                //    }
 
+                //}
             }
+
             return View();
         }
 

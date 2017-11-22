@@ -1,22 +1,21 @@
 ﻿<div>
     <div class=''>
-            <div class='col-md-12 '>
-                <div class='verlist input-group col-md-6' style='display:inline-block'>
-                    <select id='selected_Ver_1_@(ViewBag.TabNum)' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>                       
-                    </select>
-                </div>
-                <div class='verlist input-group col-md-5' style='display:inline-block'>
-                    <select id='selected_Ver_2_@(ViewBag.TabNum)' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'>
-                    </select>
-                </div>
-                <div> <i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw' id='loader_fd@(ViewBag.TabNum)' style='display:none;color:dodgerblue;'></i></div>
-                <div class="compare_inner pull-right" id='compare_inner@(ViewBag.TabNum)' style='display:inline-block'>
-                    <i class="fa fa-chevron-circle-right fa-2x"></i>
-                </div>
+        <div class='col-md-12 '>
+            <div class='verlist input-group col-md-3 col-md-offset-3' style='display:inline-block'>
+                <select id='selected_Ver_1_@(ViewBag.TabNum)' name='selected_Ver_1' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'></select>
             </div>
-        
+            <div class='verlist input-group col-md-3' style='display:inline-block'>
+                <select id='selected_Ver_2_@(ViewBag.TabNum)' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'></select>
+            </div>
+            <div class="compare_inner pull-right" id='compare_inner@(ViewBag.TabNum)' style='display:inline-block'>
+                <i class="fa fa-chevron-circle-right fa-2x"></i>
+            </div>
+
+            <div> <i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw fd-loader' id='loader_fd@(ViewBag.TabNum)'></i></div>
+        </div>
+
     </div>
-   <div id='compare_result@(ViewBag.TabNum)'></div>
+    <div id='compare_result@(ViewBag.TabNum)'></div>
 </div>
 <style>
     /*differ styles*/
@@ -66,12 +65,14 @@
     }
 
     .leftPane {
-        border-right:solid 1px #bbb4b4;
+        border-right: solid 1px #bbb4b4;
     }
+
     .rightPane {
         border-left: solid 1px #bbb4b4;
     }
-        .diffHeader {
+
+    .diffHeader {
         font-weight: bold;
         padding: 2px 0px 2px 10px;
         background-color: #FFFFFF;
@@ -85,9 +86,11 @@
         font-family: Consolas;
         font-size: xx-small;
     }
-    .diffPane table{
-        width:100%;
-    }
+
+        .diffPane table {
+            width: 100%;
+        }
+
     .line {
         padding-left: .2em;
         white-space: nowrap;
@@ -159,5 +162,13 @@
         border-radius: 50%;
         padding: 4px;
         cursor: pointer;
+    }
+
+    .fd-loader {
+        position: absolute;
+        color: dodgerblue;
+        display: inline-block;
+        top: 6px;
+        height: 100%;
     }
 </style>

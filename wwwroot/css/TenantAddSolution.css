@@ -1,0 +1,226 @@
+﻿.tier {
+    padding: 10px;
+}
+.pd-0{
+padding:0;
+}
+.tier i {
+    position: center;
+}
+.Eb-product-container-bdy {
+    padding-bottom: 25px;
+    background: white;
+    padding-top: 25px;
+    text-align: center;
+    border: 1px solid #d7d7d7;
+}
+
+.pro-icon-bx {
+    padding: 10px 60px 15px 60px;
+}
+
+.pro-name-bx {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.client-id-sec {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.input-clientId {
+    width: 65%;
+    display: inline;
+}
+
+.clientId-auto {
+    font-size: 14px;
+    color: #9e9e9e;
+    display: inline;
+}
+
+.is-edit-clientid {
+    display: inline;
+    float: right;
+}
+.pricing-icon img {
+    height: 40px;
+}
+
+.T-add-amount {
+    font-size: 17px;
+    color: #8e8282;
+    font-weight: lighter;
+}
+
+.pricing-container {
+    padding: 10px;
+}
+
+.tadd-pricing-head {
+    text-align: center;
+    color: #797878;
+    font-weight: 100;
+}
+
+.eb-common-price-modal-container {
+    padding: 15px;
+    background-color: #F7F7F7;
+    margin: 0 auto;
+    border-radius: 2px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    font-family: roboto;
+}
+
+#eb-common-price-modal .modal-dialog {
+    width: 1000px;
+    margin: 30px auto;
+}
+/*cdgfdjhdtjykuflkjyh*/
+.tAddAcc {
+    padding-top: 50px;
+    font-family: sans-serif;
+    background-color: #f8f8f8;
+    padding-bottom:50px;
+}
+    .tAddAcc .btn {
+        border-radius: 0;
+        background: white;
+        border: 1px solid #e1e0e0;
+    }
+    .tAddAcc .form-control {
+        border-radius: 0;
+        -webkit-box-shadow: none; 
+        box-shadow: none; 
+    }
+    .tAddAcc .detailsec {
+        margin-top: 50px;
+    }
+.detailsec-name{
+    height:inherit;
+}
+.detailsec-form {
+    height: inherit;
+}
+.detailsec-name-head h4{
+    color: #3ea8dc;
+}
+.eb-products {
+    margin-top: 30px;
+}
+.products-head {
+    margin-top: 40px;
+    color: #3ea8dc;
+    font-family: sans-serif;
+}
+.detailsec-name-desc{
+    text-align:center;
+}
+.add-accPricing-sec {
+    padding: 50px 140px 10px 140px;
+}
+.pricing-modal-btn {
+    
+}
+.add-accPricing-sec-table{
+    background:white;
+}
+    .add-accPricing-sec-table .btn {
+        background: white;
+        border: 1px solid #e1e0e0;
+        font-size: 12px;
+    }
+    .add-accPricing-sec-table td {            
+        border-top: 7px solid #f8f8f8 !important;
+        text-align: center;
+        cursor: pointer;
+    }
+.tAddAcc table td {
+    vertical-align: central !important;
+    width:200px;
+}
+.logo-upload-container {
+    padding: 10px 40px 0px 40px;
+    border-radius: 4px;
+}
+.logo-upload {
+    background: white;
+    height: 130px;
+    border: 1px solid #d7d7d7;
+}
+.eb-cropper .modal-dialog {
+   width: 500px;
+    margin: 100px auto;
+}
+.eb-cropper .eb-cropie-container {
+    height: 350px;
+    padding: 50px 50px 80px 50px;
+    background: white;
+    border-radius: 4px;
+}
+.subscribed {
+    background: #69ea69;
+    border: none;
+}
+.price-selected .T-add-amount {
+    font-size: 17px;
+    color: #ffffff;
+    font-weight: lighter;
+}
+.price-selected {
+    background: #69ea69;
+    border: none;
+}
+.review-container {
+    padding: 30px 100px 10px 100px;
+}
+.review-container-row-outer {
+    background: white;
+    padding: 15px;
+    border: 1px solid #d7d7d7;
+}
+.sol-name-review{
+    display:inline-block;
+}
+#solution-info-review {
+    background: #fafafa;
+    min-height: inherit;
+}
+.solution-info {
+    background: #fafafa;
+    padding: 10px;
+}
+.subscrib-info {
+    margin-top:10px;
+    background: #fafafa;
+    padding: 10px;
+}
+.tot-sec {
+    height: inherit;
+    /* padding: 10px; */
+    background: #fafafa;
+    text-align: center;
+}
+    .tot-sec total {
+        padding: 10px;
+    }
+    .tot-sec h4 {
+        margin-top: 5px;
+        color: #3ea8dc;
+    }
+    .tot-sec .total-count-cont {
+        font-size:18px;
+
+    }
+    .tot-sec label {
+        color: #808588;
+        margin-right:10px;
+    }
+.subscrib-info label{
+    width:150px;
+}

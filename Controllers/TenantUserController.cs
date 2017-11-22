@@ -37,8 +37,7 @@ namespace ExpressBase.Web2.Controllers
         }
         
         public IActionResult UserDashboard()
-        {
-            this.HttpContext.Items["user"] = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+        {        
             return View();
         }
 

@@ -16,6 +16,7 @@ using DiffPlex.DiffBuilder.Model;
 using Newtonsoft.Json;
 using System.Text;
 using ExpressBase.Objects.ReportRelated;
+using ExpressBase.Objects.EmailRelated;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -117,6 +118,16 @@ namespace ExpressBase.Web.Controllers
             {
                 var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
+            }
+            else if (type == EbObjectType.EmailBuilder)
+            {
+                var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(this.Redis);
+                    ViewBag.dsObj = dsobj;
+                }
             }
 
             ViewBag.Meta = _c2js.AllMetas;

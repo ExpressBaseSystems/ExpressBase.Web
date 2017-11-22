@@ -23,19 +23,25 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult addBot(string _name, string _url, string _sol_id, string _wel_msg)
+        public IActionResult addBot(string _name, string _url, string _sol_id, string _wel_msg, string chatid, string botid)
         {
             var bot = new CreateBotRequest();
             bot.BotName = _name;
             bot.WebURL = _url;
             bot.SolutionId = _sol_id;
             bot.WelcomeMsg = _wel_msg;
+            bot.BotId = botid;
+            bot.ChatId = chatid;
 
             var res = ServiceClient.Post<CreateBotResponse>(bot);
             ViewBag.botname = _name;
             ViewBag.url = _url;
             ViewBag.welcomemsg = _wel_msg;
-            ViewBag.chatid = res.BotId;
+            ViewBag.botid = botid;
+            if (chatid != null)
+                ViewBag.chatid = chatid;
+            else
+                ViewBag.chatid = res.BotId;
             return View();
         }
 
@@ -49,32 +55,45 @@ namespace ExpressBase.Web.Controllers
 
             string _html = string.Empty;
 
-            string BotTile = @"<div class='botlist-box'>
-            <div class='Bot-tile'>
-                <h4>@Name@</h4>
-                <div class='bottile-icon'></div>
-                <div class='sitename'>@WebsiteURL@</div>
-                <div class='pull-left'>
-                    <div class='created-lbl'>@CreatedBy@</div>
-                    <div class='created-date'>@CreatedAt@</div>
-                </div>
-                <div class='pull-right'>
+            string BotTile = @"
+        <form method='post' action='../Boti/addBot'>
+             <div class='botlist-box' tabindex='1'>
+                <div class='Bot-tile'>
+                    <h4>@Name@</h4>
+                    <div class='bottile-icon'></div>
+                    <div class='sitename'>@WebsiteURL@</div>
+                    <div class='pull-left'>
+                        <div class='created-lbl'>@CreatedBy@</div>
+                        <div class='created-date'>@CreatedAt@</div>
+                    </div>
+                    <div class='pull-right'>
 
-                    <div class='modified-lbl'>@LastModifiedBy@</div>
-                    <div class='modified-date'>@LastModifiedAt@</div>
+                        <div class='modified-lbl'>@LastModifiedBy@</div>
+                        <div class='modified-date'>@LastModifiedAt@</div>
+                    </div>
                 </div>
             </div>
-        </div>";
+            <input type='hidden' value='@Name@' name='_name' />
+            <input type='hidden' value='@WebsiteURL@' name='_url' />
+            <input type='hidden' value='@ViewBag.chatid' name='_chat_id' />
+            <input type='hidden' value='@welcomeMsg@' name='_wel_msg' />
+            <input type='hidden' value='@ViewBag.solid' name='_sol_id' />
+            <input type='hidden' value='@chatid@' name='chatid' />
+            <input type='hidden' value='@botid@' name='botid' />
+         </form>";
 
             foreach (ChatBot chatbot in Bots)
             {
-                _html += BotTile.Replace("@botname@", chatbot.Name)
-                    .Replace("@Name@", chatbot.WebsiteURL)
-                    .Replace("@WebsiteURL@", chatbot.BotId)
+                _html += BotTile.Replace("@Name@", chatbot.Name)
+                    .Replace("@WebsiteURL@", chatbot.WebsiteURL)
                     .Replace("@LastModifiedBy@", chatbot.LastModifiedBy)
                     .Replace("@LastModifiedAt@", chatbot.LastModifiedAt.ToString())
                     .Replace("@CreatedBy@", chatbot.CreatedBy)
-                    .Replace("@CreatedAt@", chatbot.CreatedAt.ToString());
+                    .Replace("@CreatedAt@", chatbot.CreatedAt.ToString())
+                    .Replace("@welcomeMsg@", chatbot.WelcomeMsg)
+                    .Replace("@chatid@", chatbot.ChatId)
+                    .Replace("@botid@", chatbot.BotId)
+                    .Replace("@ViewBag.solid", "100");
             }
             ViewBag.tileshtml = _html;
             return View();

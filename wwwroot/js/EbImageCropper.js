@@ -20,7 +20,7 @@
 
     this.cropper = function () {
         this.crop = $('#' + this.cropperContainer).croppie({
-            url: this.fileurl,
+            url: 'http://localhost:5000/images/your-logo.png',
             viewport: { width: 150, height: 150 },
             enableOrientation: true
         });
@@ -47,11 +47,12 @@
     this.cropedImage = function (result) {
         this.croppedImage = result;
         $('#' + this.preview).empty();   
-        $('#' + this.preview).css('background', 'url(' + result + ') center center no-repeat');
+        $('#' + this.preview).append('<img src="' + result + '" style="width:100%;height:auto" />');
     };
 
     this.uploadImgToserver = function () {
         this.getCropedImg();
+        $('#' + this.cropperContainer).hide();
         if (this.croppedImage !== null) {
             $('.cropie-loader').css({ "display": "inline", });           
             $('.cr-slider-wrap .btn').attr('disabled', 'disabled');

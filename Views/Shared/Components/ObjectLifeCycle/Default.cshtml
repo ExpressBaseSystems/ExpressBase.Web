@@ -253,58 +253,59 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+    .change_stat_box {
+        background-color: midnightblue;
+        padding: 10px;
+    }
 </style>
 <div class='container'>
     <div class='row statwindow col-md-12' id="statwindow@(tabNum)">
         <ul class='timeline' id='timeline@(tabNum)'>
             <li class='timeline-item' id='stat@(tabNum)'>
-                <div class='timeline-badge' id='timeline-badge'>
-                    <i class='glyphicon glyphicon-check'></i>
-                </div>
-                <div class='timeline-panel' style="background-color:aliceblue">
+                <div class='col-md-offset-3 col-md-5 change_stat_box'>
                     <div class='timeline-heading'>
-                         <h5 class='timeline-title text-center col-md-offset-4' style='display:inline'> Current Status :@(cur_stat)</h5>
-                        <div class="pull-right"id='confirm_stat_change@(tabNum)'>
+                        <div class="btn btn-default pull-right" id='confirm_stat_change@(tabNum)' style="margin-bottom:5px">
                             Apply  <i class="fa fa-save fa-1x"></i>
                         </div>
-                        <div id="st_dd@(tabNum)" class="form-group">
-                            <select class='selectpicker btn form-control' id='status_drpdwn@(tabNum)' style='display:inline'>
-                                <option value='Select Status'>Select Status</option>
-                                @{
-                                    if (cur_stat == "Dev")
-                                    {
-                                        <option value='Test'>Test</option>
+                            <div class='form-control col-md-12' style="margin-bottom:5px">Current Status :@(cur_stat)</div>
+                       <div id="st_dd@(tabNum)" class="form-group">
+                                <select class='selectpicker btn form-control' id='status_drpdwn@(tabNum)'>
+                                    <option value='Select Status'>Select Status</option>
+                                    @{
+                                        if (cur_stat == "Dev")
+                                        {
+                                            <option value='Test'>Test</option>
+                                        }
+                                        if (cur_stat == "Test")
+                                        {
+                                            <option value='Dev'> Dev </option>
+                                            <option value='UAT' id='uat'> UAT </option>
+                                            <option value='Live'> Live </option>
+                                        }
+                                        if (cur_stat == "UAT")
+                                        {
+                                            <option value='Live'> Live </option>
+                                        }
+                                        if (cur_stat == "Live")
+                                        {
+                                            <option value='Dev'> Dev </option>
+                                            <option value='Test'> Test </option>
+                                            <option value='Offline'> Offline </option>
+                                        }
+                                        if (cur_stat == "Offline")
+                                        {
+                                            <option value='Dev'> Dev </option>
+                                            <option value='Test'> Test </option>
+                                            <option value='Obsolete'> Obsolete </option>
+                                        }
+                                        if (cur_stat == "Obsolete")
+                                        {
+                                            @*do something*@
+                                        }
                                     }
-                                    if (cur_stat == "Test")
-                                    {
-                                        <option value='Dev'> Dev </option>
-                                        <option value='UAT' id='uat'> UAT </option>
-                                        <option value='Live'> Live </option>
-                                    }
-                                    if (cur_stat == "UAT")
-                                    {
-                                        <option value='Live'> Live </option>
-                                    }
-                                    if (cur_stat == "Live")
-                                    {
-                                        <option value='Dev'> Dev </option>
-                                        <option value='Test'> Test </option>
-                                        <option value='Offline'> Offline </option>
-                                    }
-                                    if (cur_stat == "Offline")
-                                    {
-                                        <option value='Dev'> Dev </option>
-                                        <option value='Test'> Test </option>
-                                        <option value='Obsolete'> Obsolete </option>
-                                    }
-                                    if (cur_stat == "Obsolete")
-                                    {
-                                        @*do something*@
-                                    }
-                                }
-                            </select>
-                        </div>                       
-                    </div>
+                                </select>
+                            </div>
+</div>
                     <div class='timeline-body'>
                         <div class=''>
                             <div id="st_chnglog@(tabNum)" class="form-group st_chnglog">

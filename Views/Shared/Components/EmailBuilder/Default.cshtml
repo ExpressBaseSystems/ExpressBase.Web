@@ -1,0 +1,47 @@
+﻿@using ExpressBase.Common.Objects;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Summernote</title>
+
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
+            <ul id="data-table-list"></ul>
+           
+        </div>
+        <div class="col-md-8" id="summernot_container@(ViewBag.tabnum)">
+            <div id="summernote@(ViewBag.tabnum)">
+            </div>
+        </div>
+        <div class="col-md-2 pull-right">
+            <div id="PropertyG">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var commonO;
+        if (@ViewBag.tabnum === 0) {
+            commonO = $("#layout_div").data("commonObj");
+        }
+
+        var w = $('.col-md-10').css("width");
+        $('#summernote@(ViewBag.tabnum)').summernote({
+            width: w,
+            height: 300,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+            focus: true                  // set focus to editable area after initializing summernote
+        });
+       commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EmailWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum);
+
+</script>
+</body>
+</html>

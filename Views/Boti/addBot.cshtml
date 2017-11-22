@@ -58,6 +58,7 @@
         }
 
         .inp-block label {
+            display:none;
             position: absolute;
             font-weight: 100;
             color: #777;
@@ -80,7 +81,7 @@
         .h-inherit {
             height: inherit;
             background-color: cadetblue;
-            BACKGROUND-IMAGE: linear-gradient(45deg,#5f9ea0 0,#5f9ea0 100%);
+            BACKGROUND-IMAGE: linear-gradient(45deg,#004890 0,#1976d2 100%);
         }
 
         .pd-0 {
@@ -4608,8 +4609,6 @@
 </svg>
                     </div>
                 </div>
-                <h4 class="imgsec-text text-center">Write Something</h4>
-                <p class="text-center">Write Something</p>
             </div>
             <div class="col-md-7 profSetupSec nopadding">
 
@@ -4640,7 +4639,7 @@
                             @if (ViewBag.chatid != null)
                             {
                             <div class="embededscript-cont">
-                                <label>Embedable script:</label>
+                                <label style="color:white; font-weight:100;">Embedable script:</label>
                                 @*<button type="submit" id="copy" class="btn btn-sm btn-primary pull-right"><i class="fa fa-clipboard" aria-hidden="true"></i></button><br>*@
 
 
@@ -4684,6 +4683,20 @@
             preview: 'profimage',
             cropperContainer: 'DP-cont'
         });
+
+        $(".inp-block").on("keyup load", ".inp-control", function (e) {
+            var inp = $(e.target);
+            var label = inp.closest(".inp-block").find("label")
+            if ($(e.target).val() !== "")
+                label.show(100);
+            else
+                label.hide(100);
+        });
+        $(".inp-block").on("load", ".inp-control", function (e) {
+            alert(100);
+        });
     });
+
+    
 
 </script>

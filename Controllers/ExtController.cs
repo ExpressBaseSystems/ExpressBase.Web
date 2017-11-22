@@ -639,7 +639,7 @@ namespace ExpressBase.Web.Controllers
                 MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
-                    UserName = email,
+                    UserName = "NIL",
                     Password = "NIL",
                     Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", "expressbase" }, { "socialId", socialId } },
                     // UseTokenCookie = true

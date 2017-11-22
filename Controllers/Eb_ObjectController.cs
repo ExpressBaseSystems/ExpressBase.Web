@@ -234,17 +234,6 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public string GetObjHtml(string refid, string token)
-        {
-            this.ServiceClient.BearerToken = token;
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-            var dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-            dsobj.Status = resultlist.Data[0].Status;
-            dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-            return dsobj.GetHtml();
-        }
-
-        [HttpPost]
         public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype, string _refid, string _ssurl)
         {
             string VCName = string.Empty;

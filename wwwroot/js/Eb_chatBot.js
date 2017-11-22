@@ -14,6 +14,7 @@
     this.formControls = [];
     this.formValues = {};
     this.EXPRESSbase_SOLUTION_ID;
+    this.socialId = "1250935561719412";
 
     this.init = function () {
 
@@ -78,7 +79,6 @@
     this.chatBtn_click = function (e) {
         this.$chatCont.toggle(200);
         this.showDate();
-        this.Query("What do you want to do ?", ["Apply Leave", "Claim for reimbursement"]);
 
         //this.getMsg('The setting for a paragraph continues down here.There is a blockquote next to it.');
         //this.sendMsg('The setting for a paragraph continues down here. There is a blockquote next to it. You may want to make that stand out. The setting for a paragraph continues down here.');
@@ -98,6 +98,8 @@
             greeting = 'Good evening!';
         }
         this.getMsg(`Hello ${name}, ${greeting}`);
+        
+        this.Query("What do you want to do ?", ["Apply Leave", "Claim for reimbursement"]);
     }.bind(this);
 
     this.Query = function (query, OptArr) {
@@ -114,9 +116,10 @@
     };
 
     this.getForm = function ($msg) {
-        $.post('../Eb_Object/GetObjHtml', {
+        $.post('../Bote/GetObjHtml', {
             refid: "eb_roby_dev-eb_roby_dev-0-809-1488",
-            token: this.EXPRESSbase_SOLUTION_ID
+            //token: this.EXPRESSbase_SOLUTION_ID,
+            socialId: this.socialId
         },
             function (data) {
                 this.$form = data;

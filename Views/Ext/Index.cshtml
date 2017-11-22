@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
     Html.RenderPartial("ExtPageHeader");
 }
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 <!--Navigation bar/-->
 <!--Slider-->
 <script type="text/javascript">
@@ -18,28 +19,47 @@
 @*<iframe width="30%" height="60%" class="eb-chat-frame" style="position: fixed;bottom: 0px;right: 0px;box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.46);min-width: 300px;z-index: 99999999999999;" src="//eb_roby_dev.localhost:5000/dev/Eb_chatBot" frameborder="0" allowfullscreen></iframe>*@
 <section class="slider">
     <div class="container-fluid">
-        <div class="row eb-banner"> 
-            <div class="bg-color-banner">
-
+        <div class="row eb-banner">
+            <div class="col-md-12 no-padd eb-banner-text-img-sec">
+                <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner">
+                    <h2>Fast growing Small & Midsize Businesses <br />deserve rapidly evolving software.</h2>
+                    <p>
+                        The only RAD Platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
+                        Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
+                        Efficiently manage change in business processes with versioning & branching of objects - from a simple SQL statement to a complex Form.
+                    </p>
+                </div>
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 banner-img pull-right">
+                    <img src="~/images/svg/cloud2.svg" />
+                </div>
             </div>
-            @*<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-               <ol class="carousel-indicators">
-                    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-                </ol>       
-                <div class="carousel-inner">                    
-                    <div class="item active">
-                        <img src="~/images/bgpic.jpg" alt="First slide" class="img-responsive">
+            <div class="col-md-12 no-padd get-start-sec">
+                <div class="col-md-4 col-md-offset-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Enter your email">
+                        <span class="input-group-addon" id="btnGroupAddon">Get Started</span>
                     </div>
-                   <div class="item">
-                        <img src="~/images/bgpic.jpg" alt="First slide" class="img-responsive">
-                    </div>
-                    <div class="item">
-                        <img src="~/images/bgpic.jpg" alt="First slide" class="img-responsive">
+                    <div class="form-group social-btn-sec">
+                        <div class="form-inline">
+                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                                <i class="fa fa-facebook fa-lg"></i>                                
+                            </a>
+                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                                <i class="fa fa-twitter fa-lg"></i>                               
+                            </a>
+                            <a class="btn socialbtns" href="#">
+                                <i class="fa fa-linkedin fa-lg"></i>                                
+                            </a>
+                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                                <i class="fa fa-google-plus fa-lg"></i>                               
+                            </a>
+                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                                <i class="fa fa-github fa-lg"></i>                                
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>*@
+            </div>
         </div>
     </div>
 </section>
@@ -123,16 +143,17 @@
 <!--/ work-shop-->
 <section id="overlay2" class="section-padding">
     <div class="container-fluid">
-        <div class="row eb-banner2">            
-            <img class="col-md-8 eb-banner2-img" src="~/images/wall4.png">           
+        <div class="row eb-banner2">
+            <img class="col-md-8 eb-banner2-img" src="~/images/wall4.png">
             <div class="col-md-4 header-section">
-                <div class="eb-banner2-text">                   
+                <div class="eb-banner2-text">
                     <h2 class="text-center">Get Started for FREE</h2>
-                    <p>specifically focusing on customer retention and ultimately driving sales growth.
+                    <p>
+                        specifically focusing on customer retention and ultimately driving sales growth.
                         One important aspect of the CRM approach is the systems of CRM that compile data
-                    from a range of different communication channels, including a company's website, 
-                    telephone, email, live chat, marketing materials, and more recently, social media.
-                    Through the CRM approach and the systems used to facilitate it, businesses learn more
+                        from a range of different communication channels, including a company's website,
+                        telephone, email, live chat, marketing materials, and more recently, social media.
+                        Through the CRM approach and the systems used to facilitate it, businesses learn more
                     </p>
                     <a href="SignUp" class="btn btn-primary">Sign Up</a>
                 </div>
@@ -140,40 +161,62 @@
         </div>
     </div>
 </section>
-<!--partners-->
-<section id="partners" class="section-padding">
-    
-    @*<div class="container">
-        <div class="row">
-            <div class="header-section text-center">
-                <h4>WE ARE SUPPORTED BY</h4>
+<section class="container getStarted">
+    <div class="col-md-12  no-padd get-start-sec">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter your email">
+                <span class="input-group-addon" id="btnGroupAddon">Get Started</span>
+            </div>
+            <div class="form-group social-btn-sec">
+                <div class="form-inline">
+                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                        <i class="fa fa-facebook fa-lg"></i>
+                    </a>
+                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                        <i class="fa fa-twitter fa-lg"></i>
+                    </a>
+                    <a class="btn socialbtns" href="#">
+                        <i class="fa fa-linkedin fa-lg"></i>
+                    </a>
+                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                        <i class="fa fa-google-plus fa-lg"></i>
+                    </a>
+                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                        <i class="fa fa-github fa-lg"></i>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>*@
+    </div>
+</section>
+<!--partners-->
+<section id="partners" class="section-padding">
     <div class="container">
         <div class="row">
             <div class="header-section text-center">
                 <h3>We Are Supported By</h3>
             </div>
-            <div class="col-sm-6 col-md-5 col-lg-6">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-md-offset-3">
                 <a href="https://bizspark.microsoft.com/"><img src="~/images/perk-bizspark.jpg" class="img-responsive"></a>
             </div>
-            <div class="col-sm-5 .col-sm-offset-2 .col-md-6 .col-md-offset-2">
+            <div class="col-sm-6 col-md-3">
                 <a href="http://10000startups.com/"><img src="~/images/10000-startups.png" class="img-responsive"></a>
             </div>
         </div>
     </div>
 </section>
 <!--partners/-->
-<section class="getStarted">
-    <div class="container">
-        <div class="col-md-6 col-md-offset-3">
-            <h3 class="text-center">Try EXPRESSbase for FREE</h3>
-            <h5 class="text-center">No credit required</h5>
-            <button class="btn btn-trial">Get Free Trial</button>
-        </div>
-    </div>
-</section>
 @{
     Html.RenderPartial("PageFooter");
 }
+<script>
+    $(document).scroll(function () {
+        var y = $(this).scrollTop();
+        if (y > $('.slider').height()) {
+            $('#trial-btn').fadeIn();
+        } else {
+            $('#trial-btn').fadeOut();
+        }
+    });
+</script>

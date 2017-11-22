@@ -2,29 +2,12 @@
 body {
     padding: 0 !important;
     --ebbg: #0280db;
-    --ebbgimage: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
+    --ebbgimage: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);    
 }
-
 .nopadding {
     padding: 0;
 }
 /*       Slider       */
-.slider {
-    margin-top: 89px;
-}
-
-.carousel-indicators .active {
-    background-color: #2980b9;
-}
-
-.carousel-inner img {
-    width: 100%;
-    height: 100%;
-}
-
-.carousel-control {
-    width: 0;
-}
 /***********************************
 Navigation bar
 ************************************/
@@ -45,6 +28,7 @@ Navigation bar
 
 .navbar-default {
     background-color: #ffffff !important;
+    border-bottom:none;
 }
 
     .navbar-default img {
@@ -69,18 +53,30 @@ Navigation bar
 }
 
 .navbar-nav > li > a {
-    padding: 0px;
     margin: 10px 5px;
-    padding: 10px 10px;
+    padding: 10px 10px 5px;
+}
+.hvr-underline-from-center:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    right: 100%;
+    bottom: 0;
+    background: white;
+    height: 3px;
+    -webkit-transition-property: right;
+    transition-property: right;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
 }
 
-.navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover {
-    background-color: #3b5998;
-    color: #ffffff;
-    padding-bottom: 6px;
-    padding-top: 6px;
-}
-
+    .hvr-underline-from-center:hover:before, .hvr-underline-from-center:focus:before, .hvr-underline-from-center:active:before {
+       left:0;
+        right: 0;
+    }
+   
 .navbar-collapse {
     text-align: center;
 }
@@ -89,7 +85,16 @@ Navigation bar
     height: auto;
     padding: 14px;
 }
-
+.ext-pageheader .navbar-default {
+    background: var(--ebbg) !important;
+    background-image: var(--ebbgimage) !important;
+}
+.ext-pageheader .navbar-nav > li > a {
+    color: white;
+}
+.ext-pageheader .navbar-nav > li > a:hover{
+    color: white !important;
+}
 .ext-pageheader .navbar-right {
     margin-right: 0;
 }
@@ -98,17 +103,12 @@ Navigation bar
     height: 50px;
 }
 
-.ext-pageheader .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover {
-    background-color: #e8762c;
-    color: #ffffff;
-    padding-bottom: 10px;
-    padding-top: 10px;
-}
-
-.btn-trial a {
-    background-color: #e8762c;
-    color: #ffffff !important;
-    border: 0px solid;
+.ext-pageheader .btn-trial a {    
+    background: #31d031;
+    font-size: 15px;
+    border: none;
+    border-radius: 2px;
+    padding: 10px !important;
 }
 
 @media(max-width: 768px) {
@@ -152,25 +152,71 @@ Navigation bar
 }
 
 .eb-banner {
-    height: 500px;
-    background: url(../images/pic.jpg) no-repeat center center;
+    background: var(--ebbg);
+    padding: 15px 15px 15px 15px;
+    background-image: var(--ebbgimage);
 }
+.eb-banner-text-img-sec {
+    width: 100%;
+    
+}
+.get-start-sec {
+    margin-top: 10px;
+}
+.get-start-sec input{
+    height:45px;  
+    box-shadow:none;
+}
+    .get-start-sec span {
+        background: #31d031;
+        color: white;
+        border: none;
+        font-family: open sans;
+        font-weight: 300;        
+    }
+    .get-start-sec .social-btn-sec {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .get-start-sec .socialbtns {      
+        color: #ffffff;   
+    }
+.eb-banner .banner-img {
+    margin-top: 100px;
+}
+    .eb-banner .banner-img img{
+        width:100%
+    }
 
 .bg-color-banner {
-    width: inherit;
-    height: inherit;
-    opacity: 0.3;
+    margin-top: 100px;
 }
-/*PARTNERS*/
-.img-box .img-responsive {
-    margin: 20px auto;
-    border-radius: 4px;
-}
+    .bg-color-banner h2 {
+        color: white;
+        font-size: 40px;
+        font-family: open sans;
+        font-weight: 300;
+        padding-bottom: 20px;
+    }
+    .bg-color-banner p {
+        width: 90%;
+        font-size: 20px;
+        line-height: 1.6;
+        color: white;
+        font-family: open sans;
+        text-shadow: 0px 1px 0px #14426f;
+        font-weight: 300;
+    }
+    /*PARTNERS*/
+    .img-box .img-responsive {
+        margin: 20px auto;
+        border-radius: 4px;
+    }
 
 #partners {
     background-color: #fafafa;
     padding-top: 20px;
-    padding-bottom: 28px;
+    padding-bottom: 50px;
 }
 
     #partners h4 {
@@ -190,7 +236,11 @@ Navigation bar
 #work-shop {
     padding-bottom: 40px;
     background-color: #fafafa;
+    padding-top: 30px;
 }
+    .header-section {
+        margin-bottom: 50px;      
+    }
 
 .content {
     font-family: 'Open Sans', sans-serif;
@@ -202,7 +252,7 @@ Navigation bar
 
 .icon-box {
     font-size: 40px;
-    color: #3b5998;
+    color: #238fb1;
 }
 
     .icon-box i {
@@ -280,13 +330,11 @@ Navigation bar
 footer {
     padding-top: 30px;
     background-color: #081e29;
-    color: white;
-    min-height: 250px;
+    color: white;   
+    padding-bottom: 30px;
 }
-
-    footer .main {
-        color: #3b5998;
-        font-weight: 700;
+    footer h5 {
+        color: #3e77e2;
     }
 
     footer a {
@@ -298,14 +346,6 @@ footer {
             text-decoration: none;
             border-bottom: 1px dotted #999;
         }
-
-    footer .form-control {
-        box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.1);
-        border: none;
-        color: #d1d2d2;
-        padding: 0.7em 1em;
-    }
-
 .copyright {
     min-height: 40px;
     background-color: #1c3c4c;
@@ -501,92 +541,11 @@ footer {
 }
 
 .getStarted {
-    height: 180px;
+    padding: 50px 0px 50px 0px;
 }
-
-    .getStarted .btn {
-        background-color: #e8762c;
-        color: white;
-        border-radius: 0;
-        margin-left: 40%;
-        margin-top: 16px;
+    .getStarted .socialbtns {
+        color: #7b7b7b;
     }
-
-    .getStarted h3 {
-        font-weight: normal;
-    }
-/* CSS-only ribbon styles    */
-.cnrflash {
-    /*Position correctly within container*/
-    position: absolute;
-    top: -9px;
-    right: 4px;
-    z-index: 1; /*Set overflow to hidden, to mask inner square*/
-    overflow: hidden; /*Set size and add subtle rounding  		to soften edges*/
-    width: 100px;
-    height: 100px;
-    border-radius: 3px 5px 3px 0;
-}
-
-.cnrflash-inner {
-    /*Set position, make larger then 			container and rotate 45 degrees*/
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 145px;
-    height: 145px;
-    -ms-transform: rotate(45deg); /* IE 9 */
-    -o-transform: rotate(45deg); /* Opera */
-    -moz-transform: rotate(45deg); /* Firefox */
-    -webkit-transform: rotate(45deg); /* Safari and Chrome */
-    -webkit-transform-origin: 100% 100%; /*Purely decorative effects to add texture and stuff*/ /* Safari and Chrome */
-    -ms-transform-origin: 100% 100%; /* IE 9 */
-    -o-transform-origin: 100% 100%; /* Opera */
-    -moz-transform-origin: 100% 100%; /* Firefox */
-    background-image: linear-gradient(90deg, transparent 50%, rgba(255,255,255,.1) 50%), linear-gradient(0deg, transparent 0%, rgba(1,1,1,.2) 50%);
-    background-size: 4px,auto, auto,auto;
-    background-color: #aa0101;
-    box-shadow: 0 3px 3px 0 rgba(1,1,1,.5), 0 1px 0 0 rgba(1,1,1,.5), inset 0 -1px 8px 0 rgba(255,255,255,.3), inset 0 -1px 0 0 rgba(255,255,255,.2);
-}
-
-    .cnrflash-inner:before, .cnrflash-inner:after {
-        /*Use the border triangle trick to make  				it look like the ribbon wraps round it's 				container*/
-        content: " ";
-        display: block;
-        position: absolute;
-        bottom: -16px;
-        width: 0;
-        height: 0;
-        border: 8px solid #800000;
-    }
-
-    .cnrflash-inner:before {
-        left: 1px;
-        border-bottom-color: transparent;
-        border-right-color: transparent;
-    }
-
-    .cnrflash-inner:after {
-        right: 0;
-        border-bottom-color: transparent;
-        border-left-color: transparent;
-    }
-
-.cnrflash-label {
-    /*Make the label look nice*/
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    display: block;
-    width: 100%;
-    padding-bottom: 5px;
-    color: #fff;
-    text-shadow: 0 1px 1px rgba(1,1,1,.8);
-    font-size: 0.95em;
-    font-weight: bold;
-    text-align: center;
-}
-
 .left {
     text-align: left;
     background-color: gainsboro;
@@ -679,6 +638,7 @@ footer {
     height: calc(100vh - 84px);
     margin-right: -15px;
     margin-left: -8px;
+    margin-top: 85px;
 }
 
 .padd {

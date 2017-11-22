@@ -8,6 +8,7 @@ using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,11 +25,17 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
-            User user = (User)this.HttpContext.Items["user"];
-            var Ids = String.Join(",", user.EbObjectIds);
-            var resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids = "{" + Ids + "}" });
+            var resultlist = new SidebarUserResponse();
+            resultlist = this.Redis.Get<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
+            if (resultlist == null)
+            {
+                User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
+                var Ids = String.Join(",", user.EbObjectIds);
+                resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids = "{" + Ids + "}" });
+                this.Redis.Set<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console), resultlist);
+            }
 
             StringBuilder sb = new StringBuilder();
 
@@ -42,9 +49,16 @@ namespace ExpressBase.Web.Components
 
                 foreach (var val in obj.Value.Types)
                 {
+                    ControlAction ctrlAction = new ControlAction();
+                    if(val.Key == Convert.ToInt32(EbObjectType.TableVisualization) || val.Key == Convert.ToInt32(EbObjectType.ChartVisualization))
+                    {
+                        ctrlAction.Controller = "DV";
+                        ctrlAction.Action = "dv";
+                    }
                     sb.Append("<li><a class='list-group-item' href='#'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
                     var json = JsonConvert.SerializeObject(val.Value.Objects);
-                    sb.Append("<div id='EbType_" + val.Key + "' style='display:none' data-json='"+json+"' ></div>");
+                    var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
+                    sb.Append("<div id='EbType_" + val.Key + "' style='display:none' data-json='"+json+"' data-action = '"+ ctrlaction + "' ></div>");
                 }
                 sb.Append("</ul></li>");
             }
@@ -53,4 +67,14 @@ namespace ExpressBase.Web.Components
             return View();
         }
     }    
+
+    [DataContract]
+    public class ControlAction
+    {
+        [DataMember(Order = 1)]
+        public string Controller { get; set; }
+
+        [DataMember(Order = 2)]
+        public string Action { get; set; }
+    }
 }

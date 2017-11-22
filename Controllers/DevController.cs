@@ -272,6 +272,41 @@ namespace ExpressBase.Web.Controllers
                 return View();
         }
 
+        public string GetObjectList(EbObjectType type)
+        {
+            IServiceClient client = this.ServiceClient;
+
+            var resultlist = client.Get<EbObjectListResponse>(new EbObjectListRequest { EbObjectType = (int)type });
+            var rlist = resultlist.Data;
+
+            Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
+            var html = string.Empty;
+            foreach (var element in rlist)
+            {
+                html += @"<a href='../Eb_Object/Index?objid="+ element.Id+ @"&objtype=" + (int)type + @"'>
+                <div class='col-md-6 objitems' name='objBox'>
+                    <div class='col-md-1 obj-icon'>
+                        <div class='obj-ic-cir'>
+                            <i class='fa fa-file-text' aria-hidden='true'></i>
+                        </div>
+                    </div>
+                    <div class='col-md-10'>
+                        <h4 name='head4' style='color:black;'>"+ element .Name+ @"</h4>
+                        <p class='text-justify'>"+element.Description+@"</p>
+                        <a id='labels'>
+                            <span name='Version' class='label label-default'>v "+element.VersionNumber+@"</span>
+                            <span name='Application' class='label objbox-label'>"+ type + @"</span>
+                        </a>
+                    </div>
+                    <div class='col-md-1 objbox-footer'>
+                        <input type='button' class='btn fa-input fa-lg' value='&#xf054;' style='font-family: FontAwesome;background: transparent;'>
+                    </div>
+                </div></a>";
+            }
+            return html;
+            
+        }
+
         [HttpGet]
         public IActionResult CreateApplication()
         {

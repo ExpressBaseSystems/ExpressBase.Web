@@ -43,6 +43,17 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpGet]
+        public IActionResult getSidebarMenu()
+        {
+            if (ViewBag.wc == "tc")
+                return View("_SidebarMenu");
+            else if(ViewBag.wc == "dc")
+                return ViewComponent("SidebarmenuDev", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
+            else
+                return ViewComponent("_SidebarmenuTUser", new {solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc});
+        }
+
+        [HttpGet]
         public IActionResult UserPreferences()
         {
             var res = this.ServiceClient.Post<EditUserPreferenceResponse>(new EditUserPreferenceRequest());

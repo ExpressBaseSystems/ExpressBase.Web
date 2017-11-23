@@ -310,7 +310,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         dq.Params = this.Object_String_WithVal;
         return dq;
     };
-
    
     this.SetSqlFnName = function () {
         var result = this.EbObject.Sql.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);

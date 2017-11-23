@@ -110,6 +110,9 @@ Navigation bar
     border-radius: 2px;
     padding: 10px !important;
 }
+.ext-pageheader .btn-trial a:hover {
+    background: #31d031 !important;
+}
 
 @media(max-width: 768px) {
     .navbar-collapse {
@@ -169,7 +172,9 @@ Navigation bar
     margin-bottom: 10px;
     font-size: 13px;
 }
-
+.getStarted .no-creditcared {   
+    color: #7b7b7b;  
+}
 .get-start-sec input {
     height: 45px;
     box-shadow: none;
@@ -240,21 +245,23 @@ Navigation bar
     padding: 0 !important;
 }
 
-#work-shop {
+.work-shop {
     padding-bottom: 40px;
     background-color: #fafafa;
     padding-top: 30px;
+    font-family: open sans;
+    font-weight: 300;
 }
     .header-section {
         margin-bottom: 50px !important;      
     }
 
 .content {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
+    font-family: 'Open Sans';
+    font-weight: 300;
+    font-size: 15px;
     color: #494a4a;
-    line-height: 18px;
+    line-height: 1.5;
 }
 
 .icon-box {
@@ -328,17 +335,27 @@ Navigation bar
         line-height: 1.6;
         font-size: 15px;
         font-weight: 300;
+        margin-top: 20px;
     }
-
+.prod-link {
+    text-decoration: underline;
+    font-size: 16px;
+    margin-left: 10px;
+} 
 .eb-banner2-img {
     background-repeat: no-repeat;
     border: 1px solid #ccc;
     padding: 0;
-    margin-top:50px;
+    margin-top: 50px;
 }
 .chatbot-container {
     border: none;
+    text-align: center;
 }
+    .chatbot-container img {
+        border: 1px solid #ccc;
+    }
+
 .padd-left-30 {
     padding-left:30px;
 }
@@ -363,16 +380,19 @@ Navigation bar
 /*Footer*/
 footer {
     padding-top: 30px;
-    background-color: #081e29;
-    color: white;   
+    background-color: #e6edf1;
+    color: white;
     padding-bottom: 30px;
+    font-family: open sans;
+    font-weight: 300;
 }
     footer h5 {
-        color: #3e77e2;
+        color: #1270a5;
     }
 
     footer a {
         text-decoration: none;
+        color: #717171;
     }
 
         footer a:hover, footer a:focus {
@@ -380,6 +400,17 @@ footer {
             text-decoration: none;
             border-bottom: 1px dotted #999;
         }
+    footer p {
+        color: #717171;
+    }
+    footer .cmpny-details {
+        padding-left: 32px;
+    }
+    footer ul {
+        list-style-type: none;
+        padding:0;
+    }
+
 .copyright {
     min-height: 40px;
     background-color: #1c3c4c;
@@ -539,6 +570,21 @@ footer {
     height: inherit;
     background: white;
 }
+/*platform*/
+.apaas {
+    padding-top: 100px;
+    font-family: open sans;
+    font-weight: 300;
+    background: var(--ebbg);
+    background-image: var(--ebbgimage);
+    color: white;
+    padding-bottom: 50px;
+}
+    .apaas p {
+        line-height: 1.6;
+        font-size: 15px;
+        margin-top: 20px;
+    }
 /*pricing*/
 #headerPricing {
     background-color: rgb(260,260,260);
@@ -586,7 +632,7 @@ footer {
 }
 
 .getStarted {
-    padding: 50px 0px 50px 0px;
+    padding: 30px 0px 30px 0px;
 }
     .getStarted .socialbtns {
         color: #7b7b7b;

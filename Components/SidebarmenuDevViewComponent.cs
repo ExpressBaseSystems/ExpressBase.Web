@@ -26,7 +26,7 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
             var resultlist = new SidebarDevResponse();
-            resultlist = this.Redis.Get<SidebarDevResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
+            //resultlist = this.Redis.Get<SidebarDevResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
             if (resultlist == null || resultlist.Data == null)
             {
                 resultlist = this.ServiceClient.Get<SidebarDevResponse>(new SidebarDevRequest ());

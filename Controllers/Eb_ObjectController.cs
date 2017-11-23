@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Controllers
             Context2Js _c2js = new Context2Js();
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
             var type = (EbObjectType)(objtype);
-            if (objid != null)
+            if (objid != "null")
             {
                 ViewBag.Obj_id = objid;
                 var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });

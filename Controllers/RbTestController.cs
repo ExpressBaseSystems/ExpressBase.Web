@@ -107,10 +107,10 @@ namespace ExpressBase.Web.Controllers
             {
 
             }
-            foreach (EbReportDetail detail in Report.Detail)
-            {
+            //foreach (EbReportDetail detail in Report.Detail)
+            //{
 
-            }
+            //}
 
             foreach (EbPageFooter p_footer in Report.PageFooters)
             {

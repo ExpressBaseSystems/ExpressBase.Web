@@ -36,31 +36,34 @@
             <div class="col-md-12 no-padd get-start-sec">
                 <div class="col-md-4 col-md-offset-4">
                     <div class="no-creditcared">No credit card required.</div>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Enter your email">
-                        <span class="input-group-addon" id="btnGroupAddon">Get Started</span>
-                    </div>
-                    <div class="form-group social-btn-sec">
-                        <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
-                        <div class="form-inline">                           
-                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
-                                <i class="fa fa-facebook fa-lg"></i>                                
-                            </a>
-                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
-                                <i class="fa fa-twitter fa-lg"></i>                               
-                            </a>
-                            <a class="btn socialbtns" href="#">
-                                <i class="fa fa-linkedin fa-lg"></i>                                
-                            </a>
-                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
-                                <i class="fa fa-google-plus fa-lg"></i>                               
-                            </a>
-                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
-                                <i class="fa fa-github fa-lg"></i>                                
-                            </a>
+
+                        <form id="signup_form" action="~/Ext/TenantExtSignup" method="post">
+                        <div class="input-group">
+                            <input type="email" name="email" class="form-control" placeholder="Enter your email">
+                            <span class="input-group-addon" id="btnGroupAddon">Get Started</span>
                         </div>
-                    </div>
-                </div>
+                        </form>
+                        <div class="form-group social-btn-sec">
+                            <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                            <div class="form-inline">
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                                    <i class="fa fa-facebook fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                                    <i class="fa fa-twitter fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="#">
+                                    <i class="fa fa-linkedin fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                                    <i class="fa fa-google-plus fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                                    <i class="fa fa-github fa-lg"></i>
+                                </a>
+                            </div>
+                        </div>
+</div>
             </div>
         </div>
     </div>
@@ -224,10 +227,12 @@
     <div class="col-md-12 no-padd get-start-sec">
         <div class="col-md-4 col-md-offset-4">
             <div class="no-creditcared">No credit card required.</div>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Enter your email">
-                <span class="input-group-addon" id="btnGroupAddon">Get Started</span>
-            </div>
+            <form id="signup_form" action="~/Ext/TenantExtSignup" method="post">
+                <div class="input-group">
+                    <input type="email" class="form-control" name="email" placeholder="Enter your email">
+                    <span class="input-group-addon" id="btnGroupAddon">Get Started</span>
+                </div>
+            </form>
             <div class="form-group social-btn-sec">
                 <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
                 <div class="form-inline">
@@ -279,5 +284,8 @@
         } else {
             $('#trial-btn').fadeOut();
         }
+        $('#btnGroupAddon').click(function () { 
+            document.getElementById("signup_form").submit();
+        })
     });
 </script>

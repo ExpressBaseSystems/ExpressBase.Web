@@ -97,72 +97,82 @@
         </div>
     </div>
 </div>
-<div class="row outer-row-profsetup">  
-    <div class="container-fluid pd-0 h-inherit">
-        <div class="col-md-2 profImageSec">
-            <div class="prof-picDiv" id="profimage">
-                <div class="img-box-prof-picDiv">
-                    <img src="~/images/svg/man.svg" />
+<form method="post">
+    <div class="row outer-row-profsetup">
+        <div class="container-fluid pd-0 h-inherit">
+            <div class="col-md-2 profImageSec">
+                <div class="prof-picDiv" id="profimage">
+                    <div class="img-box-prof-picDiv">
+                        <img src="~/images/svg/man.svg" />
+                    </div>
                 </div>
+                <h4 class="imgsec-text text-center"></h4>
+                <p class="text-center"></p>
             </div>
-            <h4 class="imgsec-text text-center"></h4>
-            <p class="text-center"></p>
-        </div>
-        <div class="col-md-6 profSetupSec">
-            <div class="form-horizontal" style="margin-top:35px">
-                <div class="form-group">
-                    <label for="name" class="col-md-2">Name:</label>
-                    <div class="col-md-8 pd-0">
-                        <input class="form-control" type="text" name="Name" id="name">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="phone" class="col-md-2">Phone:</label>
-                    <div class="col-md-8 pd-0">
-                        <input class="form-control" type="text" name="Phone" id="phone">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="company" class="col-md-2">Company:</label>
-                    <div class="col-md-8 pd-0">
-                        <input class="form-control" type="text" name="Company" id="company">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="designation" class="col-md-2">Designation:</label>
-                    <div class="col-md-8 pd-0">
-                        <input class="form-control" type="text" name="Designation" id="designation">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="ui-select">
-                        <label for="employees" class="col-md-2">Employees:</label>
+            <div class="col-md-6 profSetupSec">
+                <div class="form-horizontal" style="margin-top:35px">
+                    <div class="form-group">
+                        <label for="name" class="col-md-2">Name:</label>
                         <div class="col-md-8 pd-0">
-                            <select id="employees" name="Employees" class="form-control">
-                                <option value="0">Employees</option>
-                                <option value="1-10">1-10</option>
-                                <option value="11-50">11-50</option>
-                                <option value="51-100">51-100</option>
-                                <option value="101-250">101-250</option>
-                                <option value="251-500">250-500</option>
-                                <option value="greater than 500">greater than 500</option>
-                            </select>
+                            <input class="form-control" type="text" name="Name" id="name">
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="phone" class="col-md-2">Phone:</label>
+                        <div class="col-md-8 pd-0">
+                            <input class="form-control" type="text" name="Phone" id="phone">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="company" class="col-md-2">Company:</label>
+                        <div class="col-md-8 pd-0">
+                            <input class="form-control" type="text" name="Company" id="company">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="designation" class="col-md-2">Designation:</label>
+                        <div class="col-md-8 pd-0">
+                            <input class="form-control" type="text" name="Designation" id="designation">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="ui-select">
+                            <label for="employees" class="col-md-2">Employees:</label>
+                            <div class="col-md-8 pd-0">
+                                <select id="employees" name="Employees" class="form-control">
+                                    <option value="0">Employees</option>
+                                    <option value="1-10">1-10</option>
+                                    <option value="11-50">11-50</option>
+                                    <option value="51-100">51-100</option>
+                                    <option value="101-250">101-250</option>
+                                    <option value="251-500">250-500</option>
+                                    <option value="greater than 500">greater than 500</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-md-2">Password:</label>
+                        <div class="col-md-8 pd-0">
+                            <input class="form-control" type="password" name="password" id="password">
+                        </div>
+                    </div>
+                    <input type="hidden" id="email" name="email" value="@ViewBag.email" />
+                    <button type="submit" class="btn btn-info">Save</button>
+                    <input type="hidden" id="imgsrc" name="imgsrc" />
+                    <div class="Img-upload-modal" id="promodal-container"></div>
                 </div>
-                <input type="hidden" id="imgsrc" name="imgsrc" />
-                <div class="Img-upload-modal" id="promodal-container"></div>
             </div>
-        </div>
-        <div class="col-md-4 pd-0 profImagePrevSec">
-            <div class="previewsec-outer" id="previewsec-outer">
-                <div class="cropsection" id="cropsection">
+            <div class="col-md-4 pd-0 profImagePrevSec">
+                <div class="previewsec-outer" id="previewsec-outer">
+                    <div class="cropsection" id="cropsection">
 
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 <script>
     $('#save').attr('disabled', 'disabled');
     var upload = new EbImageCropper({

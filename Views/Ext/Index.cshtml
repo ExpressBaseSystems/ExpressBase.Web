@@ -153,7 +153,7 @@
     <div class="container">
         <div class="row eb-banner2">
             <div class="text-center">
-                <h3>Meet our Products</h3>
+                <h3>Meet Our Products</h3>
             </div>
             <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12">
                 <div class="eb-banner2-text">
@@ -289,3 +289,13 @@
 @{
     Html.RenderPartial("PageFooter");
 }
+<script>
+    $(document).scroll(function () {
+        var y = $(this).scrollTop();
+        if (y > $('.slider').height()) {
+            $('#trial-btn').fadeIn();
+        } else {
+            $('#trial-btn').fadeOut();
+        }
+    });
+</script>

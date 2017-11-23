@@ -31,6 +31,28 @@ namespace ExpressBase.Web.Controllers
             string[] subdomain = host.Host.Split('.');
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
+            if (host.Host.EndsWith("azurewebsites.net"))
+            {
+                if (subdomain.Length == 4) // USER CONSOLE
+                {
+                    if (!string.IsNullOrEmpty(req["console"]))
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "dc";
+                    }
+                    else
+                    {
+                        ViewBag.cid = subdomain[0];
+                        whichconsole = "uc";
+                    }
+
+                }
+                else // TENANT CONSOLE
+                {
+                    ViewBag.cid = "expressbase";
+                    whichconsole = "tc";
+                }
+            }
             if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
             {
                 if (subdomain.Length == 3) // USER CONSOLE

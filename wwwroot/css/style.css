@@ -186,6 +186,10 @@ Navigation bar
         font-family: open sans;
         font-weight: 300;        
     }
+.get-start-sec span:hover{   
+    color: white;
+}
+
     .get-start-sec .social-btn-sec {
         margin-top: 10px;
         text-align: center;
@@ -524,7 +528,25 @@ footer {
     .navbar-default .navbar-nav > li > a {
         text-align: center;
         font-size: 12px;
-        font-weight: normal;
+        font-weight: normal;        
+    }
+    .navbar-collapse,collapse in {
+        background:var(--ebbg);
+        background-image:var(--ebbgimage);
+    }
+    .eb-banner2-img {
+        padding-left:15px;
+        padding-right:15px;
+        border:none;
+    }
+    .chatbot-container img{
+        width:98%;
+    }
+    .parteners-last {
+        padding-top:20px;
+    }
+    .gl {
+        text-align: center;
     }
 }
 

@@ -1,6 +1,12 @@
 ﻿var Eb_chatBot = function () {
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
-    this.$chatHead = $('<div class="eb-chat-head"><span>EXPESSbase Bot <i class="fa fa-window-minimize pull-right" aria-hidden="true"></i></span></div>');
+    this.$chatHead = $(`<div class="eb-chat-head">
+                            <div class="inline-block">
+                                <div class="bot-head">&nbsp; Live ChatBot</div>
+                                <div class="poweredby">&nbsp; &nbsp; Powered by EXPESSbase</span></div>
+                            </div>
+                        </div>`);
+    this.$chatHead.prepend('<div class="bot-icon"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
@@ -98,7 +104,7 @@
             greeting = 'Good evening!';
         }
         this.getMsg(`Hello ${name}, ${greeting}`);
-        
+
         this.Query("What do you want to do ?", ["Apply Leave", "Claim for reimbursement"]);
     }.bind(this);
 
@@ -189,6 +195,7 @@
         this.getMsg(lablel + ' ?');
         this.getMsg($control);
         $label.hide();
+        $ctrlCont.find(".helpText").remove();
     }.bind(this);
 
     this.showTypingAnim = function ($msg) {
@@ -224,7 +231,7 @@
             setTimeout(function () {
                 if (msg instanceof jQuery) {
                     $msg.find('.bot-icon').remove();
-                    $msg.find('.msg-wraper-bot').html(msg);
+                    $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
                     $msg.css("margin-left", "26px");
                 }

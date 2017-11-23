@@ -122,7 +122,7 @@
     };
 
     this.getForm = function ($msg) {
-        $.post('../Bote/GetObjHtml', {
+        $.post('https://expressbase.azurewebsites.net/Bote/GetObjHtml', {
             refid: "eb_roby_dev-eb_roby_dev-0-809-1488",
             //token: this.EXPRESSbase_SOLUTION_ID,
             socialId: this.socialId

@@ -37,7 +37,7 @@
 }
 
 .msg-cont-bot, .msg-cont-user {
-    width: 90%;
+    width: calc(100% - 26px);
     display: inline-block;
 }
 
@@ -94,15 +94,10 @@
 }
 
 .eb-chat-inp-cont {
-    height: 29px;
     position: absolute;
-    padding: 2px;
-    background-color: #fafaff;
-    border-radius: 20px;
-    bottom: 0px;
-    width: calc(100% - 3px);
-    margin: 3px 2px;
-    border: solid 1px #dedede;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
 }
 
 .eb-chat-head {
@@ -118,11 +113,12 @@
 
 .eb-chat-inp-cont .btn, .msg-wraper-bot .btn {
     border-radius: 15px;
-    padding: 2px 12px;
+    padding: 6px 9px;
     color: white;
     background: #428bca;
     border: none;
     outline: none;
+    margin-left: 5px;
 }
 
 
@@ -142,11 +138,13 @@
 
 .msg-inp {
     border: none;
-    border-bottom: 2px solid #675dff;
+    border: 1px solid #d8d8d8;
     width: calc(100% - 48px);
     outline: none;
-    margin-left: 10px;
-    background-color: transparent;
+    background-color: white;
+    padding: 5px;
+    border-radius: 30px;
+    box-shadow: 0px 1px 0px 0px #d0d0d0;
 }
 
 .chat-ctrl-cont .Eb-ctrlContainer {

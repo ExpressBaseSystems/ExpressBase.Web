@@ -48,6 +48,7 @@
 
     var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl');
     $("#layout_div").data("commonObj", commonObj);
+    console.log("Index   " + $("#layout_div").data("commonObj"));
 
 </script>
 <div id="object_Dashboard_main">
@@ -98,6 +99,11 @@
                 else if (ViewBag.ObjType == (int)EbObjectType.WebForm)
                 {
                     @await Component.InvokeAsync("FormBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
+                else if (ViewBag.ObjType == (int)EbObjectType.EmailBuilder)
+                {
+                    @await Component.InvokeAsync("Emailbuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
             }

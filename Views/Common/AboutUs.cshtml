@@ -2,22 +2,26 @@
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
     Html.RenderPartial("ExtPageHeader");
 }
-<header class="aboutus-header">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+<section class="aboutus-header">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12  text-right">
-                <br><br><br><br><br><br>
-                <h1 class="tagline">Empowering Enterprise </h1>
-                <p>Our project proposal was selected to be one of the NASSCOM 10k Startup initiative.</p>
-                <p>we are incubated at the NASSCOM 10k Startup Warehouse in Infopark, Kochi, Kerala.</p>
-                <br>
-                <a href="#contactModal" data-toggle="modal" class="btn btn-primary"><i class="fa fa-contact "></i> <span class="network-name">Contact Us</span></a>
+            <div class="col-md-12 no-padd eb-banner-text-img-sec">
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 banner-img">
+                    <img src="~/images/svg/aboutus.svg" />
+                </div>
+                <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner">
+                    <h2></h2>
+                    <p>
+                       
+                    </p>
+                </div>           
             </div>
         </div>
     </div>
-</header>
+</section>
 <!--Organisations-->
-<section id="founder">
+<section id="founder" class="founder">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -144,3 +148,13 @@
 @{
     Html.RenderPartial("PageFooter");
 }
+<script>
+    $(document).scroll(function () {
+        var y = $(this).scrollTop();
+        if (y > $('.aboutus-header').height()) {
+            $('#trial-btn').fadeIn();
+        } else {
+            $('#trial-btn').fadeOut();
+        }
+    });
+</script>

@@ -84,9 +84,10 @@ padding:0;
 /*cdgfdjhdtjykuflkjyh*/
 .tAddAcc {
     padding-top: 50px;
-    font-family: sans-serif;
+    font-family: open sans;
+    font-weight: 300;
     background-color: #f8f8f8;
-    padding-bottom:50px;
+    padding-bottom: 50px;
 }
     .tAddAcc .btn {
         border-radius: 0;

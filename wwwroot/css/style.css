@@ -745,10 +745,10 @@ footer {
 .Eb-CommonMenuStyle {
     width: 100%;
     background-color: #2c2c3c;
-    margin-top: 50px;
+    margin-top: 13px;
     padding-left: 10px;
     padding-right: 10px;
-    position:fixed;
+    //position:fixed;
 }
 
     .Eb-CommonMenuStyle .btn {

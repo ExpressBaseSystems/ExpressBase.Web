@@ -189,6 +189,15 @@
                                         <div id="EbsideBar" class="col-md-3" style="height:100%;">
                                         </div>
                                         <div class="col-md-9" style="height:100%;">
+                                            @{
+                                                if (ViewBag.wc == "dc")
+                                                {
+                                                        <div class="Eb-CommonMenuStyle" id="topmenu">
+                                                            <a href="" class="btn"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                                                        </div>
+
+                                                }
+                                            }
                                             <div id="objList" style="height:93%; overflow-y:auto"></div>
                                             <div class="input-group">
                                                 <div class="input-group-btn">
@@ -198,21 +207,21 @@
                                                     <ul class="dropdown-menu" id="MyDropDownId">
                                                         <li><a href="#">All</a></li>
                                                         <li><a href="#">Application</a></li>
-</ul>
+                                                    </ul>
                                                 </div>
                                                 <input type="text" class="form-control" id="searchobj">
                                             </div>
                                         </div>
                                     </div>
                                     @*<div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    </div>*@
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>*@
                                 </div>
                             </div>
                         </div>
-                    }
+                                                }
                 }
-                
+
                 @RenderBody()
                 @RenderSection("EbHead", false)
             </div>

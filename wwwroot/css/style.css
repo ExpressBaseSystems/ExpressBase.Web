@@ -225,21 +225,20 @@ Navigation bar
         border-radius: 4px;
     }
 
-#partners {
+.partners {
     background-color: #fafafa;
     padding-top: 20px;
     padding-bottom: 50px;
 }
 
-    #partners h4 {
-        font-weight: normal;
-        color: #717f86;
-    }
+.partner h4 {
+    font-weight: normal;
+    color: #717f86;
+}
 
-    #partners img {
-        width: auto;
-        height: 100px;
-    }
+.partner img {
+    width: auto;
+}
 /*Work Shop*/
 .nopadding {
     padding: 0 !important;

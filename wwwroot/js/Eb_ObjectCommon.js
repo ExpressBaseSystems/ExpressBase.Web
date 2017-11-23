@@ -95,7 +95,7 @@
     };
 
     this.UpdateDashboard = function () {
-        $.post("Eb_object/UpdateObjectDashboard", { refid: this.ver_Refid }).done(this.UpdateDashboard_Success.bind(this));
+        $.post("../Eb_Object/UpdateObjectDashboard", { refid: this.ver_Refid }).done(this.UpdateDashboard_Success.bind(this));
     };
 
     this.UpdateDashboard_Success = function (data) {

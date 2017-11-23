@@ -679,7 +679,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.EbObject.PageFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'ReportDetail') {
-            this.EbObject.Detail.Fields.push(this.objCollection[elemId]);
+            this.EbObject.Detail[this.j].Fields.push(this.objCollection[elemId]);
         }
     };//........save/commit
 

@@ -275,27 +275,36 @@ Navigation bar
     font-size: 30px;
 }
 /*workshop ends*/
+/*aboutus*/
+.eb-banner-abtus-head {
+    padding-top: 130px;
+}
+    .eb-banner-abtus-head .banner-img-abtus img{
+        width:100%;
+    }
 /*team*/
 .team {
-    padding: 30px 0;
     font-family: open sans;
     font-weight: 300;
+    padding-bottom: 30px;
 }
-   
+
 .profile {
-    margin-top: 25px;
+    padding: 20px 43px 10px 43px;
 }
 
     .profile h1 {
         font-weight: normal;
         font-size: 20px;
         margin: 0 0 0 0;
+        text-align:center;
     }
 
     .profile h2 {
         font-size: 14px;
         font-weight: lighter;
         margin-top: 5px;
+        text-align: center;
     }
 
     .profile .img-box {
@@ -323,10 +332,18 @@ Navigation bar
 
 .eb-banner2-img {
     background-repeat: no-repeat;
+    border: 1px solid #ccc;
+    padding: 0;
+    margin-top:50px;
 }
-
+.chatbot-container {
+    border: none;
+}
+.padd-left-30 {
+    padding-left:30px;
+}
 .overlay2 {
-    padding-bottom: 20px;
+    padding-bottom: 50px;
 }
 .bg-fafa{
     background:#fafafa;

@@ -64,8 +64,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index()
         {
             var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-868-1572" });
-            var dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-           
+            var dsobj = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
+
             cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", "eb_roby_dev-eb_roby_dev-2-810-1489"));
             if (cresp.IsNull)
                 cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = "eb_roby_dev-eb_roby_dev-2-810-1489" });

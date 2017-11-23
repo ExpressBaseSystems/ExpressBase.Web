@@ -28,6 +28,7 @@
     });
 
     function AppendList(Obj) {
+        $("#topmenu a").attr("href","../Eb_Object/Index?objid="+null+"&objtype="+ Obj[0].EbObjectType+"")
         $(".modal-body #objList").empty();
         $.each(Obj, function (i, _obj) {
             $(".modal-body #objList").append(`<a href='../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType }'>

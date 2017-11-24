@@ -66,7 +66,7 @@
     this.send_btn = function () {
         window.onmessage = function (e) {
             if (e.data == 'hello') {
-                alert('It works!8888888888888888888888');
+                //alert('It works!8888888888888888888888');
             }
         };
 
@@ -77,7 +77,7 @@
             return;
         };
         this.sendMsg(msg);
-        $('.eb-chatBox').scrollTop(999999999);
+        $('.eb-chatBox').scrollTop(99999999999);
         $e.val('');
 
     }.bind(this);
@@ -122,11 +122,7 @@
     };
 
     this.getForm = function ($msg) {
-        $.post('https://expressbase.azurewebsites.net/Bote/GetObjHtml', {
-            refid: "eb_roby_dev-eb_roby_dev-0-809-1488",
-            //token: this.EXPRESSbase_SOLUTION_ID,
-            socialId: this.socialId
-        },
+        $.get('https://expressbase.azurewebsites.net/Bote/GetSamp?refid=eb_roby_dev-eb_roby_dev-0-809-1488&socialId='+this.socialId,
             function (data) {
                 this.$form = data;
                 this.setFormControls();
@@ -211,12 +207,14 @@
     this.sendCtrl = function (msg) {
         var $msg = this.$userMsgBox.clone().wrapInner($(msg));
         this.$chatBox.append($msg)
+        $('.eb-chatBox').scrollTop(99999999999);
     };
 
     this.sendCtrlAfter = function ($ctrl, msg) {
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').html(msg).append(this.getTime());;
         $msg.insertAfter($ctrl);
+        $('.eb-chatBox').scrollTop(99999999999);
     };
 
     //this.HideTypingAnim = function (msg) {
@@ -247,6 +245,7 @@
                 this.getMsg(msg);
             }.bind(this), 1001);
         }
+        $('.eb-chatBox').scrollTop(99999999999);
     }.bind(this);
 
     this.formSubmit = function (e) {
@@ -268,6 +267,10 @@
 
     this.getTime = function () {
         return `<div class='msg-time'>${new Date().getHours() % 12 + ':' + new Date().getMinutes() + 'pm'}</div>`;
+    };
+
+    this.loadCtrlScript = function () {
+        $("head").append(this.CntrlHeads);
     };
 
     this.init();

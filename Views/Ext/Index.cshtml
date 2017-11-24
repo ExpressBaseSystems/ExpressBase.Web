@@ -11,8 +11,8 @@
     (function () {
         d = document;
         s = d.createElement("script");
-        //s.src = "/js/ebbot-ext.js";
-        s.src = "https://expressbase.azurewebsites.net/js/ebbot-ext.js";
+        s.src = "/js/ChatBot/ebbot-ext.js";
+        //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
         s.async = 1;
         d.getElementsByTagName("head")[0].appendChild(s);
     })();</script>
@@ -290,12 +290,18 @@
     Html.RenderPartial("PageFooter");
 }
 <script>
+
     $(document).scroll(function () {
+
         var y = $(this).scrollTop();
         if (y > $('.slider').height()) {
             $('#trial-btn').fadeIn();
         } else {
             $('#trial-btn').fadeOut();
         }
+
+        $('#btnGroupAddon').click(function () {
+                       document.getElementById("signup_form").submit();
+                    })
     });
 </script>

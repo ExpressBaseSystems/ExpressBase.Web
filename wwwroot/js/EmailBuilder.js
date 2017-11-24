@@ -75,9 +75,9 @@
         this.SetCode();
     };
 
-    this.SetCode = function (e) {    
-        this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));
-        console.log(this.EbObject.Body);
+    this.SetCode = function (e) {
+        console.log($('#summernote' + tabNum).summernote('code'));
+        this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
         commonO.Current_obj = this.EbObject;
     }
 

@@ -657,7 +657,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.EbObject.PageFooters.push(this.objCollection[this.subsec]);
         }
         else if (eb_type === 'ReportDetail') {
-            this.EbObject.Detail = this.objCollection[this.subsec];
+            this.EbObject.Detail.push(this.objCollection[this.subsec]);
         }
 
         $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));

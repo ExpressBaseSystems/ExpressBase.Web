@@ -63,7 +63,7 @@ namespace ExpressBase.Web.Controllers
         PdfContentByte cb;
         public IActionResult Index()
         {
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-875-1581" });
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-887-1604" });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
             cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", Report.DataSourceRefId));
@@ -101,6 +101,21 @@ namespace ExpressBase.Web.Controllers
 
             foreach (EbReportHeader r_header in Report.ReportHeaders)
             {
+                foreach (EbReportFields field in r_header.Fields)
+                {
+                    var table = field.Title.Split('.')[0];
+                    var column = field.Title.Split('.')[1];
+
+                    foreach (var col in __columns)
+                    {
+                        if (col.ColumnName == column)
+                        {
+                            ColumnText ct = new ColumnText(cb);
+                            ct.SetSimpleColumn(new Phrase(col.ColumnName), 34, 750, 580, 317, 15, Element.ALIGN_LEFT);
+                            ct.Go();
+                        }
+                    }
+                }
 
             }
             foreach (EbPageHeader p_header in Report.PageHeaders)
@@ -111,7 +126,6 @@ namespace ExpressBase.Web.Controllers
             {
 
             }
-
             foreach (EbPageFooter p_footer in Report.PageFooters)
             {
 
@@ -124,9 +138,7 @@ namespace ExpressBase.Web.Controllers
                 //        addRows(cb, s, d);
             }
 
-            ColumnText ct = new ColumnText(cb);
-            ct.SetSimpleColumn(new Phrase("data"), 34, 750, 580, 317, 15, Element.ALIGN_LEFT);
-            ct.Go();
+            
             d.Close();
             ms1.Position = 0;
             return new FileStreamResult(ms1, "application/pdf");
@@ -141,7 +153,7 @@ namespace ExpressBase.Web.Controllers
         //            if (col.ColumnName == c.Name)
         //            {
         //                ColumnText ct = new ColumnText(cb);
-        //                ct.SetSimpleColumn(new Phrase(c.Title), c.Left, repdef.PaperSize.Height - (c.Top + c.Height), c.Left + c.Width, repdef.PaperSize.Height - c.Top, 15, Element.ALIGN_LEFT);
+        //                ct.SetSimpleColumn(new Phrase(c.Title), c.Left, Report.Height - (c.Top + c.Height), c.Left + c.Width, Report.Height - c.Top, 15, Element.ALIGN_LEFT);
         //                ct.Go();
         //            }
         //        }
@@ -195,17 +207,17 @@ namespace ExpressBase.Web.Controllers
         //        writeColumnname(cb, s);
         //    }
         //}
-        public void PrintPageFooter()
-        {
-            foreach (EbReportSection s in Report.PageFooters)
-            {
-                //pageTotal(s);
-                //if (gtot == 1)
-                //{
-                //    grandTotal(s);
-                //}
-            }
-        }
+        //public void PrintPageFooter()
+        //{
+        //    foreach (EbReportSection s in Report.PageFooters)
+        //    {
+        //        //pageTotal(s);
+        //        //if (gtot == 1)
+        //        //{
+        //        //    grandTotal(s);
+        //        //}
+        //    }
+        //}
         //public void PrintReportHeader(Document d)
         //{
         //    foreach (EbReportSection s in repdef.ReportHeaders)

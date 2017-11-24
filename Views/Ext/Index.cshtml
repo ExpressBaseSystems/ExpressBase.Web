@@ -290,12 +290,18 @@
     Html.RenderPartial("PageFooter");
 }
 <script>
+
     $(document).scroll(function () {
+
         var y = $(this).scrollTop();
         if (y > $('.slider').height()) {
             $('#trial-btn').fadeIn();
         } else {
             $('#trial-btn').fadeOut();
         }
+
+        $('#btnGroupAddon').click(function () {
+                       document.getElementById("signup_form").submit();
+                    })
     });
 </script>

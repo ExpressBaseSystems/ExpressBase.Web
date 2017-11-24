@@ -14,7 +14,7 @@
     };
 
     this.createModal = function () {
-        var modalHTML = '<div class="fup" id="' + this.ContainerId + 'fontEditor"><div class="fontW">'
+        var modalHTML = '<div class="fup" id="' + this.ContainerId + 'fontEditor" style="display:none;"><div class="fontW">'
             + '<div class="FECont" style="z-index: 1000;">'
             + '<div class="modal-header">'
             + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + 'fontEditor\').hide(500);" >&times;</button>'
@@ -213,7 +213,7 @@
         this.loadFontStyle();
         this.loadFontFamily();
         this.loadFontSize();
-        $('body').off("click", "#" + this.ToggleId).on("click", "#" + this.ToggleId, this.toggleModal.bind(this));
+        $("#" + this.ToggleId).on("click", this.toggleModal.bind(this));
         $('#googleFont').on('change', this.loadFont.bind(this));
         $('#fontStyle').on('change', this.LoadFontStyle.bind(this));
         $('#fontSize').on('change', this.getFontSize.bind(this));

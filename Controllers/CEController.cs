@@ -349,7 +349,7 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data;
             return rlist;
         }
-
+        [HttpPost]
         public string GetColumns4Trial(string ds_refid, string parameter)
         {
             var redis = this.Redis;

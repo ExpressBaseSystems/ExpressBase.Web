@@ -61,11 +61,11 @@
 
     function login() {
         FB.login(function (response) {
-            if (response.authResponse) {
-                alert('Success!');
-            } else {
-                alert('Login Failed!');
-            }
+            //if (response.authResponse) {
+            //    alert('Success!');
+            //} else {
+            //    alert('Login Failed!');
+            //}
         }, { scope: 'email' });
     }
 

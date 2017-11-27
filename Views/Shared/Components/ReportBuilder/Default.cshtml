@@ -63,14 +63,9 @@
 
 </script>
 <div class="container-fluid">
-    <div class="row pgB" id="eb-rpt-container">
-        <div class="col-md-2 side-toolbar">
-            <div class="toolbox eb-toolBoxReport">
-                <div class="side-toolbar-head">
-                    Toolbox
-                    <i class="fa fa-wrench" aria-hidden="true"></i>
-                    <i class="fa fa-times pin" aria-hidden="true"></i>
-                </div>
+    <div class="row pgB eb-rpt-container" id="eb-rpt-container">
+        <div class="col-md-2 col-lg-2 col-sm 2 side-toolbar">
+            <div class="toolbox eb-toolBoxReport">               
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item active">
                         <a class="nav-link" data-toggle="tab" href="#genaral" role="tab">General</a>
@@ -93,8 +88,8 @@
                                 </ul>
                             </li>
                         </ul>
-                        <div class='Eb-shaps' data-toggle="collapse" data-target="#shapes">
-                            <i class="fa fa-plus" style="padding-right:5px"></i> Shapes
+                        <div class='Eb-shaps tool-box-div' data-toggle="collapse" data-target="#shapes">
+                            <i class="fa fa-plus"></i> Shapes
                             <div class="shapes-tank collapse" id="shapes">
                                 <button eb-type="Circle" class="btn draggable"><i class="fa fa-circle-thin fa-lg"></i></button>
                                 <button eb-type="Rect" class="btn draggable"><i class="fa fa-square-o fa-lg"></i></button>
@@ -139,11 +134,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8 col-md-offset-2" id="page-outer-cont">
+        <div class="col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2 page-outer-cont" id="page-outer-cont">
             <div class="page-outer-container">
                 <div class="ruler-top">
                     <div class="title">
-                        <select id="rulerUnit">
+                        <select class="form-control rulerUnit" id="rulerUnit">
                             <option value="cm">cm</option>
                             <option value="inch">inch</option>
                             <option value="px">pixel</option>
@@ -152,11 +147,11 @@
                     <div class='ruler' style="display:none"></div>
                 </div>
                 <div class='rulerleft' style="display:none"></div>
-                <div id="pageCanvas">                  
+                <div id="pageCanvas" class="pageCanvas">                  
                 </div>
             </div>
         </div>
-        <div class="col-md-2 col-md-offset-10 PGgrid">
+        <div class="col-md-2 col-lg-2 col-sm-2 col-lg-offset-10 col-sm-offset-10 col-md-offset-10 PGgrid">
             <div class="pGreportBuilder">
                 <div id="propGrid"></div>
             </div>

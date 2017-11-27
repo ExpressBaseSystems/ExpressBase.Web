@@ -232,7 +232,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.EbObject.Detail.push(obj);
         }
     };
-    
+
     this.pageSplitters = function () {
         var j = 0;      
         for (var sections in this.EbObjectSections) {            
@@ -403,7 +403,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             }
             obj.Title = Title;
             this.objCollection[Objid] = obj;
-            this.RefreshControl(obj);
+            this.RefreshControl(obj);          
         }
         else if (this.col.hasClass('dropped')) {
             this.dropLoc.append(this.col.css({ left: (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop }));
@@ -674,6 +674,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.objCollection[elemId].Height = this.convertTopoints(this.objCollection[elemId].Height);
         this.objCollection[elemId].Left = this.convertTopoints(this.objCollection[elemId].Left);
         this.objCollection[elemId].Top = this.convertTopoints(this.objCollection[elemId].Top);
+
         if (eb_typeCntl === 'ReportHeader') {       
             this.EbObject.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
@@ -788,24 +789,19 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 this.repExtern.splitGeneric(this.idArray, this.sizeArray);                
             }
             else if (pname === "DataSourceRefId") {
-                this.getDataSourceColoums(obj.DataSourceRefId);
-                this.RefreshControl(obj);
+                this.getDataSourceColoums(obj.DataSourceRefId);               
             }
             else if (pname === "PaperSize") {
-                this.setpageSize(obj);
-                this.RefreshControl(obj);
+                this.setpageSize(obj);                
             }
             else if (pname === "IsLandscape") {
-                this.setpageMode(obj);
-                this.RefreshControl(obj);
+                this.setpageMode(obj);                
             }
             else if (pname === "Image") {
-                this.addImageFn(obj);
-                this.RefreshControl(obj);
+                this.addImageFn(obj);                
             }
             else if (pname === "WaterMark") {
-                this.addWaterMarkFn(obj)
-                this.RefreshControl(obj);
+                this.addWaterMarkFn(obj)                
             }
             else {
                 this.RefreshControl(obj);

@@ -192,7 +192,6 @@
     font-size: 10px;
     overflow: hidden;
     background-color: #fbf7f7;
-    margin-top: 1px;
     display: inline-block;
     height: inherit;   
     border: 1px solid #ccc;
@@ -429,8 +428,7 @@
     height: 20px;    
     z-index: 4;
     display: inline-block;
-    float: left;
-    margin-top: 1px;
+    float: left;   
 }
 
 .measurement {

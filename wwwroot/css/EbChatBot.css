@@ -1,13 +1,4 @@
-﻿/*.eb-chat-frame {
-    position: fixed;
-    bottom: 0px;
-    right: 0px;
-    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.46);
-    min-width: 300px;
-    z-index: 99999999999999;
-}*/
-
-.eb-chat-cont {
+﻿.eb-chat-cont {
     display: none;
     position: fixed;
     height: 100%;
@@ -17,8 +8,9 @@
 
 .eb-chatBox {
     overflow-y: auto;
-    height: 95%;
-    padding-bottom: 30px;
+    height: 90%;
+    padding: 0px 5px;
+    padding-bottom: 60px;
     background-color: #e8e8e8;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23bdbdbd' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
 }
@@ -47,21 +39,20 @@
     text-align: left;
     font-size: 12px;
     font-family: sans-serif;
-    box-shadow: 0px 0px 5px 0px rgba(66, 139, 202, 0.15);
     padding: 2px 6px;
 }
 
 .msg-wraper-user {
     border-radius: 4px 7px 0px 7px;
     margin: 6px 5px 5px 50px;
-    background-color: #fffffc;
+    background-color: #fff;
     padding-right: 40px;
 }
 
 .msg-wraper-bot {
     border-radius: 7px 4px 7px 0px;
     margin: 6px 50px 6px 5px;
-    background-color: #fcfdff;
+    background-color: #fff;
     padding-right: 40px;
 }
 
@@ -118,13 +109,19 @@
     background: #428bca;
     border: none;
     outline: none;
+    padding: 2px;
     margin-left: 5px;
+}
+
+.eb-chat-inp-cont .btn {
+    padding: 6px 9px!important;
 }
 
 
 .btn-box .btn {
     color: #555;
-    background: #fcfdff;
+    background: #428bca;
+    color:white;
     font-size: 12px;
     border: solid 1px #e0e0e0;
 }
@@ -166,16 +163,19 @@
 }
 
 .bot-icon {
-    background: url(../images/robot2.png)center center no-repeat;
+    background: url(../images/svg/chatBot.svg)center center no-repeat;
     width: 26px;
     background-size: cover;
     height: 26px;
     display: inline-block;
     margin-bottom: -6px;
     border-radius: 24px;
+    background-color: #428bca;
 }
-
-.bot-icon-user {
+.eb-chat-head .bot-icon {
+    height: 50px;
+    width: 50px;
+}.bot-icon-user {
     background: url(../images/rob.jpg)center center no-repeat;
     width: 26px;
     background-size: cover;
@@ -198,7 +198,6 @@
 }
 
     .chat-date span {
-        background: #ffffff;
         border-radius: 15px;
         opacity: .8;
         padding: 2px 8px;
@@ -207,4 +206,15 @@
 
 .chat-typing {
     color: #999;
+}
+.inline-block{
+    display:inline-block;
+}
+.poweredby {
+    font-size: 10px;
+    font-family: arial;
+}
+.bot-head {
+    font-family: arial;
+    font-size: 20px;
 }

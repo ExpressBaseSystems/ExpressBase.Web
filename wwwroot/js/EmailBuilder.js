@@ -14,7 +14,9 @@
             commonO.Current_obj = this.EbObject;
         }
         else {
-            $('#summernote' + tabNum).append(this.EbObject.Body);
+            //console.log(this.EbObject);
+            //alert(this.EbObject.Body);
+            //$('#summernote' + tabNum).append(this.EbObject.Body);
         }
         this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
         this.Name = this.EbObject.Name;
@@ -50,7 +52,6 @@
     };
 
     this.DrawColumnTree = function (result) {
-        alert("hiii");
         $.each(result.columns, function (i, columnCollection) {
             $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {
@@ -65,7 +66,7 @@
     this.yyy = function (e) {
         var colVal = "Table" + $(e.target).parent().siblings("a").text().slice(-1) + "." + $(e.target).text().trim();
 
-        this.insertselected("«" + colVal + "»");
+        this.insertselected("{{" + colVal + "}}");
     };
 
     this.insertselected = function (text) {
@@ -75,7 +76,8 @@
     };
 
     this.SetCode = function (e) {
-        this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));
+        console.log($('#summernote' + tabNum).summernote('code'));
+        this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
         commonO.Current_obj = this.EbObject;
     }
 

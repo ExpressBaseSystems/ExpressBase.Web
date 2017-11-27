@@ -8,8 +8,8 @@
         height: '42cm'
     },//A3
     2: {
-        width: '21cm',
-        height: '29.7cm'
+        width: '595.276pt',
+        height: '841.8898pt'
     },//A4      
     3: {
         width: '14.8cm',
@@ -55,10 +55,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.rulertype = "cm";
     this.copyStack = null;
     this.copyORcut = null;
-    this.idCounter = {
-        EbCircleCounter: 0,
-        EbReportColCounter: 0,
-        EbRectCounter: 0,
+    this.idCounter = {       
+        EbReportColCounter: 0,        
         EbTableCounter: 0,
         EbImgCounter: 0,
         EbDateTimeCounter: 0,
@@ -67,7 +65,17 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         EbTextCounter: 0,
         EbBarcodeCounter: 0,
         EbQRcodeCounter: 0,
-        EbWaterMarkCounter: 0
+        EbWaterMarkCounter: 0,
+        EbCircleCounter: 0,
+        EbRectCounter: 0,
+        EbArrRCounter: 0,
+        EbArrLCounter: 0,
+        EbArrUCounter: 0,
+        EbArrDCounter: 0,
+        EbByArrHCounter: 0,
+        EbByArrVCounter: 0,
+        EbHlCounter: 0,
+        EbVlCounter: 0,
     };
 
     this.subSecIdCounter = {
@@ -118,6 +126,13 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         $("#" + obj.EbSid).attr("tabindex", "1");
         $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
+
+    this.convertTopoints = function (val) {
+        var pixel = val;       
+        var point = (pixel * 72) / 96;
+
+        return point;
+    }
 
     this.getDataSourceColoums = function (refid) {
         if (refid !== "") {
@@ -626,8 +641,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//drag stop fn of control
 
     this.savefile = function () {
-        this.EbObject.Height = $("#page").height();
-        this.EbObject.Width = $("#page").width();
+        this.EbObject.Height = this.convertTopoints($("#page").height());
+        this.EbObject.Width = this.convertTopoints($("#page").width());
         this.EbObject.PaperSize = this.type;
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         commonO.Current_obj = this.EbObject;
@@ -642,8 +657,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.subsec = $(subsec).attr("id");
         var eb_type = $(subsec).attr("eb-type");
         this.j = j;
-        this.objCollection[this.subsec].Width = $("#" + this.subsec).width();
-        this.objCollection[this.subsec].Height = $("#" + this.subsec).height();
+        this.objCollection[this.subsec].Width = this.convertTopoints($("#" + this.subsec).width());
+        this.objCollection[this.subsec].Height = this.convertTopoints($("#" + this.subsec).height());
+
         if (eb_type === 'ReportHeader') {
             this.EbObject.ReportHeaders.push(this.objCollection[this.subsec]);
         }
@@ -657,7 +673,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.EbObject.PageFooters.push(this.objCollection[this.subsec]);
         }
         else if (eb_type === 'ReportDetail') {
-            this.EbObject.Detail = this.objCollection[this.subsec];
+            this.EbObject.Detail.push(this.objCollection[this.subsec]);
         }
 
         $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
@@ -666,6 +682,11 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.findPageElements = function (k, elements) {
         var elemId = $(elements).attr('id');
         var eb_typeCntl = $("#" + this.subsec).attr("eb-type");
+        this.objCollection[elemId].Width = this.convertTopoints(this.objCollection[elemId].Width);
+        this.objCollection[elemId].Height = this.convertTopoints(this.objCollection[elemId].Height);
+        this.objCollection[elemId].Left = this.convertTopoints(this.objCollection[elemId].Left);
+        this.objCollection[elemId].Top = this.convertTopoints(this.objCollection[elemId].Top);
+
         if (eb_typeCntl === 'ReportHeader') {
             this.EbObject.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
@@ -754,7 +775,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         });
     };
 
-    this.init = function () {
+    this.init = function () {       
         this.repExtern = new ReportExtended();
         this.pg = new Eb_PropertyGrid("propGrid");
         if (this.EbObject === null) {
@@ -806,7 +827,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         }.bind(this);
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
     };//report execution start func
-
     this.init();
 };
 //background image

@@ -165,7 +165,7 @@
 .bot-icon {
     background: url(../images/svg/chatBot.svg)center center no-repeat;
     width: 26px;
-    background-size: cover;
+    background-size: 100%!important;
     height: 26px;
     display: inline-block;
     margin-bottom: -6px;
@@ -178,7 +178,7 @@
 }.bot-icon-user {
     background: url(../images/rob.jpg)center center no-repeat;
     width: 26px;
-    background-size: cover;
+    background-size: 100%!important;
     height: 26px;
     display: inline-block;
     margin-bottom: -6px;

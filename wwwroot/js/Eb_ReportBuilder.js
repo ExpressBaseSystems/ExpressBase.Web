@@ -674,31 +674,19 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.objCollection[elemId].Height = this.convertTopoints(this.objCollection[elemId].Height);
         this.objCollection[elemId].Left = this.convertTopoints(this.objCollection[elemId].Left);
         this.objCollection[elemId].Top = this.convertTopoints(this.objCollection[elemId].Top);
-
-        
-        
-        
-        
-        
-
-        if (eb_typeCntl === 'ReportHeader') {
-            this.EbObject.ReportHeaders[this.j].Fields = [];
+        if (eb_typeCntl === 'ReportHeader') {       
             this.EbObject.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
-        else if (eb_typeCntl === 'PageHeader') {
-            this.EbObject.PageHeaders[this.j].Fields = [];
+        else if (eb_typeCntl === 'PageHeader') {          
             this.EbObject.PageHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
-        else if (eb_typeCntl === 'ReportFooter') {
-            this.EbObject.ReportFooters[this.j].Fields = [];
+        else if (eb_typeCntl === 'ReportFooter') {           
             this.EbObject.ReportFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
-        else if (eb_typeCntl === 'PageFooter') {
-            this.EbObject.PageFooters[this.j].Fields = [];
+        else if (eb_typeCntl === 'PageFooter') {           
             this.EbObject.PageFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
-        else if (eb_typeCntl === 'ReportDetail') {
-            this.EbObject.Detail[this.j].Fields = [];
+        else if (eb_typeCntl === 'ReportDetail') {           
             this.EbObject.Detail[this.j].Fields.push(this.objCollection[elemId]);
         }
     };//........save/commit

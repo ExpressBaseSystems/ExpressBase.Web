@@ -19,6 +19,7 @@
     this.$form = null;
     this.formControls = [];
     this.formValues = {};
+    this.FB = null;
     this.EXPRESSbase_SOLUTION_ID;
     this.socialId = "1250935561719412";
 
@@ -92,6 +93,16 @@
     }.bind(this);
 
     this.greetings = function (name) {
+
+        this.FB.api("/" + this.socialId + "/picture?width=26&height=26",
+            function (response) {
+                if (response && !response.error) {
+                    //alert(response.data.url + "");
+                    this.$userMsgBox.find(".bot-icon-user").css('background', `url(${response.data.url})center center no-repeat`);
+                }
+            }.bind(this)
+        );
+
         var time = new Date().getHours();
         var greeting = null;
         if (time < 12) {

@@ -24,7 +24,8 @@ namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseNewController
     {
-        private Context2Js _c2js = new Context2Js();
+        private Context2Js _c2js;
+
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         [HttpGet]

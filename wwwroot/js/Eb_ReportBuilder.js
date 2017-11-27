@@ -103,7 +103,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.RefreshControl = function (obj) {
-        var NewHtml = obj.Html();
+        var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
         $.each(metas, function (i, meta) {
             var name = meta.name;
@@ -130,7 +130,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.convertTopoints = function (val) {
         var pixel = val;       
         var point = (pixel * 72) / 96;
-
         return point;
     }
 
@@ -158,7 +157,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         var j = 0;
         var pxlabel = 1;
         if (this.rulertype == "px") { pxlabel = 5; }
-        if (this.width.substring(0, this.width.length - 2) > 21) { width = ($('#pageCanvas').width() - 79) + 'px'; }
+        if (this.width.substring(0, this.width.length - 2) > 21) { width = ($('#PageContainer').width() - 79) + 'px'; }
         else { width = this.width;}
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
@@ -202,17 +201,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         }
     };
 
-    this.createPagecontainer = function () {
-        var $pageCanvas = $('#pageCanvas');
-        $pageCanvas.empty();
-        var PageContainer = $("<div id='PageContainer' style='margin-top: 20px;'></div>");
-        $pageCanvas.append(PageContainer);
+    this.createPage = function () {
         this.createHeaderBox();
-        return PageContainer;
-    };
-
-    this.createPage = function (PageContainer) {
-        PageContainer.append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'>`);
+        $("#PageContainer").append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'>`);       
         this.pageSplitters();
     };
 
@@ -223,16 +214,43 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $("#multiSplit").append(`<div class='multiSplitHbox' data_val='${i}' eb-type='MultiSplitBox' id='box${i }' style='width: 100%;'></div>`);
         }
     };
+    this.pushSubsecToRptObj = function (sections, obj) {
 
-    this.pageSplitters = function () {
-        for (var i in this.EbObjectSections) {
-            var sec = "Eb" + i;
-            var obj = new EbObjects[sec](this.EbObjectSections[i]);
-            $("#page").append(obj.Html());
-            //obj.BackColor = "transparent";
-            //this.RefreshControl(obj);
-            this.sectionArray.push("#" + this.EbObjectSections[i]);
+        if (sections === 'ReportHeader') {
+            this.EbObject.ReportHeaders.push(obj);
         }
+        else if (sections === 'PageHeader') {
+            this.EbObject.PageHeaders.push(obj);
+        }
+        else if (sections === 'ReportFooter') {
+            this.EbObject.ReportFooters.push(obj);
+        }
+        else if (sections === 'PageFooter') {
+            this.EbObject.PageFooters.push(obj);
+        }
+        else if (sections === 'ReportDetail') {
+            this.EbObject.Detail.push(obj);
+        }
+    };
+    
+    this.pageSplitters = function () {
+        var j = 0;      
+        for (var sections in this.EbObjectSections) {            
+            $("#page").append(`<div class='${sections}s' eb-type='${sections}' id='${this.EbObjectSections[sections]}' 
+            data_val='${j++}' style='width :100%;position: relative'> </div>`);
+            this.sectionArray.push("#" + this.EbObjectSections[sections]);  
+            
+            //zero section adding by default.              
+            var SubSec_obj = new EbObjects["Eb" + sections](this.EbObjectSections[sections] + "0");
+            $("#" + this.EbObjectSections[sections]).append(SubSec_obj.$Control.outerHTML());
+            SubSec_obj.SectionHeight = "100%";
+            SubSec_obj.BackColor = "transparent";           
+            this.objCollection[this.EbObjectSections[sections] + "0"] = SubSec_obj;
+            this.RefreshControl(SubSec_obj);
+            this.pg.addToDD(SubSec_obj);
+            this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.         
+        }       
+        this.repExtern.headerSecSplitter(this.sectionArray);
         this.headerBox1_Split();
     };//add page sections
 
@@ -246,13 +264,11 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.headerScaling = function () {
-        var _this = this;
-        this.repExtern.headerSecSplitter(this.sectionArray);
+        var _this = this;        
         this.repExtern.multisplit();
-        this.repExtern.box();        
-        $("#page").children().not(".gutter").each(this.setFirstSubDiv.bind(this));
+        this.repExtern.box();                
         $(".multiSplit").children().not(".gutter").each(this.setFirstMsSubBoxDiv.bind(this));
-    };//page sections splited using split.js
+    };
 
     this.setFirstMsSubBoxDiv = function (boxsub, obj) {
         var id = this.sectionArray[boxsub].slice(1) + "subBox" + 0;
@@ -261,18 +277,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         var focid = id.substring(0, id.indexOf('s')) + id.slice(-1);
         $("#" + id).attr("onclick", "$('#" + focid + "').focus();");
     };
-
-    this.setFirstSubDiv = function (i, obj) {
-        var id = obj.id + "0";
-        var objType = $(obj).attr("eb-type");
-        var SubSec_obj = new EbObjects["Eb" + objType](id);
-        $(obj).append(SubSec_obj.Html());
-        SubSec_obj.SectionHeight = "100%";
-        SubSec_obj.BackColor = "transparent";
-        this.objCollection[id] = SubSec_obj;
-        this.RefreshControl(SubSec_obj);
-        this.pg.addToDD(SubSec_obj);
-    }; //first sub section auto
 
     this.splitButton = function () {
         $('.headersections').children().not(".gutter").each(this.addButton.bind(this));
@@ -286,7 +290,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.splitDiv = function (e) {
         this.splitarray = [];
         this.btn_indx = $(e.target).parent().parent().attr("data-index");
-        $.each($('.page').children('.pageHeaders'), this.splitDiv_inner.bind(this));
+        $.each($('.page').children().not(".gutter"), this.splitDiv_inner.bind(this));
     };
 
     this.splitDiv_inner = function (i, obj) {
@@ -296,11 +300,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             var objType = $(obj).attr("eb-type");
             this.$sec.children('.gutter').remove();
             var SubSec_obj = new EbObjects["Eb" + objType](id);
-            this.$sec.append(SubSec_obj.Html());
+            this.$sec.append(SubSec_obj.$Control.outerHTML());
             SubSec_obj.BackColor = "transparent";
             this.objCollection[id] = SubSec_obj;
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
+            this.pushSubsecToRptObj(objType, SubSec_obj);//push subsec to report object.
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
             this.repExtern.splitGeneric(this.splitarray);                       
             this.multiSplitBoxinner();
@@ -387,7 +392,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (!this.col.hasClass('dropped')) {
             var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
             var obj = new EbObjects["Eb" + this.Objtype](Objid);
-            this.dropLoc.append(obj.Html());
+            this.dropLoc.append(obj.$Control.outerHTML());
             if (this.col.hasClass('coloums')) {
                 obj.Top = (this.posTop - this.dropLoc.offset().top) - PosOBjOFdrag['top'];
                 obj.Left = (this.posLeft - this.dropLoc.offset().left) - PosOBjOFdrag['left'];
@@ -659,23 +664,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.j = j;
         this.objCollection[this.subsec].Width = this.convertTopoints($("#" + this.subsec).width());
         this.objCollection[this.subsec].Height = this.convertTopoints($("#" + this.subsec).height());
-
-        if (eb_type === 'ReportHeader') {
-            this.EbObject.ReportHeaders.push(this.objCollection[this.subsec]);
-        }
-        else if (eb_type === 'PageHeader') {
-            this.EbObject.PageHeaders.push(this.objCollection[this.subsec]);
-        }
-        else if (eb_type === 'ReportFooter') {
-            this.EbObject.ReportFooters.push(this.objCollection[this.subsec]);
-        }
-        else if (eb_type === 'PageFooter') {
-            this.EbObject.PageFooters.push(this.objCollection[this.subsec]);
-        }
-        else if (eb_type === 'ReportDetail') {
-            this.EbObject.Detail.push(this.objCollection[this.subsec]);
-        }
-
         $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
     };//.........save/commit
 
@@ -786,9 +774,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
             this.pg.addToDD(this.EbObject);
             $('#PageContainer,.ruler,.rulerleft').empty();
-            this.ruler();
-            this.pgC = this.createPagecontainer();
-            this.createPage(this.pgC);
+            this.ruler();           
+            this.createPage();
             this.DragDrop_Items();
             //this.minimap();
         }

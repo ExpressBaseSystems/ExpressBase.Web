@@ -393,8 +393,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 obj.Left = (this.posLeft - this.dropLoc.offset().left) - PosOBjOFdrag['left'];
             }
             else {
-                obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
-                obj.Left = (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];
+                obj.Top = (this.posTop - this.dropLoc.offset().top) /*- this.positionTandL['top']*/;
+                obj.Left = (this.posLeft - this.dropLoc.offset().left)/* - this.positionTandL['left']*/;
             }
             obj.Title = Title;
             this.objCollection[Objid] = obj;
@@ -687,19 +687,30 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.objCollection[elemId].Left = this.convertTopoints(this.objCollection[elemId].Left);
         this.objCollection[elemId].Top = this.convertTopoints(this.objCollection[elemId].Top);
 
+        
+        
+        
+        
+        
+
         if (eb_typeCntl === 'ReportHeader') {
+            this.EbObject.ReportHeaders[this.j].Fields = [];
             this.EbObject.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'PageHeader') {
+            this.EbObject.PageHeaders[this.j].Fields = [];
             this.EbObject.PageHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'ReportFooter') {
+            this.EbObject.ReportFooters[this.j].Fields = [];
             this.EbObject.ReportFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'PageFooter') {
+            this.EbObject.PageFooters[this.j].Fields = [];
             this.EbObject.PageFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
         else if (eb_typeCntl === 'ReportDetail') {
+            this.EbObject.Detail[this.j].Fields = [];
             this.EbObject.Detail[this.j].Fields.push(this.objCollection[elemId]);
         }
     };//........save/commit

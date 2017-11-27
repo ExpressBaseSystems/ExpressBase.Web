@@ -64,7 +64,7 @@ namespace ExpressBase.Web.Controllers
         PdfContentByte cb;
         public IActionResult Index()
         {
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-887-1604" });
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-916-1633" });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
             cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", Report.DataSourceRefId));
@@ -146,6 +146,7 @@ namespace ExpressBase.Web.Controllers
                         {
                             column_val = dt[0][columnindex].ToString();
                         }
+                        columnindex++;
                     }
                 }
                 var urx = field.Width + field.Left;
@@ -156,9 +157,6 @@ namespace ExpressBase.Web.Controllers
                 ct.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);
                 ct.Go();
             }
-
-            columnindex++;
-
             printingTop += section.Height;
         }
         //public void writeColumnname(PdfContentByte cb, EbReportSection s)

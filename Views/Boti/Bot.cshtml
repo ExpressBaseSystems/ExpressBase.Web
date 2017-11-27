@@ -52,6 +52,7 @@
             FB.api('/me', function (response) {
                 chatBotObj.greetings(response.name);
                 chatBotObj.socilalId = response.id;
+                chatBotObj.FB = FB;
             });
         } else {
             // The person is not logged into your app or we are unable to tell.

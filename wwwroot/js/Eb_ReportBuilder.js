@@ -641,8 +641,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//drag stop fn of control
 
     this.savefile = function () {
-        this.EbObject.Height = $("#page").height();
-        this.EbObject.Width = $("#page").width();
+        this.EbObject.Height = this.convertTopoints($("#page").height());
+        this.EbObject.Width = this.convertTopoints($("#page").width());
         this.EbObject.PaperSize = this.type;
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         commonO.Current_obj = this.EbObject;
@@ -659,8 +659,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.j = j;
         this.objCollection[this.subsec].Width = this.convertTopoints($("#" + this.subsec).width());
         this.objCollection[this.subsec].Height = this.convertTopoints($("#" + this.subsec).height());
-        if (eb_type === 'ReportHeader') {
 
+        if (eb_type === 'ReportHeader') {
             this.EbObject.ReportHeaders.push(this.objCollection[this.subsec]);
         }
         else if (eb_type === 'PageHeader') {

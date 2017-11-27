@@ -38,7 +38,9 @@
         if (response.status === 'connected') {
             // Logged into your app and Facebook.
             FB.api('/me', function (response) {
+                chatBotObj.FB = FB;            
                 chatBotObj.greetings(response.name);
+                chatBotObj.socilalId = response.id;
             });
         } else {
             // The person is not logged into your app or we are unable to tell.
@@ -49,11 +51,9 @@
     function login() {
         FB.login(function (response) {
             if (response.authResponse) {
-                //alert('Success!');
-                ;
+                statusChangeCallback(response);
             } else {
-                //alert('Login Failed!');
-                ;
+                alert('Login Failed!'); 
             }
         }, { scope: 'email' });
     }
@@ -67,7 +67,7 @@
 
     window.fbAsyncInit = function () {
         FB.init({
-            appId: '141908109794829'//'1525758114176201',
+            appId: '141908109794829',//'1525758114176201',
             cookie: true,  // enable cookies to allow the server to access
             // the session
             xfbml: true,  // parse social plugins on this page

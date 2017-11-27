@@ -255,7 +255,7 @@
                 var $el = $(el);
                 var type = $el.attr("eb-type").trim();
                 var id = type + (this.controlCounters[type + "Counter"])++;
-                var $ctrl = $(new EbObjects["Eb" + type](id).Html());
+                var $ctrl = new EbObjects["Eb" + type](id).$Control;
                 $el.remove();
 
                 var t = $("<div class='controlTile'>" + $ctrl.outerHTML() + "</div>");

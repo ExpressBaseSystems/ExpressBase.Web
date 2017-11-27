@@ -64,17 +64,21 @@ namespace ExpressBase.Web.Controllers
         PdfContentByte cb;
         public IActionResult Index()
         {
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-887-1604" });
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-889-1606" });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
-            cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", Report.DataSourceRefId));
-            if (cresp.IsNull)
-                cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = Report.DataSourceRefId });
+            if(Report.DataSourceRefId != string.Empty)
+            {
+                cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", Report.DataSourceRefId));
+                if (cresp.IsNull)
+                    cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = Report.DataSourceRefId });
 
-            __columns = (cresp.Columns.Count > 1) ? cresp.Columns[1] : cresp.Columns[0];
+                __columns = (cresp.Columns.Count > 1) ? cresp.Columns[1] : cresp.Columns[0];
 
-            dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Report.DataSourceRefId, Draw = 1, Start = 0, Length = 100 });
-            dt = dresp.Data;
+                dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Report.DataSourceRefId, Draw = 1, Start = 0, Length = 100 });
+                dt = dresp.Data;
+            }
+            
 
 
             //total.Clear();
@@ -129,7 +133,6 @@ namespace ExpressBase.Web.Controllers
         }
 
         public void DrawFields(dynamic section) {
-            var columnindex = 0;
             var column_name = "";
             var column_val = "";
             foreach (EbReportFields field in section.Fields)
@@ -137,16 +140,27 @@ namespace ExpressBase.Web.Controllers
                 if (field.GetType() == typeof(EbText)) {
                     column_val = field.Title;
                 }
-                else if (field.GetType() == typeof(EbReportCol)) {
+                else if (field.GetType() == typeof(EbReportCol))
+                {
                     var table = field.Title.Split('.')[0];
                     column_name = field.Title.Split('.')[1];
+
+                    var columnindex = 0;
                     foreach (var col in __columns)
                     {
                         if (col.ColumnName == column_name)
                         {
                             column_val = dt[0][columnindex].ToString();
+                            continue;
                         }
+                        columnindex++;
                     }
+                }
+                else if (field.GetType() == typeof(EbCircle))
+                {
+                   // cb.SetColorStroke();
+                    //cb.Circle(field., 150f, 50f);
+                    cb.Stroke();
                 }
                 var urx = field.Width + field.Left;
                 var ury = Report.Height - (printingTop + field.Height);
@@ -156,9 +170,6 @@ namespace ExpressBase.Web.Controllers
                 ct.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);
                 ct.Go();
             }
-
-            columnindex++;
-
             printingTop += section.Height;
         }
         //public void writeColumnname(PdfContentByte cb, EbReportSection s)

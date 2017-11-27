@@ -35,8 +35,10 @@
     </div>
 </div>
 @{
-    foreach (var element in Dict.Keys)
+    if (Dict.Keys.Count > 0)
     {
+        foreach (var element in Dict.Keys)
+        {
         <div class="row objitems" name="objBox">
             <div class="col-md-1">
                 <input type="checkbox" aria-label="...">
@@ -64,8 +66,9 @@
                 </div>
             }
         </div>
+            }
+        }
     }
-}
 
 <script>
     $(document).ready(function () {

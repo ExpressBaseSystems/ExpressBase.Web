@@ -52,20 +52,32 @@
     };
 
     this.DrawColumnTree = function (result) {
+        var ctype;
         $.each(result.columns, function (i, columnCollection) {
             $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
-            $.each(columnCollection, function (j, obj) {
-                $("#data-table-list ul[id='t" + i + "'").append("<li class='styl'>" + obj.columnName + "</li>");
+            $.each(columnCollection, function (j, obj) {               
+                $("#data-table-list ul[id='t" + i + "'").append("<li value ='" + obj.type + "'  class='styl'>" + obj.columnName + "</li>");
+               
             });
         });
+        
         $('#data-table-list').treed();
 
         $('.styl').off('dblclick').on('dblclick',this.yyy.bind(this));
     };
-
+   
     this.yyy = function (e) {
+        var dict = new Array();
+        
+        var obj = new Object({ Name: $(e.target).text().trim(), Type: $(e.target).attr("value") });
+        dict.push($(e.target).text().trim());
+        //dict.push({
+        //    key: $(e.target).text().trim(),
+        //    value: obj
+        //});
         var colVal = "Table" + $(e.target).parent().siblings("a").text().slice(-1) + "." + $(e.target).text().trim();
-
+        this.EbObject.Parameters = dict;
+        console.log(this.EbObject.Parameters);
         this.insertselected("{{" + colVal + "}}");
     };
 
@@ -76,7 +88,7 @@
     };
 
     this.SetCode = function (e) {
-        console.log($('#summernote' + tabNum).summernote('code'));
+        //console.log($('#summernote' + tabNum).summernote('code'));
         this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
         commonO.Current_obj = this.EbObject;
     }

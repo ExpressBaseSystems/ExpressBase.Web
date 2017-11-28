@@ -41,8 +41,9 @@ namespace ExpressBase.Web.Controllers
         public List<double> total = new List<double>();
         Dictionary<int, double> totalOfColumn = new Dictionary<int, double>();
         PdfContentByte cb;
-        
-       
+        ColumnText ct;
+
+
 
         //public IActionResult Index()
         //{
@@ -51,9 +52,9 @@ namespace ExpressBase.Web.Controllers
         //    return View();
         //}
 
-            public IActionResult Index()
+        public IActionResult Index()
         {
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-932-1649" });
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-934-1651" });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
             if(Report.DataSourceRefId != string.Empty)
@@ -78,6 +79,9 @@ namespace ExpressBase.Web.Controllers
                 rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
             }
             Document d = new Document(rec/*, repdef.Margins.Left, repdef.Margins.Right, repdef.Margins.Top, repdef.Margins.Bottom*/);
+            //PdfPage page = d.AddPage();
+            //page.Size = pageSize;
+            //XGraphics gfx = XGraphics.FromPdfPage(page);
             MemoryStream ms1= new MemoryStream();
             PdfWriter writer = PdfWriter.GetInstance(d, ms1);
             writer.Open();
@@ -85,7 +89,7 @@ namespace ExpressBase.Web.Controllers
             writer.PageEvent = new HeaderFooter(this);
             writer.CloseStream = true;//important
             cb = writer.DirectContent;
-            ColumnText ct = new ColumnText(cb);
+            ct = new ColumnText(cb);
             ct.SetSimpleColumn(new Phrase("column_val"), 100F, 100F, 200F, 200F, 15, Element.ALIGN_LEFT);
             ct.Go();
             foreach (EbReportHeader r_header in Report.ReportHeaders)
@@ -117,11 +121,15 @@ namespace ExpressBase.Web.Controllers
         public void DrawFields(dynamic section) {
             var column_name = "";
             var column_val = "";
+            float urx;
+            float ury;
+            float llx;
+            float lly;
             foreach (EbReportFields field in section.Fields)
             {
                 if (field.GetType() == typeof(EbText)) {
                     column_val = field.Title;
-                    DrawTextBox(field, column_val);
+                    //DrawTextBox(field, column_val);               
                 }
                 else if (field.GetType() == typeof(EbReportCol))
                 {
@@ -137,25 +145,26 @@ namespace ExpressBase.Web.Controllers
                         }
                         columnindex++;
                     }
-                    DrawTextBox(field, column_val);
+                    //DrawTextBox(field, column_val);                   
                 }
                 else if (field.GetType() == typeof(EbCircle))
                 {
                      DrawCircle(field);
-                }               
+                }
+                urx = field.Width + field.Left;
+                ury = Report.Height - (printingTop + field.Height);
+                llx = field.Left;
+                lly = Report.Height - (printingTop + field.Top + field.Height);
+
+                ColumnText ct1 = new ColumnText(cb);
+                ct1.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);
+                ct1.Go();
             }
             printingTop += section.Height;
         }
         public void DrawTextBox(EbReportFields field, string column_val)
         {
-            float urx = field.Width + field.Left;
-            float ury = Report.Height - (printingTop + field.Height);
-            float llx = field.Left;
-            float lly = Report.Height - (printingTop + field.Top + field.Height);
-
-            ColumnText ct = new ColumnText(cb);
-            ct.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);
-            ct.Go();
+ 
         }
         public void DrawCircle(EbReportFields field)
         {

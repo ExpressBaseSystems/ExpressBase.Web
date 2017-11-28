@@ -127,6 +127,7 @@
     <script type="text/javascript" src="~/js/Eb_ObjectCommon.js"></script>
     <script type="text/javascript" src="~/js/ImageUploader.js"></script>@*amal*@
     <script type="text/javascript" src="~/js/EmailBuilder.js"></script>@*bini*@
+    <script type="text/javascript" src="~/js/Menu.js"></script>
 
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
@@ -149,6 +150,9 @@
 <body>
     <div id="tenatDtls" class="container-fluid">
         <div class="row">
+            @*<div class="ebsidedivtoolbar"></div>*@
+
+
             @{if (ViewBag.wc == "tc")
                 {
                     @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
@@ -192,13 +196,13 @@
                                             @{
                                                 if (ViewBag.wc == "dc")
                                                 {
-                                                        <div class="Eb-CommonMenuStyle" id="topmenu">
-                                                            <a href="" class="btn"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                                                        </div>
+                                                    <div class="Eb-CommonMenuStyle" id="topmenu">
+                                                        <a href="" class="btn"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                                                    </div>
 
                                                 }
                                             }
-                                            <div id="objList" style="height:93%; overflow-y:auto"></div>
+                                            <div id="objList" style="height:86%; overflow-y:auto"></div>
                                             <div class="input-group">
                                                 <div class="input-group-btn">
                                                     <button type="button" id="dropbuttn" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -206,7 +210,6 @@
                                                     </button>
                                                     <ul class="dropdown-menu" id="MyDropDownId">
                                                         <li><a href="#">All</a></li>
-                                                        <li><a href="#">Application</a></li>
                                                     </ul>
                                                 </div>
                                                 <input type="text" class="form-control" id="searchobj">
@@ -219,7 +222,14 @@
                                 </div>
                             </div>
                         </div>
-                                                }
+                    }
+                    else
+                    {
+                        <div id="EbsideBar" class="col-md-3" style="height:100%;display:none;">
+                            Html.RenderPartial("_SidebarMenu");
+                        </div>
+
+                    }
                 }
 
                 @RenderBody()
@@ -243,10 +253,18 @@
     }
 </style>
 <script>
-    @*var menu = new menujs('@ViewBag.wc');
-    $("#layout_div").data("menu", menu);*@
+    var menu = new menujs('@ViewBag.wc');
+    $("#layout_div").data("menu", menu);
 
-    $('document').ready(function () {
+    @*  $('document').ready(function () {
+        if ('@ViewBag.wc' == "tc") {
+            $('#submen').click(function () {
+                $('#EbsideBar').animate({ width: 'toggle' });
+            });
+        }
+    });*@
+
+    @* $('document').ready(function () {
         $('#submen').click(function () {
             if ('@ViewBag.wc' == "dc" || '@ViewBag.wc' == "uc") {
                 $("#ObjModal").modal('show');
@@ -262,46 +280,6 @@
             }
         });
 
-        $('#MyDropDownId li').click(function () {
-            $('#dropbuttn').text($(this).text());
-        });
-
-        $("#searchobj").on("keyup", function (e) {
-            if ($('#dropbuttn').text() === 'All') {
-                var f = false;
-                var srch = $(this).val().toLowerCase();
-                alert(srch);
-                $('[name=head4]').each(function () {
-                    $(this).parent().parent().hide();
-                    var head = $(this).text().toLowerCase();
-                    if (head.match(srch)) {
-                        $(this).parent().parent().show();
-                        f = true;
-                    }
-                });
-                if (!f)
-                    $("#notfound").text('Item not found.......');
-                else
-                    $("#notfound").text('');
-            }
-            else {
-                var searchBy = $('#dropbuttn').text();
-                var f = false;
-                var srch = $(this).val().toLowerCase();
-                $('[name=' + searchBy + ']').each(function () {
-                    $(this).parent().parent().parent().parent().hide();
-                    var head = $(this).text().toLowerCase();
-                    if (head.match(srch)) {
-                        $(this).parent().parent().parent().parent().show();
-                        f = true;
-                    }
-                });
-                if (!f)
-                    $("#notfound").text('Item not found.......');
-                else
-                    $("#notfound").text('');
-            }
-        });
 
         $('.list-group a').on('click', function () {
             var $this = $(this),
@@ -314,7 +292,7 @@
             });
             $('.brdCrumb').html($bc.prepend('<a href="#"> Home</a>'));
         })
-    })
+    })*@
     EbFonts = {};
     EbFontsCallback = function (data, status) {
         EbFonts = data;

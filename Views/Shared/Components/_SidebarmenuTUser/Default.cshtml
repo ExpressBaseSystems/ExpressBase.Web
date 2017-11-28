@@ -1,4 +1,8 @@
-﻿<style>
+﻿@{
+    @using Newtonsoft.Json;
+    var obj = JsonConvert.SerializeObject(ViewBag.Object);
+}
+<style>
     #ObjModal .close {
         margin-top: -25px;
     }
@@ -12,60 +16,61 @@
 <script>
 
     $(".outer").prepend(`@Html.Raw(ViewBag.menu)`);
+    menu.resultObj = @Html.Raw(obj);
 
-    $(".sub-menu a").click(function (e) {
-        var json = $(e.target).parent().next("div").attr("data-json");
-        var Obj = JSON.parse(json);
-        var ctrlAct = $(e.target).parent().next("div").attr("data-action");
-        var ctrlActObj = JSON.parse(ctrlAct);
-        //$(e.target).text().indexOf("(");
-        //$(e.target).text().substring(0, 18)
-        //$(".modal-title").text("Home/");
-        AppendList(Obj, ctrlActObj);
+    //$(".sub-menu a").click(function (e) {
+    //    var json = $(e.target).parent().next("div").attr("data-json");
+    //    var Obj = JSON.parse(json);
+    //    var ctrlAct = $(e.target).parent().next("div").attr("data-action");
+    //    var ctrlActObj = JSON.parse(ctrlAct);
+    //    //$(e.target).text().indexOf("(");
+    //    //$(e.target).text().substring(0, 18)
+    //    //$(".modal-title").text("Home/");
+    //    AppendList(Obj, ctrlActObj);
 
-    });
+    //});
 
-    function AppendList(Obj, ctrlActObj) {
-        $(".modal-body #objList").empty();
-        $.each(Obj, function (i, _obj) {
-            $(".modal-body #objList").append(`<a href='../${ctrlActObj.Controller}/${ctrlActObj.Action}?refid=${_obj.Refid}'>
-                <div class="col-md-6 objitems" name="objBox" data-refid='${_obj.Refid}' data-action= '${JSON.stringify(ctrlActObj)}'>
-                    <div class="col-md-1 obj-icon">
-                        <div class="obj-ic-cir">
-                            <i class="fa fa-file-text" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="col-md-10">
-                        <h4 name="head4" style="color:black;">${_obj.ObjName }</h4>
-                        <p class="text-justify">${_obj.Description}</p>
-                        <a id="labels">
-                            <span name="Version" class="label label-default">v ${_obj.VersionNumber}</span>
-                            <span name="Application" class="label objbox-label">${_obj.EbType}</span>
-                        </a>
-                    </div>
-                    <div class="col-md-1 objbox-footer">
-                        <input type="button" class="btn fa-input fa-lg" value="&#xf054;" style="font-family: FontAwesome;background: transparent;">
-                    </div>
-                </div></a>`);
-        });
+    //function AppendList(Obj, ctrlActObj) {
+    //    $(".modal-body #objList").empty();
+    //    $.each(Obj, function (i, _obj) {
+    //        $(".modal-body #objList").append(`<a href='../${ctrlActObj.Controller}/${ctrlActObj.Action}?refid=${_obj.Refid}'>
+    //            <div class="col-md-6 objitems" name="objBox" data-refid='${_obj.Refid}' data-action= '${JSON.stringify(ctrlActObj)}'>
+    //                <div class="col-md-1 obj-icon">
+    //                    <div class="obj-ic-cir">
+    //                        <i class="fa fa-file-text" aria-hidden="true"></i>
+    //                    </div>
+    //                </div>
+    //                <div class="col-md-10">
+    //                    <h4 name="head4" style="color:black;">${_obj.ObjName }</h4>
+    //                    <p class="text-justify">${_obj.Description}</p>
+    //                    <a id="labels">
+    //                        <span name="Version" class="label label-default">v ${_obj.VersionNumber}</span>
+    //                        <span name="Application" class="label objbox-label">${_obj.EbType}</span>
+    //                    </a>
+    //                </div>
+    //                <div class="col-md-1 objbox-footer">
+    //                    <input type="button" class="btn fa-input fa-lg" value="&#xf054;" style="font-family: FontAwesome;background: transparent;">
+    //                </div>
+    //            </div></a>`);
+    //    });
 
-        //$(".objitems").click(function () {
-        //    var refid = $(this).attr("data-refid");
-        //    var ctrlAct = $(this).attr("data-action");
-        //    var ctrlActObj = JSON.parse(ctrlAct);
-        //    var url = `../${ctrlActObj.Controller}/${ctrlActObj.Action}`;
-        //    calltoObj(url, refid);
-        //});
+    //    //$(".objitems").click(function () {
+    //    //    var refid = $(this).attr("data-refid");
+    //    //    var ctrlAct = $(this).attr("data-action");
+    //    //    var ctrlActObj = JSON.parse(ctrlAct);
+    //    //    var url = `../${ctrlActObj.Controller}/${ctrlActObj.Action}`;
+    //    //    calltoObj(url, refid);
+    //    //});
 
-        //$(".objbox-footer input").click(function () {
-        //    var obj = $(this).parents().find(".objitems").first();
-        //    var refid = $(obj).attr("data-refid");
-        //    var ctrlAct = $(obj).attr("data-action");
-        //    var ctrlActObj = JSON.parse(ctrlAct);
-        //    var url = `../${ctrlActObj.Controller}/${ctrlActObj.Action}`;
-        //    calltoObj(url, refid);
-        //});
-    }
+    //    //$(".objbox-footer input").click(function () {
+    //    //    var obj = $(this).parents().find(".objitems").first();
+    //    //    var refid = $(obj).attr("data-refid");
+    //    //    var ctrlAct = $(obj).attr("data-action");
+    //    //    var ctrlActObj = JSON.parse(ctrlAct);
+    //    //    var url = `../${ctrlActObj.Controller}/${ctrlActObj.Action}`;
+    //    //    calltoObj(url, refid);
+    //    //});
+    //}
 
     //function calltoObj(url, refid) {
     //    $.LoadingOverlay("show");

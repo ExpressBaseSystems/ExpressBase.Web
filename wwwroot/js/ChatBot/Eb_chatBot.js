@@ -16,7 +16,6 @@
     this.EXPRESSbase_SOLUTION_ID;
     this.socialId = null;
     this.picture = null;
-
     this.init = function () {
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatBox);
@@ -96,7 +95,8 @@
     };
 
     this.getForm = function ($msg) {
-        $.get('https://expressbase.azurewebsites.net/Bote/GetSamp?refid=eb_roby_dev-eb_roby_dev-0-809-1488&socialId='+this.socialId,
+        //$.get('https://expressbase.azurewebsites.net/Bote/GetSamp?refid=eb_roby_dev-eb_roby_dev-0-809-1488&socialId=' + this.socialId,
+        $.get('/Bote/GetSamp?refid=eb_roby_dev-eb_roby_dev-0-809-1488&socialId=' + this.socialId,
             function (data) {
                 this.$form = data;
                 this.setFormControls();

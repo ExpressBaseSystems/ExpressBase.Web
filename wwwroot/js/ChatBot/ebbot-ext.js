@@ -34,7 +34,6 @@
     iframe.id = "ebbot_iframe";
     iframe.frameBorder = "0";
     iframe.allowFullscreen = true;
-
     iframecont.appendChild(chatHead);
     iframecont.appendChild(iframe);
     document.body.appendChild(iframecont);

@@ -6,8 +6,9 @@
     padding: 14px;
 }
 .Eb-bot-header .navbar-default {
-    background: var(--ebbg) !important;
-    background-image: var(--ebbgimage) !important;
+    background-color:transparent;
+    /*background: var(--ebbg) !important;
+    background-image: var(--ebbgimage) !important;*/
 }
 .Eb-bot-header .navbar-default img {
         height: 100%;
@@ -87,8 +88,9 @@
     .bot-section2 .tiles {
         padding: 10px;
     }
-    .bot-section2 .tiles h3{
+    .bot-section2 .tiles h4{
        color:#666;
+       font-size:20px;
     }
     .bot-section2 .tiles .tile-body{
         height: 100%;
@@ -114,14 +116,15 @@
     
 }
 .bot-pricing-body .price-tile {
-    height:300px;
-    border:1px solid #ccc;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 4px;
 }
 .price-tile-headsec {
     height: 80px;
     width: 100%;
-    background: #0481da;
-    padding: 10px;  
+    background: #1e8db8;
+    padding: 10px;
 }
 .headsec-textarea {
     display: inline-block;
@@ -139,3 +142,33 @@
 .bot-image-bg img{
     width:100%;
 }
+.price-tile-bdy {
+    height: 230px;
+}
+    .pricing-items {
+        text-align: center;
+        padding: 10px;
+        font-size: 16px;       
+        font-weight:400;
+    }
+    .mr-8{
+        margin-top:8px;
+    }
+.Enterprise-price {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.chatBoticons {
+    font-size: 35px;
+    color: #198bbe;
+}
+.bot-faq{
+    padding-bottom:50px;
+}
+    .bot-faq .answer{
+        margin-left:10px;
+    }
+    .bot-faq .faqs {
+        margin-top:20px;
+    }

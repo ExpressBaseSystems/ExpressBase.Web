@@ -138,3 +138,14 @@
 @{
     Html.RenderPartial("PageFooter");
 }
+<script>
+    $(document).scroll(function () {
+
+        var y = $(this).scrollTop();
+        if (y > $('.apaas').height()) {           
+            $('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
+        } else {            
+            $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
+        }
+    });
+</script>

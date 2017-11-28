@@ -203,7 +203,7 @@
                          Scheduled Reports for automation<br />
                          State-of-the art Designer on the web
                     </p> 
-                    Go to<a href="#" class="prod-link">report.expressbase.com</a>
+                    Go to<a href="#" class="prod-link">reports.expressbase.com</a>
                 </div>
             </div>
             <img class="col-md-5 col-lg-5 col-sm-6 col-xs-12 eb-banner2-img" src="~/images/EbReportBuilder.png">
@@ -226,7 +226,7 @@
                         Initiate and Automate business workflows from the bot itself<br />
                         An elegant solution for Data collection, Surveys and even Enterprise forms
                     </p>
-                    Go to<a href="#" class="prod-link">bot.expressbase.com</a>
+                    Go to<a href="#" class="prod-link">bots.expressbase.com</a>
                 </div>
             </div>
         </div>
@@ -295,8 +295,10 @@
         var y = $(this).scrollTop();
         if (y > $('.slider').height()) {
             $('#trial-btn').fadeIn();
+            $('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
         } else {
             $('#trial-btn').fadeOut();
+            $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
         }
 
         $('#btnGroupAddon').click(function () {

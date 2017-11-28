@@ -1,53 +1,67 @@
 ﻿@using ExpressBase.Common.Objects;
 @using ExpressBase.Objects;
+@{
+    @using Newtonsoft.Json;
+    var obj = JsonConvert.SerializeObject(ViewBag.Object);
+}
 <div class="side-menu-container">
     <ul class="outer" style="padding-left:0;">
         <li>
-            <a href="ListApplications" class="list-group-item">
-                <i class="fa fa-align-right"></i> Applications
+            <a href="#" class="list-group-item menuApp">
+                <i class="fa fa-object-group"></i>Application
             </a>
         </li>
         <li>
             <a href="#" class="list-group-item collapsed" data-toggle="collapse" data-target="#dropdown2">
                 <i class="fa fa-object-group"></i>Objects<i class="fa fa-caret-down pull-right"></i>
             </a>
-            <ul class="sub-menu collapse" id="dropdown2">
-                
+            <ul class="sub-menuObj collapse" id="dropdown2">
+                @{  foreach (var Op in Enum.GetValues(typeof(EbObjectType)))
+                    {
+                        var intop = (int)Op;
+                        <li><a class="list-group-item" data-key=@intop><i class="fa fa-caret-right"></i> @Op</a></li>
+
+                    }
+
+                }
+
             </ul>
         </li>
     </ul>
 </div>
 <script>
-    $("#dropdown2").append(`@Html.Raw(ViewBag.menu)`);
+    //$("#Application").append(`@Html.Raw(ViewBag.menu)`);
+    menu.resultObj = @Html.Raw(obj);
 
-    $(".sub-menu a").click(function (e) {
-        var json = $(e.target).parent().next("div").attr("data-json");
-        var Obj = JSON.parse(json);
-        AppendList(Obj);
 
-    });
+    //$(".sub-menu a").click(function (e) {
+    //    var json = $(e.target).parent().next("div").attr("data-json");
+    //    var Obj = JSON.parse(json);
+    //    AppendList(Obj);
 
-    function AppendList(Obj) {
-        $("#topmenu a").attr("href","../Eb_Object/Index?objid="+null+"&objtype="+ Obj[0].EbObjectType+"")
-        $(".modal-body #objList").empty();
-        $.each(Obj, function (i, _obj) {
-            $(".modal-body #objList").append(`<a href='../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType }'>
-                <div class='col-md-6 objitems' name='objBox'>
-                    <div class='col-md-1 obj-icon'>
-                        <div class='obj-ic-cir'>
-                            <i class='fa fa-file-text' aria-hidden='true'></i>
-                        </div>
-                    </div>
-                    <div class='col-md-10'>
-                        <h4 name='head4' style='color:black;'>${_obj.ObjName}</h4>
-                        <p class='text-justify'>${_obj.Description}</p>
-                    </div>
-                    <div class='col-md-1 objbox-footer'>
-                        <input type='button' class='btn fa-input fa-lg' value='&#xf054;' style='font-family: FontAwesome;background: transparent;'>
-                    </div>
-                </div></a>`);
-        });
-    }
+    //});
+
+    //function AppendList(Obj) {
+    //    $("#topmenu a").attr("href","../Eb_Object/Index?objid="+null+"&objtype="+ Obj[0].EbObjectType+"")
+    //    $(".modal-body #objList").empty();
+    //    $.each(Obj, function (i, _obj) {
+    //        $(".modal-body #objList").append(`<a href='../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType }'>
+    //            <div class='col-md-6 objitems' name='objBox'>
+    //                <div class='col-md-1 obj-icon'>
+    //                    <div class='obj-ic-cir'>
+    //                        <i class='fa fa-file-text' aria-hidden='true'></i>
+    //                    </div>
+    //                </div>
+    //                <div class='col-md-10'>
+    //                    <h4 name='head4' style='color:black;'>${_obj.ObjName}</h4>
+    //                    <p class='text-justify'>${_obj.Description}</p>
+    //                </div>
+    //                <div class='col-md-1 objbox-footer'>
+    //                    <input type='button' class='btn fa-input fa-lg' value='&#xf054;' style='font-family: FontAwesome;background: transparent;'>
+    //                </div>
+    //            </div></a>`);
+    //    });
+    //}
     //function LoadObjectList44(type44) {
     //    event.preventDefault();
     //    $(".modal-body #objList").empty();

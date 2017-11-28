@@ -307,27 +307,38 @@ namespace ExpressBase.Web.Controllers
             
         }
 
-        [HttpGet]
-        public IActionResult CreateApplication()
+        [HttpGet][HttpPost]
+        public IActionResult CreateApplication(int itemid)
         {
-            ViewBag.applicationname = "";
-            ViewBag.description = "";
-            ViewBag.Obj_id = "";
+            if(itemid > 0)
+            {
+                IServiceClient client = this.ServiceClient;
+                var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest { id = itemid });
+                ViewBag.applicationname = resultlist.Data["applicationname"];
+                ViewBag.description = resultlist.Data["description"];
+                ViewBag.Obj_id = itemid;
+            }
+            else
+            {
+                ViewBag.applicationname = "";
+                ViewBag.description = "";
+                ViewBag.Obj_id = "";
+            }
             return View();
         }
 
-        [HttpPost]
-        public IActionResult CreateApplication(int i)
-        {
-            var req = this.HttpContext.Request.Form;
+        
+        //public IActionResult CreateApplication(int i)
+        //{
+        //    var req = this.HttpContext.Request.Form;
 
-            IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest{ id =Convert.ToInt32(req["itemid"]) });
-            ViewBag.applicationname = resultlist.Data["applicationname"];
-            ViewBag.description = resultlist.Data["description"];
-            ViewBag.Obj_id = req["itemid"];
-            return View();          
-        }
+        //    IServiceClient client = this.ServiceClient;
+        //    var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest{ id =Convert.ToInt32(req["itemid"]) });
+        //    ViewBag.applicationname = resultlist.Data["applicationname"];
+        //    ViewBag.description = resultlist.Data["description"];
+        //    ViewBag.Obj_id = req["itemid"];
+        //    return View();          
+        //}
 
         public IActionResult SaveApplications()
         {

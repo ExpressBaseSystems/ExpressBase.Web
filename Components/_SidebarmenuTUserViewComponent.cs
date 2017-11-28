@@ -45,7 +45,7 @@ namespace ExpressBase.Web.Components
                     <li><a href = '#' class='list-group-item collapsed' data-toggle='collapse' data-target='#dropdown1_" + obj.Key + @"'>
                         <i class='fa fa-cog'></i> " + resultlist.AppList[obj.Key].AppName + @"<i class='fa fa-caret-down pull-right'></i>
                     </a>
-                    <ul class='sub-menu collapse' id='dropdown1_" + obj.Key + @"'>");
+                    <ul class='sub-menuObj collapse' id='dropdown1_" + obj.Key + @"'>");
 
                 foreach (var val in obj.Value.Types)
                 {
@@ -55,14 +55,16 @@ namespace ExpressBase.Web.Components
                         ctrlAction.Controller = "DV";
                         ctrlAction.Action = "dv";
                     }
-                    sb.Append("<li><a class='list-group-item' href='#'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
-                    var json = JsonConvert.SerializeObject(val.Value.Objects);
                     var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
-                    sb.Append("<div id='EbType_" + val.Key + "' style='display:none' data-json='"+json+"' data-action = '"+ ctrlaction + "' ></div>");
+                    sb.Append("<li><a class='list-group-item' href='#' data-key='"+ val.Key + "' data-Appid='"+ obj.Key + "' data-action = '" + ctrlaction + "'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
+                    //var json = JsonConvert.SerializeObject(val.Value.Objects);
+                    //var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
+                    //sb.Append("<div id='EbType_" + val.Key + "' style='display:none' data-json='"+json+"' data-action = '"+ ctrlaction + "' ></div>");
                 }
                 sb.Append("</ul></li>");
             }
 
+            ViewBag.Object = resultlist;
             ViewBag.menu = sb.ToString();
             return View();
         }

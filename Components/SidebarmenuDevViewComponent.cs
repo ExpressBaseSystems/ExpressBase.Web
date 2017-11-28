@@ -25,24 +25,30 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
-            var resultlist = new SidebarDevResponse();
-            resultlist = this.Redis.Get<SidebarDevResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
-            if (resultlist == null || resultlist.Data == null)
-            {
-                resultlist = this.ServiceClient.Get<SidebarDevResponse>(new SidebarDevRequest ());
-                this.Redis.Set<SidebarDevResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console), resultlist);
-            }
+            var resultlist = this.ServiceClient.Get<SidebarDevResponse>(new SidebarDevRequest ());
+            //this.Redis.Set<SidebarDevResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console), resultlist);
 
-            StringBuilder sb = new StringBuilder();
+            // StringBuilder sb = new StringBuilder();
+            //sb.Append(@"<li><a href='#' class='list-group-item collapsed' data-toggle = 'collapse' data-target '#dropdown1' ><i class='fa fa-align-right'></i> Applications</a>
+            //            <ul class='sub-menu collapse' id='dropdown1'>");
 
-            foreach (var obj in resultlist.Data)
-            {
-                var json = JsonConvert.SerializeObject(resultlist.Data[obj.Key].Objects);
-                sb.Append(@"<li><a class='list-group-item'><i class='fa fa-caret-right'></i>"+ ((EbObjectType)obj.Key).ToString() + @"</a></li>");
-                sb.Append("<div id='EbType_" + obj.Key + "' style='display:none' data-json='" + json + "'></div>");
-            }
+            //foreach (var obj in resultlist.AppList)
+            //{
+            //    sb.Append(@"<li><a class='list-group-item' href='..Dev/CreateApplication?itemid=" +obj.Key +@"'><i class='fa fa-caret-right'></i>" + obj.Value.AppName + @"</a></li>");
+            //}
+            //sb.Append("</ul></li>");
 
-            ViewBag.menu = sb.ToString();
+            //sb.Append(@"<li><a href='#' class='list-group-item collapsed' data-toggle = 'collapse' data-target '#dropdown1' ><i class='fa fa-align-right'></i> Applications</a>
+            //            <ul class='sub-menu collapse' id='dropdown1'>");
+
+            //foreach (var obj in resultlist.Data)
+            //{
+            //    //var json = JsonConvert.SerializeObject(resultlist.Data[obj.Key].Objects);
+            //    sb.Append(@"<li><a class='list-group-item' data-key=" + obj.Key + @"><i class='fa fa-caret-right'></i>" + ((EbObjectType)obj.Key).ToString() + @"</a></li>");
+            //}
+            //sb.Append("</ul></li>");
+            ViewBag.Object = resultlist;
+            //ViewBag.menu = sb.ToString();
             return View();
         }
     }

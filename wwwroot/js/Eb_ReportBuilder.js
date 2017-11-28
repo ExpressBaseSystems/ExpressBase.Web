@@ -648,14 +648,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.savefile = function () {
         this.EbObject.Height = this.convertTopoints($("#page").height());
         this.EbObject.Width = this.convertTopoints($("#page").width());
-        this.EbObject.PaperSize = this.type;
+        this.EbObject.PaperSize = this.type;      
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         commonO.Current_obj = this.EbObject;
     };//save
 
     this.findPageSections = function (i, sections) {
         this.sections = $(sections).attr('id');
-        $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
+        $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));       
     };//........save/commit
 
     this.findPageSectionsSub = function (j, subsec) {
@@ -664,7 +664,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.j = j;
         this.objCollection[this.subsec].Width = this.convertTopoints($("#" + this.subsec).width());
         this.objCollection[this.subsec].Height = this.convertTopoints($("#" + this.subsec).height());
-        $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
+        $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));       
     };//.........save/commit
 
     this.findPageElements = function (k, elements) {
@@ -693,9 +693,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//........save/commit
 
     this.Commit = function () {
-        this.EbObject.Height = $("#page").height();
-        this.EbObject.Width = $("#page").width();
-        this.EbObject.PaperSize = this.type;
+        this.EbObject.Height = this.convertTopoints($("#page").height());
+        this.EbObject.Width = this.convertTopoints($("#page").width());
+        this.EbObject.PaperSize = this.type;       
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         commonO.Current_obj = this.EbObject;
     };//commit

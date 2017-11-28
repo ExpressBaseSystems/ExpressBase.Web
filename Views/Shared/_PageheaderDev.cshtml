@@ -30,7 +30,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand"><i class="fa fa-bars fa-lg" id="submen" alt="Brand"></i></a>
+            @*<a class="navbar-brand"><i class="fa fa-bars fa-lg" id="submen" alt="Brand"></i></a>*@
             <a class="navbar-brand" href="#"><img alt="Brand" src="~/images/EB_Logo.png"></a>
         </div>
         @*<div id="chatbtn" class="chat-icon"><i class="fa fa-comment-o" aria-hidden="true"></i></div>*@        
@@ -64,7 +64,7 @@
                         <li class="divider"></li>
                         <li><a href="@preference">My Preferences<span class="fa fa-user pull-right"></span></a></li>
                         <li class="divider"></li>
-                        <li><a href="@wc">Sign Out<span class="fa fa-sign-out pull-right"></span></a></li>
+                        <li><a href="../TenantUser/Logout">Sign Out<span class="fa fa-sign-out pull-right"></span></a></li>
                     </ul>
                 </li>
             </ul>
@@ -86,7 +86,8 @@
             success: function (result) {
                 _container.html(result);
                 $.LoadingOverlay("hide");
-                $('#EbsideBar').animate({ width: 'toggle' });
+                $("#ObjModal").modal('hide');
+                //$('#EbsideBar').animate({ width: 'toggle' });
             }
         });
     }

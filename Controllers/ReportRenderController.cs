@@ -37,21 +37,23 @@ namespace ExpressBase.Web.Controllers
 
         EbReport Report = new EbReport();
         Font f = FontFactory.GetFont(FontFactory.HELVETICA, 7);
-
         float printingTop = 0;
-
         public List<double> total = new List<double>();
         Dictionary<int, double> totalOfColumn = new Dictionary<int, double>();
         PdfContentByte cb;
-        public IActionResult Index()
+        
+       
+
+        //public IActionResult Index()
+        //{
+        //    var resultlist = this.ServiceClient.Get<EbObjectListResponse>(new EbObjectObjListRequest { EbObjectType = 3 });
+        //    ViewBag.reports = resultlist.Data;
+        //    return View();
+        //}
+
+            public IActionResult Index()
         {
-            var resultlist = this.ServiceClient.Get<EbObjectListResponse>(new EbObjectObjListRequest { EbObjectType = 3 });
-            ViewBag.reports = resultlist.Data;
-            return View();
-        }
-            public IActionResult RenderReport(string refid)
-        {
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-932-1649" });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
             if(Report.DataSourceRefId != string.Empty)
@@ -76,14 +78,16 @@ namespace ExpressBase.Web.Controllers
                 rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
             }
             Document d = new Document(rec/*, repdef.Margins.Left, repdef.Margins.Right, repdef.Margins.Top, repdef.Margins.Bottom*/);
-            MemoryStream ms1 = new MemoryStream();
+            MemoryStream ms1= new MemoryStream();
             PdfWriter writer = PdfWriter.GetInstance(d, ms1);
             writer.Open();
             d.Open();
             writer.PageEvent = new HeaderFooter(this);
             writer.CloseStream = true;//important
             cb = writer.DirectContent;
-
+            ColumnText ct = new ColumnText(cb);
+            ct.SetSimpleColumn(new Phrase("column_val"), 100F, 100F, 200F, 200F, 15, Element.ALIGN_LEFT);
+            ct.Go();
             foreach (EbReportHeader r_header in Report.ReportHeaders)
             {
                 DrawFields(r_header);
@@ -105,8 +109,6 @@ namespace ExpressBase.Web.Controllers
             {
                 DrawFields(r_footer);
             }
-
-            
             d.Close();
             ms1.Position = 0;
             return new FileStreamResult(ms1, "application/pdf");
@@ -131,7 +133,7 @@ namespace ExpressBase.Web.Controllers
                         if (col.ColumnName == column_name)
                         {
                             column_val = dt[0][columnindex].ToString();
-                            continue;
+                            //continue;
                         }
                         columnindex++;
                     }
@@ -139,7 +141,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else if (field.GetType() == typeof(EbCircle))
                 {
-                    DrawCircle(field);
+                     DrawCircle(field);
                 }               
             }
             printingTop += section.Height;

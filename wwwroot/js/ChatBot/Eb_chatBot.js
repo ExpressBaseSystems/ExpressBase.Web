@@ -1,12 +1,5 @@
 ﻿var Eb_chatBot = function () {
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
-    this.$chatHead = $(`<div class="eb-chat-head">
-                            <div class="inline-block">
-                                <div class="bot-head">&nbsp; Live ChatBot</div>
-                                <div class="poweredby">&nbsp; &nbsp; Powered by EXPESSbase</span></div>
-                            </div>
-                        </div>`);
-    this.$chatHead.prepend('<div class="bot-icon"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
@@ -25,11 +18,7 @@
     this.picture = null;
 
     this.init = function () {
-
-        //$("#chatbtn").click(this.chatBtn_click);
-
         $("body").append(this.$chatCont);
-        this.$chatCont.append(this.$chatHead);
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
         this.$TypeAnim = $(`<div><span class="chat-typing">Typing</span><svg class="lds-typing" width="10%" height="10%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
@@ -48,17 +37,9 @@
         $("body").on("click", ".msg-cont [name=ctrledit]", this.ctrlEdit);
         $("body").on("click", ".eb-chatBox [name=formsubmit]", this.formSubmit);
         $("body").on("click", ".btn-box [name=form-opt]", this.startFormInteraction);
-        //$("body").on("click", ".eb-chat-head .btn", this.close);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
-        this.chatBtn_click();
+        this.showDate();
     };
-
-    //this.close = function () {
-    //    alert(("id"));
-    //    var iframe = window.parent.document.getElementById('#ebbot_iframe');
-    //    iframe.hide(200);
-    //    alert(iframe.attr("id"));
-    //}.bind(this);
 
     this.txtboxKeyup = function (e) {
         if (e.ctrlKey && e.which === 10)/////////////////////////////
@@ -83,16 +64,6 @@
         $e.val('');
 
     }.bind(this);
-
-    this.chatBtn_click = function (e) {
-        this.$chatCont.toggle(200);
-        this.showDate();
-
-        //this.getMsg('The setting for a paragraph continues down here.There is a blockquote next to it.');
-        //this.sendMsg('The setting for a paragraph continues down here. There is a blockquote next to it. You may want to make that stand out. The setting for a paragraph continues down here.');
-
-    }.bind(this);
-
     this.greetings = function (name) {
         this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.picture.data.url})center center no-repeat`);
         var time = new Date().getHours();
@@ -219,10 +190,6 @@
         $msg.insertAfter($ctrl);
         $('.eb-chatBox').scrollTop(99999999999);
     };
-
-    //this.HideTypingAnim = function (msg) {
-    //    this.$TypeAnim.hide();
-    //}.bind(this);
 
     this.getMsg = function (msg) {
         var $msg = this.$botMsgBox.clone();

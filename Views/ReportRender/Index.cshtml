@@ -20,7 +20,7 @@
     $('#render').on('click', function () {
         $.post('../ReportRender/RenderReport',
             { refid: $('#repdd').val() }, function (data) {
-                $('#resultreport').append(data);
+                console.log(data);
             }
         );
 

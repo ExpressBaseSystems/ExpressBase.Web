@@ -39,7 +39,7 @@
             // Logged into your app and Facebook.
             FB.api('/me?fields=id,name,picture', function (response) {
                 chatBotObj.FB = FB;            
-                chatBotObj.socilalId = response.id;
+                chatBotObj.socialId = response.id;
                 chatBotObj.picture = response.picture;
                 chatBotObj.greetings(response.name);
             });
@@ -68,7 +68,7 @@
 
     window.fbAsyncInit = function () {
         FB.init({
-            appId: '1525758114176201',//'141908109794829',//,
+            appId: '141908109794829',//,'1525758114176201',//
             cookie: true,  // enable cookies to allow the server to access
             // the session
             xfbml: true,  // parse social plugins on this page

@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
 }
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
 <div class="container-fluid pd-0">
     <div class="Eb-bot-header">
@@ -16,68 +17,241 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#" data-toggle="modal" data-target="#login-modal">Sign In</a></li>                        
+                        <li><a class="hvr-underline-from-center" href="~/EBProducts/Demos">Demos</a></li> 
+                        <li><a href="#" class="hvr-underline-from-center" data-toggle="modal" data-target="#login-modal">Sign In</a></li>
+                        <li class="btn-trial" id="trial-btn" style="display:none;"><a href="#">Try for FREE</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </div>
-    <div class="bot-banner">
-        <div class="col-md-4 pull-right bot-signup">
-            <div class="bot-signup-bdy">
-                <h4 class="both">
-                   Get Started for FREE
-                </h4>
-                <div class="form-group">
-                    <input type="email" class="form-control bot-signup-input" id="name" name="name" placeholder="Name" />
-                </div>
-                <div class="form-group">                  
-                        <input type="email" class="form-control bot-signup-input" id="email" name="email" placeholder="Email" />                  
-                </div>
-                <div class="form-group">                  
-                        <input type="password" class="form-control bot-signup-input" id="password" name="password" placeholder="Password" />                  
-                </div>
-                <div class="form-group">
-                    <h6 class="bot-s-agrement">By clicking 'Sign Up', you agree to the Terms of Service and Privacy Policy.</h6>
-                    <button type="submit" id="bot-signUP" class="btn bot-signup-btn">
-                        SIGN UP
-                    </button>
-                </div>
-                <div class="form-group text-center">
-                    <div class="col-sm-12">
+</div>
+    <section class="slider">
+        <div class="container-fluid">
+            <div class="row eb-banner">
+                <div class="col-md-12 no-padd eb-banner-text-img-sec">
+                    <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner">
+                        <h2>Fast growing Small & Midsize Businesses <br />deserve rapidly evolving software.</h2>
                         <p>
-                            Or Sign In with
+                            The only RAD Platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
+                            Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
+                            Efficiently manage change in business processes with versioning & branching of objects - from a simple SQL statement to a complex Form.
                         </p>
                     </div>
+                    <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs banner-img pull-right">
+                        <img src=""/>
+                    </div>
                 </div>
-                <div class="form-group text-center">
-                    <div class="btn-group btn-group-justified">
-                        <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
-                            <i class="fa fa-facebook fa-lg"></i>
-                            <span class="hidden-xs"></span>
-                        </a>
-                        <a href="@ViewBag.ServiceUrl/auth/twitter" class="btn btn-lg btn-block">
-                            <i class="fa fa-twitter fa-lg text-info"></i>
-                            <span class="hidden-xs"></span>
-                        </a>
-                        <a href="#" class="btn btn-lg btn-block">
-                            <i class="fa fa-linkedin fa-lg"></i>
-                            <span class="hidden-xs"></span>
-                        </a>
-                        <a href="@ViewBag.ServiceUrl/auth/googleoauth" class="btn btn-lg btn-block">
-                            <i class="fa fa-google-plus fa-lg text-danger"></i>
-                            <span class="hidden-xs"></span>
-                        </a>
-                        <a href="@ViewBag.ServiceUrl/auth/github" class="btn btn-lg btn-block">
-                            <i class="fa fa-github fa-lg text-muted"></i>
-                            <span class="hidden-xs"></span>
-                        </a>
+                <div class="col-md-12 no-padd get-start-sec">
+                    <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-4">
+                        <div class="no-creditcared">No credit card required.</div>
+
+                        <form id="signup_form" action="~/Ext/TenantExtSignup" method="post">
+                            <div class="input-group">
+                                <input type="email" name="email" class="form-control" placeholder="Enter your email">
+                                <span class="btn input-group-addon" id="btnGroupAddon">Get Started</span>
+                            </div>
+                        </form>
+                        <div class="form-group social-btn-sec">
+                            <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                            <div class="form-inline">
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                                    <i class="fa fa-facebook fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                                    <i class="fa fa-twitter fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="#">
+                                    <i class="fa fa-linkedin fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                                    <i class="fa fa-google-plus fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                                    <i class="fa fa-github fa-lg"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<section class="bot-section2 bg-fafa">
+    <div class="container-fluid">
+        <div class="header-section text-center">
+            <h3>Heading</h3>
+        </div>
+        <div class="col-md-5 bot-image-bg">
+            <img src="~/images/botscreenshot.png" />
+        </div>
+        <div class="col-md-7">
+            <div class="col-md-12 nopadding">
+                <div class="col-md-4 tiles">
+                    <div class="tile-body">
+                        <h3 class="text-center">heading</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel quam arcu. Quisque eu arcu.
+                        </p> 
+                    </div>
+                </div>
+                <div class="col-md-4 tiles">
+                    <div class="tile-body">
+                        <h3 class="text-center">heading</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel quam arcu. Quisque eu arcu.
+                        </p> 
+                    </div>
+                </div>
+                <div class="col-md-4 tiles">
+                    <div class="tile-body">
+                        <h3 class="text-center">heading</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel quam arcu. Quisque eu arcu.
+                        </p> 
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 nopadding">
+                <div class="col-md-4 tiles">
+                    <div class="tile-body">
+                        <h3 class="text-center">heading</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel quam arcu. Quisque eu arcu.
+                        </p> 
+                    </div>
+                </div>
+                <div class="col-md-4 tiles">
+                    <div class="tile-body">
+                        <h3 class="text-center">heading</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel quam arcu. Quisque eu arcu.
+                        </p> 
+                    </div>
+                </div>
+                <div class="col-md-4 tiles">
+                    <div class="tile-body">
+                        <h3 class="text-center">heading</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel quam arcu. Quisque eu arcu.
+                        </p> 
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="bot-login-sec">
-        @await Component.InvokeAsync("EbProductPage")
+</section>
+<section class="bot-video">
+    <div class="container">
+        <div class="header-section text-center">
+            <h3>Heading2</h3>
+        </div>
+        <div class="bot-video-body">
+
+        </div>
     </div>
+</section>
+<section class="bot-pricing bg-fafa">
+    <div class="container">
+        <div class="header-section text-center">
+            <h3>Pricing</h3>
+        </div>
+        <div class="col-md-12 nopadding bot-pricing-body">
+            <div class="col-md-3">
+                <div class="price-tile">
+                    <div class="price-tile-headsec">
+                       <div class="headsec-textarea">  Free For Ever </div>
+                        <div class="headsec-amount">$14</div>
+                      
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="price-tile">
+                    <div class="price-tile-headsec">
+                       
+                        <div class="headsec-textarea"> Standard</div>
+                        <div class="headsec-amount">$!3</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="price-tile">
+                    <div class="price-tile-headsec">
+                       
+                        <div class="headsec-textarea"> Pro</div>
+                        <div class="headsec-amount">$12</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="price-tile">
+                    <div class="price-tile-headsec">
+                        
+                        <div class="headsec-textarea">Enterprise</div>
+                        <div class="headsec-amount">$10</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="container getStarted">
+    <div class="text-center">
+        <h3>Sign Up now. Start building your Business Apps...</h3>
+    </div>
+    <div class="col-md-12 no-padd get-start-sec">
+        <div class="col-md-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-xs-12 col-sm-offset-4">
+            <div class="no-creditcared">No credit card required.</div>
+            <form id="signup_form" action="~/Ext/TenantExtSignup" method="post">
+                <div class="input-group">
+                    <input type="email" class="form-control" name="email" placeholder="Enter your email">
+                    <span class="btn input-group-addon" id="btnGroupAddon">Get Started</span>
+                </div>
+            </form>
+            <div class="form-group social-btn-sec">
+                <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
+                <div class="form-inline">
+                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                        <i class="fa fa-facebook fa-lg"></i>
+                    </a>
+                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                        <i class="fa fa-twitter fa-lg"></i>
+                    </a>
+                    <a class="btn socialbtns" href="#">
+                        <i class="fa fa-linkedin fa-lg"></i>
+                    </a>
+                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                        <i class="fa fa-google-plus fa-lg"></i>
+                    </a>
+                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                        <i class="fa fa-github fa-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@{
+    Html.RenderPartial("PageFooter");
+}
+<div class="bot-login-sec">
+    @await Component.InvokeAsync("EbProductPage")
 </div>
+
+<script>
+
+    $(document).scroll(function () {
+
+        var y = $(this).scrollTop();
+        if (y > $('.slider').height()) {
+            $('#trial-btn').fadeIn();
+        } else {
+            $('#trial-btn').fadeOut();
+        }
+
+        $('#btnGroupAddon').click(function () {
+              document.getElementById("signup_form").submit();
+        })
+    });
+</script>

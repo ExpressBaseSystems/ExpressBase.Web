@@ -690,6 +690,7 @@ footer {
     border-right: 1px solid #ccc;
     overflow-x: hidden;
     background-color: #153076;
+    padding-right: 0px;
 }
 
     #EbsideBar::-webkit-scrollbar-track {
@@ -719,14 +720,15 @@ footer {
         line-height: 41px !important;
         vertical-align: baseline;
         border: 0;
-        padding: 0px 15px;
+        //padding: 0px 15px;
+        padding: 0px 0px;
     }
 
 
     .side-menu-container .outer .list-group-item {
         background-color: #153076;
         color: white;
-        font-size: 15px;
+        font-size: 13px;
         font-family: Tahoma;
     }
 
@@ -886,3 +888,10 @@ footer {
     }
 
 /*EB COMMON MENUBAR*/
+/*ebsidedivtoolbar*/
+.ebsidedivtoolbar{
+    height:100vh;
+    width:40px;
+    background-color:peru;
+    position:fixed;
+}

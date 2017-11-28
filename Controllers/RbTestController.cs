@@ -48,48 +48,52 @@ namespace ExpressBase.Web.Controllers
         DataSourceDataResponse dresp = new DataSourceDataResponse();
         ColumnColletion __columns = null;
 
-        EbReport repdef = new EbReport();
+        EbReport Report = new EbReport();
         Font f = FontFactory.GetFont(FontFactory.HELVETICA, 7);
 
-        float printHeight = 0;
-        float sTop = 0;
-        float sTopVal;
-        float dtheight = 0;
+        float printingTop = 0;
+        //float printHeight = 0;
+        //float sTop = 0;
+        //float sTopVal;
+        //float dtheight = 0;
 
         public List<double> total = new List<double>();
         Dictionary<int, double> totalOfColumn = new Dictionary<int, double>();
-        int totalofColumnCounter = 0;
-        int gtot = 0;
+        //int totalofColumnCounter = 0;
+        //int gtot = 0;
         PdfContentByte cb;
         public IActionResult Index()
         {
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-868-1572" });
-            var dsobj = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-889-1606" });
+            Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
-            cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", "eb_roby_dev-eb_roby_dev-2-810-1489"));
-            if (cresp.IsNull)
-                cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = "eb_roby_dev-eb_roby_dev-2-810-1489" });
+            if(Report.DataSourceRefId != string.Empty)
+            {
+                cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", Report.DataSourceRefId));
+                if (cresp.IsNull)
+                    cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = Report.DataSourceRefId });
 
-            __columns = (cresp.Columns.Count > 1) ? cresp.Columns[1] : cresp.Columns[0];
+                __columns = (cresp.Columns.Count > 1) ? cresp.Columns[1] : cresp.Columns[0];
 
-            dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = "eb_roby_dev-eb_roby_dev-2-810-1489", Draw = 1, Start = 0, Length = 100 });
-            dt = dresp.Data;
-            //repDefInitialize();
-            //repfldInitialize();
+                dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Report.DataSourceRefId, Draw = 1, Start = 0, Length = 100 });
+                dt = dresp.Data;
+            }
+            
 
-            total.Clear();
-            totalOfColumn.Clear();
-            totalofColumnCounter = 0;
-            gtot = 0;
+
+            //total.Clear();
+            //totalOfColumn.Clear();
+            //totalofColumnCounter = 0;
+            //gtot = 0;
 
             Rectangle rec;
-            if (repdef.IsLandscape)
+            if (Report.IsLandscape)
             {
-                rec = new iTextSharp.text.Rectangle(repdef.Height, repdef.Width);
+                rec = new iTextSharp.text.Rectangle(Report.Height, Report.Width);
             }
             else
             {
-                rec = new iTextSharp.text.Rectangle(repdef.Width, repdef.Height);
+                rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
             }
             Document d = new Document(rec/*, repdef.Margins.Left, repdef.Margins.Right, repdef.Margins.Top, repdef.Margins.Bottom*/);
             MemoryStream ms1 = new MemoryStream();
@@ -99,26 +103,75 @@ namespace ExpressBase.Web.Controllers
             writer.PageEvent = new HeaderFooter(this);
             writer.CloseStream = true;//important
             cb = writer.DirectContent;
-            //if (cresp.Columns.Count > 0)
-            //{
-            //    foreach (fields s in repdef.ReportHeaders)
 
-            //        foreach (EbReportSection s in repdef.Details)
-            //    {
-            //        dtheight = s.Height;
-            //        sTopVal = sTop = /*s.Top*/ 842 - 50;
-            //        CalculatePositions(s);
-            //        addRows(cb, s, d);
-            //    }
-            //}
-            ColumnText ct = new ColumnText(cb);
-            ct.SetSimpleColumn(new Phrase("data"), 34, 750, 580, 317, 15, Element.ALIGN_LEFT);
-            ct.Go();
+            foreach (EbReportHeader r_header in Report.ReportHeaders)
+            {
+                DrawFields(r_header);
+
+            }
+            foreach (EbPageHeader p_header in Report.PageHeaders)
+            {
+                DrawFields(p_header);
+            }
+            foreach (EbReportDetail detail in Report.Detail)
+            {
+                DrawFields(detail);
+            }
+            foreach (EbPageFooter p_footer in Report.PageFooters)
+            {
+                DrawFields(p_footer);
+            }
+            foreach (EbReportFooter r_footer in Report.ReportFooters)
+            {
+                DrawFields(r_footer);
+            }
+
+            
             d.Close();
             ms1.Position = 0;
             return new FileStreamResult(ms1, "application/pdf");
         }
 
+        public void DrawFields(dynamic section) {
+            var column_name = "";
+            var column_val = "";
+            foreach (EbReportFields field in section.Fields)
+            {
+                if (field.GetType() == typeof(EbText)) {
+                    column_val = field.Title;
+                }
+                else if (field.GetType() == typeof(EbReportCol))
+                {
+                    var table = field.Title.Split('.')[0];
+                    column_name = field.Title.Split('.')[1];
+
+                    var columnindex = 0;
+                    foreach (var col in __columns)
+                    {
+                        if (col.ColumnName == column_name)
+                        {
+                            column_val = dt[0][columnindex].ToString();
+                            continue;
+                        }
+                        columnindex++;
+                    }
+                }
+                else if (field.GetType() == typeof(EbCircle))
+                {
+                   // cb.SetColorStroke();
+                    //cb.Circle(field., 150f, 50f);
+                    cb.Stroke();
+                }
+                var urx = field.Width + field.Left;
+                var ury = Report.Height - (printingTop + field.Height);
+                var llx = field.Left;
+                var lly = Report.Height - (printingTop + field.Top + field.Height);
+                ColumnText ct = new ColumnText(cb);
+                ct.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);
+                ct.Go();
+            }
+            printingTop += section.Height;
+        }
         //public void writeColumnname(PdfContentByte cb, EbReportSection s)
         //{
         //    foreach (EbReportField c in s.Fields)
@@ -128,7 +181,7 @@ namespace ExpressBase.Web.Controllers
         //            if (col.ColumnName == c.Name)
         //            {
         //                ColumnText ct = new ColumnText(cb);
-        //                ct.SetSimpleColumn(new Phrase(c.Title), c.Left, repdef.PaperSize.Height - (c.Top + c.Height), c.Left + c.Width, repdef.PaperSize.Height - c.Top, 15, Element.ALIGN_LEFT);
+        //                ct.SetSimpleColumn(new Phrase(c.Title), c.Left, Report.Height - (c.Top + c.Height), c.Left + c.Width, Report.Height - c.Top, 15, Element.ALIGN_LEFT);
         //                ct.Go();
         //            }
         //        }
@@ -182,17 +235,17 @@ namespace ExpressBase.Web.Controllers
         //        writeColumnname(cb, s);
         //    }
         //}
-        public void PrintPageFooter()
-        {
-            foreach (EbReportSection s in repdef.PageFooters)
-            {
-                //pageTotal(s);
-                //if (gtot == 1)
-                //{
-                //    grandTotal(s);
-                //}
-            }
-        }
+        //public void PrintPageFooter()
+        //{
+        //    foreach (EbReportSection s in Report.PageFooters)
+        //    {
+        //        //pageTotal(s);
+        //        //if (gtot == 1)
+        //        //{
+        //        //    grandTotal(s);
+        //        //}
+        //    }
+        //}
         //public void PrintReportHeader(Document d)
         //{
         //    foreach (EbReportSection s in repdef.ReportHeaders)

@@ -266,7 +266,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
             "<table class='table table-striped table-bordered' id='sample" + commonO.tabNum + "'></table>" +
             "</div>");
-        $.post('CE/GetColumns4Trial', {
+        $.post('../../CE/GetColumns4Trial', {
             ds_refid: this.Refid,
             parameter: this.Object_String_WithVal
         }, this.Load_Table_Columns.bind(this));
@@ -310,7 +310,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         dq.Params = this.Object_String_WithVal;
         return dq;
     };
-
    
     this.SetSqlFnName = function () {
         var result = this.EbObject.Sql.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);

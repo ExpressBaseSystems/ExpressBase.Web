@@ -84,6 +84,10 @@
         table-layout: fixed;
     }
 
+    .form-buider-form .btn-group {
+        width: 100%!important;
+    }
+
 .form-save-wraper {
     float: left;
     width: 66%;
@@ -211,14 +215,16 @@
     position: fixed;
     z-index: 100000;
 }
+
 .Eb-invalid {
     outline: none;
-    background: antiquewhite!important;
-    border: 1px solid maroon!important;
-    box-shadow: rgb(128, 0, 0) 0px 0px 2px 0px!important;
+    background: antiquewhite !important;
+    border: 1px solid maroon !important;
+    box-shadow: rgb(128, 0, 0) 0px 0px 2px 0px !important;
 }
+
 .alert {
-    margin-bottom: 7px!important;
+    margin-bottom: 7px !important;
 }
 /*ChatFormBuilder*/
 .dev-chat-cont {
@@ -229,9 +235,11 @@
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.46);
     border-radius: 3px;
 }
-.dev-chat-cont .eb-chatBox {
-    height: 600px;
-}
-.dev-chat-cont .Eb-ctrlContainer {
-    /*background-color:white;*/
-}
+
+    .dev-chat-cont .eb-chatBox {
+        height: 600px;
+    }
+
+    .dev-chat-cont .Eb-ctrlContainer {
+        /*background-color:white;*/
+    }

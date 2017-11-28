@@ -110,6 +110,9 @@ Navigation bar
     border-radius: 2px;
     padding: 10px !important;
 }
+.ext-pageheader .btn-trial a:hover {
+    background: #31d031 !important;
+}
 
 @media(max-width: 768px) {
     .navbar-collapse {
@@ -169,7 +172,9 @@ Navigation bar
     margin-bottom: 10px;
     font-size: 13px;
 }
-
+.getStarted .no-creditcared {   
+    color: #7b7b7b;  
+}
 .get-start-sec input {
     height: 45px;
     box-shadow: none;
@@ -181,6 +186,10 @@ Navigation bar
         font-family: open sans;
         font-weight: 300;        
     }
+.get-start-sec span:hover{   
+    color: white;
+}
+
     .get-start-sec .social-btn-sec {
         margin-top: 10px;
         text-align: center;
@@ -220,41 +229,42 @@ Navigation bar
         border-radius: 4px;
     }
 
-#partners {
+.partners {
     background-color: #fafafa;
     padding-top: 20px;
     padding-bottom: 50px;
 }
 
-    #partners h4 {
-        font-weight: normal;
-        color: #717f86;
-    }
+.partner h4 {
+    font-weight: normal;
+    color: #717f86;
+}
 
-    #partners img {
-        width: auto;
-        height: 100px;
-    }
+.partner img {
+    width: auto;
+}
 /*Work Shop*/
 .nopadding {
     padding: 0 !important;
 }
 
-#work-shop {
+.work-shop {
     padding-bottom: 40px;
     background-color: #fafafa;
     padding-top: 30px;
+    font-family: open sans;
+    font-weight: 300;
 }
     .header-section {
         margin-bottom: 50px !important;      
     }
 
 .content {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
+    font-family: 'Open Sans';
+    font-weight: 300;
+    font-size: 15px;
     color: #494a4a;
-    line-height: 18px;
+    line-height: 1.5;
 }
 
 .icon-box {
@@ -275,27 +285,36 @@ Navigation bar
     font-size: 30px;
 }
 /*workshop ends*/
+/*aboutus*/
+.eb-banner-abtus-head {
+    padding-top: 130px;
+}
+    .eb-banner-abtus-head .banner-img-abtus img{
+        width:100%;
+    }
 /*team*/
 .team {
-    padding: 30px 0;
     font-family: open sans;
     font-weight: 300;
+    padding-bottom: 30px;
 }
-   
+
 .profile {
-    margin-top: 25px;
+    padding: 20px 43px 10px 43px;
 }
 
     .profile h1 {
         font-weight: normal;
         font-size: 20px;
         margin: 0 0 0 0;
+        text-align:center;
     }
 
     .profile h2 {
         font-size: 14px;
         font-weight: lighter;
         margin-top: 5px;
+        text-align: center;
     }
 
     .profile .img-box {
@@ -319,14 +338,32 @@ Navigation bar
         line-height: 1.6;
         font-size: 15px;
         font-weight: 300;
+        margin-top: 20px;
     }
-
+.prod-link {
+    text-decoration: underline;
+    font-size: 16px;
+    margin-left: 10px;
+} 
 .eb-banner2-img {
     background-repeat: no-repeat;
+    border: 1px solid #ccc;
+    padding: 0;
+    margin-top: 50px;
 }
+.chatbot-container {
+    border: none;
+    text-align: center;
+}
+    .chatbot-container img {
+        border: 1px solid #ccc;
+    }
 
+.padd-left-30 {
+    padding-left:30px;
+}
 .overlay2 {
-    padding-bottom: 20px;
+    padding-bottom: 50px;
 }
 .bg-fafa{
     background:#fafafa;
@@ -346,16 +383,19 @@ Navigation bar
 /*Footer*/
 footer {
     padding-top: 30px;
-    background-color: #081e29;
-    color: white;   
+    background-color: #e6edf1;
+    color: white;
     padding-bottom: 30px;
+    font-family: open sans;
+    font-weight: 300;
 }
     footer h5 {
-        color: #3e77e2;
+        color: #1270a5;
     }
 
     footer a {
         text-decoration: none;
+        color: #717171;
     }
 
         footer a:hover, footer a:focus {
@@ -363,6 +403,17 @@ footer {
             text-decoration: none;
             border-bottom: 1px dotted #999;
         }
+    footer p {
+        color: #717171;
+    }
+    footer .cmpny-details {
+        padding-left: 32px;
+    }
+    footer ul {
+        list-style-type: none;
+        padding:0;
+    }
+
 .copyright {
     min-height: 40px;
     background-color: #1c3c4c;
@@ -477,7 +528,25 @@ footer {
     .navbar-default .navbar-nav > li > a {
         text-align: center;
         font-size: 12px;
-        font-weight: normal;
+        font-weight: normal;        
+    }
+    .navbar-collapse,collapse in {
+        background:var(--ebbg);
+        background-image:var(--ebbgimage);
+    }
+    .eb-banner2-img {
+        padding-left:15px;
+        padding-right:15px;
+        border:none;
+    }
+    .chatbot-container img{
+        width:98%;
+    }
+    .parteners-last {
+        padding-top:20px;
+    }
+    .gl {
+        text-align: center;
     }
 }
 
@@ -522,6 +591,21 @@ footer {
     height: inherit;
     background: white;
 }
+/*platform*/
+.apaas {
+    padding-top: 100px;
+    font-family: open sans;
+    font-weight: 300;
+    background: var(--ebbg);
+    background-image: var(--ebbgimage);
+    color: white;
+    padding-bottom: 50px;
+}
+    .apaas p {
+        line-height: 1.6;
+        font-size: 15px;
+        margin-top: 20px;
+    }
 /*pricing*/
 #headerPricing {
     background-color: rgb(260,260,260);
@@ -569,7 +653,7 @@ footer {
 }
 
 .getStarted {
-    padding: 50px 0px 50px 0px;
+    padding: 30px 0px 30px 0px;
 }
     .getStarted .socialbtns {
         color: #7b7b7b;

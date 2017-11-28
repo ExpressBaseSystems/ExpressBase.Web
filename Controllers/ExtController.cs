@@ -132,51 +132,51 @@ namespace ExpressBase.Web.Controllers
         public async Task<IActionResult> TenantExtSignup()
         {
             var req = this.HttpContext.Request.Form;
-            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", req["g-recaptcha-response"]);
-            if (!data.Success)
-            {
-                if (data.ErrorCodes.Count > 0)
-                {
-                    var error = data.ErrorCodes[0].ToLower();
-                    switch (error)
-                    {
-                        case ("missing-input-secret"):
-                            ViewBag.CaptchaMessage = "The secret parameter is missing.";
-                            break;
-                        case ("invalid-input-secret"):
-                            ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
-                            break;
+           // Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", req["g-recaptcha-response"]);
+            //if (!data.Success)
+            //{
+            //    if (data.ErrorCodes.Count > 0)
+            //    {
+            //        var error = data.ErrorCodes[0].ToLower();
+            //        switch (error)
+            //        {
+            //            case ("missing-input-secret"):
+            //                ViewBag.CaptchaMessage = "The secret parameter is missing.";
+            //                break;
+            //            case ("invalid-input-secret"):
+            //                ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
+            //                break;
 
-                        case ("missing-input-response"):
-                            ViewBag.CaptchaMessage = "The captcha input is missing.";
-                            break;
-                        case ("invalid-input-response"):
-                            ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
-                            break;
+            //            case ("missing-input-response"):
+            //                ViewBag.CaptchaMessage = "The captcha input is missing.";
+            //                break;
+            //            case ("invalid-input-response"):
+            //                ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
+            //                break;
 
-                        default:
-                            ViewBag.CaptchaMessage = "Error occured. Please try again";
-                            break;
-                    }
-                }
-            }
-            else
-            {
+            //            default:
+            //                ViewBag.CaptchaMessage = "Error occured. Please try again";
+            //                break;
+            //        }
+            //    }
+            //}
+            //else
+            //{
                 IServiceClient client = this.ServiceClient;
                 try
                 {
-                    var res = client.Post<RegisterResponse>(new RegisterRequest { Email = req["email"], Password = req["password"], DisplayName = "expressbase" });
+                    var res = client.Post<RegisterResponse>(new RegisterRequest { Email = req["email"], DisplayName = "expressbase" });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
                     {
-                        return RedirectToAction("SignupSuccess", new RouteValueDictionary(new { controller = "Ext", action = "SignupSuccess", email = req["email"] })); // convert get to post
+                        return RedirectToAction("ProfileSetup", new RouteValueDictionary(new { controller = "Tenant", action = "ProfileSetup", email = req["email"] })); // convert get to post
                     }
 
                 }
                 catch (WebServiceException e)
                 {
                 }
-            }
+           // }
 
             return View();
         }
@@ -650,13 +650,13 @@ namespace ExpressBase.Web.Controllers
                     CookieOptions options = new CookieOptions();
                     Response.Cookies.Append("bToken", authResponse.BearerToken, options);
                     Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
-                    if (lg <= 1)
-                    {
-                        return RedirectToAction("ProfileSetup", "Tenant");
-                    }
-                    {
+                    //if (lg <= 1)
+                    //{
+                    //    return RedirectToAction("ProfileSetup", "Tenant");
+                    //}
+                    //{
                         return RedirectToAction("TenantDashboard", "Tenant");
-                    }
+                    //}
                 }
                 else
                 {

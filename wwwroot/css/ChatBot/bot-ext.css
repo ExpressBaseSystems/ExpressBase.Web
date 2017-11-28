@@ -1,0 +1,64 @@
+﻿#ebbot_iframe {
+    position: fixed;
+    right: 24px;
+    bottom: 15px;
+}
+
+#ebbot_iframe {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    border-radius: 3.5px;
+    width: 28%;
+    height: 65%;
+    min-width: 300px;
+    z-index: 16777270;
+    display: none;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
+}
+
+#chatbtn {
+    position: fixed;
+    right: 24px;
+    bottom: 15px;
+    font-size: 24px;
+    background-color: #369;
+    color: #fff;
+    padding: 12px;
+    Float: right;
+    z-index: 16777271;
+    border-radius: 30px;
+    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.39);
+}
+
+@media screen and (max-width: 768px) {
+    #ebbot_iframe {
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        height: 100%;
+    }
+
+    /*#chatbtn {
+        position: fixed;
+        right: 0px;
+        top: 0px;
+        bottom: unset;
+        background-color: #428bca;
+        box-shadow: none;
+    }*/
+
+    .eb-chatbtn {
+        bottom: calc( 100% - 55px) !important;
+        right: 0 !important;
+        box-shadow: unset !important;
+        background-color: #428bca !important;
+    }
+}
+
+.eb-chatbtn {
+    bottom: calc( 65% - 55px) !important;
+    right: 0 !important;
+    box-shadow: unset !important;
+    background-color: #428bca !important;
+}

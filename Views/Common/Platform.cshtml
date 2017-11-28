@@ -2,25 +2,30 @@
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
     Html.RenderPartial("ExtPageHeader");
 }
-<section class="apaas" style="padding-top:100px;">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 col-sm-6 col-sm-12">
-                <img src="https://expressbase.com/wp-content/uploads/2016/11/services-1-1600x1040.jpg" class="img-responsive">
-            </div>
-            <div class="col-md-6 col-sm-6 col-sm-12">
+<section class="apaas">
+    <div class="container-fluid">
+        <div class="col-md-12"> 
+            
+            <div class="col-md-9 col-sm-3 col-sm-12">
                 <div class="detail-info">
                     <hgroup>
-                        <h3>What is Enterprise aPaaS?</h3>
+                        <h2>What is Enterprise aPaaS or hpaPaaS?</h2>
                     </hgroup>
-                    <p>As per GARTNER, Application infrastructure functionality, enriched with cloud characteristics and offered as a service, is platform as a service (PaaS). Gartner refers to it more precisely as cloud application infrastructure services. Application platform as a service (aPaaS) is a form of PaaS that provides a platform to support application development, deployment and execution in the cloud. It is a suite of cloud services designed to meet the prevailing application design requirements of the time, and, in 2015, includes mobile, cloud, the Internet of Things (IoT) and big data analytics innovations.</p>
-                    <p>An aPaaS that is designed to support the enterprise style of applications and application projects (high availability, disaster recovery, security and technical support) is an enterprise aPaaS.</p>
+                    <p>As per GARTNER, Application infrastructure functionality, enriched with cloud characteristics and offered as a service,
+                    is platform as a service (PaaS). Gartner refers to it more precisely as cloud application infrastructure services.
+                    Application platform as a service (aPaaS) is a form of PaaS that provides a platform to support application development,
+                    deployment and execution in the cloud. It is a suite of cloud services designed to meet the prevailing application design
+                    requirements of the time, and, in 2015, includes mobile, cloud, the Internet of Things (IoT) and big data analytics innovations.
+                    </p>                
                 </div>
+            </div>
+            <div class="col-md-3 col-lg-3 col-sm-12">
+                <img src="" class="img-responsive">
             </div>
         </div>
     </div>
 </section>
-<section id="work-shop">
+<section id="work-shop" style="background: #fafafa;padding-bottom: 30px;">
     <div class="container">
         <div class="row">
             <div class="header-section text-center">
@@ -110,15 +115,17 @@
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.postgresql.org/"><img class="img-responsive" src="~/images/postgresql.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://redis.io/"><img class="img-responsive" src="~/images/redis-logo.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="http://jquery.com/"><img class="img-responsive" src="~/images/jquery.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 col-md-offset-2"><a href="https://azure.microsoft.com/"><img class="img-responsive" src="~/images/azure.png" /></a></div>
+            <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" style="padding-left: 25px;"/></a></div>
+            <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://azure.microsoft.com/"><img class="img-responsive" src="~/images/azure.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.digitalocean.com/"><img class="img-responsive" src="~/images/digitalOcean.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.rabbitmq.com/"><img class="img-responsive" src="~/images/rabitMq.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.docker.com/"><img class="img-responsive" src="~/images/docker.png" style="height:95px;" /></a></div>
+            <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.kubernetes.io/"><img class="img-responsive" src="~/images/kubernetes-logo.png" style="height: 115px;"/></a></div>
+            <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://cloud.google.com/"><img class="img-responsive" src="~/images/gcp-logo.png" style="" /></a></div>
         </div>
     </div>
 </section>
-<section class="eb-integrations">
+@*<section class="eb-integrations">
     <div class="container">
         <div class="row">
             <div class="header-section text-center">
@@ -127,7 +134,7 @@
 
         </div>
     </div>
-</section>
+</section>*@
 @{
     Html.RenderPartial("PageFooter");
 }

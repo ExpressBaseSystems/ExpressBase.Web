@@ -18,6 +18,8 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using ServiceStack.Redis;
 using ExpressBase.Security;
+using ServiceStack.Auth;
+using ExpressBase.Common.Extensions;
 
 
 
@@ -40,7 +42,8 @@ namespace ExpressBase.Web.Controllers
         {
             User _user = new User();
             _user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
-            ViewBag.ImgSrc = _user.Proimg;
+            ViewBag.email = HttpContext.Request.Query["email"];
+            //ViewBag.ImgSrc = _user.Proimg;
             return View();
         }
 
@@ -53,6 +56,23 @@ namespace ExpressBase.Web.Controllers
             var res = client.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
+                var authClient = this.ServiceClient;
+                MyAuthenticateResponse authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    //UserName = res.email,
+                    //Password = (req["password"] + res.email).ToMD5Hash(),
+                    Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", "expressbase" } },
+                    //UseTokenCookie = true
+                });
+                if(authResponse != null)
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append("bToken", authResponse.BearerToken, options);
+                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+                    this.ServiceClient.BearerToken = authResponse.BearerToken;
+                    this.ServiceClient.RefreshToken =authResponse.RefreshToken;
+                }
                 return RedirectToAction("TenantDashboard","Tenant");
             }
 

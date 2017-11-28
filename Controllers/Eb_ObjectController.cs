@@ -24,7 +24,8 @@ namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseNewController
     {
-        private Context2Js _c2js = new Context2Js();
+        private Context2Js _c2js;
+
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         [HttpGet]
@@ -252,6 +253,12 @@ namespace ExpressBase.Web.Controllers
                 VCName = "CodeEditor";
             else if (Objtype == (int)EbObjectType.TableVisualization)
                 VCName = "DVTable";
+            else if (Objtype == (int)EbObjectType.WebForm)
+                VCName = "FormBuilder";
+            else if (Objtype == (int)EbObjectType.Report)
+                VCName = "ReportBuilder";
+            else if (Objtype == (int)EbObjectType.EmailBuilder)
+                VCName = "Emailbuilder";
             return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl = _ssurl });
 
         }
@@ -432,6 +439,7 @@ namespace ExpressBase.Web.Controllers
             return res.RefId;
         }
 
+        [HttpPost]
         public IActionResult UpdateObjectDashboard(string refid)
         { var resultlist = this.ServiceClient.Get<EbObjectUpdateDashboardResponse>(new EbObjectUpdateDashboardRequest { Refid = refid });
             var rlist = resultlist.Data;

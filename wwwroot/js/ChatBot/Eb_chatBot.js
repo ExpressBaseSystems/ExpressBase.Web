@@ -1,6 +1,12 @@
 ﻿var Eb_chatBot = function () {
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
-    this.$chatHead = $('<div class="eb-chat-head"><span>EXPESSbase Bot <i class="fa fa-window-minimize pull-right" aria-hidden="true"></i></span></div>');
+    this.$chatHead = $(`<div class="eb-chat-head">
+                            <div class="inline-block">
+                                <div class="bot-head">&nbsp; Live ChatBot</div>
+                                <div class="poweredby">&nbsp; &nbsp; Powered by EXPESSbase</span></div>
+                            </div>
+                        </div>`);
+    this.$chatHead.prepend('<div class="bot-icon"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
@@ -13,8 +19,10 @@
     this.$form = null;
     this.formControls = [];
     this.formValues = {};
+    this.FB = null;
     this.EXPRESSbase_SOLUTION_ID;
-    this.socialId = "1250935561719412";
+    this.socialId = null;
+    this.picture = null;
 
     this.init = function () {
 
@@ -60,7 +68,7 @@
     this.send_btn = function () {
         window.onmessage = function (e) {
             if (e.data == 'hello') {
-                alert('It works!8888888888888888888888');
+                //alert('It works!8888888888888888888888');
             }
         };
 
@@ -71,7 +79,7 @@
             return;
         };
         this.sendMsg(msg);
-        $('.eb-chatBox').scrollTop(999999999);
+        $('.eb-chatBox').scrollTop(99999999999);
         $e.val('');
 
     }.bind(this);
@@ -86,6 +94,7 @@
     }.bind(this);
 
     this.greetings = function (name) {
+        this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.picture.data.url})center center no-repeat`);
         var time = new Date().getHours();
         var greeting = null;
         if (time < 12) {
@@ -98,7 +107,7 @@
             greeting = 'Good evening!';
         }
         this.getMsg(`Hello ${name}, ${greeting}`);
-        
+
         this.Query("What do you want to do ?", ["Apply Leave", "Claim for reimbursement"]);
     }.bind(this);
 
@@ -116,11 +125,7 @@
     };
 
     this.getForm = function ($msg) {
-        $.post('../Bote/GetObjHtml', {
-            refid: "eb_roby_dev-eb_roby_dev-0-809-1488",
-            //token: this.EXPRESSbase_SOLUTION_ID,
-            socialId: this.socialId
-        },
+        $.get('https://expressbase.azurewebsites.net/Bote/GetSamp?refid=eb_roby_dev-eb_roby_dev-0-809-1488&socialId='+this.socialId,
             function (data) {
                 this.$form = data;
                 this.setFormControls();
@@ -189,6 +194,7 @@
         this.getMsg(lablel + ' ?');
         this.getMsg($control);
         $label.hide();
+        $ctrlCont.find(".helpText").remove();
     }.bind(this);
 
     this.showTypingAnim = function ($msg) {
@@ -204,12 +210,14 @@
     this.sendCtrl = function (msg) {
         var $msg = this.$userMsgBox.clone().wrapInner($(msg));
         this.$chatBox.append($msg)
+        $('.eb-chatBox').scrollTop(99999999999);
     };
 
     this.sendCtrlAfter = function ($ctrl, msg) {
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').html(msg).append(this.getTime());;
         $msg.insertAfter($ctrl);
+        $('.eb-chatBox').scrollTop(99999999999);
     };
 
     //this.HideTypingAnim = function (msg) {
@@ -224,7 +232,7 @@
             setTimeout(function () {
                 if (msg instanceof jQuery) {
                     $msg.find('.bot-icon').remove();
-                    $msg.find('.msg-wraper-bot').html(msg);
+                    $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
                     $msg.css("margin-left", "26px");
                 }
@@ -240,6 +248,7 @@
                 this.getMsg(msg);
             }.bind(this), 1001);
         }
+        $('.eb-chatBox').scrollTop(99999999999);
     }.bind(this);
 
     this.formSubmit = function (e) {
@@ -261,6 +270,10 @@
 
     this.getTime = function () {
         return `<div class='msg-time'>${new Date().getHours() % 12 + ':' + new Date().getMinutes() + 'pm'}</div>`;
+    };
+
+    this.loadCtrlScript = function () {
+        $("head").append(this.CntrlHeads);
     };
 
     this.init();

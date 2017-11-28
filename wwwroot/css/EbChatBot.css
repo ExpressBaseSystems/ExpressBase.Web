@@ -8,7 +8,7 @@
 
 .eb-chatBox {
     overflow-y: auto;
-    height: 90%;
+    height: 100%;
     padding: 0px 5px;
     padding-bottom: 60px;
     background-color: #e8e8e8;
@@ -91,17 +91,6 @@
     text-align: center;
 }
 
-.eb-chat-head {
-    background-color: #428bca;
-    border-radius: 3px 3px 0px 0px;
-    color: white;
-    padding: 5px 15px;
-}
-
-    .eb-chat-head span {
-        font-weight: bold;
-    }
-
 .eb-chat-inp-cont .btn, .msg-wraper-bot .btn {
     border-radius: 15px;
     padding: 6px 9px;
@@ -114,14 +103,14 @@
 }
 
 .eb-chat-inp-cont .btn {
-    padding: 6px 9px!important;
+    padding: 6px 9px !important;
 }
 
 
 .btn-box .btn {
     color: #555;
     background: #428bca;
-    color:white;
+    color: white;
     font-size: 12px;
     border: solid 1px #e0e0e0;
 }
@@ -165,20 +154,18 @@
 .bot-icon {
     background: url(../images/svg/chatBot.svg)center center no-repeat;
     width: 26px;
-    background-size: 100%!important;
+    background-size: 100% !important;
     height: 26px;
     display: inline-block;
     margin-bottom: -6px;
     border-radius: 24px;
     background-color: #428bca;
 }
-.eb-chat-head .bot-icon {
-    height: 50px;
-    width: 50px;
-}.bot-icon-user {
+
+.bot-icon-user {
     background: url(../images/rob.jpg)center center no-repeat;
     width: 26px;
-    background-size: 100%!important;
+    background-size: 100% !important;
     height: 26px;
     display: inline-block;
     margin-bottom: -6px;
@@ -207,14 +194,7 @@
 .chat-typing {
     color: #999;
 }
-.inline-block{
-    display:inline-block;
-}
-.poweredby {
-    font-size: 10px;
-    font-family: arial;
-}
-.bot-head {
-    font-family: arial;
-    font-size: 20px;
+
+.inline-block {
+    display: inline-block;
 }

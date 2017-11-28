@@ -1,5 +1,4 @@
 ﻿var ReportExtended = function () {
-
     this.headerSecSplitter = function (array) {
         Split(array, {
             direction: 'vertical',
@@ -9,6 +8,7 @@
             snapOffset: 20,
             gutterSize: 5,
             onDrag: function (e) {
+                console.log(e)
                 $('#box0,#rptheadHbox').css("height", $('#rpthead').height());
                 $('#box1,#pgheadHbox').css("height", $('#pghead').height());
                 $('#box2,#detailHbox').css("height", $('#detail').height());
@@ -71,7 +71,7 @@
         });
     };//spliter ondrag func
 
-    this.splitGeneric = function (array,sizeArray) {
+    this.splitGeneric = function (array, sizeArray) {
         Split(array, {
             direction: 'vertical',
             sizes: sizeArray,

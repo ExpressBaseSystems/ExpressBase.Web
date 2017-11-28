@@ -3,10 +3,12 @@
 }
 .Eb-bot-header .navbar {
     height: auto;
-    padding: 10px 100px 10px 100px;
+    padding: 14px;
 }
 .Eb-bot-header .navbar-default {
-    border-color: #27A1C5 !important;
+    background-color:transparent;
+    /*background: var(--ebbg) !important;
+    background-image: var(--ebbgimage) !important;*/
 }
 .Eb-bot-header .navbar-default img {
         height: 100%;
@@ -15,50 +17,15 @@
         margin-right: 0; 
 }
     .Eb-bot-header .navbar-default .navbar-nav > li > a {
-        color: #27a1c5;
-        font-size: 15px;
-        font-weight: 500;
+        color: white;
+        font-size: 13px;       
     }
-.bot-banner {
-    height: 550px;
-    background: #27A1C5;
+.Eb-bot-header .btn-trial a {
+    background: #31d031;   
+    border: none;
+    border-radius: 2px;
+    padding: 10px !important;
 }
-.bot-signup {
-    padding: 101px 50px 10px 10px;
-    height: inherit;
-}
-.bot-signup-bdy {
-    background: white;
-    padding: 10px;
-    height: 100%;
-}
-.bot-signup-input {
-    border-radius: 0;
-}
-.both {
-    margin-bottom: 20px;
-}
-.bot-signup-btn {
-    border-radius: 0;
-    width: 100%;
-    background: #27A1C5;
-    color:white;
-}
-.bot-s-agrement {
-    font-size: 11px;
-    color: #7c8082;
-}
-.bot-desc {
-    height:300px;
-}
-.Eb-bot-header .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover {
-    background-color: #27A1C5;
-    color: #ffffff;
-}
-
-/*login*/
-@import url(http://fonts.googleapis.com/css?family=Roboto);
-
 /****** LOGIN MODAL ******/
 .loginmodal-container {
     padding: 15px;
@@ -69,7 +36,8 @@
     border-radius: 2px;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    font-family: roboto;
+    font-family:open sans;
+    font-weight:100;
 }
 
     .loginmodal-container h1 {
@@ -110,3 +78,97 @@
     height: 100px;
     width: 100px;    
 }
+/*end login*/
+
+.bot-section2{
+  padding-bottom:50px;
+  font-family:open sans;
+  font-weight:300;
+}
+    .bot-section2 .tiles {
+        padding: 10px;
+    }
+    .bot-section2 .tiles h4{
+       color:#666;
+       font-size:20px;
+    }
+    .bot-section2 .tiles .tile-body{
+        height: 100%;
+        width:100%;    
+        text-align:center;
+    }
+.bot-video{
+    padding-bottom:50px;
+}
+.bot-video .container{
+    padding: 20px 20px 20px 20px;
+}
+    .bot-video .bot-video-body {
+        height:400px;
+        border:1px solid #ccc;
+    }
+.bot-pricing {
+    padding-bottom: 50px;
+    font-family: open sans;
+    font-weight: 300;
+}
+.bot-pricing-body .col-md-3{
+    
+}
+.bot-pricing-body .price-tile {
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 4px;
+}
+.price-tile-headsec {
+    height: 80px;
+    width: 100%;
+    background: #1e8db8;
+    padding: 10px;
+}
+.headsec-textarea {
+    display: inline-block;
+    color: white;
+    height: 100%;    
+    font-size: 18px;
+}
+.headsec-amount {
+    display: inline-block;
+    color: white;
+    height: 100%;   
+    float: right;
+    font-size: 38px;
+}
+.bot-image-bg img{
+    width:100%;
+}
+.price-tile-bdy {
+    height: 230px;
+}
+    .pricing-items {
+        text-align: center;
+        padding: 10px;
+        font-size: 16px;       
+        font-weight:400;
+    }
+    .mr-8{
+        margin-top:8px;
+    }
+.Enterprise-price {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.chatBoticons {
+    font-size: 35px;
+    color: #198bbe;
+}
+.bot-faq{
+    padding-bottom:50px;
+}
+    .bot-faq .answer{
+        margin-left:10px;
+    }
+    .bot-faq .faqs {
+        margin-top:20px;
+    }

@@ -27,7 +27,7 @@ Navigation bar
     }
 
 .navbar-default {
-    background-color: #ffffff !important;
+    background-color: #ffffff;
     border-bottom:none;
 }
 
@@ -86,8 +86,9 @@ Navigation bar
     padding: 14px;
 }
 .ext-pageheader .navbar-default {
-    background: var(--ebbg) !important;
-    background-image: var(--ebbgimage) !important;
+    background-color:transparent;
+    /*background: var(--ebbg) !important;
+    background-image: var(--ebbgimage) !important;*/
 }
 .ext-pageheader .navbar-nav > li > a {
     color: white;

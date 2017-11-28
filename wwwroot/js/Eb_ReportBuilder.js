@@ -121,7 +121,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));
         }
         if ('SectionHeight' in obj) {
-            $("#" + obj.EbSid).droppable({ accept: ".draggable,.dropped", drop: this.onDropFn.bind(this) });
+            $("#" + obj.EbSid).droppable({ accept: ".draggable,.dropped,.coloums", drop: this.onDropFn.bind(this) });
         }
         $("#" + obj.EbSid).attr("tabindex", "1");
         $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));
@@ -214,6 +214,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $("#multiSplit").append(`<div class='multiSplitHbox' data_val='${i}' eb-type='MultiSplitBox' id='box${i }' style='width: 100%;'></div>`);
         }
     };
+
     this.pushSubsecToRptObj = function (sections, obj) {
 
         if (sections === 'ReportHeader') {
@@ -370,7 +371,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.positionTandL = {};
         this.positionTandL['left'] = event.pageX - $(event.target).offset().left;
         this.positionTandL['top'] = event.pageY - $(event.target).offset().top;
-
     };
 
     this.onDropFn = function (event, ui) {
@@ -398,8 +398,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 obj.Left = (this.posLeft - this.dropLoc.offset().left) - PosOBjOFdrag['left'];
             }
             else {
-                obj.Top = (this.posTop - this.dropLoc.offset().top) /*- this.positionTandL['top']*/;
-                obj.Left = (this.posLeft - this.dropLoc.offset().left)/* - this.positionTandL['left']*/;
+                obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
+                obj.Left = (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];
             }
             obj.Title = Title;
             this.objCollection[Objid] = obj;
@@ -437,17 +437,33 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//obj send to pg on focus
 
     this.Resizable = function (object) {
-        if (object.hasClass('arrow')) {
-            object.resizable({
-                containment: "parent", handles: "e,w", stop: this.onReSizeFn.bind(this)
-            });
+        if (object.hasClass("Ebshapes")) {
+            if (object.attr("eb-type") === "ArrR" || object.attr("eb-type") === "ArrL") {
+                this.resizing(object, "e,w");
+            }
+            else if (object.attr("eb-type") === "ArrU" || object.attr("eb-type") === "ArrD") {
+                this.resizing(object, "n, s");
+            }
+            else if (object.attr("eb-type") === "ByArrH" || object.attr("eb-type") === "Hl") {
+                this.resizing(object, "e,w");
+            }
+            else if (object.attr("eb-type") === "ByArrV" || object.attr("eb-type") === "Vl") {
+                this.resizing(object, "n, s");
+            }
+            else {
+                this.resizing(object, "n, s,e,w, ne, se, sw, nw");
+            }
         }
-        else {
-            object.resizable({
-                containment: "parent", handles: "n, s,e,w, ne, se, sw, nw", stop: this.onReSizeFn.bind(this)
-            });
+        else {          
+            this.resizing(object, "n, s,e,w, ne, se, sw, nw");
         }
-    }
+    };
+
+    this.resizing = function (object,handles) {
+        object.resizable({
+            containment: "parent", handles: handles, stop: this.onReSizeFn.bind(this)
+        });
+    };
 
     this.destroyResizable = function (event) {
         $(event.target).resizable("destroy");

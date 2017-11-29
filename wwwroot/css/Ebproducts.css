@@ -26,6 +26,9 @@
     border-radius: 2px;
     padding: 10px !important;
 }
+    .Eb-bot-header .btn-trial a:hover {
+        background: #31d031 !important;
+    }
 /****** LOGIN MODAL ******/
 .loginmodal-container {
     padding: 15px;

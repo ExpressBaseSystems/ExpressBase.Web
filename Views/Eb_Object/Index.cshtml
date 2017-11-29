@@ -31,10 +31,6 @@
     .codedit .tab-cont-common {
         margin-top: 48px;
     }
-
-    .codedit .tab-cont-common {
-        height: calc(100vh - 85px);
-    }
 </style>
 <script>
 
@@ -55,7 +51,7 @@
     @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _appId = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles })
 </div>
 
-<div class="row codedit" id="codedit" style="margin-top:229px;">
+<div class="row codedit" id="codedit" style="margin-top:178px;">
     <div class="tab-section-common" id="tab-section-common">
         <ul class="nav nav-tabs" id="versionNav">
             @{

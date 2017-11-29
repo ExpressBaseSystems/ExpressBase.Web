@@ -21,14 +21,14 @@ namespace ExpressBase.Web.Controllers
         }
      
 
-        [HttpPost]
-        public string UniqueCheck(string text)
-        {
-            Dictionary<string, object> Dict = new Dictionary<string, object>();
-            Dict["email"] = text;
-            var fr = this.ServiceClient.Get<bool>(new UniqueRequest { Colvalues = Dict });
-            return fr.ToString();
-        }
+        //[HttpPost]
+        //public string UniqueCheck(string text)
+        //{
+        //    Dictionary<string, object> Dict = new Dictionary<string, object>();
+        //    Dict["email"] = text;
+        //    var fr = this.ServiceClient.Get<bool>(new UniqueRequest { Colvalues = Dict });
+        //    return fr.ToString();
+        //}
         public IActionResult Pricing()
         {
             return View();

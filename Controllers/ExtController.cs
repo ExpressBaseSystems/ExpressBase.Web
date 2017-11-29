@@ -25,9 +25,9 @@ namespace ExpressBase.Web.Controllers
             : base(_client, _redis) { }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index(string email)
         {
-
+            ViewBag.useremail = email;
             return View();
         }
 
@@ -165,13 +165,20 @@ namespace ExpressBase.Web.Controllers
                 IServiceClient client = this.ServiceClient;
                 try
                 {
+                var unq = client.Post<bool>(new UniqueRequest { email = req["email"] });
+                if (!unq)
+                {
                     var res = client.Post<RegisterResponse>(new RegisterRequest { Email = req["email"], DisplayName = "expressbase" });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
                     {
-                        return RedirectToAction("ProfileSetup", new RouteValueDictionary(new { controller = "Tenant", action = "ProfileSetup", email = req["email"] })); // convert get to post
+                       return RedirectToAction("ProfileSetup", new RouteValueDictionary(new { controller = "Tenant", action = "ProfileSetup", email = req["email"] })); // convert get to post
                     }
-
+                }
+                else
+                {
+                    return RedirectToAction("Index", new RouteValueDictionary(new { controller = "Ext", action = "Index", email = req["email"] })); // convert get to post;
+                }
                 }
                 catch (WebServiceException e)
                 {

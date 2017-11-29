@@ -171,20 +171,18 @@
                     <div class="modal fade" tabindex="-1" role="dialog" id='ObjModal'>
                         <div class="modal-dialog modal-lg" role="document" style="width:90%">
                             <div class="modal-content">
-                                <div class="modal-header" style="height:50px;">
-                                    <div class="row">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="row">
+                                <div class="modal-header">
+                                    <div id="headerDiv" style="height:50px;width:100%">
                                         @{
                                             if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
                                             {
-                                                Html.RenderPartial("_PageheaderDev");
+                                                Html.RenderPartial("PageHeaderDev");
 
                                             }
                                         }
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="modal-body" style="height:500px;padding: 5px;">

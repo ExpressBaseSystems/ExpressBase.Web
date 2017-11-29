@@ -187,29 +187,29 @@ var DvContainerObj = function (settings) {
         }
     };
 
-    this.drawDv = function (e) {
-        $.LoadingOverlay("show");
-        $.ajax({
-            type: "POST",
-            url: "../DV/getdv",
-            data: { id: $(e.target).attr("data-id"), objtype: $(e.target).attr("objtype") },
-            success: function (dvObj) {
-                dvObj = JSON.parse(dvObj);
-                dvcontainerObj.currentObj = dvObj;
-                $.LoadingOverlay("hide");
-                if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
-                    pg.setObject(dvObj, AllMetas["EbTableVisualization"]);
-                    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbTableVisualization");
-                    call2dvView(dvObj);
-                }
-                else if (dvObj.$type.indexOf("EbChartVisualization") !== -1) {
-                    pg.setObject(dvObj, AllMetas["EbChartVisualization"]);
-                    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbChartVisualization");
-                    call2dvView(dvObj);
-                }
-            }
-        });
-    };
+    //this.drawDv = function (e) {
+    //    $.LoadingOverlay("show");
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "../DV/getdv",
+    //        data: { id: $(e.target).attr("data-id"), objtype: $(e.target).attr("objtype") },
+    //        success: function (dvObj) {
+    //            dvObj = JSON.parse(dvObj);
+    //            dvcontainerObj.currentObj = dvObj;
+    //            $.LoadingOverlay("hide");
+    //            if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
+    //                pg.setObject(dvObj, AllMetas["EbTableVisualization"]);
+    //                split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbTableVisualization");
+    //                call2dvView(dvObj);
+    //            }
+    //            else if (dvObj.$type.indexOf("EbChartVisualization") !== -1) {
+    //                pg.setObject(dvObj, AllMetas["EbChartVisualization"]);
+    //                split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbChartVisualization");
+    //                call2dvView(dvObj);
+    //            }
+    //        }
+    //    });
+    //};
 
     this.saveSettings = function () {
         $.LoadingOverlay("show");

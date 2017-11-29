@@ -1,0 +1,40 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<body>
+    <select class="selectpicker" data-style="btn-new" id="repdd">
+        @{
+            List<EbObjectWrapper> list = ViewBag.reports;
+            foreach (var report in list)
+            {
+                <option value="@report.RefId">@report.Id ** @report.RefId</option>
+            }
+        }
+    </select>
+    <button class="btn" id="render">render</button>
+    <iframe id="resultreport"></iframe>
+</body>
+<script>
+    $('#render').on('click', function () {
+        $.post('../ReportRender/RenderReport',
+            { refid: $('#repdd').val() }, function (data) {
+                console.log(data);
+            }
+        );
+
+    })
+</script>
+<style>
+    select.selectpicker {
+        display: block;
+        margin: 0 auto;
+        padding-left: 20px;
+    }
+
+    .btn-new {
+        background-color: #2A3F54;
+    }
+
+</style>

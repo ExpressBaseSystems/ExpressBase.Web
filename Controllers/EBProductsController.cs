@@ -24,5 +24,9 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+        public IActionResult Demos()
+        {
+            return View();
+        }
     }
 }

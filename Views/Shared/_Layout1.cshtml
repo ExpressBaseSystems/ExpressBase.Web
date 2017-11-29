@@ -149,89 +149,94 @@
 </head>
 <body>
     <div id="tenatDtls" class="container-fluid">
-        <div class="row">
-            @*<div class="ebsidedivtoolbar"></div>*@
 
-
-            @{if (ViewBag.wc == "tc")
-                {
+        @{
+            if (ViewBag.wc == "tc")
+            {
+                <div class="row">
                     @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
-                    //Html.RenderPartial("_PageheaderTenant");
-                }
-                else if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-                {
-                    Html.RenderPartial("_PageheaderDev");
-
-                }
+                </div>
             }
-        </div>
-        <div class="row">
-            <div id="layout_div" class="col-md-12 col-sm-12 col-xs-12 main-cont">
-                @{
-                    if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-                    {
-                        <div class="modal fade" tabindex="-1" role="dialog" id='ObjModal'>
-                            <div class="modal-dialog modal-lg" role="document" style="width:90%">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <div>
-                                            @{
-                                                if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-                                                {
-                                                    Html.RenderPartial("_PageheaderDev");
+            else
+            {
+                 <div id="submen" class="togglemenu"><i class="fa fa-bars fa-lg" alt="Brand"></i></div>
 
-                                                }
-                                            }
-                                        </div>
-                                        <div>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
+            }
+        }
+       
+        <div class="row">
+            @{
+                if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+                {
+                    <div class="modal fade" tabindex="-1" role="dialog" id='ObjModal'>
+                        <div class="modal-dialog modal-lg" role="document" style="width:90%">
+                            <div class="modal-content">
+                                <div class="modal-header" style="height:50px;">
+                                    <div class="row">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
-                                    <div class="modal-body" style="height:500px;padding: 5px;">
-                                        <div id="EbsideBar" class="col-md-3" style="height:100%;">
-                                        </div>
-                                        <div class="col-md-9" style="height:100%;">
-                                            @{
-                                                if (ViewBag.wc == "dc")
-                                                {
-                                                    <div class="Eb-CommonMenuStyle" id="topmenu">
+                                    <div class="row">
+                                        @{
+                                            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+                                            {
+                                                Html.RenderPartial("_PageheaderDev");
+
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="modal-body" style="height:500px;padding: 5px;">
+                                    <div id="EbsideBar" class="col-md-3" style="height:100%;">
+                                    </div>
+                                    <div class="col-md-9" style="height:100%;">
+                                        @{
+                                            var hei = "93%";
+                                            if (ViewBag.wc == "dc")
+                                            {
+                                                <div class="Eb-CommonMenuStyle">
+                                                    <div id="topmenu" class="pull-right">
+                                                        <button class="btn"><i class="fa fa-download" aria-hidden="true"></i></button>
+                                                        <button class="btn"><i class="fa fa-upload" aria-hidden="true"></i></button>
                                                         <a href="" class="btn"><i class="fa fa-plus" aria-hidden="true"></i></a>
                                                     </div>
-
-                                                }
-                                            }
-                                            <div id="objList" style="height:86%; overflow-y:auto"></div>
-                                            <div class="input-group">
-                                                <div class="input-group-btn">
-                                                    <button type="button" id="dropbuttn" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        All<span class="caret"></span>
-                                                    </button>
-                                                    <ul class="dropdown-menu" id="MyDropDownId">
-                                                        <li><a href="#">All</a></li>
-                                                    </ul>
                                                 </div>
-                                                <input type="text" class="form-control" id="searchobj">
+                                                hei = "86%";
+                                            }
+                                            <div id="objList" style="height:@hei; overflow-y:auto; width: 100%;"></div>
+                                        }
+                                        <div class="input-group">
+                                            <div class="input-group-btn">
+                                                <button type="button" id="dropbuttn" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    All<span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" id="MyDropDownId">
+                                                    <li><a href="#">All</a></li>
+                                                </ul>
                                             </div>
+                                            <input type="text" class="form-control" id="searchobj">
                                         </div>
                                     </div>
-                                    @*<div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        </div>*@
                                 </div>
                             </div>
                         </div>
-                    }
-                    else
-                    {
-                        <div id="EbsideBar" class="col-md-3" style="height:100%;display:none;">
-                            Html.RenderPartial("_SidebarMenu");
-                        </div>
-
-                    }
+                    </div>
                 }
+                else
+                {
+                    <div id="EbsideBar" class="col-md-3" style="height:100%;display:none;">
+                        @{ 
 
+                            Html.RenderPartial("_SidebarMenu");
+                        }
+
+                    </div>
+
+                }
+            }
+
+            <div id="layout_div" class="col-md-12 col-sm-12 col-xs-12 main-cont">
                 @RenderBody()
                 @RenderSection("EbHead", false)
             </div>
@@ -256,43 +261,19 @@
     var menu = new menujs('@ViewBag.wc');
     $("#layout_div").data("menu", menu);
 
-    @*  $('document').ready(function () {
-        if ('@ViewBag.wc' == "tc") {
-            $('#submen').click(function () {
-                $('#EbsideBar').animate({ width: 'toggle' });
-            });
-        }
-    });*@
 
-    @* $('document').ready(function () {
-        $('#submen').click(function () {
-            if ('@ViewBag.wc' == "dc" || '@ViewBag.wc' == "uc") {
-                $("#ObjModal").modal('show');
-                $.LoadingOverlay("show");
-                $("#EbsideBar").empty();
-                $.get("../TenantUser/getSidebarMenu", function (result) {
-                    $("#EbsideBar").append(result);
-                    $.LoadingOverlay("hide");
-                });
-            }
-            else {
-                $('#EbsideBar').animate({ width: 'toggle' });
-            }
+    $('.list-group a').on('click', function () {
+        var $this = $(this),
+            $bc = $('<div class="brdCrumb"></div>');
+
+        $this.parents('li').each(function (i, parent) {
+            var i = $(parent).children('a').text();
+            $bc.prepend(' / ', i);
+            parent = i;
         });
+        $('.brdCrumb').html($bc.prepend('<a href="#"> Home</a>'));
+    });
 
-
-        $('.list-group a').on('click', function () {
-            var $this = $(this),
-                $bc = $('<div class="brdCrumb"></div>');
-
-            $this.parents('li').each(function (i, parent) {
-                var i = $(parent).children('a').text();
-                $bc.prepend(' / ', i);
-                parent = i;
-            });
-            $('.brdCrumb').html($bc.prepend('<a href="#"> Home</a>'));
-        })
-    })*@
     EbFonts = {};
     EbFontsCallback = function (data, status) {
         EbFonts = data;

@@ -57,9 +57,6 @@ namespace ExpressBase.Web.Components
                     }
                     var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
                     sb.Append("<li><a class='list-group-item' href='#' data-key='"+ val.Key + "' data-Appid='"+ obj.Key + "' data-action = '" + ctrlaction + "'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
-                    //var json = JsonConvert.SerializeObject(val.Value.Objects);
-                    //var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
-                    //sb.Append("<div id='EbType_" + val.Key + "' style='display:none' data-json='"+json+"' data-action = '"+ ctrlaction + "' ></div>");
                 }
                 sb.Append("</ul></li>");
             }

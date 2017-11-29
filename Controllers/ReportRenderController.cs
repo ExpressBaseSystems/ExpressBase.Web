@@ -46,7 +46,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index()
         {
             //var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-889-1606" });
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-945-1662" });
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-952-1669" });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
             if (Report.DataSourceRefId != string.Empty)
@@ -142,11 +142,11 @@ namespace ExpressBase.Web.Controllers
                 }
                 else if(field.GetType()== typeof(EbHl) )
                 {
-
+                    DrawHLine(field);
                 }
                 else if (field.GetType() == typeof(EbVl))
                 {
-
+                    DrawVLine(field);
                 }
             }
             printingTop += section.Height;
@@ -219,7 +219,7 @@ namespace ExpressBase.Web.Controllers
         public void DrawRectangle(EbReportFields field)
         {
             float x = field.Left;
-            float y = Report.Height - (printingTop + field.Top + field.Height); ;
+            float y = Report.Height - (printingTop + field.Top + field.Height);
             float w = field.Width;
             float h = field.Height;
 
@@ -227,8 +227,23 @@ namespace ExpressBase.Web.Controllers
             cb.Stroke();
         }
 
-        public void DrawLine(EbReportFields field)
+        public void DrawHLine(EbReportFields field)
         {
+            var x1 =field.Left;
+            var y1 = Report.Height - (printingTop + field.Top);
+            var x2 =field.Left + field.Width;
+            var y2 = y1;
+
+            cb.MoveTo(x1, y1);
+            cb.LineTo(x2, y2);
+            cb.Stroke();
+        }
+        public void DrawVLine(EbReportFields field)
+        {
+            var x1 = field.Left;
+            var y1 = Report.Height - (printingTop + field.Top);
+            var x2 = x1;
+            var y2 = Report.Height - (printingTop + field.Top + field.Height);
             cb.MoveTo(x1, y1);
             cb.LineTo(x2, y2);
             cb.Stroke();

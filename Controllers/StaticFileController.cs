@@ -163,7 +163,7 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         Id = this.ServiceClient.Post<string>(uploadImageRequest);
-                        if (ViewBag.cid == "expressbase")
+                        if (ViewBag.cid == "expressbase" && ViewBag.wc == "tc")
                             url = string.Format("http://localhost:5000/static/{0}.{1}",  Id, uploadImageRequest.ImageInfo.FileType);
                         else
                             url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadImageRequest.ImageInfo.FileType);

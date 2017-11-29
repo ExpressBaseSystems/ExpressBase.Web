@@ -88,7 +88,7 @@
     };
 
     this.SetCode = function (e) {
-        //console.log($('#summernote' + tabNum).summernote('code'));
+        console.log($('#summernote' + tabNum).summernote('code'));
         this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
         commonO.Current_obj = this.EbObject;
     }

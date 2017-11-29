@@ -129,6 +129,7 @@
 
     this.init = function () {
         //this.getUplodedImgOnload();
+        $("#" + this.ContainerId).empty();
         this.CreateMOdalW();
         this.loadFileInput();
         $('body').off("click", "#" + this.toggleId).on("click", "#" + this.toggleId, this.toggleModal.bind(this));

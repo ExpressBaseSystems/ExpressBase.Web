@@ -1,17 +1,15 @@
 ﻿<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="loginmodal-container">
-            <div class="login-sec-image">
-                <div class="svg-section">
-                    <img src="~/images/svg/chat1.svg" />
-                </div>
+            <div class="login-sec-image">           
+                    <img src="~/images/EB_Logo-png.png" />             
             </div>
             <h1 class="text-center">Sign In</h1><br>
             <div class="form-group">
-                <input type="email" class="form-control bot-signup-input" id="email" name="email" placeholder="Email" />
+                <input type="email" class="form-control" id="email-login" name="email" placeholder="Email" />
             </div>
             <div class="form-group">
-                <input type="password" class="form-control bot-signup-input" id="password" name="password" placeholder="Password" />
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" />
             </div>
             <div class="form-group">
                 <div class="checkbox icheck">                   
@@ -22,7 +20,7 @@
                         <a href="#">Forgot password?</a>
                     </div>
                 </div>
-                <button type="submit" id="bot-signUP" class="btn bot-signup-btn">
+                <button type="submit" id="bot-signUP" class="btn signin-btn">
                     Sign In
                 </button>
             </div> 
@@ -30,31 +28,31 @@
             <div style="padding-left: 34px;">
                 <div class="col-xs-2 col-sm-2">
                     <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
-                        <i class="fa fa-facebook fa-lg"></i>
+                        <i class="fa fa-facebook"></i>
                         <span class="hidden-xs"></span>
                     </a>
                 </div>
                 <div class="col-xs-2 col-sm-2">
                     <a href="#" class="btn btn-lg btn-block">
-                        <i class="fa fa-twitter fa-lg text-info"></i>
+                        <i class="fa fa-twitter text-info"></i>
                         <span class="hidden-xs"></span>
                     </a>
                 </div>
                 <div class="col-xs-2 col-sm-2">
                     <a href="#" class="btn btn-lg btn-block">
-                        <i class="fa fa-google-plus fa-lg text-danger"></i>
+                        <i class="fa fa-google-plus text-danger"></i>
                         <span class="hidden-xs"></span>
                     </a>
                 </div>
                 <div class="col-xs-2 col-sm-2">
                     <a href="#" class="btn btn-lg btn-block">
-                        <i class="fa fa-linkedin fa-lg"></i>
+                        <i class="fa fa-linkedin"></i>
                         <span class="hidden-xs"></span>
                     </a>
                 </div>
                 <div class="col-xs-2 col-sm-2">
                     <a href="#" class="btn btn-lg btn-block">
-                        <i class="fa fa-github fa-lg text-muted"></i>
+                        <i class="fa fa-github text-muted"></i>
                         <span class="hidden-xs"></span>
                     </a>
                 </div>

@@ -43,10 +43,10 @@ namespace ExpressBase.Web.Controllers
         PdfContentByte cb;
         ColumnText ct;
 
-        public IActionResult Index()
+        public IActionResult Index(string refid)
         {
             //var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-889-1606" });
-            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-952-1669" });
+            var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
             if (Report.DataSourceRefId != string.Empty)
@@ -140,13 +140,37 @@ namespace ExpressBase.Web.Controllers
                 {
                     DrawRectangle(field);
                 }
-                else if(field.GetType()== typeof(EbHl) )
+                else if (field.GetType() == typeof(EbHl))
                 {
                     DrawHLine(field);
                 }
                 else if (field.GetType() == typeof(EbVl))
                 {
                     DrawVLine(field);
+                }
+                else if (field.GetType() == typeof(EbArrR))
+                {
+                    DrawArrowR(field);
+                }
+                else if (field.GetType() == typeof(EbArrL))
+                {
+                    DrawArrowL(field);
+                }
+                else if (field.GetType() == typeof(EbArrU))
+                {
+                    DrawArrowU(field);
+                }
+                else if (field.GetType() == typeof(EbArrD))
+                {
+                    DrawArrowD(field);
+                }
+                else if (field.GetType() == typeof(EbByArrH))
+                {
+                    DrawByArrH(field);
+                }
+                else if (field.GetType() == typeof(EbByArrV))
+                {
+                    DrawByArrV(field);
                 }
             }
             printingTop += section.Height;
@@ -176,11 +200,12 @@ namespace ExpressBase.Web.Controllers
                             }
                         }
                         columnindex++;
-                    }                    
+                    }
                 }
             }
             printingTop += section.Height;
         }
+
         public void DrawTextBox(EbReportFields field, string column_val)
         {
             var urx = field.Width + field.Left;
@@ -193,7 +218,7 @@ namespace ExpressBase.Web.Controllers
             ct1.Go();
         }
 
-         public void DrawDetailTextBox(EbReportFields field, string column_val, float detailtop)
+        public void DrawDetailTextBox(EbReportFields field, string column_val, float detailtop)
         {
             var urx = field.Width + field.Left;
             var ury = Report.Height - (printingTop + field.Top + detailtop);
@@ -205,17 +230,18 @@ namespace ExpressBase.Web.Controllers
             ct1.Go();
         }
 
-
         public void DrawCircle(EbReportFields field)
         {
             float radius = field.Width / 2;
             float xval = field.Left + radius;
             float yval = Report.Height - (printingTop + field.Top + radius);
 
-            // cb.SetColorStroke();
+
+           // cb.SetColorStroke(BaseColor.
             cb.Circle(xval, yval, radius);
             cb.Stroke();
         }
+
         public void DrawRectangle(EbReportFields field)
         {
             float x = field.Left;
@@ -229,15 +255,16 @@ namespace ExpressBase.Web.Controllers
 
         public void DrawHLine(EbReportFields field)
         {
-            var x1 =field.Left;
+            var x1 = field.Left;
             var y1 = Report.Height - (printingTop + field.Top);
-            var x2 =field.Left + field.Width;
+            var x2 = field.Left + field.Width;
             var y2 = y1;
 
             cb.MoveTo(x1, y1);
             cb.LineTo(x2, y2);
             cb.Stroke();
         }
+
         public void DrawVLine(EbReportFields field)
         {
             var x1 = field.Left;
@@ -247,6 +274,85 @@ namespace ExpressBase.Web.Controllers
             cb.MoveTo(x1, y1);
             cb.LineTo(x2, y2);
             cb.Stroke();
+        }
+
+        public void DrawArrowR(EbReportFields field)
+        {
+            DrawHLine(field);
+            var x = field.Left + field.Width;
+            var y = Report.Height - (printingTop + field.Top);
+            cb.SetColorFill(BaseColor.Black);
+            cb.MoveTo(x, y);
+            cb.LineTo(x - 3, y - 3);
+            cb.LineTo(x - 3, y + 3);
+            cb.ClosePathFillStroke();
+        }
+
+        public void DrawArrowL(EbReportFields field)
+        {
+            DrawHLine(field);
+            var x = field.Left;
+            var y = Report.Height - (printingTop + field.Top);
+            cb.SetColorFill(BaseColor.Black);
+            cb.MoveTo(x, y);
+            cb.LineTo(x + 3, y + 3);
+            cb.LineTo(x + 3, y - 3);
+            cb.ClosePathFillStroke();
+        }
+
+        public void DrawArrowU(EbReportFields field)
+        {
+            DrawVLine(field);
+            var x = field.Left;
+            var y = Report.Height - (printingTop + field.Top);
+            cb.SetColorFill(BaseColor.Black);
+            cb.MoveTo(x, y);
+            cb.LineTo(x + 3, y - 3);
+            cb.LineTo(x - 3, y - 3);
+            cb.ClosePathFillStroke();
+        }
+        public void DrawArrowD(EbReportFields field)
+        {
+            DrawVLine(field);
+            var x = field.Left;
+            var y = Report.Height - (printingTop + field.Top + field.Height);
+            cb.SetColorFill(BaseColor.Black);
+            cb.MoveTo(x, y);
+            cb.LineTo(x - 3, y + 3);
+            cb.LineTo(x + 3, y + 3);
+            cb.ClosePathFillStroke();
+        }
+        public void DrawByArrH(EbReportFields field)
+        {
+            DrawHLine(field);
+            var x1 = field.Left + field.Width;
+            var y1 = Report.Height - (printingTop + field.Top);
+            cb.SetColorFill(BaseColor.Black);
+            cb.MoveTo(x1, y1);
+            cb.LineTo(x1 - 3, y1 - 3);
+            cb.LineTo(x1 - 3, y1 + 3);
+            var x2 = field.Left;
+            var y2 = Report.Height - (printingTop + field.Top);
+            cb.MoveTo(x2, y2);
+            cb.LineTo(x2 + 3, y2 + 3);
+            cb.LineTo(x2 + 3, y2 - 3);
+            cb.ClosePathFillStroke();
+        }
+        public void DrawByArrV(EbReportFields field)
+        {
+            DrawVLine(field);
+            var x1 = field.Left;
+            var y1 = Report.Height - (printingTop + field.Top);
+            cb.SetColorFill(BaseColor.Black);
+            cb.MoveTo(x1, y1);
+            cb.LineTo(x1 + 3, y1 - 3);
+            cb.LineTo(x1 - 3, y1 - 3);
+            var x2 = field.Left;
+            var y2 = Report.Height - (printingTop + field.Top + field.Height);
+            cb.MoveTo(x2, y2);
+            cb.LineTo(x2 - 3, y2 + 3);
+            cb.LineTo(x2 + 3, y2 + 3);
+            cb.ClosePathFillStroke();
         }
     }
 }

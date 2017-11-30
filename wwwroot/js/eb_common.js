@@ -15,7 +15,8 @@ function fltr_obj(type, name, value) {
     this.type = type;
     this.name = name;
     this.value = value;
-}
+};
+
 
 //function getFilterValues() {
 //    var fltr_collection = [];
@@ -72,7 +73,7 @@ function isPrintable(e) {
 }
 
 function RefreshControl(obj) {
-    var NewHtml = obj.Html();
+    var NewHtml = obj.$Control.outerHTML();
     var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
     $.each(metas, function (i, meta) {
         var name = meta.name;

@@ -7,6 +7,60 @@ body {
 .nopadding {
     padding: 0;
 }
+/****** LOGIN MODAL ******/
+.loginmodal-container {
+    padding: 15px;
+    max-width: 360px;
+    width: 100% !important;
+    background-color: white;
+    margin: 0 auto;
+    border-radius: 2px;
+    overflow: hidden;
+    font-family: open sans;
+    font-weight: 300;
+}
+
+    .loginmodal-container h1 {
+        text-align: center;
+        font-size: 1.8em;       
+        margin-bottom: 0;
+    }
+
+.loginmodal {
+    text-align: center;
+    font-size: 14px;    
+    font-weight: 700;
+    height: 36px;
+    padding: 0 8px;
+    /* border-radius: 3px; */
+    /* -webkit-user-select: none;
+  user-select: none; */
+}
+
+.loginmodal-container a {
+    text-decoration: none;
+    color: #666;
+    text-align: center;
+    display: inline-block;
+}
+
+.loginmodal-container .signin-btn {
+    width: 100%;
+    background: #1e8db8;
+    color: white;
+}
+.login-sec-image {
+    width: 100%;
+    text-align: center;
+    padding-top: 25px;
+    padding-bottom: 15px;
+}
+.login-sec-image img{
+   height:50px;
+}
+
+
+/*end login*/
 /*       Slider       */
 /***********************************
 Navigation bar
@@ -180,16 +234,22 @@ Navigation bar
     height: 45px;
     box-shadow: none;
 }
-    .get-start-sec span {
-        background: #31d031;
-        color: white;
-        border: none;
-        font-family: open sans;
-        font-weight: 300;        
-    }
-.get-start-sec span:hover{   
-    color: white;
+.get-start-sec span {
+    background: #31d031;
+    font-family: open sans;
+    font-weight: 300;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
+    .get-start-sec span button {
+        background: transparent;
+        height: 45px;
+        border: none;
+        color: white;
+    }
+        .get-start-sec span button:hover {
+            color: white;
+        }
 
     .get-start-sec .social-btn-sec {
         margin-top: 10px;
@@ -778,11 +838,13 @@ footer {
     padding-bottom: 5px;
     margin-top: 8px;
     background-color: white;
-    border-radius: 2px;
+    border-radius: 5px;
     height: 74px;
     margin-right: 8px;
     width: 100%;
     cursor: pointer;
+    border: 1px solid beige;
+    box-shadow: 5px 2px 1px #ebeef1;
 }
 
     .objitems:hover {
@@ -907,4 +969,12 @@ footer {
     padding: 12px;
     border-radius: 50%;
     z-index:1;
+}
+#ObjModal .close {
+    margin: -17px -10px;
+}
+
+.objbox-footer a {
+    padding-left: 0px;
+    padding-top: 25px;
 }

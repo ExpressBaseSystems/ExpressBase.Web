@@ -23,10 +23,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult addBot(string _name, string _url, string _sol_id, string _wel_msg, string chatid, string botid)
+        public IActionResult addBot(string _name, string _fullname, string _url, string _sol_id, string _wel_msg, string chatid, string botid)
         {
             var bot = new CreateBotRequest();
             bot.BotName = _name;
+            bot.FullName = _fullname;
             bot.WebURL = _url;
             bot.SolutionId = _sol_id;
             bot.WelcomeMsg = _wel_msg;
@@ -38,8 +39,11 @@ namespace ExpressBase.Web.Controllers
             ViewBag.url = _url;
             ViewBag.welcomemsg = _wel_msg;
             ViewBag.botid = botid;
+            ViewBag.fullname = _fullname;
             if (chatid != null)
+            {
                 ViewBag.chatid = chatid;
+            }
             else
                 ViewBag.chatid = res.BotId;
             return View();
@@ -74,6 +78,7 @@ namespace ExpressBase.Web.Controllers
                 </div>
             </div>
             <input type='hidden' value='@Name@' name='_name' />
+            <input type='hidden' value='@fullname@' name='_fullname' />
             <input type='hidden' value='@WebsiteURL@' name='_url' />
             <input type='hidden' value='@ViewBag.chatid' name='_chat_id' />
             <input type='hidden' value='@welcomeMsg@' name='_wel_msg' />
@@ -85,6 +90,7 @@ namespace ExpressBase.Web.Controllers
             foreach (ChatBot chatbot in Bots)
             {
                 _html += BotTile.Replace("@Name@", chatbot.Name)
+                    .Replace("@fullname@", chatbot.FullName)
                     .Replace("@WebsiteURL@", chatbot.WebsiteURL)
                     .Replace("@LastModifiedBy@", chatbot.LastModifiedBy)
                     .Replace("@LastModifiedAt@", chatbot.LastModifiedAt.ToString())

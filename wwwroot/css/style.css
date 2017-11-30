@@ -750,7 +750,7 @@ footer {
     overflow-y: auto;
     border-right: 1px solid #ccc;
     overflow-x: hidden;
-    background-color: #153076;
+    background-color: #ffffff;
     padding-right: 0px;
 }
 
@@ -787,18 +787,18 @@ footer {
 
 
     .side-menu-container .outer .list-group-item {
-        background-color: #153076;
-        color: white;
+        /*background-color: #153076;*/
+        color: black;
         font-size: 13px;
         font-family: Tahoma;
     }
 
     .side-menu-container .list-group-item:hover {
-        background-color: #49459b;
+        background-color: #fafafa;
     }
 
     .side-menu-container .list-group-item:focus {
-        background-color: #49459b;
+        background-color: #d4d4d4;
     }
 
     .side-menu-container .sub-menu {
@@ -922,22 +922,23 @@ footer {
 .Eb-CommonMenuStyle {
     height: 30px;
     width: 100%;
-    background-color: #2c2c3c;
-    //margin-top: 13px;
+    background-color: #e8e6e6;
+    /*margin-top: 13px;
     padding-left: 10px;
     padding-right: 10px;
-    //position:fixed;
+    position:fixed;*/
 }
 
     .Eb-CommonMenuStyle .btn {
         background-color: transparent;
-        color: white;
+        color: black;
         display:inline;
     }
 
         .Eb-CommonMenuStyle .btn:hover {
-            background-color: #30C2FF;
+            //background-color: #30C2FF;
             border-radius: 0;
+            color: #c7a3a3;
         }
 
         .Eb-CommonMenuStyle .btn:focus {
@@ -971,10 +972,25 @@ footer {
     z-index:1;
 }
 #ObjModal .close {
-    margin: -17px -10px;
+    margin-top: -48px;
+    margin-right: 4px;
 }
 
 .objbox-footer a {
     padding-left: 0px;
     padding-top: 25px;
+}
+
+#ObjModal .modal-header {
+    height: 50px;
+    padding: 0px;
+}
+
+.sub-menuObj {
+    padding-left: 10px;
+}
+
+#ObjListCont {
+    padding-right: 0px;
+    padding-left: 4px;
 }

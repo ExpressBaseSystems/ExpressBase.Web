@@ -838,11 +838,13 @@ footer {
     padding-bottom: 5px;
     margin-top: 8px;
     background-color: white;
-    border-radius: 2px;
+    border-radius: 5px;
     height: 74px;
     margin-right: 8px;
     width: 100%;
     cursor: pointer;
+    border: 1px solid beige;
+    box-shadow: 5px 2px 1px #ebeef1;
 }
 
     .objitems:hover {
@@ -967,4 +969,12 @@ footer {
     padding: 12px;
     border-radius: 50%;
     z-index:1;
+}
+#ObjModal .close {
+    margin: -17px -10px;
+}
+
+.objbox-footer a {
+    padding-left: 0px;
+    padding-top: 25px;
 }

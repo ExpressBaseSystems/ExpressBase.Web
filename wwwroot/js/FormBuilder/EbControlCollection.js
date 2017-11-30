@@ -1,5 +1,5 @@
 ﻿var EbControlCollection = function (obj) {
-    this.$type = obj.$type || "System.Collections.Generic.List`1[[ExpressBase.Objects.EbControl, ExpressBase.Objects]], System.Private.CoreLib";
+    this.$type = obj.$type || "System.Collections.Generic.List`1[[ExpressBase.Common.Objects.EbControl, ExpressBase.Common]], System.Private.CoreLib";
     this.$values = obj.$values || [];
 
     this.ToArray = function () {

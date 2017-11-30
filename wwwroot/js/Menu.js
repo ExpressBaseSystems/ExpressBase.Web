@@ -56,7 +56,8 @@
         $("#topmenu a").attr("href", "../Dev/CreateApplication");
         $(".modal-body #objList").empty();
         $.each(this.resultObj.AppList, function (i, _obj) {
-            $(".modal-body #objList").append(`<a href='../Dev/CreateApplication?itemid=${i}'>
+            var url = `../Dev/CreateApplication?itemid=${i}`;
+            $(".modal-body #objList").append(`
                 <div class='col-md-6 objitems' name='objBox'>
                     <div class='col-md-1 obj-icon'>
                         <div class='obj-ic-cir'>
@@ -77,9 +78,9 @@
                         </h6>
                     </div>
                     <div class='col-md-1 objbox-footer'>
-                        <input type='button' class='btn fa-input fa-lg' value='&#xf054;' style='font-family: FontAwesome;background: transparent;'>
+                         <a href='${url}' class='btn'><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
-                </div></a>`);
+                </div>`);
         });
     }
 
@@ -127,7 +128,7 @@
     };
 
     this.code4AppendList = function (_obj, url) {
-        var appname ="Application";
+        var appname ="Not Selected..";
         if (_obj.AppId > 0)
             appname = this.resultObj.AppList[_obj.AppId].AppName;
         $(".modal-body #objList").append(`
@@ -139,21 +140,23 @@
                     </div>
                     <div class='col-md-10'>
                         <h4 name='head4' style='color:black;font-size: 14px;'>${_obj.ObjName}</h4>
-                        <p class='text-justify'>${_obj.Description}</p>
+                        <p class='text-justify' style="font-size: 12px;">${_obj.Description}</p>
                         <h6>
-                            <a style="margin-left:10px;">
-                                <span name="Status" class="label label-primary">Status</span>
+                            <a>
                                 <span name="Version" class="label label-default">V.${_obj.VersionNumber}</span>
                                 <span class="label label-success">${_obj.EbType}</span>
                                 <span name="Application" class="label label-danger">${appname}</span>
-                                <span name="Module" class="label label-default">Module</span>
                             </a>
                         </h6>
                     </div>
                     <div class='col-md-1 objbox-footer'>
-                        <a href='${url}' class='btn'><i class="fa fa-folder-open" aria-hidden="true"></i></a>
+                        <a href='${url}' class='btn'><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
                 </div>`);
+
+        if (this.login == "dc") {
+            $("#objList span[name=Version]").hide();
+        }
     };
 
     this.init();

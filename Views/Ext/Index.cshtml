@@ -40,7 +40,7 @@
                 <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-4">
                     <div class="no-creditcared">No credit card required.</div>
 
-                    <form action="~/Ext/TenantExtSignup" method="post">
+                    <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
                         <div class="input-group">
                             <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
                             <span class="input-group-btn">
@@ -242,7 +242,7 @@
     <div class="col-md-12 no-padd get-start-sec">
         <div class="col-md-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-xs-12 col-sm-offset-4">
             <div class="no-creditcared">No credit card required.</div>
-            <form action="~/Ext/TenantExtSignup" method="post">
+            <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
                 <div class="input-group">
                     <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
                     <span class="input-group-btn">
@@ -298,7 +298,7 @@
 }
 <script>
     $('document').ready(function () {
-        //$(".getstarted").prop("disabled", true);  
+        //$(".getstarted").prop("disabled", true);
         $(document).scroll(function () {
             var y = $(this).scrollTop();
             if (y > $('.slider').height()) {
@@ -307,20 +307,33 @@
             } else {
                 $('#trial-btn').fadeOut();
                 $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
-            }                 
-        });
-
-        function ValidateEmail(mail) {
-            if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
-                return (true)
             }
-            return (false)
-        }
-        
-        @*if ("@ViewBag.useremail" !== "") {   
-            alert(@ViewBag.useremail);
-            $("#login-modal").modal('toggle');
-            $("#email-login").text(@ViewBag.useremail);
-        }*@
+        });                   
     });
+
+    function validate(form) {
+        var email = form.email.value.trim();
+        if (ValidateEmail(email)) {
+
+            return true;
+        }
+        else {
+            return false;
+
+        }
+    }
+    function ValidateEmail(mail) {
+        if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+            return (true)
+        }
+        return (false)
+    }     
 </script>
+@if (ViewBag.useremail != null)
+{
+    <script> 
+        alert("email exist");
+            $("#login-modal").modal('toggle');
+            $("#email-login").val("@ViewBag.useremail");
+    </script>
+}

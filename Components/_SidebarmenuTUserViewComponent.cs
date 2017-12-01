@@ -43,7 +43,7 @@ namespace ExpressBase.Web.Components
             {
                 sb.Append(@" 
                     <li><a href = '#' class='list-group-item collapsed' data-toggle='collapse' data-target='#dropdown1_" + obj.Key + @"'>
-                        <i class='fa fa-cog'></i> " + resultlist.AppList[obj.Key].AppName + @"<i class='fa fa-caret-down pull-right'></i>
+                        <i class='fa fa-angle-right' aria-hidden='true'></i> " + resultlist.AppList[obj.Key].AppName + @"
                     </a>
                     <ul class='sub-menuObj collapse' id='dropdown1_" + obj.Key + @"'>");
 

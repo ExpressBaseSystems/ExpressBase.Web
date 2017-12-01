@@ -102,6 +102,12 @@
                     @await Component.InvokeAsync("Emailbuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
+
+                else if (ViewBag.ObjType == (int)EbObjectType.BotForm)
+                {
+                    @await Component.InvokeAsync("BotFormBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
             }
         </div>
     </div>

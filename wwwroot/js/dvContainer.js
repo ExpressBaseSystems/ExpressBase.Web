@@ -15,6 +15,7 @@ var DvContainerObj = function (settings) {
     this.chartJs = {};
     this.previousObj = null;
     this.user = settings.user;
+    this.previewBody = null;
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -24,6 +25,7 @@ var DvContainerObj = function (settings) {
         $("#last").off("click").on("click", this.gotoLast.bind(this));
         //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#btnGo" + counter).trigger("click");
+        $("#mini").off("click").on("click", this.toggleminimap.bind(this));
     };
 
 
@@ -303,6 +305,29 @@ var DvContainerObj = function (settings) {
             //    $("#first").css("display", "inline-block");
             //    $("#last").css("display", "inline-block");
             //}
+        }
+    };
+
+    this.toggleminimap = function () {
+        $("#MinimapDiv").toggle();
+        if ($("#MinimapDiv").css("display") === "block") {
+            if (this.previewBody)
+                this.previewBody = null;
+            this.previewBody = $('.splitdiv_parent').minimap({
+                heightRatio: 0.2,
+                widthRatio: 0.2,
+                offsetHeightRatio: 0.1,
+                offsetWidthRatio: 0.02,
+                position: "left",
+                touch: true,
+                smoothScroll: true,
+                smoothScrollDelay: 200,
+            });
+            this.previewBody.show();
+        }
+        else {
+            if (this.previewBody)
+                this.previewBody.hide();
         }
     };
 

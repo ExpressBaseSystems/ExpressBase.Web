@@ -21,14 +21,14 @@
                             var vNumMajor = ("v." + (ViewBag._major + 1) + "." + ViewBag._minor + "." + ViewBag._patch + ".w");
                             var vNumMinor = ("v." + ViewBag._major + "." + (ViewBag._minor + 1) + "." + ViewBag._patch + ".w");
                             var vNumPatch = ("v." + ViewBag._major + "." + ViewBag._minor + "." + (ViewBag._patch + 1) + ".w");
-                            <div class="dropdown" style="display:inline">
+                            <div class="dropdown" style="display:inline" id="create_button">
                                 <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
                                 </button>
                                 <ul class="dropdown-menu" id="create"></ul>
                             </div>
                             <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
-                            <button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
+                            ///<button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
                             <button class='btn status' id="status" data-toggle="tooltip" data-placement="bottom" title="status"><i class="fa fa-exchange" aria-hidden="true"></i></button>
                             <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
                         }
@@ -285,6 +285,28 @@
         //    }
         //});
     });
+    //var countries = new Bloodhound({
+    //    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    //    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    //    prefetch: {
+    //        url: 'countries.json',
+    //        filter: function (list) {
+    //            return $.map(list, function (name) {
+    //                return { name: name };
+    //            });
+    //        }
+    //    }
+    //});
+    //countries.initialize();
+
+    //$('#tags').tagsinput({
+    //    typeaheadjs: {
+    //        name: 'countries',
+    //        displayKey: 'name',
+    //        valueKey: 'name',
+    //        source: countries.ttAdapter()
+    //    }
+    //});
         $('#minmize').click(function () {
             $('.dashbord').animate({ height: 'toggle' }, minMaxDash.bind(this));
         });
@@ -300,6 +322,5 @@
                 $(".tab-cont-common").css("height","calc(100vh - 178px)");
             }
         }
-
 
 </script>

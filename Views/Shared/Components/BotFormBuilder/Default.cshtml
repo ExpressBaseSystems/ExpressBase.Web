@@ -4,11 +4,12 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script type="text/javascript" src="~/js/"></script>
-<link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
+@*<link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css">
 <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
-<script src="~/lib/codemirror/lib/codemirror.js"></script>
-<script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
+<script src="~/lib/codemirror/lib/codemirror.js"></script>*@
+<script src="~/js/ChatBot/BotFormBuilder.js"></script>
+@*<script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
 <script src="~/lib/codemirror/addon/hint/javascript-hint.js"></script>
 <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
 <script src="~/lib/codemirror/addon/fold/foldcode.js"></script>
@@ -16,7 +17,7 @@
 <script src="~/lib/codemirror/addon/fold/brace-fold.js"></script>
 <script src="~/lib/codemirror/addon/fold/xml-fold.js"></script>
 <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
-<script src="~/lib/codemirror/mode/xml/xml.js"></script>@{
+<script src="~/lib/codemirror/mode/xml/xml.js"></script>@{*@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 @{
@@ -69,13 +70,14 @@
     var editModeFormObj = null;
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
+     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new BotFormBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
     // if edit mode
-    if(objid){
+    @*if(objid){
         var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
         //$.each(editModeFormObj, funcion(i, obj) {  });
         formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
         formBuilderObj.InitEditModeCtrls(JSON.parse(editModeObj));
     }
     else
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
+        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");*@
 </script>

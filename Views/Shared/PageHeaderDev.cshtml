@@ -1,13 +1,10 @@
 ﻿<style>
     .dd {
         display: inline-block;
-        margin: -5px 10px;
         cursor: pointer;
     }
     .dd1 {
-        display: inline-block;
-        margin: -5px -2px;
-        cursor: pointer;
+        vertical-align: 8px;
     }
 </style>
 
@@ -31,9 +28,9 @@
         <a href="#"><img alt="Brand" src="~/images/EB_Logo.png" style="width: 100%;height: 100%;"></a>
     </div>
     <div class="col-md-9" style="height: 100%;">
-        <div class="pull-right" style="height: 100%;display: inline;">
-            <div class="dropdown dd1">
-                <i class="fa fa-lock fa-lg" style="margin-right:12px;margin-top:5px" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
+        <div class="pull-right" style="height: 100%;display: inline;padding-top: 10px;">
+            <div class="dropdown dd dd1" style="margin: 0px 4px;">
+                <i class="fa fa-lock fa-lg" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
                 <ul class="dropdown-menu">
                     <li><a onclick="LoadCommonList('user')" href="CommonList?type='user'"><i class="fa fa-caret-right"></i> Users</a></li>
                     <li class="divider"></li>
@@ -43,7 +40,7 @@
 
                 </ul>
             </div>
-            <div class="dropdown dd">
+            <div class="dropdown dd dd1" style="margin: 0px 12px;">
                 <i class="fa fa-bell fa-lg" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i><span class="badge bg-green">6</span>
                 <ul class="dropdown-menu">
                     <li>
@@ -54,7 +51,7 @@
                 </ul>
             </div>
             <div class="dropdown dd">
-                <img id="prof" class="img-responsive" alt="dropdown-toggle" data-toggle="dropdown" src="~/images/proimg.jpg" />
+                <img id="prof" class="img-responsive" alt="dropdown-toggle" data-toggle="dropdown" src="~/images/proimg.jpg" style="border-radius:50%;width: 66%;"/>
                 <ul class="dropdown-menu">
                     <li><a href="#">My Account<span class="fa fa-user pull-right"></span></a></li>
                     <li class="divider"></li>

@@ -22,6 +22,7 @@
                 $.LoadingOverlay("hide");
                 $(".sub-menuObj a").off("click").on("click", this.appendObjList.bind(this));
                 $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
+                $(".list-group-item[data-toggle=collapse]").off("click").on("click", this.changeIcon.bind(this));
             }.bind(this));
         }
         else {
@@ -106,14 +107,14 @@
                     $.each(this.resultObj.Data, function (i, Apps) {
                         $.each(Apps.Types, function (j, Type) {
                             $.each(Type.Objects, function (l, _obj) {
-                                        if (_obj.ObjName.toLowerCase().indexOf(srch) !== -1) {
-                                            f = true;
-                                            if (_obj.EbType == "TableVisualization" || _obj.EbType == "ChartVisualization") {
-                                                url = "../DV/dv?refid=" + _obj.Refid;
-                                            }
-                                            this.code4AppendList(_obj, url);
-                                        }
-                                    }.bind(this));
+                                if (_obj.ObjName.toLowerCase().indexOf(srch) !== -1) {
+                                    f = true;
+                                    if (_obj.EbType == "TableVisualization" || _obj.EbType == "ChartVisualization") {
+                                        url = "../DV/dv?refid=" + _obj.Refid;
+                                    }
+                                    this.code4AppendList(_obj, url);
+                                }
+                            }.bind(this));
                         }.bind(this));
                     }.bind(this));
                 }
@@ -123,12 +124,12 @@
                 else
                     $("#notfound").text('');
             }
-            
+
         }
     };
 
     this.code4AppendList = function (_obj, url) {
-        var appname ="Not Selected..";
+        var appname = "Not Selected..";
         if (_obj.AppId > 0)
             appname = this.resultObj.AppList[_obj.AppId].AppName;
         $(".modal-body #objList").append(`
@@ -156,6 +157,15 @@
 
         if (this.login == "dc") {
             $("#objList span[name=Version]").hide();
+        }
+    };
+
+    this.changeIcon = function (e) {
+        if (this.login === "uc") {
+            if ($(e.target).hasClass("collapsed"))
+                $(e.target).children("i").attr("class", "fa fa-angle-down")
+            else
+                $(e.target).children("i").attr("class", "fa fa-angle-right")
         }
     };
 

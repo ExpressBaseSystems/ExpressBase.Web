@@ -21,13 +21,17 @@ namespace ExpressBase.Web.Controllers
 {
     public class ExtController : EbBaseNewController
     {
+        public const string RequestEmail = "reqEmail";
+        public const string Email = "email";      
+
         public ExtController(IServiceClient _client, IRedisClient _redis)
             : base(_client, _redis) { }
 
         // GET: /<controller>/
-        public IActionResult Index(string email)
+        [HttpPost][HttpGet]
+        public IActionResult Index()
         {
-            ViewBag.useremail = email;
+            ViewBag.useremail = TempData[RequestEmail];
             return View();
         }
 
@@ -131,7 +135,6 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()
         {
-            var req = this.HttpContext.Request.Form;
            // Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", req["g-recaptcha-response"]);
             //if (!data.Success)
             //{
@@ -162,23 +165,21 @@ namespace ExpressBase.Web.Controllers
             //}
             //else
             //{
-                IServiceClient client = this.ServiceClient;
+                
                 try
                 {
-                var unq = client.Post<bool>(new UniqueRequest { email = req["email"] });
-                if (!unq)
-                {
-                    var res = client.Post<RegisterResponse>(new RegisterRequest { Email = req["email"], DisplayName = "expressbase" });
+                    string reqEmail = this.HttpContext.Request.Form[Email];
+                    TempData[RequestEmail] = reqEmail;
 
-                    if (Convert.ToInt32(res.UserId) >= 0)
+                    if (!this.ServiceClient.Post<bool>(new UniqueRequest { email = reqEmail }))
                     {
-                       return RedirectToAction("ProfileSetup", new RouteValueDictionary(new { controller = "Tenant", action = "ProfileSetup", email = req["email"] })); // convert get to post
+                        var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = "expressbase" });
+
+                        if (Convert.ToInt32(res.UserId) >= 0)
+                           return RedirectToAction("ProfileSetup", new RouteValueDictionary(new { controller = "Tenant", action = "ProfileSetup"})); // convert get to post
                     }
-                }
-                else
-                {
-                    return RedirectToAction("Index", new RouteValueDictionary(new { controller = "Ext", action = "Index", email = req["email"] })); // convert get to post;
-                }
+                    else
+                        return RedirectToAction("Index", new RouteValueDictionary(new { controller = "Ext", action = "Index" })); // convert get to post;
                 }
                 catch (WebServiceException e)
                 {

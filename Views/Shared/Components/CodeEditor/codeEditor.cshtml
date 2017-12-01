@@ -20,11 +20,13 @@
                 CodeMirror.showHint(cm, CodeMirror.hint.sql);
             };
         }
-     var _readonly = '@ViewBag.VersionNumber'.slice(-1);
-        if (_readonly === "w" ||'@ViewBag.IsNew'==="True")
+     var readonly = '@ViewBag.VersionNumber'.slice(-1);
+        if (readonly === "w" ||'@ViewBag.IsNew'==="True")
             _readonly = false;
         else
-            _readonly = true;
+         _readonly = true;
+        alert(readonly);
+        alert(_readonly);
         window["editor@(ViewBag.tabnum)"] = CodeMirror.fromTextArea(document.getElementById("code@(ViewBag.tabnum)"), {
             mode: "text/x-pgsql",
             lineNumbers: true,

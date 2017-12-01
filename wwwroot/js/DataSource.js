@@ -12,6 +12,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.FD = false;
 
     this.EbObject = dsobj;
+    commonO.Current_obj = this.EbObject;
     this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
     this.Init = function () {
@@ -62,12 +63,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $('#save').addClass('disabled');
             $('#commit_outer').addClass('disabled');
         }
-        commonO.Current_obj = this.EbObject;
+       // commonO.Current_obj = this.EbObject;
     };
 
     this.propGrid.PropertyChanged = function (obj, pname) {
         this.EbObject = obj;
-        commonO.Current_obj = this.EbObject;
+        //commonO.Current_obj = this.EbObject;
         if (pname === "FilterDialogRefId")
         {
             if (obj[pname] !== null)
@@ -207,7 +208,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
 
     this.CountParameters = function () {
-        this.flagRun = false;
+        commonO.flagRun = false;
         var result = window["editor" + tabNum].getValue().match(/\@\w+/g);
         var filterparams = [];
         if (result !== null) {

@@ -10,6 +10,9 @@
 <link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
 <script src="~/js/splitWindow.js" type="text/javascript"></script>
 
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>
+
 <style>
     .scrollable-menu {
         height: auto;
@@ -26,6 +29,14 @@
     }
     body {
         overflow-x: hidden;
+    }
+    .minimaps {
+        height: 200px;
+        position: absolute;
+        background: whitesmoke;
+        width: 100%;
+        z-index: 100;
+        margin-top: 34px;
     }
 </style>
 @{
@@ -44,6 +55,9 @@
         </div>
         <div class="col-md-8 pd-0">
             <div class='toolicons form-inline pull-right'>
+                <div id="mini_icon" style="display:inline">
+                    <button id='mini' class='btn commonControls'><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+                </div>
                 <div id="obj_icons" style="display:inline">
                     <button id='btnGo0' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
                 </div>
@@ -56,6 +70,7 @@
         </div>
     </div>
 </div>
+<section class="minimaps" id="MinimapDiv" style="display:none;"></section>
 <div class="row splitdiv_parent" id="parent-div0"></div>
 
 

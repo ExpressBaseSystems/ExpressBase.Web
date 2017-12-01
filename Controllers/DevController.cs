@@ -431,9 +431,9 @@ namespace ExpressBase.Web.Controllers
 
             var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
 
-            var _jsResult = CSharpToJs.GenerateJs<EbEmailTemplateBase>(BuilderType.EmailBuilder, typeArray);
-
-            ViewBag.Meta = _jsResult.Meta;
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
+           
+            ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
         
@@ -482,9 +482,9 @@ namespace ExpressBase.Web.Controllers
                 }
                 var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
 
-                var _jsResult = CSharpToJs.GenerateJs<EbEmailTemplateBase>(BuilderType.EmailBuilder, typeArray);
+                Context2Js _jsResult = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
 
-                ViewBag.Meta = _jsResult.Meta;
+                ViewBag.Meta = _jsResult.AllMetas;
                 ViewBag.JsObjects = _jsResult.JsObjects;
                 ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
             }

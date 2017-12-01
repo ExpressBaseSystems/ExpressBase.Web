@@ -5,6 +5,8 @@
     this.emailpropG = new Eb_PropertyGrid("PropertyG");
     this.ObjId = 0;
     this.ObjCollect = {};
+    this.PosLeft;
+    this.PosRight;
 
     this.Init = function () {
         $('#summernot_container' + tabNum + ' .note-editable').bind('paste', this.SetCode.bind(this));
@@ -22,9 +24,18 @@
         this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
         this.Name = this.EbObject.Name;
         this.DrawDsTree();
-        $(".note-editable").droppable({ accept: ".coloums", drop: this.onDropFn.bind(this) })
+        $(".note-editable").droppable({ accept: ".coloums", drop: this.onDropFn.bind(this) });
+        $(".note-editable").on('click', this.onclickFn.bind(this));
+
     };
 
+   
+
+    this.onclickFn=function (e) {
+        this.PosLeft = e.pageX - $(".note-editable").offset().left;
+        this.PosRight = e.pageY - $(".note-editable").offset().top;
+           
+    };
     this.onDropFn = function (event, ui) {
         //this.posLeft = event.pageX;
         //this.posTop = event.pageY;
@@ -36,6 +47,9 @@
 
         this.dropLoc.append(obj.$Control.outerHTML());
         obj.Title = this.col.text();
+        obj.Left = this.PosLeft;
+        obj.Right = this.PosRight;
+        alert(obj.Left);
         this.ObjCollect[id] = obj;
         this.RefreshControl(obj);
         //$(".note-editable").append(text);

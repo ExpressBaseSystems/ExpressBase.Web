@@ -9,6 +9,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using ServiceStack.Auth;
 using Microsoft.AspNetCore.Http;
+using ExpressBase.Security;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -183,5 +184,14 @@ namespace ExpressBase.Web.Controllers
 
             return "SocialId not in Database";
         }
+
+        //public void GetBotForms()
+        //{
+        //    User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
+        //    var Ids = String.Join(",", user.EbObjectIds);
+        //    resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids = "{" + Ids + "}" });
+        //    var resultlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest());
+        //    var resultlist.d 
+        //}
     }
 }

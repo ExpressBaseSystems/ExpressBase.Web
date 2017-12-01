@@ -176,6 +176,25 @@ namespace ExpressBase.Web2.Controllers
                 }
             }
 
+            else if (ObjectType == 18)
+            {
+                foreach (var Op in Enum.GetValues(typeof(EbBotForm.Operations)))
+                    header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
+
+                foreach (var obj in resultlist.Data.Keys)
+                {
+                    tbody += "<tr>";
+                    tbody += "<td>{0}</td>".Fmt(resultlist.Data[obj]);
+                    foreach (var Op in Enum.GetValues(typeof(EbChartVisualization.Operations)))
+                    {
+                        var perm = string.Format("{0}_{1}", obj, (int)Op);
+                        var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
+                        tbody += "<td><input type = 'checkbox' name ='permissions' value='{0}' class='form-check-input' aria-label='...' {1}></td>".Fmt(perm, checked_string);
+                    }
+                    tbody += "</tr>";
+                }
+            }
+
             return html.Replace("@Header", header).Replace("@tbody", tbody);
 
         }

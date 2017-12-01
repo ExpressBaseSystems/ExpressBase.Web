@@ -8,6 +8,7 @@
     this.$propGrid = $("#" + propGridId);
     this.$form = $("#" + formid);
     this.EbObject = dsobj;
+    commonO.Current_obj = this.EbObject;
 
 
     // need to change
@@ -66,7 +67,6 @@
     
     if (this.EbObject){
         this.InitEditModeCtrls(this.EbObject);
-        commonO.Current_obj = this.EbObject;
     }
     if (this.EbObject === null) {
         if (builderType === 0)
@@ -382,7 +382,6 @@
             RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
-            commonO.Current_obj = this.rootContainerObj;
         }.bind(this);
     };
     this.Init();

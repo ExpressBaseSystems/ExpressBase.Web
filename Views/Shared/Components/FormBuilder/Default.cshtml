@@ -52,7 +52,7 @@
     var editModeFormObj = null;
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
-     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
     // if edit mode
     @*if(objid){
         @*var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.dsObj));

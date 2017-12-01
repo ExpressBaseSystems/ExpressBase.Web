@@ -3,7 +3,8 @@
     this.Refid = refid;
     this.EbObject = dsobj;
     this.emailpropG = new Eb_PropertyGrid("PropertyG");
-
+    this.ObjId = 0;
+    this.ObjCollect = {};
 
     this.Init = function () {
         $('#summernot_container' + tabNum + ' .note-editable').bind('paste', this.SetCode.bind(this));
@@ -20,12 +21,51 @@
         }
         this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
         this.Name = this.EbObject.Name;
-
         this.DrawDsTree();
+        $(".note-editable").droppable({ accept: ".coloums", drop: this.onDropFn.bind(this) })
     };
 
-  
+    this.onDropFn = function (event, ui) {
+        //this.posLeft = event.pageX;
+        //this.posTop = event.pageY;
+        this.dropLoc = $(event.target);
+        this.col = $(ui.draggable);
 
+        var id = this.ObjId++;
+        var obj = new EbObjects["DsColumns"](id);
+
+        this.dropLoc.append(obj.$Control.outerHTML());
+        obj.Title = this.col.text();
+        this.ObjCollect[id] = obj;
+        this.RefreshControl(obj);
+        //$(".note-editable").append(text);
+        this.SetCode();
+
+    };
+
+    this.RefreshControl = function (obj) {
+        var NewHtml = obj.$Control.outerHTML();
+        var metas = AllMetas["DsColumns"];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
+            }
+        });
+        $("#" + obj.EbSid).replaceWith(NewHtml);
+        $("#" + obj.EbSid).attr("tabindex", "1").off("focus").on("focus", this.elementOnFocus.bind(this));;
+        
+    };//render after pgchange
+
+
+    this.elementOnFocus = function (event)
+    {
+        event.stopPropagation();
+        var curControl = $(event.target);
+        var id = curControl.attr("id");
+        var curObject = this.ObjCollect[id];
+        this.emailpropG.setObject(curObject, AllMetas["DsColumns"]);      
+    }
     this.emailpropG.PropertyChanged = function (obj, Pname) {
         this.EbObject = obj;
         commonO.Current_obj = obj;
@@ -56,16 +96,34 @@
         $.each(result.columns, function (i, columnCollection) {
             $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {               
-                $("#data-table-list ul[id='t" + i + "'").append("<li value ='" + obj.type + "'  class='styl'>" + obj.columnName + "</li>");
+                $("#data-table-list ul[id='t" + i + "'").append("<li value ='" + obj.type + "'  class='coloums draggable'>" + obj.columnName + "</li>");
                
             });
         });
         
         $('#data-table-list').treed();
 
-        $('.styl').off('dblclick').on('dblclick',this.yyy.bind(this));
+        $('.coloums').draggable({
+            cancel: "a.ui-icon",
+            revert: "invalid",
+            helper: "clone",
+            cursor: "move",
+            appendTo: ".note-editable",
+            stack: ".draggable",
+            drag: function (event, ui) {
+                $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "200px" });
+                $(ui.helper).children(".shape-text").remove();
+                $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
+            },
+            //start: getMousePositonOnDraggable.bind(this)
+        });
+       // $('.styl').off('dblclick').on('dblclick',this.yyy.bind(this));
     };
-   
+
+    getMousePositonOnDraggable = function (event, ui) {
+        //PosOBjOFdrag['left'] = event.pageX - $(event.target).offset().left;
+        //PosOBjOFdrag['top'] = event.pageY - $(event.target).offset().top;
+    }
     this.yyy = function (e) {
         var dict = new Array();
         
@@ -78,17 +136,25 @@
         var colVal = "Table" + $(e.target).parent().siblings("a").text().slice(-1) + "." + $(e.target).text().trim();
         this.EbObject.Parameters = dict;
         console.log(this.EbObject.Parameters);
+        e.preventDefault();
         this.insertselected("{{" + colVal + "}}");
     };
 
     this.insertselected = function (text) {
         var text = text;
-        $(".note-editable").append(text);
+        var id = this.ObjId++;
+        var obj = new EbObjects["DsColumns"](id);
+
+        $(".note-editable").append(obj.$Control.outerHTML());
+        obj.Title = text;        
+        this.ObjCollect[id] = obj;
+        this.RefreshControl(obj);
+        //$(".note-editable").append(text);
         this.SetCode();
     };
 
     this.SetCode = function (e) {
-        console.log($('#summernote' + tabNum).summernote('code'));
+      //  console.log($('#summernote' + tabNum).summernote('code'));
         this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
         commonO.Current_obj = this.EbObject;
     }
@@ -144,35 +210,43 @@
         });
     }
     this.Init();
+
+ 
 }
 
-        function insertAtCursor(text) {
-        $(".note-editable").attr("tabindex", "1").attr("onclick", "$(this).focus();");
+function pasteHtmlAtCaret(html) {
     var sel, range;
-            var text = text;
-            if (window.getSelection) {
-
+    if (window.getSelection) {
+        // IE9 and non-IE
         sel = window.getSelection();
-    console.log(sel);
-                if (sel.getRangeAt && sel.rangeCount) {
-        range = sel.getRangeAt(0);
-    range.deleteContents();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
 
-                    var lines = text.replace("\r\n", "\n").split("\n");
-                    var frag = document.createDocumentFragment();
-                    for (var i = 0, len = lines.length; i < len; ++i) {
-                        if (i > 0) {
-        frag.appendChild(document.createElement("br"));
-    }
-                        frag.appendChild(document.createTextNode(lines[i]));
-                    }
+            // Range.createContextualFragment() would be useful here but is
+            // non-standard and not supported in all browsers (IE9, for one)
+            var el = document.createElement("div");
+            el.innerHTML = html;
+            var frag = document.createDocumentFragment(), node, lastNode;
+            while ((node = el.firstChild)) {
+                lastNode = frag.appendChild(node);
+            }
+            range.insertNode(frag);
 
-                    range.insertNode(frag);
-                }
-            } else if (document.selection && document.selection.createRange) {
-        document.selection.createRange().text = text;
-    }
+            // Preserve the selection
+            if (lastNode) {
+                range = range.cloneRange();
+                range.setStartAfter(lastNode);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
         }
+    } else if (document.selection && document.selection.type != "Control") {
+        // IE < 9
+        document.selection.createRange().pasteHTML(html);
+    }
+}
 
         
 

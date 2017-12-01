@@ -1,4 +1,4 @@
-﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
+﻿var BotFormBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
     this.wc = wc;
     this.cid = cid;
     this.Name = formid;
@@ -8,7 +8,9 @@
     this.$propGrid = $("#" + propGridId);
     this.$form = $("#" + formid);
     this.EbObject = dsobj;
-
+    this.rootContainerObj = new EbObjects.EbBotForm(formid);
+    this.PGobj = null;
+    
 
     // need to change
     this.controlCounters = {
@@ -27,9 +29,9 @@
     this.CurRowCount = 2;
     this.CurColCount = 2;
     this.movingObj = {};
-    
+
     this.controlOnFocus = function (e) {
-        if (e.target.id ==="form-buider-form") {
+        if (e.target.id === "form-buider-form") {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
             return;
@@ -63,31 +65,17 @@
         $el.attr("eb-type", type);
         $el.attr("eb-type", type).attr("id", id);
     };
-    
-    if (this.EbObject){
+
+    if (this.EbObject) {
         this.InitEditModeCtrls(this.EbObject);
         commonO.Current_obj = this.EbObject;
     }
     if (this.EbObject === null) {
-        if (builderType === 0)
-            this.rootContainerObj = new EbObjects.EbWebForm(formid);
-        else if (builderType === 12)
-            this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
+        this.rootContainerObj = new EbObjects.EbBotForm(formid);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
     }
-    //if (builderType === 1)
-    //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
-    if (builderType === 0)
-        this.rootContainerObj = new EbObjects.EbWebForm(formid);
-    //else if (builderType === 12)
-    //    this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
-    //else if (builderType === 13)
-    //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
-    //else if (builderType === 14)
-    //    this.rootContainerObj = new EbObjects.UserControlObj(formid);
-    //else if (builderType === 3)
-    //    this.rootContainerObj = new EbObjects.ReportObj(formid);
+
 
     this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
     this.curControl = null;
@@ -356,7 +344,7 @@
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-    
+
 
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
@@ -382,7 +370,6 @@
             RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
-            commonO.Current_obj = this.rootContainerObj;
         }.bind(this);
     };
     this.Init();

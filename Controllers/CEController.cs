@@ -34,86 +34,86 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult code_editor()
-        {
-            ViewBag.Header = "New Datasource";
-            ViewBag.VersionNumber = 1;
-            ViewBag.Obj_id = null;
-            ViewBag.IsNew = "true";
-            ViewBag.EditorHint = "CodeMirror.hint.sql";
-            ViewBag.EditorMode = "text/x-sql";
-            ViewBag.Icon = "fa fa-database";
-            ViewBag.ObjType = (int)EbObjectType.DataSource;
-            ViewBag.ObjectName = "*Untitled";
-            ViewBag.FilterDialogId = "null";
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+        //[HttpGet]
+        //public IActionResult code_editor()
+        //{
+        //    ViewBag.Header = "New Datasource";
+        //    ViewBag.VersionNumber = 1;
+        //    ViewBag.Obj_id = null;
+        //    ViewBag.IsNew = "true";
+        //    ViewBag.EditorHint = "CodeMirror.hint.sql";
+        //    ViewBag.EditorMode = "text/x-sql";
+        //    ViewBag.Icon = "fa fa-database";
+        //    ViewBag.ObjType = (int)EbObjectType.DataSource;
+        //    ViewBag.ObjectName = "*Untitled";
+        //    ViewBag.FilterDialogId = "null";
+        //    ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
 
-            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-            ViewBag.Meta = _jsResult.Meta;
-            ViewBag.JsObjects = _jsResult.JsObjects;
-            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-            return View();
-        }
+        //    var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+        //    var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+        //    ViewBag.Meta = _jsResult.Meta;
+        //    ViewBag.JsObjects = _jsResult.JsObjects;
+        //    ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+        //    return View();
+        //}
 
-        [HttpPost]
-        public IActionResult code_editor(int i)
-        {
-            ViewBag.Header = "Edit Datasource";
-            var req = this.HttpContext.Request.Form;
-            int obj_id = Convert.ToInt32(req["objid"]);
+        //[HttpPost]
+        //public IActionResult code_editor(int i)
+        //{
+        //    ViewBag.Header = "Edit Datasource";
+        //    var req = this.HttpContext.Request.Form;
+        //    int obj_id = Convert.ToInt32(req["objid"]);
 
-            ViewBag.Obj_id = obj_id;
-            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
-            var rlist = resultlist.Data;
-            foreach (var element in rlist)
-            {
-                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-                ViewBag.LifeCycle = lifeCycle;
-                ViewBag.IsNew = "false";
-                ViewBag.ObjectName = element.Name;
-                ViewBag.ObjectDesc = element.Description;
-                ViewBag.Status = element.Status;
-                ViewBag.VersionNumber = element.VersionNumber;
-                ViewBag.EditorHint = "CodeMirror.hint.sql";
-                ViewBag.EditorMode = "text/x-pgsql";
-                ViewBag.Icon = "fa fa-database";
-                ViewBag.ObjType = (int)EbObjectType.DataSource;
-                ViewBag.Refid = element.RefId;
-                //ViewBag.Majorv = element.MajorVersionNumber;
-                //ViewBag.Minorv = element.MinorVersionNumber;
-                //ViewBag.Patchv = element.PatchVersionNumber;
-                ViewBag.Tags = element.Tags;
+        //    ViewBag.Obj_id = obj_id;
+        //    var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
+        //    var rlist = resultlist.Data;
+        //    foreach (var element in rlist)
+        //    {
+        //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+        //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+        //        ViewBag.LifeCycle = lifeCycle;
+        //        ViewBag.IsNew = "false";
+        //        ViewBag.ObjectName = element.Name;
+        //        ViewBag.ObjectDesc = element.Description;
+        //        ViewBag.Status = element.Status;
+        //        ViewBag.VersionNumber = element.VersionNumber;
+        //        ViewBag.EditorHint = "CodeMirror.hint.sql";
+        //        ViewBag.EditorMode = "text/x-pgsql";
+        //        ViewBag.Icon = "fa fa-database";
+        //        ViewBag.ObjType = (int)EbObjectType.DataSource;
+        //        ViewBag.Refid = element.RefId;
+        //        //ViewBag.Majorv = element.MajorVersionNumber;
+        //        //ViewBag.Minorv = element.MinorVersionNumber;
+        //        //ViewBag.Patchv = element.PatchVersionNumber;
+        //        ViewBag.Tags = element.Tags;
 
-                if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-                {
-                    ViewBag.ReadOnly = true;
-                    var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_lc);
-                    ViewBag.Code = dsobj.Sql;
-                    ViewBag.dsObj = dsobj;
-                    ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
-                    ViewBag.Workingcopy = element.Wc_All;
-                }
-                else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
-                {
-                    ViewBag.ReadOnly = false;
-                    var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_wc);
-                    ViewBag.Code = dsobj.Sql;
-                    ViewBag.dsObj = dsobj;
-                    ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
-                    ViewBag.Workingcopy = element.Wc_All;
-                }
-            }
-            var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-            var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-            ViewBag.Meta = _jsResult.Meta;
-            ViewBag.JsObjects = _jsResult.JsObjects;
-            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
-            return View();
-        }
+        //        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+        //        {
+        //            ViewBag.ReadOnly = true;
+        //            var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_lc);
+        //            ViewBag.Code = dsobj.Sql;
+        //            ViewBag.dsObj = dsobj;
+        //            ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
+        //            ViewBag.Workingcopy = element.Wc_All;
+        //        }
+        //        else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
+        //        {
+        //            ViewBag.ReadOnly = false;
+        //            var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_wc);
+        //            ViewBag.Code = dsobj.Sql;
+        //            ViewBag.dsObj = dsobj;
+        //            ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
+        //            ViewBag.Workingcopy = element.Wc_All;
+        //        }
+        //    }
+        //    var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
+        //    var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+        //    ViewBag.Meta = _jsResult.Meta;
+        //    ViewBag.JsObjects = _jsResult.JsObjects;
+        //    ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+        //    ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+        //    return View();
+        //}
 
         
         [HttpGet]

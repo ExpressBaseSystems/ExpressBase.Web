@@ -17,7 +17,7 @@
 
     var poweredbyDiv = document.createElement("div");
     poweredbyDiv.className = "poweredby";
-    poweredbyDiv.innerHTML = "&nbsp; &nbsp; Powered by EXPESSbase";
+    poweredbyDiv.innerHTML = "&nbsp; &nbsp; Powered by EXPRESSbase";
 
     var botdp = document.createElement("div");
     botdp.className = "bot-icon";

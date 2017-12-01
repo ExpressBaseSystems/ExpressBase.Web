@@ -293,13 +293,14 @@
         $.LoadingOverlay("show");
         var tagvalues = $('#tags').val();
         var appid = $("#apps").find("option:selected").val();
-        if (this.ObjCollection["#vernav" + this.tabNum].EbObject.$type.indexOf("Report") !== -1) {
-            this.ObjCollection["#vernav" + this.tabNum].savefile();
+        var getNav = $("#versionNav li.active a").attr("href");
+        if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1) {
+            this.ObjCollection[getNav].savefile();
         }
         $.post("../Eb_Object/SaveEbObject", {
             _refid: this.ver_Refid,
             _json: JSON.stringify(this.Current_obj),
-            _rel_obj: this.ObjCollection["#vernav" + this.tabNum].relatedObjects,
+            _rel_obj: this.ObjCollection[getNav].relatedObjects,
             _tags: tagvalues,
             _appid: appid
         }, this.UpdateTab.bind(this));
@@ -310,13 +311,14 @@
         var tagvalues = $('#tags').val();
         var appid = $("#apps").find("option:selected").val();
         var changeLog = $('#obj_changelog').val();
-        if (this.ObjCollection["#vernav" + this.tabNum].EbObject.$type.indexOf("Report") !== -1) {
-            this.ObjCollection["#vernav" + this.tabNum].Commit();
+        var getNav = $("#versionNav li.active a").attr("href");
+        if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1) {
+            this.ObjCollection[getNav].Commit();
         }
         $.post("../Eb_Object/CommitEbObject", {
             _refid: this.ver_Refid, _changeLog: changeLog,
             _json: JSON.stringify(this.Current_obj),
-            _rel_obj: this.ObjCollection["#vernav" + this.tabNum].relatedObjects,
+            _rel_obj: this.ObjCollection[getNav].relatedObjects,
             _tags: tagvalues,
             _appid: appid
         }, this.UpdateTab.bind(this));

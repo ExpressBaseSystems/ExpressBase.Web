@@ -285,6 +285,28 @@
         //    }
         //});
     });
+    //var countries = new Bloodhound({
+    //    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    //    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    //    prefetch: {
+    //        url: 'countries.json',
+    //        filter: function (list) {
+    //            return $.map(list, function (name) {
+    //                return { name: name };
+    //            });
+    //        }
+    //    }
+    //});
+    //countries.initialize();
+
+    //$('#tags').tagsinput({
+    //    typeaheadjs: {
+    //        name: 'countries',
+    //        displayKey: 'name',
+    //        valueKey: 'name',
+    //        source: countries.ttAdapter()
+    //    }
+    //});
         $('#minmize').click(function () {
             $('.dashbord').animate({ height: 'toggle' }, minMaxDash.bind(this));
         });
@@ -300,6 +322,5 @@
                 $(".tab-cont-common").css("height","calc(100vh - 178px)");
             }
         }
-
 
 </script>

@@ -8,6 +8,7 @@
     this.$propGrid = $("#" + propGridId);
     this.$form = $("#" + formid);
     this.EbObject = dsobj;
+    commonO.Current_obj = this.EbObject;
     this.rootContainerObj = new EbObjects.EbBotForm(formid);
     this.PGobj = null;
     
@@ -68,7 +69,6 @@
 
     if (this.EbObject) {
         this.InitEditModeCtrls(this.EbObject);
-        commonO.Current_obj = this.EbObject;
     }
     if (this.EbObject === null) {
         this.rootContainerObj = new EbObjects.EbBotForm(formid);

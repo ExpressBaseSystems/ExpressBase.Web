@@ -203,9 +203,17 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.createPage = function () {
         this.createHeaderBox();
-        $("#PageContainer").append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'>`);       
+        $("#PageContainer").append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'>`);
+        $(".page").resizable({
+            handles: "s",
+            resize:this.onPageResize.bind(this)           
+        });
         this.pageSplitters();
     };
+    this.onPageResize = function () {
+        $('.headersections,.multiSplit').css("height", $('.page').height());
+        $(".rulerleft").css("height", $('.page').height());
+    }
 
     this.createHeaderBox = function () {        
         $("#PageContainer").append(`<div class='headersections' style='height:${this.height};'></div>

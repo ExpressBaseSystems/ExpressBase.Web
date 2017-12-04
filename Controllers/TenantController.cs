@@ -40,10 +40,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult ProfileSetup()
         {
-            User _user = new User();
-            _user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
-            ViewBag.email = HttpContext.Request.Query["email"];
-            //ViewBag.ImgSrc = _user.Proimg;
+            ViewBag.useremail = TempData["reqEmail"];          
             return View();
         }
 
@@ -51,17 +48,16 @@ namespace ExpressBase.Web.Controllers
         public IActionResult ProfileSetup(int i)
         {
            
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.ServiceClient;
-            var res = client.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
+            var req = this.HttpContext.Request.Form;            
+            var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
-                var authClient = this.ServiceClient;
-                MyAuthenticateResponse authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+               
+                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
-                    //UserName = res.email,
-                    //Password = (req["password"] + res.email).ToMD5Hash(),
+                    UserName = res.email,
+                    Password = (req["Password"] + res.email).ToMD5Hash(),
                     Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", "expressbase" } },
                     //UseTokenCookie = true
                 });

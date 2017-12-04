@@ -283,9 +283,22 @@
             //this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
             this.UpdateCreateVersionDD();
             this.ObjWrapper.GenerateButtons();
+            $('#save').show();
+            $('#commit_outer').show();
+            $('#create_button').show();
+            $('#compare').show();
+            $('#status').show();
+            $('#ver_his').show();
         }
-        else
+        else {
             $("#obj_icons").empty();
+            $('#save').hide();
+            $('#commit_outer').hide();
+            $('#create_button').hide();
+            $('#compare').show();
+            $('#status').show();
+            $('#ver_his').show();
+        }
     };
 
     this.Save = function () {

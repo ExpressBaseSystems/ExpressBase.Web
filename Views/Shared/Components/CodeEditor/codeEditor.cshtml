@@ -1,7 +1,8 @@
 ﻿@{ 
     @using ExpressBase.Common;
     var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
-}
+    string readonlyval = (dsObj != null) ? dsObj.VersionNumber.Substring(dsObj.VersionNumber.Length - 1) : String.Empty;
+    }
 
 <div class="ds-page" id="ds-page@(ViewBag.tabnum)">
     <div class='col-md-10 code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
@@ -20,13 +21,11 @@
                 CodeMirror.showHint(cm, CodeMirror.hint.sql);
             };
         }
-     var readonly = '@ViewBag.VersionNumber'.slice(-1);
-        if (readonly === "w" ||'@ViewBag.IsNew'==="True")
+        
+        if ("@readonlyval" === "w" ||'@ViewBag.IsNew'==="True")
             _readonly = false;
         else
          _readonly = true;
-        alert(readonly);
-        alert(_readonly);
         window["editor@(ViewBag.tabnum)"] = CodeMirror.fromTextArea(document.getElementById("code@(ViewBag.tabnum)"), {
             mode: "text/x-pgsql",
             lineNumbers: true,

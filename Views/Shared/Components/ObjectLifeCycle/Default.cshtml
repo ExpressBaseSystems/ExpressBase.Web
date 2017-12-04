@@ -3,8 +3,10 @@
     var cur_stat = ViewBag.CurrStatus;
     @using Newtonsoft.Json;
     var dvobj = JsonConvert.SerializeObject(ViewBag.StatusHistory);
+
 }
 <script>
+    var classname;
     $('#save').hide();
     $('#commit_outer').hide();
     $('#create_button').hide();
@@ -22,28 +24,23 @@
                 "<div class='timeline-panel' style='min-height: 92px;'> " +
                     "<div class='timeline-heading col-md-10'> " +
                         "<div class='col-md-12'>" +
-                            "<div class='timeline-title col-md-1' style='display:inline'>" + obj.Status + "</div>" +
-                            "<div class='timeline-time col-md-8' style='display:inline'>" +
-                                "<p style='backgroung-color:lightgrey'><small class='text-muted'><i class='glyphicon glyphicon-time'></i>" + obj.CommitTs + "</small>" +
-                            "</div> " +
-                            "<small class='col-md-2 style='display:inline' > " + obj.CommitUname + "</small></p >" +
+                            "<div class='timeline-title col-md-1' style='display:inline;font-weight:700;'>" + obj.Status + "</div>" +                                                     
                         "</div>" +
                         "<div class='timeline-body' id='timeline-body" + i + "_" + @(ViewBag.tabNum) + "'> " +
                             "<p class='timeline-body-clickmore'>" + obj.ChangeLog + "</p>" +
-                "</div>" +
-                "<a class='primary pull-right more' style='position:absolute; bottom: 0; right: 0;' id='more" + i + "_" + @(ViewBag.tabNum) + "'>more</a>" +
-                    "</div>" +
-
-                    "<div class='col-md-2'>" +
-                "<div> " +
-                            "<img class='img-circle img-thumbnail prof_dp pull-right' src= '../static/dp/dp_"+ obj.CommitUId +"_micro.jpg" + "'/>" +
-
-                        "</div> " +
-                    "</div> " +
+                        "</div>" +
+                      "<a class='primary pull-right more' style='position:absolute; bottom: 0; right: 0;' id='more" + i + "_" + @(ViewBag.tabNum) + "'>more</a>" +
+                   "</div>" + 
+                "<div class='col-md-2'>" +
+                        "<img class='img-circle img-thumbnail prof_dp pull-right' src= '../static/dp/dp_" + obj.CommitUId + "_micro.jpg" + "'/>" +
+                        "<small class='col-md-2' style='display:inline;font-weight:700;' > " + obj.CommitUname + "</small></p >" +
                 "</div> " +
+                "<div class='timeline-time' style='display:inline'>" +
+                 "<p style='backgroung-color:lightgrey'><small class='text-muted' style='font-size: 11px;'><i class='glyphicon glyphicon-time'></i>" + obj.CommitTs + "</small>" +
+                "</div> " +  
+            "</div> " +
+          "</li>");
 
-                "</li>");
-            var classname;
             if (obj.Status === "Test")
                 classname = "info";
             if (obj.Status === "UAT")
@@ -51,7 +48,7 @@
             if (obj.Status === "Live") {
                 classname = "success";
                 $('#stat' + i + "_" + @(ViewBag.tabNum)).addClass("livestat");
-            }
+                }
             if (obj.Status === "Offline")
                 classname = "warning";
             if (obj.Status === "Obsolete")
@@ -104,6 +101,26 @@
     });
 </script>
 <style>
+    #st_dd1 .btn {
+        border-radius: 2px;
+    }
+
+    .w100 {
+        width: 100%;
+        color: #fff;
+        font-size: 12px;
+        padding: 5px;
+        margin: 15px 0px;
+        border-radius: 2px;
+        text-align: center;
+        border: none;
+    }
+
+    .ebbutton {
+        border-radius: 2px;
+        box-shadow: none !important;
+        border: none;
+    }
     /* Timeline */
     .timeline {
         list-style: none;
@@ -118,7 +135,7 @@
             content: ' ';
             width: 3px;
             background-color: #eeeeee;
-            left: 50%;
+            left: 52%;
             margin-left: -1.5px;
         }
 
@@ -257,66 +274,95 @@
         width: 25em;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: 13px;
     }
+
     .change_stat_box {
-        background-color: midnightblue;
-        padding: 10px;
+        border: 1px solid #c0c0c0;
+        background: #ffffff;
+        border-radius: 2px;
+        padding: 25px;
+        -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
     }
 </style>
+@{
+    string classname = "";
+    if (cur_stat == "Test")
+    {
+        classname = "info";
+    }
+    if (cur_stat == "UAT")
+    {
+        classname = "primary";
+    }
+    if (cur_stat == "Live")
+    {
+        classname = "success";
+    }
+    if (cur_stat == "Offline")
+    {
+        classname = "warning";
+    }
+    if (cur_stat == "Obsolete")
+    {
+        classname = "danger";
+    }
+}
 <div class='container'>
     <div class='row statwindow col-md-12' id="statwindow@(tabNum)">
         <ul class='timeline' id='timeline@(tabNum)'>
             <li class='timeline-item' id='stat@(tabNum)'>
-                <div class='col-md-offset-3 col-md-5 change_stat_box'>
+                <div class='col-md-offset-3 col-md-6 change_stat_box'>
                     <div class='timeline-heading'>
-                        <div class="btn btn-default pull-right" id='confirm_stat_change@(tabNum)' style="margin-bottom:5px">
-                            Apply  <i class="fa fa-save fa-1x"></i>
-                        </div>
-                            <div class='form-control col-md-12' style="margin-bottom:5px">Current Status :@(cur_stat)</div>
-                       <div id="st_dd@(tabNum)" class="form-group">
-                                <select class='selectpicker btn form-control' id='status_drpdwn@(tabNum)'>
-                                    <option value='Select Status'>Select Status</option>
-                                    @{
-                                        if (cur_stat == "Dev")
-                                        {
-                                            <option value='Test'>Test</option>
-                                        }
-                                        if (cur_stat == "Test")
-                                        {
-                                            <option value='Dev'> Dev </option>
+                        <input type="text" readonly class="btn-@(classname) w100" id="w100" value="Current Status : @(cur_stat)" />
+                        <div id="st_dd@(tabNum)" class="form-group">
+                            <select class='selectpicker btn form-control' id='status_drpdwn@(tabNum)'>
+                                <option value='Select Status'>Select Status</option>
+                                @{
+                                    if (cur_stat == "Dev")
+                                    {
+                                        <option value='Test'>Test</option>
+                                    }
+                                    if (cur_stat == "Test")
+                                    {
+                                        <option value='Dev'> Dev </option>
                                             <option value='UAT' id='uat'> UAT </option>
                                             <option value='Live'> Live </option>
-                                        }
-                                        if (cur_stat == "UAT")
-                                        {
-                                            <option value='Live'> Live </option>
-                                        }
-                                        if (cur_stat == "Live")
-                                        {
-                                            <option value='Dev'> Dev </option>
+                                    }
+                                    if (cur_stat == "UAT")
+                                    {
+                                        <option value='Live'> Live </option>
+                                    }
+                                    if (cur_stat == "Live")
+                                    {
+                                        <option value='Dev'> Dev </option>
                                             <option value='Test'> Test </option>
                                             <option value='Offline'> Offline </option>
-                                        }
-                                        if (cur_stat == "Offline")
-                                        {
-                                            <option value='Dev'> Dev </option>
+                                    }
+                                    if (cur_stat == "Offline")
+                                    {
+                                        <option value='Dev'> Dev </option>
                                             <option value='Test'> Test </option>
                                             <option value='Obsolete'> Obsolete </option>
-                                        }
-                                        if (cur_stat == "Obsolete")
-                                        {
-                                            @*do something*@
-                                        }
                                     }
-                                </select>
-                            </div>
-</div>
+                                    if (cur_stat == "Obsolete")
+                                    {
+                                        @*do something*@
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
                     <div class='timeline-body'>
                         <div class=''>
-                            <div id="st_chnglog@(tabNum)" class="form-group st_chnglog">
-                                <textarea id='StatChlog@(tabNum)' class='StatChlog form-control' rows="5" placeholder='Change log' required></textarea>
+                            <div id="st_chnglog@(tabNum)" class="form-group">
+                                <textarea id='StatChlog@(tabNum)' class='form-control' style="border-radius: 2px; " rows="4" placeholder='Change log' required></textarea>
                             </div>
                         </div>
+                    </div>
+                    <div class="btn btn-info pull-right ebbutton" id='confirm_stat_change@(tabNum)'>
+                        Apply  <i class="fa fa-save fa-1x"></i>
                     </div>
                 </div>
             </li>

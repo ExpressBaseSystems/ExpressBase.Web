@@ -271,6 +271,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             ds_refid: this.Refid,
             parameter: this.Object_String_WithVal
         }, this.Load_Table_Columns.bind(this));
+        $("#obj_icons").empty();
+        $('#save').hide();
+        $('#commit_outer').hide();
+        $('#create_button').hide();
+        $('#compare').show();
+        $('#status').show();
+        $('#ver_his').show();
     };
 
     this.Load_Table_Columns = function (result) {

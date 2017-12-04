@@ -1,9 +1,45 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
+<div class="row t-dash-boardrow">
+    <div class="col-md-3 col-lg-3 tdasboard-sidebar">
+        <div class="t-container">
+            <ul class="list-group">
+                <li class="list-group-item"><i class="fa fa-cog fa-lg tdash-icon" aria-hidden="true"></i> Solutions<div class="tr-on-hov"></div></li>
+                <li class="list-group-item"><i class="fa fa-usd fa-lg tdash-icon" aria-hidden="true"></i> Billing<div class="tr-on-hov"></div></li>
+                <li class="list-group-item"><i class="fa fa-life-ring fa-lg tdash-icon" aria-hidden="true"></i> Support<div class="tr-on-hov"></div></li>
+               
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-9 col-lg-9 pull-right t-dash-workplace">
+        <div class="t-container">
+            <div class="tdash-box">
+                <div class="tdash-box-head">
+                    Solutions
+                </div>
+                <div class="tdash-box-body">
+                    <div class="tdash-sol-box eb-flex-center">
+                        <a href="~/Tenant/TenantAddAccount" class="btn newsolution-btn">New solution</a>
+                    </div>
+                </div>               
+            </div>        
+        </div>
+        <div class="t-container">
+            <div class="tdash-box">
+               
+            </div>
+        </div>
+    </div>
+</div>
 
-
-
+<script>
+    $(".t-container .list-group-item").focus(function() {
+        $(this).children(".tr-on-hov").css("visibility", "visible");
+    }, function () {
+        $(this).children(".tr-on-hov").css("visibility", "hidden");
+    });
+</script>
 
 
 

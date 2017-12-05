@@ -112,6 +112,9 @@
                                     if (_obj.EbType == "TableVisualization" || _obj.EbType == "ChartVisualization") {
                                         url = "../DV/dv?refid=" + _obj.Refid;
                                     }
+                                    else if (_obj.EbType == "Report") {
+                                        url = "../ReportRender/Index?refid=" + _obj.Refid;
+                                    }
                                     this.code4AppendList(_obj, url);
                                 }
                             }.bind(this));

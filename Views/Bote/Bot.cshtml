@@ -52,7 +52,7 @@
                     }, function (result) {
                         chatBotObj.bearerToken = (JSON.parse(result)).BearerToken;
                         chatBotObj.refreshToken = (JSON.parse(result)).RefreshToken;
-                        console.log((JSON.parse(result)).BearerToken);
+                        alert("authenticate");
                     });
             });
         } else {

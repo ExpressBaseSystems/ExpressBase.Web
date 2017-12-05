@@ -8,9 +8,9 @@
     this.$userMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-user"><div class="msg-wraper-user"></div></div>'));
     this.$userMsgBox.append('<div class="bot-icon-user"></div>');
     this.ready = true;
-
     this.bearerToken = null;
     this.refreshToken = null;
+    this.userForms = null;
 
     this.$form = null;
     this.formControls = [];
@@ -44,7 +44,7 @@
     };
 
     this.txtboxKeyup = function (e) {
-        if (e.ctrlKey && e.which === 10)/////////////////////////////
+        if (e.which === 13)/////////////////////////////
             this.send_btn();
     }.bind(this);
 
@@ -53,7 +53,8 @@
             "refreshToken": this.refreshToken,
             "bearerToken": this.bearerToken
         }, function (data) {
-            Console.log(JSON.stringify(data));
+            this.userForms = data;
+            this.Query("What do you want to do ?");
         }.bind(this));
         window.onmessage = function (e) {
             if (e.data == 'hello') {
@@ -72,6 +73,7 @@
         $e.val('');
 
     }.bind(this);
+
     this.greetings = function (name) {
         this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.picture.data.url})center center no-repeat`);
         var time = new Date().getHours();
@@ -86,11 +88,11 @@
             greeting = 'Good evening!';
         }
         this.getMsg(`Hello ${name}, ${greeting}`);
-
-        this.Query("What do you want to do ?", ["Apply Leave", "Claim for reimbursement"]);
     }.bind(this);
 
-    this.Query = function (query, OptArr) {
+    this.Query = function (query) {
+        var OptArr = []
+        $.each(this.userForms, function (i, form) { OptArr.push(form.name); });
         this.getMsg(query);
         var Options = this.getButtons(OptArr);
         this.getMsg($('<div class="btn-box">' + Options + '</div>'));
@@ -99,38 +101,26 @@
 
     this.getButtons = function (OptArr) {
         var Html = '';
-        $.each(OptArr, function (i, opt) { Html += '<button name="form-opt" class="btn" idx="' + i + '">' + opt + '</button>'; });
+        $.each(OptArr, function (i, opt) {
+            Html += '<button name="form-opt" class="btn" idx="' + i + '">' + opt + '</button>';
+        });
         return Html;
     };
-
-    this.getForm = function ($msg) {
-        //$.get('https://expressbase.azurewebsites.net/Bote/GetSamp?refid=eb_roby_dev-eb_roby_dev-0-809-1488&socialId=' + this.socialId,
-        $.get('/Bote/GetSamp?refid=eb_roby_dev-eb_roby_dev-0-809-1488&socialId=' + this.socialId,
-            function (data) {
-                this.$form = data;
-                this.setFormControls();
-                $msg.remove();
-            }.bind(this));
-    }.bind(this);
-
 
     this.startFormInteraction = function (e) {
         var $e = $(e.target);
         var reply = $e.text().trim();
+        var idx = $e.attr("idx");
         $e.closest('.msg-cont').remove();
         this.sendMsg(reply);
         $('.eb-chat-inp-cont').hide();
-
-        var $msg = this.$botMsgBox.clone();
-        this.$chatBox.append($msg);
-        this.showTypingAnim($msg);
-        this.getForm($msg);
+        this.CurFormIdx = idx;
+        this.setFormControls(this.CurFormIdx);
     }.bind(this);
 
     this.setFormControls = function () {
-        var ctrls = $(this.$form).find('.Eb-ctrlContainer');
-        $.each(ctrls, function (i, control) {
-            this.formControls.push($(control))
+        $.each(this.userForms[this.CurFormIdx].controls, function (i, control) {
+            this.formControls.push($(control.bareControlHtml));
         }.bind(this));
         this.getNextControl();
     }.bind(this);
@@ -139,7 +129,7 @@
         var $btn = $(e.target).closest(".btn");
         var $msgDiv = $btn.closest('.msg-cont-bot');
         var idx = parseInt($btn.attr('idx')) + 1;
-        var id = $btn.siblings('.Eb-ctrlContainer').attr('id').slice(5).trim();
+        var id = this.userForms[this.CurFormIdx].controls[idx - 1].name;
         var $input = $('#' + id);
         $input.off("blur").on("blur", function () { $btn.click() });
         this.sendCtrlAfter($msgDiv.hide(), $input.val() + '&nbsp; <span idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
@@ -169,11 +159,9 @@
             return;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var $control = $('<div class="chat-ctrl-cont">' + this.formControls[idx][0].outerHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>');
-        var $label = $ctrlCont.find('#' + $ctrlCont.attr('id').slice(5).trim() + 'Lbl');
-        var lablel = $label.text();
+        var lablel = this.userForms[this.CurFormIdx].controls[idx].label;
         this.getMsg(lablel + ' ?');
         this.getMsg($control);
-        $label.hide();
         $ctrlCont.find(".helpText").remove();
     }.bind(this);
 

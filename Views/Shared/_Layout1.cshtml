@@ -152,10 +152,8 @@
 
         @{
             if (ViewBag.wc == "tc")
-            {
-                <div class="row">
-                    @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
-                </div>
+            {          
+                    @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });              
             }
             else
             {
@@ -222,40 +220,16 @@
                         </div>
                     </div>
                 }
-                else
-                {
-                    @*<div id="EbsideBar" class="col-md-3" style="height:100%;display:none;">
-                        @{ 
-
-                            Html.RenderPartial("_SidebarMenu");
-                        }
-
-                    </div>*@
-
-                }
             }
 
-            <div id="layout_div" class="col-md-12 col-sm-12 col-xs-12 main-cont">
+            <div id="layout_div" class="container-fluid main-cont">
                 @RenderBody()
                 @RenderSection("EbHead", false)
             </div>
-
-            @*<div class="col-md-12 col-sm-12 col-xs-12" style="padding:0;">
-                    <div class="item">
-                        <a href="#"> Home/</a>
-                    </div>
-                </div>*@
         </div>
     </div>
 </body>
 </html>
-<style>
-    .item {
-        color: #337ab7;
-        margin-top: 57px;
-        margin-bottom: 10px;
-    }
-</style>
 <script>
     var menu = new menujs('@ViewBag.wc');
     $("#layout_div").data("menu", menu);

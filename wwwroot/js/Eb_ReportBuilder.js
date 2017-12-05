@@ -56,7 +56,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.copyStack = null;
     this.copyORcut = null;
     this.idCounter = {       
-        EbReportColCounter: 0,        
+        EbDataFieldTextCounter: 0,
+        EbDataFieldDateTimeCounter: 0,
+        EbDataFieldBooleanCounter: 0,
+        EbDataFieldNumericCounter: 0,
         EbTableCounter: 0,
         EbImgCounter: 0,
         EbDateTimeCounter: 0,
@@ -391,7 +394,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (this.Objtype === 'DateTime') {
             Title = this.addCurrentDateTime();
         }
-        else if (this.Objtype === 'ReportCol') {
+        else if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric') {
             Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
         }
         else {

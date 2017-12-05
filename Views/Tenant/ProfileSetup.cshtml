@@ -1,129 +1,35 @@
 ﻿@{
-    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    Html.RenderPartial("_PageheaderTenant");
+    Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <script>
     $("#signIn").hide();
     $("#signUpFree").hide();
 </script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.css" />
+<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 <link rel="stylesheet" href="~/css/EbImageCropper.css" />
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.js"></script>
 <script src="~/js/EbImageCropper.js" type="text/javascript"></script>
-
-<style>
-    .pd-0 {
-        padding: 0;
-    }
-
-    .pd-r-0 {
-        padding-right: 0
-    }
-
-    .mr-t-50 {
-        margin-top: 50px;
-    }
-
-    .pd-l-0 {
-        padding-left: 0
-    }
-
-    .outer-row-profsetup {
-        height: 100vh;
-        padding-top: 40px;
-        font-family: open sans;
-        font-weight: 300;
-        background: #efefef;
-    }
-
-        .outer-row-profsetup label {
-            font-weight: 300;
-        }
-
-        .outer-row-profsetup .profSetupSec {
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding-bottom: 15px;
-        }
-
-            .outer-row-profsetup .profSetupSec .form-horizontal {
-                padding: 0px 70px 15px 70px;
-            }
-
-        .outer-row-profsetup .set-form-head {
-            width: 100%;         
-            background: #339bb3;
-            color: white;
-            font-size: 20px;
-            padding: 10px;
-        }
-
-            .outer-row-profsetup .set-form-head img {
-                height: 100%;
-                float: right;
-                display: inline-block;
-                background: white;
-            }
-
-        .outer-row-profsetup .set-form-head-name {
-            display: inline-block;
-        }
-
-        .outer-row-profsetup .cropie {
-            max-width: 100%;
-            height: 500px;
-            padding-bottom: 50px;
-        }
-
-        .outer-row-profsetup .skip-btn {
-            border: none;
-            background: none;
-        }
-
-        .outer-row-profsetup .savebtn {
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 0;
-        }
-
-            .outer-row-profsetup .savebtn .btn {
-                font-family: open sans;
-                font-weight: 300;
-                color: #fff;
-                background-color: #339bb3;
-            }
-        .outer-row-profsetup .profimage {
-            text-align:center;
-            padding:20px;
-        }
-            .outer-row-profsetup .profimage .p-st-dp {
-                height:100px;
-            }
-    .prof-setup-cropie .loginmodal-container {
-        max-width:500px;
-        height:400px;
-        padding-bottom:50px;
-    }
-</style>
+<script src="~/js/validator.js" type="text/javascript"></script>
 <section class="outer-row-profsetup">
     <div class="container pd-0 mr-t-50">
         <div class="col-md-8 col-lg-8 col-lg-offset-2 col-sm-8 col-sm-offset-2 col-xs-12 col-md-offset-2 profSetupSec pd-0">
             <div class="set-form-head">
                 <div class="set-form-head-name">Profile Setup</div>         
             </div>
-            <form class="form-horizontal" action="~/Tenant/ProfileSetup" method="post" onsubmit="return validate(this)">
+            <form class="form-horizontal" action="~/Tenant/ProfileSetup" method="post" data-toggle="validator">
 
                 <br />
                 <div class="col-md-12 pd-0">
                     <div class="col-md-8">
-                        <div class="form-group">
+                        <div class="form-group required">
                             <label>Name</label>
-                            <input class="form-control" type="text" onchange="" name="Name" id="name">
+                            <input class="form-control" type="text" name="Name" id="name" required>                          
                         </div>
                         <div class="form-group">                           
                             <label>Company</label>
-                            <input class="form-control" type="text" name="Company" id="company">
+                            <input class="form-control" type="text" name="Company" id="company" required>
                         </div>                     
                     </div>
                     <div class="col-md-4 profimage">
@@ -145,11 +51,18 @@
                         </div>
                         <div class="pd-l-0 col-md-4">
                             <label>Designation</label>
-                            <input class="form-control" type="text" name="Designation" id="designation">
+                            <select id="desig" name="Designation" class="form-control">
+                                <option value="1-10">1-10</option>
+                                <option value="11-50">11-50</option>
+                                <option value="51-100">51-100</option>
+                                <option value="101-250">101-250</option>
+                                <option value="251-500">250-500</option>
+                                <option value="greater than 500">greater than 500</option>
+                            </select>                            
                         </div>
                         <div class="pd-r-0 col-md-4">
                             <label>Country</label>
-                            <input class="form-control" type="text" name="country" id="country">
+                            <input class="form-control" type="text" name="Country" id="country" required>
                         </div>
                     </div>                  
                     <div class="form-group">
@@ -159,20 +72,19 @@
                             <input class="form-control" type="text" value="@ViewBag.useremail" name="Email" id="email" readonly>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group required">
                         <div class="pd-l-0 col-md-6">
                             <label>Password</label>
                             <div class="input-group">
                                 <span class="input-group-addon" id="basic-addon1"><i class="fa fa-key" aria-hidden="true"></i></span>
-                                <input class="form-control" type="text" name="Password" id="password">
+                                <input class="form-control" data-minlength="8" type="password" name="Password" id="inputPassword" required>                            
                             </div>
+                            <div class="help-block">Minimum of 8 characters</div>
                         </div>
                         <div class="pd-r-0 col-md-6">
-                            <label>Repeat Password</label>
-                            <div class="input-group">
-                                <span class="input-group-addon" id="basic-addon1"><i class="fa fa-key" aria-hidden="true"></i></span>
-                                <input class="form-control" type="text" name="Repeat-password" id="rep-password">
-                            </div>
+                            <label>Repeat Password</label>                           
+                                <input class="form-control" type="password" name="Repeat-password" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Whoops, these don't match" required>                               
+                            <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="form-group savebtn">
@@ -198,8 +110,8 @@
         preview: 'profimage',
         cropperContainer: 'cropsection'
     });
-    function validate(form) {
-
-    };
-
+    $.getJSON("http://freegeoip.net/json/", function (data) {
+        var country = data.country_name;
+        $('#country').val(country);
+    });
 </script>

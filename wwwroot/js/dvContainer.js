@@ -310,25 +310,25 @@ var DvContainerObj = function (settings) {
 
     this.toggleminimap = function () {
         $("#MinimapDiv").toggle();
-        if ($("#MinimapDiv").css("display") === "block") {
-            if (this.previewBody)
-                this.previewBody = null;
-            this.previewBody = $('.splitdiv_parent').minimap({
-                heightRatio: 0.2,
-                widthRatio: 0.2,
-                offsetHeightRatio: 0.1,
-                offsetWidthRatio: 0.02,
-                position: "left",
-                touch: true,
-                smoothScroll: true,
-                smoothScrollDelay: 200,
-            });
-            this.previewBody.show();
-        }
-        else {
-            if (this.previewBody)
-                this.previewBody.hide();
-        }
+        //if ($("#MinimapDiv").css("display") === "block") {
+        //    if (this.previewBody)
+        //        this.previewBody = null;
+        //    this.previewBody = $('.splitdiv_parent').minimap({
+        //        heightRatio: 0.2,
+        //        widthRatio: 0.2,
+        //        offsetHeightRatio: 0.1,
+        //        offsetWidthRatio: 0.02,
+        //        position: "left",
+        //        touch: true,
+        //        smoothScroll: true,
+        //        smoothScrollDelay: 200,
+        //    });
+        //    this.previewBody.show();
+        //}
+        //else {
+        //    if (this.previewBody)
+        //        this.previewBody.hide();
+        //}
     };
 
     this.init();

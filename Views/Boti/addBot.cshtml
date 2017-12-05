@@ -75,6 +75,15 @@
             margin-left: 3px;
             font-size: 11px;
         }
+        .inline-block{
+            display:inline-block;
+        }
+        .pp {
+            width: 24%;
+            background: red;
+            height: 155px;
+            margin-left: 30px;
+        }
     </style>
     <script>
     </script>
@@ -214,13 +223,18 @@
                     <div class="addbot-box">
                         @*@using (Html.BeginForm("AddBot", whichController, FormMethod.Post, new { target = "_blank" })){*@
                         <form method="post" action="../Boti/addBot">
-                            <div class="inp-block">
-                                <label>Bot Name:</label>
-                                <input type="text" name="_fullname" value="@ViewBag.fullname" class="inp-control" required id="botname" placeholder="Enter a name for your bot">
+                            <div class="inline-block" style="width:70%">
+                                <div class="inp-block">
+                                    <label>Bot Name:</label>
+                                    <input type="text" name="_fullname" value="@ViewBag.fullname" class="inp-control" required id="botname" placeholder="Enter a name for your bot">
+                                </div>
+                                <div class="inp-block">
+                                    <label>Short Name:</label>
+                                    <input type="text" name="_name" value="@ViewBag.botname" class="inp-control" required id="botname" placeholder="Enter a short name for your bot">
+                                </div>
                             </div>
-                            <div class="inp-block">
-                                <label>Short Name:</label>
-                                <input type="text" name="_name" value="@ViewBag.botname" class="inp-control" required id="botname" placeholder="Enter a short name for your bot">
+                            <div class="inline-block pp">
+
                             </div>
                             <div class="inp-block">
                                 <label>Website URL:</label>

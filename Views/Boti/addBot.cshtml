@@ -48,21 +48,23 @@
 
         .inp-control {
             border: none;
-            padding: 18px;
+            padding: 3px;
+            padding-top: 20px;
             font-size: 13px;
             width: 100%;
-            background-color: #f5f5f5;
-            border: solid 1px transparent;
+            background-color: transparent;
+            border: none;
             outline: none;
         }
 
         .inp-block {
             margin-bottom: 30px;
+            border-bottom: solid 1px gray;
         }
 
         .inp-control:focus {
-            background-color: white;
-            border: solid 1px #eee;
+            background-color: #f5f5f5;
+            /*border: solid 1px #eee;*/
         }
 
         .inp-block label {
@@ -70,11 +72,12 @@
             position: absolute;
             font-weight: 100;
             color: #777;
-            margin: 3px;
-            margin-left: 18px;
+            margin-left: 3px;
             font-size: 11px;
         }
     </style>
+    <script>
+    </script>
 </head>
 <body>
     @{
@@ -88,8 +91,8 @@
 
         .h-inherit {
             height: inherit;
-            background-color: cadetblue;
-            BACKGROUND-IMAGE: linear-gradient(45deg,#004890 0,#1976d2 100%);
+            background-color: #efefef;
+            /*BACKGROUND-IMAGE: linear-gradient(45deg,#004890 0,#1976d2 100%);*/
         }
 
         .pd-0 {
@@ -231,7 +234,7 @@
                             </div>
                             <div class="inp-block">
                                 <label>Welcome Message:</label>
-                                <textarea name="_wel_msg" class="inp-control" required rows="4" id="welcomemsg">@ViewBag.welcomemsg</textarea>
+                                <textarea name="_wel_msg" class="inp-control" required rows="4" id="welcomemsg"  placeholder="Enter a welcome Message">@ViewBag.welcomemsg</textarea>
                             </div>
                             <input type="hidden" id="sol_id" value="sampleSOLid" name="_sol_id" />
                             <button type="submit" id="submit" style="display:none" class="btn btn-default">Submit</button>
@@ -283,6 +286,13 @@
 
 <script>
     $(document).ready(function () {
+
+        $(".inp-block label").each(function (i, e) {
+            $e = $(e);
+            $inp = $e.siblings(".inp-control");
+            if ($inp.val() !== "")
+                $(e).show();;
+        });
 
         $("body").on("click", ".input-group-addon", function () {
             $("#embedtxt").select();

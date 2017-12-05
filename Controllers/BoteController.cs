@@ -10,6 +10,8 @@ using ServiceStack.Redis;
 using ServiceStack.Auth;
 using Microsoft.AspNetCore.Http;
 using ExpressBase.Security;
+using ExpressBase.Objects.ObjectContainers;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -32,31 +34,16 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 string cid = refid.Split('-')[0].Trim();
-                string whichconsole = "tc";
-
-                MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
-                {
-                    provider = CredentialsAuthProvider.Name,
-                    UserName = "NIL",
-                    Password = "NIL",
-                    Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", cid }, { "socialId", socialId } },
-                    // UseTokenCookie = true
-                });
-
+                string authResponse = MyAuthenticate(refid, socialId);
                 if (authResponse != null)
                 {
-                    CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append("bToken", authResponse.BearerToken, options);
-                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
-                    this.ServiceClient.BearerToken = authResponse.BearerToken;
-                    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
                     var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
                     var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
                     dsobj.Status = resultlist.Data[0].Status;
                     dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
                     result = dsobj.GetHtml();
                 }
-            }
+             }
             catch (Exception e)
             {
                 result = e.Message;
@@ -159,22 +146,10 @@ namespace ExpressBase.Web.Controllers
                 }
             }
 
-            MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
-            {
-                provider = CredentialsAuthProvider.Name,
-                UserName = "NIL",
-                Password = "NIL",
-                Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", ViewBag.cid }, { "socialId", socialId } },
-                // UseTokenCookie = true
-            });
+            string authResponse = MyAuthenticate(refid, socialId, whichconsole);
 
             if (authResponse != null)
-            {
-                CookieOptions options = new CookieOptions();
-                Response.Cookies.Append("bToken", authResponse.BearerToken, options);
-                Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
-                this.ServiceClient.BearerToken = authResponse.BearerToken;
-                this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+            {            
                 var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
                 var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
                 dsobj.Status = resultlist.Data[0].Status;
@@ -185,13 +160,50 @@ namespace ExpressBase.Web.Controllers
             return "SocialId not in Database";
         }
 
-        //public void GetBotForms()
-        //{
-        //    User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
-        //    var Ids = String.Join(",", user.EbObjectIds);
-        //    resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids = "{" + Ids + "}" });
-        //    var resultlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest());
-        //    var resultlist.d 
-        //}
+
+        [HttpPost]
+        public string MyAuthenticate(string cid, string socialId, string wc = "tc")
+        {
+           // string cid = refid.Split('-')[0].Trim();
+         //   string whichconsole = "tc";
+
+            MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
+            {
+                provider = CredentialsAuthProvider.Name,
+                UserName = "NIL",
+                Password = "NIL",
+                Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId } },
+                // UseTokenCookie = true
+            });
+
+            //if (authResponse != null)
+            //{
+            //    CookieOptions options = new CookieOptions();
+            //    Response.Cookies.Append("botToken", authResponse.BearerToken, options);
+            //    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+            //    this.ServiceClient.BearerToken = authResponse.BearerToken;
+            //    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+
+            //}
+            return authResponse.ToJson();
+        }
+
+        public List<EbBotForm> GetBotForms(string refreshToken, string bearerToken)
+        {
+            this.ServiceClient.BearerToken = bearerToken;
+            this.ServiceClient.RefreshToken = refreshToken;
+            var tokenS = (new JwtSecurityTokenHandler()).ReadToken(bearerToken) as JwtSecurityToken;
+
+           
+            ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+            ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
+            ViewBag.email = tokenS.Claims.First(claim => claim.Type == "email").Value;
+                    
+            User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+            var Ids = String.Join(",", user.EbObjectIds);
+            var resultlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
+            return resultlist.BotForms;
+        }
+
     }
 }

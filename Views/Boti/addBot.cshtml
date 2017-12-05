@@ -4,13 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Add ChatBot</title>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.css" />
+    <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
     <link rel="stylesheet" href="~/css/EbImageCropper.css" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.js"></script>
     <script src="~/js/EbImageCropper.js" type="text/javascript"></script>
 
+
     <style>
+        .no-padd{
+            padding:0;
+        }
         #embedtxt {
             color: transparent;
             background: transparent;
@@ -42,15 +46,18 @@
         }
 
         .dp-cont {
-            width: 100%;
-            height: 250px;
+            display:inline-block;
+            height: 100%;
         }
+            .dp-cont:hover {
+                background: #cad8db;
+            }
 
         .inp-control {
             border: none;
             padding: 3px;
             padding-top: 20px;
-            font-size: 13px;
+            font-size: 14px;
             width: 100%;
             background-color: transparent;
             border: none;
@@ -58,8 +65,9 @@
         }
 
         .inp-block {
-            margin-bottom: 30px;
-            border-bottom: solid 1px gray;
+            margin-bottom: 25px;
+            border-bottom: solid 1px #ccc;
+            font-family: 'Non-existant Sans', Arial, sans-serif;
         }
 
         .inp-control:focus {
@@ -75,6 +83,26 @@
             margin-left: 3px;
             font-size: 11px;
         }
+
+        .inline-block {
+            display: inline-block;
+        }
+
+        .pp {
+            width: 24%;
+            background: red;
+            height: 155px;
+            margin-left: 30px;
+        }
+        /*//////////////////////*/
+
+        .outer-row-profsetup .profimage {
+            padding: 0;
+            height: 130px;
+        }
+            .outer-row-profsetup .profimage .p-st-dp {
+                height: 100%;
+            }
     </style>
     <script>
     </script>
@@ -84,136 +112,17 @@
         Layout = "~/Views/Shared/_LayoutExternal.cshtml";
         Html.RenderPartial("_PageheaderDev");
     }
-    <style>
-        .mt-89 {
-            margin-top: 89px;
-        }
-
-        .h-inherit {
-            height: inherit;
-            background-color: #efefef;
-            /*BACKGROUND-IMAGE: linear-gradient(45deg,#004890 0,#1976d2 100%);*/
-        }
-
-        .pd-0 {
-            padding: 0;
-        }
-
-        .outer-row-profsetup {
-            height: inherit;
-        }
-
-        .profImageSec {
-            background-color: transparent;
-            height: inherit;
-            padding: 30px;
-        }
-
-        .profSetupSec {
-            height: inherit;
-        }
-
-        .prof-picDiv {
-            width: 100%;
-            height: 150px;
-            padding: 20px;
-        }
-
-        .profDetailHead {
-            color: white;
-            font-size: 22px;
-            padding-left: 20px;
-        }
-
-        .profImagePrevSec {
-            height: inherit;
-        }
-
-        .previewsec-outer {
-            width: 100%;
-            height: inherit;
-            background: #efefef;
-            padding: 35px 10px 10px 20px;
-        }
-
-            .previewsec-outer .cropsection {
-                width: 100%;
-                height: 300px;
-            }
-
-        .submitsec .btn {
-            float: right;
-        }
-
-        .Eb-CommonMenuStyle {
-            height: 32px;
-            border: none;
-            position: relative !important;
-        }
-
-            .Eb-CommonMenuStyle .btn {
-                border: none;
-            }
-
-        .croppie-container .cr-slider-wrap {
-            width: 100%;
-            padding: 5px;
-            background-color: black;
-            margin: 0;
-            text-align: left;
-        }
-
-        .cr-slider {
-            max-width: 100%;
-            padding-top: 0;
-            padding-bottom: 3px;
-            background: white;
-        }
-
-        .cr-slider-wrap .btn {
-            display: inline;
-            margin-left: 5px;
-            color: #fff;
-            background-color: transparent;
-            border-color: none;
-        }
-
-        .cr-slider-wrap input[type=range] {
-            width: 99px;
-            display: inline;
-        }
-
-        .imgsec-text {
-            margin-top: 30px;
-            color: white;
-        }
-
-        body {
-            margin-top: 50px !important;
-        }
-    </style>
-    <div class="row outer-row-profsetup">
-        <div class="Eb-CommonMenuStyle">
-            <div class="col-md-3 profDetailHead">Create Bot</div>
-            <div class="pull-right">
-                <input type="button" class="btn btn-primary" id="save" value="Save">
-            </div>
-        </div>
-        <div class="container-fluid pd-0 h-inherit">
-            <div class="col-md-2 profImageSec">
-                <div class="prof-picDiv" id="profimage">
-                    <div class="img-box-prof-picDiv">
-                        @*<div class="bot-dp"></div>*@
-                        <img src="~/images/svg/bot2.svg">
-                    </div>
+    <section class="outer-row-profsetup">
+        <div class="container pd-0 mr-t-50">
+            <div class="col-md-8 col-lg-8 col-lg-offset-2 col-sm-8 col-sm-offset-2 col-xs-12 col-md-offset-2 profSetupSec pd-0">
+                <div class="set-form-head">
+                    <div class="set-form-head-name">Chatbot Setup</div>
                 </div>
-            </div>
-            <div class="col-md-7 profSetupSec nopadding">
+                <form class="form-horizontal" action="~/Tenant/ProfileSetup" method="post">
 
-                <div class="addbot-cont">
-                    <div class="addbot-box">
-                        @*@using (Html.BeginForm("AddBot", whichController, FormMethod.Post, new { target = "_blank" })){*@
-                        <form method="post" action="../Boti/addBot">
+                    <br />
+                    <div class="col-md-12 pd-0">
+                        <div class="col-md-8 no-padd">
                             <div class="inp-block">
                                 <label>Bot Name:</label>
                                 <input type="text" name="_fullname" value="@ViewBag.fullname" class="inp-control" required id="botname" placeholder="Enter a name for your bot">
@@ -222,6 +131,15 @@
                                 <label>Short Name:</label>
                                 <input type="text" name="_name" value="@ViewBag.botname" class="inp-control" required id="botname" placeholder="Enter a short name for your bot">
                             </div>
+                        </div>
+                        <div class="col-md-4 profimage">
+                            <div class="dp-cont">
+                                <img src="~/images/svg/bot2.svg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" class="p-st-dp" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
                             <div class="inp-block">
                                 <label>Website URL:</label>
                                 <input type="url" name="_url" class="inp-control" value="@ViewBag.url" required id="websitename" placeholder="Enter your website Name">
@@ -234,7 +152,7 @@
                             </div>
                             <div class="inp-block">
                                 <label>Welcome Message:</label>
-                                <textarea name="_wel_msg" class="inp-control" required rows="4" id="welcomemsg"  placeholder="Enter a welcome Message">@ViewBag.welcomemsg</textarea>
+                                <textarea name="_wel_msg" class="inp-control" required rows="4" id="welcomemsg" placeholder="Enter a welcome Message">@ViewBag.welcomemsg</textarea>
                             </div>
                             <input type="hidden" id="sol_id" value="sampleSOLid" name="_sol_id" />
                             <button type="submit" id="submit" style="display:none" class="btn btn-default">Submit</button>
@@ -271,56 +189,66 @@
 
                                 </div>
                             }
-                        </form>
-                        @*}  *@
+                        </div>
+                        <div class="form-group savebtn">
+                            <button type="submit" id="save" value="Save" class="btn">Save Chatbot</button>
+                        </div>
                     </div>
-                </div>
+                </form>
+                <input type="hidden" id="imgsrc" name="imgsrc" />
             </div>
-            <div class="col-md-3 nopadding">
-                <div class="dp-cont" id="DP-cont"></div>
+        </div>
+    </section>
+    <div class="prof-setup-cropie">
+        <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="loginmodal-container cropie" id="cropsection">
+                </div>
             </div>
         </div>
     </div>
+    <script>
+        var upload = new EbImageCropper({
+            preview: 'profimage',
+            cropperContainer: 'cropsection'
+        });      
+    </script>
+
+
+
+    
 </body>
 </html>
 
 <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        $(".inp-block label").each(function (i, e) {
-            $e = $(e);
-            $inp = $e.siblings(".inp-control");
-            if ($inp.val() !== "")
-                $(e).show();;
-        });
+            $(".inp-block label").each(function (i, e) {
+                $e = $(e);
+                $inp = $e.siblings(".inp-control");
+                if ($inp.val() !== "")
+                    $(e).show();;
+            });
 
-        $("body").on("click", ".input-group-addon", function () {
-            $("#embedtxt").select();
-            document.execCommand('copy');
-            $("#embedtxt").blur()
-        });
+            $("body").on("click", ".input-group-addon", function () {
+                $("#embedtxt").select();
+                document.execCommand('copy');
+                $("#embedtxt").blur()
+            });
 
-        $("body").on("click", ".Eb-CommonMenuStyle [value=Save]", function () {
-            $("#submit").click();
-        });
+            $("body").on("click", ".outer-row-profsetup [value=Save]", function () {
+                $("#submit").click();
+            });
 
-        var upload = new EbImageCropper({
-            preview: 'profimage',
-            cropperContainer: 'DP-cont'
+            $(".inp-block").on("keyup load", ".inp-control", function (e) {
+                var inp = $(e.target);
+                var label = inp.closest(".inp-block").find("label")
+                if ($(e.target).val() !== "")
+                    label.show(100);
+                else
+                    label.hide(100);
+            });
         });
-
-        $(".inp-block").on("keyup load", ".inp-control", function (e) {
-            var inp = $(e.target);
-            var label = inp.closest(".inp-block").find("label")
-            if ($(e.target).val() !== "")
-                label.show(100);
-            else
-                label.hide(100);
-        });
-        $(".inp-block").on("load", ".inp-control", function (e) {
-            alert(100);
-        });
-    });
 
 
 

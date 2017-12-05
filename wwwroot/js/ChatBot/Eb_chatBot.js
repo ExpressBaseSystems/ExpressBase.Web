@@ -9,6 +9,9 @@
     this.$userMsgBox.append('<div class="bot-icon-user"></div>');
     this.ready = true;
 
+    this.bearerToken = null;
+    this.refreshToken = null;
+
     this.$form = null;
     this.formControls = [];
     this.formValues = {};
@@ -46,6 +49,12 @@
     }.bind(this);
 
     this.send_btn = function () {
+        $.post("../Bote/GetBotForms", {
+            "refreshToken": this.refreshToken,
+            "bearerToken": this.bearerToken
+        }, function (data) {
+            Console.log(JSON.stringify(data));
+        }.bind(this));
         window.onmessage = function (e) {
             if (e.data == 'hello') {
                 //alert('It works!8888888888888888888888');

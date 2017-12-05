@@ -11,6 +11,7 @@ using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ReportRelated;
 using System.Reflection;
+using System.Data;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,7 +19,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class RBController : EbBaseNewController
     {
-        public RBController(IServiceClient _client, IRedisClient _redis) : base (_client, _redis) { }
+        public RBController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         [HttpPost]
         public DataSourceColumnsResponse GetColumns(String refID)

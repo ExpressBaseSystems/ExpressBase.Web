@@ -1066,3 +1066,41 @@ footer {
     margin-top: -7px;
 }
 /*tdashboard end*/
+/*.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}*/
+
+#demodd #charttype {
+    display: flex;
+    flex-direction: column;
+}
+
+#demodd .chartBody {
+    display: flex;
+    flex-direction: row;
+}
+
+#demodd .divLLType {
+    margin: 10px;
+    cursor:pointer;
+}
+
+#demodd .divLLType:hover {
+    background-color: #d0cbf9;
+}
+
+#demodd .chartHeader {
+    background-color: #e4dcdc;
+    font-size: 13px;
+    padding-left: 10px;
+}
+
+#demodd .chartname {
+    font-size: 11px;
+    padding-left: 8px;
+    margin-top: 3px;
+}
+
+#demodd img{
+    height:40px;
+}

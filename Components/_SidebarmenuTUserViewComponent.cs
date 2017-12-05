@@ -28,8 +28,8 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
             var resultlist = new SidebarUserResponse();
-            resultlist = this.Redis.Get<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
-            if (resultlist == null)
+            //resultlist = this.Redis.Get<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
+           // if (resultlist == null)
             {
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
                 var Ids = String.Join(",", user.EbObjectIds);

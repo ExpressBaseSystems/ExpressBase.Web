@@ -22,7 +22,20 @@ namespace ExpressBase.Web.Controllers
     {
         private ReportRenderController Controller { get; set; }
         PdfTemplate total;
-
+        public void onOpenDocument(PdfWriter writer, Document d)
+        {
+            Controller.DrawReportHeader();
+        }
+        public override void OnCloseDocument(PdfWriter writer, Document d)
+        {
+            Controller.DrawReportFooter();
+            //ColumnText.ShowTextAligned(total, Element.ALIGN_LEFT, new Phrase((writer.PageNumber - 1).ToString()), 2, 2, 0);
+        }
+        public override void OnEndPage(PdfWriter writer, Document d)
+        {
+            Controller.DrawPageHeader();
+            Controller.DrawPageFooter();
+        }
         public HeaderFooter(ReportRenderController _c) : base()
         {
             this.Controller = _c;
@@ -30,23 +43,23 @@ namespace ExpressBase.Web.Controllers
     }
     public class ReportRenderController : EbBaseNewController
     {
-        public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
-        public RowColletion dt;
-        DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
-        DataSourceDataResponse dresp = new DataSourceDataResponse();
-        ColumnColletion __columns = null;
+        private RowColletion dt;
+        private DataSourceColumnsResponse cresp = null;
+        private DataSourceDataResponse dresp = null;
+        private ColumnColletion __columns = null;
 
-        EbReport Report = null;
-        iTextSharp.text.Font f = FontFactory.GetFont(FontFactory.HELVETICA, 5);
-        float printingTop = 0;
-        public List<double> total = new List<double>();
-        Dictionary<int, double> totalOfColumn = new Dictionary<int, double>();
-        PdfContentByte cb;
-        ColumnText ct;
+        private EbReport Report = null;
+        private iTextSharp.text.Font f = FontFactory.GetFont(FontFactory.HELVETICA, 5);
+        private float printingTop = 0;
+        private List<double> total = new List<double>(); // change
+        private Dictionary<int, double> totalOfColumn = new Dictionary<int, double>(); //change
+        private PdfContentByte cb;
+        private ColumnText ct;
+
+        public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         public IActionResult Index(string refid)
         {
-            //var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = "eb_roby_dev-eb_roby_dev-3-889-1606" });
             var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
 
@@ -62,15 +75,9 @@ namespace ExpressBase.Web.Controllers
                 dt = dresp.Data;
             }
 
-            iTextSharp.text.Rectangle rec;
-            if (Report.IsLandscape)
-            {
-                rec = new iTextSharp.text.Rectangle(Report.Height, Report.Width);
-            }
-            else
-            {
-                rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
-            }
+            iTextSharp.text.Rectangle rec = (Report.IsLandscape) ?
+                new iTextSharp.text.Rectangle(Report.Height, Report.Width) : new iTextSharp.text.Rectangle(Report.Width, Report.Height);
+
             Document d = new Document(rec);
 
             MemoryStream ms1 = new MemoryStream();
@@ -80,59 +87,71 @@ namespace ExpressBase.Web.Controllers
             writer.PageEvent = new HeaderFooter(this);
             writer.CloseStream = true;//important
             cb = writer.DirectContent;
+            //DrawDetail();
+            cb.Ellipse(100, 100, 200, 200);
+            cb.Stroke();
+            d.Close();
+            ms1.Position = 0;
+            return new FileStreamResult(ms1, "application/pdf");
+        }
+
+        public void DrawReportHeader()
+        {
             foreach (EbReportHeader r_header in Report.ReportHeaders)
             {
                 DrawFields(r_header);
-
             }
+        }
+
+        public void DrawPageHeader() {
             foreach (EbPageHeader p_header in Report.PageHeaders)
             {
                 DrawFields(p_header);
             }
+        }
+
+        public void DrawDetail()
+        {
             foreach (EbReportDetail detail in Report.Detail)
             {
                 DrawDetails(detail);
             }
+        }
+
+        public void DrawPageFooter()
+        {
             foreach (EbPageFooter p_footer in Report.PageFooters)
             {
                 DrawFields(p_footer);
             }
+        }
+
+        public void DrawReportFooter()
+        {
             foreach (EbReportFooter r_footer in Report.ReportFooters)
             {
                 DrawFields(r_footer);
             }
-            d.Close();
-            ms1.Position = 0;
-            return new FileStreamResult(ms1, "application/pdf");
         }
 
         public void DrawFields(dynamic section)
         {
             var column_name = "";
             var column_val = "";
-            foreach (EbReportField field in section.Fields)
+            foreach (EbReportFields field in section.Fields)
             {
                 if (field.GetType() == typeof(EbText))
                 {
                     column_val = field.Title;
                     DrawTextBox(field, column_val);
                 }
-                //else if (field.GetType() == typeof(EbReportCol))
-                //{
-                //    var table = field.Title.Split('.')[0];
-                //    column_name = field.Title.Split('.')[1];
-                //    var columnindex = 0;
-                //    foreach (var col in __columns)
-                //    {
-                //        if (col.ColumnName == column_name)
-                //        {
-                //            column_val = dt[0][columnindex].ToString();
-                //            //continue;
-                //        }
-                //        columnindex++;
-                //    }
-                //    DrawTextBox(field, column_val);
-                //}
+                else if (field.GetType() == typeof(EbReportCol))
+                {
+                    var table = field.Title.Split('.')[0];
+                    column_name = field.Title.Split('.')[1];
+                    column_val = GeFieldtData(column_name, 0);
+                    DrawTextBox(field, column_val);
+                }
                 else if (field.GetType() == typeof(EbCircle))
                 {
                     if (field.Height == field.Width)
@@ -179,38 +198,54 @@ namespace ExpressBase.Web.Controllers
             }
             printingTop += section.Height;
         }
+
         public void DrawDetails(dynamic section)
         {
-            //float detailtop = 0;
-            //var column_name = "";
-            //var column_val = "";
-            foreach (EbReportField field in section.Fields)
+            float detailtop = 0;
+            var column_name = "";
+            var column_val = "";
+            foreach (EbReportFields field in section.Fields)
             {
-                //if (field.GetType() == typeof(EbReportCol))
-                //{
-                //    var table = field.Title.Split('.')[0];
-                //    column_name = field.Title.Split('.')[1];
-                //    var columnindex = 0;
-                //    foreach (var col in __columns)
-                //    {
-                //        if (col.ColumnName == column_name)
-                //        {
-                //            detailtop = 0;
-                //            for (int i = 0; detailtop < section.Height && i < dt.Count; i++)
-                //            {
-                //                column_val = dt[i][columnindex].ToString();
-                //                detailtop += field.Height;
-                //                DrawDetailTextBox(field, column_val, detailtop);
-                //            }
-                //        }
-                //        columnindex++;
-                //    }
-                //}
+                if (field.GetType() == typeof(EbReportCol))
+                {
+                    var table = field.Title.Split('.')[0];
+                    column_name = field.Title.Split('.')[1];
+                    detailtop = 0;
+                    for (int i = 0; detailtop < section.Height && i < dt.Count; i++)
+                    {
+                        column_val = GeFieldtData(column_name, i);
+                        detailtop += field.Height;
+                        DrawDetailTextBox(field, column_val, detailtop);
+                    }
+                }
             }
             printingTop += section.Height;
+
+            //if (printHeight >= dtheight)
+            //{
+            //    d.NewPage();
+            //    printHeight = 0;
+            //    sTop = sTopVal;
+            //}
         }
 
-        public void DrawTextBox(EbReportField field, string column_val)
+        public string GeFieldtData(string column_name, int i)
+        {
+            var columnindex = 0;
+            var column_val = "";
+            foreach (var col in __columns)
+            {
+                if (col.ColumnName == column_name)
+                {
+                    column_val = dt[i][columnindex].ToString();
+                    return column_val;
+                }
+                columnindex++;
+            }
+            return column_val;
+        }
+
+        public void DrawTextBox(EbReportFields field, string column_val)
         {
             var urx = field.Width + field.Left;
             var ury = Report.Height - (printingTop + field.Top);
@@ -222,7 +257,7 @@ namespace ExpressBase.Web.Controllers
             ct1.Go();
         }
 
-        public void DrawDetailTextBox(EbReportField field, string column_val, float detailtop)
+        public void DrawDetailTextBox(EbReportFields field, string column_val, float detailtop)
         {
             var urx = field.Width + field.Left;
             var ury = Report.Height - (printingTop + field.Top + detailtop);
@@ -234,7 +269,7 @@ namespace ExpressBase.Web.Controllers
             ct1.Go();
         }
 
-        public void DrawCircle(EbReportField field)
+        public void DrawCircle(EbReportFields field)
         {
             float radius = field.Width / 2;
             float xval = field.Left + radius;
@@ -247,8 +282,7 @@ namespace ExpressBase.Web.Controllers
             cb.FillStroke();
         }
 
-
-        public void DrawEllipse(EbReportField field)
+        public void DrawEllipse(EbReportFields field)
         {
             var x1 = field.Left;
             var y1 = Report.Height - (printingTop + field.Top + field.Height);
@@ -261,7 +295,7 @@ namespace ExpressBase.Web.Controllers
             cb.FillStroke();
         }
 
-        public void DrawRectangle(EbReportField field)
+        public void DrawRectangle(EbReportFields field)
         {
             float x = field.Left;
             float y = Report.Height - (printingTop + field.Top + field.Height);
@@ -274,7 +308,7 @@ namespace ExpressBase.Web.Controllers
             cb.FillStroke();
         }
 
-        public void DrawHLine(EbReportField field)
+        public void DrawHLine(EbReportFields field)
         {
             var x1 = field.Left;
             var y1 = Report.Height - (printingTop + field.Top);
@@ -287,7 +321,7 @@ namespace ExpressBase.Web.Controllers
             cb.Stroke();
         }
 
-        public void DrawVLine(EbReportField field)
+        public void DrawVLine(EbReportFields field)
         {
             var x1 = field.Left;
             var y1 = Report.Height - (printingTop + field.Top);
@@ -300,7 +334,7 @@ namespace ExpressBase.Web.Controllers
             cb.Stroke();
         }
 
-        public void DrawArrowR(EbReportField field)
+        public void DrawArrowR(EbReportFields field)
         {
             DrawHLine(field);
             var x = field.Left + field.Width;
@@ -314,7 +348,7 @@ namespace ExpressBase.Web.Controllers
             cb.ClosePathFillStroke();
         }
 
-        public void DrawArrowL(EbReportField field)
+        public void DrawArrowL(EbReportFields field)
         {
             DrawHLine(field);
             var x = field.Left;
@@ -328,7 +362,7 @@ namespace ExpressBase.Web.Controllers
             cb.ClosePathFillStroke();
         }
 
-        public void DrawArrowU(EbReportField field)
+        public void DrawArrowU(EbReportFields field)
         {
             DrawVLine(field);
             var x = field.Left;
@@ -341,7 +375,8 @@ namespace ExpressBase.Web.Controllers
             cb.LineTo(x - 3, y - 3);
             cb.ClosePathFillStroke();
         }
-        public void DrawArrowD(EbReportField field)
+
+        public void DrawArrowD(EbReportFields field)
         {
             DrawVLine(field);
             var x = field.Left;
@@ -354,7 +389,8 @@ namespace ExpressBase.Web.Controllers
             cb.LineTo(x + 3, y + 3);
             cb.ClosePathFillStroke();
         }
-        public void DrawByArrH(EbReportField field)
+
+        public void DrawByArrH(EbReportFields field)
         {
             DrawHLine(field);
             var x1 = field.Left + field.Width;
@@ -373,7 +409,7 @@ namespace ExpressBase.Web.Controllers
             cb.ClosePathFillStroke();
         }
 
-        public void DrawByArrV(EbReportField field)
+        public void DrawByArrV(EbReportFields field)
         {
             DrawVLine(field);
             var x1 = field.Left;

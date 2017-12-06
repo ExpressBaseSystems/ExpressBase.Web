@@ -1,7 +1,7 @@
 ﻿@{ 
     @using ExpressBase.Common;
     var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
-    string readonlyval = (dsObj != null) ? dsObj.VersionNumber.Substring(dsObj.VersionNumber.Length - 1) : String.Empty;
+    string readonlyval = (dsObj != null) ? dsObj.VersionNumber.Substring(dsObj.VersionNumber.Length - 1) : "w";
     }
 
 <div class="ds-page" id="ds-page@(ViewBag.tabnum)">

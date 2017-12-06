@@ -65,7 +65,7 @@
 <div class="container-fluid">
     <div class="row pgB eb-rpt-container" id="eb-rpt-container">
         <div class="col-md-2 col-lg-2 col-sm 2 side-toolbar">
-            <div class="toolbox eb-toolBoxReport">               
+            <div class="toolbox eb-toolBoxReport">
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item active">
                         <a class="nav-link" data-toggle="tab" href="#genaral" role="tab">General</a>
@@ -102,7 +102,7 @@
                                 <button eb-type="Hl" class="btn draggable"><i> __ </i></button>
                                 <button eb-type="Vl" class="btn draggable"><i> | </i></button>
                             </div>
-                        </div>                        
+                        </div>
                         <div class="draggable tool-box-div" eb-type="Text"><i class="fa fa-text-width" aria-hidden="true"></i> Text </div>
                         <div class="draggable tool-box-div" eb-type="Barcode"><i class="fa fa-barcode" aria-hidden="true"></i> Barcode </div>
                         <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-qrcode" aria-hidden="true"></i> QR Code </div>
@@ -147,7 +147,7 @@
                     <div class='ruler' style="display:none"></div>
                 </div>
                 <div class='rulerleft' style="display:none"></div>
-                <div id="PageContainer" class="PageContainer" style='padding-top: 20px;'>                  
+                <div id="PageContainer" class="PageContainer">
                 </div>
             </div>
         </div>
@@ -158,6 +158,31 @@
         </div>
     </div>
     <div id="fontModal"></div>
+    <div class="modal fade" id="summarry-editor-modal-container" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="summarry-editor-container">
+                <h4>Add summary</h4>
+                <div class="form-group">
+                    <label>Function</label>
+                    <select id="summary-func" name="func" class="form-control">
+                                          
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Field Name</label>
+                    <input type="text" id="summary-fieldname" class="form-control" value="" readonly/>
+                </div>
+                <div class="form-group">
+                    <label>Section</label>
+                    <select id="summary-sections" name="" class="form-control">                                             
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn pull-right" id="submit-summary">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     if (@ViewBag.tabnum === 0) {

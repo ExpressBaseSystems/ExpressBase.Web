@@ -415,6 +415,11 @@
     padding-left: 0;    
     position: fixed;
 }
+.PageContainer {
+    padding-top: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 
 .eb-rpt-container .PGgrid {
     min-height: 1000px;

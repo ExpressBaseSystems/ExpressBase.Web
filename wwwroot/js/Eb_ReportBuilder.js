@@ -1,23 +1,23 @@
 ﻿var pages = {
     0: {
-        width: '21.59cm',
-        height: '27.94cm'
+        width: '612pt',
+        height: '792pt'
     },//A2
     1: {
-        width: '29.7cm',
-        height: '42cm'
+        width: '841.8898pt',
+        height: '1190.55pt'
     },//A3
     2: {
         width: '595.276pt',
         height: '841.8898pt'
     },//A4      
     3: {
-        width: '14.8cm',
-        height: '21cm'
+        width: '419.5276',
+        height: '595.276pt'
     },//A5 
     4: {
-        width: '21.59cm',
-        height: '27.94cm'
+        width: '612pt',
+        height: '792pt'
     },//letter
 };
 var ruler = {
@@ -160,7 +160,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         var j = 0;
         var pxlabel = 1;
         if (this.rulertype == "px") { pxlabel = 5; }
-        if (this.width.substring(0, this.width.length - 2) > 21) { width = ($('#PageContainer').width() - 79) + 'px'; }
+        if (this.width.substring(0, this.width.length - 2) > 595.276) { width = ($('#PageContainer').width() - 79) + 'px'; }
         else { width = this.width;}
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
@@ -673,8 +673,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//drag stop fn of control
 
     this.savefile = function () {
-        this.EbObject.Height = this.convertTopoints($("#page").height());
-        this.EbObject.Width = this.convertTopoints($("#page").width());
+        this.EbObject.Height = parseInt(this.height.slice(0, -2));
+        this.EbObject.Width = parseInt(this.width.slice(0, -2));
         this.EbObject.PaperSize = this.type;      
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         commonO.Current_obj = this.EbObject;
@@ -720,8 +720,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//........save/commit
 
     this.Commit = function () {
-        this.EbObject.Height = this.convertTopoints($("#page").height());
-        this.EbObject.Width = this.convertTopoints($("#page").width());
+        this.EbObject.Height = parseInt(this.height.slice(0, -2));
+        this.EbObject.Width = parseInt(this.width.slice(0, -2));
         this.EbObject.PaperSize = this.type;       
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         commonO.Current_obj = this.EbObject;

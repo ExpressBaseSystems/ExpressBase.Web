@@ -28,8 +28,8 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
             var resultlist = new SidebarUserResponse();
-            resultlist = this.Redis.Get<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
-            if (resultlist == null)
+            //resultlist = this.Redis.Get<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
+            //if (resultlist == null)
             {
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
                 var Ids = String.Join(",", user.EbObjectIds);
@@ -54,6 +54,11 @@ namespace ExpressBase.Web.Components
                     {
                         ctrlAction.Controller = "DV";
                         ctrlAction.Action = "dv";
+                    }
+                    else if (val.Key == Convert.ToInt32(EbObjectType.Report))
+                    {
+                        ctrlAction.Controller = "ReportRender";
+                        ctrlAction.Action = "Index";
                     }
                     var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
                     sb.Append("<li><a class='list-group-item' href='#' data-key='"+ val.Key + "' data-Appid='"+ obj.Key + "' data-action = '" + ctrlaction + "'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");

@@ -415,6 +415,11 @@
     padding-left: 0;    
     position: fixed;
 }
+.PageContainer {
+    padding-top: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 
 .eb-rpt-container .PGgrid {
     min-height: 1000px;
@@ -636,4 +641,26 @@
     display: block;
     height: 100%;
     width: 100%;
+}
+/*summary editor*/
+.summarry-editor-container {
+    padding: 15px;
+    max-width: 360px;
+    width: 100% !important;
+    background-color: white;
+    margin: 0 auto;
+    border-radius: 2px;
+    overflow: hidden;
+    font-family: open sans;
+    font-weight: 300;
+}
+.loginmodal {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    height: 36px;
+    padding: 0 8px;
+    /* border-radius: 3px; */
+    /* -webkit-user-select: none;
+  user-select: none; */
 }

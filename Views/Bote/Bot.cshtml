@@ -42,6 +42,18 @@
                 chatBotObj.socialId = response.id;
                 chatBotObj.picture = response.picture;
                 chatBotObj.greetings(response.name);
+               
+                
+                $.post("http://eb_roby_dev.localhost:5000/bote/MyAuthenticate",
+                    {
+                        "cid": "eb_roby_dev",
+                        "socialId": response.id,
+                        "wc" : "uc",
+                    }, function (result) {
+                        chatBotObj.bearerToken = (JSON.parse(result)).BearerToken;
+                        chatBotObj.refreshToken = (JSON.parse(result)).RefreshToken;
+                        alert("authenticate");
+                    });
             });
         } else {
             // The person is not logged into your app or we are unable to tell.

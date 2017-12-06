@@ -2,7 +2,12 @@
 body {
     padding: 0 !important;
     --ebbg: #0280db;
-    --ebbgimage: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);    
+    --ebbgimage: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
+    --eb-blue: #339bb3;
+    --eb-grey: #efefef;
+    --eb-font: open sans;
+    --eb-fontweight-light: 300;
+    --eb-grey2: #fafafa;
 }
 .nopadding {
     padding: 0;
@@ -58,8 +63,6 @@ body {
 .login-sec-image img{
    height:50px;
 }
-
-
 /*end login*/
 /*       Slider       */
 /***********************************
@@ -809,6 +812,7 @@ footer {
 /*sidebar end*/
 .main-cont {
     background-color: #f2f2f2;
+    min-height: 100vh;
 }
 
 #layout_div #objlist-items {
@@ -993,4 +997,41 @@ footer {
 #ObjListCont {
     padding-right: 0px;
     padding-left: 4px;
+}
+
+/*chart*/
+
+#demodd #charttype {
+    display: flex;
+    flex-direction: column;
+}
+
+#demodd .chartBody {
+    display: flex;
+    flex-direction: row;
+}
+
+#demodd .divLLType {
+    margin: 10px;
+    cursor: pointer;
+}
+
+    #demodd .divLLType:hover {
+        background-color: #d0cbf9;
+    }
+
+#demodd .chartHeader {
+    background-color: #e4dcdc;
+    font-size: 13px;
+    padding-left: 10px;
+}
+
+#demodd .chartname {
+    font-size: 11px;
+    padding-left: 8px;
+    margin-top: 3px;
+}
+
+#demodd img {
+    height: 40px;
 }

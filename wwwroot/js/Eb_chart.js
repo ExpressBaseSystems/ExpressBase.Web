@@ -414,24 +414,81 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tableId).click(this.init.bind(this));
-        $("#obj_icons").append("<div style='display: inline;'>" +
-            "<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
-            "<button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>" +
-            "<span class='caret'></span>" +
-            "</button>" +
-            "<ul class='dropdown-menu'>" +
-            "<li><a href='#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
-            "<li><a href='#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
-            "<li><a href='#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
-            "<li><a href='#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
-            "<li><a href='#'> doughnut </a></li>" +
-            "<li><a href='#'> map </a></li>" +
-            "</ul>" +
-            "</div>" +
-            "<button id='reset_zoom" + this.tableId + "' class='btn'>Reset zoom</button>" +
-            "<button id='btnColumnCollapse" + this.tableId + "' class='btn' style='display: inline-block;'>" +
-            "<i class='fa fa-cog' aria-hidden='true'></i>" +
-            "</button>");
+        $("#obj_icons").append(`<div style='display: inline;'>
+            <div class='dropdown' id='graphDropdown_tab${ this.tableId}' style='display: inline-block;padding-top: 1px;'>
+            <button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>
+            <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' id="demodd">
+            <div id="charttype">
+                <div class="divHLType">
+                    <div class="chartHeader">Comparison</div>
+                    <div id="Comparison" class="chartBody">
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/bar-chart.svg"></a></div>
+                            <div class="chartname">Bar</div>
+                        </div>
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/Line-chart.svg"></a></div>
+                            <div class="chartname">Line</div>
+                        </div>
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/column-chart.svg"></a></div>
+                            <div class="chartname">Column</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="divHLType">
+                    <div class="chartHeader">Composition</div>
+                    <div id="Composition" class="chartBody">
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/pie-chart.svg"></a></div>
+                            <div class="chartname">Pie</div>
+                        </div>
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/donut-chart.svg"></a></div>
+                            <div class="chartname">Donut</div>
+                        </div>
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/area-chart.svg"></a></div>
+                            <div class="chartname">Area</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="divHLType">
+                    <div class="chartHeader">Distribution</div>
+                    <div id="Distribution" class="chartBody">
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/Line-chart.svg"></a></div>
+                            <div class="chartname">Line</div>
+                        </div>
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/bar-chart.svg"></a></div>
+                            <div class="chartname">Bar</div>
+                        </div>
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/column-chart.svg"></a></div>
+                            <div class="chartname">Column</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="divHLType">
+                    <div class="chartHeader">Relationship</div>
+                    <div id="Relationship" class="chartBody">
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/Line-chart.svg"></a></div>
+                            <div class="chartname">Line</div>
+                        </div>
+                    </div>
+                </div>
+            <div>
+                
+            </ul>
+            </div>
+            <button id='reset_zoom${ this.tableId}' class='btn'>Reset zoom</button>
+            <button id='btnColumnCollapse${ this.tableId}' class='btn' style='display: inline-block;'>
+            <i class='fa fa-cog' aria-hidden='true'></i>
+            </button>`);
         if (this.FD) {
             $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
         }
@@ -450,7 +507,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.bindEvents = function () {
         $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
-        $("#graphDropdown_tab" + this.tableId + " .dropdown-menu li a").off("click").on("click", this.setGraphType.bind(this));
+        $("#graphDropdown_tab" + this.tableId + " .dropdown-menu a").off("click").on("click", this.setGraphType.bind(this));
         $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
@@ -753,7 +810,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.setGraphType = function (e) {
         var current = this;
-        $("#graphDropdown_tab" + this.tableId + " button:first-child").html($(e.target).text().trim() + "&nbsp;<span class = 'caret'></span>");
+        $("#graphDropdown_tab" + this.tableId + " button:first-child").html($(e.target).parent().parent().next().text().trim() + "&nbsp;<span class = 'caret'></span>");
         if ($(e.target).text().trim().toLowerCase() !== "map") {
             $("#graphcontainer_tab" + current.tableId).children("#map").remove();
             $("#graphcontainer_tab" + current.tableId).children("table").css("display", "block");

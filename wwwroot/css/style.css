@@ -2,15 +2,15 @@
 body {
     padding: 0 !important;
     --ebbg: #0280db;
-    --ebbgimage: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);    
+    --ebbgimage: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
+    --eb-blue: #339bb3;
+    --eb-grey: #efefef;
+    --eb-font: open sans;
+    --eb-fontweight-light: 300;
+    --eb-grey2: #fafafa;
 }
 .nopadding {
     padding: 0;
-}
-.eb-flex-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 /****** LOGIN MODAL ******/
 .loginmodal-container {
@@ -63,8 +63,6 @@ body {
 .login-sec-image img{
    height:50px;
 }
-
-
 /*end login*/
 /*       Slider       */
 /***********************************
@@ -1000,69 +998,40 @@ footer {
     padding-right: 0px;
     padding-left: 4px;
 }
-/*tdashboard*/
-.t-dash-boardrow .col-lg-9,.col-md-9{
-    width:80%;
+
+/*chart*/
+
+#demodd #charttype {
+    display: flex;
+    flex-direction: column;
 }
-.t-dash-boardrow .col-lg-3, .col-md-3 {
-    width: 20%;
+
+#demodd .chartBody {
+    display: flex;
+    flex-direction: row;
 }
-.tdasboard-sidebar {
-    height: 100vh;
-    padding: 0;
-    position: fixed;
-    background: #fbfbfb;
+
+#demodd .divLLType {
+    margin: 10px;
+    cursor: pointer;
 }
-    .t-container {       
-        height: inherit;
-    width: 100%;
-    padding-top: 50px;
+
+    #demodd .divLLType:hover {
+        background-color: #d0cbf9;
     }
-        .t-container .list-group-item {   
-    padding: 10px 15px;
-    padding-right:0;
-    margin-bottom: -1px;
-     background-color:transparent; 
-    border:none;
+
+#demodd .chartHeader {
+    background-color: #e4dcdc;
+    font-size: 13px;
+    padding-left: 10px;
 }
-     
-.t-dash-workplace{
-    font-family:open sans;
-    font-weight:300;
-    
+
+#demodd .chartname {
+    font-size: 11px;
+    padding-left: 8px;
+    margin-top: 3px;
 }
-.tdash-box{
-    background:white;
-    width:100%;
+
+#demodd img {
+    height: 40px;
 }
-.tdash-box-head {
-    padding: 5px 0px 5px 10px;
-    font-size: 18px;
-    background: #339bb3;
-    color: white;
-}
-.tdash-box-body{
-    padding:10px;
-}
-.tdash-sol-box {
-    width: 170px;
-    height: 170px;
-    border: 1px solid #ccc;
-}
-.tdash-icon{width:30px;}
-.newsolution-btn{
-   background-color:transparent;
-   border:1px solid #ccc;
-   border-radius:20px;
-}
-.tr-on-hov {
-    visibility:hidden;
-    display: inline-block;
-    float: right;
-    border: 15px solid #f2f2f2;
-    border-bottom-color: transparent;
-    border-top-color: transparent;
-    border-left-color: transparent;
-    margin-top: -7px;
-}
-/*tdashboard end*/

@@ -234,22 +234,16 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.pushSubsecToRptObj = function (sections, obj) {
-
-        if (sections === 'ReportHeader') {
-            this.EbObject.ReportHeaders.push(obj);
-        }
-        else if (sections === 'PageHeader') {
+        if (sections === 'ReportHeader')
+            this.EbObject.ReportHeaders.push(obj);      
+        else if (sections === 'PageHeader')
             this.EbObject.PageHeaders.push(obj);
-        }
-        else if (sections === 'ReportFooter') {
+        else if (sections === 'ReportFooter')
             this.EbObject.ReportFooters.push(obj);
-        }
-        else if (sections === 'PageFooter') {
+        else if (sections === 'PageFooter')
             this.EbObject.PageFooters.push(obj);
-        }
-        else if (sections === 'ReportDetail') {
+        else if (sections === 'ReportDetail')
             this.EbObject.Detail.push(obj);
-        }
     };
 
     this.pageSplitters = function () {
@@ -258,7 +252,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $("#page").append(`<div class='${sections}s' eb-type='${sections}' id='${this.EbObjectSections[sections]}' 
             data_val='${j++}' style='width :100%;position: relative'> </div>`);
             this.sectionArray.push("#" + this.EbObjectSections[sections]);
-
             //zero section adding by default.              
             var SubSec_obj = new EbObjects["Eb" + sections](this.EbObjectSections[sections] + "0");
             $("#" + this.EbObjectSections[sections]).append(SubSec_obj.$Control.outerHTML());
@@ -398,15 +391,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.col = $(ui.draggable);
         this.Objtype = this.col.attr('eb-type');
         var Title = "";
-        if (this.Objtype === 'DateTime') {
+        if (this.Objtype === 'DateTime')
             Title = this.addCurrentDateTime();
-        }
-        else if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric') {
+        else if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric')
             Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
-        }
-        else {
+        else
             Title = this.col.text().trim();
-        }
         if (!this.col.hasClass('dropped')) {
             var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
             var obj = new EbObjects["Eb" + this.Objtype](Objid);

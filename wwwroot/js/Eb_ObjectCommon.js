@@ -59,6 +59,9 @@
         this.ver_Refid = data;
         var getNav = $("#versionNav li.active a").attr("href");
         $(getNav).attr("data-id", this.ver_Refid);
+        if (this.Current_obj.Status === null || this.Current_obj.Status === undefined){
+            this.Current_obj.Status = "Dev";
+        }
         if (this.Current_obj.VersionNumber !== null && this.Current_obj.VersionNumber !== undefined) {
             if (!this.FlagSave) {
                 this.Current_obj.VersionNumber = this.Current_obj.VersionNumber.replace(/.w/g, '');

@@ -12,6 +12,7 @@
     this.refreshToken = null;
     this.userForms = null;
     this.FormsList = [];
+    this.initControls = new InitControls();
 
     this.$form = null;
     this.formControls = [];
@@ -46,6 +47,10 @@
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
+        $("body").on("click", "[data-id=SimpleSelect0]", function () {
+            console.log(100);
+        });/////////////////////////////////////////////////////////////// double binding?
+        
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
     };
@@ -54,9 +59,10 @@
         this.getMsg("Thank you.");
     }.bind(this);
 
-    this.postmenuClick = function (e) {
+    this.postmenuClick = function (e, reply) {
         var $e = $(e.target);
-        var reply = $e.text().trim();
+        if (reply === undefined)
+            reply = $e.text().trim();
         var idx = $e.attr("idx");
         $e.closest('.msg-cont').remove();
         this.sendMsg(reply);
@@ -76,7 +82,7 @@
     }.bind(this);
 
     this.continueAsFBUser = function (e) {
-        this.postmenuClick(e);
+        this.postmenuClick(e, "");
         if (this.CurFormIdx == 0)
             this.getForms();
         else
@@ -140,7 +146,7 @@
         else {
             greeting = 'Good evening!';
         }
-        this.getMsg(`Hello ${name}, ${greeting}`);
+        this.Query(`Hello ${name}, ${greeting}`, [`Continue as ${name} ?`, `Not ${name}?`], "continueAsFBUser");
     }.bind(this);
 
     this.Query = function (msg, OptArr, For) {
@@ -167,12 +173,12 @@
     }.bind(this);
 
     this.ctrlSend = function (e) {
+        var id = this.curCtrl.name;
         var $btn = $(e.target).closest(".btn");
         var $msgDiv = $btn.closest('.msg-cont-bot');
         var idx = parseInt($btn.attr('idx')) + 1;
-        var id = this.userForms[this.CurFormIdx].controls[idx - 1].name;
         var $input = $('#' + id);
-        $input.off("blur").on("blur", function () { $btn.click() });
+        $input.off("blur").on("blur", function () { $btn.click() });////////////////////////////////
         this.sendCtrlAfter($msgDiv.hide(), $input.val() + '&nbsp; <span idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
 
         if (idx !== this.formControls.length) {
@@ -201,10 +207,10 @@
             return;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var $control = $('<div class="chat-ctrl-cont">' + this.formControls[idx][0].outerHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>');
-        var curCtrl = this.userForms[this.CurFormIdx].controls[idx];
-        var lablel = curCtrl.label + ' ?';
-        if (curCtrl.helpText)
-            lablel += ` (${curCtrl.helpText})`;
+        this.curCtrl = this.userForms[this.CurFormIdx].controls[idx];
+        var lablel = this.curCtrl.label + ' ?';
+        if (this.curCtrl.helpText)
+            lablel += ` (${this.curCtrl.helpText})`;
 
         this.getMsg(lablel);
         this.getMsg($control);
@@ -212,6 +218,8 @@
     }.bind(this);
 
     this.sendMsg = function (msg) {
+        if (!msg)
+            return;
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').text(msg).append(this.getTime());
         this.$chatBox.append($msg);
@@ -254,6 +262,7 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
                     $msg.css("margin-left", "26px");
+                    this.loadcontrol();
                 }
                 else
                     $msg.find('.msg-wraper-bot').text(msg).append(this.getTime());
@@ -268,6 +277,12 @@
             }.bind(this), 1001);
         }
         $('.eb-chatBox').scrollTop(99999999999);
+    }.bind(this);
+
+    this.loadcontrol = function () {
+        if (!this.curCtrl)
+            return;
+        this.initControls[this.curCtrl.type](this.curCtrl);
     }.bind(this);
 
     this.formSubmit = function (e) {
@@ -309,8 +324,6 @@
                 this.refreshToken = (JSON.parse(result)).RefreshToken;
                 this.hideTypingAnim();
                 this.greetings(response.name);
-                this.Query(`Continue as ${response.name} ?`, ["yes", "Not me"], "continueAsFBUser");
-                alert("authenticated via FB");
             }.bind(this));
     }.bind(this);
 

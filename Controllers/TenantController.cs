@@ -20,6 +20,7 @@ using ServiceStack.Redis;
 using ExpressBase.Security;
 using ServiceStack.Auth;
 using ExpressBase.Common.Extensions;
+using Newtonsoft.Json;
 
 
 
@@ -98,6 +99,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult TenantAddAccount()
         {
+            var resultset = this.ServiceClient.Get<GetProductPlanResponse>(new GetProductPlanRequest { } );
+            ViewBag.plans =JsonConvert.SerializeObject(resultset.Plans);
             return View();
         }
 

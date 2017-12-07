@@ -105,6 +105,10 @@ padding:0;
 .detailsec-name{
     height:inherit;
 }
+.btn-upload i{
+    pointer-events:none !important;
+}
+
 .detailsec-form {
     height: inherit;
 }
@@ -225,3 +229,4 @@ padding:0;
 .subscrib-info label{
     width:150px;
 }
+/*t addaacc latest----*/

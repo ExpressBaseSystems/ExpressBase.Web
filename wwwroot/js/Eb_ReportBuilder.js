@@ -1,23 +1,23 @@
 ﻿var pages = {
     0: {
-        width: '21.59cm',
-        height: '27.94cm'
+        width: '612pt',
+        height: '792pt'
     },//A2
     1: {
-        width: '29.7cm',
-        height: '42cm'
+        width: '841.8898pt',
+        height: '1190.55pt'
     },//A3
     2: {
         width: '595.276pt',
         height: '841.8898pt'
     },//A4      
     3: {
-        width: '14.8cm',
-        height: '21cm'
+        width: '419.5276',
+        height: '595.276pt'
     },//A5 
     4: {
-        width: '21.59cm',
-        height: '27.94cm'
+        width: '612pt',
+        height: '792pt'
     },//letter
 };
 var ruler = {
@@ -40,7 +40,13 @@ var ruler = {
         len: 9.6
     }
 }
-
+var summaryFunc = {
+    0:"Average",
+    1:"Count",
+    2:"Max",
+    3:"Min",
+    4:"Sum"
+}
 var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
     this.EbObject = dsobj;
     this.Rel_object;
@@ -55,11 +61,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.rulertype = "cm";
     this.copyStack = null;
     this.copyORcut = null;
-    this.idCounter = {       
+    this.idCounter = {
         EbDataFieldTextCounter: 0,
         EbDataFieldDateTimeCounter: 0,
         EbDataFieldBooleanCounter: 0,
         EbDataFieldNumericCounter: 0,
+        EbDataFieldSummaryCounter:0,
         EbTableCounter: 0,
         EbImgCounter: 0,
         EbDateTimeCounter: 0,
@@ -131,7 +138,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//render after pgchange
 
     this.convertTopoints = function (val) {
-        var pixel = val;       
+        var pixel = val;
         var point = (pixel * 72) / 96;
         return point;
     }
@@ -146,7 +153,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 cache: false,
                 data: { refID: refid },
                 success: function (result) {
-                    $("#get-col-loader").hide();                   
+                    $("#get-col-loader").hide();
                     DrawColTree(result);
                     $('.nav-tabs a[href="#data"]').tab('show');
                 }
@@ -160,8 +167,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         var j = 0;
         var pxlabel = 1;
         if (this.rulertype == "px") { pxlabel = 5; }
-        if (this.width.substring(0, this.width.length - 2) > 21) { width = ($('#PageContainer').width() - 79) + 'px'; }
-        else { width = this.width;}
+        if (this.width.substring(0, this.width.length - 2) > 595.276) { width = ($('#PageContainer').width() - 79) + 'px'; }
+        else { width = this.width; }
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / ruler[this.rulertype].len; i++ , step++) {
@@ -209,7 +216,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         $("#PageContainer").append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'>`);
         $(".page").resizable({
             handles: "s",
-            resize:this.onPageResize.bind(this)           
+            resize: this.onPageResize.bind(this)
         });
         this.pageSplitters();
     };
@@ -218,50 +225,43 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         $(".rulerleft").css("height", $('.page').height());
     }
 
-    this.createHeaderBox = function () {        
+    this.createHeaderBox = function () {
         $("#PageContainer").append(`<div class='headersections' style='height:${this.height};'></div>
                                     <div class='multiSplit' id='multiSplit' style='height:${ this.height};'></div>`);
         for (var i = 0; i < 5; i++) {
-            $("#multiSplit").append(`<div class='multiSplitHbox' data_val='${i}' eb-type='MultiSplitBox' id='box${i }' style='width: 100%;'></div>`);
+            $("#multiSplit").append(`<div class='multiSplitHbox' data_val='${i}' eb-type='MultiSplitBox' id='box${i}' style='width: 100%;'></div>`);
         }
     };
 
     this.pushSubsecToRptObj = function (sections, obj) {
-
-        if (sections === 'ReportHeader') {
-            this.EbObject.ReportHeaders.push(obj);
-        }
-        else if (sections === 'PageHeader') {
+        if (sections === 'ReportHeader')
+            this.EbObject.ReportHeaders.push(obj);      
+        else if (sections === 'PageHeader')
             this.EbObject.PageHeaders.push(obj);
-        }
-        else if (sections === 'ReportFooter') {
+        else if (sections === 'ReportFooter')
             this.EbObject.ReportFooters.push(obj);
-        }
-        else if (sections === 'PageFooter') {
+        else if (sections === 'PageFooter')
             this.EbObject.PageFooters.push(obj);
-        }
-        else if (sections === 'ReportDetail') {
+        else if (sections === 'ReportDetail')
             this.EbObject.Detail.push(obj);
-        }
     };
 
     this.pageSplitters = function () {
-        var j = 0;      
-        for (var sections in this.EbObjectSections) {            
+        var j = 0;
+        for (var sections in this.EbObjectSections) {
             $("#page").append(`<div class='${sections}s' eb-type='${sections}' id='${this.EbObjectSections[sections]}' 
             data_val='${j++}' style='width :100%;position: relative'> </div>`);
-            this.sectionArray.push("#" + this.EbObjectSections[sections]);  
-            
+            this.sectionArray.push("#" + this.EbObjectSections[sections]);
             //zero section adding by default.              
             var SubSec_obj = new EbObjects["Eb" + sections](this.EbObjectSections[sections] + "0");
             $("#" + this.EbObjectSections[sections]).append(SubSec_obj.$Control.outerHTML());
             SubSec_obj.SectionHeight = "100%";
-            SubSec_obj.BackColor = "transparent";           
+            SubSec_obj.BackColor = "transparent";
             this.objCollection[this.EbObjectSections[sections] + "0"] = SubSec_obj;
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
             this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.         
-        }       
+        }
         this.repExtern.headerSecSplitter(this.sectionArray);
         this.headerBox1_Split();
     };//add page sections
@@ -276,9 +276,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.headerScaling = function () {
-        var _this = this;        
+        var _this = this;
         this.repExtern.multisplit();
-        this.repExtern.box();                
+        this.repExtern.box();
         $(".multiSplit").children().not(".gutter").each(this.setFirstMsSubBoxDiv.bind(this));
     };
 
@@ -319,7 +319,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.pg.addToDD(SubSec_obj);
             this.pushSubsecToRptObj(objType, SubSec_obj);//push subsec to report object.
             $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
-            this.repExtern.splitGeneric(this.splitarray);                       
+            this.repExtern.splitGeneric(this.splitarray);
             this.multiSplitBoxinner();
         }
     };//split sections multipple
@@ -339,9 +339,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $('.page').children().not(".gutter").each(function (j, obj2) {
                 var count = $(obj2).children().not(".gutter").length;
                 if ($(obj).attr("data_val") === $(obj2).attr("data_val") && index === $(obj).attr("data_val")) {
-                    var id = obj2.id + "subBox" + (count-1);
+                    var id = obj2.id + "subBox" + (count - 1);
                     $(obj).append("<div class='multiSplitHboxSub' eb-type='MultiSplitBox' id='" + id + "' style='width: 100%;'>"
-                        + "<p> " + msBoxSubNotationTemp[obj2.id] + (count-1) + " </p></div>");                    
+                        + "<p> " + msBoxSubNotationTemp[obj2.id] + (count - 1) + " </p></div>");
                     var focid = id.substring(0, id.indexOf('s')) + id.slice(-1);
                     $("#" + id).attr("onclick", "$('#" + focid + "').focus();");
                     $.each($(obj).children().not(".gutter"), function (i, object) { temp1.push("#" + object.id); });
@@ -353,7 +353,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 return false;
         });
         if (temp1 !== null) {
-            this.repExtern.splitGeneric(temp1);            
+            this.repExtern.splitGeneric(temp1);
         }
     };
 
@@ -391,15 +391,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.col = $(ui.draggable);
         this.Objtype = this.col.attr('eb-type');
         var Title = "";
-        if (this.Objtype === 'DateTime') {
+        if (this.Objtype === 'DateTime')
             Title = this.addCurrentDateTime();
-        }
-        else if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric') {
+        else if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric')
             Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
-        }
-        else {
+        else
             Title = this.col.text().trim();
-        }
         if (!this.col.hasClass('dropped')) {
             var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
             var obj = new EbObjects["Eb" + this.Objtype](Objid);
@@ -414,7 +411,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             }
             obj.Title = Title;
             this.objCollection[Objid] = obj;
-            this.RefreshControl(obj);          
+            this.RefreshControl(obj);
         }
         else if (this.col.hasClass('dropped')) {
             this.dropLoc.append(this.col.css({ left: (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop }));
@@ -465,12 +462,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 this.resizing(object, "n, s,e,w, ne, se, sw, nw");
             }
         }
-        else {          
+        else {
             this.resizing(object, "n, s,e,w, ne, se, sw, nw");
         }
     };
 
-    this.resizing = function (object,handles) {
+    this.resizing = function (object, handles) {
         object.resizable({
             containment: "parent", handles: handles, stop: this.onReSizeFn.bind(this)
         });
@@ -494,6 +491,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) },
                 "lock": { name: "Lock", icon: "fa-lock", callback: this.lockControl.bind(this) },
                 "unlock": { name: "unlock", icon: "fa-unlock", callback: this.unLockControl.bind(this) },
+                "summary": { name: "Summary", icon: "fa-cog", callback: this.addSummeryField.bind(this) },
                 "fold1": {
                     "name": "Text Align", icon: "fa-text",
                     "items": {
@@ -529,19 +527,19 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         else {
             var copy = this.copyStack;
             var Objid = null;
-            var Objtype = $("#" + copy.EbSid).attr('eb-type');          
+            var Objtype = $("#" + copy.EbSid).attr('eb-type');
             if (this.copyORcut === 'copy') {
                 Objid = Objtype + (this.idCounter["Eb" + Objtype + "Counter"])++;
                 copy.EbSid = Objid;
                 copy.Name = Objid;
             }
             else if (this.copyORcut === 'cut') {
-                Objid = copy.EbSid;               
+                Objid = copy.EbSid;
             }
             copy.Top = action.originalEvent.pageY - $(selector.selector).offset().top;
             copy.Left = action.originalEvent.pageX - $(selector.selector).offset().left;
             $(selector.selector).append(copy.Html());
-            this.objCollection[Objid] = copy;             
+            this.objCollection[Objid] = copy;
             this.RefreshControl(copy);
             this.copyStack = null;
             this.copyORcut = null;
@@ -603,28 +601,68 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         }
     };
 
-    this.editElement = function (control) {
-        this.control = control;
-        control.on('keydown', this.keyBoardShortcuts.bind(this));
-
-    };//control edit options
-
-    this.keyBoardShortcuts = function (event) {
-        if (event.key === "Delete") {
-            this.control.remove();
-        }
-        else if (event.key === "Control") {
-            this.control.toggleClass("marked");
+    this.addSummeryField = function (eType, selector, action, originalEvent) {
+        $("#summarry-editor-modal-container").modal("toggle");
+        this.selector = selector;
+        this.$funcselect = $("#summarry-editor-modal-container #summary-func").empty();
+        this.$sectionselect = $("#summarry-editor-modal-container #summary-sections").empty();      
+        var sections = this.getSectionToAddSum($(selector.selector));
+        if ($(selector.selector).hasClass("EbCol")) {            
+            $("#summarry-editor-modal-container #summary-fieldname").val($(selector.selector).text().trim()); 
+            for (var func in summaryFunc) {
+                this.$funcselect.append(`<option 
+                value="${summaryFunc[func]}">${summaryFunc[func]}</option>`);
+            }
+            for (var i = 0; i < sections.length;i++) {
+                this.$sectionselect.append(`<option 
+                value="#${sections[i].attr("id")}">${sections[i].attr("eb-type") + sections[i].attr("id").slice(-1)}</option>`);
+            }
+            $("#submit-summary").off("click").on("click", this.appendSummaryField.bind(this));
         }
     };
 
-    this.removeElementFn = function (e) {
-        if (!$(e.target).hasClass("pageHeaders")) {
+    this.appendSummaryField = function (e) {    
+        $("#summarry-editor-modal-container").modal("toggle");
+        var Objid = "DataFieldSummary" + this.idCounter["EbDataFieldSummaryCounter"]++;
+        var obj = new EbObjects["EbDataFieldSummary"](Objid);
+        $(this.$sectionselect.val()).append(obj.$Control.outerHTML());
+        obj.DataField = $(this.selector.selector).text().trim();
+        obj.Title = this.$funcselect.val()+"("+$(this.selector.selector).text().trim()+")";
+        obj.Function = this.$funcselect.val();
+        obj.Left = this.objCollection[$(this.selector.selector).attr("id")].Left;      
+        this.objCollection[Objid] = obj;
+        this.RefreshControl(obj);
+        $("#running-summary ul[id='running-summary-childul']").append("<li class='styl'><div tabindex='1' $(this).focus(); class='textval'> "
+            + this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")" + "</div></li>");        
+    };
+
+    this.getSectionToAddSum = function (selector) {
+        var objlist = [];
+        selector.parent().parent().nextAll().not(".gutter,#detail").each(function (i, obj) {
+            $(obj).children().not(".gutter").each(function (j, sections) {
+                objlist.push($(sections));
+            })
+        })
+        return objlist;
+    };
+
+    this.editElement = function (control) {
+        this.control = control;
+        control.on('keydown', this.keyBoardShortcuts.bind(this));
+    };//control edit options
+
+    this.keyBoardShortcuts = function (event) {
+        if (event.key === "Delete")
             this.control.remove();
-        }
-        else {
+        else if (event.key === "Control")
+            this.control.toggleClass("marked");
+    };
+
+    this.removeElementFn = function (e) {
+        if (!$(e.target).hasClass("pageHeaders"))
+            this.control.remove();
+        else
             alert("no permission");
-        }
     };
 
     this.addImageFn = function (obj) {
@@ -673,16 +711,16 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//drag stop fn of control
 
     this.savefile = function () {
-        this.EbObject.Height = this.convertTopoints($("#page").height());
-        this.EbObject.Width = this.convertTopoints($("#page").width());
-        this.EbObject.PaperSize = this.type;      
+        this.EbObject.Height = parseInt(this.height.slice(0, -2));
+        this.EbObject.Width = parseInt(this.width.slice(0, -2));
+        this.EbObject.PaperSize = this.type;
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         commonO.Current_obj = this.EbObject;
     };//save
 
     this.findPageSections = function (i, sections) {
         this.sections = $(sections).attr('id');
-        $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));       
+        $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
     };//........save/commit
 
     this.findPageSectionsSub = function (j, subsec) {
@@ -691,7 +729,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.j = j;
         this.objCollection[this.subsec].Width = this.convertTopoints($("#" + this.subsec).width());
         this.objCollection[this.subsec].Height = this.convertTopoints($("#" + this.subsec).height());
-        $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));       
+        $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
     };//.........save/commit
 
     this.findPageElements = function (k, elements) {
@@ -702,40 +740,40 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.objCollection[elemId].Left = this.convertTopoints(this.objCollection[elemId].Left);
         this.objCollection[elemId].Top = this.convertTopoints(this.objCollection[elemId].Top);
 
-        if (eb_typeCntl === 'ReportHeader') {       
+        if (eb_typeCntl === 'ReportHeader') {
             this.EbObject.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
-        else if (eb_typeCntl === 'PageHeader') {          
+        else if (eb_typeCntl === 'PageHeader') {
             this.EbObject.PageHeaders[this.j].Fields.push(this.objCollection[elemId]);
         }
-        else if (eb_typeCntl === 'ReportFooter') {           
+        else if (eb_typeCntl === 'ReportFooter') {
             this.EbObject.ReportFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
-        else if (eb_typeCntl === 'PageFooter') {           
+        else if (eb_typeCntl === 'PageFooter') {
             this.EbObject.PageFooters[this.j].Fields.push(this.objCollection[elemId]);
         }
-        else if (eb_typeCntl === 'ReportDetail') {           
+        else if (eb_typeCntl === 'ReportDetail') {
             this.EbObject.Detail[this.j].Fields.push(this.objCollection[elemId]);
         }
     };//........save/commit
 
     this.Commit = function () {
-        this.EbObject.Height = this.convertTopoints($("#page").height());
-        this.EbObject.Width = this.convertTopoints($("#page").width());
-        this.EbObject.PaperSize = this.type;       
+        this.EbObject.Height = parseInt(this.height.slice(0, -2));
+        this.EbObject.Width = parseInt(this.width.slice(0, -2));
+        this.EbObject.PaperSize = this.type;
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
         commonO.Current_obj = this.EbObject;
     };//commit
 
     this.setpageSize = function (obj) {
         this.type = obj.PaperSize;
-        if (obj.PaperSize !== 5) {            
+        if (obj.PaperSize !== 5) {
             this.height = pages[this.type].height;
             this.width = pages[this.type].width;
             $('.ruler,.rulerleft').empty();
             this.ruler();
             $(".headersections,.multiSplit").css({ "height": this.height });
-            $("#page").css({ "height": this.height, "width": this.width });            
+            $("#page").css({ "height": this.height, "width": this.width });
         }
         else if (obj.PaperSize === 5) {
             if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
@@ -744,7 +782,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 $('.ruler,.rulerleft').empty();
                 this.ruler();
                 $(".headersections,.multiSplit").css({ "height": this.height });
-                $("#page").css({ "height": this.height, "width": this.width });               
+                $("#page").css({ "height": this.height, "width": this.width });
             }
         }
     };//page size change fn
@@ -766,16 +804,20 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.setSplitArrayFSec = function (i, obj) {
         this.idArray.push("#" + obj.id);
-        var size = (($(obj).height() / $(obj).parent().height()) * 100) + 1.2 ;
+        var size = (($(obj).height() / $(obj).parent().height()) * 100) + 1.2;
         this.sizeArray.push(size);
-        $(obj).siblings(".gutter").remove();                      
+        $(obj).siblings(".gutter").remove();
     };//section split for pg change
 
     this.rulerChangeFn = function (e) {
         this.rulertype = $(e.target).val();
         $('.ruler,.rulerleft').empty();
         this.ruler();
-    };    
+    };
+
+    this.changeSummaryFunc = function (obj) {
+        obj.Title = obj.Title.replace(obj.Title.substr(0, obj.Title.indexOf('(')), summaryFunc[obj.Function]);
+    };
 
     this.minimap = function () {
         var previewPage = $('.page').minimap({
@@ -790,7 +832,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         });
     };
 
-    this.init = function () {       
+    this.init = function () {
         this.repExtern = new ReportExtended();
         this.pg = new Eb_PropertyGrid("propGrid");
         if (this.EbObject === null) {
@@ -801,34 +843,38 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
             this.pg.addToDD(this.EbObject);
             $('#PageContainer,.ruler,.rulerleft').empty();
-            this.ruler();           
+            this.ruler();
             this.createPage();
             this.DragDrop_Items();
             //this.minimap();
         }
-        else {}               
+        else { }
         this.pg.PropertyChanged = function (obj, pname) {
             if ('SectionHeight' in obj) {
                 this.sizeArray = [];
-                this.idArray = []                 
+                this.idArray = []
                 $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
                 this.RefreshControl(obj);
-                this.repExtern.splitGeneric(this.idArray, this.sizeArray);                
+                this.repExtern.splitGeneric(this.idArray, this.sizeArray);
             }
             else if (pname === "DataSourceRefId") {
-                this.getDataSourceColoums(obj.DataSourceRefId);               
+                this.getDataSourceColoums(obj.DataSourceRefId);
             }
             else if (pname === "PaperSize") {
-                this.setpageSize(obj);                
+                this.setpageSize(obj);
             }
             else if (pname === "IsLandscape") {
-                this.setpageMode(obj);                
+                this.setpageMode(obj);
             }
             else if (pname === "Image") {
-                this.addImageFn(obj);                
+                this.addImageFn(obj);
             }
             else if (pname === "WaterMark") {
-                this.addWaterMarkFn(obj)                
+                this.addWaterMarkFn(obj);
+            }
+            else if (pname === "Function") {
+                this.changeSummaryFunc(obj);
+                this.RefreshControl(obj);
             }
             else {
                 this.RefreshControl(obj);
@@ -843,7 +889,6 @@ var setBackgroud = function (input) {
     console.log(input);
     if (input.files && input.files[0]) {
         var reader = new FileReader();
-
         reader.onload = function (e) {
             $('#page').css({ 'background-image': 'url(' + e.target.result + ')', 'width': $('#page').width(), 'background-repeat': 'no-repeat' });
         };

@@ -1,17 +1,11 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using ExpressBase.Security.Core;
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
-
-   Dictionary<string, object> Dict = ViewBag.dict;
 }
 
 @using (Html.BeginForm(FormMethod.Post))
 {
-   
-
-    <div class="row">
+    @*<div class="row">
         <div class="col-md-6">
             <h3 class="text-center">Create User</h3>
             <div class="form-group">
@@ -27,7 +21,231 @@
                 <span>Send mail. </span><input type="checkbox" id="sendmail" />
             </div>
         </div>
+    </div>*@
+    
+    <style>
+        .outer-section-createuser {
+            height: 100vh;
+            font-family: open sans;
+            font-weight: 300;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding-bottom: 15px;
+        }
+
+           .set-form-head {
+                width: 100%;
+                background: #339bb3;
+                color: white;
+                font-size: 20px;
+                padding: 10px;
+            }
+
+        .center {
+            margin: auto;
+            width: 90%;
+            padding: 10px;
+        }
+
+        .searchRsulsItemsDiv:hover{
+            background-color: #eee;
+        }
+
+        .mydiv1:hover {
+            background-color: #f5f5f5;
+            border:none;
+        }
+        .mydiv1 {
+            border: 1px solid #f5f5f5;
+            background-color: #fdfdfd;
+            border-radius: 6px;
+            align-items: center;
+            height: 75px;
+            overflow: hidden;
+            padding: 14px 16px;
+            margin-top: 15px;
+        }
+        .icondiv1{
+            display:inline-block;
+            font-size:xx-large;
+            padding-right:10px;
+        }
+        .textdiv1 {
+            display: inline-block;
+        }
+        .closediv1 {
+            display: inline-block;
+            float:right;
+            cursor:pointer;
+        }
+
+
+    </style>
+    <div class="center">
+        <section class="outer-section-createuser" style="height: 700px;">
+            <div class="set-form-head">
+                <div class="">Create User</div>
+            </div>
+            <div class="row">
+                <br />
+                <div class="col-md-8" style="margin-left:4%">
+                    <div class="row">
+                        <div class="form-group col-md-8" >
+                            <label style="font-family: open sans; font-weight: 300;">Name</label>
+                            <input class="form-control" type="text" onchange="" name="Name" id="name">
+                        </div>
+                        <div class="form-group col-md-3" style="margin-left:18px;">
+                            <label style="font-family: open sans; font-weight: 300;">Nick Name</label>
+                            <input class="form-control" type="text" onchange="" name="" id="" style="width:192px">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label style="font-family: open sans; font-weight: 300;">Email ID</label>
+                            <input class="form-control" type="text" onchange="" name="" id="">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="pwd" style="font-family: open sans; font-weight: 300;">Password</label>
+                            <input  type="password" class="form-control" name="" id="pwd">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-2" style="padding:25px; margin-left:70px">
+                    <img src="~/images/proimg.jpg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" style="height:100px" />
+                </div>
+            </div>
+
+            <div class="row" style="padding-left:50px; padding-right:50px; ">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#home">More Details</a></li>
+                    <li><a data-toggle="tab" href="#menu1">Roles</a></li>
+                    <li><a data-toggle="tab" href="#menu2">User Groups</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="home" class="tab-pane fade in active" style="padding-top:40px">
+                        <div style="display:inline-block;">
+                            <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
+                            <input class="form-control" type="date" onchange="" name="" id="">
+                        </div>
+                        <div style="display:inline-block; padding-left:40px">
+                            <label style="font-family: open sans; font-weight: 300;">Gender</label>
+                            <select class="form-control" id="">
+                                <option selected disabled>Select Gender</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="form-group" style="display:inline-block; padding-top: 30px; width:40%">
+                            <label style="font-family: open sans; font-weight: 300;">Permanent Address</label>
+                            <textarea class="form-control" rows="3" id=""></textarea>
+                        </div>
+                        <div class="form-group" style="display:inline-block; padding-left: 30px; width:40%">
+                            <label style="font-family: open sans; font-weight: 300;">Communication Address</label>
+                            <textarea class="form-control" rows="3" id=""></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-family: open sans; font-weight: 300;">Alternate Email ID</label>
+                            <input class="form-control" type="text" onchange="" name="" id="">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-family: open sans; font-weight: 300;">Phone Number</label>
+                            <input class="form-control" type="text" onchange="" name="" id="">
+                        </div>
+
+
+                    </div>
+                    <div id="menu1" class="tab-pane fade" style="padding-top:20px">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                @*<label id="lblNoOfRoles" style="font-family: open sans; font-weight: 300;">Available Roles : </label>*@
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn" data-toggle="modal" data-target="#addRolesModal" style="float:right">Add Roles</button>
+                            </div>
+                        </div>
+                        <div class="container">                            
+                            <!-- Modal -->
+                            <div class="modal fade" id="addRolesModal" role="dialog">
+                                <div class="modal-dialog">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">Add Roles</h4>
+                                        </div>
+                                        <div class="modal-body" style="height:400px">
+                                            <div class="input-group ">
+                                                <input id="txtSearchRole" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                                <span class="input-group-btn">
+                                                    <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                                </span>
+                                            </div>
+                                            @*<label id="" style="font-family: open sans; font-weight: 300;">Search Roles</label>
+                                            <input id="txtSearchRole" class="form-control" type="text" style="margin-bottom:20px;"/>*@
+                                            <div id="divRoleSearchResults" style="height:300px; overflow-y:auto"></div>
+                                        </div>
+                                        
+                                        <div class="modal-footer">
+                                            <button id="btnModalOk" type="button" class="btn btn-default">OK</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="divSelectedRoleDisplay" class="row"></div>
+                    </div>
+
+                    <div id="menu2" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-md-6"></div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn" data-toggle="modal" data-target="#addUserGroupModal" style="float:right">Add to User Groups</button>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <!-- Modal -->
+                            <div class="modal fade" id="addUserGroupModal" role="dialog">
+                                <div class="modal-dialog">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">User Groups</h4>
+                                        </div>
+                                        <div class="modal-body" style="height:400px">
+                                            <div class="input-group ">
+                                                <input id="txtSearchUserGroup" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                                <span class="input-group-btn">
+                                                    <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                                </span>
+                                            </div>
+                                            <div id="divUserGroupSearchResults" style="height:300px; overflow-y:auto"></div>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button id="btnUserGroupModalOk" type="button" class="btn btn-default">OK</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="divSelectedUserGroupDisplay" class="row"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
     </div>
+
+
+
+
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#roles">Roles</a></li>
         <li><a onclick="Getusergroups()" data-toggle="tab" href="#usergroup">User Groups</a></li>
@@ -43,9 +261,7 @@
                         <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
-
             </div>
-
         </div>
         
         <div id="usergroup" class="tab-pane fade">
@@ -58,9 +274,7 @@
                         <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
     <div class="form-group">
@@ -113,8 +327,13 @@
     }
 </style>
 <script>
+    var RoleObj =  @Html.Raw( ViewBag.Roles);
+    var UserGroupObj = @Html.Raw( ViewBag.UserGroups);
+    //console.log(RoleObj);
+    var userobj = new UserJs(RoleObj, UserGroupObj);
+
     $('document').ready(function () {
-   
+
         $.post("../TenantUser/GetRoles",
             {
                 "userid": $('#userid').val()
@@ -122,7 +341,12 @@
                      if (result) {
                          document.getElementById("userroles").innerHTML = result;
                      }
-                 });
+            });
+
+
+
+
+
             $('#sendmail').change(function () {
                 if (!this.checked)
                     $('#pw').fadeIn();
@@ -150,7 +374,7 @@
                 });
                 $.post("../TenantUser/SaveUser",
                     {
-                      
+
                         "userid": $('#userid').val(),
                         "roles": selectedroles.substring(0, selectedroles.length - 1),
                         "usergroups": selectedusergroups.substring(0, selectedusergroups.length - 1),
@@ -165,7 +389,7 @@
                     });
 
             });
-           
+
 
     });
 

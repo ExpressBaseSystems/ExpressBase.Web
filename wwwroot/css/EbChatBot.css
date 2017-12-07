@@ -91,16 +91,16 @@
     text-align: center;
 }
 
-.eb-chat-inp-cont .btn, .msg-wraper-bot .btn {
-    border-radius: 15px;
-    padding: 6px 9px;
-    color: white;
-    background: #428bca;
-    border: none;
-    outline: none;
-    padding: 2px;
-    margin-left: 5px;
-}
+    .eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
+        border-radius: 15px;
+        padding: 6px 9px;
+        color: white;
+        background: #428bca;
+        border: none;
+        outline: none;
+        padding: 2px;
+        margin-left: 5px;
+    }
 
 .eb-chat-inp-cont .btn {
     padding: 6px 9px !important;
@@ -115,7 +115,7 @@
     border: solid 1px #e0e0e0;
 }
 
-.msg-wraper-bot .btn {
+.btn-box .btn {
     margin: 1px 1px;
     width: 100%;
     min-width: 222px;
@@ -138,7 +138,7 @@
     display: inline-block;
 }
 
-.chat-ctrl-cont .btn {
+.chat-ctrl-cont [name=ctrlsend] {
     font-size: 13px;
     padding: 12px 0px;
     width: 35px;

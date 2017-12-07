@@ -72,6 +72,7 @@ namespace ExpressBase.Web.Controllers
         private PdfContentByte cb;
         private ColumnText ct;
         private PdfWriter writer;
+        private Document d;
 
         private float rh_height;
         private float ph_height;
@@ -82,6 +83,10 @@ namespace ExpressBase.Web.Controllers
         private float pf_Yposition;
         private float ph_Yposition;
         private float dt_Yposition;
+        private float detailprintingtop = 0;
+        private float detail_section_height;
+        private bool IsLastpage = false;
+
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         public IActionResult Index(string refid)
@@ -103,8 +108,8 @@ namespace ExpressBase.Web.Controllers
 
             iTextSharp.text.Rectangle rec = (Report.IsLandscape) ?
                 new iTextSharp.text.Rectangle(Report.Height, Report.Width) : new iTextSharp.text.Rectangle(Report.Width, Report.Height);
-            
-            Document d = new Document(rec);
+
+            d = new Document(rec);
             MemoryStream ms1 = new MemoryStream();
             writer = PdfWriter.GetInstance(d, ms1);
             writer.Open();
@@ -117,17 +122,6 @@ namespace ExpressBase.Web.Controllers
 
             DrawReportHeader();
             DrawDetail();
-
-            ct = new ColumnText(cb);
-            ct.SetSimpleColumn(new Phrase("page1"), 100, 600, 150, 650, 15, Element.ALIGN_LEFT);
-            ct.Go();
-            d.NewPage();
-            ct.SetSimpleColumn(new Phrase("page2"), 100, 600, 150, 650, 15, Element.ALIGN_LEFT);
-            ct.Go();
-            d.NewPage();
-            ct.SetSimpleColumn(new Phrase("page3"), 100, 600, 150, 650, 15, Element.ALIGN_LEFT);
-            ct.Go();
-
             DrawReportFooter();
             d.Close();
             ms1.Position = 0;
@@ -152,19 +146,23 @@ namespace ExpressBase.Web.Controllers
             {
                 rf_height += r_footer.Height;
             }
+            foreach (EbReportDetail detail in Report.Detail)
+            {
+                detail_section_height += detail.Height;
+            }
             CalculateDetailHeight();
         }
 
         public void CalculateDetailHeight()
         {
-            if (writer.PageNumber == 1)
+            if(writer.PageNumber == 1 && IsLastpage == true)
+                dt_height = Report.Height - (ph_height + pf_height + pf_height + rf_height);
+            else if (writer.PageNumber == 1)
                 dt_height = Report.Height - (rh_height + ph_height + pf_height);
-            // else if() lastpage
-            // dt_height = Report.Height - (ph_height + pf_height + rf_height);
+            else if (IsLastpage == true) 
+              dt_height = Report.Height - (ph_height + pf_height + rf_height);
             else
                 dt_height = Report.Height - (ph_height + pf_height);
-
-
         }
 
         public void DrawReportHeader()
@@ -172,7 +170,10 @@ namespace ExpressBase.Web.Controllers
             var rh_Yposition = 0;
             foreach (EbReportHeader r_header in Report.ReportHeaders)
             {
-                DrawFields(r_header, rh_Yposition);
+                foreach (EbReportField field in r_header.Fields)
+                {
+                    DrawFields(field, rh_Yposition,0,0);
+                }
             }
         }
 
@@ -181,7 +182,10 @@ namespace ExpressBase.Web.Controllers
             ph_Yposition = (writer.PageNumber == 1) ? rh_height : 0;
             foreach (EbPageHeader p_header in Report.PageHeaders)
             {
-                DrawFields(p_header, ph_Yposition);
+                foreach (EbReportField field in p_header.Fields)
+                {
+                    DrawFields(field, ph_Yposition,0,0);
+                }
             }
         }
 
@@ -189,38 +193,48 @@ namespace ExpressBase.Web.Controllers
         {
             ph_Yposition = (writer.PageNumber == 1) ? rh_height : 0;
             dt_Yposition = ph_Yposition + ph_height;
-            foreach (EbReportDetail detail in Report.Detail)
+            if (dt != null)
             {
-                float detailtop = 0;
-                var column_name = "";
-                var column_val = "";
-                foreach (EbReportField field in detail.Fields)
+                int i;
+                for (i = 0; i < dt.Count; i++)
                 {
-                    if (field.GetType() == typeof(EbDataFieldBoolean) || field.GetType() == typeof(EbDataFieldDateTime) || field.GetType() == typeof(EbDataFieldNumeric) || field.GetType() == typeof(EbDataFieldText))
+                    if (detailprintingtop < dt_height && dt_height - detailprintingtop >= detail_section_height)
                     {
-                        var table = field.Title.Split('.')[0];
-                        column_name = field.Title.Split('.')[1];
-                        detailtop = 0;
-                        for (int i = 0; detailtop < detail.Height && i < dt.Count; i++)
-                        {
-                            column_val = GeFieldtData(column_name, i);
-                            detailtop += field.Height;
-                            DrawTextBox(field, column_val, detailtop, dt_Yposition);
-                        }
+                        DoLoopInDetail(i);
                     }
-                    else DrawFields(detail, dt_Yposition);
+                    else
+                    {
+                        detailprintingtop = 0;
+                        d.NewPage();
+                        DoLoopInDetail(i);
+                    }
                 }
-                //           printingTop += section.Height;
-
-                //if (printHeight >= dtheight)
-                //{
-                //    d.NewPage();
-                //    printHeight = 0;
-                //    sTop = sTopVal;
-                //}
-                //}
+                if (i == dt.Count)
+                {
+                    IsLastpage = true;
+                    CalculateDetailHeight();
+                }
+            }
+            else
+            {
+                IsLastpage = true;
+                DoLoopInDetail(0);
+             
             }
 
+        }
+
+        public void DoLoopInDetail(int i)
+        {
+            foreach (EbReportDetail detail in Report.Detail)
+            {
+                foreach (EbReportField field in detail.Fields)
+                {
+                    DrawFields(field, dt_Yposition, detailprintingtop,i);
+                }
+
+                detailprintingtop += detail.Height;
+            }
         }
 
         public void DrawPageFooter()
@@ -230,82 +244,102 @@ namespace ExpressBase.Web.Controllers
             pf_Yposition = dt_Yposition + dt_height;
             foreach (EbPageFooter p_footer in Report.PageFooters)
             {
-                DrawFields(p_footer, pf_Yposition);
+                foreach (EbReportField field in p_footer.Fields)
+                {
+                    DrawFields(field, pf_Yposition,0,0);
+                }
             }
         }
 
         public void DrawReportFooter()
         {
+            CalculateDetailHeight();
+            dt_Yposition = ph_Yposition + ph_height;
+            pf_Yposition = dt_Yposition + dt_height;
             rf_Yposition = pf_Yposition + pf_height;
             foreach (EbReportFooter r_footer in Report.ReportFooters)
             {
-                DrawFields(r_footer, rf_Yposition);
+                foreach (EbReportField field in r_footer.Fields)
+                {
+                    DrawFields(field, rf_Yposition,0,0);
+                }
             }
         }
 
-        public void DrawFields(dynamic section, float section_Yposition)
+        public void DrawFields(EbReportField field, float section_Yposition, float detailprintingtop,int i)
         {
             var column_name = "";
             var column_val = "";
-            foreach (EbReportField field in section.Fields)
+
+            if (field.GetType() == typeof(EbText))
             {
-                if (field.GetType() == typeof(EbText))
-                {
-                    column_val = field.Title;
-                    DrawTextBox(field, column_val, 0, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbDataFieldBoolean) || field.GetType() == typeof(EbDataFieldDateTime) || field.GetType() == typeof(EbDataFieldNumeric) || field.GetType() == typeof(EbDataFieldText))
-                {
-                    var table = field.Title.Split('.')[0];
-                    column_name = field.Title.Split('.')[1];
-                    column_val = GeFieldtData(column_name, 0);
-                    DrawTextBox(field, column_val, 0, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbCircle))
-                {
-                    if (field.Height == field.Width)
-                        DrawCircle(field, section_Yposition);
-                    else
-                        DrawEllipse(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbRect))
-                {
-                    DrawRectangle(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbHl))
-                {
-                    DrawHLine(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbVl))
-                {
-                    DrawVLine(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbArrR))
-                {
-                    DrawArrowR(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbArrL))
-                {
-                    DrawArrowL(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbArrU))
-                {
-                    DrawArrowU(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbArrD))
-                {
-                    DrawArrowD(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbByArrH))
-                {
-                    DrawByArrH(field, section_Yposition);
-                }
-                else if (field.GetType() == typeof(EbByArrV))
-                {
-                    DrawByArrV(field, section_Yposition);
-                }
+                column_val = field.Title;
+                DrawTextBox(field, column_val, section_Yposition);
             }
-            //           printingTop += section.Height;
+            else if (field.GetType() == typeof(EbDataFieldBoolean) || field.GetType() == typeof(EbDataFieldDateTime) || field.GetType() == typeof(EbDataFieldNumeric) || field.GetType() == typeof(EbDataFieldText))
+            {
+                var table = field.Title.Split('.')[0];
+                column_name = field.Title.Split('.')[1];
+                column_val = GeFieldtData(column_name, i);
+                DrawTextBox(field, column_val, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbCircle))
+            {
+                if (field.Height == field.Width)
+                    DrawCircle(field, section_Yposition);
+                else
+                    DrawEllipse(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbRect))
+            {
+                DrawRectangle(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbHl))
+            {
+                DrawHLine(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbVl))
+            {
+                DrawVLine(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbArrR))
+            {
+                DrawArrowR(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbArrL))
+            {
+                DrawArrowL(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbArrU))
+            {
+                DrawArrowU(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbArrD))
+            {
+                DrawArrowD(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbByArrH))
+            {
+                DrawByArrH(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbByArrV))
+            {
+                DrawByArrV(field, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbPageNo))
+            {
+                column_val = writer.PageNumber.ToString();
+                DrawTextBox(field, column_val, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbPageXY))
+            {
+              ///  column_val = writer.PageNumber + "/" + writer.PageCount;
+                DrawTextBox(field, column_val, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbDateTime))
+            {
+                DrawTextBox(field, field.Title, section_Yposition);
+            }
         }
 
 
@@ -326,12 +360,12 @@ namespace ExpressBase.Web.Controllers
             return column_val;
         }
 
-        public void DrawTextBox(EbReportField field, string column_val, float detailtop, float printingTop)
+        public void DrawTextBox(EbReportField field, string column_val, float printingTop)
         {
             var urx = field.Width + field.Left;
-            var ury = Report.Height - (printingTop + field.Top + detailtop);
+            var ury = Report.Height - (printingTop + field.Top + detailprintingtop);
             var llx = field.Left;
-            var lly = Report.Height - (printingTop + field.Top + field.Height + detailtop);
+            var lly = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
 
             ColumnText ct1 = new ColumnText(cb);
             ct1.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);

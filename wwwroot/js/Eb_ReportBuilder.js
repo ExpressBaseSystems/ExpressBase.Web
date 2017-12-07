@@ -631,7 +631,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         obj.Function = this.$funcselect.val();
         obj.Left = this.objCollection[$(this.selector.selector).attr("id")].Left;      
         this.objCollection[Objid] = obj;
-        this.RefreshControl(obj);        
+        this.RefreshControl(obj);
+        $("#running-summary ul[id='running-summary-childul']").append("<li class='styl'><div tabindex='1' $(this).focus(); class='textval'> "
+            + this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")" + "</div></li>");        
     };
 
     this.getSectionToAddSum = function (selector) {

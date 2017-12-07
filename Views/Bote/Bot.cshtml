@@ -34,30 +34,11 @@
     function statusChangeCallback(response) {
         console.log('statusChangeCallback');
         console.log(response);
-        // The response object is returned with a status field that lets the
+        chatBotObj.FB = FB;
         if (response.status === 'connected') {
-            // Logged into your app and Facebook.
-            FB.api('/me?fields=id,name,picture', function (response) {
-                chatBotObj.FB = FB;            
-                chatBotObj.socialId = response.id;
-                chatBotObj.picture = response.picture;
-                chatBotObj.greetings(response.name);
-               
-                
-                $.post("http://eb_roby_dev.localhost:5000/bote/MyAuthenticate",
-                    {
-                        "cid": "eb_roby_dev",
-                        "socialId": response.id,
-                        "wc" : "uc",
-                    }, function (result) {
-                        chatBotObj.bearerToken = (JSON.parse(result)).BearerToken;
-                        chatBotObj.refreshToken = (JSON.parse(result)).RefreshToken;
-                        alert("authenticate");
-                    });
-            });
+            chatBotObj.FBLogined();
         } else {
-            // The person is not logged into your app or we are unable to tell.
-            chatBotObj.getMsg($("<button class='btn' onclick='login();'>Login with Facebook</button>"));
+            chatBotObj.FBNotLogined();
         }
     }
 

@@ -16,7 +16,7 @@
 }
 
 .propgrid-table-cont input[type="number"] {
-    direction: rtl;
+    /*direction: rtl;*/
 }
 
 .propgrid-table-cont {

@@ -1,14 +1,14 @@
-﻿.pgTdval > input[type="text"], input[type="email"], input[type="number"], input[type="color"], input[type="password"], input[type="singleline"] {
-    height: 21px;
-    width: 110px;
-    -webkit-tap-highlight-color: rgba(255,255,255,0);
-    background-color: transparent;
-    border: none;
-    padding: 3px;
-    font-size: 13px;
-    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
-    transition: box-shadow .1s ease,border-color .1s ease;
-    box-shadow: none;
+﻿.pgTdval > input {
+	height: 21px;
+	width: 110px;
+	-webkit-tap-highlight-color: rgba(255,255,255,0);
+	background-color: transparent;
+	border: none;
+	padding: 3px;
+	font-size: 13px;
+	-webkit-transition: box-shadow .1s ease,border-color .1s ease;
+	transition: box-shadow .1s ease,border-color .1s ease;
+	box-shadow: none;
 }
 
 .propgrid-table-cont input[type="color"] {
@@ -16,7 +16,7 @@
 }
 
 .propgrid-table-cont input[type="number"] {
-    direction: rtl;
+    /*direction: rtl;*/
 }
 
 .propgrid-table-cont {

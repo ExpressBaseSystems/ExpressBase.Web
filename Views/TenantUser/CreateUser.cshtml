@@ -1,15 +1,10 @@
 ﻿@using ExpressBase.Security.Core;
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
-
-    List<EbUserGroups> UGroups = ViewBag.UserGroups;
-    List<EbRole> Roles = ViewBag.Roles;
 }
 
 @using (Html.BeginForm(FormMethod.Post))
 {
-   
-
     @*<div class="row">
         <div class="col-md-6">
             <h3 class="text-center">Create User</h3>
@@ -27,8 +22,7 @@
             </div>
         </div>
     </div>*@
-
-
+    
     <style>
         .outer-section-createuser {
             height: 100vh;
@@ -50,8 +44,12 @@
 
         .center {
             margin: auto;
-            width: 80%;
+            width: 90%;
             padding: 10px;
+        }
+
+        .searchRsulsItemsDiv:hover{
+            background-color: #eee;
         }
 
         .mydiv1:hover {
@@ -59,12 +57,14 @@
             border:none;
         }
         .mydiv1 {
-            
-            border: 1px solid #ccc;
+            border: 1px solid #f5f5f5;
+            background-color: #fdfdfd;
+            border-radius: 6px;
             align-items: center;
             height: 75px;
             overflow: hidden;
             padding: 14px 16px;
+            margin-top: 15px;
         }
         .icondiv1{
             display:inline-block;
@@ -161,7 +161,7 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <label id="lblNoOfRoles" style="font-family: open sans; font-weight: 300;">Available Roles : </label>
+                                @*<label id="lblNoOfRoles" style="font-family: open sans; font-weight: 300;">Available Roles : </label>*@
                             </div>
                             <div class="col-md-6">
                                 <button type="button" class="btn" data-toggle="modal" data-target="#addRolesModal" style="float:right">Add Roles</button>
@@ -178,47 +178,64 @@
                                             <h4 class="modal-title">Add Roles</h4>
                                         </div>
                                         <div class="modal-body" style="height:400px">
-                                            <label id="" style="font-family: open sans; font-weight: 300;">Search Roles</label>
-                                            <input id="txtSearchRole" class="form-control" type="text" style="margin-bottom:20px;"/>
+                                            <div class="input-group ">
+                                                <input id="txtSearchRole" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                                <span class="input-group-btn">
+                                                    <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                                </span>
+                                            </div>
+                                            @*<label id="" style="font-family: open sans; font-weight: 300;">Search Roles</label>
+                                            <input id="txtSearchRole" class="form-control" type="text" style="margin-bottom:20px;"/>*@
                                             <div id="divRoleSearchResults" style="height:300px; overflow-y:auto"></div>
                                         </div>
                                         
                                         <div class="modal-footer">
+                                            <button id="btnModalOk" type="button" class="btn btn-default">OK</button>
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                            <button id="btnModalOk" type="button" class="btn btn-default" >OK</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div id="divSelectedRoleDisplay" class="row"></div>
+                    </div>
 
+                    <div id="menu2" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-md-6"></div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn" data-toggle="modal" data-target="#addUserGroupModal" style="float:right">Add to User Groups</button>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <!-- Modal -->
+                            <div class="modal fade" id="addUserGroupModal" role="dialog">
+                                <div class="modal-dialog">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">User Groups</h4>
+                                        </div>
+                                        <div class="modal-body" style="height:400px">
+                                            <div class="input-group ">
+                                                <input id="txtSearchUserGroup" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                                <span class="input-group-btn">
+                                                    <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                                </span>
+                                            </div>
+                                            <div id="divUserGroupSearchResults" style="height:300px; overflow-y:auto"></div>
+                                        </div>
 
-                        <div id="divSelectedRoleDisplay" class="row">
-                            <div class="col-md-4">
-                                <div class="mydiv1" style="">
-                                    <div class="icondiv1">
-                                     <b>W</b>   
-                                    </div>
-                                    <div class="textdiv1">
-                                        wedssedsefcsefcse
-                                        <br />jbdkageifvkcka
-                                    </div>
-                                    <div class="closediv1">
-                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                        <div class="modal-footer">
+                                            <button id="btnUserGroupModalOk" type="button" class="btn btn-default">OK</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4"></div>
-                            <div class="col-md-4"></div>
                         </div>
-
-
-
-
-                    </div>
-                    <div id="menu2" class="tab-pane fade">
-                        <h3>Menu 2</h3>
-                        <p>Some content in menu 2.</p>
+                        <div id="divSelectedUserGroupDisplay" class="row"></div>
                     </div>
                 </div>
 
@@ -310,7 +327,11 @@
     }
 </style>
 <script>
-    var RoleObj = @Roles;
+    var RoleObj =  @Html.Raw( ViewBag.Roles);
+    var UserGroupObj = @Html.Raw( ViewBag.UserGroups);
+    //console.log(RoleObj);
+    var userobj = new UserJs(RoleObj, UserGroupObj);
+
     $('document').ready(function () {
 
         $.post("../TenantUser/GetRoles",
@@ -322,54 +343,6 @@
                      }
             });
 
-
-        //$.ajax({
-        //    type: "POST",
-        //    url: "../TenantUser/GetRoles1",
-        //    data: { userid : $('#userid').val() },
-        //    success: GetRolesSuccess
-        //});
-        //function GetRolesSuccess(data) {
-        //    RoleObj = JSON.parse(data);
-        //    $("#lblNoOfRoles").text("Available Roles : "+RoleObj.length);
-        //}
-        //$("#btnAddRoles").on('click', btnAddRolesAction);
-        //function btnAddRolesAction() {
-        //}
-        $("#txtSearchRole").on('keyup', KeyUptxtSearchRole);
-
-        $("#btnModalOk").on('click', clickbtnModalOkAction);
-
-        function KeyUptxtSearchRole() {
-            $("#divRoleSearchResults").children().remove();
-            var txt = $("#txtSearchRole").val().trim();
-            for (var i = 0; i < RoleObj.length; i++) {
-                if (RoleObj[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
-                    $("#divRoleSearchResults").append(`<div class='row' style='margin-left:5px; margin-right:5px'>
-                                                        <div class='col-md-1'>
-                                                            <input type ='checkbox' name = '${RoleObj[i].Role}' value = '${RoleObj[i].Role}' aria-label='...'>
-                                                        </div>
-                                                        <div class='col-md-10'>
-                                                            <h5 name = 'head4' style='color:black;'>${RoleObj[i].Role}</h5>
-                                                            <br />${RoleObj[i].Role}
-                                                        </div>
-                                                        </div>`);
-                }
-            }
-        }
-        function clickbtnModalOkAction() {
-            
-        }
-
-        function drawObject() {
-            var div = $("#divSelectedRoleDisplay");
-            for (var i = 0; i < RoleObj.length; i++) {
-                div.children().append(`div
-                                        `);
-
-            }
-
-        }
 
 
 

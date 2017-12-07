@@ -107,9 +107,9 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult TenantAddAccount(int i)
         {
+            var req = this.HttpContext.Request.Form;
             
-              return View();
-          
+            return View();
         }
 
         [HttpGet]

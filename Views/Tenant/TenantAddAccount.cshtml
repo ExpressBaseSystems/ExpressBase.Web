@@ -20,24 +20,26 @@
             </div>
         </div>
         <div class="col-md-3 logo-upload-container">
-            <div class="logo-upload" id="logo-prev">
+            <div class="logo-upload" id="">
+                <img class="img-responsive" id="logo-prev"/>
             </div>
         </div>
         <div class="col-md-6 detailsec-form">
-            <form id="subscript-submit" action="" method="post">
+            <form id="subscript-submit" action="~/Tenant/TenantAddAccount" method="post">
                 <div class="tier">
                     <div class="form-group">
-                        <input type="text" required="required" id="solutionname" name="accountname" class="form-control" placeholder="Solution Name" />
+                        <input type="text" required="required" id="solutionname" name="Sname" class="form-control" placeholder="Solution Name" />
                     </div>
                     <div class="client-id-sec">
-                        <input type="text" required="required" id="cid" name="cid" class="form-control input-clientId" placeholder="Client id" />
+                        <input type="text" required="required" id="cid" name="Cid" class="form-control input-clientId" placeholder="Client id" />
                         <div class="clientId-auto">.expressbase.com</div>
-                        <button class="btn is-edit-clientid pricing-modal-btn" id="is-edit-clientid"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                        <button class="btn is-edit-clientid pricing-modal-btn" id="is-edit-clientid" style="display:none;"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                    <p>Select atleast one product for custome Client Id</p>
                     </div>
                     <div class="form-group">
                         <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-cropie">upload logo</button>
                     </div>
-                    <input type="hidden" id="subsciptions" />
+                    <input type="hidden" name="Subscription" id="sub-form-field" />
                 </div>
             </form>
         </div>
@@ -121,19 +123,19 @@
                     <td class="pricing-icon"><img src="~/images/svg/form1.svg" /><div class="p-icon-text">Forms</div></td>
                     <td product="Forms" p-type="1" plan="0" price="0">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$0</div>
+                            <div class="T-add-amount"></div>
                         </div>
                       
                     </td>
                     <td product="Forms" p-type="1" plan="1" price="1">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$1</div>
+                            <div class="T-add-amount"></div>
                         </div>
                         
                     </td>
                     <td product="Forms" p-type="1" plan="2" price="2">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$2</div>
+                            <div class="T-add-amount"></div>
                         </div>
                        
                     </td>
@@ -153,14 +155,14 @@
                     <td class="pricing-icon"><img src="~/images/svg/dv1.svg" /><div class="p-icon-text">Visualization</div></td>
                     <td class="tdclass disabled-click" product="Visualization" p-type="2" plan="0" price="0">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$0</div>
+                            <div class="T-add-amount"></div>
 
                         </div>
                         
                     </td>
                     <td product="Visualization" p-type="2" plan="1" price="1">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$1</div>
+                            <div class="T-add-amount"></div>
                         </div>
                         
                     </td>
@@ -187,21 +189,21 @@
                     <td class="pricing-icon"><img src="~/images/svg/report1.svg" /><div class="p-icon-text">Report</div></td>
                     <td product="Report" p-type="3" plan="0" price="0">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$0</div>
+                            <div class="T-add-amount"></div>
 
                         </div>
                         
                     </td>
                     <td product="Report" p-type="3" plan="1" price="1">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$1</div>
+                            <div class="T-add-amount"></div>
 
                         </div>
                         
                     </td>
                     <td product="Report" p-type="3" plan="2" price="2">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$2</div>
+                            <div class="T-add-amount"></div>
 
                         </div>
                         
@@ -223,20 +225,20 @@
                     <td class="pricing-icon"><img src="~/images/svg/chat1.svg" /><div class="p-icon-text">ChatBot</div></td>
                     <td product="ChatBot" p-type="4" plan="0" price="0">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$0</div>
+                            <div class="T-add-amount"></div>
                         </div>
                         
                     </td>
                     <td product="ChatBot" p-type="4" plan="1" price="1">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$1</div>
+                            <div class="T-add-amount"></div>
 
                         </div>
                         
                     </td>
                     <td product="ChatBot" p-type="4" plan="2" price="2">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$2</div>
+                            <div class="T-add-amount"></div>
 
                         </div>
                         
@@ -258,20 +260,20 @@
                     <td class="pricing-icon"><img src="~/images/svg/document1.svg" /><div class="p-icon-text">Documents</div></td>
                     <td product="Documents" p-type="5" plan="0" price="0">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$0</div>
+                            <div class="T-add-amount"></div>
                         </div>
                         
                     </td>
                     <td product="Documents" p-type="5" plan="1" price="1">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$1</div>
+                            <div class="T-add-amount"></div>
 
                         </div>
                         
                     </td>
                     <td product="Documents" p-type="5" plan="2" price="2">
                         <div class="pricing-container">
-                            <div class="T-add-amount">$2</div>
+                            <div class="T-add-amount"></div>
 
                         </div>
                        
@@ -291,7 +293,7 @@
             </tbody>
         </table>
     </div>
-    <div class="container products-head">
+    @*<div class="container products-head">
         <h4>Review</h4>
     </div>
     <div class="container review-container">
@@ -319,10 +321,20 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>*@
     <div class="container">
-        <input type="submit" class="btn btn-success" value="Save" id="save-subscrip"/> 
+        <input type="submit" class="btn btn-success pull-right" value="Save" id="save-subscrip"/> 
     </div>
+    <div class="popover-clientid-edit">
+        <div class="popover-text">
+            You can edit solution Id
+        </div>
+        <div class="btn-section">
+            <button class="btn btn-success">Edit</button>
+            <button class="btn btn-success pull-right">Skip</button>
+        </div>
+    </div>
+
 </div>
 <div class="modal fade" id="eb-common-price-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -340,10 +352,13 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
-        var subscribe = new TenantAddSolution(EbSubsciptionPlans);
+        var subscribe = new TenantAddSolution(EbSubsciptionPlans);       
         $("#save-subscrip").click(function () {
+            var sub = subscribe.getSubscription();            
+            $("#sub-form-field").val(sub);
             $("#subscript-submit").submit();
         });              
     });

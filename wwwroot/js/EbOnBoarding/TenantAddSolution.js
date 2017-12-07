@@ -18,12 +18,13 @@
         selector.toggleClass('subscribed');
         $('#subscrib-info').show();
         if (selector.hasClass('subscribed')) {
+            $('#is-edit-clientid').show();
             selector.text(' ').css({
                 "background": "#69ea69",
                 "border": "none"
             }).append('<i class="fa fa-check" aria-hidden="true" style="color:white;"></i>');         
             $('[pritem=' + selector.parent().attr('pid') + ']').children('[plan=0]').toggleClass('price-selected');
-            this.objSubscription[selector.parent().attr("prod-id")] = "0";
+            this.objSubscription[selector.parent().attr("prod-id")] = 0;
             this.addProductTorev(selector.parent());
         }
         else {
@@ -59,12 +60,11 @@
                     selector.siblings().each(function (i, obj) {
                         $(obj).removeClass('price-selected');
                     });
-                    this.objSubscription[selector.attr("p-type")] = selector.attr("plan");
+                    this.objSubscription[selector.attr("p-type")] = parseInt(selector.attr("plan"));
                     this.addPlanToRev($(e.target));
                 }
-                else {
+                else 
                     selector.children('i').hide();
-                }
             }
             else
                 alert('product not selected!');
@@ -94,10 +94,13 @@
     };
     this.addAmountTodiv = function (i, obj) {  
         for (var obj2 in this.object) {
-            if ($(obj).attr("plan") === this.object[obj2].plan) {
-                $(obj).children().find(".T-add-amount").text("$" + this.object[obj2].amount);
-            }
+            if ($(obj).attr("plan") === this.object[obj2].plan) 
+                $(obj).children().find(".T-add-amount").text("$" + this.object[obj2].amount);        
         }        
+    };
+
+    this.getSubscription = function () {
+        return this.objSubscription;
     };
 
     this.init = function () {

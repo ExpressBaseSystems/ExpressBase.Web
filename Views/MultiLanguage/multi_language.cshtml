@@ -1,0 +1,332 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+
+}
+
+<style>
+    /*.li-item:hover {
+        color: #fff;
+        background-color: #428bca !important;
+        border-color: #428bca !important;
+    }*/
+</style>
+<div style="margin-top: 100px; padding-left:50px">
+    <input id="txtfinalvalue" type="text" class="form-control" style="width:150px" value="">
+    <br />
+    <button id="btn_click" class="btn btn-info btn-lg" data-target="#MLSettingsModal" data-toggle="modal">Click Me</button>
+</div>
+
+
+<div id="MLSettingsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div id="loader"  style="display:inline-block; margin-left:10px"> <i class="fa fa-spinner fa-pulse" aria-hidden="true"></i></div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Multi Language Key Settings.</h4> </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <ul class="nav nav-tabs">
+                    <li class="active" ><a data-toggle="tab" href="#menusearch" >Search</a></li>
+                    <li ><a data-toggle="tab" href="#menuadd">Add</a></li>
+                    <li ><a data-toggle="tab" href="#menuupdate">Update</a></li>
+                </ul>
+                
+                <div class="tab-content">
+
+                    <div id="menusearch" class="tab-pane fade in active">
+                        <div class="row" style="margin-top:5%">
+                            <div class="col-md-6" style="margin-left:3%">
+                                <div class="input-group ">
+                                    <input id="txtsearch" type="text" value="" class="form-control" placeholder="Search">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="button" onclick="getKeySuggestion(true)">Go!</button>
+                                    </span>
+                                </div>
+                                <div id="keylist" class="list-group " style="max-height:160px; overflow-y:auto ">
+                                    <div id="searchkeyresult" style="display:none">Key Not Found!
+                                    <br /><a href="#" onclick="addnewkey();" class="newkey"> Click Here</a> to add as new Key.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5" >
+                                <div id="langlist" class="list-group " style="max-height:160px; overflow-y:auto">
+                                    
+                                    <div id="langvalueresult" style="display:none">Language Value Not Found!</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="divtable" class="row">
+                            <div class="col-md-11" style="margin-left:4%">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-4">Language</th>
+                                            <th class="col-md-8">Key Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody1">
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                    <div id="menuadd" class="tab-pane fade" style="display:none">
+                        @*<div class="row" style="height:80px">
+                            <div class="col-md-5" style="margin-left:5%">
+                                <input id="txtkeyvalue" type="text" class="form-control" placeholder="Enter a key Value">
+                            </div>
+                            <div class="col-md-5" style="margin-left:5%">
+                                <select id="selectlang" class="form-control">
+                                    <option disabled selected>Select a language</option>
+                                </select>
+                            </div>
+                        </div>*@
+                    </div>
+                    <div id="menuupdate" class="tab-pane fade">
+                        <h3>Menu 3</h3>
+                    </div>
+                </div>
+
+            </div>
+
+
+            
+
+            
+            <div class="modal-footer">
+                <button id="btnaddkey" type="button" class="btn btn-default" onclick="addkeyaction()" style="display:none">Add Key</button>
+                <button id="btnaddval" type="button" class="btn btn-default" onclick="addvalaction()" style="display:none">Add Value</button>
+                <button id="btnselect" type="button" class="btn btn-default" onclick="selectaction()">Select</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*<script type="text/javascript" >
+    $('#txtsearch').keyup(function (e) {
+        clearTimeout($.data(this, 'timer'));
+        if (e.keyCode == 13)
+            getKeySuggestion(true);
+        else
+            $(this).data('timer', setTimeout(getKeySuggestion, 500));
+    });
+
+    function getKeySuggestion(force) {
+        $('#langlist a').remove();
+        $("#searchkeyresult").hide();
+        $("#loader").show();
+        $("#txtsearch").attr("value", "");
+        if (!force && $("#txtsearch").val().length < 3) {
+            $("#keylist a:not(.newkey)").remove();
+            $("#loader").hide();
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "../MultiLanguage/getkeys",
+            data: { k: $("#txtsearch").val() },
+            success: function (data) {
+                $("#keylist a:not(.newkey)").remove();
+                $("#loader").hide();
+                if (Object.keys(data).length === 0) {
+                    $("#searchkeyresult").show();
+                    //loadlang();
+                    return;
+                }
+
+                $.each(data, function (i, k) {
+                    $('#keylist').append(`<a href='#' class='list-group-item' value= '${i}' >${k}</a>`);
+                });
+
+                $("#keylist a:not(.newkey)").hover(function () {
+                    $("#keylist a").removeClass("active");
+                    $(this).addClass("active");
+                });
+
+                $("#keylist a:not(.newkey)").click(function () {
+                    $("#txtsearch").val($("#keylist a.active").text());
+                    $("#txtsearch").attr("value", $("#keylist a.active").attr("value"));
+                    getlangandvalue($("#txtsearch"));
+                    $("#keylist a:not(.newkey)").remove();
+                });
+            }
+        });
+    }
+
+    function getlangandvalue(Element) {
+        //console.log(Element);  
+        $("#loader").show();
+        $('#langlist a').remove();
+        $("#langvalueresult").css("display", "none");
+        $.ajax({
+            type: "POST",
+            url: "../MultiLanguage/getlangandvalue",
+            data: { id: $(Element).attr("value") },
+            success: function (data) {
+                $("#loader").hide();
+                if (Object.keys(data).length === 0) {
+                    $("#langvalueresult").css("display", "block");
+                    return;
+                }
+                $.each(data, function (i, obj) {
+                    $('#langlist').append(`<a href='#' class='list-group-item' value='${obj.id}' data-value='${obj.value}'> ${obj.lang}    ${obj.value} </a>`);
+                });
+                //$("#langlist a").click(function () {
+                //    $("#langlist a").removeClass("active");
+                //    $(this).addClass("active");
+                //});
+            }
+        });
+    }
+
+    function selectaction() {
+        var t = $("#txtsearch").val();
+        var v = $("#txtsearch").attr("value");
+        if (t === "" || v === "") {
+            alert("Select a valid key !");
+            return;
+        }
+        $("#txtfinalvalue").val(t);
+        $("#txtfinalvalue").attr("value", v);
+        //reset modal after successful selection of value
+        $("#keylist a:not(.newkey)").remove();
+        $("#txtsearch").val("");
+        $("#txtsearch").attr("value", "");
+        $("#langlist a").remove();
+        $("#MLSettingsModal").modal("toggle");
+    }
+
+    function addnewkey() {
+        //alert("new key link ");
+        var t = $("#txtsearch").val();
+        var v = $("#txtsearch").attr("value");
+        if (t === "" || v != "") {
+            alert("Invalid Key Value !");
+            return;
+        }
+        $("#searchkeyresult").hide();
+        $("#divtable").show();
+
+        $.ajax({
+            type: "POST",
+            url: "../MultiLanguage/getlanguage",
+            data: {},
+            success: function (data) {
+                $("#loader").hide();
+                if (Object.keys(data).length === 0) {
+                    $("#langvalueresult").css("display", "block");
+                    return;
+                }
+                $.each(data, function (i, obj) {
+                    $('#langlist').append(`<a href='#' class='list-group-item' value='${obj.id}' data-value='${obj.value}'> ${obj.lang}    ${obj.value} </a>`);
+                });
+                //$("#langlist a").click(function () {
+                //    $("#langlist a").removeClass("active");
+                //    $(this).addClass("active");
+                //});
+            }
+        });
+
+    }
+
+    function addkeyaction() {
+
+        var key = $("#txtsearch").val();
+        var value = $("#txtkeyvalue").val();
+        var langid = $("#selectlang").val();
+
+        if (key.length === 0 || value.length === 0) {
+            alert("Enter a key/value");
+            return;
+        }
+        if (langid === null) {
+            alert("Select a Language!");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "../MultiLanguage/setkey",
+            data: { k: key, v: value, lid: langid },
+            success: function (data) {
+                $("#txtfinalvalue").val(value);
+                $("#txtfinalvalue").attr("value", data);
+
+                //code for reset modal after successfull add key value
+                $("#txtsearch").val("");
+                $("#searchkeyresult").hide();
+                $("#txtkeyvalue").val("");
+                $("#selectlang option").remove();
+                $('#selectlang').append(`<option disabled selected>Select a language</option>`);
+                $("#myModal").modal("toggle");
+
+            }
+        });
+
+
+    }
+
+    function addvalaction() {
+        alert("add val action");
+
+    }
+
+    function loadlang() {
+        $("#selectlang option").remove();
+        $('#selectlang').append(`<option disabled selected>Select a language</option>`);
+        $.ajax({
+            type: "POST",
+            url: "../MultiLanguage/getlang",
+            data: {},
+            success: function (data) {
+                if (Object.keys(data).length === 0) {
+                    alert("Language list not found!");
+                    return;
+                }
+                $.each(data, function (i, l) {
+                    $('#selectlang').append(`<option value='${i}' > ${l} </option>`);
+                });
+            }
+        });
+    }
+
+    $('#MLSettingsModal').on('shown.bs.modal', function () {
+        $("#loader").hide();
+        $("#divtable").hide();
+        $("#txtsearch").focus();
+    })
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).text();
+        if (target === "Search") {
+            $("#btnaddval").hide();
+            $("#btnaddkey").hide();
+            $("#btnselect").show();
+            $("#txtsearch").focus();
+        }
+        else if (target === "Add") {
+            $("#btnselect").hide();
+            $("#btnaddval").hide();
+            $("#btnaddkey").show();
+            $("#txtkeyvalue").focus();
+        }
+        else if (target === "Update") {
+            $("#btnaddkey").hide();
+            $("#btnselect").hide();
+            $("#btnaddval").show();
+        }
+    })
+</script>*@
+

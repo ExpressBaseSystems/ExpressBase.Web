@@ -11,6 +11,7 @@
     this.bearerToken = null;
     this.refreshToken = null;
     this.userForms = null;
+    this.FormsList = [];
 
     this.$form = null;
     this.formControls = [];
@@ -34,14 +35,73 @@
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.25s"></animate>
                     </circle>
                 </svg><div>`);
+        var $botMsgBox = this.$botMsgBox.clone();
+        $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone());
+        this.$TypeAnimMsg = $botMsgBox;
         $("body").on("click", ".eb-chat-inp-cont .msg-send", this.send_btn);
         $("body").on("click", ".msg-cont [name=ctrlsend]", this.ctrlSend);
         $("body").on("click", ".msg-cont [name=ctrledit]", this.ctrlEdit);
         $("body").on("click", ".eb-chatBox [name=formsubmit]", this.formSubmit);
-        $("body").on("click", ".btn-box [name=form-opt]", this.startFormInteraction);
+        $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
+        $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
+        $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
+        $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
     };
+
+    this.contactSubmit = function (e) {
+        this.getMsg("Thank you.");
+    }.bind(this);
+
+    this.postmenuClick = function (e) {
+        var $e = $(e.target);
+        var reply = $e.text().trim();
+        var idx = $e.attr("idx");
+        $e.closest('.msg-cont').remove();
+        this.sendMsg(reply);
+        $('.eb-chat-inp-cont').hide();
+        this.CurFormIdx = idx;
+
+    }.bind(this);
+
+    this.FBlogin = function (e) {
+        this.postmenuClick(e);
+        if (this.CurFormIdx == 0)
+            login();
+        else {
+            this.getMsg("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
+            this.getMsg($('<input type="email"><br/><input type="tel"><button name="contactSubmit">submit</button>'));
+        }
+    }.bind(this);
+
+    this.continueAsFBUser = function (e) {
+        this.postmenuClick(e);
+        if (this.CurFormIdx == 0)
+            this.getForms();
+        else
+            this.FB.logout(function (response) {
+                this.getMsg("You are successfully logout from our App");
+            }.bind(this));
+    }.bind(this);
+
+    this.startFormInteraction = function (e) {
+        this.postmenuClick(e);
+        this.setFormControls(this.CurFormIdx);
+    }.bind(this);
+
+    this.getForms = function () {
+        this.showTypingAnim();
+        $.post("../Bote/GetBotForms", {
+            "refreshToken": this.refreshToken,
+            "bearerToken": this.bearerToken
+        }, function (data) {
+            this.hideTypingAnim();
+            this.userForms = data;
+            $.each(this.userForms, function (i, form) { this.FormsList.push(form.name); }.bind(this));
+            this.Query("What do you want to do ?", this.FormsList, "form-opt");
+        }.bind(this));
+    }.bind(this);
 
     this.txtboxKeyup = function (e) {
         if (e.which === 13)/////////////////////////////
@@ -49,13 +109,6 @@
     }.bind(this);
 
     this.send_btn = function () {
-        $.post("../Bote/GetBotForms", {
-            "refreshToken": this.refreshToken,
-            "bearerToken": this.bearerToken
-        }, function (data) {
-            this.userForms = data;
-            this.Query("What do you want to do ?");
-        }.bind(this));
         window.onmessage = function (e) {
             if (e.data == 'hello') {
                 //alert('It works!8888888888888888888888');
@@ -90,35 +143,23 @@
         this.getMsg(`Hello ${name}, ${greeting}`);
     }.bind(this);
 
-    this.Query = function (query) {
-        var OptArr = []
-        $.each(this.userForms, function (i, form) { OptArr.push(form.name); });
-        this.getMsg(query);
-        var Options = this.getButtons(OptArr);
-        this.getMsg($('<div class="btn-box">' + Options + '</div>'));
+    this.Query = function (msg, OptArr, For) {
+        this.getMsg(msg);
+        var Options = this.getButtons(OptArr, For);
+        this.getMsg($('<div class="btn-box" >' + Options + '</div>'));
 
     };
 
-    this.getButtons = function (OptArr) {
+    this.getButtons = function (OptArr, For) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
-            Html += '<button name="form-opt" class="btn" idx="' + i + '">' + opt + '</button>';
+            Html += `<button for="${For}" class="btn" idx="${i}">${opt}</button>`;
         });
         return Html;
     };
 
-    this.startFormInteraction = function (e) {
-        var $e = $(e.target);
-        var reply = $e.text().trim();
-        var idx = $e.attr("idx");
-        $e.closest('.msg-cont').remove();
-        this.sendMsg(reply);
-        $('.eb-chat-inp-cont').hide();
-        this.CurFormIdx = idx;
-        this.setFormControls(this.CurFormIdx);
-    }.bind(this);
-
     this.setFormControls = function () {
+        this.formControls = []
         $.each(this.userForms[this.CurFormIdx].controls, function (i, control) {
             this.formControls.push($(control.bareControlHtml));
         }.bind(this));
@@ -141,6 +182,7 @@
         else {
             this.getMsg('Are you sure? Can I submit?');
             this.getMsg($('<div class="btn-box"><button name="formsubmit"" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
+
         }
         this.formValues[id] = $('#' + id).val();
 
@@ -159,14 +201,14 @@
             return;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var $control = $('<div class="chat-ctrl-cont">' + this.formControls[idx][0].outerHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>');
-        var lablel = this.userForms[this.CurFormIdx].controls[idx].label;
-        this.getMsg(lablel + ' ?');
+        var curCtrl = this.userForms[this.CurFormIdx].controls[idx];
+        var lablel = curCtrl.label + ' ?';
+        if (curCtrl.helpText)
+            lablel += ` (${curCtrl.helpText})`;
+
+        this.getMsg(lablel);
         this.getMsg($control);
         $ctrlCont.find(".helpText").remove();
-    }.bind(this);
-
-    this.showTypingAnim = function ($msg) {
-        $msg.find('.msg-wraper-bot').html(this.$TypeAnim.clone());
     }.bind(this);
 
     this.sendMsg = function (msg) {
@@ -182,16 +224,29 @@
     };
 
     this.sendCtrlAfter = function ($ctrl, msg) {
+        $ctrl.attr("ctrlhidden", "true");
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').html(msg).append(this.getTime());;
         $msg.insertAfter($ctrl);
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
+    this.startTypingAnim = function ($msg) {
+        $msg.find('.msg-wraper-bot').html(this.$TypeAnim.clone());
+    }.bind(this);
+
+    this.showTypingAnim = function () {
+        this.$chatBox.append(this.$TypeAnimMsg);
+    }.bind(this);
+
+    this.hideTypingAnim = function () {
+        this.$TypeAnimMsg.remove();
+    }.bind(this);
+
     this.getMsg = function (msg) {
         var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
-        this.showTypingAnim($msg);
+        this.startTypingAnim($msg);
         if (this.ready) {
             setTimeout(function () {
                 if (msg instanceof jQuery) {
@@ -224,8 +279,11 @@
     }.bind(this);
 
     this.showConfirm = function () {
+        this.formValues = {};
+        $("[ctrlhidden=true]").remove();
         var msg = 'Your leave application submitted successfully';
         this.getMsg(msg);
+        this.Query("What do you want to do ?", this.FormsList, "form-opt");
     }.bind(this);
 
     this.showDate = function () {
@@ -239,6 +297,39 @@
     this.loadCtrlScript = function () {
         $("head").append(this.CntrlHeads);
     };
+    this.authenticate = function (response) {
+        this.showTypingAnim();
+        $.post("http://eb_roby_dev.localhost:5000/bote/MyAuthenticate",
+            {
+                "cid": "eb_roby_dev",
+                "socialId": response.id,
+                "wc": "uc",
+            }, function (result) {
+                this.bearerToken = (JSON.parse(result)).BearerToken;
+                this.refreshToken = (JSON.parse(result)).RefreshToken;
+                this.hideTypingAnim();
+                this.greetings(response.name);
+                this.Query(`Continue as ${response.name} ?`, ["yes", "Not me"], "continueAsFBUser");
+                alert("authenticated via FB");
+            }.bind(this));
+    }.bind(this);
+
+    this.getFBInfo = function (response) {
+        this.socialId = response.id;
+        this.picture = response.picture;
+        this.authenticate(response);
+    };
+
+    this.FBLogined = function () {
+        this.FB.api('/me?fields=id,name,picture', function (response) {
+            chatBotObj.getFBInfo(response);
+        }.bind(this));
+    }.bind(this);
+
+    this.FBNotLogined = function () {
+        this.Query("Hello I am EBbot, Nice to meet you. Do you mind loging into facebook.", ["Login", "No, Sorry"], "fblogin");
+        //chatBotObj.getMsg($("<button class='btn' onclick='login();'>Login with Facebook</button>"));
+    }.bind(this);
 
     this.init();
 };

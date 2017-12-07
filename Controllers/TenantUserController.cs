@@ -336,7 +336,7 @@ namespace ExpressBase.Web2.Controllers
             return html;
         }
 
-        public string GetRoleUsers(int roleid)
+		public string GetRoleUsers(int roleid)
         {
 
             string html = string.Empty;
@@ -419,20 +419,23 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult CreateUser()
         {
-            return View();
+			var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = 0, TenantAccountId = ViewBag.cid });
+			ViewBag.roles = fr.Roles;
+			ViewBag.UserGroups = fr.EbUserGroups;
+			return View();
         }
 
         [HttpPost]
         public IActionResult CreateUser(int itemid)
         {
-            if (itemid > 0)
-            {
+           
                 var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = itemid, TenantAccountId = ViewBag.cid });
-                ViewBag.Name = fr.Data["name"];
-                ViewBag.email = fr.Data["email"];
-                ViewBag.itemid = itemid;
-            }
-            return View();
+                //ViewBag.Name = fr.Data["name"];
+                //ViewBag.email = fr.Data["email"];
+                ViewBag.roles = fr.Roles;
+			ViewBag.UserGroups = fr.EbUserGroups;
+
+			return View();
         }
 
         public void SaveUser(int userid, string roles, string usergroups)

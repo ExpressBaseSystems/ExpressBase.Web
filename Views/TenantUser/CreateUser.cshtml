@@ -63,27 +63,40 @@
             align-items: center;
             height: 75px;
             overflow: hidden;
-            padding: 14px 16px;
+            padding: 10px 13px;
             margin-top: 15px;
         }
         .icondiv1{
             display:inline-block;
             font-size:xx-large;
             padding-right:10px;
+            vertical-align:top;
         }
         .textdiv1 {
+            width:82%;
             display: inline-block;
+            vertical-align:top;
         }
         .closediv1 {
             display: inline-block;
             float:right;
             cursor:pointer;
+            vertical-align:top;
+        }
+        .tilediv1 {
+            border: 1px solid;
+            border-color: #ccc;
+            padding: 10px;
+            height: 300px;
+            border-radius: 6px;
+            overflow: auto;
+            margin:0px;
         }
 
-
     </style>
+
     <div class="center">
-        <section class="outer-section-createuser" style="height: 700px;">
+        <section class="outer-section-createuser" style="height: 640px;">
             <div class="set-form-head">
                 <div class="">Create User</div>
             </div>
@@ -91,28 +104,28 @@
                 <br />
                 <div class="col-md-8" style="margin-left:4%">
                     <div class="row">
-                        <div class="form-group col-md-8" >
+                        <div class="form-group col-md-6" >
                             <label style="font-family: open sans; font-weight: 300;">Name</label>
-                            <input class="form-control" type="text" onchange="" name="Name" id="name">
+                            <input id="txtName" style="display:inline-block; width:85%; margin-left: 13px;"  class="form-control" type="text" name="Name">
                         </div>
-                        <div class="form-group col-md-3" style="margin-left:18px;">
+                        <div class="form-group col-md-6" style="">
                             <label style="font-family: open sans; font-weight: 300;">Nick Name</label>
-                            <input class="form-control" type="text" onchange="" name="" id="" style="width:192px">
+                            <input style="display:inline-block; width:77% " class="form-control" type="text" onchange="" name="">
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label style="font-family: open sans; font-weight: 300;">Email ID</label>
-                            <input class="form-control" type="text" onchange="" name="" id="">
+                            <input style="display:inline-block; width:85%" class="form-control" type="text" onchange="" name="" id="txtEmail">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="pwd" style="font-family: open sans; font-weight: 300;">Password</label>
-                            <input  type="password" class="form-control" name="" id="pwd">
+                            <input style="display:inline-block; width:77%; margin-left:7px" type="password" class="form-control" name="" id="pwdPassword">
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-md-2" style="padding:25px; margin-left:70px">
+                <div class="col-md-2" style="margin-left:70px">
                     <img src="~/images/proimg.jpg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" style="height:100px" />
                 </div>
             </div>
@@ -124,48 +137,61 @@
                     <li><a data-toggle="tab" href="#menu2">User Groups</a></li>
                 </ul>
                 <div class="tab-content">
-                    <div id="home" class="tab-pane fade in active" style="padding-top:40px">
-                        <div style="display:inline-block;">
-                            <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
-                            <input class="form-control" type="date" onchange="" name="" id="">
+                    <div id="home" class="tab-pane fade in active" style="padding-top:30px">
+                        <div class="row tilediv1">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
+                                    <input class="form-control" type="text" id="txtDateOfBirth">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Gender</label>
+                                    <select class="form-control" id="">
+                                        <option selected disabled>Select Gender</option>
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Address</label>
+                                    <input class="form-control" type="text" placeholder="House Number">
+                                    <input class="form-control" type="text" placeholder="City">
+                                    <input class="form-control" type="text" placeholder="State">
+                                    <input class="form-control" type="text" placeholder="Country">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Primary Phone Number</label>
+                                    <input class="form-control" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Secondary Phone Number</label>
+                                    <input class="form-control" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Alternate Email ID</label>
+                                    <input class="form-control" type="text">
+                                </div>
+                                
+                            </div>
                         </div>
-                        <div style="display:inline-block; padding-left:40px">
-                            <label style="font-family: open sans; font-weight: 300;">Gender</label>
-                            <select class="form-control" id="">
-                                <option selected disabled>Select Gender</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                            </select>
-                        </div>
-                        <br />
-                        <div class="form-group" style="display:inline-block; padding-top: 30px; width:40%">
-                            <label style="font-family: open sans; font-weight: 300;">Permanent Address</label>
-                            <textarea class="form-control" rows="3" id=""></textarea>
-                        </div>
-                        <div class="form-group" style="display:inline-block; padding-left: 30px; width:40%">
-                            <label style="font-family: open sans; font-weight: 300;">Communication Address</label>
-                            <textarea class="form-control" rows="3" id=""></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label style="font-family: open sans; font-weight: 300;">Alternate Email ID</label>
-                            <input class="form-control" type="text" onchange="" name="" id="">
-                        </div>
-                        <div class="form-group">
-                            <label style="font-family: open sans; font-weight: 300;">Phone Number</label>
-                            <input class="form-control" type="text" onchange="" name="" id="">
-                        </div>
-
-
                     </div>
-                    <div id="menu1" class="tab-pane fade" style="padding-top:20px">
+                    <div id="menu1" class="tab-pane fade">
 
-                        <div class="row">
+                        <div class="row" style="padding:6px 0px">
                             <div class="col-md-6">
-                                @*<label id="lblNoOfRoles" style="font-family: open sans; font-weight: 300;">Available Roles : </label>*@
+                                <label id="lblNoOfRoles" style="font-family: open sans; font-weight: 300; padding:7px; margin:0px">Selected Roles : 0</label>
                             </div>
-                            <div class="col-md-6">
-                                <button type="button" class="btn" data-toggle="modal" data-target="#addRolesModal" style="float:right">Add Roles</button>
+                            <div class="col-md-3">
+                                <input id="txtDemoRoleSearch" type="search" class="form-control" placeholder="Search" />
                             </div>
+                            <div class="col-md-2">
+                                 <button type="button" class="btn" data-toggle="modal" data-target="#addRolesModal" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i> Add Roles</button>
+                            </div>
+                            
                         </div>
                         <div class="container">                            
                             <!-- Modal -->
@@ -197,14 +223,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="divSelectedRoleDisplay" class="row"></div>
+                        <div id="divSelectedRoleDisplay" class="row tilediv1"></div>
                     </div>
 
                     <div id="menu2" class="tab-pane fade">
-                        <div class="row">
+                        <div class="row" style="padding:6px 0px">
                             <div class="col-md-6"></div>
                             <div class="col-md-6">
-                                <button type="button" class="btn" data-toggle="modal" data-target="#addUserGroupModal" style="float:right">Add to User Groups</button>
+                                <button type="button" class="btn" data-toggle="modal" data-target="#addUserGroupModal" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i> Add to User Groups</button>
                             </div>
                         </div>
                         <div class="container">
@@ -235,18 +261,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="divSelectedUserGroupDisplay" class="row"></div>
+                        <div id="divSelectedUserGroupDisplay" class="row tilediv1"></div>
                     </div>
                 </div>
 
             </div>
+            <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
+            <button id="btnCreateUser" type="button" class="btn btn-default" style="margin:20px 40px; float:right" >Create</button>
         </section>
     </div>
 
 
 
 
-    <ul class="nav nav-tabs">
+    @*<ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#roles">Roles</a></li>
         <li><a onclick="Getusergroups()" data-toggle="tab" href="#usergroup">User Groups</a></li>
     </ul>
@@ -280,11 +308,11 @@
     <div class="form-group">
         <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
         <input type="submit" class="btn btn-primary" id="save" value="Create" />
-    </div>
-    }
+    </div>*@
+ }
 
 
-<style>
+@*<style>
     table {
         width: 100%;
     }
@@ -325,85 +353,86 @@
         border: 0;
         background: transparent;
     }
-</style>
+</style>*@
 <script>
     var RoleObj =  @Html.Raw( ViewBag.Roles);
     var UserGroupObj = @Html.Raw( ViewBag.UserGroups);
     //console.log(RoleObj);
     var userobj = new UserJs(RoleObj, UserGroupObj);
 
+    function OnClickRemove(e) {
+        $(e).parents("div.col-md-4").remove();
+    }
+
     $('document').ready(function () {
-
-        $.post("../TenantUser/GetRoles",
-            {
-                "userid": $('#userid').val()
-                 }, function (result) {
-                     if (result) {
-                         document.getElementById("userroles").innerHTML = result;
-                     }
-            });
-
-
+        $("#txtDateOfBirth").datetimepicker({ timepicker: false });
+        //    $.post("../TenantUser/GetRoles",
+        //        {
+        //            "userid": $('#userid').val()
+        //             }, function (result) {
+        //                 if (result) {
+        //                     document.getElementById("userroles").innerHTML = result;
+        //                 }
+        //        });
 
 
+        //        $('#sendmail').change(function () {
+        //            if (!this.checked)
+        //                $('#pw').fadeIn();
+        //            else
+        //                $('#pw').fadeOut();
+        //        });
+        //        var f = true;
+        //        $('.selectpicker').on('rendered.bs.select', function (e) {
+        //            if (f)
+        //                $("#roleSel").find("span:eq(0)").text("Select Role")
+        //            f = false;
+        //        });
 
-            $('#sendmail').change(function () {
-                if (!this.checked)
-                    $('#pw').fadeIn();
-                else
-                    $('#pw').fadeOut();
-            });
-            var f = true;
-            $('.selectpicker').on('rendered.bs.select', function (e) {
-                if (f)
-                    $("#roleSel").find("span:eq(0)").text("Select Role")
-                f = false;
-            });
+        //        $('#save').click(function () {
+        //            var selectedroles = "";
+        //            $('#userroles input:checked').each(function () {
+        //                selectedroles += $(this).attr('value') + ",";
 
-            $('#save').click(function () {
-                var selectedroles = "";
-                $('#userroles input:checked').each(function () {
-                    selectedroles += $(this).attr('value') + ",";
+        //            });
 
-                });
+        //            var selectedusergroups = "";
+        //            $('#usergrouplist input:checked').each(function () {
+        //                selectedusergroups += $(this).attr('value') + ",";
 
-                var selectedusergroups = "";
-                $('#usergrouplist input:checked').each(function () {
-                    selectedusergroups += $(this).attr('value') + ",";
+        //            });
+        //            $.post("../TenantUser/SaveUser",
+        //                {
 
-                });
-                $.post("../TenantUser/SaveUser",
-                    {
+        //                    "userid": $('#userid').val(),
+        //                    "roles": selectedroles.substring(0, selectedroles.length - 1),
+        //                    "usergroups": selectedusergroups.substring(0, selectedusergroups.length - 1),
+        //                    "firstname": $('#firstname').val(),
+        //                    "email": $('#email').val(),
+        //                    "Pwd":$('#pw').val()
 
-                        "userid": $('#userid').val(),
-                        "roles": selectedroles.substring(0, selectedroles.length - 1),
-                        "usergroups": selectedusergroups.substring(0, selectedusergroups.length - 1),
-                        "firstname": $('#firstname').val(),
-                        "email": $('#email').val(),
-                        "Pwd":$('#pw').val()
+        //                }, function (result) {
+        //                    if (result) {
+        //                        document.getElementById("usergrouplist").innerHTML = result;
+        //                    }
+        //                });
 
-                    }, function (result) {
-                        if (result) {
-                            document.getElementById("usergrouplist").innerHTML = result;
-                        }
-                    });
+        //        });
 
-            });
 
+        //});
+
+        //function Getusergroups() {
+
+        //    $.post("../TenantUser/GetUserGroups",
+        //        {
+        //            "userid": $('#userid').val(),
+
+        //        }, function (result) {
+        //            if (result) {
+        //                document.getElementById("usergrouplist").innerHTML = result;
+        //            }
+        //        });
 
     });
-
-    function Getusergroups() {
-
-        $.post("../TenantUser/GetUserGroups",
-            {
-                "userid": $('#userid').val(),
-
-            }, function (result) {
-                if (result) {
-                    document.getElementById("usergrouplist").innerHTML = result;
-                }
-            });
-
-    }
     </script>

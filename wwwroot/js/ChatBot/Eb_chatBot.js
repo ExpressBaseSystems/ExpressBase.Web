@@ -47,10 +47,6 @@
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
-        $("body").on("click", "[data-id=SimpleSelect0]", function () {
-            console.log(100);
-        });/////////////////////////////////////////////////////////////// double binding?
-        
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
     };
@@ -167,7 +163,7 @@
     this.setFormControls = function () {
         this.formControls = []
         $.each(this.userForms[this.CurFormIdx].controls, function (i, control) {
-            this.formControls.push($(control.bareControlHtml));
+            this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
         }.bind(this));
         this.getNextControl();
     }.bind(this);
@@ -262,7 +258,8 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
                     $msg.css("margin-left", "26px");
-                    this.loadcontrol();
+                    if (this.curCtrl && $('#' + this.curCtrl.name).length === 1)
+                        this.loadcontrol();
                 }
                 else
                     $msg.find('.msg-wraper-bot').text(msg).append(this.getTime());
@@ -279,6 +276,7 @@
         $('.eb-chatBox').scrollTop(99999999999);
     }.bind(this);
 
+    //load control script
     this.loadcontrol = function () {
         if (!this.curCtrl)
             return;

@@ -155,12 +155,12 @@ namespace ExpressBase.Web.Controllers
 
         public void CalculateDetailHeight()
         {
-            if(writer.PageNumber == 1 && IsLastpage == true)
+            if (writer.PageNumber == 1 && IsLastpage == true)
                 dt_height = Report.Height - (ph_height + pf_height + pf_height + rf_height);
             else if (writer.PageNumber == 1)
                 dt_height = Report.Height - (rh_height + ph_height + pf_height);
-            else if (IsLastpage == true) 
-              dt_height = Report.Height - (ph_height + pf_height + rf_height);
+            else if (IsLastpage == true)
+                dt_height = Report.Height - (ph_height + pf_height + rf_height);
             else
                 dt_height = Report.Height - (ph_height + pf_height);
         }
@@ -172,7 +172,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in r_header.Fields)
                 {
-                    DrawFields(field, rh_Yposition,0,0);
+                    DrawFields(field, rh_Yposition, 0, 0);
                 }
             }
         }
@@ -184,7 +184,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in p_header.Fields)
                 {
-                    DrawFields(field, ph_Yposition,0,0);
+                    DrawFields(field, ph_Yposition, 0, 0);
                 }
             }
         }
@@ -219,7 +219,7 @@ namespace ExpressBase.Web.Controllers
             {
                 IsLastpage = true;
                 DoLoopInDetail(0);
-             
+
             }
 
         }
@@ -230,7 +230,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in detail.Fields)
                 {
-                    DrawFields(field, dt_Yposition, detailprintingtop,i);
+                    DrawFields(field, dt_Yposition, detailprintingtop, i);
                 }
 
                 detailprintingtop += detail.Height;
@@ -246,7 +246,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in p_footer.Fields)
                 {
-                    DrawFields(field, pf_Yposition,0,0);
+                    DrawFields(field, pf_Yposition, 0, 0);
                 }
             }
         }
@@ -261,12 +261,12 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in r_footer.Fields)
                 {
-                    DrawFields(field, rf_Yposition,0,0);
+                    DrawFields(field, rf_Yposition, 0, 0);
                 }
             }
         }
 
-        public void DrawFields(EbReportField field, float section_Yposition, float detailprintingtop,int i)
+        public void DrawFields(EbReportField field, float section_Yposition, float detailprintingtop, int i)
         {
             var column_name = "";
             var column_val = "";
@@ -333,7 +333,7 @@ namespace ExpressBase.Web.Controllers
             }
             else if (field.GetType() == typeof(EbPageXY))
             {
-              ///  column_val = writer.PageNumber + "/" + writer.PageCount;
+                column_val = writer.PageNumber + "/" + writer.PageCount;
                 DrawTextBox(field, column_val, section_Yposition);
             }
             else if (field.GetType() == typeof(EbDateTime))

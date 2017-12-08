@@ -82,7 +82,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.order_info = new Object();
     this.order_info.col = '';
     this.order_info.dir = 0;
-    this.MainData = null;
+    this.MainData = (data === undefined) ? null: data;
+    this.isPipped = false;
     this.chartJs = null;
 
     this.EbObject = dsobj;
@@ -162,6 +163,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.ajaxSucc = function (text) {
         $("#objname").text(this.EbObject.Name);
+        if (this.MainData !== null) {
+            this.isPipped = true;
+            $("#Pipped").show();
+            $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
+            this.filterValues = null;
+        }
         this.PcFlag = "False";
         obj = this.EbObject;
         $("#obj_icons").empty();
@@ -182,12 +189,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
             $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
+            $("#btnGo" + this.tabNum).trigger("click");
         }
         else {
             this.FD = true;
-            $(sideDivId).css("display", "inline");
+            if (this.isPipped) {
+                $("#btnGo" + this.tabNum).trigger("click");
+            }
+            else {
+                $(sideDivId).css("display", "inline");
+                $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
+            }
             $.LoadingOverlay("hide");
-            $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
         }
         $(subDivId).focus();
     }.bind(this);
@@ -208,7 +221,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.propGrid.PropertyChanged = function (obj, Pname) {
         this.EbObject = obj;
-        commonO.Current_obj = obj;
+        if (this.login == "dc")
+            commonO.Current_obj = obj;
+        else
+            dvcontainerObj.currentObj = obj;
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
@@ -389,35 +405,54 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.select = true;
         o.retrieve = true;
         o.keys = true;
-        //if (this.data !== null) {
-        //    dvcontainerObj.currentObj.data = this.dtsettings.data;
-        //    o.ajax = function (data, callback, settings) {
-        //        setTimeout(function () {
-        //            callback({
-        //                draw : dvcontainerObj.currentObj.data.draw,
-        //                data : dvcontainerObj.currentObj.data.data,
-        //                recordsTotal : dvcontainerObj.currentObj.data.recordsTotal,
-        //                recordsFiltered : dvcontainerObj.currentObj.data.recordsFiltered,
-        //            });
-        //        }, 50);
+        if (this.MainData !== null && this.login == "uc") {
+            this.filterValues = this.getFilterValues();
+            if (this.filterValues.length == 0) {
+                dvcontainerObj.currentObj.data = this.MainData;
+                o.ajax = function (data, callback, settings) {
+                    setTimeout(function () {
+                        callback({
+                            draw: dvcontainerObj.currentObj.data.draw,
+                            data: dvcontainerObj.currentObj.data.data,
+                            recordsTotal: dvcontainerObj.currentObj.data.recordsTotal,
+                            recordsFiltered: dvcontainerObj.currentObj.data.recordsFiltered,
+                        });
+                    }, 50);
 
-        //    }
-        //    //o.data = this.receiveAjaxData(this.dtsettings.data);
-        //}
-        //else {
-        o.ajax = {
-            //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
-            url: this.ssurl + '/ds/data/' + this.dsid,
-            type: 'POST',
-            timeout: 180000,
-            data: this.ajaxData.bind(this),
-            dataSrc: this.receiveAjaxData.bind(this),
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-            },
-            crossDomain: true
-        };
-        //}
+                }
+                o.data = this.receiveAjaxData(this.MainData);
+            }
+            else {
+                dvcontainerObj.currentObj.Pippedfrom = "";
+                $("#Pipped").text("");
+                o.ajax = {
+                    //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
+                    url: this.ssurl + '/ds/data/' + this.dsid,
+                    type: 'POST',
+                    timeout: 180000,
+                    data: this.ajaxData.bind(this),
+                    dataSrc: this.receiveAjaxData.bind(this),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+                    },
+                    crossDomain: true
+                };
+            }
+        }
+        else {
+            o.ajax = {
+                //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
+                url: this.ssurl + '/ds/data/' + this.dsid,
+                type: 'POST',
+                timeout: 180000,
+                data: this.ajaxData.bind(this),
+                dataSrc: this.receiveAjaxData.bind(this),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+                },
+                crossDomain: true
+            };
+        }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
@@ -434,19 +469,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.ajaxData = function (dq) {
-        //alert("xxxxxx");
         delete dq.columns; delete dq.order; delete dq.search;
         dq.RefId = this.EbObject.DataSourceRefId;
-        //dq.Token = getToken();
-        //dq.rToken = getrToken();
-        //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = JSON.stringify(serachItems);
-        //else {
-        //    var arr = [];
-        //    arr.push(new filter_obj(this.dtsettings.filterParams.column, "x*", this.dtsettings.filterParams.key));
-        //    dq.TFilters = JSON.stringify(arr);
-        //}
         dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined) ? this.filterValues : this.getFilterValues());
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
@@ -460,22 +486,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.getFilterValues = function () {
         var fltr_collection = [];
         var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
+        var FdCont = "#sub_windows_sidediv_" + this.tableId;
         if (paramstxt.length > 0) {
             var params = paramstxt.split(',');
             $.each(params, function (i, id) {
                 var v = null;
-                var dtype = $('#' + id).attr('data-ebtype');
+                var dtype = $(FdCont +' #' + id).attr('data-ebtype');
                 if (dtype === '6')
-                    v = $('#' + id).val().substring(0, 10);
+                    v = $(FdCont +' #' + id).val().substring(0, 10);
                 else
-                    v = $('#' + id).val();
-                fltr_collection.push(new fltr_obj(dtype, id, v));
+                    v = $(FdCont + ' #' + id).val();
+                if(v !== "")
+                    fltr_collection.push(new fltr_obj(dtype, id, v));
             });
         }
 
-        if (this.rowData !== null) {
-            $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection));
-        }
+        //if (this.rowData !== null) {
+        //    $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection));
+        //}
 
         return fltr_collection;
     };
@@ -497,7 +525,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    this.Api.paging = dd.IsPaged;
         //    this.Api.lengthChange = false;
         //}
-        //dvcontainerObj.currentObj.data = dd;
+        if(this.login == "uc")
+            dvcontainerObj.currentObj.data = dd;
         return dd.data;
     };
 
@@ -658,33 +687,31 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    $(".dataTables_scrollFoot table:eq(0)").css("width",wid);
         //},500);
         //if (this.ebSettings.renderAs == "both") {
-        $("#graphcontainer_tab" + this.tableId).show();
+        //$("#graphcontainer_tab" + this.tableId).show();
         //if (this.chartJs == null)
         //    this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
         //else
         //    this.chartJs.drawGraphHelper(this.Api.data());
-        //$("#graphDropdown_tab" + this.tableId + " .btn:first-child").html(this.ebSettings.options.type.trim() + "&nbsp;<span class = 'caret'></span>");
-        //}
-        //else{
-        //    $("#showgraphbtn" + this.tableId).hide();
-        //}
-        //if (!this.flagAppendColumns) {
-        //    this.appendColumns();
-        //    //this.appendDisplayColumns();
-        //}
-        //$("#dvnametxt").show();
-        //$("#dvnametxt").css("display", "inline-block"); 
-        //$("#TableHeighttxt").show();
-        //$("#TableHeighttxt").css("display", "inline-block");
-        //$("#Save_btn").show();
-        //$("#renderOption").show();
-        //$("#renderOption").css("display", "inline-flex");
-        //if (this.filterBox.css("display") !== "none") 
-        //    this.collapseFilter();
-        //$("#sidediv").toggleClass("toggled");
-        //$("#contBox").removeClass('col-md-10').addClass('col-md-8');
-        //$('#fd-min-btn').css('margin-right', '0').removeClass("rotated");
 
+        if (this.login == "uc") {
+            $.each(dvcontainerObj.dvcol, function (key, obj) {
+                if (dvcontainerObj.currentObj.Name === obj.EbObject.Pippedfrom) {
+
+                    if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+                        dvcontainerObj.dvcol[key].EbObject.data = this.MainData;
+                        dvcontainerObj.currentObj.data = this.MainData;
+                        dvcontainerObj.dvcol[key].drawGraphHelper(this.Api.data());
+                    }
+                    //else {
+                    //    dvcontainerObj.dvcol[key].Api.clear().draw();
+                    //    dvcontainerObj.dvcol[key].Api.rows.add(this.Api.data()); // Add new data
+                    //    dvcontainerObj.dvcol[key].Api.columns.adjust().draw(); 
+                    //    dvcontainerObj.dvcol[key].EbObject.data = this.MainData;
+                    //    dvcontainerObj.currentObj.data = this.MainData;
+                    //}
+                }
+            }.bind(this));
+        }
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight()

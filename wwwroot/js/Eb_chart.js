@@ -5,6 +5,18 @@
     this.borderColor = borderColor;
     this.fill = fill;
 };
+var datasetObj4Pie = function (label, data, backgroundColor, borderColor, fill) {
+    this.label = label;
+    this.data = data;
+    var color = [], width = [];
+    $.each(this.data, function (i, obj) {
+        color.push(getRandomColor());
+        width.push(1);
+    });
+    this.backgroundColor = color;
+    this.borderColor = color;
+    this.borderWidth = width;
+};
 
 var ChartColor = function (name, color) {
     this.name = name;
@@ -226,7 +238,7 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
         //    );
     };
 };
-
+var Xlabel, Ylabel;
 var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data ) {
     this.columnInfo = null;
     this.data = null;
@@ -250,6 +262,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.login = login;
     this.relatedObjects = null;
     this.FD = false;
+    this.piedataFlag = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -258,7 +271,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
                 var id = $(ev.target).attr("id");
                 focusedId = id;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+                if(this.type === "googlemap")
+                    this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+                else
+                    this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             }
         }
     }.bind(this);
@@ -406,6 +422,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 "</div>");
             this.GenerateButtons();
         }
+        else {
+
+        }
     };
 
     this.GenerateButtons = function () {
@@ -479,6 +498,19 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                             <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/Line-chart.svg"></a></div>
                             <div class="chartname">Line</div>
                         </div>
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/horizontal-bar-chart.svg"></a></div>
+                            <div class="chartname">Horizontalbar</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="divHLType">
+                    <div class="chartHeader">Other</div>
+                    <div id="Other" class="chartBody">
+                        <div class="divLLType">
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/google.svg"></a></div>
+                            <div class="chartname">GoogleMap</div>
+                        </div>
                     </div>
                 </div>
             <div>
@@ -499,7 +531,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.login == "uc") {
             //this.appendRelatedDv();
             dvcontainerObj.appendRelatedDv(this.tableId);
-            dvcontainerObj.check4Navigation();
+            dvcontainerObj.check4Navigation(); 
         }
         this.bindEvents();
 
@@ -537,12 +569,22 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     $("#measure" + tid).append("<div class='colTile columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "</div>");
             }
         });
-
-        this.drake = new dragula([document.getElementById("diamension" + tid), document.getElementById("measure" + tid), document.getElementById("X_col_name" + tid), document.getElementById("Y_col_name" + tid)], {
-            accepts: this.acceptDrop.bind(this)
-        });
-        this.drake.on("drop", this.colDrop.bind(this));
-        //this.drake.on("drag", this.colDrag.bind(this));
+        if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
+            if (this.drake)
+                this.drake.destroy();
+            this.drake = new dragula([document.getElementById("diamension" + tid), document.getElementById("measure" + tid), document.getElementById("X_col_name" + tid), document.getElementById("Y_col_name" + tid)], {
+                accepts: this.acceptDrop.bind(this)
+            });
+            this.drake.on("drop", this.colDrop.bind(this));
+        }
+        else {
+            if (this.drake)
+                this.drake.destroy();
+            this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
+                accepts: this.acceptDrop1.bind(this)
+            });
+            this.drake.on("drop", this.colDrop.bind(this));
+        }
     };
 
     this.AddXcolumns = function (Xcol, i, obj) {
@@ -638,7 +680,16 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 this.YLabel = [];
                 for (j = 0; j < this.data.length; j++)
                     this.YLabel.push(this.data[j][ydx[k]]);
-                this.dataset.push(new datasetObj(this.columnInfo.Yaxis.$values[k].name, this.YLabel, this.columnInfo.LegendColor.$values[k].color, this.columnInfo.LegendColor.$values[k].color, false));
+                if (this.type !== "googlemap") {
+                    if (this.type !== "pie") {
+                        this.piedataFlag = false;
+                        this.dataset.push(new datasetObj(this.columnInfo.Yaxis.$values[k].name, this.YLabel, this.columnInfo.LegendColor.$values[k].color, this.columnInfo.LegendColor.$values[k].color, false));
+                    }
+                    else {
+                        this.dataset.push(new datasetObj4Pie(this.columnInfo.Yaxis.$values[k].name, this.YLabel, this.columnInfo.LegendColor.$values[k].color, this.columnInfo.LegendColor.$values[k].color, false));
+                        this.piedataFlag = true;
+                    }
+                }
             }
         }
     };
@@ -647,145 +698,189 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         for (k = 0; k < xdx.length; k++)
             this.XLabel.push(value[xdx[k]]);
     };
-
+    
     this.drawGeneralGraph = function () {
         $.LoadingOverlay("show");
         this.getBarData();
-        this.gdata = {
-            labels: this.XLabel,
-            datasets: this.dataset,
-        };
-        this.animateOPtions = (this.columnInfo.ShowValue) ? new animateObj(0) : false;
-        this.goptions = {
-            scales: {
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: (this.columnInfo.YaxisTitle !== "") ? this.columnInfo.YaxisTitle : "YLabel",
-                        fontColor: (this.columnInfo.YaxisTitleColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.YaxisTitleColor : "#000000"
-                    },
-                    stacked: false,
-                    gridLines: {
-                        display: true
-                    },
-                    ticks: {
-                        fontSize: 10,
-                        fontColor: (this.columnInfo.YaxisLabelColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.YaxisLabelColor : "#000000"
-                    }
-                }],
-                xAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: (this.columnInfo.XaxisTitle !== "") ? this.columnInfo.XaxisTitle : "XLabel",
-                        fontColor: (this.columnInfo.XaxisTitleColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.XaxisTitleColor : "#000000"
-                    },
-                    gridLines: {
-                        display: true
-                    },
-                    ticks: {
-                        fontSize: 10,
-                        fontColor: (this.columnInfo.XaxisLabelColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.XaxisLabelColor : "#000000"
-                    }
-                }]
-            },
-            zoom: {
-                // Boolean to enable zooming
-                enabled: true,
+        if (this.type === "googlemap") {
+            //this.getData4GoogleMap();
+            $("#canvasDiv" + this.tableId).children("iframe").remove();
+            $("#myChart" + this.tableId).remove();
+            if($("#map").children().length === 0)
+                $("#canvasDiv" + this.tableId).append("<div id='map' style='height:400px;width:100%;'></div>");
+            Xlabel = this.XLabel;
+            Ylabel = this.YLabel;
+            if (!this.isMyScriptLoaded("https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js")) {
+                $("#parent-div0").prepend(`
+                <script src= "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js" ></script >
+                <script async defer
+                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh12bqSKCYb6sJ9EVzNkEyXEDZ__UA-TE&callback=initMap">
+                </script>`);
+            }
+            else {
+                $("#map").empty();
+                initMap();
+            }
+               
+            $.LoadingOverlay("hide");
+            return false;
+        }
+        else
+        {
+            this.gdata = {
+                labels: this.XLabel,
+                datasets: this.dataset,
+            };
+            this.animateOPtions = (this.columnInfo.ShowValue) ? new animateObj(0) : false;
+            this.goptions = {
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: (this.type !== "pie") ? true : false,
+                            labelString: (this.columnInfo.YaxisTitle !== "") ? this.columnInfo.YaxisTitle : "YLabel",
+                            fontColor: (this.columnInfo.YaxisTitleColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.YaxisTitleColor : "#000000"
+                        },
+                        stacked: false,
+                        gridLines: {
+                            display: (this.type !== "pie") ? true : false
+                        },
+                        ticks: {
+                            fontSize: 10,
+                            fontColor: (this.columnInfo.YaxisLabelColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.YaxisLabelColor : "#000000"
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: (this.type !== "pie") ? true : false,
+                            labelString: (this.columnInfo.XaxisTitle !== "") ? this.columnInfo.XaxisTitle : "XLabel",
+                            fontColor: (this.columnInfo.XaxisTitleColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.XaxisTitleColor : "#000000"
+                        },
+                        gridLines: {
+                            display: (this.type !== "pie") ? true : false
+                        },
+                        ticks: {
+                            fontSize: 10,
+                            fontColor: (this.columnInfo.XaxisLabelColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.XaxisLabelColor : "#000000"
+                        }
+                    }]
+                },
+                zoom: {
+                    // Boolean to enable zooming
+                    enabled: true,
 
-                // Zooming directions. Remove the appropriate direction to disable 
-                // Eg. 'y' would only allow zooming in the y direction
-                mode: 'x',
-            },
-            pan: {
-                enabled: true,
-                mode: 'x',
-            },
-            legend: {
-                onClick: this.legendClick.bind(this)
-            },
+                    // Zooming directions. Remove the appropriate direction to disable 
+                    // Eg. 'y' would only allow zooming in the y direction
+                    mode: 'x',
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'x',
+                },
+                legend: {
+                    onClick: this.legendClick.bind(this)
+                },
 
-            tooltips: {
-                enabled: this.columnInfo.ShowTooltip
-            },
-            animation: this.animateOPtions
-            //{
-            //    duration:  1 ,
-            //    onComplete: function () {
-            //            var chartInstance = this.chart,
-            //                ctx = chartInstance.ctx;
+                tooltips: {
+                    enabled: this.columnInfo.ShowTooltip
+                },
+                animation: this.animateOPtions
+                //{
+                //    duration:  1 ,
+                //    onComplete: function () {
+                //            var chartInstance = this.chart,
+                //                ctx = chartInstance.ctx;
 
-            //            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-            //            ctx.textAlign = 'center';
-            //            ctx.textBaseline = 'bottom';
+                //            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                //            ctx.textAlign = 'center';
+                //            ctx.textBaseline = 'bottom';
 
-            //            this.data.datasets.forEach(function (dataset, i) {
-            //                var meta = chartInstance.controller.getDatasetMeta(i);
-            //                meta.data.forEach(function (bar, index) {
-            //                    var data = dataset.data[index];
-            //                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
-            //                });
-            //            });
-            //    }
-            //},
-        };
+                //            this.data.datasets.forEach(function (dataset, i) {
+                //                var meta = chartInstance.controller.getDatasetMeta(i);
+                //                meta.data.forEach(function (bar, index) {
+                //                    var data = dataset.data[index];
+                //                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                //                });
+                //            });
+                //    }
+                //},
+            };
+            if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
+                this.RemoveCanvasandCheckButton();
 
-        this.RemoveCanvasandCheckButton();
+            $.LoadingOverlay("hide");
+        }
+        
     };
 
     this.RemoveCanvasandCheckButton = function () {
-        var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim().toLowerCase();
-        if (ty == "areafilled" || ty == "line") {
+        if (this.type == null) {
+            this.type = "bar";
+            $("#graphDropdown_tab" + this.tableId + " button:first-child").html("Bar" + "&nbsp;<span class = 'caret'></span>")
+        }
+        else {
+            this.type = this.type.toLowerCase();
+        }
+        
+        if (this.type == "area" || this.type == "line") {
             if (this.gdata !== null) {
                 $.each(this.gdata.datasets, this.GdataDSiterFn.bind(this));
+                if (this.piedataFlag)
+                    this.drawGeneralGraph();
                 this.type = "line";
             }
             else
                 this.drawGeneralGraph();
         }
-        else if (ty == "bar")
-            this.type = "bar";
-        else if (ty == "pie") {
-            this.goptions = null;
-            this.type = "pie";
-        }
-        else if (ty == "doughnut") {
-            this.goptions = null;
-            this.type = "doughnut";
-        }
-        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null) {
-            if (this.columnInfo.Type == null || this.columnInfo.Type == "") {
-                $("#graphDropdown_tab" + this.tableId + " button:first-child").html("Bar" + "&nbsp;<span class = 'caret'></span>")
-                this.columnInfo.Type = "bar";
+        else if (this.type == "bar") {
+            if (this.piedataFlag) {
+                this.drawGeneralGraph();
             }
-            else
-                this.columnInfo.Type = this.type;
         }
+        else if (this.type == "pie") {
+            if (!this.piedataFlag)
+                this.drawGeneralGraph();
+        }
+        else if (this.type == "horizontalbar") {
+            if (this.piedataFlag) {
+                this.drawGeneralGraph();
+            }
+            this.type = "horizontalBar"
+        }
+
+        //else if (ty == "bar")
+        //    this.type = "bar";
+        //else if (ty == "pie") {
+        //    //this.goptions = null;
+        //    this.type = "pie";
+        //}
+        //else if (ty == "doughnut") {
+        //    this.goptions = null;
+        //    this.type = "doughnut";
+        //}
+        //if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
+        //    if (this.columnInfo.Type == null || this.columnInfo.Type == "") {
+        //        $("#graphDropdown_tab" + this.tableId + " button:first-child").html("Bar" + "&nbsp;<span class = 'caret'></span>")
+        //        this.columnInfo.Type = "bar";
+        //    }
+        //    else
+        //        this.columnInfo.Type = this.type;
+        //}
+
         $("#canvasDiv" + this.tableId).children("iframe").remove();
         $("#myChart" + this.tableId).remove();
         //$("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
         $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
 
-        if (this.columnInfo.Xaxis !== null && this.columnInfo.Yaxis !== null)
+        if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0)
             this.drawGraph();
+
+        
     };
 
-    this.ApiDSiterFn = function (i, obj) {
-
-        var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim().toLowerCase();
-        console.log("each" + i);
-        if (ty == "areafilled") {
-            this.gdata.datasets[i].fill = true;
-        }
-        else {
-            this.gdata.datasets[i].fill = false;
-            console.log("obj.fill = f");
-        }
-
-    };
-
+   
     this.GdataDSiterFn = function (j, obj) {
-        var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim().toLowerCase();
-        if (ty == "areafilled") {
+        var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim();
+        if (ty == "area") {
             this.gdata.datasets[j].fill = true;
         }
         else {
@@ -794,10 +889,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     }
 
     this.drawGraph = function () {
+        this.columnInfo.Type = this.type;
         var canvas = document.getElementById("myChart" + this.tableId);
 
         this.chartApi = new Chart(canvas, {
-            type: this.columnInfo.Type.trim().toLowerCase(),
+            type: this.columnInfo.Type.trim(),
             data: this.gdata,
             options: this.goptions,
         });
@@ -810,24 +906,44 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.setGraphType = function (e) {
         var current = this;
-        $("#graphDropdown_tab" + this.tableId + " button:first-child").html($(e.target).parent().parent().next().text().trim() + "&nbsp;<span class = 'caret'></span>");
-        if ($(e.target).text().trim().toLowerCase() !== "map") {
-            $("#graphcontainer_tab" + current.tableId).children("#map").remove();
-            $("#graphcontainer_tab" + current.tableId).children("table").css("display", "block");
-            this.type = $(e.target).text().trim().toLowerCase();
-            this.RemoveCanvasandCheckButton();
+        this.type = $(e.target).parent().parent().next().text().toLowerCase();
+        $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.type.trim() + "&nbsp;<span class = 'caret'></span>");
+        if (this.type.trim() !== "googlemap") {
+            if (this.columnInfo.$type.indexOf("EbGoogleMap") !== -1) {
+                $("#canvasDiv" + this.tableId).children("#map").remove();
+                var refid = this.EbObject.DataSourceRefId;
+                var columns = JSON.parse(JSON.stringify(this.EbObject.Columns)); 
+                this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
+                this.EbObject.DataSourceRefId = refid;
+                this.EbObject.DSColumns = columns;
+                this.EbObject.Columns = columns;
+
+                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+                this.columnInfo = this.EbObject;
+                this.gdata = null;
+                this.updateDragula();
+            }
+            if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
+                this.RemoveCanvasandCheckButton();
+            else
+                return false;
         }
         else {
-            $.ajax({
-                type: "GET",
-                url: "../DV/dvgoogle",
-                success: function (text) {
-                    $("#graphcontainer_tab" + current.tableId).children("iframe").remove();
-                    $("#myChart" + current.tableId).remove();
-                    $("#graphcontainer_tab" + current.tableId).children("table").css("display", "none");
-                    $("#graphcontainer_tab" + current.tableId).append(text);
-                }
-            });
+
+            var refid = this.EbObject.DataSourceRefId;
+            var columns = JSON.parse(JSON.stringify(this.EbObject.Columns)); 
+            $("#canvasDiv" + this.tableId).children("iframe").remove();
+            $("#myChart" + this.tableId).remove();
+
+            this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
+            this.EbObject.DataSourceRefId = refid;
+            this.EbObject.DSColumns = columns;
+            this.EbObject.Columns = columns;
+
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+            this.columnInfo = this.EbObject;
+
+            this.updateDragula();
         }
         e.preventDefault();
     };
@@ -855,7 +971,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 temp = $.grep(this.columnInfo.Columns.$values, function (obj) { return obj.name === name });
                 this.columnInfo.Yaxis.$values.push(temp[0]);
                 //this.Yindx.push(temp[0].data);
-                this.columnInfo.LegendColor.$values.push(new ChartColor(name, getRandomColor()));
+                if (this.type !== "googlemap")
+                    this.columnInfo.LegendColor.$values.push(new ChartColor(name, getRandomColor()));
             }
 
             if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
@@ -946,7 +1063,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //$("#columns4Drag" + this.tableId + " .columnDrag").off("dragstart").on("dragstart", this.colDrag.bind(this));
         this.columnInfo.Xaxis.$values = $.grep(this.columnInfo.Xaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
         this.columnInfo.Yaxis.$values = $.grep(this.columnInfo.Yaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
-        this.columnInfo.LegendColor.$values = $.grep(this.columnInfo.LegendColor.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
+        if (this.type !== "googlemap")
+            this.columnInfo.LegendColor.$values = $.grep(this.columnInfo.LegendColor.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
         //this.columnInfo.Xaxis = this.
         //this.Xindx = $.grep(this.Xindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
         //this.Yindx = $.grep(this.Yindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
@@ -989,17 +1107,28 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (legendItem.text === obj.name)
                 this.columnInfo.LegendColor.$values[i].color = $("#fontSel").val();
         }.bind(this));
-        $.each(this.gdata.datasets, this.reloadChart_inner.bind(this, legendItem));
-        this.RemoveCanvasandCheckButton();
+        if (this.type !== "pie") 
+            $.each(this.gdata.datasets, this.reloadChart_inner.bind(this, legendItem));
+        else
+            $.each(this.gdata.datasets, this.reloadChart4pie.bind(this, legendItem));
+
+        if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
+            this.RemoveCanvasandCheckButton();
     };
 
-    this.reloadChart_inner = function (legendItem, i, obj) {
+    this.reloadChart_inner = function (legendItem, i, obj) {        
         if (i === legendItem.datasetIndex) {
             this.gdata.datasets[i].backgroundColor = $("#fontSel").val();
             this.gdata.datasets[i].borderColor = $("#fontSel").val();
         }
     };
 
+    this.reloadChart4pie = function (legendItem, i, obj) {
+        this.gdata.datasets[i].backgroundColor[legendItem.index] = $("#fontSel").val();
+        this.gdata.datasets[i].borderColor[legendItem.index] = $("#fontSel").val();
+    }
+
+   
     this.animationOnComplete = function () {
             var chartInstance = this.chart,
                 ctx = chartInstance.ctx;
@@ -1016,7 +1145,85 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 });
             });
     };
+
+    this.updateDragula = function () {
+        if (this.type !== "googlemap") {
+            $("#X_col_name" + this.tableId).siblings("span").text("X-Axis");
+            $("#Y_col_name" + this.tableId).siblings("span").text("Y-Axis");  
+        }
+        else {
+
+            $("#X_col_name" + this.tableId).siblings("span").text("Longitude");
+            $("#Y_col_name" + this.tableId).siblings("span").text("Lattitude");        
+        }
+
+        $("#X_col_name" + this.tableId).empty();
+        $("#Y_col_name" + this.tableId).empty();
+
+        this.appendColumns();
+    };
+
+    this.acceptDrop1 = function (el, target, source, sibling) {
+        if ($(source).attr("id") === "X_col_name" + this.tableId && $(target).attr("id") === "Y_col_name" + this.tableId) {
+            return false;
+        }
+        else if ($(source).attr("id") === "Y_col_name" + this.tableId && $(target).attr("id") === "X_col_name" + this.tableId) {
+            return false;
+        }
+        else if ($(target).children().length == 1) {
+            return false;
+        }
+            return true;
+    };
+
+    this.isMyScriptLoaded = function (url) {
+        var scripts = document.getElementsByTagName('script');
+        for (var i = scripts.length; i--;) {
+            if (scripts[i].src == url) return true;
+        }
+        return false;
+    };
 };
+
+function initMap() {
+    var directionsDisplay;
+    var directionsService = new google.maps.DirectionsService();
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    var mid = Math.floor(Xlabel.length / 2);
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 14,
+        center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
+        // mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    directionsDisplay.setMap(map);
+    var request = {
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+    var marker, i;
+    for (i = 0; i < Xlabel.length; i++) {
+        var latlng = new google.maps.LatLng(Ylabel[i], Xlabel[i]);
+        marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            label: "A",
+        });
+        if (i == 0) request.origin = marker.getPosition();
+        else if (i == Xlabel.length - 1) request.destination = marker.getPosition();
+        else {
+            if (!request.waypoints) request.waypoints = [];
+            request.waypoints.push({
+                location: marker.getPosition(),
+                stopover: true
+            });
+        }
+    }
+    directionsService.route(request, function (result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(result);
+        }
+    });
+    //}
+}
 
 {
     //var eb_chart111 = function (columnInfo, ssurl, data, tableId) {
@@ -1097,3 +1304,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     //    this.init();
     //}
 }
+
+            //var tid = this.tableId;
+            //$.ajax({
+            //    type: "GET",
+            //    url: "../DV/dvgoogle",
+            //    success: function (text) {
+            //        $("#canvasDiv" + tid).children("iframe").remove();
+            //        $("#myChart" + tid).remove();
+            //        //$("#graphcontainer_tab" + current.tableId).children("table").css("display", "none");
+            //        $("#canvasDiv" + tid).append(text);
+            //    }
+            //});

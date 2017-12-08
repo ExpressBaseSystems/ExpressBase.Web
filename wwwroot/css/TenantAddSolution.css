@@ -31,6 +31,11 @@ padding:0;
     text-align: left;
     margin-bottom: 15px;
 }
+    .client-id-sec p {
+        margin-top: 10px;
+        font-size: 13px;
+        padding-left: 10px;
+    }
 
 .input-clientId {
     width: 65%;
@@ -105,6 +110,10 @@ padding:0;
 .detailsec-name{
     height:inherit;
 }
+.btn-upload i{
+    pointer-events:none !important;
+}
+
 .detailsec-form {
     height: inherit;
 }
@@ -225,4 +234,30 @@ padding:0;
 .subscrib-info label{
     width:150px;
 }
+#save-subscrip {
+    background: var(--eb-blue);
+}
+.popover-clientid-edit {
+    background: #656565;
+    position: fixed;
+    z-index: 10000;
+    top: 40vh;
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+    width: 400px;
+    /* height: 150px; */
+    padding: 20px;
+}
+    .popover-clientid-edit .popover-text {
+        width: 100%;
+        height: 78px;
+        color: white;
+        font-size: 16px;
+    }
+    .popover-clientid-edit .btn-section btn {
+        display: inline-block;
+        color:black;
+    }
 /*t addaacc latest----*/

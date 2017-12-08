@@ -420,8 +420,8 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult CreateUser()
         {
 			var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = 0, TenantAccountId = ViewBag.cid });
-			ViewBag.roles = fr.Roles;
-			ViewBag.UserGroups = fr.EbUserGroups;
+			ViewBag.roles =JsonConvert.SerializeObject(fr.Roles);
+			ViewBag.UserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
 			return View();
         }
 

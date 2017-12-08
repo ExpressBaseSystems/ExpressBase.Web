@@ -333,7 +333,7 @@ namespace ExpressBase.Web.Controllers
             }
             else if (field.GetType() == typeof(EbPageXY))
             {
-                column_val = writer.PageNumber + "/" + writer.PageCount;
+                column_val = writer.PageNumber + "/"/* + writer.PageCount*/;
                 DrawTextBox(field, column_val, section_Yposition);
             }
             else if (field.GetType() == typeof(EbDateTime))

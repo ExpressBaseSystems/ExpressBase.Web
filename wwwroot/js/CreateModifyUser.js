@@ -4,33 +4,47 @@
     this.selectedRolesId = [];
     this.txtSearchRole = $("#txtSearchRole");
     this.btnModalOk = $("#btnModalOk");
-    this.txtSearchRole = $("#txtSearchRole");
     this.divRoleSearchResults = $("#divRoleSearchResults");
     this.divSelectedRoleDisplay = $("#divSelectedRoleDisplay");
+    this.txtDemoRoleSearch = $("#txtDemoRoleSearch");
 
     this.closeDiv = $(".closediv1");
-    this.txtSearchUserGroup = $("#txtSearchUserGroup");
+    this.t = 0;
+
     this.btnUserGroupModalOk = $("#btnUserGroupModalOk");
     this.txtSearchUserGroup = $("#txtSearchUserGroup");
 
     this.init = function () {
-        this.txtSearchRole.on('keyup', this.KeyUptxtSearchRole(this.user));
+        this.txtSearchRole.on('keyup', this.KeyUptxtSearchRole.bind(this));
         this.btnModalOk.on('click', this.clickbtnModalOkAction.bind(this));
         $('#addRolesModal').on('shown.bs.modal', this.initModal1.bind(this));
+        this.txtDemoRoleSearch.on('keyup', this.KeyUptxtDemoRoleSearch.bind(this));
+
+        this.txtSearchUserGroup.on('keyup', this.KeyUptxtSearchUserGroup.bind(this));
+        this.btnUserGroupModalOk.on('click', this.clickbtnUserGroupModalOkAction.bind(this));
+        $('#addUserGroupModal').on('shown.bs.modal', this.initModal2.bind(this));
+
+        $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
     }
 
     this.initModal1 = function () {
         this.txtSearchRole.focus();
-        this.KeyUptxtSearchRole(this.user,this.divRoleSearchResults, this.divSelectedRoleDisplay, this.txtSearchRole);
+        this.KeyUptxtSearchRole();
     }
 
-    this.KeyUptxtSearchRole = function (obj, id1, id2, id3) {
+    this.initModal2 = function () {
+        this.txtSearchUserGroup.focus();
+        this.KeyUptxtSearchUserGroup();
+    }
+
+    this.KeyUptxtSearchRole = function () {
+        obj = this.user;
         $("#divRoleSearchResults").children().remove();
         var txt = $("#txtSearchRole").val().trim();
         var st = null;
         for (var i = 0; i < obj.length; i++) {
             if (obj[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
-                if ($('#divSelectedRoleDisplay').find(`[data-id='${obj[i].Id}']`).length > 0)
+                if ($("#divSelectedRoleDisplay").find(`[data-id='${obj[i].Id}']`).length > 0)
                     st = "checked";
                 else
                     st = null;
@@ -50,29 +64,122 @@
     this.clickbtnModalOkAction = function () {
         $('#divRoleSearchResults input:checked').each(function () {
             if (($('#divSelectedRoleDisplay').find(`[data-id='${$(this).attr('data-id')}']`).length) === 0) {
-                $('#divSelectedRoleDisplay').append(`<div class="col-md-4 container-md-4" data-id=${$(this).attr('data-id')}>
+                $('#divSelectedRoleDisplay').append(`<div class="col-md-4 container-md-4" data-id=${$(this).attr('data-id')} data-name=${$(this).attr('data-name')}>
+                                                    <div class="mydiv1" style="overflow:visible;">
+                                                        <div class="icondiv1">
+                                                             <b>${$(this).attr('data-name').substring(0, 1).toUpperCase()}</b>
+                                                        </div>
+                                                        <div class="textdiv1">
+                                                            <b>${$(this).attr('data-name')}</b>
+                                                            <div style="font-size: smaller;">&nbsp${$(this).attr('data-d')}</div>
+                                                        </div>
+                                                        <div class="closediv1">
+                                                            <div class="dropdown">
+                                                                <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
+                                                                <ul class="dropdown-menu" style="left:-140px;">
+                                                                    <li><a href="#" onclick="OnClickRemove(this);">Remove</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    </div>`);
+            }
+        });
+        $('#addRolesModal').modal('toggle');
+        $(".closediv1").on('click', this.clickOnCloseDiv.bind(this));
+    }
+
+    this.KeyUptxtSearchUserGroup = function () {
+        obj = this.userGroup;
+        $("#divUserGroupSearchResults").children().remove();
+        var txt = $("#txtSearchUserGroup").val().trim();
+        var st = null;
+        for (var i = 0; i < obj.length; i++) {
+            if (obj[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
+                if ($("#divSelectedUserGroupDisplay").find(`[data-id='${obj[i].Id}']`).length > 0)
+                    st = "checked";
+                else
+                    st = null;
+                $("#divUserGroupSearchResults").append(`<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id=${obj[i].Id}>
+                                                        <div class='col-md-1' style="padding:10px">
+                                                            <input type ='checkbox' ${st} data-name = '${obj[i].Name}' data-id = '${obj[i].Id}' data-d = '${obj[i].Description}' aria-label='...'>
+                                                        </div>
+                                                        <div class='col-md-10'>
+                                                            <h5 name = 'head5' style='color:black;'>${obj[i].Name}</h5>
+                                                            ${obj[i].Description}
+                                                        </div>
+                                                    </div>`);
+            }
+        }
+    }
+
+    this.clickbtnUserGroupModalOkAction = function () {
+        $('#divUserGroupSearchResults input:checked').each(function () {
+            if (($('#divSelectedUserGroupDisplay').find(`[data-id='${$(this).attr('data-id')}']`).length) === 0) {
+                $('#divSelectedUserGroupDisplay').append(`<div class="col-md-4 container-md-4" data-id=${$(this).attr('data-id')} data-name=${$(this).attr('data-name')}>
                                                     <div class="mydiv1" style="">
                                                         <div class="icondiv1">
                                                              <b>${$(this).attr('data-name').substring(0, 1).toUpperCase()}</b>
                                                         </div>
                                                         <div class="textdiv1">
                                                             <b>${$(this).attr('data-name')}</b>
-                                                            <br />&nbsp; ${$(this).attr('data-d')}
+                                                            <div style="font-size: smaller;">&nbsp${$(this).attr('data-d')}</div>
                                                         </div>
                                                         <div class="closediv1">
-                                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                                            <div class="dropdown">
+                                                                <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
+                                                                <ul class="dropdown-menu" style="left:-140px;">
+                                                                    <li><a href="#" onclick="OnClickRemove(this);">Remove</a></li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>`);
             }
         });
-    $('#addRolesModal').modal('toggle');
-    $(".closediv1").on('click', this.clickOnCloseDiv.bind(this));
-}
+        $('#addUserGroupModal').modal('toggle');
+        $(".closediv1").on('click', this.clickOnCloseDiv.bind(this));
+    }
 
-this.clickOnCloseDiv = function (e) {
-    $(e.target).parent().parent().parent().remove();
-}
 
-this.init();
+    this.clickbtnCreateUser = function () {
+        var selectedroles = "";
+        $($('#divSelectedRoleDisplay').children()).each(function () {
+            selectedroles += $(this).attr('data-id') + ",";
+        });
+        var selectedusergroups = "";
+        $($('#divSelectedUserGroupDisplay').children()).each(function () {
+            selectedusergroups += $(this).attr('data-id') + ",";
+        });
+        $.post("../TenantUser/SaveUser",
+            {
+                "userid": $('#userid').val(),
+                "roles": selectedroles.substring(0, selectedroles.length - 1),
+                "usergroups": selectedusergroups.substring(0, selectedusergroups.length - 1),
+                "firstname": $('#txtName').val(),
+                "email": $('#txtEmail').val(),
+                "Pwd": $('#pwdPaasword').val()
+            }, function (result) {
+                if (result) {
+                    //document.getElementById("usergrouplist").innerHTML = result;
+                    alert('Completed');
+                }
+            });
+    }
+
+    this.KeyUptxtDemoRoleSearch = function () {
+        var txt = $("#txtDemoRoleSearch").val().trim();
+        $($("#divSelectedRoleDisplay").children("div.col-md-4")).each(function () {
+            $(this).children().css('box-shadow', '1px 1px 2px 1px #fff');
+            if ($(this).attr('data-name').toLowerCase().substring(0, txt.length) === txt.toLowerCase() && txt!=="") {
+                $(this).children().css('box-shadow', '1px 1px 2px 1px red');
+            }
+        });
+    }
+
+
+    this.clickOnCloseDiv = function (e) {
+        //$(e.target).parent().parent().parent().remove();
+    }
+    this.init();
 }

@@ -323,15 +323,57 @@ namespace ExpressBase.Web.Controllers
             {
                 DrawTextBox(field, field.Title, section_Yposition);
             }
+            else if (field.GetType() == typeof(EbDataFieldNumericSummary))
+            {
+                EbDataFieldNumericSummary f = field as EbDataFieldNumericSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Sum")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Average")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Count")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Max")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Min")
+                {
+                }
+            }
+            else if (field.GetType() == typeof(EbDataFieldTextSummary))
+            {
+                EbDataFieldTextSummary f = field as EbDataFieldTextSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsText), f.Function) == "Count")
+                {
+                }
+                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Max")
+                {
+                }
+                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Min")
+                {
+                }
+            }
+            else if (field.GetType() == typeof(EbDataFieldDateTimeSummary))
+            {
+                EbDataFieldDateTimeSummary f = field as EbDataFieldDateTimeSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Count")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Max")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Min")
+                {
+                }
+            }
             else if (field.GetType() == typeof(EbDataFieldBooleanSummary))
             {
-                //if (field.Function == Average)
-                //{ }
-                //Count,
-                //Max,
-                //Min,
-                //Sum
-                DrawTextBox(field, field.Title, section_Yposition);
+                EbDataFieldBooleanSummary f = field as EbDataFieldBooleanSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsBoolean), f.Function) == "Count")
+                {
+                }
             }
         }
 

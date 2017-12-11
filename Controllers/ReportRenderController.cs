@@ -323,7 +323,7 @@ namespace ExpressBase.Web.Controllers
             {
                 DrawTextBox(field, field.Title, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbDataFieldSummary))
+            else if (field.GetType() == typeof(EbDataFieldBooleanSummary))
             {
                 //if (field.Function == Average)
                 //{ }

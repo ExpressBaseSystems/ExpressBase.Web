@@ -10,22 +10,22 @@
     this.ready = true;
     this.bearerToken = null;
     this.refreshToken = null;
-    this.userForms = null;
-    this.FormsList = [];
     this.initControls = new InitControls();
 
-    this.$form = null;
+    this.formsList = {};
+    this.formsDict = {};
+    this.formNames = [];
+    this.curForm = {};
     this.formControls = [];
     this.formValues = {};
     this.FB = null;
+    this.FBResponse = {};
     this.EXPRESSbase_SOLUTION_ID;
-    this.socialId = null;
-    this.picture = null;
     this.init = function () {
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
-        this.$TypeAnim = $(`<div><span class="chat-typing">Typing</span><svg class="lds-typing" width="10%" height="10%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+        this.$TypeAnim = $(`<div><svg class="lds-typing" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
                     <circle cx="27.5" cy="40.9532" r="5" fill="#999">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.5s"></animate>
                     </circle>
@@ -37,7 +37,7 @@
                     </circle>
                 </svg><div>`);
         var $botMsgBox = this.$botMsgBox.clone();
-        $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone());
+        $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone()).css("width", "75px");
         this.$TypeAnimMsg = $botMsgBox;
         $("body").on("click", ".eb-chat-inp-cont .msg-send", this.send_btn);
         $("body").on("click", ".msg-cont [name=ctrlsend]", this.ctrlSend);
@@ -64,7 +64,6 @@
         this.sendMsg(reply);
         $('.eb-chat-inp-cont').hide();
         this.CurFormIdx = idx;
-
     }.bind(this);
 
     this.FBlogin = function (e) {
@@ -80,7 +79,7 @@
     this.continueAsFBUser = function (e) {
         this.postmenuClick(e, "");
         if (this.CurFormIdx == 0)
-            this.getForms();
+            this.authenticate();
         else
             this.FB.logout(function (response) {
                 this.getMsg("You are successfully logout from our App");
@@ -88,20 +87,42 @@
     }.bind(this);
 
     this.startFormInteraction = function (e) {
+        var RefId = $(e.target).attr("refid");
         this.postmenuClick(e);
-        this.setFormControls(this.CurFormIdx);
+        this.getForm(RefId);///////////////////
     }.bind(this);
 
-    this.getForms = function () {
+    this.getForm = function (RefId) {
+        this.showTypingAnim();
+        if (!this.formsList[RefId]) {
+            $.post("../Bote/GetCurForm", {
+                "refreshToken": this.refreshToken,
+                "bearerToken": this.bearerToken,
+                "refid": RefId
+            }, function (data) {
+                this.hideTypingAnim();
+                this.formsList[RefId] = data;
+                this.curForm = data;
+                this.setFormControls();
+            }.bind(this));
+        }
+        else {
+            this.hideTypingAnim();
+            this.curForm = this.formsList[RefId];
+            this.setFormControls();
+        }
+    }
+
+    this.getFormsList = function () {
         this.showTypingAnim();
         $.post("../Bote/GetBotForms", {
             "refreshToken": this.refreshToken,
             "bearerToken": this.bearerToken
         }, function (data) {
             this.hideTypingAnim();
-            this.userForms = data;
-            $.each(this.userForms, function (i, form) { this.FormsList.push(form.name); }.bind(this));
-            this.Query("What do you want to do ?", this.FormsList, "form-opt");
+            this.formsDict = data;
+            this.formNames = Object.values(this.formsDict);
+            this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
         }.bind(this));
     }.bind(this);
 
@@ -130,7 +151,7 @@
     }.bind(this);
 
     this.greetings = function (name) {
-        this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.picture.data.url})center center no-repeat`);
+        this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
         var time = new Date().getHours();
         var greeting = null;
         if (time < 12) {
@@ -142,29 +163,27 @@
         else {
             greeting = 'Good evening!';
         }
-        this.Query(`Hello ${name}, ${greeting}`, [`Continue as ${name} ?`, `Not ${name}?`], "continueAsFBUser");
+        this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
     }.bind(this);
 
-    this.Query = function (msg, OptArr, For) {
+    this.Query = function (msg, OptArr, For, ids) {
         this.getMsg(msg);
-        var Options = this.getButtons(OptArr, For);
+        var Options = this.getButtons(OptArr, For, ids);
         this.getMsg($('<div class="btn-box" >' + Options + '</div>'));
 
     };
 
-    this.getButtons = function (OptArr, For) {
+    this.getButtons = function (OptArr, For, ids) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
-            Html += `<button for="${For}" class="btn" idx="${i}">${opt}</button>`;
+            Html += `<button for="${For}" class="btn" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}">${opt} </button>`;
         });
         return Html;
     };
 
     this.setFormControls = function () {
-        this.formControls = []
-        $.each(this.userForms[this.CurFormIdx].controls, function (i, control) {
-            this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
-        }.bind(this));
+        this.formControls = [];
+        $.each(this.curForm.controls, function (i, control) { this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`)); }.bind(this));
         this.getNextControl();
     }.bind(this);
 
@@ -175,15 +194,20 @@
         var idx = parseInt($btn.attr('idx')) + 1;
         var $input = $('#' + id);
         $input.off("blur").on("blur", function () { $btn.click() });////////////////////////////////
-        this.sendCtrlAfter($msgDiv.hide(), $input.val() + '&nbsp; <span idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        var inpVal = $input.val();
+        if ($input[0].tagName === "SELECT")
+            inpVal = $input.find(":selected").text();
+        this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
 
         if (idx !== this.formControls.length) {
             if (!this.formValues[id])
                 this.getNextControl(idx);
         }
         else {
-            this.getMsg('Are you sure? Can I submit?');
-            this.getMsg($('<div class="btn-box"><button name="formsubmit"" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
+            if ($("[name=formsubmit]").length===0){
+                this.getMsg('Are you sure? Can I submit?');
+                this.getMsg($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
+            }
 
         }
         this.formValues[id] = $('#' + id).val();
@@ -203,14 +227,12 @@
             return;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var $control = $('<div class="chat-ctrl-cont">' + this.formControls[idx][0].outerHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>');
-        this.curCtrl = this.userForms[this.CurFormIdx].controls[idx];
+        this.curCtrl = this.curForm.controls[idx];
         var lablel = this.curCtrl.label + ' ?';
         if (this.curCtrl.helpText)
             lablel += ` (${this.curCtrl.helpText})`;
-
         this.getMsg(lablel);
         this.getMsg($control);
-        $ctrlCont.find(".helpText").remove();
     }.bind(this);
 
     this.sendMsg = function (msg) {
@@ -296,7 +318,7 @@
         $("[ctrlhidden=true]").remove();
         var msg = 'Your leave application submitted successfully';
         this.getMsg(msg);
-        this.Query("What do you want to do ?", this.FormsList, "form-opt");
+        this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
     }.bind(this);
 
     this.showDate = function () {
@@ -310,30 +332,25 @@
     this.loadCtrlScript = function () {
         $("head").append(this.CntrlHeads);
     };
-    this.authenticate = function (response) {
+    this.authenticate = function () {
         this.showTypingAnim();
         $.post("http://eb_roby_dev.localhost:5000/bote/MyAuthenticate",
             {
                 "cid": "eb_roby_dev",
-                "socialId": response.id,
+                "socialId": this.FBResponse.id,
                 "wc": "uc",
             }, function (result) {
                 this.bearerToken = (JSON.parse(result)).BearerToken;
                 this.refreshToken = (JSON.parse(result)).RefreshToken;
+                this.getFormsList();
                 this.hideTypingAnim();
-                this.greetings(response.name);
             }.bind(this));
     }.bind(this);
 
-    this.getFBInfo = function (response) {
-        this.socialId = response.id;
-        this.picture = response.picture;
-        this.authenticate(response);
-    };
-
     this.FBLogined = function () {
         this.FB.api('/me?fields=id,name,picture', function (response) {
-            chatBotObj.getFBInfo(response);
+            this.FBResponse = response;
+            this.greetings();
         }.bind(this));
     }.bind(this);
 

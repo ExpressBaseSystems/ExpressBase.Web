@@ -43,14 +43,14 @@
 }
 
 .msg-wraper-user {
-    border-radius: 4px 7px 0px 7px;
+    border-radius: 3px 9px 0px 9px;
     margin: 6px 5px 5px 50px;
     background-color: #fff;
     padding-right: 40px;
 }
 
 .msg-wraper-bot {
-    border-radius: 7px 4px 7px 0px;
+    border-radius: 9px 3px 9px 0px;
     margin: 6px 5px 6px 5px;
     background-color: #fff;
     padding-right: 40px;
@@ -85,6 +85,7 @@
 }
 
 .eb-chat-inp-cont {
+    display:none;
     position: absolute;
     bottom: 10px;
     width: 100%;
@@ -155,10 +156,6 @@
         font-size: 11px;
     }
 
-.chat-typing {
-    color: #999;
-}
-
 .inline-block {
     display: inline-block;
 }
@@ -192,12 +189,11 @@
 
 .eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
     border-radius: 15px;
-    padding: 6px 9px;
     color: white;
     background: #428bca;
     border: none;
     outline: none;
-    padding: 2px;
+    padding: 4px;
     margin-left: 5px;
 }
 
@@ -218,7 +214,7 @@
     border: solid 1px #ccc;
 }
 
-    .ctrl-wraper input {
+    .ctrl-wraper input, .ctrl-wraper select {
         height: 28px;
         border: none;
     }

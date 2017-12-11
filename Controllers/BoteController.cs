@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Http;
 using ExpressBase.Security;
 using ExpressBase.Objects.ObjectContainers;
 using System.IdentityModel.Tokens.Jwt;
+using ExpressBase.Common.Objects;
+using ExpressBase.Objects;
+using ExpressBase.Common;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -43,7 +46,7 @@ namespace ExpressBase.Web.Controllers
                     dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
                     result = dsobj.GetHtml();
                 }
-             }
+            }
             catch (Exception e)
             {
                 result = e.Message;
@@ -149,7 +152,7 @@ namespace ExpressBase.Web.Controllers
             string authResponse = MyAuthenticate(refid, socialId, whichconsole);
 
             if (authResponse != null)
-            {            
+            {
                 var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
                 var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
                 dsobj.Status = resultlist.Data[0].Status;
@@ -164,8 +167,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public string MyAuthenticate(string cid, string socialId, string wc = "tc")
         {
-           // string cid = refid.Split('-')[0].Trim();
-         //   string whichconsole = "tc";
+            // string cid = refid.Split('-')[0].Trim();
+            //   string whichconsole = "tc";
 
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
@@ -188,22 +191,38 @@ namespace ExpressBase.Web.Controllers
             return authResponse.ToJson();
         }
 
-        public List<EbBotForm> GetBotForms(string refreshToken, string bearerToken)
+        public Dictionary<string, string> GetBotForms(string refreshToken, string bearerToken)
         {
             this.ServiceClient.BearerToken = bearerToken;
             this.ServiceClient.RefreshToken = refreshToken;
             var tokenS = (new JwtSecurityTokenHandler()).ReadToken(bearerToken) as JwtSecurityToken;
 
-           
+
             ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
             ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
             ViewBag.email = tokenS.Claims.First(claim => claim.Type == "email").Value;
-                    
+
             User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
             var Ids = String.Join(",", user.EbObjectIds);
-            var resultlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
-            return resultlist.BotForms;
-        }
+            var formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
 
+            return formlist.BotForms;
+        }
+        public EbBotForm GetCurForm(string refreshToken, string bearerToken, string refid)
+        {
+            this.ServiceClient.BearerToken = bearerToken;
+            this.ServiceClient.RefreshToken = refreshToken;
+            var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+            EbBotForm obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+            string _selects = string.Empty;
+            foreach (EbControl control in obj.Controls)
+            {
+                if (control is EbSimpleSelect)
+                {
+                    (control as EbSimpleSelect).GetOptionsHtml(this.ServiceClient);    
+                }
+            }
+            return obj;
+        }
     }
 }

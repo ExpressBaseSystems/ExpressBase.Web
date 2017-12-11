@@ -12,23 +12,21 @@
     <div class="container">
         <div class="col-md-4">
             <div class="row" style="text-align:center"><h4>Connect Your Mail Server</h4></div>
-            
-            @using (Html.BeginForm("EditSMTP", "ConnectionManager", FormMethod.Post))
+
+            @using (Html.BeginForm("SMSAccount", "ConnectionManager", FormMethod.Post))
             {
                 <div class="form-group">
                     <!-- <label class ="control-label" for="dropdown">Mail Server:</label> -->
                     <div class="input-group">
-                        <input type="text" class="form-control" id="providername" name="providername" placeholder="Name of Mail Provider" disabled="disabled">
+                        <input type="text" class="form-control" id="providername" name="providername" placeholder="Twilio" disabled="disabled">
                         <div class="input-group-btn">
                             <div id="mailserver" name="mailserver" class="dropdown dropdown-menu-right">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                    Mail Server
+                                    SMS Provider
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">Google</a></li>
-                                    <li><a href="#">Zoho</a></li>
-                                    <li><a href="#">MSN</a></li>
+                                    <li><a href="#">Twilio</a></li>
                                     <li><a href="#">Others</a></li>
                                 </ul>
                             </div>
@@ -37,28 +35,26 @@
                 </div>
 
                 <div class="form-group">
-                    <!-- <label class ="control-label" for="smtp">Smtp:</label> -->
-                    <input type="text" class="form-control" id="smtp" name="smtp" placeholder="Smtp Server" value=@ViewBag.SMTP.Smtp.ToString()>
+                    <!-- <label class="control-label" for="port">Port:</label> -->
+                    <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Nick Name" value=@(String.IsNullOrEmpty(ViewBag.SMS.NickName)?String.Empty:ViewBag.SMS.NickName)>
                 </div>
 
-                <div class="form-group">
-                    <!-- <label class="control-label" for="port">Port:</label> -->
-                    <input type="text" class="form-control" id="port" name="port" placeholder="Port" value=@ViewBag.SMTP.Port.ToString()>
-                </div>
-
-                <div class="form-group">
-                    <!-- <label class="control-label" for="port">Port:</label> -->
-                    <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Nick Name" value=@ViewBag.SMTP.NickName.ToString()>
-                </div>
 
                 <div class="form-group">
                     <!-- <label class="control-label" for="email">Email:</label> -->
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" value=@ViewBag.SMTP.EmailAddress.ToString()>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" value=@(String.IsNullOrEmpty(ViewBag.SMS.UserName)?String.Empty:ViewBag.SMS.UserName)>
+                </div>
+
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="email">Email:</label> -->
+                    <input type="text" class="form-control" id="from" name="from" placeholder="From" value=@(String.IsNullOrEmpty(ViewBag.SMS.From)?String.Empty:ViewBag.SMS.From)>
+
                 </div>
 
                 <div class="form-group">
                     <!-- <label class="control-label" for="pwd">Password:</label> -->
-                    <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Enter password">
+                    <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Enter password" value=@(String.IsNullOrEmpty(ViewBag.SMS.Password) ? String.Empty : ViewBag.SMS.Password)>
                 </div>
 
                 <div id="submit" class="form-group">

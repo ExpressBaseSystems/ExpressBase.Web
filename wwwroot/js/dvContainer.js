@@ -95,7 +95,7 @@ var DvContainerObj = function (settings) {
                     this.dvcol[focusedId].GenerateButtons();
                 }
             }
-            else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
+            else{
                 if ($("#" + focusedId).find("canvas").length > 0) {
                     this.dvcol[focusedId].GenerateButtons();
                 }

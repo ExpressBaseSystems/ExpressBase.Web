@@ -34,9 +34,11 @@ var DvContainerObj = function (settings) {
         $("#next").css("display", "none");
         $("#Save_btn").css("display", "none");
 
-        focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + this.tabnum+"_"+counter;
+        focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + this.tabnum + "_" + counter;
+
+        this.MainData = (this.currentObj.Pippedfrom !== null && this.currentObj.Pippedfrom !== "") ? this.previousObj.data : null;
+
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
-            //this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null) ? dvcontainerObj.previousObj.data : null;
             this.dvcol[focusedId] = new EbDataTable(
                 refid = this.dvRefid,
                 ver_num = this.ver_num,
@@ -56,8 +58,6 @@ var DvContainerObj = function (settings) {
             //this.dvcol[focusedId].getColumnsSuccess(this.currentObj);
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
-            //this.UniqueId = "dv" + this.currentObj.EbSid + "_" + counter;
-            //this.MainData = (dvcontainerObj.currentObj.Pippedfrom !== null && dvcontainerObj.currentObj.Pippedfrom !== "") ? dvcontainerObj.previousObj.data : null;
             this.dvcol[focusedId] = new eb_chart(
                 refid = this.dvRefid,
                 ver_num = this.ver_num,
@@ -86,6 +86,10 @@ var DvContainerObj = function (settings) {
             var dvobj = this.dvcol[focusedId].EbObject;
             dvcontainerObj.previousObj = dvcontainerObj.currentObj;
             dvcontainerObj.currentObj = dvobj;
+            if (dvcontainerObj.currentObj.Pippedfrom !== "")
+                $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
+            else
+                $("#Pipped").text("");
             if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
                 if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
                     this.dvcol[focusedId].GenerateButtons();
@@ -113,6 +117,10 @@ var DvContainerObj = function (settings) {
         var dvobj = this.dvcol[focusedId].EbObject;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
         dvcontainerObj.currentObj = dvobj;
+        if (dvcontainerObj.currentObj.Pippedfrom !== "")
+            $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
+        else
+            $("#Pipped").text("");
         if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
                 this.dvcol[focusedId].GenerateButtons();
@@ -189,30 +197,7 @@ var DvContainerObj = function (settings) {
         }
     };
 
-    //this.drawDv = function (e) {
-    //    $.LoadingOverlay("show");
-    //    $.ajax({
-    //        type: "POST",
-    //        url: "../DV/getdv",
-    //        data: { id: $(e.target).attr("data-id"), objtype: $(e.target).attr("objtype") },
-    //        success: function (dvObj) {
-    //            dvObj = JSON.parse(dvObj);
-    //            dvcontainerObj.currentObj = dvObj;
-    //            $.LoadingOverlay("hide");
-    //            if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
-    //                pg.setObject(dvObj, AllMetas["EbTableVisualization"]);
-    //                split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbTableVisualization");
-    //                call2dvView(dvObj);
-    //            }
-    //            else if (dvObj.$type.indexOf("EbChartVisualization") !== -1) {
-    //                pg.setObject(dvObj, AllMetas["EbChartVisualization"]);
-    //                split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbChartVisualization");
-    //                call2dvView(dvObj);
-    //            }
-    //        }
-    //    });
-    //};
-
+   
     this.saveSettings = function () {
         $.LoadingOverlay("show");
         if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1)

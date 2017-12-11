@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="col-md-4">
+            <div class="row" style="text-align:center"><h4>Send SMS</h4></div>
+            </br>
+            @using (Html.BeginForm("SendSMS", "SMS", FormMethod.Post))
+            {
+                <div class="form-group">
+                    <!-- <label class="control-label" for="port">Port:</label> -->
+                    <input type="text" class="form-control" id="to" name="to" placeholder="To">
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="email">Email:</label> -->
+                    <input type="text" class="form-control" id="from" name="from" placeholder="From">
+                </div>
+
+                <div class="form-group">
+                    <!-- <label class="control-label" for="pwd">Password:</label> -->
+                    <input type="text" class="form-control" id="body" name="body" placeholder="Message">
+                </div>
+
+                <div id="submit" class="form-group">
+                    <button type="submit" class="btn btn-primary pull-right">Send</button>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>

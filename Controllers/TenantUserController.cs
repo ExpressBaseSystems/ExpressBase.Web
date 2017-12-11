@@ -19,6 +19,7 @@ using ExpressBase.Objects.ObjectContainers;
 using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using ExpressBase.Security;
+using ExpressBase.Security.Core;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -428,13 +429,23 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult CreateUser(int itemid)
         {
-           
-                var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = itemid, TenantAccountId = ViewBag.cid });
-                //ViewBag.Name = fr.Data["name"];
-                //ViewBag.email = fr.Data["email"];
-                ViewBag.roles = fr.Roles;
-			ViewBag.UserGroups = fr.EbUserGroups;
-
+			List<EbRole> Sysroles = new List<EbRole>();
+			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
+			{
+				Sysroles.Add(new EbRole() { Name= role.ToString(), Description = "SystemRole_"+ role, Id = (int)role });
+			}
+			ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
+			var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = itemid, TenantAccountId = ViewBag.cid });
+			ViewBag.Roles = JsonConvert.SerializeObject(fr.Roles);
+			ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
+			if (itemid > 0)
+			{
+				ViewBag.U_Name = fr.UserData["name"];
+				ViewBag.U_Email = fr.UserData["email"];
+				ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
+				ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
+			}
+			ViewBag.itemid = itemid;
 			return View();
         }
 

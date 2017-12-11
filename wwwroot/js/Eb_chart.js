@@ -394,27 +394,17 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
         }
 
-        if (this.MainData !== null && this.login === "uc") {
-            this.filterValues = this.getFilterValues();
-            if (this.filterValues.length == 0) {
-                dvcontainerObj.currentObj.data = this.MainData;
-                this.drawGraphHelper(this.MainData.data);
-            }
-            else {
-                $.LoadingOverlay("show");
-                $.ajax({
-                    type: 'POST',
-                    url: this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId,
-                    data: { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: JSON.stringify(this.getFilterValues()) },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                    },
-                    success: this.getDataSuccess.bind(this),
-                    error: function () { }
-                });
-            }
+        this.filterValues = this.getFilterValues();
+
+        if (this.MainData !== null && this.login === "uc" && this.filterValues.length == 0) {
+            dvcontainerObj.currentObj.data = this.MainData;
+            this.drawGraphHelper(this.MainData.data);
         }
         else {
+            if (this.login === "uc") {
+                dvcontainerObj.currentObj.Pippedfrom = "";
+                $("#Pipped").text("");
+            }
             $.LoadingOverlay("show");
             $.ajax({
                 type: 'POST',
@@ -431,7 +421,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.createChartDivs = function () {
-        if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
+        //if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append(
                 "<div id='graphcontainer_tab" + this.tableId + "' style='height:inherit;'>" +
@@ -457,10 +447,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 "</div> " +
                 "</div>");
             this.GenerateButtons();
-        }
-        else {
+        //}
+        //else {
 
-        }
+        //}
     };
 
     this.GenerateButtons = function () {
@@ -977,10 +967,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $("#canvasDiv" + this.tableId).children("#map").remove();
                 var refid = this.EbObject.DataSourceRefId;
                 var columns = JSON.parse(JSON.stringify(this.EbObject.Columns)); 
+                var pipe = this.EbObject.Pippedfrom;
                 this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
                 this.EbObject.DataSourceRefId = refid;
                 this.EbObject.DSColumns = columns;
                 this.EbObject.Columns = columns;
+                this.EbObject.Pippedfrom = pipe;
 
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 this.columnInfo = this.EbObject;
@@ -998,12 +990,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             var columns = JSON.parse(JSON.stringify(this.EbObject.Columns)); 
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
-
+            var pipe = this.EbObject.Pippedfrom;
             this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
             this.EbObject.DataSourceRefId = refid;
             this.EbObject.DSColumns = columns;
             this.EbObject.Columns = columns;
-
+            this.EbObject.Pippedfrom = pipe;
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
             this.columnInfo = this.EbObject;
 

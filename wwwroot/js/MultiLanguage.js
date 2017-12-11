@@ -98,7 +98,7 @@
         this.lblsearchkeyresult2.hide();
         $(lstkeysuggestion).children("a").remove();
         this.loader.show();
-        if (!force && searchtext.length < 3) {
+        if (!force && searchtext.length < 2) {
             this.loader.hide();
             return;
         }
@@ -106,6 +106,7 @@
         this.Offset = 0;
         this.currentWindow = 1;
         $(this.txtPageNumber).val("");
+        $("#divPageNumberDisplay").children("i").text("Key Suggestions");
         this.getKeySuggestionAjaxCall();        
     };
 
@@ -133,6 +134,8 @@
     this.drawSearchResult = function (wPage) {
         var wPageStart = (wPage - 1) * this.pageSize;
         var dWindowLength = Object.keys(this.dataWindow).length;
+        this.lblsearchkeyresult.hide();
+        this.lblsearchkeyresult2.hide();
         if (dWindowLength < wPageStart || dWindowLength === 0) {
             $(txtsearch).attr("data-value", "");
             $(lblsearchkeyresult).show();
@@ -149,6 +152,7 @@
         $("#divPageNumberDisplay").children("i").text("Page " + this.currentPage + " of " + Math.ceil(this.resultCount / this.pageSize));
         $(this.txtPageNumber).val(this.currentPage);
         $(lstkeysuggestion).children("a").click(this.onclicklstitem.bind(this));
+        
     }
 
     this.onclicklstitem = function (e) {
@@ -216,10 +220,10 @@
         var data =JSON.parse( $(txtsearch).attr("data-object"));
         $.each(data, function (i, k) {    //i->serial index
             $.each($(divtable).find("tbody tr"), function (j, obj) {
-                if ($(obj).attr("data-lid") === k.langId.toString()) {
-                    $(obj).attr("data-id", k.keyValId.toString());
-                    $($(obj).children()[1]).children().val(k.keyValue);
-                    $($(obj).children()[1]).children().attr("data-value", k.keyValue);
+                if ($(obj).attr("data-lid") === k.LangId.toString()) {
+                    $(obj).attr("data-id", k.KeyValId.toString());
+                    $($(obj).children()[1]).children().val(k.KeyValue);
+                    $($(obj).children()[1]).children().attr("data-value", k.KeyValue);
                 }
             });
         });

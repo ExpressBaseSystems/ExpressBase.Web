@@ -16,15 +16,15 @@
             settings.format = "Y/m/d H:i";
         }
 
-        settings.minDate = ctrl.min;
-        settings.maxDate = ctrl.max;
+        //settings.minDate = ctrl.min;
+        //settings.maxDate = ctrl.max;
 
         $('#' + ctrl.name).datetimepicker(settings);
         $('#' + ctrl.name).mask(ctrl.maskPattern || '00/00/0000');
     };
 
     this.SimpleSelect = function (ctrl) {
-        $('#' + ctrl.name).selectpicker();
+        //$('#' + ctrl.name).selectpicker();
     };
 
     this.Numeric = function (ctrl) {

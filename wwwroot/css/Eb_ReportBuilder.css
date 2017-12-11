@@ -176,6 +176,7 @@
     border: none;
     background-color: #fafafa;
     color: #333;
+    margin-bottom: 3px;
 }
 .gutter.gutter-vertical {
     background-color: #ccc;
@@ -570,6 +571,15 @@
     transition: all 200ms ease-in;
     transform: scale(1.3);
 }
+/*.page .ui-resizable-handle:first-child {
+    width: 100%;
+    z-index: 90;
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+    height:10px;    
+}*/
 /*.context-menu-item {    
     color: #ffffff;    
     background-color: transparent; 

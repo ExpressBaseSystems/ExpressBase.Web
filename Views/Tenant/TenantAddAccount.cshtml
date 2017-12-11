@@ -31,10 +31,13 @@
                         <input type="text" required="required" id="solutionname" name="Sname" class="form-control" placeholder="Solution Name" />
                     </div>
                     <div class="client-id-sec">
-                        <input type="text" required="required" id="cid" name="Cid" class="form-control input-clientId" placeholder="Client id" />
+                        <input type="text" required="required" id="cid" name="esid" class="form-control input-clientId" placeholder="Client id" />
                         <div class="clientId-auto">.expressbase.com</div>
                         <button class="btn is-edit-clientid pricing-modal-btn" id="is-edit-clientid" style="display:none;"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                     <p>Select atleast one product for custome Client Id</p>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" placeholder="Description" name="Desc"></textarea>
                     </div>
                     <div class="form-group">
                         <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-cropie">upload logo</button>
@@ -325,7 +328,7 @@
     <div class="container">
         <input type="submit" class="btn btn-success pull-right" value="Save" id="save-subscrip"/> 
     </div>
-    <div class="popover-clientid-edit">
+    @*<div class="popover-clientid-edit">
         <div class="popover-text">
             You can edit solution Id
         </div>
@@ -333,7 +336,7 @@
             <button class="btn btn-success">Edit</button>
             <button class="btn btn-success pull-right">Skip</button>
         </div>
-    </div>
+    </div>*@
 
 </div>
 <div class="modal fade" id="eb-common-price-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
@@ -357,8 +360,8 @@
     $(document).ready(function () {
         var subscribe = new TenantAddSolution(EbSubsciptionPlans);       
         $("#save-subscrip").click(function () {
-            var sub = subscribe.getSubscription();            
-            $("#sub-form-field").val(sub);
+            var sub = subscribe.getSubscription();
+            $("#sub-form-field").val(JSON.stringify(sub));
             $("#subscript-submit").submit();
         });              
     });

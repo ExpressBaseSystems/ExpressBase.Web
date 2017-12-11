@@ -51,7 +51,7 @@
 
 .msg-wraper-bot {
     border-radius: 7px 4px 7px 0px;
-    margin: 6px 50px 6px 5px;
+    margin: 6px 5px 6px 5px;
     background-color: #fff;
     padding-right: 40px;
 }
@@ -91,37 +91,6 @@
     text-align: center;
 }
 
-    .eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
-        border-radius: 15px;
-        padding: 6px 9px;
-        color: white;
-        background: #428bca;
-        border: none;
-        outline: none;
-        padding: 2px;
-        margin-left: 5px;
-    }
-
-.eb-chat-inp-cont .btn {
-    padding: 6px 9px !important;
-}
-
-
-.btn-box .btn {
-    color: #555;
-    background: #428bca;
-    color: white;
-    font-size: 12px;
-    border: solid 1px #e0e0e0;
-}
-
-.btn-box .btn {
-    margin: 1px 1px;
-    width: 100%;
-    min-width: 222px;
-    margin-bottom: 2px;
-}
-
 .msg-inp {
     border: none;
     border: 1px solid #d8d8d8;
@@ -138,17 +107,12 @@
     display: inline-block;
 }
 
-.chat-ctrl-cont [name=ctrlsend] {
-    font-size: 13px;
-    padding: 12px 0px;
-    width: 35px;
-    min-width: 25px;
-    border-radius: 0px 4px 4px 0px;
-    vertical-align: top;
-}
-
 .chat-ctrl-cont {
-    width: 234px;
+    width: 100%;
+    border: solid 5px #ffffff;
+    border-radius: 0px 25px 25px 0px;
+    background-color: #ffffff;
+    line-height: 6px;
 }
 
 .bot-icon {
@@ -197,4 +161,72 @@
 
 .inline-block {
     display: inline-block;
+}
+
+.chat-ctrl-cont select, .chat-ctrl-cont textarea {
+    width: 100%;
+    min-height: 28px;
+    min-width: inherit;
+}
+
+.eb-chat-inp-cont .btn {
+    padding: 6px 9px !important;
+}
+
+
+.btn-box .btn {
+    color: #555;
+    background: #428bca;
+    color: white;
+    font-size: 12px;
+    border: solid 1px #e0e0e0;
+}
+
+.btn-box .btn {
+    margin: 1px 1px;
+    width: 100%;
+    min-width: 222px;
+    margin-bottom: 2px;
+}
+
+
+.eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
+    border-radius: 15px;
+    padding: 6px 9px;
+    color: white;
+    background: #428bca;
+    border: none;
+    outline: none;
+    padding: 2px;
+    margin-left: 5px;
+}
+
+.chat-ctrl-cont [name=ctrlsend] {
+    font-size: 13px;
+    margin-left: 0px;
+    padding: 6px 0px;
+    width: 35px;
+    min-width: 25px;
+    border-radius: 0px 54px 54px 0px;
+    vertical-align: top;
+    box-shadow: none;
+}
+
+.ctrl-wraper {
+    display: inline-block;
+    width: calc(100% - 36px);
+    border: solid 1px #ccc;
+}
+
+    .ctrl-wraper input {
+        height: 28px;
+        border: none;
+    }
+
+    .ctrl-wraper .input-group-addon:last-child, .ctrl-wraper .input-group-addon:first-child {
+        border-radius: 0px;
+        border: none;
+    }
+[name=ctrlsend] .fa {
+    margin-left: -5px
 }

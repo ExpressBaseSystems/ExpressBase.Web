@@ -21,12 +21,7 @@ namespace ExpressBase.Web.Controllers
     public partial class HeaderFooter : PdfPageEventHelper
     {
         private ReportRenderController Controller { get; set; }
-        //PdfTemplate total;
-        //public override void OnCloseDocument(PdfWriter writer, Document d)
-        //{
-        //    base.OnCloseDocument(writer, d);
-        //    Controller.ct.ShowTextAligned(total, Element.ALIGN_LEFT, new Phrase((writer.PageNumber - 1).ToString()), 2, 2, 0);
-        //}
+
         public override void OnEndPage(PdfWriter writer, Document d)
         {
             Controller.DrawPageHeader();
@@ -68,6 +63,8 @@ namespace ExpressBase.Web.Controllers
         private float detail_section_height;
         private bool IsLastpage = false;
 
+        private List<dynamic> Summaryfield = new List<dynamic>();
+        private Dictionary<string, List<object>> PageSummaryFields = new Dictionary<string, List<object>>();
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         public IActionResult Index(string refid)
@@ -99,6 +96,7 @@ namespace ExpressBase.Web.Controllers
             writer.CloseStream = true;//important
             cb = writer.DirectContent;
             CalculateSectionHeights();
+            InitializeSummaryFields();
             d.NewPage();
 
             DrawReportHeader();
@@ -144,6 +142,32 @@ namespace ExpressBase.Web.Controllers
                 dt_height = Report.Height - (ph_height + pf_height + rf_height);
             else
                 dt_height = Report.Height - (ph_height + pf_height);
+        }
+
+        public void InitializeSummaryFields()
+        {
+            List<object> l = null;
+            foreach (EbPageFooter p_footer in Report.PageFooters)
+            {
+                foreach (EbReportField field in p_footer.Fields)
+                {
+                    if (field.GetType() == typeof(EbDataFieldNumericSummary))
+                    {
+                        EbDataFieldNumericSummary f = field as EbDataFieldNumericSummary;
+
+                        if (!PageSummaryFields.ContainsKey(f.DataField))
+                        {
+                            l = new List<object>();
+                            PageSummaryFields.Add(f.DataField, l);
+                        }
+                        else
+                        {
+                            PageSummaryFields[f.DataField].Add(l);
+                        }
+                    }
+                }
+            }
+
         }
 
         public void DrawReportHeader()
@@ -253,63 +277,66 @@ namespace ExpressBase.Web.Controllers
         {
             var column_name = "";
             var column_val = "";
-
+            if (PageSummaryFields.ContainsKey(field.Title))
+            {
+                string x = field.Title;
+            }
             if (field.GetType() == typeof(EbText))
             {
                 column_val = field.Title;
                 DrawTextBox(field, column_val, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbDataFieldBoolean) || field.GetType() == typeof(EbDataFieldDateTime) || field.GetType() == typeof(EbDataFieldNumeric) || field.GetType() == typeof(EbDataFieldText))
+            else if (field is EbDataFieldBoolean || field is EbDataFieldDateTime || field is EbDataFieldNumeric || field is EbDataFieldText)
             {
                 var table = field.Title.Split('.')[0];
                 column_name = field.Title.Split('.')[1];
                 column_val = GeFieldtData(column_name, i);
                 DrawTextBox(field, column_val, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbCircle))
+            else if (field is EbCircle)
             {
                 if (field.Height == field.Width)
                     DrawCircle(field, section_Yposition);
                 else
                     DrawEllipse(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbRect))
+            else if (field is EbRect)
             {
                 DrawRectangle(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbHl))
+            else if (field is EbHl)
             {
                 DrawHLine(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbVl))
+            else if (field is EbVl)
             {
                 DrawVLine(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbArrR))
+            else if (field is EbArrR)
             {
                 DrawArrowR(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbArrL))
+            else if (field is EbArrL)
             {
                 DrawArrowL(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbArrU))
+            else if (field is EbArrU)
             {
                 DrawArrowU(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbArrD))
+            else if (field is EbArrD)
             {
                 DrawArrowD(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbByArrH))
+            else if (field is EbByArrH)
             {
                 DrawByArrH(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbByArrV))
+            else if (field is EbByArrV)
             {
                 DrawByArrV(field, section_Yposition);
             }
-            else if (field.GetType() == typeof(EbPageNo))
+            else if (field is EbPageNo)
             {
                 column_val = writer.PageNumber.ToString();
                 DrawTextBox(field, column_val, section_Yposition);
@@ -323,9 +350,46 @@ namespace ExpressBase.Web.Controllers
             {
                 DrawTextBox(field, field.Title, section_Yposition);
             }
+            else if (field.GetType() == typeof(EbDataFieldNumericSummary))
+            {
+                EbDataFieldNumericSummary f = field as EbDataFieldNumericSummary;
+                var val = f.SummarizedValue.ToString();
+                DrawTextBox(field, val, section_Yposition);
+            }
+            else if (field.GetType() == typeof(EbDataFieldTextSummary))
+            {
+                EbDataFieldTextSummary f = field as EbDataFieldTextSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsText), f.Function) == "Count")
+                {
+                }
+                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Max")
+                {
+                }
+                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Min")
+                {
+                }
+            }
+            else if (field.GetType() == typeof(EbDataFieldDateTimeSummary))
+            {
+                EbDataFieldDateTimeSummary f = field as EbDataFieldDateTimeSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Count")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Max")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Min")
+                {
+                }
+            }
+            else if (field.GetType() == typeof(EbDataFieldBooleanSummary))
+            {
+                EbDataFieldBooleanSummary f = field as EbDataFieldBooleanSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsBoolean), f.Function) == "Count")
+                {
+                }
+            }
         }
-
-
 
         public string GeFieldtData(string column_name, int i)
         {

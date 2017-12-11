@@ -31,5 +31,17 @@ namespace ExpressBase.Web.Controllers
             this.ServiceClient.Post(sMSSentRequest);
             return View();
         }
+
+        [HttpPost]
+        public void CallBack(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            var smsSid = Request.Form["SmsSid"];
+            var messageStatus = Request.Form["MessageStatus"];
+            SMSSentRequest sMSSentRequest = new SMSSentRequest();
+            sMSSentRequest.To = req["to"];
+            sMSSentRequest.Body = "SMS Id: "+smsSid.ToString()+"/nMessageStatus:" + messageStatus.ToString();
+            this.ServiceClient.Post(sMSSentRequest);
+        }
     }
 }

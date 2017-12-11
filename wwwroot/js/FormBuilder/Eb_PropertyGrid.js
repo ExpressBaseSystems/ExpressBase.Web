@@ -1,6 +1,4 @@
-﻿var Gcolumns = { "$type": "ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects", "IsPaged": "", "rowGrouping": ["serial", "checkbox"], "DataSourceRefId": "eb_roby_dev-eb_roby_dev-2-519-1165", "Ebsid": "set1_EbTableVisualization0_1", "Columns": { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [{ "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 0, "name": "serial", "Type": 12, "sTitle": "#", "bVisible": true, "Pos": -2, "sWidth": "10px", "className": null, "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 0, "name": "checkbox", "Type": 3, "sTitle": "checkbox", "bVisible": false, "Pos": -1, "sWidth": "10px", "className": null, "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 0, "name": "id", "Type": 11, "sTitle": "id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 1, "name": "xid", "Type": 16, "sTitle": "xid", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 2, "name": "trndate", "Type": 6, "sTitle": "trndate", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 3, "name": "cash_or_cre", "Type": 16, "sTitle": "cash_or_cre", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 4, "name": "cash2", "Type": 3, "sTitle": "cash2", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 5, "name": "lpo", "Type": 16, "sTitle": "lpo", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 6, "name": "dispname", "Type": 16, "sTitle": "dispname", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 7, "name": "discount", "Type": 7, "sTitle": "discount", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 8, "name": "grossamt", "Type": 7, "sTitle": "grossamt", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 9, "name": "netamt", "Type": 7, "sTitle": "netamt", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 10, "name": "submitter", "Type": 16, "sTitle": "submitter", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 11, "name": "routegroup", "Type": 16, "sTitle": "routegroup", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 12, "name": "sys_submitted_ts", "Type": 6, "sTitle": "sys_submitted_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 13, "name": "modifier", "Type": 16, "sTitle": "modifier", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 14, "name": "sys_last_modified_ts", "Type": 6, "sTitle": "sys_last_modified_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 15, "name": "device_id", "Type": 16, "sTitle": "device_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 16, "name": "forms_id", "Type": 16, "sTitle": "forms_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 17, "name": "sys_location_id", "Type": 16, "sTitle": "sys_location_id", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 18, "name": "sys_cancelled", "Type": 3, "sTitle": "sys_cancelled", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVBooleanColumn, ExpressBase.Objects", "IsEditable": false, "RenderAs": 0, "data": 19, "name": "sys_locked", "Type": 3, "sTitle": "sys_locked", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVNumericColumn, ExpressBase.Objects", "Aggregate": false, "DecimalPlaces": 0, "RenderAs": 0, "LinkRefId": null, "data": 20, "name": "sys_row_color", "Type": 11, "sTitle": "sys_row_color", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 21, "name": "verified", "Type": 16, "sTitle": "verified", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVStringColumn, ExpressBase.Objects", "RenderAs": 0, "LinkRefId": null, "data": 22, "name": "appversion", "Type": 16, "sTitle": "appversion", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }, { "$type": "ExpressBase.Objects.Objects.DVRelated.DVDateTimeColumn, ExpressBase.Objects", "Format": 0, "RenderAs": 0, "LinkRefId": null, "data": 23, "name": "appsubmit_ts", "Type": 6, "sTitle": "appsubmit_ts", "bVisible": true, "Pos": 124, "sWidth": "100px", "className": "tdheight", "fontfamily": 0, "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null }] }, "Name": "set1_EbTableVisualization0_1", "Id": 0, "RefId": null, "EbObjectType": 0, "ChangeLog": null };
-
-var Eb_PropertyGrid = function (id, wc, cid) {
+﻿var Eb_PropertyGrid = function (id, wc, cid) {
     this.wc = wc;
     this.cid = cid;
     this.$wraper = $("#" + id);
@@ -20,6 +18,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
     this.Close = function (e) { };
     this.IsReadonly = false;
 
+    // refresh and get object with new values from PG
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
         for (var prop in this.getValueFuncs) {
@@ -29,6 +28,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         return this.PropsObj;
     };
 
+    //Builds property Grid rows
     this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf) {
         var valueHTML;
         var type = meta.editor || '';
@@ -140,6 +140,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
+    // gives expandable prop values as array
     this.getExpandedValue = function (obj) {
         values = [];
         $.each(obj, function (key, val) {
@@ -149,6 +150,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         return values;
     };
 
+    // BootstrapSelect Html builder
     this.getBootstrapSelectHtml = function (id, selectedValue, options) {
         selectedValue = selectedValue || 0;
         var html = "<select class='selectpicker' >";
@@ -159,6 +161,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         return html;
     };
 
+    //GroupHeaderRow Html  builder
     this.getGroupHeaderRowHtml = function (displayName) {
         if (this.IsSortByGroup)
             return '<tr class="pgGroupRow" is-expanded="true" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell">'
@@ -168,6 +171,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
             return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell"> &nbsp ' + displayName + '</td></tr > ';
     };
 
+    //checks an object is contained in array by name
     this.isContains = function (obj, val) {
         for (var i = 0; i < obj.length; i++)
             if (obj[i].name.toLowerCase() === val.toLowerCase())
@@ -175,6 +179,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         return false;
     };
 
+    //Fn to call all property's postInitFn
     this.CallpostInitFns = function () {
         // Call the post init functions 
         for (var prop in this.postCreateInitFuncs) {
@@ -183,6 +188,10 @@ var Eb_PropertyGrid = function (id, wc, cid) {
                 this.postCreateInitFuncs[prop] = null;// just in case make sure we are not holding any reference to the functions
             }
         }
+    };
+
+    //Fn to call all property's OnchangeExecFn
+    this.callOnchangeExecFns = function () {
         // call OnChangeExec functions
         for (var prop in this.OnChangeExec) {
             var func = this.OnChangeExec[prop].bind(this.PropsObj, this);
@@ -191,10 +200,13 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         }
     };
 
+    //makes a property editor readOnly
     this.MakeReadOnly = function (prop) { $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true); };
 
+    //makes a property editor readWritable
     this.MakeReadWrite = function (prop) { $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false); };
 
+    //makes a property row hidden
     this.HideProperty = function (prop) {
         if (this.$hiddenProps[prop])
             return;
@@ -205,6 +217,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.$hiddenProps[prop] = { "$Tr": $Tr };
     };
 
+    //makes a property row visible which hidden by 'HideProperty()'
     this.ShowProperty = function (prop) {
         if (!this.$hiddenProps[prop])
             return;
@@ -215,6 +228,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.$hiddenProps[prop] = null;
     };
 
+    //build PG table by Assembling property GroupHeaders, property rows ...
     this.buildGrid = function () {
         // Now we have all the html we need, just assemble it
         for (var group in this.groupsHeaderRowHTML) {
@@ -233,6 +247,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) });
     };
 
+    //Creates Table rows and group them by property Group name 
     this.buildRows = function () {
         var propArray = [];
         for (var prop in this.PropsObj) { propArray.push(prop); }
@@ -263,6 +278,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         }
     };
 
+    //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) {
         this.getvaluesFromPG();
         if (e)
@@ -272,6 +288,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.PropertyChanged(this.PropsObj, this.CurProp);
     };
 
+    //Add a control name to Control DD
     this.addToDD = function (obj) {
         var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
         var _name = (obj.Name || obj.name);
@@ -288,6 +305,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
     };
 
+    //removes a control name to Control DD
     this.removeFromDD = function (EbSid) {
         var slctr = EbSid + this.wraperId;
         if ($(".pgCXEditor-bg").css("display") !== "none")
@@ -298,11 +316,12 @@ var Eb_PropertyGrid = function (id, wc, cid) {
             $("#SelOpt" + slctr).remove();
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
     };
-
+    // PGclose fn
     this.CloseFn = function (e) {
         this.Close();
     };
 
+    //Set basic foundation for PG
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div><span>Properties </span><div class="icon-cont  pull-right"><i class="fa fa-times" aria-hidden="true"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
@@ -323,6 +342,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         });
     };
 
+    //fires onChange of DDlisting all controls
     this.ctrlsDD_onchange = function (e) {
         var SelItem = $(e.target).find("option:selected").attr("data-name");
         $("#" + SelItem).focus();
@@ -332,12 +352,14 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.DD_onChange(e);
     };
 
+    //sort PG irrespective of Groups
     this.SortFn = function (e) {
         this.IsSortByGroup = !this.IsSortByGroup;
         this.InitPG();
         $("#" + this.wraperId + " [name=sort]").toggle();
     };
 
+    //init PG variables, fn bindings
     this.InitPG = function () {
         this.propNames = [];
         this.MISC_GROUP_NAME = 'Miscellaneous';
@@ -362,17 +384,18 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.buildRows();
         this.buildGrid();
         this.CallpostInitFns();
+        this.callOnchangeExecFns();
         this.getvaluesFromPG();//no need
 
         $("#" + this.wraperId + " .propgrid-table-cont .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
-        $('#' + this.wraperId + "_propGrid" + ' table tr').find(".fa-caret-right").click(this.ExpandToggle.bind(this));
+        $('#' + this.wraperId + "_propGrid" + ' table tr').find(".fa-caret-right").click(this.toggleSubPropRows.bind(this));
         this.addToDD(this.PropsObj);
         //if (this.PropsObj.RenderMe)
         //    RefreshControl(this.PropsObj);///////////////////////////////////////////////////////////////////////
         $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", this.nameChangedFn);
-        $("#" + this.wraperId + " .pgGroupCell").on("click", this.collapsGroup);
+        $("#" + this.wraperId + " .pgGroupCell").on("click", this.togglePropGroup);
         $("#" + this.wraperId + " .pgRow").on("focus", this.rowFocus);
         this.bindFns();
 
@@ -380,6 +403,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
             this.ReadOnly();
     };
 
+    // performs some basic tasks after initialization of variables 
     this.setBasic = function () {
         $.each(this.Metas, function (i, meta) {
             this.propNames.push(meta.name.toLowerCase());
@@ -400,6 +424,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         }.bind(this));
     };
 
+    //Checks and alert if a property value is not unique in PG
     this.checkUnique = function (e) {
         var $e = $(e.target);
         //$e.removeClass("Eb-invalid");
@@ -418,6 +443,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         }.bind(this));
     }.bind(this);
 
+    //Checks and alert if a required property is left blank
     this.checkRequired = function (e) {
         var $e = $(e.target);
         if ($e.val().trim() === "") {
@@ -432,12 +458,13 @@ var Eb_PropertyGrid = function (id, wc, cid) {
 
     }.bind(this);
 
+    //??
     this.bindFns = function () {
         $.each(this.Metas, function (i, meta) {
 
         });
     };
-
+    // fires when a prop row is focused To show help text
     this.rowFocus = function (e) {
         var $e = $(e.target);
         var prop = $e.attr("name").slice(0, -2);
@@ -445,7 +472,8 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $("#" + this.wraperId + "_HelpBox").html(ht);
     }.bind(this);
 
-    this.collapsGroup = function (e) {
+    //toggles a propGroup and set necessory flags as attribute
+    this.togglePropGroup = function (e) {
         var $GroupHeadRow = $(e.target).closest("[group-h]");
         var isExpanded = $GroupHeadRow.attr("is-expanded") === 'true';
         var groupName = $GroupHeadRow.attr("group-h");
@@ -464,8 +492,8 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $GroupHeadRow.attr("is-expanded", !isExpanded);
 
     }.bind(this);
-
-    this.ExpandToggle = function (e) {
+    //toggles subProperty rows
+    this.toggleSubPropRows = function (e) {
         var t = 0;
         if (e.hasOwnProperty('originalEvent'))
             var t = 200;
@@ -479,6 +507,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $parentPropRow.attr("is-expanded", !isExpanded);
     };
 
+    // fire when Name property changed
     this.nameChangedFn = function (e) {
         var name = e.target.value;
         $("#M_SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
@@ -490,10 +519,12 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.nameChanged();
     }.bind(this)
 
+    //removed PG tables from DOM
     this.clear = function () {
         this.$PGcontainer.empty();
     };
 
+    // sets Object to property grid
     this.setObject = function (props, metas) {
         //params check
         {
@@ -514,9 +545,11 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         this.imgSlctrs = {};
         this.InitPG();
         $("#" + this.wraperId + " .propgrid-helpbox").show();
+        console.log("default test :" + JSON.stringify(props));
     };
     this.init();
 
+    // makes PG readonly
     this.ReadOnly = function () {
         this.IsReadonly = true;
         $('<i class="fa fa-lock" aria-hidden="true"></i>').insertAfter($('#' + this.wraperId + " .pgHead span").html('Properties ').css("opacity", "0.72"));
@@ -536,6 +569,7 @@ var Eb_PropertyGrid = function (id, wc, cid) {
         $('#' + this.wraperId + ' .CEctrlsCont button').css("cursor", "not-allowed").prop('disabled', true);//coltile X
 
     };
+    // makes PG readwritable
     this.ReadWrite = function () {
         this.IsReadonly = false;
 

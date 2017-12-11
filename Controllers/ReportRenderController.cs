@@ -21,30 +21,12 @@ namespace ExpressBase.Web.Controllers
     public partial class HeaderFooter : PdfPageEventHelper
     {
         private ReportRenderController Controller { get; set; }
-        //  PdfTemplate total;
-
-        //public override void OnOpenDocument(PdfWriter writer, Document d)
-        //{
-        //    base.OnOpenDocument(writer, d);
-        //    Controller.DrawReportHeader();
-        //}
-
+        //PdfTemplate total;
         //public override void OnCloseDocument(PdfWriter writer, Document d)
         //{
-        //    base.OnCloseDocument(writer,d);
-        //    Controller.DrawReportFooter();
-        //    //ColumnText.ShowTextAligned(total, Element.ALIGN_LEFT, new Phrase((writer.PageNumber - 1).ToString()), 2, 2, 0);
-        //} 
-
-        //public override void OnStartPage(PdfWriter writer, Document document)
-        //{
-        //    if (Controller.writer.PageNumber != 1)
-        //    {
-        //        Controller.printingTop = 0;
-        //    }
-        //    Controller.DrawPageHeader();
-        //} 
-
+        //    base.OnCloseDocument(writer, d);
+        //    Controller.ct.ShowTextAligned(total, Element.ALIGN_LEFT, new Phrase((writer.PageNumber - 1).ToString()), 2, 2, 0);
+        //}
         public override void OnEndPage(PdfWriter writer, Document d)
         {
             Controller.DrawPageHeader();
@@ -70,7 +52,6 @@ namespace ExpressBase.Web.Controllers
         private List<double> total = new List<double>(); // change
         private Dictionary<int, double> totalOfColumn = new Dictionary<int, double>(); //change
         private PdfContentByte cb;
-        private ColumnText ct;
         private PdfWriter writer;
         private Document d;
 
@@ -167,24 +148,27 @@ namespace ExpressBase.Web.Controllers
 
         public void DrawReportHeader()
         {
+
             var rh_Yposition = 0;
+            detailprintingtop = 0;
             foreach (EbReportHeader r_header in Report.ReportHeaders)
             {
                 foreach (EbReportField field in r_header.Fields)
                 {
-                    DrawFields(field, rh_Yposition, 0, 0);
+                    DrawFields(field, rh_Yposition, 0);
                 }
             }
         }
 
         public void DrawPageHeader()
         {
+            detailprintingtop = 0;
             ph_Yposition = (writer.PageNumber == 1) ? rh_height : 0;
             foreach (EbPageHeader p_header in Report.PageHeaders)
             {
                 foreach (EbReportField field in p_header.Fields)
                 {
-                    DrawFields(field, ph_Yposition, 0, 0);
+                    DrawFields(field, ph_Yposition, 0);
                 }
             }
         }
@@ -219,9 +203,7 @@ namespace ExpressBase.Web.Controllers
             {
                 IsLastpage = true;
                 DoLoopInDetail(0);
-
             }
-
         }
 
         public void DoLoopInDetail(int i)
@@ -230,15 +212,15 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in detail.Fields)
                 {
-                    DrawFields(field, dt_Yposition, detailprintingtop, i);
+                    DrawFields(field, dt_Yposition, i);
                 }
-
                 detailprintingtop += detail.Height;
             }
         }
 
         public void DrawPageFooter()
         {
+            detailprintingtop = 0;
             CalculateDetailHeight();
             dt_Yposition = ph_Yposition + ph_height;
             pf_Yposition = dt_Yposition + dt_height;
@@ -246,13 +228,14 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in p_footer.Fields)
                 {
-                    DrawFields(field, pf_Yposition, 0, 0);
+                    DrawFields(field, pf_Yposition, 0);
                 }
             }
         }
 
         public void DrawReportFooter()
         {
+            detailprintingtop = 0;
             CalculateDetailHeight();
             dt_Yposition = ph_Yposition + ph_height;
             pf_Yposition = dt_Yposition + dt_height;
@@ -261,12 +244,12 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in r_footer.Fields)
                 {
-                    DrawFields(field, rf_Yposition, 0, 0);
+                    DrawFields(field, rf_Yposition, 0);
                 }
             }
         }
 
-        public void DrawFields(EbReportField field, float section_Yposition, float detailprintingtop, int i)
+        public void DrawFields(EbReportField field, float section_Yposition, int i)
         {
             var column_name = "";
             var column_val = "";
@@ -340,6 +323,58 @@ namespace ExpressBase.Web.Controllers
             {
                 DrawTextBox(field, field.Title, section_Yposition);
             }
+            else if (field.GetType() == typeof(EbDataFieldNumericSummary))
+            {
+                EbDataFieldNumericSummary f = field as EbDataFieldNumericSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Sum")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Average")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Count")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Max")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsNumeric), f.Function) == "Min")
+                {
+                }
+            }
+            else if (field.GetType() == typeof(EbDataFieldTextSummary))
+            {
+                EbDataFieldTextSummary f = field as EbDataFieldTextSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsText), f.Function) == "Count")
+                {
+                }
+                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Max")
+                {
+                }
+                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Min")
+                {
+                }
+            }
+            else if (field.GetType() == typeof(EbDataFieldDateTimeSummary))
+            {
+                EbDataFieldDateTimeSummary f = field as EbDataFieldDateTimeSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Count")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Max")
+                {
+                }
+                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Min")
+                {
+                }
+            }
+            else if (field.GetType() == typeof(EbDataFieldBooleanSummary))
+            {
+                EbDataFieldBooleanSummary f = field as EbDataFieldBooleanSummary;
+                if (Enum.GetName(typeof(SummaryFunctionsBoolean), f.Function) == "Count")
+                {
+                }
+            }
         }
 
 
@@ -367,9 +402,9 @@ namespace ExpressBase.Web.Controllers
             var llx = field.Left;
             var lly = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
 
-            ColumnText ct1 = new ColumnText(cb);
-            ct1.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);
-            ct1.Go();
+            ColumnText ct = new ColumnText(cb);
+            ct.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);
+            ct.Go();
         }
 
 
@@ -378,7 +413,7 @@ namespace ExpressBase.Web.Controllers
         {
             float radius = field.Width / 2;
             float xval = field.Left + radius;
-            float yval = Report.Height - (printingTop + field.Top + radius);
+            float yval = Report.Height - (printingTop + field.Top + radius + detailprintingtop);
 
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetColorFill(GetColor(field.BackColor));
@@ -390,9 +425,9 @@ namespace ExpressBase.Web.Controllers
         public void DrawEllipse(EbReportField field, float printingTop)
         {
             var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top + field.Height);
+            var y1 = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
             var x2 = field.Left + field.Width;
-            var y2 = Report.Height - (printingTop + field.Top);
+            var y2 = Report.Height - (printingTop + field.Top + detailprintingtop);
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetColorFill(GetColor(field.BackColor));
             cb.SetLineWidth(field.Border);
@@ -403,7 +438,7 @@ namespace ExpressBase.Web.Controllers
         public void DrawRectangle(EbReportField field, float printingTop)
         {
             float x = field.Left;
-            float y = Report.Height - (printingTop + field.Top + field.Height);
+            float y = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
             float w = field.Width;
             float h = field.Height;
             cb.SetColorStroke(GetColor(field.BorderColor));
@@ -416,9 +451,9 @@ namespace ExpressBase.Web.Controllers
         public void DrawHLine(EbReportField field, float printingTop)
         {
             var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top);
+            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
             var x2 = field.Left + field.Width;
-            var y2 = y1;
+            var y2 = y1 + detailprintingtop;
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetLineWidth(field.Border);
             cb.MoveTo(x1, y1);
@@ -429,9 +464,9 @@ namespace ExpressBase.Web.Controllers
         public void DrawVLine(EbReportField field, float printingTop)
         {
             var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top);
+            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
             var x2 = x1;
-            var y2 = Report.Height - (printingTop + field.Top + field.Height);
+            var y2 = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetLineWidth(field.Border);
             cb.MoveTo(x1, y1);
@@ -443,7 +478,7 @@ namespace ExpressBase.Web.Controllers
         {
             DrawHLine(field, printingTop);
             var x = field.Left + field.Width;
-            var y = Report.Height - (printingTop + field.Top);
+            var y = Report.Height - (printingTop + field.Top + detailprintingtop);
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetColorFill(GetColor(field.BorderColor));
             cb.SetLineWidth(field.Border);
@@ -457,7 +492,7 @@ namespace ExpressBase.Web.Controllers
         {
             DrawHLine(field, printingTop);
             var x = field.Left;
-            var y = Report.Height - (printingTop + field.Top);
+            var y = Report.Height - (printingTop + field.Top + detailprintingtop);
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetColorFill(GetColor(field.BorderColor));
             cb.SetLineWidth(field.Border);
@@ -471,7 +506,7 @@ namespace ExpressBase.Web.Controllers
         {
             DrawVLine(field, printingTop);
             var x = field.Left;
-            var y = Report.Height - (printingTop + field.Top);
+            var y = Report.Height - (printingTop + field.Top + detailprintingtop);
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetColorFill(GetColor(field.BorderColor));
             cb.SetLineWidth(field.Border);
@@ -485,7 +520,7 @@ namespace ExpressBase.Web.Controllers
         {
             DrawVLine(field, printingTop);
             var x = field.Left;
-            var y = Report.Height - (printingTop + field.Top + field.Height);
+            var y = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetColorFill(GetColor(field.BorderColor));
             cb.SetLineWidth(field.Border);
@@ -499,7 +534,7 @@ namespace ExpressBase.Web.Controllers
         {
             DrawHLine(field, printingTop);
             var x1 = field.Left + field.Width;
-            var y1 = Report.Height - (printingTop + field.Top);
+            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetColorFill(GetColor(field.BorderColor));
             cb.SetLineWidth(field.Border);
@@ -507,7 +542,7 @@ namespace ExpressBase.Web.Controllers
             cb.LineTo(x1 - 3, y1 - 3);
             cb.LineTo(x1 - 3, y1 + 3);
             var x2 = field.Left;
-            var y2 = Report.Height - (printingTop + field.Top);
+            var y2 = Report.Height - (printingTop + field.Top + detailprintingtop);
             cb.MoveTo(x2, y2);
             cb.LineTo(x2 + 3, y2 + 3);
             cb.LineTo(x2 + 3, y2 - 3);
@@ -518,7 +553,7 @@ namespace ExpressBase.Web.Controllers
         {
             DrawVLine(field, printingTop);
             var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top);
+            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
             cb.SetColorStroke(GetColor(field.BorderColor));
             cb.SetColorFill(GetColor(field.BorderColor));
             cb.SetLineWidth(field.Border);
@@ -526,7 +561,7 @@ namespace ExpressBase.Web.Controllers
             cb.LineTo(x1 + 3, y1 - 3);
             cb.LineTo(x1 - 3, y1 - 3);
             var x2 = field.Left;
-            var y2 = Report.Height - (printingTop + field.Top + field.Height);
+            var y2 = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
             cb.MoveTo(x2, y2);
             cb.LineTo(x2 - 3, y2 + 3);
             cb.LineTo(x2 + 3, y2 + 3);

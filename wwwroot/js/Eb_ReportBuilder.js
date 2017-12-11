@@ -66,7 +66,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         EbDataFieldDateTimeCounter: 0,
         EbDataFieldBooleanCounter: 0,
         EbDataFieldNumericCounter: 0,
-        EbDataFieldSummaryCounter:0,
+        EbDataFieldNumericSummaryCounter: 0,
+        EbDataFieldTextSummaryCounter: 0,
+        EbDataFieldBooleanSummaryCounter: 0,
+        EbDataFieldDateTimeSummaryCounter: 0,
         EbTableCounter: 0,
         EbImgCounter: 0,
         EbDateTimeCounter: 0,
@@ -223,6 +226,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.onPageResize = function () {
         $('.headersections,.multiSplit').css("height", $('.page').height());
         $(".rulerleft").css("height", $('.page').height());
+        this.repExtern.OndragOfSections();
     }
 
     this.createHeaderBox = function () {
@@ -623,8 +627,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.appendSummaryField = function (e) {    
         $("#summarry-editor-modal-container").modal("toggle");
-        var Objid = "DataFieldSummary" + this.idCounter["EbDataFieldSummaryCounter"]++;
-        var obj = new EbObjects["EbDataFieldSummary"](Objid);
+        var type = $(this.selector.selector).attr("eb-type");
+        var Objid = type+ "Summary" + this.idCounter["Eb" + type + "SummaryCounter"]++;
+        var obj = new EbObjects["Eb" + type+ "Summary"](Objid);
         $(this.$sectionselect.val()).append(obj.$Control.outerHTML());
         obj.DataField = $(this.selector.selector).text().trim();
         obj.Title = this.$funcselect.val()+"("+$(this.selector.selector).text().trim()+")";

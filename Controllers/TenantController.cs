@@ -108,8 +108,15 @@ namespace ExpressBase.Web.Controllers
         public IActionResult TenantAddAccount(int i)
         {
             var req = this.HttpContext.Request.Form;
+            var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest {
+                SolutionName = req["Sname"],
+                IsolutionId = "i-sid",
+                EsolutionId = req["esid"],
+                Description = req["Desc"],
+                Subscription = req["Subscription"]
+            });   
             
-            return View();
+            return RedirectToAction("TenantDashboard", "Tenant");
         }
 
         [HttpGet]

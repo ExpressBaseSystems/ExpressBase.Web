@@ -36,7 +36,7 @@
         <div class="form-inline">
             <button class="btn btn-default" id="reload"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
 
-            @using (Html.BeginForm(editor, whichController, FormMethod.Get, new { target = "_blank" }))
+            @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
             {
 
                 <button href="" class="btn btn-primary"><i class="fa fa-plus-circle"></i> New</button>

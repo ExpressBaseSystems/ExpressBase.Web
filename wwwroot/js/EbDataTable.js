@@ -274,6 +274,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.Init = function () {
+        //this.MainData = null;
         $.event.props.push('dataTransfer');
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
@@ -319,6 +320,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
 
         this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+
+        this.table_jQO.on('length.dt', function (e, settings, len) {
+            console.log('New page length: ' + len);
+            //this.Api.ajax.reload();
+        });
     };
 
     this.addSerialAndCheckboxColumns = function () {
@@ -405,41 +411,28 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.select = true;
         o.retrieve = true;
         o.keys = true;
-        if (this.MainData !== null && this.login == "uc") {
-            this.filterValues = this.getFilterValues();
-            if (this.filterValues.length == 0) {
-                dvcontainerObj.currentObj.data = this.MainData;
-                o.ajax = function (data, callback, settings) {
-                    setTimeout(function () {
-                        callback({
-                            draw: dvcontainerObj.currentObj.data.draw,
-                            data: dvcontainerObj.currentObj.data.data,
-                            recordsTotal: dvcontainerObj.currentObj.data.recordsTotal,
-                            recordsFiltered: dvcontainerObj.currentObj.data.recordsFiltered,
-                        });
-                    }, 50);
-
-                }
-                o.data = this.receiveAjaxData(this.MainData);
+        this.filterValues = this.getFilterValues();
+        if (this.MainData !== null && this.login == "uc" && this.filterValues.length == 0) {
+            o.dom = "<'col-md-12 noPadding'B>rt";
+            dvcontainerObj.currentObj.data = this.MainData;
+            o.ajax = function (data, callback, settings) {
+                setTimeout(function () {
+                    callback({
+                        draw: dvcontainerObj.currentObj.data.draw,
+                        data: dvcontainerObj.currentObj.data.data,
+                        recordsTotal: dvcontainerObj.currentObj.data.recordsTotal,
+                        recordsFiltered: dvcontainerObj.currentObj.data.recordsFiltered,
+                    });
+                }, 50);
             }
-            else {
-                dvcontainerObj.currentObj.Pippedfrom = "";
-                $("#Pipped").text("");
-                o.ajax = {
-                    //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
-                    url: this.ssurl + '/ds/data/' + this.dsid,
-                    type: 'POST',
-                    timeout: 180000,
-                    data: this.ajaxData.bind(this),
-                    dataSrc: this.receiveAjaxData.bind(this),
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                    },
-                    crossDomain: true
-                };
-            }
+            o.data = this.receiveAjaxData(this.MainData);
         }
         else {
+            o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
+            if (this.login === "uc") {
+                dvcontainerObj.currentObj.Pippedfrom = "";
+                $("#Pipped").text("");
+            }
             o.ajax = {
                 //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
                 url: this.ssurl + '/ds/data/' + this.dsid,
@@ -520,7 +513,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.receiveAjaxData = function (dd) {
-        this.MainData = dd.data;
+        this.MainData = dd;
         //if (!dd.IsPaged) {
         //    this.Api.paging = dd.IsPaged;
         //    this.Api.lengthChange = false;
@@ -692,29 +685,30 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
         //else
         //    this.chartJs.drawGraphHelper(this.Api.data());
-
-        if (this.login == "uc") {
-            $.each(dvcontainerObj.dvcol, function (key, obj) {
-                if (dvcontainerObj.currentObj.Name === obj.EbObject.Pippedfrom) {
-
-                    if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                        dvcontainerObj.dvcol[key].EbObject.data = this.MainData;
-                        dvcontainerObj.currentObj.data = this.MainData;
-                        dvcontainerObj.dvcol[key].drawGraphHelper(this.Api.data());
-                    }
-                    //else {
-                    //    dvcontainerObj.dvcol[key].Api.clear().draw();
-                    //    dvcontainerObj.dvcol[key].Api.rows.add(this.Api.data()); // Add new data
-                    //    dvcontainerObj.dvcol[key].Api.columns.adjust().draw(); 
-                    //    dvcontainerObj.dvcol[key].EbObject.data = this.MainData;
-                    //    dvcontainerObj.currentObj.data = this.MainData;
-                    //}
-                }
-            }.bind(this));
-        }
+        if (this.login == "uc") 
+            this.ModifyingDVs(dvcontainerObj.currentObj.Name);
+        
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight()
+    }
+
+    this.ModifyingDVs = function (parentName) {
+        $.each(dvcontainerObj.dvcol, function (key, obj) {
+            if (parentName === obj.EbObject.Pippedfrom) {
+                if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+                    dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
+                    dvcontainerObj.dvcol[key].drawGraphHelper(this.Api.data());
+                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name);
+                }
+                //else {
+                //    dvcontainerObj.dvcol[key].Api.clear().draw();
+                //    dvcontainerObj.dvcol[key].Api.rows.add(this.Api.data()); // Add new data
+                //    dvcontainerObj.dvcol[key].Api.columns.adjust().draw(); 
+                //    dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
+                //}
+            }
+        }.bind(this));
     }
 
     this.drawCallBackFunc = function (settings) {
@@ -730,6 +724,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //}
         //this.btnGo.attr("disabled", false);
         //dvcontainerObj.currentObj.data = this.Api.data();
+        if(this.login === "uc")
+            this.ModifyingDVs(dvcontainerObj.currentObj.Name);
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {

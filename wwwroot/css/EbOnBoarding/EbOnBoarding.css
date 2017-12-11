@@ -13,6 +13,9 @@
 .pd-0 {
     padding: 0;
 }
+.mr-t-0{
+margin-top:0;
+ }
 
 .pd-r-0 {
     padding-right: 0
@@ -116,25 +119,19 @@
 }
 /*ProfileSetup end*/
 /*tdashboard*/
-.t-dash-boardrow .col-lg-9, .col-md-9 {
-    width: 80%;
-}
-
-.t-dash-boardrow .col-lg-3, .col-md-3 {
-    width: 20%;
-}
-
 .tdasboard-sidebar {
     height: 100vh;
     padding: 0;
     position: fixed;
-    background: #fbfbfb;
+    /*background: #fbfbfb;*/
 }
 
 .t-container {
     height: inherit;
     width: 100%;
-    padding-top: 20px;
+    padding-top: 30px;
+    color: #666666;
+    font-family: open sans;
 }
 
     .t-container .list-group-item {
@@ -149,9 +146,8 @@
     font-family: open sans;
     font-weight: 300;
 }
-
 .tdash-box {
-    background: white;
+    /*background: white;*/
     width: 100%;
 }
 
@@ -172,6 +168,7 @@
     width: 150px;
     border: 1px solid #ccc;
     margin-right: 15px;
+    background: white;
 }
 
 .tdash-icon {
@@ -213,3 +210,72 @@
     margin-top: 30px;
 }
 /*tdashboard end*/
+/*solution dashboard */
+.s-dash-solution-desc {
+    background: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+.s-dash-container {
+    min-height: 100vh;
+    padding-top: 50px;
+}
+.s-dash-workplace {
+    font-family: open sans;
+    font-weight: 300;
+    padding: 30px 10px 0px 0px;
+}
+    .s-dash-workplace .s-dash-workplace-tabs {
+        background: white;
+        min-height: 80vh;
+        border-radius: 4px;
+    }
+    .s-dash-workplace .nav-tabs {
+        border-bottom: 2px solid #DDD;
+    }
+
+    .s-dash-workplace .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+        border-width: 0;
+    }
+    .s-dash-workplace .nav > li{
+       width:25%;
+    }
+
+    .s-dash-workplace .nav > li > a {
+        padding: 15px 15px;
+        font-size: 14px;
+        text-align: center;
+        border: none;
+        color: #666;
+    }
+
+    .s-dash-workplace .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+        border: none;
+        color: #4285F4 !important;
+        background: transparent;
+    }
+    .s-dash-workplace .nav-tabs > li > a::after {
+        content: "";
+        background: #4285F4;
+        height: 2px;
+        position: absolute;
+        width: 100%;
+        left: 0px;
+        bottom: -1px;
+        transition: all 250ms ease 0s;
+        transform: scale(0);
+    }
+   .s-dash-workplace .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
+        transform: scale(1);
+    }
+    .s-dash-workplace .tab-nav > li > a::after {
+        background: #21527d none repeat scroll 0% 0%;
+        color: #fff;
+    }
+    .s-dash-workplace .tab-content {
+       padding:10px;
+    }
+    .s-dash-workplace .solution-logo{
+        width:100%;
+    }

@@ -5,20 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Summernote</title>
-    @*
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css " />*@
-
+    
     <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
-
-    @*
-    <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />*@
-    @*
     <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">*@
 </head>
 <body>
@@ -195,40 +184,6 @@
 
         }
 
-        function insertAtCursor(text) {
-            $(".note-editable").attr("tabindex", "1").attr("onclick", "$(this).focus();");
-            //document.getElementsByClassName("note-editable").focus();
-            var sel, range;
-            var text = text;
-            if (window.getSelection) {
-
-                sel = window.getSelection();
-                console.log(sel);
-                if (sel.getRangeAt && sel.rangeCount) {
-                    range = sel.getRangeAt(0);
-                    range.deleteContents();
-
-                    var lines = text.replace("\r\n", "\n").split("\n");
-                    var frag = document.createDocumentFragment();
-                    for (var i = 0, len = lines.length; i < len; ++i) {
-                        if (i > 0) {
-                            frag.appendChild(document.createElement("br"));
-                        }
-                        frag.appendChild(document.createTextNode(lines[i]));
-                    }
-
-                    range.insertNode(frag);
-                }
-            } else if (document.selection && document.selection.createRange) {
-                document.selection.createRange().text = text;
-            }
-        }
-
-        function insertselected(text) {
-            var text = text;
-            $(".note-editable").append(text);
-        }
-
         function DrawColumnTree(result) {
 
             $.each(result.columns, function (i, columnCollection) {
@@ -281,3 +236,8 @@
     </script>
 </body>
 </html>
+<style>
+    .ebdscols {
+        cursor : pointer;
+    }
+</style>

@@ -141,5 +141,19 @@ namespace ExpressBase.Web.Controllers
             var r = this.ServiceClient.Post<bool>(new ChangeFilesDBConnectionRequest { FilesDBConnection = FilesDB, IsNew = false });
             return Redirect("/ConnectionManager");
         }
+
+        [HttpPost]
+        public IActionResult AddSMSAccount(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            SMSConnection smscon = new SMSConnection();
+            smscon.ProviderName = req["provider"];
+            smscon.NickName = req["nickname"];
+            smscon.UserName = req["username"];
+            smscon.Password = req["pwd"];
+
+            var r = this.ServiceClient.Post<bool>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true });
+            return Redirect("/ConnectionManager");
+        }
     }
 }

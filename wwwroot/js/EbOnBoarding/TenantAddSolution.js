@@ -94,8 +94,15 @@
     };
     this.addAmountTodiv = function (i, obj) {  
         for (var obj2 in this.object) {
-            if ($(obj).attr("plan") === this.object[obj2].plan) 
-                $(obj).children().find(".T-add-amount").text("$" + this.object[obj2].amount);        
+            if ($(obj).attr("plan") === this.object[obj2].Plan) 
+                if ($(obj).attr("plan") === "0") {
+                    if ($(obj).parent("tr").attr("pritem") === "ChatBot")
+                        $(obj).children().find(".T-add-amount").text(this.object[obj2].EvalDays + "days");
+                    else
+                        $(obj).children().find(".T-add-amount").text("Free for EVER"); 
+                }
+            else
+                $(obj).children().find(".T-add-amount").text("$" + this.object[obj2].Amount);        
         }        
     };
 

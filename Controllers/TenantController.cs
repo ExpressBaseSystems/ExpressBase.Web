@@ -30,6 +30,8 @@ namespace ExpressBase.Web.Controllers
 {
     public class TenantController : EbBaseNewController
     {
+        public const string SolutionName = "SolutionName";
+
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         // GET: /<controller>/
@@ -82,6 +84,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult SolutionDashBoard()
+        {
+            ViewBag.SolutionName = TempData[SolutionName];
+            return View();
+        }
 
         [HttpGet]
         public IActionResult PricingSelect()
@@ -108,15 +116,15 @@ namespace ExpressBase.Web.Controllers
         public IActionResult TenantAddAccount(int i)
         {
             var req = this.HttpContext.Request.Form;
+            TempData[SolutionName] = req["Sname"];
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest {
                 SolutionName = req["Sname"],
                 IsolutionId = "i-sid",
                 EsolutionId = req["esid"],
                 Description = req["Desc"],
                 Subscription = req["Subscription"]
-            });   
-            
-            return RedirectToAction("TenantDashboard", "Tenant");
+            });
+            return RedirectToAction("SolutionDashBoard", new RouteValueDictionary(new { controller = "Tenant", action = "SolutionDashBoard" })); // convert get to post
         }
 
         [HttpGet]

@@ -323,6 +323,16 @@ namespace ExpressBase.Web.Controllers
             {
                 DrawTextBox(field, field.Title, section_Yposition);
             }
+            else if (field.GetType() == typeof(EbDataFieldSummary))
+            {
+                //if (field.Function == Average)
+                //{ }
+                //Count,
+                //Max,
+                //Min,
+                //Sum
+                DrawTextBox(field, field.Title, section_Yposition);
+            }
         }
 
 

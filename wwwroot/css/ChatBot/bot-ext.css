@@ -3,7 +3,7 @@
     flex-direction: column;
     position: fixed;
     right: 24px;
-    bottom: 15px;
+    bottom: 70px;
     width: 28%;
     height: 65%;
     border-radius: 3.5px;
@@ -24,7 +24,7 @@
     right: 24px;
     bottom: 15px;
     font-size: 24px;
-    background-color: #369;
+    background-color: var( --ebbotThemeColor );
     color: #fff;
     padding: 12px;
     Float: right;
@@ -55,12 +55,15 @@
 /*-----*/
 
 .eb-chat-head .bot-icon {
-    height: 50px;
-    width: 50px;
+    height: 44px;
+    width: 44px;
+    float: left;
+    border-radius: 4px;
+    text-align: center;
 }
 
 .eb-chat-head {
-    background-color: #428bca;
+    background-color: var( --ebbotThemeColor );
     border-radius: 3px 3px 0px 0px;
     color: white;
     padding: 5px 15px;
@@ -74,6 +77,8 @@
 .bot-head {
     font-family: arial;
     font-size: 20px;
+    display: inline-block;
+    margin-top: 10px;
 }
 
 .inline-block {
@@ -88,7 +93,7 @@
     display: inline-block;
     margin-bottom: -6px;
     border-radius: 24px;
-    background-color: #428bca;
+    background-color: var( --ebbotThemeColor );
 }
 
 .chatclose {

@@ -2,7 +2,7 @@
     var ss = document.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";
-    ss.href = "/css/ChatBot/bot-ext.css";
+    ss.href = "http://expressbase.com/css/ChatBot/bot-ext.css";
     document.getElementsByTagName("head")[0].appendChild(ss);
 
     var chatHead = document.createElement("div");
@@ -85,8 +85,8 @@
         var ebbot_iframe = document.getElementById("ebbot_iframe");
 
         if (!ebbot_iframe.getAttribute("src")) {
-            //ebbot_iframe.setAttribute("src", "https://expressbase.azurewebsites.net//bote/bot?tid=" + window.EXPRESSbase_SOLUTION_ID);
-            ebbot_iframe.setAttribute("src", "//eb_roby_dev.localhost:5000/bote/bot?tid=" + window.EXPRESSbase_SOLUTION_ID);
+            ebbot_iframe.setAttribute("src", "https://expressbase.azurewebsites.net//bote/bot?tid=" + window.EXPRESSbase_SOLUTION_ID);
+            //ebbot_iframe.setAttribute("src", "//eb_roby_dev.localhost:5000/bote/bot?tid=" + window.EXPRESSbase_SOLUTION_ID);
         }
         if (iframecont.style.display === "none") {
             this.style.display = "none";

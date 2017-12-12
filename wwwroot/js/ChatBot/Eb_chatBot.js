@@ -334,7 +334,7 @@
     };
     this.authenticate = function () {
         this.showTypingAnim();
-        $.post("http://eb_roby_dev.localhost:5000/bote/MyAuthenticate",
+        $.post("../bote/MyAuthenticate",
             {
                 "cid": "eb_roby_dev",
                 "socialId": this.FBResponse.id,
@@ -356,7 +356,6 @@
 
     this.FBNotLogined = function () {
         this.Query("Hello I am EBbot, Nice to meet you. Do you mind loging into facebook.", ["Login", "No, Sorry"], "fblogin");
-        //chatBotObj.getMsg($("<button class='btn' onclick='login();'>Login with Facebook</button>"));
     }.bind(this);
 
     this.init();

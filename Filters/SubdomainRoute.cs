@@ -50,10 +50,15 @@ namespace ExpressBase.Web.Filters
             var host = context.HttpContext.Request.Host.Host.Replace("www.", string.Empty);
             var path = context.HttpContext.Request.Path;
             string[] subdomain = host.Split('.');
-            if(subdomain[0] == "bot")
+            if (subdomain[0] == "bot")
             {
                 context.RouteData.Values["controller"] = "EBProducts"; //Goes to the relevant Controller  class
                 context.RouteData.Values["action"] = "Bot";
+            }
+            else if (subdomain[0] == "sms")
+            {
+                context.RouteData.Values["controller"] = "SMS"; //Goes to the relevant Controller  class
+                context.RouteData.Values["action"] = "CallBack";
             }
             else if (path == "/")
             {

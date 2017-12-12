@@ -13,7 +13,7 @@
         <div class="col-md-4">
             <div class="row" style="text-align:center"><h4>Connect Your Files DataBase</h4></div>
             </br>
-            @using (Html.BeginForm("EditFilesDB", "ConnectionManager", FormMethod.Post))
+            @using (Html.BeginForm("AddFilesDB", "ConnectionManager", FormMethod.Post))
             {
                 <div class="form-group">
                     <!-- <label class ="control-label" for="dropdown">Mail Server:</label> -->
@@ -26,7 +26,7 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">PGSQL</a></li>
+                                    <li><a href="">MongoDB</a></li>
                                     <li><a fontcolor="red">Cassandra Coming Soon</a></li>
                                     <li><a fontcolor="red">HBase Coming Soon</a></li>
                                     <li><a fontcolor="red">OrientDB Coming Soon</a></li>
@@ -38,7 +38,7 @@
 
                 <div class="form-group">
                     <!-- <label class ="control-label" for="smtp">Smtp:</label> -->
-                    <input type="text" class="form-control" id="databasename" name="databasename" placeholder=@ViewBag.FilesDB.FilesDB_url>
+                    <input type="text" class="form-control" id="url" name="url" placeholder="MongoDB Url" value= @(String.IsNullOrEmpty(ViewBag.FilesDb.FilesDB_url)?String.Empty:ViewBag.FilesDb.FilesDB_url)>
                 </div>
                 <div id="submit" class="form-group">
                     <button type="submit" class="btn btn-primary pull-right">Submit</button>

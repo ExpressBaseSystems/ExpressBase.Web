@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
+<div class="row s-dash-container">
+    <div class="col-md-2 col-lg-2 pd-0 tdasboard-sidebar">
+        <div class="t-container">
+            <ul class="list-group">
+                <li class="list-group-item"><i class="fa fa-cog fa-lg tdash-icon" aria-hidden="true"></i> Solutions<div class="tr-on-hov"></div></li>
+                <li class="list-group-item"><i class="fa fa-usd fa-lg tdash-icon" aria-hidden="true"></i> Billing<div class="tr-on-hov"></div></li>
+                <li class="list-group-item"><i class="fa fa-life-ring fa-lg tdash-icon" aria-hidden="true"></i> Support<div class="tr-on-hov"></div></li>
+
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-10 col-lg-10 pd-0 pull-right s-dash-workplace">
+        <div class="col-md-12 pd-0 s-dash-solution-desc">
+            <div class="col-md-10 pd-0">
+                <h3 class="mr-t-0">@ViewBag.SolutionName Solution Name</h3>
+                <p class="small">Client-id</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ultricies massa a nisl fringilla finibus. Fusce mattis molestie nisl.</p>
+            </div>
+            <div class="col-md-2 pd-0">
+                <img class="solution-logo" src="~/images/your-logo.png" />
+            </div>   
+        </div>
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item active">
+                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">General</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#Connections" role="tab">Connection Manager</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#team" role="tab">Team</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#billing" role="tab">Billing</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="home" role="tabpanel">
+                                                    
+                </div>
+                <div class="tab-pane" id="Connections" role="tabpanel">
+
+                </div>
+                <div class="tab-pane" id="team" role="tabpanel">
+
+                </div>
+                <div class="tab-pane" id="billing" role="tabpanel">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

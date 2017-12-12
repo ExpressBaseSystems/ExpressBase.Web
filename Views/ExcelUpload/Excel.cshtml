@@ -1,0 +1,934 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+
+}
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+
+
+@using (Html.BeginForm(FormMethod.Post, new { id = "excelform", enctype = "multipart/form-data" }))
+{
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="panel panel-primary" id="panel1">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Upload Your Excel File</h3>
+                            <span id="span1" class="pull-right clickable"><i class="fa fa-angle-up" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="panel-body">
+                            <input type="file" id="excellfile" name="excelfile" onchange="UploadFile()" accept=".xls,.xlsx" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--.....................................................................-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary" id="panel2">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Select Any Excel Sheet</h3>
+                            <span id="span2" class="pull-right clickable"><i class="fa fa-angle-up" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="panel-body">
+                            <select id="sheetNo" class="form-control" style="visibility:hidden">
+                                <option value="sel">--Select--</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--.....................................................................-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary" id="panel3">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Show and Confirm Selected Sheet</h3>
+                            <span class="pull-right clickable" id="span3"><i class="fa fa-angle-up" aria-hidden="true"></i></span>
+                        </div>
+                        <div id="tblpanel" class="panel-body">
+
+                            <div id="btn">
+                                <input type="button" id="confirm" value="Confirm" class="btn btn-primary active" style="visibility:hidden" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*.....................................................................................*@
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary" id="panel4">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Choose Your Option To Store Selected Sheet</h3>
+                            <span class="pull-right clickable" id="span4"><i class="fa fa-angle-up" aria-hidden="true"></i></span>
+                        </div>
+                        <div id="tblpanel" class="panel-body">
+
+                            <div class="funkyradio">
+                                <div class="funkyradio-default">
+                                    <div class="funkyradio-info">
+                                        <input type="radio" name="radio" id="rd1" />
+                                        <label for="rd1">Create New Table</label>
+                                    </div>
+                                    <div class="funkyradio-info">
+                                        <input type="radio" name="radio" id="rd2" />
+                                        <label for="rd2">Map To Existing Table</label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--............................................................................................-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary" id="panel5">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Enter Your New Table Name</h3>
+                            <span class="pull-right clickable" id="span5"><i class="fa fa-angle-up" aria-hidden="true"></i></span>
+                        </div>
+                        <div id="tblpanel" class="panel-body">
+
+                            <input type="text" id="tbl_name" name="tbl_name" value="Table1" class="form-control" />
+                            <input type="button" id="createtbl" value="Create" class="btn btn-primary active" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--...........................................................................-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary" id="panel6">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Choose Any Table To View The Structure</h3>
+                            <span class="pull-right clickable" id="span6"><i class="fa fa-angle-up" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="list-group" id="list">
+
+                            </div>
+
+                            <!--Div for column details of selected table-->
+                            <div id="col">
+
+
+                            </div>
+
+                            @*Div for Map button*@
+                            <div id="map_btn">
+                                <input type="button" id="map" value="Map the Columns" class="btn btn-primary active" style="display:none" />
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--.....................................................................................-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary" id="panel7">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Customize Your Table Columns</h3>
+                            <span class="pull-right clickable" id="span7"><i class="fa fa-angle-up" aria-hidden="true"></i></span>
+                        </div>
+                        <div id="colpanel" class="panel-body">
+                            <div id="tblbtn1">
+                                <input type="button" id="tblcreate" value="Create Table" class="btn btn-primary active" style="visibility:hidden" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Div for store path, files & existing db tbl col count-->
+        <div style="width:50px;height:50px;">
+            <input type="text" id="path" hidden />
+            <input type="text" id="sheet" hidden />
+            <input type="text" id="sheetcount" hidden />
+            <input type="text" id="tblname" hidden />
+            <input type="text" id="count" hidden />
+            <input type="text" id="colcount" hidden />
+            <input type="text" id="newtbl" hidden />
+        </div>
+
+        <div class="alert alert-success" id="alert" style="display:none">
+
+        </div>
+    </body>
+}
+
+
+<style>
+    .container {
+        width: 2000px;
+        position: center;
+        margin-left: 150px;
+        margin-right: 150px;
+    }
+
+    .row {
+        margin-top: 10px;
+        padding: 0 10px;
+    }
+
+    .clickable {
+        cursor: pointer;
+    }
+
+    .panel-primary {
+        position: center;
+        margin: 0 !important;
+    }
+
+    .panel-heading span {
+        margin-top: -20px;
+        font-size: 15px;
+    }
+
+    .panel-body {
+        padding: 0px;
+        text-align: center;
+        margin-top: 50px;
+        margin-bottom: 50px;
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+
+    #tblpanel {
+        width: auto;
+    }
+
+    div.dataTables_wrapper {
+        width: 500px;
+        margin: 0 auto;
+    }
+
+    #sheet1, #radio_btn {
+        border: medium;
+        position: fixed;
+    }
+
+
+    .funkyradio div {
+        clear: both;
+        overflow: hidden;
+    }
+
+    .funkyradio label {
+        width: 100%;
+        border-radius: 3px;
+        border: 1px solid #D1D3D4;
+        font-weight: normal;
+    }
+
+    .funkyradio input[type="radio"]:empty, .funkyradio input[type="checkbox"]:empty {
+        display: none;
+    }
+
+        .funkyradio input[type="radio"]:empty ~ label, .funkyradio input[type="checkbox"]:empty ~ label {
+            position: relative;
+            line-height: 2.5em;
+            text-indent: 3.25em;
+            margin-top: 2em;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+            .funkyradio input[type="radio"]:empty ~ label:before, .funkyradio input[type="checkbox"]:empty ~ label:before {
+                position: absolute;
+                display: block;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                content: '';
+                width: 2.5em;
+                background: #D1D3D4;
+                border-radius: 3px 0 0 3px;
+            }
+
+    .funkyradio input[type="radio"]:hover:not(:checked) ~ label:before, .funkyradio input[type="checkbox"]:hover:not(:checked) ~ label:before {
+        content: '\2714';
+        text-indent: .9em;
+        color: #C2C2C2;
+    }
+
+    .funkyradio input[type="radio"]:hover:not(:checked) ~ label, .funkyradio input[type="checkbox"]:hover:not(:checked) ~ label {
+        color: #888;
+    }
+
+    .funkyradio input[type="radio"]:checked ~ label:before, .funkyradio input[type="checkbox"]:checked ~ label:before {
+        content: '\2714';
+        text-indent: .9em;
+        color: #333;
+        background-color: #ccc;
+    }
+
+    .funkyradio-info input[type="radio"]:checked ~ label:before, .funkyradio-info input[type="checkbox"]:checked ~ label:before {
+        color: #fff;
+        background-color: #5bc0de;
+    }
+
+    #wrapper {
+        border: medium;
+        position: fixed;
+        margin-left: auto;
+        margin-right: auto;
+        height: auto;
+        width: auto;
+    }
+
+    #wrap1 {
+        border: medium;
+        position: fixed;
+        margin-left: auto;
+        margin-right: auto;
+        height: auto;
+        width: auto;
+    }
+
+    #tbl {
+        width: 100%;
+        height: 100%;
+    }
+
+    #tblcreate, #createtbl {
+        margin-top: 50px;
+    }
+
+    .list-group {
+        width: 30%;
+        overflow-y: scroll;
+        height: 300px;
+    }
+
+    #list, #col, #map_btn {
+        padding: 5px;
+        float: left;
+        margin: 20px;
+    }
+
+    .alert-success {
+        color: #2471A3;
+        background-color: #FBFCFC;
+        border-color: #FBFCFC;
+        width: 50%;
+        text-align: center;
+    }
+</style>
+
+
+
+<script>
+
+        //.........trigger when uploading a file.step1.........
+
+        function UploadFile()
+        {
+
+            var fileUpload = $("#excellfile").get(0);
+            var files = fileUpload.files;
+            var data1 = new FormData();
+            for (var i = 0; i < files.length; i++)
+            {
+                data1.append(files[i].name, files[i]);
+            }
+            fileName = files[0].name;
+            if (fileName == '')
+            {
+                $("#alert").show();
+                $("#alert").text("Please upload excel file");
+                $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+
+            }
+            else
+            {
+                var Extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+                if (Extension == "xls" || Extension == "xlsx")
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: "/ExcelUpload/GetWorksheetsAsync",
+                        contentType: false,
+                        processData: false,
+                        data: data1,
+                        success: function (message)
+                        {
+                            if (message != "")
+                            {
+                                $("#excellfile").data("key", message);
+                                $('#panel1').find('.panel-body').slideUp();
+                                $('#panel1').find('#span1').hide();
+                                $('#panel2').show();
+                                $("#sheetNo").css('visibility', 'visible');
+                                $('#path').val(message[message.length - 1]);
+                                $('#sheetcount').val(message.length - 1);
+                                var sel = $('#sheetNo');
+                                for (var i = 0; i < message.length - 1; i++)
+                                {
+                                    $('#sheetNo').append(`<option value='${message[i]}'>${message[i]}</option>`);
+
+                                }
+
+                            }
+
+                        },
+                        error: function ()
+                        {
+                            $("#alert").show();
+                            $("#alert").text("Error in File Uploading");
+                            $("#alert").append(`<a href="#" class="close" data-dismiss="alert">&times;</a>`);
+                        }
+                    });
+                }
+                else
+                {
+
+
+                    $("#alert").show();
+                    $("#alert").text("Please upload xls or xlsx format file");
+                    $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                }
+            }
+        }
+
+        //...........................................................................................................
+
+        $('document').ready(function () {
+
+
+
+            //.......................jquery for panel.........................................
+
+            $(document).on('click', '.panel-heading span.clickable', function (e) {
+                var $this = $(this);
+                if (!$this.hasClass('panel-collapsed')) {
+                    $this.parents('.panel').find('.panel-body').slideUp();
+                    $this.addClass('panel-collapsed');
+                    $this.find('i').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
+                } else {
+                    $this.parents('.panel').find('.panel-body').slideDown();
+                    $this.removeClass('panel-collapsed');
+                    $this.find('i').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
+                }
+            })
+
+            //.........hide panel2 initial.......
+
+            $('#panel2').toggle();
+            $('#panel3').toggle();
+            $('#panel4').toggle();
+            $('#panel5').toggle();
+            $('#panel6').toggle();
+            $('#panel7').toggle();
+
+
+            //..................trigger when select a excel sheet......step2........................................................
+            $("#sheetNo").change(function () {
+                var selected = $(this).find('option:selected').val();
+                var file = $("#path").val();
+                $('#sheet').val(selected);
+                if (selected == "sel")
+                {
+                    $("#tbl").remove();
+                    $('#confirm').hide();
+                    $('#cancel').hide();
+                    $("#alert").show();
+                    $("#alert").text("Select valid sheet");
+                    $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                }
+                else {
+                    $.post("/ExcelUpload/ReadWorksheets",
+                        {
+                            "selected_opt": selected,
+                            "file_path": file
+                        },
+                        function (result) {
+                            $('#panel2').find('.panel-body').slideUp();
+                            $('#span2').hide();
+                            $('#panel3').show();
+                            $('#panel3').find('#span2').show();
+                            $('#panel3').find('.panel-body').slideDown();
+
+                            $("#tbl_wrapper").remove();
+
+                            $(result).insertBefore("#confirm");
+
+                                $('#confirm').show();
+                                $("#btn").css('visibility', 'visible');
+                                $("#confirm").css('visibility', 'visible');
+
+                                $('#tbl').DataTable();
+                        });
+
+                }
+
+            });
+
+            //.............................................................................................
+            $('#confirm').click(function () {
+
+                $('#panel3').find('.panel-body').slideUp();
+                $('#span3').hide();
+                $('#panel4').show();
+                $('#panel4').find('#span4').show();
+                $('#panel4').find('.panel-body').slideDown();
+            });
+
+         //.............................................................................
+
+            $('#rd1').click(function () {
+                $('#panel4').find('.panel-body').slideUp();
+                $('#span4').hide();
+                $('#panel5').show();
+                $('#panel5').find('#span5').show();
+                $('#panel5').find('.panel-body').slideDown();
+                $('#tblname_id').show();
+
+            });
+
+            //......trigger when create button click.............
+
+            $('#createtbl').click(function () {
+                var path = $("#path").val();
+                var sheet = $("#sheet").val();
+                var tbl = $('#tbl_name').val();
+                $('#tblname').val(tbl);
+                $.ajax({
+                    type: "POST",
+                    url: "/ExcelUpload/IsTableExist",
+                    data: {
+                        "selected_opt": sheet,
+                        "file_path": path,
+                        "tblName": tbl
+
+                    },
+                    success: function (result) {
+                        //alert(result.length)
+                        if (result.length > 1)
+                        {
+                            $('#panel5').find('.panel-body').slideUp();
+                            $('#span5').hide();
+                            $('#panel7').show();
+                            $('#panel7').find('#span2').show();
+                            $('#panel7').find('.panel-body').slideDown();
+
+                            $(result[0]).insertBefore("#tblbtn1");
+                            $("#colcount").val(result[1]);
+                            $("#tblcreate").css('visibility', 'visible');
+
+                            $('#col_cust').DataTable({
+                                "scrollY": 200,
+                                "scrollX": true
+                            });
+                        }
+                        else {
+                            $("#alert").show();
+                            $("#alert").text(result[0]);
+                            $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                        }
+
+
+                    },
+                    error: function () {
+                        $("#alert").show();
+                        $("#alert").text("There was error in select columns");
+                        $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                    }
+                });
+            });
+
+            //..................trigger when click on create tbl after customize the columns
+            $('#tblcreate').click(function () {
+                var count = $('#colcount').val();
+                var sheet = $('#sheet').val();
+                var path = $('#path').val();
+                var tbl = $('#tblname').val();
+                var ary = [];
+                var flag = 0;
+                for (var i= 0; i <count;i++)
+                {
+                    var col = "#col_name" + (i + 1);
+                    var type = "#col_type" + (i + 1);
+                    if ($(type).val() == "sel")
+                    {
+
+                        flag = 1;
+                        break;
+                    }
+                    else
+                    {
+                        ary[i] = { "colName": $(col).val(), "dataType": $(type).val() };
+                        flag = 0;
+                    }
+
+                }
+                if (flag == 0)
+                {
+                    $.ajax({
+                    type: "POST",
+                    url: "/ExcelUpload/CreateTable",
+                    data: { "selected_opt": sheet, "file_path": path, "tblName": tbl, "colcust": JSON.stringify({ "abc": ary }) },
+
+                    success: function (result) {
+
+                        var count = $('#sheetcount').val();
+                        if (count > 1) {
+                            if (confirm("Do you want to continue process?") == true) {
+                                var x = $("#excellfile").data("key");
+
+                                var this_sheet = $("#sheet").val();
+
+                                var y = x.indexOf(this_sheet);
+
+                                x.splice(y, 1);
+
+                                $("#excellfile").data("key", x);
+
+                                $('#panel3').hide();
+                                $('#panel4').hide();
+                                $('#panel5').hide();
+                                $('#panel6').hide();
+                                $('#panel7').hide();
+                                //$('#panel2').();
+                                $('#panel2').find('#span2').show();
+                                $('#panel2').find('.panel-body').slideDown();
+                                $('#sheetcount').val(x.length - 1);
+                                var sel = $('#sheetNo');
+                                $('#sheetNo').find('option').remove();
+                                $('#sheetNo').append(`<option value='sel'>--Select--</option>`);
+                                for (var i = 0; i < x.length - 1; i++) {
+
+                                    if (x[i] != this_sheet) {
+                                        $('#sheetNo').append(`<option value='${x[i]}'>${x[i]}</option>`);
+                                    }
+
+
+                                }
+                                count--;
+                            }
+                            else {
+
+                                window.location.reload();
+                            }
+
+                        }
+                        else {
+                            var path = $("#path").val();
+                            $.ajax({
+                                type: "POST",
+                                url: "/ExcelUpload/DeleteFile",
+                                data: {
+                                    "path": path
+                                },
+                                success: function (result) {
+                                    $("#alert").show();
+                                    $("#alert").text("result");
+                                    $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                                    //alert(result);
+                                    //Window.location.reload();
+                                }
+                            });
+                        }
+
+
+                    },
+                    error: function () {
+                        $("#alert").show();
+                        $("#alert").text("There was error in get tables");
+                        $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                        //alert("There was error in get tables!");
+                    }
+                });
+
+                }
+                else {
+                    $("#alert").show();
+                    $("#alert").text("Please choose valid data type");
+                    $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                    //alert("Please choose valid data type");
+
+                }
+
+
+            });
+
+
+            //..........script for getTable names for mapping............
+            $('#rd2').click(function () {
+
+                $('#panel4').find('.panel-body').slideUp();
+                $('#span4').hide();
+
+
+                //var oper = $("input[name='btn']:checked").val();
+
+                $("#radio - btn").remove();
+                $.ajax({
+                    type: "POST",
+                    url: "/ExcelUpload/GetDBTables",
+
+                    success: function (result) {
+                        $('#panel6').show();
+                        $('#panel6').find('#span6').show();
+                        $('#panel6').find('.panel-body').slideDown();
+                        $("#coltbl").remove();
+                        $("#map").hide();
+                        $("#label2").show();
+
+                        for (var i = 0; i < result.length; i++) {
+                           // $('#list').append(`<li value='${result[i]}'>${result[i]}</li>`);
+                            $('#list').append(`<a href="#" id="list_item${i}" class="list-group-item list-group-item-action" value="${result[i]}">${result[i]}</a>`);
+                        }
+
+                        $('#list').show();
+                    },
+                    error: function () {
+                        $("#alert").show();
+                        $("#alert").text("There was error in get tables");
+                        $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                    }
+                });
+            });
+
+            $('#list').on('click',function (e) {
+                var x = e.target;
+                var tblname = $(x).attr("value");
+
+                $("#newtbl").val(tblname);
+                var path = $("#path").val();
+                var sheet = $("#sheet").val();
+
+                $.ajax({
+                        type: "POST",
+                        url: "/ExcelUpload/GetDBColumns",
+                        data: { "tbl_name": tblname, excel_path: path, sheet: sheet },
+                        success: function (result) {
+                            if (result.length > 1)
+                            {
+
+                                $('#panel6').show();
+                                $('#panel6').find('#span6').show();
+                                $('#panel6').find('.panel-body').slideDown();
+                                $("#col").show();
+                                $('#coltbl').remove();
+                                $("#col").append(result[0]);
+                                $("#count").val(result[1]);
+                                $("#map").show();
+
+                                $('#coltbl').DataTable({
+                                    "scrollY": 200,
+                                    "scrollX": true
+                                });
+
+
+
+                            }
+                            else {
+                                //$("#alert").show();
+                                //$("#alert").text(result[0]);
+                                //$("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                                alert(result[0]);
+
+                            }
+
+                        },
+                        error: function () {
+                            $("#alert").show();
+                            $("#alert").text("There was error in get columns");
+                            $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                            //alert("There was error in get columns!");
+                        }
+                    });
+
+            });
+
+
+            ////.........click on map button..............................
+            $('#map').click(function () {
+                var path = $("#path").val();
+                var sheet = $("#sheet").val();
+
+                var newtbl = $("#newtbl").val();
+                //var oldtbl = $("#tblname").val(); alert(oldtbl);
+
+                var arylist = [];
+
+
+
+                for (var i = 1; i <= $("#count").val(); i++)
+                {
+                    var id = "#sel" + i;
+                    var flag = 0;
+
+                    var item = $(id).val();
+                    var a = arylist.indexOf(item);
+                    if (arylist.indexOf(item) >= 0) {
+                        $("#alert").show();
+                        $("#alert").text("Already mapped");
+                        $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                        //alert("Already mapped!");
+                        flag = 1;
+
+                    }
+                    else {
+                        flag = 0;
+                        arylist[i - 1] = item;
+                    }
+
+                }
+                var x = arylist.indexOf("sel");
+                if (x > 0)
+                {
+                    $("#alert").show();
+                    $("#alert").text("Please do correct mapping");
+                    $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                    //alert("plz do correct mapping!");
+                    flag = 1;
+                }
+                var s = flag;
+                if (flag==0)
+                {
+
+                    $.ajax({
+                    type: "POST",
+                    url: "/ExcelUpload/ColumnMapping",
+                    data: {
+                        "selected_opt": sheet,
+                        "file_path": path,
+                        "mapcol": arylist,
+                       // "oldtbl": oldtbl,
+                        "newtbl": newtbl
+                    },
+                    success: function (result) {
+
+                        var count = $('#sheetcount').val();
+                        if (count > 1)
+                        {
+                            if (confirm("Do you want to continue process?") == true)
+                            {
+                                var x = $("#excellfile").data("key");
+
+                                var this_sheet = $("#sheet").val();
+
+                                var y = x.indexOf(this_sheet);
+
+                                x.splice(y, 1);
+
+                                $("#excellfile").data("key", x);
+
+                                $('#panel3').hide();
+                                $('#panel4').hide();
+                                $('#panel5').hide();
+                                $('#panel6').hide();
+                                $('#panel7').hide();
+                                //$('#panel2').();
+                                $('#panel2').find('#span2').show();
+                                $('#panel2').find('.panel-body').slideDown();
+                                $('#sheetcount').val(x.length - 1);
+                                var sel = $('#sheetNo');
+                                $('#sheetNo').find('option').remove();
+                                $('#sheetNo').append(`<option value='sel'>--Select--</option>`);
+                                for (var i = 0; i < x.length - 1; i++) {
+
+                                    if (x[i] != this_sheet)
+                                    {
+                                        $('#sheetNo').append(`<option value='${x[i]}'>${x[i]}</option>`);
+                                    }
+
+
+                                }
+                                count--;
+                            }
+                            else
+                            {
+
+                                window.location.reload();
+                            }
+
+                        }
+                        else
+                        {
+                            var path = $("#path").val();
+                            $.ajax({
+                                type: "POST",
+                                url: "/ExcelUpload/DeleteFile",
+                                data: {
+                                    "path": path
+                                },
+                                success: function (result) {
+                                    $("#alert").show();
+                                    $("#alert").text(result);
+                                    $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                                    //alert(result);
+                                    //Window.location.reload();
+                                }
+                            });
+                        }
+
+                    },
+                    error: function () {
+                        $("#alert").show();
+                        $("#alert").text("There was error in save files");
+                        $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+                        //alert("There was error in save files!");
+                    }
+                });
+
+                }
+            });
+
+
+            $('input').keyup(function (e) {
+                str = $(this).val()
+                str = str.replace(/\s/g, '')
+                $(this).val(str)
+            });
+
+
+        });
+
+
+</script>
+   

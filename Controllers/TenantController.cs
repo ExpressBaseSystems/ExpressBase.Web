@@ -32,6 +32,10 @@ namespace ExpressBase.Web.Controllers
     {
         public const string SolutionName = "SolutionName";
 
+        public const string Sid = "Sid";
+
+        public const string Desc = "Desc";
+
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         // GET: /<controller>/
@@ -88,6 +92,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SolutionDashBoard()
         {
             ViewBag.SolutionName = TempData[SolutionName];
+            ViewBag.Sid = TempData[Sid];
+            ViewBag.Desc = TempData[Desc];
             return View();
         }
 
@@ -109,6 +115,7 @@ namespace ExpressBase.Web.Controllers
         {
             var resultset = this.ServiceClient.Get<GetProductPlanResponse>(new GetProductPlanRequest { } );
             ViewBag.plans =JsonConvert.SerializeObject(resultset.Plans);
+            ViewBag.Sid = resultset.Sid;
             return View();
         }
 
@@ -116,44 +123,24 @@ namespace ExpressBase.Web.Controllers
         public IActionResult TenantAddAccount(int i)
         {
             var req = this.HttpContext.Request.Form;
-            TempData[SolutionName] = req["Sname"];
+            TempData[SolutionName] = req["Sname"].ToString();
+            TempData[Sid] = req["esid"].ToString();
+            TempData[Desc] = req["Desc"].ToString();
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest {
                 SolutionName = req["Sname"],
-                IsolutionId = "i-sid",
+                IsolutionId = req["isid"],
                 EsolutionId = req["esid"],
                 Description = req["Desc"],
                 Subscription = req["Subscription"]
             });
-            return RedirectToAction("SolutionDashBoard", new RouteValueDictionary(new { controller = "Tenant", action = "SolutionDashBoard" })); // convert get to post
-        }
-
-        [HttpGet]
-        public IActionResult TenantAccounts()
-        {
-            IServiceClient client = this.ServiceClient;
-            var fr = client.Get<TokenRequiredSelectResponse>(new TokenRequiredSelectRequest { Uid = Convert.ToInt32(ViewBag.UId), Token = ViewBag.token });
-            ViewBag.dict = fr.returnlist;
-            return View();
-
-        }
-
-        [HttpPost]
-        public IActionResult TenantAccounts(int i)
-        {
-
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.ServiceClient;
-            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), op = "insertaccount", Token = ViewBag.token });
-            if (res.id >= 0)
-            {
-                return RedirectToAction("TenantAccounts", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAccounts", Id = req["tenantid"], aid = res.id }));
-            }
+            if (res.Solnid > 0)
+                return RedirectToAction("SolutionDashboard"); // convert get to post
             else
-            {
                 return View();
-            }
+           
         }
 
+       
         public IActionResult TenantHome()
         {
             return View();
@@ -223,10 +210,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult AddAccount2()
-        {
-            return View();
-        }
+     
 
         public IActionResult SimpleAdvanced()
         {
@@ -278,13 +262,5 @@ namespace ExpressBase.Web.Controllers
 
         }
 
-        [HttpGet]
-        public IActionResult TenantAcc()
-        {
-            IServiceClient client = this.ServiceClient;
-            var fr = client.Get<GetAccountResponse>(new GetAccountRequest());
-            ViewBag.dict = fr.returnlist;
-            return View();
-        }
     }
 }

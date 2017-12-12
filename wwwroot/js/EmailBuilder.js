@@ -28,32 +28,33 @@
         $(".note-editable").droppable({ accept: ".coloums", drop: this.onDropFn.bind(this) });       
     };
 
-    this.onDropFn = function (event, ui) {  
+    this.onDropFn = function (event, ui) {          
         $('#summernot_container' + tabNum + ' .note-editable').focus();
         this.dropLoc = $(event.target);
         this.col = $(ui.draggable);
         var id = "DataField" + this.ObjId++;
         var obj = new EbObjects["DsColumns"](id);
-        this.pasteHtmlAtCaret(obj.$Control.outerHTML());      
-        obj.Title = this.col.text();       
+        this.pasteHtmlAtCaret(obj.$Control.outerHTML());
+        var tbl = $('#' + this.col.text()).data('mytbl');
+        obj.Title = "{{" + tbl + this.col.text() + "}}";       
         this.ObjCollect[id] = obj;
         this.RefreshControl(obj);       
         this.placeCaretAtEnd(document.getElementById(id));
         $('#' + id).attr('contenteditable', 'false');
-        //this.SetCode();
+        this.SetCode();
         $('#summernot_container' + tabNum + ' .note-editable').focus();
     };
     this.placeCaretAtEnd = function (el) {
         el.focus();
-        if (typeof window.getSelection != "undefined"
-            && typeof document.createRange != "undefined") {
+        if (typeof window.getSelection !== "undefined"
+            && typeof document.createRange !== "undefined") {
             var range = document.createRange();
             range.selectNodeContents(el);
             range.collapse(false);
             var sel = window.getSelection();
             sel.removeAllRanges();
             sel.addRange(range);
-        } else if (typeof document.body.createTextRange != "undefined") {
+        } else if (typeof document.body.createTextRange !== "undefined") {
             var textRange = document.body.createTextRange();
             textRange.moveToElementText(el);
             textRange.collapse(false);
@@ -116,7 +117,7 @@
         $.each(result.columns, function (i, columnCollection) {
             $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {               
-                $("#data-table-list ul[id='t" + i + "'").append("<li value ='" + obj.type + "'  class='coloums draggable'>" + obj.columnName + "</li>");              
+                $("#data-table-list ul[id='t" + i + "'").append("<li id = " + obj.columnName + " data-mytbl = 'Table" + i + ".'  class='coloums draggable'>" + obj.columnName + "</li>");              
             });
         });      
         $('#data-table-list').treed();
@@ -136,7 +137,8 @@
         });     
     };
 
-    this.SetCode = function (e) {      
+    this.SetCode = function (e) {
+        console.log($('#summernote' + tabNum).summernote('code'));
         this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
         commonO.Current_obj = this.EbObject;
     }
@@ -164,7 +166,7 @@
                     sel.addRange(range);
                 }
             }
-        } else if (document.selection && document.selection.type != "Control") {          
+        } else if (document.selection && document.selection.type !== "Control") {          
             document.selection.createRange().pasteHTML(html);
         }
     };

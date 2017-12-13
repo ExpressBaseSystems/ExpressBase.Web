@@ -31,7 +31,7 @@
                         <input type="text" required="required" id="solutionname" name="Sname" class="form-control" placeholder="Solution Name" />
                     </div>
                     <div class="client-id-sec">
-                        <input type="text" required="required" id="cid" name="esid" class="form-control input-clientId" placeholder="Client id" />
+                        <input type="text" required="required" id="cid" name="esid" value="@ViewBag.Sid" readonly class="form-control input-clientId" placeholder="Client id" />
                         <div class="clientId-auto">.expressbase.com</div>
                         <button class="btn is-edit-clientid pricing-modal-btn" id="is-edit-clientid" style="display:none;"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                     <p>Select atleast one product for custome Client Id</p>
@@ -42,6 +42,7 @@
                     <div class="form-group">
                         <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-cropie">upload logo</button>
                     </div>
+                    <input type="hidden" name="isid" value="@ViewBag.Sid" />
                     <input type="hidden" name="Subscription" id="sub-form-field" />
                 </div>
             </form>
@@ -111,190 +112,7 @@
         <h4>Select Plans</h4>
     </div>
     <div class="container add-accPricing-sec">
-        <table class="table add-accPricing-sec-table">
-            <thead>
-                <tr>
-                    <th class="tadd-pricing-head"></th>
-                    <th class="tadd-pricing-head">FREE FOR EVER</th>
-                    <th class="tadd-pricing-head">STANDARD</th>
-                    <th class="tadd-pricing-head">PRO</th>
-                    <th class="tadd-pricing-head">ENTERPRISE</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr pritem="Forms">
-                    <td class="pricing-icon"><img src="~/images/svg/form1.svg" /><div class="p-icon-text">Forms</div></td>
-                    <td product="Forms" p-type="1" plan="0" price="0">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-                        </div>
-                      
-                    </td>
-                    <td product="Forms" p-type="1" plan="1" price="1">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-                        </div>
-                        
-                    </td>
-                    <td product="Forms" p-type="1" plan="2" price="2">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-                        </div>
-                       
-                    </td>
-                    <td p-type="1" plan="3" price="3">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-                        </div>
-                        
-                    </td>
-                    <td class="compare">
-                        <div class="pricing-container">
-                            <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-common-price-modal">Compare</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr pritem="Visualization">
-                    <td class="pricing-icon"><img src="~/images/svg/dv1.svg" /><div class="p-icon-text">Visualization</div></td>
-                    <td class="tdclass disabled-click" product="Visualization" p-type="2" plan="0" price="0">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td product="Visualization" p-type="2" plan="1" price="1">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-                        </div>
-                        
-                    </td>
-                    <td product="Visualization" p-type="2" plan="2" price="2">
-                        <div class="pricing-container">
-                            <div class="T-add-amount">$2</div>
-                        </div>
-                        
-                    </td>
-                    <td plan="3" p-type="2" price="3">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td class="compare">
-                        <div class="pricing-container">
-                            <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-common-price-modal">Compare</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr pritem="Report">
-                    <td class="pricing-icon"><img src="~/images/svg/report1.svg" /><div class="p-icon-text">Report</div></td>
-                    <td product="Report" p-type="3" plan="0" price="0">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td product="Report" p-type="3" plan="1" price="1">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td product="Report" p-type="3" plan="2" price="2">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td plan="3" p-type="3" price="3">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td class="compare">
-                        <div class="pricing-container">
-                            <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-common-price-modal">Compare</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr pritem="ChatBot">
-                    <td class="pricing-icon"><img src="~/images/svg/chat1.svg" /><div class="p-icon-text">ChatBot</div></td>
-                    <td product="ChatBot" p-type="4" plan="0" price="0">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-                        </div>
-                        
-                    </td>
-                    <td product="ChatBot" p-type="4" plan="1" price="1">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td product="ChatBot" p-type="4" plan="2" price="2">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td plan="3" p-type="4" price="3">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td class="compare">
-                        <div class="pricing-container">
-                            <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-common-price-modal">Compare</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr pritem="Documents">
-                    <td class="pricing-icon"><img src="~/images/svg/document1.svg" /><div class="p-icon-text">Documents</div></td>
-                    <td product="Documents" p-type="5" plan="0" price="0">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-                        </div>
-                        
-                    </td>
-                    <td product="Documents" p-type="5" plan="1" price="1">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                        
-                    </td>
-                    <td product="Documents" p-type="5" plan="2" price="2">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-
-                        </div>
-                       
-                    </td>
-                    <td plan="3" p-type="5" price="3">
-                        <div class="pricing-container">
-                            <div class="T-add-amount"></div>
-                        </div>
-                        
-                    </td>
-                    <td class="compare">
-                        <div class="pricing-container">
-                            <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-common-price-modal">Compare</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        @await Component.InvokeAsync("EbProductSubscription")
     </div>
     @*<div class="container products-head">
         <h4>Review</h4>

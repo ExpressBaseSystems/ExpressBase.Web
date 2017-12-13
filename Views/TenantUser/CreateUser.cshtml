@@ -3,6 +3,12 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.css" />
+<link rel="stylesheet" href="~/css/EbImageCropper.css" />
+<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.js"></script>
+<script src="~/js/EbImageCropper.js" type="text/javascript"></script>
+
 @*@using (Html.BeginForm(FormMethod.Post))
 {*@
     @*<div class="row">
@@ -94,7 +100,13 @@
         }
 
     </style>
-
+@{
+    var RoleObj = Html.Raw(ViewBag.Roles);
+    var SystemRoles = Html.Raw(ViewBag.SystemRoles);
+    var UserGroupObj = Html.Raw(ViewBag.EBUserGroups);
+    var URoles =(Html.Raw(ViewBag.U_Roles).ToString()=="")?"null": Html.Raw(ViewBag.U_Roles);
+    var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ?"null" : Html.Raw(ViewBag.U_Groups);
+}
     <div class="center">
         <section class="outer-section-createuser" style="height: 640px;">
             <div class="set-form-head">
@@ -275,6 +287,14 @@
             <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
             <button id="btnCreateUser" type="button" class="btn btn-default" style="margin:20px 40px; float:right" >Create</button>
         </section>
+        <div class="prof-setup-cropie">
+            <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                    <div class="loginmodal-container cropie" id="cropsection">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -361,18 +381,12 @@
     }
 </style>*@
 <script>
-    var RoleObj =  @Html.Raw(ViewBag.Roles);
-    var SystemRoles = @Html.Raw(ViewBag.SystemRoles);
-    var UserGroupObj = @Html.Raw(ViewBag.EBUserGroups);
-    var URoles = @Html.Raw(ViewBag.U_Roles);
-    var UGroups = @Html.Raw(ViewBag.U_Groups);
-    var userobj = new UserJs(RoleObj, SystemRoles, UserGroupObj, URoles, UGroups);
 
+    var userobj = new UserJs(@RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups);
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();
     }
-
     $('document').ready(function () {
         $("#txtDateOfBirth").datetimepicker({ timepicker: false });
         //    $.post("../TenantUser/GetRoles",
@@ -442,6 +456,11 @@
         //                document.getElementById("usergrouplist").innerHTML = result;
         //            }
         //        });
+
+        var upload = new EbImageCropper({
+            preview: 'profimage',
+            cropperContainer: 'cropsection'
+        });
 
     });
     </script>

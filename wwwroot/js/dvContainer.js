@@ -16,6 +16,8 @@ var DvContainerObj = function (settings) {
     this.previousObj = null;
     this.user = settings.user;
     this.previewBody = null;
+    this.scrollCounter = 0;
+    this.firstWPos =  null;
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -26,6 +28,19 @@ var DvContainerObj = function (settings) {
         //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#btnGo" + counter).trigger("click");
         $("#mini").off("click").on("click", this.toggleminimap.bind(this));
+        //$('#parent-div0').scroll(function () {
+        //    this.scrollCounter++;
+        //    if (this.scrollCounter == 500) {
+        //        $('.sub-windows').each(function () {
+        //            var post = $(this);
+        //            var position = post.position().left - $(window).scrollLeft();
+        //            if (position <= 500 || position >= -500) {
+        //                post.focus();
+        //            }
+        //        });
+        //    }
+            
+        //});
     };
 
 
@@ -79,6 +94,7 @@ var DvContainerObj = function (settings) {
         if ($("#" + focusedId).next().attr("id") == undefined) {
             $("#next").attr("disabled", true).css("color", "darkgray");
             $("#last").attr("disabled", true).css("color", "darkgray");
+            //$('.splitdiv_parent').scrollLeft($('.splitdiv_parent').width());
         }
         else {
             focusedId = $("#" + focusedId).next().attr("id");
@@ -104,6 +120,7 @@ var DvContainerObj = function (settings) {
         if ($("#" + focusedId).next().attr("id") == undefined) {
             $("#next").attr("disabled", true).css("color", "darkgray");
             $("#last").attr("disabled", true).css("color", "darkgray");
+            //$('.splitdiv_parent').scrollLeft($('.splitdiv_parent').width());
         }
         if ($("#" + focusedId).prev().attr("id") !== undefined) {
             $("#prev").attr("disabled", false).css("color", "white");

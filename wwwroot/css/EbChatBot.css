@@ -34,12 +34,11 @@
 }
 
 .msg-wraper-user, .msg-wraper-bot {
-    background-color: white;
-    width: fit-content;
+    display: inline-block;
     text-align: left;
     font-size: 12px;
     font-family: sans-serif;
-    padding: 2px 6px;
+    padding: 4px 10px;
 }
 
 .msg-wraper-user {
@@ -85,7 +84,7 @@
 }
 
 .eb-chat-inp-cont {
-    display:none;
+    display: none;
     position: absolute;
     bottom: 10px;
     width: 100%;
@@ -117,14 +116,14 @@
 }
 
 .bot-icon {
-    background: url(../images/svg/chatBot.svg)center center no-repeat;
+    background: var(--botdpURL);
     width: 26px;
     background-size: 100% !important;
     height: 26px;
     display: inline-block;
     margin-bottom: -6px;
     border-radius: 24px;
-    background-color: #428bca;
+    background-color: var(--botThemeColor);
 }
 
 .bot-icon-user {
@@ -173,7 +172,7 @@
 
 .btn-box .btn {
     color: #555;
-    background: #428bca;
+    background: var(--botThemeColor);
     color: white;
     font-size: 12px;
     border: solid 1px #e0e0e0;
@@ -190,7 +189,7 @@
 .eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
     border-radius: 15px;
     color: white;
-    background: #428bca;
+    background: var(--botThemeColor);
     border: none;
     outline: none;
     padding: 4px;
@@ -223,6 +222,22 @@
         border-radius: 0px;
         border: none;
     }
+
 [name=ctrlsend] .fa {
     margin-left: -5px
+}
+
+.watermark-cont {
+    position: fixed;
+    bottom: 0;
+    background-color: var(--botThemeColor);
+    WIDTH: 100%;
+    padding: 1px;
+    text-align: center;
+}
+
+.watermark {
+    font-family: arial;
+    font-size: 12px;
+    color: white;
 }

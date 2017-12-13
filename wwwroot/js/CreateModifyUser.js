@@ -89,19 +89,22 @@
 
     this.drawSearchResults = function (flag) {
         var st = null;
+        var txt = null;
+        var divSelectedDisplay;
+        var divSearchResults;
         if (flag === 1) {
             obj = this.user;
             $("#divRoleSearchResults").children().remove();
-            var txt = $("#txtSearchRole").val().trim();
-            var divSelectedDisplay = $("#divSelectedRoleDisplay");
-            var divSearchResults = $("#divRoleSearchResults");
+            txt = $("#txtSearchRole").val().trim();
+            divSelectedDisplay = $("#divSelectedRoleDisplay");
+            divSearchResults = $("#divRoleSearchResults");
         }
         else if (flag === 2) {
             obj = this.userGroup;
             $("#divUserGroupSearchResults").children().remove();
-            var txt = $("#txtSearchUserGroup").val().trim();
-            var divSelectedDisplay = $("#divSelectedUserGroupDisplay");
-            var divSearchResults = $("#divUserGroupSearchResults");
+            txt = $("#txtSearchUserGroup").val().trim();
+            divSelectedDisplay = $("#divSelectedUserGroupDisplay");
+            divSearchResults = $("#divUserGroupSearchResults");
         }
         else
             return;
@@ -130,15 +133,18 @@
     }
        
     this.drawSelectedDisplay = function (flag) {
+        var addModal;
+        var divSearchResultsChecked;
+        var divSelectedDisplay;
         if (flag === 1) {
-            var divSearchResultsChecked = $('#divRoleSearchResults input:checked');
-            var divSelectedDisplay = $('#divSelectedRoleDisplay');
-            var addModal = $('#addRolesModal');
+            divSearchResultsChecked = $('#divRoleSearchResults input:checked');
+            divSelectedDisplay = $('#divSelectedRoleDisplay');
+            addModal = $('#addRolesModal');
         }
         else if (flag === 2) {
-            var divSearchResultsChecked = $('#divUserGroupSearchResults input:checked');
-            var divSelectedDisplay = $('#divSelectedUserGroupDisplay');
-            var addModal = $('#addUserGroupModal');
+            divSearchResultsChecked = $('#divUserGroupSearchResults input:checked');
+            divSelectedDisplay = $('#divSelectedUserGroupDisplay');
+            addModal = $('#addUserGroupModal');
         }
         else
             return;
@@ -169,10 +175,11 @@
     }
 
     this.SortDiv = function (flag) {
+        var mylist;
         if (flag === 1) 
-            var mylist = $('#divSelectedRoleDisplay');
+            mylist = $('#divSelectedRoleDisplay');
         else if (flag === 2)
-            var mylist = $('#divSelectedUserGroupDisplay');
+            mylist = $('#divSelectedUserGroupDisplay');
         else
             return;
         var listitems = mylist.children('div').get();
@@ -193,13 +200,15 @@
 
     this.keyUpTxtDemoSearch = function (flag) {
         var f = 1;
+        var txt;
+        var divSelectedDisplay;
         if (flag === 1) {
-            var txt = $("#txtDemoRoleSearch").val().trim();
-            var divSelectedDisplay = $("#divSelectedRoleDisplay");
+            txt = $("#txtDemoRoleSearch").val().trim();
+            divSelectedDisplay = $("#divSelectedRoleDisplay");
         }
         else if (flag === 2) {
-            var txt = $("#txtDemoUserGroupSearch").val().trim();
-            var divSelectedDisplay = $("#divSelectedUserGroupDisplay");
+            txt = $("#txtDemoUserGroupSearch").val().trim();
+            divSelectedDisplay = $("#divSelectedUserGroupDisplay");
         }
         else
             return;
@@ -239,7 +248,7 @@
         $($('#divSelectedUserGroupDisplay').children()).each(function () {
             selectedusergroups += $(this).attr('data-id') + ",";
         });
-
+        $("#btnCreateUser").attr("disabled","true");
         $.post("../TenantUser/SaveUser",
             {
                 "userid": $('#userid').val(),
@@ -249,10 +258,10 @@
                 "email": $('#txtEmail').val(),
                 "Pwd": $('#pwdPaasword').val()
             }, function (result) {
-                if (result) {
+               
                     //document.getElementById("usergrouplist").innerHTML = result;
                     alert('Completed');
-                }
+                    $("#btnCreateUser").removeAttr("disabled");
             });
     }
 
@@ -263,16 +272,17 @@
         ugroups = this.U_Groups;
         $("#divRoleSearchResults").children().remove();
         $("#divUserGroupSearchResults").children().remove();
-        for (var i = 0; i < obj.length; i++) {
-            var st = null;
-            if ($.grep(uroles, function (e) { return e == obj[i].Id; }).length > 0)
+        var i, st;
+        for (i = 0; i < obj.length; i++) {
+            st = null;
+            if ($.grep(uroles, function (e) { return e === obj[i].Id; }).length > 0)
                 st = "checked";
             this.appendToSearchResult($("#divRoleSearchResults"), st, obj[i]);
         }
         this.drawSelectedDisplay(1);
-        for (var i = 0; i < obj2.length; i++) {
-            var st = null;
-            if ($.grep(ugroups, function (e) { return e == obj2[i].Id; }).length > 0)
+        for (i = 0; i < obj2.length; i++) {
+            st = null;
+            if ($.grep(ugroups, function (e) { return e === obj2[i].Id; }).length > 0)
                 st = "checked";
             this.appendToSearchResult($("#divUserGroupSearchResults"), st, obj2[i]);
         }

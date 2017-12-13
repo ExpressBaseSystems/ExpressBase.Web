@@ -310,8 +310,8 @@
         var tagvalues = $('#tags').val();
         var appid = $("#apps").find("option:selected").val();
         var getNav = $("#versionNav li.active a").attr("href");
-        if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1) {
-            this.ObjCollection[getNav].savefile();
+        if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {
+            this.ObjCollection[getNav].BeforeSave();
         }
         $.post("../Eb_Object/SaveEbObject", {
             _refid: this.ver_Refid,
@@ -328,8 +328,8 @@
         var appid = $("#apps").find("option:selected").val();
         var changeLog = $('#obj_changelog').val();
         var getNav = $("#versionNav li.active a").attr("href");
-        if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1) {
-            this.ObjCollection[getNav].Commit();
+        if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {
+            this.ObjCollection[getNav].BeforeSave();
         }
         $.post("../Eb_Object/CommitEbObject", {
             _refid: this.ver_Refid, _changeLog: changeLog,

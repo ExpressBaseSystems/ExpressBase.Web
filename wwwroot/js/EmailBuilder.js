@@ -9,9 +9,9 @@
     this.PosRight;
 
     this.Init = function () {
-        $('#summernot_container' + tabNum + ' .note-editable').bind('paste', this.SetCode.bind(this));
-       // $('#summernot_container' + tabNum + ' .note-editable').bind('append', this.SetCode.bind(this));
-        $('#summernot_container' + tabNum + ' .note-editable').on('keyup', this.SetCode.bind(this));
+       // $('#summernot_container' + tabNum + ' .note-editable').bind('paste', this.SetCode.bind(this));
+       //// $('#summernot_container' + tabNum + ' .note-editable').bind('append', this.SetCode.bind(this));
+       // $('#summernot_container' + tabNum + ' .note-editable').on('keyup', this.SetCode.bind(this));
 
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbEmailTemplate"]("email");
@@ -41,7 +41,7 @@
         this.RefreshControl(obj);       
         this.placeCaretAtEnd(document.getElementById(id));
         $('#' + id).attr('contenteditable', 'false');
-        this.SetCode();
+       // this.SetCode();
         $('#summernot_container' + tabNum + ' .note-editable').focus();
     };
     this.placeCaretAtEnd = function (el) {
@@ -137,11 +137,32 @@
         });     
     };
 
-    this.SetCode = function (e) {
-        console.log($('#summernote' + tabNum).summernote('code'));
-        this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
+    this.BeforeSave = function () {
+
+        $('.note-editable').children().find('span').each(function (i, obj) {
+            var text = $(obj).text();
+            $(obj).replaceWith(text);
+        });
+
+        $('.note-editable').children('span').each(function (i, obj) {
+            var text = $(obj).text();
+            $(obj).replaceWith(text);
+        });
+
+
+        console.log($('.note-editable').html());
+        alert($('.note-editable').html());
+        this.EbObject.Body = window.btoa($('.note-editable').html());
         commonO.Current_obj = this.EbObject;
     }
+
+    //this.SetCode = function (e) {
+    //   // console.log($('#summernote' + tabNum).summernote('code'));
+       
+       
+    //    this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
+    //    commonO.Current_obj = this.EbObject;
+    //}
 
     this.pasteHtmlAtCaret = function (html) {
         var sel, range;

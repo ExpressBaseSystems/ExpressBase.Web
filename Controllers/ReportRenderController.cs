@@ -304,7 +304,8 @@ namespace ExpressBase.Web.Controllers
             {
                 List<object> SummaryList;
                 if (PageSummaryFields.ContainsKey(field.Title))
-                { SummaryList = PageSummaryFields[field.Title];
+                {
+                    SummaryList = PageSummaryFields[field.Title];
                     foreach (var item in SummaryList)
                     {
                         var table = field.Title.Split('.')[0];
@@ -315,7 +316,9 @@ namespace ExpressBase.Web.Controllers
                             (item as EbDataFieldNumericSummary).Summarize(value);
                     }
                 }
-                else {SummaryList =ReportSummaryFields[field.Title];
+                if (ReportSummaryFields.ContainsKey(field.Title))
+                {
+                    SummaryList = ReportSummaryFields[field.Title];
                     foreach (var item in SummaryList)
                     {
                         var table = field.Title.Split('.')[0];
@@ -326,21 +329,12 @@ namespace ExpressBase.Web.Controllers
                             (item as EbDataFieldNumericSummary).Summarize(value);
                     }
                 }
-
-                
-                string x = field.Title;
-            }
-            else
-            {
-                var x = "ss";
             }
 
             if (field is EbDataField)
             {
                 if (field is EbDataFieldNumericSummary)
                     column_val = (field as EbDataFieldNumericSummary).SummarizedValue.ToString();
-                //else if (field is EbDataFieldBoolean || field is EbDataFieldDateTime || field is EbDataFieldNumeric || field is EbDataFieldText)
-                //     column_val = field.Title;
                 else
                 {
                     var table = field.Title.Split('.')[0];
@@ -424,40 +418,6 @@ namespace ExpressBase.Web.Controllers
             else if (field is EbDateTime)
             {
                 DrawTextBox(field, field.Title, section_Yposition);
-            }
-
-            else if (field is EbDataFieldTextSummary)
-            {
-                EbDataFieldTextSummary f = field as EbDataFieldTextSummary;
-                if (Enum.GetName(typeof(SummaryFunctionsText), f.Function) == "Count")
-                {
-                }
-                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Max")
-                {
-                }
-                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Min")
-                {
-                }
-            }
-            else if (field is EbDataFieldDateTimeSummary)
-            {
-                EbDataFieldDateTimeSummary f = field as EbDataFieldDateTimeSummary;
-                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Count")
-                {
-                }
-                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Max")
-                {
-                }
-                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Min")
-                {
-                }
-            }
-            else if (field is EbDataFieldBooleanSummary)
-            {
-                EbDataFieldBooleanSummary f = field as EbDataFieldBooleanSummary;
-                if (Enum.GetName(typeof(SummaryFunctionsBoolean), f.Function) == "Count")
-                {
-                }
             }
         }
 

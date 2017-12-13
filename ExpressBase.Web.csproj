@@ -5,7 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />-->
+    <Compile Remove="Views\TenantUser\ManageRoles1.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\TenantUser\ManageRoles1.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DiffPlex" Version="1.4.1" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="FOSS.ServiceStack.Server.Core" Version="1.0.43" />
@@ -20,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ExcelFile\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

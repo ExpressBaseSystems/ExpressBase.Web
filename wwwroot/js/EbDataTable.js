@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, cellData, rowData) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -84,6 +84,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.order_info.dir = 0;
     this.MainData = (data === undefined) ? null: data;
     this.isPipped = false;
+    this.isContextual = false;
     this.chartJs = null;
 
     this.EbObject = dsobj;
@@ -121,8 +122,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    //this.cellData = this.dtsettings.cellData;
-    //this.rowData = this.dtsettings.rowData;
+    this.cellData = cellData;
+    this.rowData = rowData;
     //this.filterValues = this.dtsettings.filterValues;
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
@@ -145,6 +146,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var id = $(ev.target).attr("id");
                 focusedId = id;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+                //if ($('#' + id).is(':last-child'))
+                    $(".splitdiv_parent").scrollTo($("#" + focusedId));
+                //if (this.login == "uc")
+                //    dvcontainerObj.firstWPos = $(".splitdiv_parent")
             }
         }
     }.bind(this);
@@ -167,7 +172,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.isPipped = true;
             $("#Pipped").show();
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
-            this.filterValues = null;
+            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
+        }
+        if (this.cellData !== null) {
+            this.isContextual = true;
+            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
         this.PcFlag = "False";
         obj = this.EbObject;
@@ -193,7 +202,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             this.FD = true;
-            if (this.isPipped) {
+            if (this.isPipped || this.isContextual) {
+                if (this.filterValues.length > 0) {
+                    $.each(this.filterValues, function (i, param) {
+                        $(sideDivId + ' #' + param.name).val(param.value);
+                    });
+                }
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
@@ -412,7 +426,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.retrieve = true;
         o.keys = true;
         this.filterValues = this.getFilterValues();
-        if (this.MainData !== null && this.login == "uc" && this.filterValues.length == 0) {
+        var f = this.compareFilterValues();
+        if (this.MainData !== null && this.login == "uc" && f) {
             o.dom = "<'col-md-12 noPadding'B>rt";
             dvcontainerObj.currentObj.data = this.MainData;
             o.ajax = function (data, callback, settings) {
@@ -432,6 +447,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.login === "uc") {
                 dvcontainerObj.currentObj.Pippedfrom = "";
                 $("#Pipped").text("");
+                this.isPipped = false;
             }
             o.ajax = {
                 //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
@@ -467,6 +483,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = JSON.stringify(serachItems);
         dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined) ? this.filterValues : this.getFilterValues());
+        dq.cellData = this.cellData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (serachItems.length > 0) {
@@ -513,15 +530,36 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.receiveAjaxData = function (dd) {
-        this.MainData = dd;
         //if (!dd.IsPaged) {
         //    this.Api.paging = dd.IsPaged;
         //    this.Api.lengthChange = false;
         //}
-        if(this.login == "uc")
+        if (this.login == "uc" && this.isPipped) {
             dvcontainerObj.currentObj.data = dd;
+            this.MainData = dd;
+        }
+           
         return dd.data;
     };
+
+    this.compareFilterValues = function () {
+        var f = null;
+        if (prevfocusedId !== undefined) {
+            $.each(this.filterValues, function (i, obj) {
+                if (obj.value !== dvcontainerObj.dvcol[prevfocusedId].filterValues[i].value) {
+                    f = 0;
+                    return false;
+                }
+
+            });
+            if (f == null)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
 
     this.btnGoClick = function (e) {
         var controlIds = ["datefrom", "dateto"];// temp
@@ -1004,9 +1042,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'> <i class='fa fa-th' aria-hidden='true'></i></button>")
             //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
             if (this.login == "uc") {
-                //this.appendRelatedDv();
-                dvcontainerObj.appendRelatedDv(this.tableId);
-                dvcontainerObj.check4Navigation();
+                if (!this.isContextual)
+                    dvcontainerObj.appendRelatedDv(this.tableId);
+                dvcontainerObj.modifyNavigation();
             }
             this.addFilterEventListeners();
         }
@@ -1339,77 +1377,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var idx = this.Api.row($(e.target).parent().parent()).index();
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues();
-        //this.NewTableModal();
-        //this.call2newTable();
-    };
-
-    this.NewTableModal = function () {
-        index++;
-        $("#table_tabs").append("<li class='nav-item'>" +
-            " <a class='nav-link' href='#dv" + this.linkDV + "_tab_" + index + "' data-toggle='tab'>" +
-
-            "</a>" +
-            " </li>");
-        $("#table_tabcontent").append("<div id='dv" + this.linkDV + "_tab_" + index + "' class='tab-pane active'>" +
-            "<div id='TableControls_dv" + this.linkDV + "_" + index + "' class = 'well well-sm' style='margin-bottom:5px!important;'>" +
-            " <div style='display: inline;'>" +
-            "    <label id='dvName_lbldv" + this.linkDV + "_" + index + "'></label>" +
-            " </div>" +
-            "</div>" +
-            "<div style='width:auto;' id='dv" + this.linkDV + "_" + index + "divcont'>" +
-            " <table id='dv" + this.linkDV + "_" + index + "' class='table table-striped table-bordered'></table>" +
-            "  </div>" +
-            " <div id='graphcontainer_tabdv" + this.linkDV + "_" + index + "' style='display: none;'>" +
-            "  <div style='height: 50px;margin-bottom: 5px!important;>" +
-            "    <label id='dvName_lbldv" + this.linkDV + "_" + index + "'></label>" +
-            "      <div class='dropdown' id='graphDropdown_tabdv" + this.linkDV + "_" + index + "' style='display: inline-block;padding-top: 1px;float:right'>" +
-            "             <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>" +
-            "          <span class='caret'></span></button>" +
-            "        <ul class='dropdown-menu'>" +
-            "          <li><a href =  '#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
-            "          <li><a href = '#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
-            "         <li><a href = '#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
-            "        <li><a href = '#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
-            "       <li><a href = '#'> doughnut </a></li>" +
-            "        </ul>" +
-            "</div>" +
-            "<button id='reset_zoomdv" + this.linkDV + "_" + index + "' class='btn btn-default' style='float: right;'>Reset zoom</button>" +
-            "<div id = 'btnColumnCollapsedv" + this.linkDV + "_" + index + "' class='btn btn-default' style='float: right;'>" +
-            "     <i class='fa fa-cog' aria-hidden='true'></i>" +
-            "</div>" +
-            "</div>" +
-            "<div id ='columns4Dragdv" + this.linkDV + "_" + index + "' style='display:none;'>" +
-            "   <div style='display: inline-block;'>" +
-            " <label class='nav-header disabled'><center><strong>Columns</strong></center><center><font size='1'>Darg n Drop to X or Y Axis</font></center></label>" +
-            "  <input id='searchColumndv" + this.linkDV + "_" + index + "' type='text' class ='form-control' placeholder='search for column'/>" +
-            "      <ul class='list-group'  style='height: 470px; overflow-y: auto;'>" +
-            "     </ul>  " +
-            " </div>" +
-            "<div style='display: inline-block;vertical-align: top;width: 806px;'>" +
-            " <div class='input-group'>" +
-            "    <span class='input-group-addon' id='basic-addon3'>X-Axis</span>" +
-            "    <div class='form-control' style='padding: 4px;height:33px' id ='X_col_namedv" + this.linkDV + "_" + index + "'></div>" +
-            "  </div>" +
-            " <div class='input-group' style='padding-top: 1px;'>" +
-            "   <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>" +
-            "  <div class='form-control' style='padding: 4px;height:33px' id ='Y_col_namedv" + this.linkDV + "_" + index + "'></div>" +
-            " </div>" +
-            "</div>" +
-            "</div>" +
-            "<canvas id='myChartdv" + this.linkDV + "_" + index + "' width='auto' height='auto'></canvas>" +
-            "</div>" +
-            "</div>");
-        //$("#newmodal").on('shown.bs.modal', this.call2newTable.bind(this));
-        //$("#newmodal").on('hidden.bs.modal', function (e) {
-        //    $('#Newtable').DataTable().destroy();
-        //    setTimeout(function () {
-        //        $("#newmodal").remove();
-        //    }, 500);
-        //});
-        //$("#newmodal").modal('show');
-
-        this.call2newTable();
-        $(".nav-tabs a[href='#dv" + this.linkDV + "_tab_" + index + "']").tab('show');
+        dvcontainerObj.drawdvFromTable();
     };
 
     this.call2newTable = function () {
@@ -1522,7 +1490,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
-                this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
+                //this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);

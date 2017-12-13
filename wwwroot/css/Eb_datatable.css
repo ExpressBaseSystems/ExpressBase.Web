@@ -225,3 +225,17 @@ table.dataTable tbody td.dt-body-right {
     height: calc(100vh - 234px);
 }
 
+#parent-div0::-webkit-scrollbar-track {
+    background-color: white;
+}
+
+#parent-div0::-webkit-scrollbar {
+    width: 10px;
+    background-color: white;
+}
+
+#parent-div0::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 6px;
+}
+

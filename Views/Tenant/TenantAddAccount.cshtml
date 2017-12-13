@@ -11,151 +11,201 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.js"></script>
 <script src="~/js/EbImageCropper.js" type="text/javascript"></script>
 <script src="~/js/EbOnBoarding/TenantAddSolution.js" type="text/javascript"></script>
-<div class="row tAddAcc">
-    <div class="container detailsec">
-        <div class="col-md-3 detailsec-name pd-0">
-            <div class="detailsec-name-head">
-                <h4>Solution Info</h4>
-              
-            </div>
-        </div>
-        <div class="col-md-3 logo-upload-container">
-            <div class="logo-upload" id="">
-                <img class="img-responsive" id="logo-prev"/>
-            </div>
-        </div>
-        <div class="col-md-6 detailsec-form">
-            <form id="subscript-submit" action="~/Tenant/TenantAddAccount" method="post">
-                <div class="tier">
-                    <div class="form-group">
-                        <input type="text" required="required" id="solutionname" name="Sname" class="form-control" placeholder="Solution Name" />
+<script src="~/js/validator.js" type="text/javascript"></script>
+<div class="row tAddAcc height-100">
+    <section class="card">
+        <div class="card--content mr-l-20" id="basic-info">
+            <div class="col-md-8 card--form">
+                <div class="products-head">
+                    <h4>Solution Info</h4>
+                </div>
+                <div class="card--content-body">
+                    <div class="company-logo">
+                        <img class="img-responsive" src="~/images/your-logo.png" />
                     </div>
-                    <div class="client-id-sec">
-                        <input type="text" required="required" id="cid" name="esid" value="@ViewBag.Sid" readonly class="form-control input-clientId" placeholder="Client id" />
-                        <div class="clientId-auto">.expressbase.com</div>
-                        <button class="btn is-edit-clientid pricing-modal-btn" id="is-edit-clientid" style="display:none;"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                    <p>Select atleast one product for custome Client Id</p>
-                    </div>
-                    <div class="form-group">
-                        <textarea class="form-control" placeholder="Description" name="Desc"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn pricing-modal-btn" data-toggle="modal" data-target="#eb-cropie">upload logo</button>
-                    </div>
-                    <input type="hidden" name="isid" value="@ViewBag.Sid" />
-                    <input type="hidden" name="Subscription" id="sub-form-field" />
+                    <form class="subscript-submit" id="subscript-submit" action="~/Tenant/TenantAddAccount" method="post">
+                        <div class="form-group">
+                            <input type="text" required="required" id="solutionname" name="Sname" class="form-control" placeholder="Solution Name" />
+                        </div>
+                        <div class="client-id-sec">
+                            <input type="text" required="required" id="cid" name="esid" value="@ViewBag.Sid" readonly class="form-control input-clientId" placeholder="Client id" />
+                            <div class="clientId-auto">.expressbase.com</div>
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" placeholder="Description" name="Desc"></textarea>
+                        </div>
+                        <input type="hidden" id="isid" name="isid" value="@ViewBag.Sid" />
+                        <input type="hidden" name="Subscription" id="sub-form-field" />
+                    </form>
                 </div>
-            </form>
-        </div>
-    </div>
-    <div class="container products-head">
-        <h4>Select Products</h4>
-    </div>
-    <div class="container-fluid eb-products">
-        <div class="col-md-2 col-md-offset-1 Eb-product-container">
-            <div class="Eb-product-container-bdy" pid="Forms" prod-id="1">
-                <div class="pro-icon-bx">
-                    <img src="~/images/svg/form1.svg" />
-                </div>
-                <div class="pro-name-bx">
-                    Forms
-                </div>
-                <button class="btn btn-sm btn-upload" id="add-form">Add</button>
-            </div>
-        </div>
-        <div class="col-md-2 Eb-product-container">
-            <div class="Eb-product-container-bdy" pid="Visualization" prod-id="2">
-                <div class="pro-icon-bx">
-                    <img src="~/images/svg/dv1.svg" />
-                </div>
-                <div class="pro-name-bx">
-                    Visualization
-                </div>
-                <button class="btn btn-sm btn-upload" id="add-viz">Add</button>
-            </div>
-        </div>
-        <div class="col-md-2 Eb-product-container">
-            <div class="Eb-product-container-bdy" pid="Report" prod-id="3">
-                <div class="pro-icon-bx">
-                    <img src="~/images/svg/report1.svg" />
-                </div>
-                <div class="pro-name-bx">
-                    Report
-                </div>
-                <button class="btn btn-sm btn-upload" id="add-report">Add</button>
-            </div>
-        </div>
-        <div class="col-md-2 Eb-product-container">
-            <div class="Eb-product-container-bdy" pid="ChatBot" prod-id="4">
-                <div class="pro-icon-bx">
-                    <img src="~/images/svg/chat1.svg" />
-                </div>
-                <div class="pro-name-bx">
-                    ChatBot
-                </div>
-                <button class="btn btn-sm btn-upload" id="add-bot">Add</button>
-            </div>
-        </div>
-        <div class="col-md-2 Eb-product-container">
-            <div class="Eb-product-container-bdy" pid="Documents" prod-id="5">
-                <div class="pro-icon-bx">
-                    <img src="~/images/svg/document1.svg" />
-                </div>
-                <div class="pro-name-bx">
-                    Documents
-                </div>
-                <button class="btn btn-sm btn-upload" id="add-doc">Add</button>
-            </div>
-        </div>
-    </div>
-    <div class="container products-head">
-        <h4>Select Plans</h4>
-    </div>
-    <div class="container add-accPricing-sec">
-        @await Component.InvokeAsync("EbProductSubscription")
-    </div>
-    @*<div class="container products-head">
-        <h4>Review</h4>
-    </div>
-    <div class="container review-container">
-        <div class="row review-container-row-outer">
-            <div class="col-md-10" id="review-sec">
-                <div class="solution-info">
+                <div class="card--content-footer">
                     <div class="form-inline">
-                        <label>Solution name </label>
-                        <div class="sol-name-review" id="sol-name-review"></div>
+                        <a id="s-info-skip" href="#product-select" class="btn pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-4 desc-section">
+                <div class="steps">
+                    <a class="step-no step-no-blue">
+                        1
+                    </a>
+                    <a class="step-no">
+                        2
+                    </a>
+                    <a class="step-no">
+                        3
+                    </a>
+                </div>
+                <div class="small-desc">
+                    <img class="small-desc-img" src="~/images/svg/people.svg" />
+                    <h4>Your Basic Info</h4>
+                    <p class="text-center">Select atleast one paid plan for custom Solution Id</p>
+                </div>
+            </div>
+        </div>
+        <div class="card--content mr-l-10" id="product-select">
+            <div class="col-md-8 card--form">
+                <div class="products-head">
+                    <h4>Select Products</h4>
+                </div>
+                <div class="card--content-body">
+                    <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
+                        <div class="Eb-product-container-bdy" pid="Forms" prod-id="1">
+                            <div class="pro-icon-bx">
+                                <img src="~/images/svg/form1.svg" />
+                            </div>
+                            <div class="pro-name-bx">
+                                Forms
+                            </div>
+                            <button class="btn btn-sm btn-upload" id="add-form">Add</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
+                        <div class="Eb-product-container-bdy" pid="Visualization" prod-id="2">
+                            <div class="pro-icon-bx">
+                                <img src="~/images/svg/dv1.svg" />
+                            </div>
+                            <div class="pro-name-bx">
+                                BI
+                            </div>
+                            <button class="btn btn-sm btn-upload" id="add-viz">Add</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
+                        <div class="Eb-product-container-bdy" pid="Report" prod-id="3">
+                            <div class="pro-icon-bx">
+                                <img src="~/images/svg/report1.svg" />
+                            </div>
+                            <div class="pro-name-bx">
+                                Reports
+                            </div>
+                            <button class="btn btn-sm btn-upload" id="add-report">Add</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
+                        <div class="Eb-product-container-bdy" pid="ChatBot" prod-id="4">
+                            <div class="pro-icon-bx">
+                                <img src="~/images/svg/chat1.svg" />
+                            </div>
+                            <div class="pro-name-bx">
+                                Bots
+                            </div>
+                            <button class="btn btn-sm btn-upload" id="add-bot">Add</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
+                        <div class="Eb-product-container-bdy" pid="Documents" prod-id="5">
+                            <div class="pro-icon-bx">
+                                <img src="~/images/svg/document1.svg" />
+                            </div>
+                            <div class="pro-name-bx">
+                                Documents
+                            </div>
+                            <button class="btn btn-sm btn-upload" id="add-doc">Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card--content-footer">
                     <div class="form-inline">
-                        <label>Client id </label>
-                        <div class="sol-name-review" id="cid-name-review"></div>
-                    </div>
-                </div>
-                <div class="subscrib-info" id="subscrib-info">
-                </div>
-            </div>
-            <div class="col-md-2 tot-sec" id="tot-sec">
-                <div class="total">
-                    <h4 class="text-center">Total</h4>
-                    <div class="total-count-cont">
-                        $0
+                        <button id="prod-skip" class="btn pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                        <button id="prod-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</button>
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 desc-section">
+                <div class="steps">
+                    <a class="step-no">
+                        1
+                    </a>
+                    <a class="step-no step-no-blue">
+                        2
+                    </a>
+                    <a class="step-no">
+                        3
+                    </a>
+                </div>
+                <div class="small-desc">
+                    <img class="small-desc-img" src="~/images/svg/product.svg" />
+                    <h4>Heading</h4>
+                    <p class="text-center">Select atleast one paid plan for custom Solution Id</p>
+                </div>
+            </div>
         </div>
-    </div>*@
-    <div class="container">
-        <input type="submit" class="btn btn-success pull-right" value="Save" id="save-subscrip"/> 
-    </div>
-    @*<div class="popover-clientid-edit">
-        <div class="popover-text">
-            You can edit solution Id
-        </div>
-        <div class="btn-section">
-            <button class="btn btn-success">Edit</button>
-            <button class="btn btn-success pull-right">Skip</button>
-        </div>
-    </div>*@
+        <div class="card--content-large mr-l-10">
+            <div class="col-md-9 card--form">
+                <div class="products-head">
+                    <h4>Select Plans</h4>
+                </div>
+                <div class="card--content-body">
+                    @await Component.InvokeAsync("EbProductSubscription")
+                </div>
+            </div>
+            <div class="col-md-3 desc-section">
+                <div class="steps">
+                    <a class="step-no">
+                        1
+                    </a>
+                    <a class="step-no">
+                        2
+                    </a>
+                    <a class="step-no step-no-blue">
+                        3
+                    </a>
+                </div>
+                <div class="small-desc-last" id="review-sec">
+                    <div class="solution-info">
+                        <div class="form-group">
+                            <label>Solution name </label>
+                            <textarea class="form-control sol-name-review" id="sol-name-review" value=""></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Solution id </label>
+                            <p class="sol-name-review" id="cid-name-review">@ViewBag.Sid</p>
+                        </div>
+                        <div class="subscrib-info" id="subscrib-info">
 
+                        </div>
+                    </div>           
+                </div>
+                <div class="card--content-footer">
+                    <div class="form-inline">
+                        <input id="save-subscrip" type="submit" class="btn btn-success pull-right" value="Save">
+                        <button id="plan-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="none"></div>
+    </section>
+</div>
+<div id="popover-clientid-edit" class="popover-clientid-edit">
+    <div class="popover-text">
+        You can edit solution Id
+    </div>
+    <div class="btn-section">
+        <button id="edit-sid" class="btn btn-success">Edit</button>
+        <button onclick="$('#popover-clientid-edit').hide()" class="btn btn-success pull-right">Close</button>
+    </div>
 </div>
 <div class="modal fade" id="eb-common-price-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -176,11 +226,11 @@
 
 <script>
     $(document).ready(function () {
-        var subscribe = new TenantAddSolution(EbSubsciptionPlans);       
+        var subscribe = new TenantAddSolution(EbSubsciptionPlans);
         $("#save-subscrip").click(function () {
             var sub = subscribe.getSubscription();
             $("#sub-form-field").val(JSON.stringify(sub));
             $("#subscript-submit").submit();
-        });              
+        });
     });
 </script>

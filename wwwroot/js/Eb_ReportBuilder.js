@@ -715,7 +715,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             + "<div class='hb' id='guid-hb' style='z-index:3;border-top: 1px dashed #55f;width:100%;position:absolute;display:none'></div>");
     };//drag stop fn of control
 
-    this.savefile = function () {
+    this.BeforeSave = function () {
         this.EbObject.Height = parseInt(this.height.slice(0, -2));
         this.EbObject.Width = parseInt(this.width.slice(0, -2));
         this.EbObject.PaperSize = this.type;
@@ -760,15 +760,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         else if (eb_typeCntl === 'ReportDetail') {
             this.EbObject.Detail[this.j].Fields.push(this.objCollection[elemId]);
         }
-    };//........save/commit
-
-    this.Commit = function () {
-        this.EbObject.Height = parseInt(this.height.slice(0, -2));
-        this.EbObject.Width = parseInt(this.width.slice(0, -2));
-        this.EbObject.PaperSize = this.type;
-        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
-        commonO.Current_obj = this.EbObject;
-    };//commit
+    };
 
     this.setpageSize = function (obj) {
         this.type = obj.PaperSize;

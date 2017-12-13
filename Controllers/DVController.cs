@@ -56,6 +56,7 @@ namespace ExpressBase.Web.Controllers
             dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
             dsobj.AfterRedisGet(this.Redis);
             ViewBag.dvObject = dsobj;
+            ViewBag.dvRefId = refid;
 
             {
                 //Edit mode

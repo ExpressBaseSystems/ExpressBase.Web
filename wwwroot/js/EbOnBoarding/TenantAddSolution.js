@@ -10,13 +10,15 @@
     }
 
     this.editclientId = function () {
-        $('#cid').removeAttr('readonly');
+        $('#cid').removeAttr('readonly').val('');
+        $("#cid").focus();
+        $('#popover-clientid-edit').hide();
     }; 
 
     this.subscribeProd = function (e) {
         var selector = $(e.target).closest("button");
         selector.toggleClass('subscribed');
-        $('#subscrib-info').show();
+        
         if (selector.hasClass('subscribed')) {
             $('#is-edit-clientid').show();
             selector.text(' ').css({
@@ -37,7 +39,7 @@
     };
 
     this.getSolutionName = function (e) {
-        $('#sol-name-review').text($(e.target).val());
+        $('#sol-name-review').val($(e.target).val());
     };
 
     this.getClientId = function (e) {
@@ -46,12 +48,27 @@
 
     this.addProductTorev = function (prod) {
         $('#subscrib-info').append(`<div class="form-inline" revpid="${prod.attr('pid')}">
-                    <label>${prod.attr('pid')}</label>
-                    <div class="sol-name-review" id="plan">FREE $0</div>
+                    <label class="plan-label">${prod.attr('pid')}</label>
+                    <div class="plan-details" id="plan">FREE $0</div>
                 </div>`);
     };
 
-    this.getProdPlan = function (e) {
+    this.isPaidPack = function () {
+        $(".add-accPricing-sec-table").children().find(".paid").each(function (i, obj) {
+            if ($(obj).hasClass('price-selected')) {
+                if ($('#isid').val() === $('#cid').val()) {
+                    $('#popover-clientid-edit').show();
+                }
+                return false;
+            }
+            else {
+                $('#cid').val($('#isid').val());
+                $('#cid').attr('readonly','readonly');
+            }
+        });
+    };
+
+    this.getProdPlan = function (e) {        
         var selector = $(e.target).closest("td");
         if (!selector.hasClass("price-selected")){
             if ($('[pid=' + selector.parent().attr('pritem') + ']').children('.btn-upload').hasClass('subscribed')) {
@@ -61,7 +78,7 @@
                         $(obj).removeClass('price-selected');
                     });
                     this.objSubscription[selector.attr("p-type")] = parseInt(selector.attr("plan"));
-                    this.addPlanToRev($(e.target));
+                    this.addPlanToRev($(e.target));                  
                 }
                 else 
                     selector.children('i').hide();
@@ -69,6 +86,7 @@
             else
                 alert('product not selected!');
         }
+        this.isPaidPack();
     };
 
     this.addPlanToRev = function (plan) {
@@ -110,18 +128,37 @@
         return this.objSubscription;
     };
 
+    this.scrollFirstDiv = function () {
+        $('.card').animate({
+            scrollLeft: $('#basic-info').width() + 120
+        }, 500);
+    };
+    this.scrollToFirstDiv = function () {
+        $('.card').animate({
+            scrollLeft: 0
+        }, 500);
+    };
+    this.scrollToLast = function () {
+        $('.card').animate({
+            scrollLeft: 2000
+        }, 500);
+    };
+
     this.init = function () {
         this.drawSubsciptionTable();
-        $('#subscrib-info').hide();
         this.upload = new EbImageCropper({
             preview: 'logo-prev',
             cropperContainer: 'eb-cropie-inner'
         });
-        $('#is-edit-clientid').on("click", this.editclientId.bind(this));
+        $('#edit-sid').on("click", this.editclientId.bind(this));
         $('.btn-upload').on('click', this.subscribeProd.bind(this));
         $('#solutionname').on("change", this.getSolutionName.bind(this));
         $('#cid').on("change", this.getClientId.bind(this));
-        $(".add-accPricing-sec-table td").not('.compare').on('click', this.getProdPlan.bind(this));       
+        $(".add-accPricing-sec-table td").not('.compare').on('click', this.getProdPlan.bind(this)); 
+        $("#s-info-skip").on('click', this.scrollFirstDiv.bind(this));
+        $("#prod-prev").on('click', this.scrollToFirstDiv.bind(this));
+        $("#prod-skip").on('click', this.scrollToLast.bind(this));
+        $("#plan-prev").on('click', this.scrollFirstDiv.bind(this));
     };
     this.init();
 };

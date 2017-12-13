@@ -43,9 +43,6 @@ namespace ExpressBase.Web.Controllers
 
         private EbReport Report = null;
         private iTextSharp.text.Font f = FontFactory.GetFont(FontFactory.HELVETICA, 5);
-        // private float printingTop = 0;
-        private List<double> total = new List<double>(); // change
-        private Dictionary<int, double> totalOfColumn = new Dictionary<int, double>(); //change
         private PdfContentByte canvas;
         private PdfWriter writer;
         private Document d;
@@ -63,8 +60,8 @@ namespace ExpressBase.Web.Controllers
         private float detail_section_height;
         private bool IsLastpage = false;
 
-        private List<dynamic> Summaryfield = new List<dynamic>();
         private Dictionary<string, List<object>> PageSummaryFields = new Dictionary<string, List<object>>();
+        private Dictionary<string, List<object>> ReportSummaryFields = new Dictionary<string, List<object>>();
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         public IActionResult Index(string refid)
@@ -147,25 +144,82 @@ namespace ExpressBase.Web.Controllers
 
         public void InitializeSummaryFields()
         {
-            List<object> l = null;
+            List<object> SummaryFieldsList = null;
             foreach (EbPageFooter p_footer in Report.PageFooters)
             {
                 foreach (EbReportField field in p_footer.Fields)
                 {
-                    if (field is EbDataFieldNumericSummary)
+                    if (field is EbDataFieldNumericSummary || field is EbDataFieldBooleanSummary || field is EbDataFieldTextSummary || field is EbDataFieldDateTimeSummary)
                     {
-                        EbDataFieldNumericSummary f = field as EbDataFieldNumericSummary;
-
+                        dynamic f = field;
+                        if (field is EbDataFieldNumericSummary)
+                        {
+                            f = field as EbDataFieldNumericSummary;
+                        }
+                        if (field is EbDataFieldBooleanSummary)
+                        {
+                            f = field as EbDataFieldBooleanSummary;
+                        }
+                        if (field is EbDataFieldTextSummary)
+                        {
+                            f = field as EbDataFieldTextSummary;
+                        }
+                        if (field is EbDataFieldDateTimeSummary)
+                        {
+                            f = field as EbDataFieldDateTimeSummary;
+                        }
                         if (!PageSummaryFields.ContainsKey(f.DataField))
                         {
-                            l = new List<object>();
-                            l.Add(field as EbDataFieldNumericSummary);
-                            PageSummaryFields.Add(f.DataField, l);
+                            SummaryFieldsList = new List<object>();
+                            SummaryFieldsList.Add(f);
+                            PageSummaryFields.Add(f.DataField, SummaryFieldsList);
                         }
                         else
                         {
-                            l.Add(field as EbDataFieldNumericSummary);
-                            PageSummaryFields[f.DataField].Add(field as EbDataFieldNumericSummary);
+                            SummaryFieldsList.Add(f);
+                            PageSummaryFields[f.DataField].Add(f);
+                        }
+                    }
+                }
+            }
+
+            foreach (EbReportFooter r_footer in Report.ReportFooters)
+            {
+                foreach (EbReportField field in r_footer.Fields)
+                {
+                    if (field is EbDataFieldNumericSummary || field is EbDataFieldBooleanSummary || field is EbDataFieldTextSummary || field is EbDataFieldDateTimeSummary)
+                    {
+                        if (field is EbDataFieldNumericSummary)
+                        {
+                            dynamic f = null;
+                            if (field is EbDataFieldNumericSummary)
+                            {
+                                f = field as EbDataFieldNumericSummary;
+                            }
+                            if (field is EbDataFieldBooleanSummary)
+                            {
+                                f = field as EbDataFieldBooleanSummary;
+                            }
+                            if (field is EbDataFieldTextSummary)
+                            {
+                                f = field as EbDataFieldTextSummary;
+                            }
+                            if (field is EbDataFieldDateTimeSummary)
+                            {
+                                f = field as EbDataFieldDateTimeSummary;
+                            }
+
+                            if (!ReportSummaryFields.ContainsKey(f.DataField))
+                            {
+                                SummaryFieldsList = new List<object>();
+                                SummaryFieldsList.Add(f);
+                                ReportSummaryFields.Add(f.DataField, SummaryFieldsList);
+                            }
+                            else
+                            {
+                                SummaryFieldsList.Add(f);
+                                ReportSummaryFields[f.DataField].Add(f);
+                            }
                         }
                     }
                 }
@@ -279,33 +333,61 @@ namespace ExpressBase.Web.Controllers
         //NEED FIX OO
         public void DrawFields(EbReportField field, float section_Yposition, int i)
         {
-            var column_name = "";
-            var column_val = "";
-            if (PageSummaryFields.ContainsKey(field.Title))
+            var column_name = string.Empty;
+            var column_val = string.Empty;
+
+            if (PageSummaryFields.ContainsKey(field.Title) || ReportSummaryFields.ContainsKey(field.Title))
             {
-                List<object> SummaryList = PageSummaryFields[field.Title];
-                foreach (var item in SummaryList)
+                List<object> SummaryList;
+                if (PageSummaryFields.ContainsKey(field.Title))
                 {
-                    var table = field.Title.Split('.')[0];
-                    column_name = field.Title.Split('.')[1];
-                    column_val = GeFieldtData(column_name, i);
-                    decimal value = column_val.ToDecimal();
-                    if (item is EbDataFieldNumericSummary)
-                        (item as EbDataFieldNumericSummary).Summarize(value);
+                    SummaryList = PageSummaryFields[field.Title];
+                    foreach (var item in SummaryList)
+                    {
+                        var table = field.Title.Split('.')[0];
+                        column_name = field.Title.Split('.')[1];
+                        column_val = GeFieldtData(column_name, i);
+                        if (item is EbDataFieldNumericSummary)
+                            (item as EbDataFieldNumericSummary).Summarize(column_val);
+                        if (item is EbDataFieldBooleanSummary)
+                            (item as EbDataFieldBooleanSummary).Summarize();
+                        if (item is EbDataFieldTextSummary)
+                            (item as EbDataFieldTextSummary).Summarize(column_val);
+                        if (item is EbDataFieldDateTimeSummary)
+                            (item as EbDataFieldDateTimeSummary).Summarize(column_val);
+                    }
                 }
-                string x = field.Title;
-            }
-            else
-            {
-                var x = "ss";
+                if (ReportSummaryFields.ContainsKey(field.Title))
+                {
+                    SummaryList = ReportSummaryFields[field.Title];
+                    foreach (var item in SummaryList)
+                    {
+                        var table = field.Title.Split('.')[0];
+                        column_name = field.Title.Split('.')[1];
+                        column_val = GeFieldtData(column_name, i);
+                        decimal value = column_val.ToDecimal();
+                        if (item is EbDataFieldNumericSummary)
+                            (item as EbDataFieldNumericSummary).Summarize(value);
+                        if (item is EbDataFieldBooleanSummary)
+                            (item as EbDataFieldBooleanSummary).Summarize();
+                        if (item is EbDataFieldTextSummary)
+                            (item as EbDataFieldTextSummary).Summarize(value);
+                        if (item is EbDataFieldDateTimeSummary)
+                            (item as EbDataFieldDateTimeSummary).Summarize(value);
+                    }
+                }
             }
 
             if (field is EbDataField)
             {
                 if (field is EbDataFieldNumericSummary)
                     column_val = (field as EbDataFieldNumericSummary).SummarizedValue.ToString();
-               //else if (field is EbDataFieldBoolean || field is EbDataFieldDateTime || field is EbDataFieldNumeric || field is EbDataFieldText)
-               //     column_val = field.Title;
+                else if (field is EbDataFieldBooleanSummary)
+                    column_val = (field as EbDataFieldBooleanSummary).SummarizedValue.ToString();
+                else if (field is EbDataFieldTextSummary)
+                    column_val = (field as EbDataFieldTextSummary).SummarizedValue.ToString();
+                else if (field is EbDataFieldDateTimeSummary)
+                    column_val = (field as EbDataFieldDateTimeSummary).SummarizedValue.ToString();
                 else
                 {
                     var table = field.Title.Split('.')[0];
@@ -389,40 +471,6 @@ namespace ExpressBase.Web.Controllers
             else if (field is EbDateTime)
             {
                 DrawTextBox(field, field.Title, section_Yposition);
-            }
-
-            else if (field is EbDataFieldTextSummary)
-            {
-                EbDataFieldTextSummary f = field as EbDataFieldTextSummary;
-                if (Enum.GetName(typeof(SummaryFunctionsText), f.Function) == "Count")
-                {
-                }
-                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Max")
-                {
-                }
-                if (Enum.GetName(typeof(EbDataFieldTextSummary), f.Function) == "Min")
-                {
-                }
-            }
-            else if (field is EbDataFieldDateTimeSummary)
-            {
-                EbDataFieldDateTimeSummary f = field as EbDataFieldDateTimeSummary;
-                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Count")
-                {
-                }
-                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Max")
-                {
-                }
-                if (Enum.GetName(typeof(SummaryFunctionsDateTime), f.Function) == "Min")
-                {
-                }
-            }
-            else if (field is EbDataFieldBooleanSummary)
-            {
-                EbDataFieldBooleanSummary f = field as EbDataFieldBooleanSummary;
-                if (Enum.GetName(typeof(SummaryFunctionsBoolean), f.Function) == "Count")
-                {
-                }
             }
         }
 

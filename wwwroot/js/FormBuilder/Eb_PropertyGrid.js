@@ -545,7 +545,7 @@
         this.imgSlctrs = {};
         this.InitPG();
         $("#" + this.wraperId + " .propgrid-helpbox").show();
-        console.log("default test :" + JSON.stringify(props));
+        //console.log("default test :" + JSON.stringify(props));
     };
     this.init();
 

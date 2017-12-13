@@ -43,9 +43,6 @@ namespace ExpressBase.Web.Controllers
 
         private EbReport Report = null;
         private iTextSharp.text.Font f = FontFactory.GetFont(FontFactory.HELVETICA, 5);
-        // private float printingTop = 0;
-        private List<double> total = new List<double>(); // change
-        private Dictionary<int, double> totalOfColumn = new Dictionary<int, double>(); //change
         private PdfContentByte canvas;
         private PdfWriter writer;
         private Document d;
@@ -63,8 +60,8 @@ namespace ExpressBase.Web.Controllers
         private float detail_section_height;
         private bool IsLastpage = false;
 
-        private List<dynamic> Summaryfield = new List<dynamic>();
         private Dictionary<string, List<object>> PageSummaryFields = new Dictionary<string, List<object>>();
+        private Dictionary<string, List<object>> ReportSummaryFields = new Dictionary<string, List<object>>();
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         public IActionResult Index(string refid)
@@ -166,6 +163,28 @@ namespace ExpressBase.Web.Controllers
                         {
                             l.Add(field as EbDataFieldNumericSummary);
                             PageSummaryFields[f.DataField].Add(field as EbDataFieldNumericSummary);
+                        }
+                    }
+                }
+            }
+            foreach (EbReportFooter r_footer in Report.ReportFooters)
+            {
+                foreach (EbReportField field in r_footer.Fields)
+                {
+                    if (field is EbDataFieldNumericSummary)
+                    {
+                        EbDataFieldNumericSummary f = field as EbDataFieldNumericSummary;
+
+                        if (!ReportSummaryFields.ContainsKey(f.DataField))
+                        {
+                            l = new List<object>();
+                            l.Add(field as EbDataFieldNumericSummary);
+                            ReportSummaryFields.Add(f.DataField, l);
+                        }
+                        else
+                        {
+                            l.Add(field as EbDataFieldNumericSummary);
+                            ReportSummaryFields[f.DataField].Add(field as EbDataFieldNumericSummary);
                         }
                     }
                 }
@@ -281,18 +300,34 @@ namespace ExpressBase.Web.Controllers
         {
             var column_name = "";
             var column_val = "";
-            if (PageSummaryFields.ContainsKey(field.Title))
+            if (PageSummaryFields.ContainsKey(field.Title) || ReportSummaryFields.ContainsKey(field.Title))
             {
-                List<object> SummaryList = PageSummaryFields[field.Title];
-                foreach (var item in SummaryList)
-                {
-                    var table = field.Title.Split('.')[0];
-                    column_name = field.Title.Split('.')[1];
-                    column_val = GeFieldtData(column_name, i);
-                    decimal value = column_val.ToDecimal();
-                    if (item is EbDataFieldNumericSummary)
-                        (item as EbDataFieldNumericSummary).Summarize(value);
+                List<object> SummaryList;
+                if (PageSummaryFields.ContainsKey(field.Title))
+                { SummaryList = PageSummaryFields[field.Title];
+                    foreach (var item in SummaryList)
+                    {
+                        var table = field.Title.Split('.')[0];
+                        column_name = field.Title.Split('.')[1];
+                        column_val = GeFieldtData(column_name, i);
+                        decimal value = column_val.ToDecimal();
+                        if (item is EbDataFieldNumericSummary)
+                            (item as EbDataFieldNumericSummary).Summarize(value);
+                    }
                 }
+                else {SummaryList =ReportSummaryFields[field.Title];
+                    foreach (var item in SummaryList)
+                    {
+                        var table = field.Title.Split('.')[0];
+                        column_name = field.Title.Split('.')[1];
+                        column_val = GeFieldtData(column_name, i);
+                        decimal value = column_val.ToDecimal();
+                        if (item is EbDataFieldNumericSummary)
+                            (item as EbDataFieldNumericSummary).Summarize(value);
+                    }
+                }
+
+                
                 string x = field.Title;
             }
             else
@@ -304,8 +339,8 @@ namespace ExpressBase.Web.Controllers
             {
                 if (field is EbDataFieldNumericSummary)
                     column_val = (field as EbDataFieldNumericSummary).SummarizedValue.ToString();
-               //else if (field is EbDataFieldBoolean || field is EbDataFieldDateTime || field is EbDataFieldNumeric || field is EbDataFieldText)
-               //     column_val = field.Title;
+                //else if (field is EbDataFieldBoolean || field is EbDataFieldDateTime || field is EbDataFieldNumeric || field is EbDataFieldText)
+                //     column_val = field.Title;
                 else
                 {
                     var table = field.Title.Split('.')[0];

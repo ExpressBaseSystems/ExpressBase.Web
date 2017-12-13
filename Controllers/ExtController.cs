@@ -35,6 +35,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+
         public IActionResult DevSignIn()
         {
             ViewBag.errMsg = TempData["ErrorMessage"] as string;
@@ -701,6 +702,24 @@ namespace ExpressBase.Web.Controllers
             else
                 ViewBag.SuccessMessage = "Verification failed";
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult SMSCallBack()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public void SMSCallBack(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            var smsSid = Request.Form["SmsSid"];
+            var messageStatus = Request.Form["MessageStatus"];
+            SMSSentRequest sMSSentRequest = new SMSSentRequest();
+            sMSSentRequest.To = req["to"];
+            sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
+            this.ServiceClient.Post(sMSSentRequest);
         }
     }
 

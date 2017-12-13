@@ -417,16 +417,23 @@ namespace ExpressBase.Web2.Controllers
             return html;
         }
 
-        [HttpGet]
-        public IActionResult CreateUser()
-        {
-			var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = 0, TenantAccountId = ViewBag.cid });
-			ViewBag.roles =JsonConvert.SerializeObject(fr.Roles);
-			ViewBag.UserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
-			return View();
-        }
+		//[HttpGet]
+		//public IActionResult CreateUser()
+		//{
+		//	var fr = this.ServiceClient.Get<GetUserEditResponse>(new GetUserEditRequest { Id = 0, TenantAccountId = ViewBag.cid });
+		//	ViewBag.roles = JsonConvert.SerializeObject(fr.Roles);
+		//	ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
+		//	List<EbRole> Sysroles = new List<EbRole>();
+		//	foreach (var role in Enum.GetValues(typeof(SystemRoles)))
+		//	{
+		//		Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
+		//	}
+		//	ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
+		//	return View();
+		//}
 
-        [HttpPost]
+		[HttpGet]
+		[HttpPost]
         public IActionResult CreateUser(int itemid)
         {
 			List<EbRole> Sysroles = new List<EbRole>();
@@ -444,6 +451,11 @@ namespace ExpressBase.Web2.Controllers
 				ViewBag.U_Email = fr.UserData["email"];
 				ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
 				ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
+			}
+			else
+			{
+				ViewBag.U_Roles = "";
+				ViewBag.U_Groups = "";
 			}
 			ViewBag.itemid = itemid;
 			return View();

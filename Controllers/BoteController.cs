@@ -37,8 +37,8 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 string cid = refid.Split('-')[0].Trim();
-                string authResponse = MyAuthenticate(refid, socialId);
-                if (authResponse != null)
+               // string authResponse = AuthAndGetformlist(refid, socialId);
+                if (AuthAndGetformlist(refid, socialId) != null)
                 {
                     var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
                     var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
@@ -149,9 +149,9 @@ namespace ExpressBase.Web.Controllers
                 }
             }
 
-            string authResponse = MyAuthenticate(refid, socialId, whichconsole);
+           // string authResponse = ;
 
-            if (authResponse != null)
+            if (AuthAndGetformlist(refid, socialId, whichconsole) != null)
             {
                 var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
                 var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
@@ -165,49 +165,41 @@ namespace ExpressBase.Web.Controllers
 
 
         [HttpPost]
-        public string MyAuthenticate(string cid, string socialId, string wc = "tc")
+        public List<object> AuthAndGetformlist(string cid, string socialId, string wc = "tc")
         {
-            // string cid = refid.Split('-')[0].Trim();
-            //   string whichconsole = "tc";
-
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,
                 UserName = "NIL",
                 Password = "NIL",
                 Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId } },
-                // UseTokenCookie = true
             });
+            if(authResponse != null)
+            {
+                this.ServiceClient.BearerToken = authResponse.BearerToken;
+                this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+                var tokenS = (new JwtSecurityTokenHandler()).ReadToken(authResponse.BearerToken) as JwtSecurityToken;
 
-            //if (authResponse != null)
-            //{
-            //    CookieOptions options = new CookieOptions();
-            //    Response.Cookies.Append("botToken", authResponse.BearerToken, options);
-            //    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
-            //    this.ServiceClient.BearerToken = authResponse.BearerToken;
-            //    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
 
-            //}
-            return authResponse.ToJson();
+                ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
+                ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
+                ViewBag.email = tokenS.Claims.First(claim => claim.Type == "email").Value;
+
+                User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+                var Ids = String.Join(",", user.EbObjectIds);
+                var formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
+                List<object> returnlist = new List<object>();
+                returnlist.Add(authResponse);
+                returnlist.Add(formlist.BotForms);
+                return returnlist;
+            }
+            else
+            {
+                return null;
+            }
+           
         }
 
-        public Dictionary<string, string> GetBotForms(string refreshToken, string bearerToken)
-        {
-            this.ServiceClient.BearerToken = bearerToken;
-            this.ServiceClient.RefreshToken = refreshToken;
-            var tokenS = (new JwtSecurityTokenHandler()).ReadToken(bearerToken) as JwtSecurityToken;
-
-
-            ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
-            ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
-            ViewBag.email = tokenS.Claims.First(claim => claim.Type == "email").Value;
-
-            User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
-            var Ids = String.Join(",", user.EbObjectIds);
-            var formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
-
-            return formlist.BotForms;
-        }
         public EbBotForm GetCurForm(string refreshToken, string bearerToken, string refid)
         {
             this.ServiceClient.BearerToken = bearerToken;

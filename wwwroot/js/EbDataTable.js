@@ -145,6 +145,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var id = $(ev.target).attr("id");
                 focusedId = id;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+                //if ($('#' + id).is(':last-child'))
+                    $(".splitdiv_parent").scrollTo($("#" + focusedId));
+                //if (this.login == "uc")
+                //    dvcontainerObj.firstWPos = $(".splitdiv_parent")
             }
         }
     }.bind(this);

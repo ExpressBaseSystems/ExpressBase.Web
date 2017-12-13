@@ -10,7 +10,7 @@
     }
 
     this.editclientId = function () {
-        $('#cid').removeAttr('disabled');
+        $('#cid').removeAttr('readonly');
     }; 
 
     this.subscribeProd = function (e) {
@@ -97,9 +97,9 @@
             if ($(obj).attr("plan") === this.object[obj2].Plan) 
                 if ($(obj).attr("plan") === "0") {
                     if ($(obj).parent("tr").attr("pritem") === "ChatBot")
-                        $(obj).children().find(".T-add-amount").text(this.object[obj2].EvalDays + "days");
+                        $(obj).children().find(".T-add-amount").text(this.object[obj2].EvalDays + " days");
                     else
-                        $(obj).children().find(".T-add-amount").text("Free for EVER"); 
+                        $(obj).children().find(".T-add-amount").text("FOREVER"); 
                 }
             else
                 $(obj).children().find(".T-add-amount").text("$" + this.object[obj2].Amount);        
@@ -112,7 +112,6 @@
 
     this.init = function () {
         this.drawSubsciptionTable();
-        $('#cid').attr('disabled', 'disabled');
         $('#subscrib-info').hide();
         this.upload = new EbImageCropper({
             preview: 'logo-prev',

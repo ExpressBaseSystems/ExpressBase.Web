@@ -2,6 +2,7 @@
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
+    this.$watermark = $('<div class="watermark-cont"><span class="watermark">&nbsp;<i>Powered by</i> EXPRESSbase</span></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
     this.$botMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-bot"><div class="msg-wraper-bot"></div></div>'));
     this.$botMsgBox.prepend('<div class="bot-icon"></div>');
@@ -10,6 +11,8 @@
     this.ready = true;
     this.bearerToken = null;
     this.refreshToken = null;
+    this.botdpURL = 'url(../images/svg/chatBot.svg)center center no-repeat';
+    this.ebbotThemeColor = '#31d031';
     this.initControls = new InitControls();
 
     this.formsList = {};
@@ -25,6 +28,7 @@
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
+        this.$chatCont.append(this.$watermark);
         this.$TypeAnim = $(`<div><svg class="lds-typing" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
                     <circle cx="27.5" cy="40.9532" r="5" fill="#999">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.5s"></animate>
@@ -36,6 +40,11 @@
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.25s"></animate>
                     </circle>
                 </svg><div>`);
+
+        var html = document.getElementsByTagName('html')[0];
+        html.style.setProperty("--botdpURL", this.botdpURL);
+        html.style.setProperty("--botThemeColor", this.ebbotThemeColor);
+
         var $botMsgBox = this.$botMsgBox.clone();
         $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone()).css("width", "75px");
         this.$TypeAnimMsg = $botMsgBox;
@@ -112,19 +121,6 @@
             this.setFormControls();
         }
     }
-
-    this.getFormsList = function () {
-        this.showTypingAnim();
-        $.post("../Bote/GetBotForms", {
-            "refreshToken": this.refreshToken,
-            "bearerToken": this.bearerToken
-        }, function (data) {
-            this.hideTypingAnim();
-            this.formsDict = data;
-            this.formNames = Object.values(this.formsDict);
-            this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
-        }.bind(this));
-    }.bind(this);
 
     this.txtboxKeyup = function (e) {
         if (e.which === 13)/////////////////////////////
@@ -204,7 +200,7 @@
                 this.getNextControl(idx);
         }
         else {
-            if ($("[name=formsubmit]").length===0){
+            if ($("[name=formsubmit]").length === 0) {
                 this.getMsg('Are you sure? Can I submit?');
                 this.getMsg($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
             }
@@ -332,18 +328,27 @@
     this.loadCtrlScript = function () {
         $("head").append(this.CntrlHeads);
     };
+
+    this.authFailed = function () {
+        alert("auth failed");
+    };
+
     this.authenticate = function () {
         this.showTypingAnim();
-        $.post("../bote/MyAuthenticate",
+        $.post("../bote/AuthAndGetformlist",
             {
                 "cid": "eb_roby_dev",
                 "socialId": this.FBResponse.id,
                 "wc": "uc",
             }, function (result) {
-                this.bearerToken = (JSON.parse(result)).BearerToken;
-                this.refreshToken = (JSON.parse(result)).RefreshToken;
-                this.getFormsList();
                 this.hideTypingAnim();
+                if (result === null)
+                    this.authFailed();
+                this.formsDict = result[1];
+                this.bearerToken = result[0].bearerToken;
+                this.refreshToken = result[0].refreshToken;
+                this.formNames = Object.values(this.formsDict);
+                this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
             }.bind(this));
     }.bind(this);
 

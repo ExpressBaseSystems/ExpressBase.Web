@@ -278,6 +278,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
                 else
                     this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+                //if ($('#' + id).is(':last-child'))
+                    //$(".splitdiv_parent").scrollTo($("#" + focusedId));
             }
         }
     }.bind(this);

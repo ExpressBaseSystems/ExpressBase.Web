@@ -14,7 +14,7 @@ using ServiceStack.Redis;
 using ExpressBase.Common;
 using ExpressBase.Objects;
 using System.Drawing;
-
+using static ExpressBase.Objects.ReportRelated.EbReportField;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -176,7 +176,7 @@ namespace ExpressBase.Web.Controllers
                         }
                         else
                         {
-                            SummaryFieldsList.Add(f);
+                            //  SummaryFieldsList.Add(f);
                             PageSummaryFields[f.DataField].Add(f);
                         }
                     }
@@ -189,37 +189,34 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (field is EbDataFieldNumericSummary || field is EbDataFieldBooleanSummary || field is EbDataFieldTextSummary || field is EbDataFieldDateTimeSummary)
                     {
+                        dynamic f = null;
                         if (field is EbDataFieldNumericSummary)
                         {
-                            dynamic f = null;
-                            if (field is EbDataFieldNumericSummary)
-                            {
-                                f = field as EbDataFieldNumericSummary;
-                            }
-                            if (field is EbDataFieldBooleanSummary)
-                            {
-                                f = field as EbDataFieldBooleanSummary;
-                            }
-                            if (field is EbDataFieldTextSummary)
-                            {
-                                f = field as EbDataFieldTextSummary;
-                            }
-                            if (field is EbDataFieldDateTimeSummary)
-                            {
-                                f = field as EbDataFieldDateTimeSummary;
-                            }
+                            f = field as EbDataFieldNumericSummary;
+                        }
+                        if (field is EbDataFieldBooleanSummary)
+                        {
+                            f = field as EbDataFieldBooleanSummary;
+                        }
+                        if (field is EbDataFieldTextSummary)
+                        {
+                            f = field as EbDataFieldTextSummary;
+                        }
+                        if (field is EbDataFieldDateTimeSummary)
+                        {
+                            f = field as EbDataFieldDateTimeSummary;
+                        }
 
-                            if (!ReportSummaryFields.ContainsKey(f.DataField))
-                            {
-                                SummaryFieldsList = new List<object>();
-                                SummaryFieldsList.Add(f);
-                                ReportSummaryFields.Add(f.DataField, SummaryFieldsList);
-                            }
-                            else
-                            {
-                                SummaryFieldsList.Add(f);
-                                ReportSummaryFields[f.DataField].Add(f);
-                            }
+                        if (!ReportSummaryFields.ContainsKey(f.DataField))
+                        {
+                            SummaryFieldsList = new List<object>();
+                            SummaryFieldsList.Add(f);
+                            ReportSummaryFields.Add(f.DataField, SummaryFieldsList);
+                        }
+                        else
+                        {
+                            //SummaryFieldsList.Add(f);
+                            ReportSummaryFields[f.DataField].Add(f);
                         }
                     }
                 }
@@ -329,148 +326,89 @@ namespace ExpressBase.Web.Controllers
                 }
             }
         }
+        public void CallSummerize(string title, int i)
+        {
+            var column_name = string.Empty;
+            var column_val = string.Empty;
+
+            List<object> SummaryList;
+            if (PageSummaryFields.ContainsKey(title))
+            {
+                SummaryList = PageSummaryFields[title];
+                foreach (var item in SummaryList)
+                {
+                    var table = title.Split('.')[0];
+                    column_name = title.Split('.')[1];
+                    column_val = GeFieldtData(column_name, i);
+                    if (item is EbDataFieldNumericSummary)
+                        (item as EbDataFieldNumericSummary).Summarize(column_val);
+                    else if (item is EbDataFieldBooleanSummary)
+                        (item as EbDataFieldBooleanSummary).Summarize();
+                    else if (item is EbDataFieldTextSummary)
+                        (item as EbDataFieldTextSummary).Summarize(column_val);
+                    else if (item is EbDataFieldDateTimeSummary)
+                        (item as EbDataFieldDateTimeSummary).Summarize(column_val);
+                }
+            }
+            if (ReportSummaryFields.ContainsKey(title))
+            {
+                SummaryList = ReportSummaryFields[title];
+                foreach (var item in SummaryList)
+                {
+                    var table = title.Split('.')[0];
+                    column_name = title.Split('.')[1];
+                    column_val = GeFieldtData(column_name, i);
+                    if (item is EbDataFieldNumericSummary)
+                        (item as EbDataFieldNumericSummary).Summarize(column_val);
+                    else if (item is EbDataFieldBooleanSummary)
+                        (item as EbDataFieldBooleanSummary).Summarize();
+                    else if (item is EbDataFieldTextSummary)
+                        (item as EbDataFieldTextSummary).Summarize(column_val);
+                    else if (item is EbDataFieldDateTimeSummary)
+                        (item as EbDataFieldDateTimeSummary).Summarize(column_val);
+                }
+            }
+
+        }
 
         //NEED FIX OO
         public void DrawFields(EbReportField field, float section_Yposition, int i)
         {
             var column_name = string.Empty;
             var column_val = string.Empty;
-
             if (PageSummaryFields.ContainsKey(field.Title) || ReportSummaryFields.ContainsKey(field.Title))
+                CallSummerize(field.Title, i);
+            if ((field is EbDataField) || (field is EbPageNo) || (field is EbPageXY) || (field is EbDateTime))
             {
-                List<object> SummaryList;
-                if (PageSummaryFields.ContainsKey(field.Title))
+                if (field is EbDataField)
                 {
-                    SummaryList = PageSummaryFields[field.Title];
-                    foreach (var item in SummaryList)
+                    if (field is EbDataFieldNumericSummary)
+                        column_val = (field as EbDataFieldNumericSummary).SummarizedValue.ToString();
+                    else if (field is EbDataFieldBooleanSummary)
+                        column_val = (field as EbDataFieldBooleanSummary).SummarizedValue.ToString();
+                    else if (field is EbDataFieldTextSummary)
+                        column_val = (field as EbDataFieldTextSummary).SummarizedValue.ToString();
+                    else if (field is EbDataFieldDateTimeSummary)
+                        column_val = (field as EbDataFieldDateTimeSummary).SummarizedValue.ToString();
+                    else
                     {
                         var table = field.Title.Split('.')[0];
                         column_name = field.Title.Split('.')[1];
                         column_val = GeFieldtData(column_name, i);
-                        if (item is EbDataFieldNumericSummary)
-                            (item as EbDataFieldNumericSummary).Summarize(column_val);
-                        if (item is EbDataFieldBooleanSummary)
-                            (item as EbDataFieldBooleanSummary).Summarize();
-                        if (item is EbDataFieldTextSummary)
-                            (item as EbDataFieldTextSummary).Summarize(column_val);
-                        if (item is EbDataFieldDateTimeSummary)
-                            (item as EbDataFieldDateTimeSummary).Summarize(column_val);
                     }
                 }
-                if (ReportSummaryFields.ContainsKey(field.Title))
-                {
-                    SummaryList = ReportSummaryFields[field.Title];
-                    foreach (var item in SummaryList)
-                    {
-                        var table = field.Title.Split('.')[0];
-                        column_name = field.Title.Split('.')[1];
-                        column_val = GeFieldtData(column_name, i);
-                        decimal value = column_val.ToDecimal();
-                        if (item is EbDataFieldNumericSummary)
-                            (item as EbDataFieldNumericSummary).Summarize(value);
-                        if (item is EbDataFieldBooleanSummary)
-                            (item as EbDataFieldBooleanSummary).Summarize();
-                        if (item is EbDataFieldTextSummary)
-                            (item as EbDataFieldTextSummary).Summarize(value);
-                        if (item is EbDataFieldDateTimeSummary)
-                            (item as EbDataFieldDateTimeSummary).Summarize(value);
-                    }
-                }
-            }
+                else if (field is EbPageNo)
+                    column_val = writer.PageNumber.ToString();
+                else if (field is EbPageXY)
+                    column_val = writer.PageNumber + "/"/* + writer.PageCount*/;
+                else if (field is EbDateTime)
+                    column_val = field.Title;
 
-            if (field is EbDataField)
-            {
-                if (field is EbDataFieldNumericSummary)
-                    column_val = (field as EbDataFieldNumericSummary).SummarizedValue.ToString();
-                else if (field is EbDataFieldBooleanSummary)
-                    column_val = (field as EbDataFieldBooleanSummary).SummarizedValue.ToString();
-                else if (field is EbDataFieldTextSummary)
-                    column_val = (field as EbDataFieldTextSummary).SummarizedValue.ToString();
-                else if (field is EbDataFieldDateTimeSummary)
-                    column_val = (field as EbDataFieldDateTimeSummary).SummarizedValue.ToString();
-                else
-                {
-                    var table = field.Title.Split('.')[0];
-                    column_name = field.Title.Split('.')[1];
-                    column_val = GeFieldtData(column_name, i);
-                }
-               (field as EbDataField).DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop, column_val);
+                field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop, column_val);
             }
-
-            if (field is EbText)
+            else if ((field is EbText) || (field is EbCircle) || (field is EbRect) || (field is EbHl) || (field is EbVl) || (field is EbArrR) || (field is EbArrL) || (field is EbArrU) || (field is EbArrD) || (field is EbByArrH) || (field is EbByArrV))
             {
-                column_val = field.Title;
-                DrawTextBox(field, column_val, section_Yposition);
-            }
-            //else if (field is EbDataFieldNumericSummary)
-            //{
-            //    EbDataFieldNumericSummary f = field as EbDataFieldNumericSummary;
-            //    var val = f.SummarizedValue.ToString();
-            //    DrawTextBox(field, val, section_Yposition);
-            //}
-            //else if (field is EbDataFieldBoolean || field is EbDataFieldDateTime || field is EbDataFieldNumeric || field is EbDataFieldText)
-            //{
-            //    var table = field.Title.Split('.')[0];
-            //    column_name = field.Title.Split('.')[1];
-            //    column_val = GeFieldtData(column_name, i);
-            //    DrawTextBox(field, column_val, section_Yposition);
-            //}
-            else if (field is EbCircle)
-            {
-                if (field.Height == field.Width)
-                    DrawCircle(field, section_Yposition);
-                else
-                    DrawEllipse(field, section_Yposition);
-            }
-            else if (field is EbRect)
-            {
-                DrawRectangle(field, section_Yposition);
-            }
-            else if (field is EbHl)
-            {
-                DrawHLine(field, section_Yposition);
-            }
-            else if (field is EbVl)
-            {
-                DrawVLine(field, section_Yposition);
-            }
-            else if (field is EbArrR)
-            {
-                DrawArrowR(field, section_Yposition);
-            }
-            else if (field is EbArrL)
-            {
-                DrawArrowL(field, section_Yposition);
-            }
-            else if (field is EbArrU)
-            {
-                DrawArrowU(field, section_Yposition);
-            }
-            else if (field is EbArrD)
-            {
-                DrawArrowD(field, section_Yposition);
-            }
-            else if (field is EbByArrH)
-            {
-                DrawByArrH(field, section_Yposition);
-            }
-            else if (field is EbByArrV)
-            {
-                DrawByArrV(field, section_Yposition);
-            }
-            else if (field is EbPageNo)
-            {
-                column_val = writer.PageNumber.ToString();
-                DrawTextBox(field, column_val, section_Yposition);
-            }
-            else if (field is EbPageXY)
-            {
-                column_val = writer.PageNumber + "/"/* + writer.PageCount*/;
-                DrawTextBox(field, column_val, section_Yposition);
-            }
-            else if (field is EbDateTime)
-            {
-                DrawTextBox(field, field.Title, section_Yposition);
+                field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop);
             }
         }
 
@@ -488,186 +426,6 @@ namespace ExpressBase.Web.Controllers
                 columnindex++;
             }
             return column_val;
-        }
-
-        public void DrawTextBox(EbReportField field, string column_val, float printingTop)
-        {
-            var urx = field.Width + field.Left;
-            var ury = Report.Height - (printingTop + field.Top + detailprintingtop);
-            var llx = field.Left;
-            var lly = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
-
-            ColumnText ct = new ColumnText(canvas);
-            ct.SetSimpleColumn(new Phrase(column_val), llx, lly, urx, ury, 15, Element.ALIGN_LEFT);
-            ct.Go();
-        }
-
-
-
-        public void DrawCircle(EbReportField field, float printingTop)
-        {
-            float radius = field.Width / 2;
-            float xval = field.Left + radius;
-            float yval = Report.Height - (printingTop + field.Top + radius + detailprintingtop);
-
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BackColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.Circle(xval, yval, radius);
-            canvas.FillStroke();
-        }
-
-        public void DrawEllipse(EbReportField field, float printingTop)
-        {
-            var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
-            var x2 = field.Left + field.Width;
-            var y2 = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BackColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.Ellipse(x1, y1, x2, y2);
-            canvas.FillStroke();
-        }
-
-        public void DrawRectangle(EbReportField field, float printingTop)
-        {
-            float x = field.Left;
-            float y = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
-            float w = field.Width;
-            float h = field.Height;
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BackColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.Rectangle(x, y, w, h);
-            canvas.FillStroke();
-        }
-
-        public void DrawHLine(EbReportField field, float printingTop)
-        {
-            var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
-            var x2 = field.Left + field.Width;
-            var y2 = y1 + detailprintingtop;
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x1, y1);
-            canvas.LineTo(x2, y2);
-            canvas.Stroke();
-        }
-
-        public void DrawVLine(EbReportField field, float printingTop)
-        {
-            var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
-            var x2 = x1;
-            var y2 = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x1, y1);
-            canvas.LineTo(x2, y2);
-            canvas.Stroke();
-        }
-
-        public void DrawArrowR(EbReportField field, float printingTop)
-        {
-            DrawHLine(field, printingTop);
-            var x = field.Left + field.Width;
-            var y = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x, y);
-            canvas.LineTo(x - 3, y - 3);
-            canvas.LineTo(x - 3, y + 3);
-            canvas.ClosePathFillStroke();
-        }
-
-        public void DrawArrowL(EbReportField field, float printingTop)
-        {
-            DrawHLine(field, printingTop);
-            var x = field.Left;
-            var y = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x, y);
-            canvas.LineTo(x + 3, y + 3);
-            canvas.LineTo(x + 3, y - 3);
-            canvas.ClosePathFillStroke();
-        }
-
-        public void DrawArrowU(EbReportField field, float printingTop)
-        {
-            DrawVLine(field, printingTop);
-            var x = field.Left;
-            var y = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x, y);
-            canvas.LineTo(x + 3, y - 3);
-            canvas.LineTo(x - 3, y - 3);
-            canvas.ClosePathFillStroke();
-        }
-
-        public void DrawArrowD(EbReportField field, float printingTop)
-        {
-            DrawVLine(field, printingTop);
-            var x = field.Left;
-            var y = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x, y);
-            canvas.LineTo(x - 3, y + 3);
-            canvas.LineTo(x + 3, y + 3);
-            canvas.ClosePathFillStroke();
-        }
-
-        public void DrawByArrH(EbReportField field, float printingTop)
-        {
-            DrawHLine(field, printingTop);
-            var x1 = field.Left + field.Width;
-            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x1, y1);
-            canvas.LineTo(x1 - 3, y1 - 3);
-            canvas.LineTo(x1 - 3, y1 + 3);
-
-            var x2 = field.Left;
-            var y2 = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.MoveTo(x2, y2);
-            canvas.LineTo(x2 + 3, y2 + 3);
-            canvas.LineTo(x2 + 3, y2 - 3);
-            canvas.ClosePathFillStroke();
-        }
-
-        public void DrawByArrV(EbReportField field, float printingTop)
-        {
-            DrawVLine(field, printingTop);
-            var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x1, y1);
-            canvas.LineTo(x1 + 3, y1 - 3);
-            canvas.LineTo(x1 - 3, y1 - 3);
-            var x2 = field.Left;
-            var y2 = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
-            canvas.MoveTo(x2, y2);
-            canvas.LineTo(x2 - 3, y2 + 3);
-            canvas.LineTo(x2 + 3, y2 + 3);
-            canvas.ClosePathFillStroke();
-        }
-
-        public BaseColor GetColor(string Color)
-        {
-            var colr = ColorTranslator.FromHtml(Color).ToArgb();
-            return new BaseColor(colr);
         }
     }
 }

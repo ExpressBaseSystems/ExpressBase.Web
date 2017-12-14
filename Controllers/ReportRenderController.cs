@@ -176,8 +176,8 @@ namespace ExpressBase.Web.Controllers
                         }
                         else
                         {
-                            SummaryFieldsList.Add(f);
-                            PageSummaryFields[f.DataField].Add(f);
+                          //  SummaryFieldsList.Add(f);
+                        PageSummaryFields[f.DataField].Add(f);
                         }
                     }
                 }
@@ -189,37 +189,34 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (field is EbDataFieldNumericSummary || field is EbDataFieldBooleanSummary || field is EbDataFieldTextSummary || field is EbDataFieldDateTimeSummary)
                     {
+                        dynamic f = null;
                         if (field is EbDataFieldNumericSummary)
                         {
-                            dynamic f = null;
-                            if (field is EbDataFieldNumericSummary)
-                            {
-                                f = field as EbDataFieldNumericSummary;
-                            }
-                            if (field is EbDataFieldBooleanSummary)
-                            {
-                                f = field as EbDataFieldBooleanSummary;
-                            }
-                            if (field is EbDataFieldTextSummary)
-                            {
-                                f = field as EbDataFieldTextSummary;
-                            }
-                            if (field is EbDataFieldDateTimeSummary)
-                            {
-                                f = field as EbDataFieldDateTimeSummary;
-                            }
+                            f = field as EbDataFieldNumericSummary;
+                        }
+                        if (field is EbDataFieldBooleanSummary)
+                        {
+                            f = field as EbDataFieldBooleanSummary;
+                        }
+                        if (field is EbDataFieldTextSummary)
+                        {
+                            f = field as EbDataFieldTextSummary;
+                        }
+                        if (field is EbDataFieldDateTimeSummary)
+                        {
+                            f = field as EbDataFieldDateTimeSummary;
+                        }
 
-                            if (!ReportSummaryFields.ContainsKey(f.DataField))
-                            {
-                                SummaryFieldsList = new List<object>();
-                                SummaryFieldsList.Add(f);
-                                ReportSummaryFields.Add(f.DataField, SummaryFieldsList);
-                            }
-                            else
-                            {
-                                SummaryFieldsList.Add(f);
-                                ReportSummaryFields[f.DataField].Add(f);
-                            }
+                        if (!ReportSummaryFields.ContainsKey(f.DataField))
+                        {
+                            SummaryFieldsList = new List<object>();
+                            SummaryFieldsList.Add(f);
+                            ReportSummaryFields.Add(f.DataField, SummaryFieldsList);
+                        }
+                        else
+                        {
+                            //SummaryFieldsList.Add(f);
+                            ReportSummaryFields[f.DataField].Add(f);
                         }
                     }
                 }
@@ -365,15 +362,14 @@ namespace ExpressBase.Web.Controllers
                         var table = field.Title.Split('.')[0];
                         column_name = field.Title.Split('.')[1];
                         column_val = GeFieldtData(column_name, i);
-                        decimal value = column_val.ToDecimal();
                         if (item is EbDataFieldNumericSummary)
-                            (item as EbDataFieldNumericSummary).Summarize(value);
+                            (item as EbDataFieldNumericSummary).Summarize(column_val);
                         if (item is EbDataFieldBooleanSummary)
                             (item as EbDataFieldBooleanSummary).Summarize();
                         if (item is EbDataFieldTextSummary)
-                            (item as EbDataFieldTextSummary).Summarize(value);
+                            (item as EbDataFieldTextSummary).Summarize(column_val);
                         if (item is EbDataFieldDateTimeSummary)
-                            (item as EbDataFieldDateTimeSummary).Summarize(value);
+                            (item as EbDataFieldDateTimeSummary).Summarize(column_val);
                     }
                 }
             }

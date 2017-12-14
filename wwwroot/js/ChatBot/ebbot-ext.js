@@ -79,6 +79,12 @@
     dpicon.style.height = "40px";
     botdp.appendChild(dpicon);
 
+    var loaderDiv = d.createElement("div");
+
+    iframe.onload = function (e) {
+        alert("loaded");
+        loaderDiv.style.display = 'none';
+    };
 
     closeDiv.onclick = function () {
         document.getElementById("eb_iframecont").style.display = "none";

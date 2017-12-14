@@ -148,6 +148,22 @@
             scrollLeft: 2000
         }, 500);
     };
+    this.ValidateForm = function () {
+        var isvalid = false; 
+        if ($('#solutionname').val() !== '') {
+            $('.Eb-product-container').each(function (i, obj) {
+                if ($(obj).children().find('.btn-upload').hasClass('subscribed')) {
+                    isvalid = true;
+                    return false;
+                }                  
+            });
+            if (!isvalid)
+                alert('select atleast one prooduct');
+        }
+        else
+            alert('solution canot be empty');
+        return isvalid;
+    }
 
     this.init = function () {
         this.drawSubsciptionTable();

@@ -25,7 +25,7 @@
                     </div>
                     <form class="subscript-submit" id="subscript-submit" action="~/Tenant/TenantAddAccount" method="post">
                         <div class="form-group">
-                            <input type="text" required="required" id="solutionname" name="Sname" class="form-control" placeholder="Solution Name" />
+                            <input type="text" id="solutionname" name="Sname" class="form-control" placeholder="Solution Name" required/>
                         </div>
                         <div class="client-id-sec">
                             <input type="text" required="required" id="cid" name="esid" value="@ViewBag.Sid" readonly class="form-control input-clientId" placeholder="Client id" />
@@ -68,7 +68,7 @@
                 <div class="products-head">
                     <h4>Select Products</h4>
                 </div>
-                <div class="card--content-body">
+                <div class="card--content-body" id="product-container">
                     <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
                         <div class="Eb-product-container-bdy" pid="Forms" prod-id="1">
                             <div class="pro-icon-bx">
@@ -198,7 +198,7 @@
         <div class="none"></div>
     </section>
 </div>
-<div id="popover-clientid-edit" class="popover-clientid-edit">
+@*<div id="popover-clientid-edit" class="popover-clientid-edit">
     <div class="popover-text">
         You can edit solution Id
     </div>
@@ -206,7 +206,7 @@
         <button id="edit-sid" class="btn btn-success">Edit</button>
         <button onclick="$('#popover-clientid-edit').hide()" class="btn btn-success pull-right">Close</button>
     </div>
-</div>
+</div>*@
 <div class="modal fade" id="eb-common-price-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="eb-common-price-modal-container">
@@ -230,7 +230,11 @@
         $("#save-subscrip").click(function () {
             var sub = subscribe.getSubscription();
             $("#sub-form-field").val(JSON.stringify(sub));
-            $("#subscript-submit").submit();
+            var isvalid = subscribe.ValidateForm();
+            if (isvalid) {
+                $("#subscript-submit").submit();
+                $.LoadingOverlay("show");
+            }       
         });
     });
 </script>

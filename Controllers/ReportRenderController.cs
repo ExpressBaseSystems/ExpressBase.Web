@@ -176,8 +176,8 @@ namespace ExpressBase.Web.Controllers
                         }
                         else
                         {
-                          //  SummaryFieldsList.Add(f);
-                        PageSummaryFields[f.DataField].Add(f);
+                            //  SummaryFieldsList.Add(f);
+                            PageSummaryFields[f.DataField].Add(f);
                         }
                     }
                 }
@@ -326,53 +326,59 @@ namespace ExpressBase.Web.Controllers
                 }
             }
         }
+        public void CallSummerize(string title, int i)
+        {
+            var column_name = string.Empty;
+            var column_val = string.Empty;
+            if (PageSummaryFields.ContainsKey(title) || ReportSummaryFields.ContainsKey(title))
+            {
+                List<object> SummaryList;
+                if (PageSummaryFields.ContainsKey(title))
+                {
+                    SummaryList = PageSummaryFields[title];
+                    foreach (var item in SummaryList)
+                    {
+                        var table = title.Split('.')[0];
+                        column_name = title.Split('.')[1];
+                        column_val = GeFieldtData(column_name, i);
+                        if (item is EbDataFieldNumericSummary)
+                            (item as EbDataFieldNumericSummary).Summarize(column_val);
+                        else if (item is EbDataFieldBooleanSummary)
+                            (item as EbDataFieldBooleanSummary).Summarize();
+                        else if (item is EbDataFieldTextSummary)
+                            (item as EbDataFieldTextSummary).Summarize(column_val);
+                        else if (item is EbDataFieldDateTimeSummary)
+                            (item as EbDataFieldDateTimeSummary).Summarize(column_val);
+                    }
+                }
+                if (ReportSummaryFields.ContainsKey(title))
+                {
+                    SummaryList = ReportSummaryFields[title];
+                    foreach (var item in SummaryList)
+                    {
+                        var table = title.Split('.')[0];
+                        column_name = title.Split('.')[1];
+                        column_val = GeFieldtData(column_name, i);
+                        if (item is EbDataFieldNumericSummary)
+                            (item as EbDataFieldNumericSummary).Summarize(column_val);
+                        else if (item is EbDataFieldBooleanSummary)
+                            (item as EbDataFieldBooleanSummary).Summarize();
+                        else if (item is EbDataFieldTextSummary)
+                            (item as EbDataFieldTextSummary).Summarize(column_val);
+                        else if (item is EbDataFieldDateTimeSummary)
+                            (item as EbDataFieldDateTimeSummary).Summarize(column_val);
+                    }
+                }
+            }
 
+        }
         //NEED FIX OO
         public void DrawFields(EbReportField field, float section_Yposition, int i)
         {
             var column_name = string.Empty;
             var column_val = string.Empty;
-
-            if (PageSummaryFields.ContainsKey(field.Title) || ReportSummaryFields.ContainsKey(field.Title))
-            {
-                List<object> SummaryList;
-                if (PageSummaryFields.ContainsKey(field.Title))
-                {
-                    SummaryList = PageSummaryFields[field.Title];
-                    foreach (var item in SummaryList)
-                    {
-                        var table = field.Title.Split('.')[0];
-                        column_name = field.Title.Split('.')[1];
-                        column_val = GeFieldtData(column_name, i);
-                        if (item is EbDataFieldNumericSummary)
-                            (item as EbDataFieldNumericSummary).Summarize(column_val);
-                        if (item is EbDataFieldBooleanSummary)
-                            (item as EbDataFieldBooleanSummary).Summarize();
-                        if (item is EbDataFieldTextSummary)
-                            (item as EbDataFieldTextSummary).Summarize(column_val);
-                        if (item is EbDataFieldDateTimeSummary)
-                            (item as EbDataFieldDateTimeSummary).Summarize(column_val);
-                    }
-                }
-                if (ReportSummaryFields.ContainsKey(field.Title))
-                {
-                    SummaryList = ReportSummaryFields[field.Title];
-                    foreach (var item in SummaryList)
-                    {
-                        var table = field.Title.Split('.')[0];
-                        column_name = field.Title.Split('.')[1];
-                        column_val = GeFieldtData(column_name, i);
-                        if (item is EbDataFieldNumericSummary)
-                            (item as EbDataFieldNumericSummary).Summarize(column_val);
-                        if (item is EbDataFieldBooleanSummary)
-                            (item as EbDataFieldBooleanSummary).Summarize();
-                        if (item is EbDataFieldTextSummary)
-                            (item as EbDataFieldTextSummary).Summarize(column_val);
-                        if (item is EbDataFieldDateTimeSummary)
-                            (item as EbDataFieldDateTimeSummary).Summarize(column_val);
-                    }
-                }
-            }
+            CallSummerize(field.Title, i);
+           
 
             if (field is EbDataField)
             {
@@ -424,15 +430,17 @@ namespace ExpressBase.Web.Controllers
             }
             else if (field is EbHl)
             {
-                DrawHLine(field, section_Yposition);
+                (field as EbHl).DrawMe(canvas, field, Report.Height, section_Yposition, detailprintingtop);
+                //  DrawHLine(field, section_Yposition);
             }
             else if (field is EbVl)
             {
-                DrawVLine(field, section_Yposition);
+                (field as EbVl).DrawMe(canvas,field,Report.Height, section_Yposition,detailprintingtop);              
             }
             else if (field is EbArrR)
             {
-                DrawArrowR(field, section_Yposition);
+                (field as EbArrR).DrawMe(canvas, field, Report.Height, section_Yposition, detailprintingtop);
+                // DrawArrowR(field, section_Yposition);
             }
             else if (field is EbArrL)
             {
@@ -452,7 +460,7 @@ namespace ExpressBase.Web.Controllers
             }
             else if (field is EbByArrV)
             {
-                DrawByArrV(field, section_Yposition);
+                (field as EbByArrV).DrawMe(canvas, field, Report.Height, section_Yposition, detailprintingtop);
             }
             else if (field is EbPageNo)
             {
@@ -539,18 +547,18 @@ namespace ExpressBase.Web.Controllers
             canvas.FillStroke();
         }
 
-        public void DrawHLine(EbReportField field, float printingTop)
-        {
-            var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
-            var x2 = field.Left + field.Width;
-            var y2 = y1 + detailprintingtop;
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x1, y1);
-            canvas.LineTo(x2, y2);
-            canvas.Stroke();
-        }
+        //public void DrawHLine(EbReportField field, float printingTop)
+        //{
+        //    var x1 = field.Left;
+        //    var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
+        //    var x2 = field.Left + field.Width;
+        //    var y2 = y1 + detailprintingtop;
+        //    canvas.SetColorStroke(GetColor(field.BorderColor));
+        //    canvas.SetLineWidth(field.Border);
+        //    canvas.MoveTo(x1, y1);
+        //    canvas.LineTo(x2, y2);
+        //    canvas.Stroke();
+        //}
 
         public void DrawVLine(EbReportField field, float printingTop)
         {
@@ -565,23 +573,23 @@ namespace ExpressBase.Web.Controllers
             canvas.Stroke();
         }
 
-        public void DrawArrowR(EbReportField field, float printingTop)
-        {
-            DrawHLine(field, printingTop);
-            var x = field.Left + field.Width;
-            var y = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x, y);
-            canvas.LineTo(x - 3, y - 3);
-            canvas.LineTo(x - 3, y + 3);
-            canvas.ClosePathFillStroke();
-        }
+        //public void DrawArrowR(EbReportField field, float printingTop)
+        //{
+        //    DrawHLine(field, printingTop);
+        //    var x = field.Left + field.Width;
+        //    var y = Report.Height - (printingTop + field.Top + detailprintingtop);
+        //    canvas.SetColorStroke(GetColor(field.BorderColor));
+        //    canvas.SetColorFill(GetColor(field.BorderColor));
+        //    canvas.SetLineWidth(field.Border);
+        //    canvas.MoveTo(x, y);
+        //    canvas.LineTo(x - 3, y - 3);
+        //    canvas.LineTo(x - 3, y + 3);
+        //    canvas.ClosePathFillStroke();
+        //}
 
         public void DrawArrowL(EbReportField field, float printingTop)
         {
-            DrawHLine(field, printingTop);
+            (field as EbHl).DrawMe(canvas, field, Report.Height, printingTop, detailprintingtop);/* DrawHLine(field, printingTop);*/
             var x = field.Left;
             var y = Report.Height - (printingTop + field.Top + detailprintingtop);
             canvas.SetColorStroke(GetColor(field.BorderColor));
@@ -623,7 +631,7 @@ namespace ExpressBase.Web.Controllers
 
         public void DrawByArrH(EbReportField field, float printingTop)
         {
-            DrawHLine(field, printingTop);
+            (field as EbHl).DrawMe(canvas, field, Report.Height, printingTop, detailprintingtop);//DrawHLine(field, printingTop);
             var x1 = field.Left + field.Width;
             var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
             canvas.SetColorStroke(GetColor(field.BorderColor));
@@ -641,24 +649,24 @@ namespace ExpressBase.Web.Controllers
             canvas.ClosePathFillStroke();
         }
 
-        public void DrawByArrV(EbReportField field, float printingTop)
-        {
-            DrawVLine(field, printingTop);
-            var x1 = field.Left;
-            var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
-            canvas.SetColorStroke(GetColor(field.BorderColor));
-            canvas.SetColorFill(GetColor(field.BorderColor));
-            canvas.SetLineWidth(field.Border);
-            canvas.MoveTo(x1, y1);
-            canvas.LineTo(x1 + 3, y1 - 3);
-            canvas.LineTo(x1 - 3, y1 - 3);
-            var x2 = field.Left;
-            var y2 = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
-            canvas.MoveTo(x2, y2);
-            canvas.LineTo(x2 - 3, y2 + 3);
-            canvas.LineTo(x2 + 3, y2 + 3);
-            canvas.ClosePathFillStroke();
-        }
+        //public void DrawByArrV(EbReportField field, float printingTop)
+        //{
+        //    DrawVLine(field, printingTop);
+        //    var x1 = field.Left;
+        //    var y1 = Report.Height - (printingTop + field.Top + detailprintingtop);
+        //    canvas.SetColorStroke(GetColor(field.BorderColor));
+        //    canvas.SetColorFill(GetColor(field.BorderColor));
+        //    canvas.SetLineWidth(field.Border);
+        //    canvas.MoveTo(x1, y1);
+        //    canvas.LineTo(x1 + 3, y1 - 3);
+        //    canvas.LineTo(x1 - 3, y1 - 3);
+        //    var x2 = field.Left;
+        //    var y2 = Report.Height - (printingTop + field.Top + field.Height + detailprintingtop);
+        //    canvas.MoveTo(x2, y2);
+        //    canvas.LineTo(x2 - 3, y2 + 3);
+        //    canvas.LineTo(x2 + 3, y2 + 3);
+        //    canvas.ClosePathFillStroke();
+        //}
 
         public BaseColor GetColor(string Color)
         {

@@ -27,6 +27,14 @@
         //$('#' + ctrl.name).selectpicker();
     };
 
+
+    this.RadioGroup = function (ctrl) {
+        $('#' + ctrl.name).find("input").on("change", function (e) {
+            var val = $('#' + this.id + 'Lbl').text().trim();
+            $('#' + ctrl.name).val(val);
+        });
+    };
+
     this.Numeric = function (ctrl) {
         var id = ctrl.name;
         $('#' + id).focusout(function () {

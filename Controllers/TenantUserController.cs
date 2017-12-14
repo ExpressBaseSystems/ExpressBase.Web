@@ -87,9 +87,14 @@ namespace ExpressBase.Web2.Controllers
             HttpContext.Response.Cookies.Delete("bToken");
             HttpContext.Response.Cookies.Delete("rToken");
             return RedirectToAction("UsrSignIn", "Ext");
-        }     
+        }
 
-        [HttpGet]
+		public IActionResult ManageRoles2()
+		{
+			return View();
+		}
+
+		[HttpGet]
         public IActionResult ManageRoles()
         {
 
@@ -296,11 +301,16 @@ namespace ExpressBase.Web2.Controllers
                 var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
                 ViewBag.dict = fr.Data;
             }
-            else
+            else if(type == "roles")
             {
                 var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
                 ViewBag.dict = fr.Data;
             }
+			else
+			{
+				var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
+				ViewBag.dict = fr.Data;
+			}
             if (ViewBag.isAjaxCall)
                 return PartialView();
             else

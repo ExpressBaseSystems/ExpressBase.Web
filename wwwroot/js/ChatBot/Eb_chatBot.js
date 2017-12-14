@@ -273,7 +273,7 @@
             setTimeout(function () {
                 if (msg instanceof jQuery) {
                     $msg.find('.bot-icon').remove();
-                    $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").html(msg);
+                    $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width","98%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
                     $msg.css("margin-left", "26px");
                     if (this.curCtrl && $('#' + this.curCtrl.name).length === 1)
@@ -298,7 +298,8 @@
     this.loadcontrol = function () {
         if (!this.curCtrl)
             return;
-        this.initControls[this.curCtrl.type](this.curCtrl);
+        if (this.initControls[this.curCtrl.type] !== undefined)
+            this.initControls[this.curCtrl.type](this.curCtrl);
     }.bind(this);
 
     this.formSubmit = function (e) {
@@ -360,7 +361,7 @@
     }.bind(this);
 
     this.FBNotLogined = function () {
-        this.Query("Hello I am EBbot, Nice to meet you. Do you mind loging into facebook.", ["Login", "No, Sorry"], "fblogin");
+        this.Query("Hello I am EBbot, Nice to meet you. Do you mind loging into facebook?", ["Login", "No, Sorry"], "fblogin");
     }.bind(this);
 
     this.init();

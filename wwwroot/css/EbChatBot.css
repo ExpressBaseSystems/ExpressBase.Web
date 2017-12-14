@@ -108,9 +108,10 @@
 }
 
 .chat-ctrl-cont {
+    position: relative;
     width: 100%;
     border: solid 5px #ffffff;
-    border-radius: 0px 25px 25px 0px;
+    border-radius: 0px 29px 29px 0px;
     background-color: #ffffff;
     line-height: 6px;
 }
@@ -202,9 +203,11 @@
     padding: 6px 0px;
     width: 35px;
     min-width: 25px;
-    border-radius: 0px 54px 54px 0px;
+    border-radius: 0px 24px 24px 0px;
     vertical-align: top;
     box-shadow: none;
+    height: 100%;
+    position: absolute;
 }
 
 .ctrl-wraper {
@@ -217,6 +220,13 @@
         height: 28px;
         border: none;
     }
+        .ctrl-wraper input[type=radio] {
+            height: inherit;
+            margin: 5px;
+        }
+        .ctrl-wraper span {
+            padding-right:5px;
+        }
 
     .ctrl-wraper .input-group-addon:last-child, .ctrl-wraper .input-group-addon:first-child {
         border-radius: 0px;

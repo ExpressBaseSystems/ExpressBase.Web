@@ -46,7 +46,7 @@
         html.style.setProperty("--botThemeColor", this.ebbotThemeColor);
 
         var $botMsgBox = this.$botMsgBox.clone();
-        $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone()).css("width", "75px");
+        $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone()).css("width", "82px");
         this.$TypeAnimMsg = $botMsgBox;
         $("body").on("click", ".eb-chat-inp-cont .msg-send", this.send_btn);
         $("body").on("click", ".msg-cont [name=ctrlsend]", this.ctrlSend);

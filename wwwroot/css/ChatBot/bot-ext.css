@@ -7,14 +7,22 @@
     width: 28%;
     height: 65%;
     border-radius: 3.5px;
-    background: url("https://icons8.com//preloaders/generator.php?filmstrip&image=30&speed=9&fore_color=000000&back_color=FFFFFF&size=160x20&transparency=0&reverse=0&orig_colors=0&gray_transp=0&image_type=2&inverse=0&flip=0&frames_amount=13&word=237-261-157-41-266-237-41-257-237-266-57-41-227-41-36-36-36&uncacher=13.96894732966414") no-repeat center;
-    background-size:100%;
+    background-color:white;
     min-width: 300px;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
     z-index: 16777270;
 }
 
+#loderdiv {
+    display: flex;
+    background-color: blueviolet;
+    background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
+    background-size: 40%;
+    flex: 1 1 auto;
+}
+
 #ebbot_iframe {
+    visibility: hidden;
     width: 100%;
     flex: 1 1 auto;
     border-radius: 0px 0px 3.5px 3.5px;
@@ -41,8 +49,9 @@
         bottom: 0;
         height: 100%;
     }
+
     #ebbot_iframe {
-        border-radius:0px;
+        border-radius: 0px;
     }
 }
 

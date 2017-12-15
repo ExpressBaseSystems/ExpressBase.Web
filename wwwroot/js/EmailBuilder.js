@@ -38,7 +38,8 @@
         var tbl = $('#' + this.col.text()).data('mytbl');
         obj.Title = "{{" + tbl + this.col.text() + "}}";       
         this.ObjCollect[id] = obj;
-        this.RefreshControl(obj);       
+        this.RefreshControl(obj); 
+        this.EbObject.DsColumnsCollection.push(obj);
         this.placeCaretAtEnd(document.getElementById(id));
         $('#' + id).attr('contenteditable', 'false');
        // this.SetCode();
@@ -86,10 +87,8 @@
         this.emailpropG.setObject(curObject, AllMetas["DsColumns"]);      
     }
 
-    this.emailpropG.PropertyChanged = function (obj, Pname) {
-        this.EbObject = obj;
-        commonO.Current_obj = obj;
-        if (obj.DataSourceRefId) {
+    this.emailpropG.PropertyChanged = function (obj, Pname) {              
+        if (Pname === 'DataSourceRefId') {
             this.getDataSourceColoumns();
         }
     }.bind(this);
@@ -150,8 +149,8 @@
         });
 
 
-        console.log($('.note-editable').html());
-        alert($('.note-editable').html());
+        //console.log($('.note-editable').html());
+        //alert($('.note-editable').html());
         this.EbObject.Body = window.btoa($('.note-editable').html());
         commonO.Current_obj = this.EbObject;
     }

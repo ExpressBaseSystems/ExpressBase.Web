@@ -21,14 +21,14 @@
                 <p>@ViewBag.Desc </p>
             </div>
             @{
-
-                string url = "http://"+ ViewBag.Sid + ".localhost:5000/dev";
+                string urldev = "http://"+ ViewBag.Sid + ".localhost:5000/dev";
+                string urlusr = "http://" + ViewBag.Sid + ".localhost:5000";
              }
 
             <div class="col-md-3 pd-0">
                 <div class="form-inline text-center">
-                    <a class="btn btn-oval btn-blue" href="@url">Dev</a>
-                    <a class="btn btn-oval btn-orange" href="@ViewBag.cid">User</a>
+                    <a class="btn btn-oval btn-blue" href="@urldev">Dev</a>
+                    <a class="btn btn-oval btn-orange" href="@urlusr">User</a>
                 </div>
             </div>
             <div class="col-md-2 pd-0">

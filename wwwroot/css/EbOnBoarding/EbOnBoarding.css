@@ -13,6 +13,10 @@
     border: 2px #f37e1a;  
     margin:0px 5px 0px 5px;
 }
+.btn-orange:hover{
+    background: #f37e1a;
+    color: white;
+}
 .btn-blue {
     background: #4aade3;
     color: white;
@@ -20,6 +24,10 @@
     border-radius: 20px;
     border: 2px #f37e1a;
     margin: 0px 5px 0px 5px;
+}
+.btn-blue:hover {
+    background: #4aade3;
+    color: white;
 }
 .eb-flex-center {
     display: flex;

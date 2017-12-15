@@ -395,10 +395,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.dropLoc = $(event.target);
         this.col = $(ui.draggable);
         this.Objtype = this.col.attr('eb-type');
-        var Title = "";
-        if (this.Objtype === 'DateTime')
-            Title = this.addCurrentDateTime();
-        else if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric')
+        var Title = "";       
+        if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric')
             Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
         else
             Title = this.col.text().trim();
@@ -681,17 +679,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         RefreshControl(obj);
     }
 
-    this.addCurrentDateTime = function () {
-        var currentdate = new Date();
-        var time = currentdate.getDate() + "/"
-            + (currentdate.getMonth() + 1) + "/"
-            + currentdate.getFullYear() + " @ "
-            + currentdate.getHours() + ":"
-            + currentdate.getMinutes() + ":"
-            + currentdate.getSeconds();
-        return time;
-    };
-
     this.onDrag_stop = function (event, ui) {
         $('#guid-v , #guid-h, #guid-vr, #guid-hb').remove();
         var dragId = $(event.target).attr("id");
@@ -789,10 +776,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (obj.IsLandscape === true) {
             this.height = pages[this.type].width;
             this.width = pages[this.type].height;
+            this.repExtern.splitterOndragFn();
         }
         else if (obj.IsLandscape === false) {
             this.height = pages[this.type].height;
             this.width = pages[this.type].width;
+            this.repExtern.splitterOndragFn();
         }
         $('.ruler,.rulerleft').empty();
         this.ruler();

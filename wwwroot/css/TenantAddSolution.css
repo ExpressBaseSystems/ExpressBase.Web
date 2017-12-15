@@ -2,6 +2,11 @@
 .pd-0{
 padding:0;
 }
+.eb-flex-end {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
 .Eb-product-container-bdy {
     padding-bottom: 15px;
     background: white;
@@ -309,8 +314,8 @@ padding:0;
     margin-top: 10px;
 }
 
-    .company-logo img {
-        height: 90px;
+    .company-logo {
+        height: 80px;
     }
 
 .pro-icon-bx img {
@@ -353,9 +358,33 @@ padding:0;
     width:100%;
 }
 .plan-label {
-    width:150px;
+    width:120px;
 }
 .plan-details {
     display: inline;
+}
+.tot-container {
+    height: 50px;
+}
+.eb-sub-tot {
+    font-size: 42px;
+    text-align: center;
+    color: #4aade3;
+    font-weight: 600;
+}
+.total-head {
+    display: flex;
+    align-items: flex-end;
+    height: inherit;
+    font-size: 20px;
+    text-align: right;
+}
+.logo-upload-sec {
+    height:100%;
+}
+.log-upload-btn {
+    background: #4aade3 !important;
+    color: white;
+    border-radius: 20px !important;
 }
 /*t addaacc latest----*/

@@ -47,7 +47,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult ProfileSetup()
         {
-            ViewBag.useremail = TempData["reqEmail"];          
+            ViewBag.useremail = TempData.Peek("reqEmail");          
             return View();
         }
 
@@ -91,9 +91,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult SolutionDashBoard()
         {
-            ViewBag.SolutionName = TempData[SolutionName];
-            ViewBag.Sid = TempData[Sid];
-            ViewBag.Desc = TempData[Desc];
+            ViewBag.SolutionName = TempData.Peek(SolutionName);
+            ViewBag.Sid = TempData.Peek(Sid);
+            ViewBag.Desc = TempData.Peek(Desc);
             return View();
         }
 
@@ -134,10 +134,16 @@ namespace ExpressBase.Web.Controllers
                 Subscription = req["Subscription"]
             });
             if (res.Solnid > 0)
-                return RedirectToAction("SolutionDashboard"); // convert get to post
-            else
-                return View();
-           
+            {
+                EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest {
+                    dbName = req["isid"]
+                });                
+                if(response.resp)
+                    return RedirectToAction("SolutionDashboard"); // convert get to post
+            }
+            
+            return View();
+          
         }
 
        

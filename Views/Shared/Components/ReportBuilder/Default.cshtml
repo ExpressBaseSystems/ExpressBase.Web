@@ -64,8 +64,12 @@
 </script>
 <div class="container-fluid">
     <div class="row pgB eb-rpt-container" id="eb-rpt-container">
-        <div class="col-md-2 col-lg-2 col-sm 2 side-toolbar">
+        <div class="max-sidebar" id="max-sidebar"><i class="fa fa-wrench" aria-hidden="true"></i></div>
+        <div class="col-md-2 col-lg-2 col-sm 2 side-toolbar" id="side-toolbar">
             <div class="toolbox eb-toolBoxReport">
+                <div class="eb-toolBoxReport-toggle-sec">
+                    <div class="pull-right" id="eb-toolBoxReport-min"><i class="fa fa-times" aria-hidden="true"></i></div>
+                </div>
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item active">
                         <a class="nav-link" data-toggle="tab" href="#genaral" role="tab">General</a>
@@ -108,6 +112,7 @@
                         <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-qrcode" aria-hidden="true"></i> QR Code </div>
                         <div class="draggable tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Image </div>
                         <div class="draggable tool-box-div" eb-type="WaterMark"><i class="fa fa-map-marker" aria-hidden="true"></i> Water Mark </div>
+                        <div class="draggable tool-box-div" eb-type="SerialNumber"><i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Serial Number </div>
                         <button class="btn" id="font"><i> test </i></button>
                     </div>
                     <div class="tab-pane" id="data" role="tabpanel">

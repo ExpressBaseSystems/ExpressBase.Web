@@ -42,17 +42,17 @@
 }
 
 .msg-wraper-user {
-    border-radius: 3px 9px 0px 9px;
+    border-radius: 13px 13px 0px 13px;
     margin: 6px 5px 5px 50px;
     background-color: #fff;
-    padding-right: 40px;
+    padding-right: 41px;
 }
 
 .msg-wraper-bot {
-    border-radius: 9px 3px 9px 0px;
+    border-radius: 13px 13px 13px 0px;
     margin: 6px 5px 6px 5px;
     background-color: #fff;
-    padding-right: 40px;
+    padding-right: 41px;
 }
 
 .msg-cont {
@@ -108,9 +108,10 @@
 }
 
 .chat-ctrl-cont {
+    position: relative;
     width: 100%;
     border: solid 5px #ffffff;
-    border-radius: 0px 25px 25px 0px;
+    border-radius: 0px 29px 29px 0px;
     background-color: #ffffff;
     line-height: 6px;
 }
@@ -140,7 +141,7 @@
     color: #999;
     font-size: 9px;
     text-align: right;
-    margin-top: -10px;
+    margin-top: -12px;
     margin-right: -36px;
 }
 
@@ -202,9 +203,11 @@
     padding: 6px 0px;
     width: 35px;
     min-width: 25px;
-    border-radius: 0px 54px 54px 0px;
+    border-radius: 0px 24px 24px 0px;
     vertical-align: top;
     box-shadow: none;
+    height: 100%;
+    position: absolute;
 }
 
 .ctrl-wraper {
@@ -217,11 +220,13 @@
         height: 28px;
         border: none;
     }
-
-    .ctrl-wraper .input-group-addon:last-child, .ctrl-wraper .input-group-addon:first-child {
-        border-radius: 0px;
-        border: none;
-    }
+        .ctrl-wraper input[type=radio], .ctrl-wraper input[type=checkbox] {
+            height: inherit;
+            margin: 5px;
+        }
+        .ctrl-wraper span {
+            padding-right:5px;
+        }
 
 [name=ctrlsend] .fa {
     margin-left: -5px

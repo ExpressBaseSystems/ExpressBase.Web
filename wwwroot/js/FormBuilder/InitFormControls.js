@@ -27,6 +27,28 @@
         //$('#' + ctrl.name).selectpicker();
     };
 
+
+    this.RadioGroup = function (ctrl) {
+        $('#' + ctrl.name).find("input").on("change", function (e) {
+            var val = $('#' + this.id + 'Lbl').text().trim();
+            $('#' + ctrl.name).val(val);
+        });
+    };
+
+
+    this.CheckBoxGroup = function (ctrl) {
+        $('#' + ctrl.name).find("input").on("change", function (e) {
+            var $ctrlDiv = $('#' + ctrl.name); var values = "";
+            $ctrlDiv.find("input").each(function (i, el) {
+                if (el.checked) {
+                    val = $('#' + el.id + 'Lbl').text().trim();
+                    values += "," + val;
+                }
+            });
+            $ctrlDiv.val(values.substring(1));
+        });
+    };
+
     this.Numeric = function (ctrl) {
         var id = ctrl.name;
         $('#' + id).focusout(function () {

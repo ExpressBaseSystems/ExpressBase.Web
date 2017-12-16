@@ -1,6 +1,7 @@
 ﻿var ReportExtended = function () {
     this.sideBar = $("#side-toolbar");
     this.pageContainer = $("#page-outer-cont");
+    this.pGcontainer = $("#PGgrid-report");
 
     this.headerSecSplitter = function (array) {
         Split(array, {
@@ -88,6 +89,7 @@
     this.minMaxToolbar = function () {
         $("#eb-toolBoxReport-min").on('click', this.toggleSideToolbar.bind(this));
         $("#max-sidebar").on('click', this.toggleSideToolbar.bind(this));
+        $("#max-pg").on('click', this.minPgrid.bind(this));
     }
 
     this.toggleSideToolbar = function (e) {              
@@ -95,20 +97,45 @@
                     width: "toggle"
         }, "fast",this.onsideBarToggle.bind(this));
     };
-
+   
     this.onsideBarToggle = function (e) {
         if (this.sideBar.css("display") === 'none') {
             $("#max-sidebar").show();
-            this.pageContainer.removeClass('col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2')
-                .addClass('col-md-10 col-lg-10 col-sm-10 pd-left-60px');
+            if (this.pGcontainer.css("display") === 'none') 
+                this.pageContainer.switchClass("col-md-10 col-lg-10 col-sm-10 col-sm-offset-2 col-lg-offset-2 col-md-offset-2", "col-md-11 col-lg-11 col-sm-11", 500, "easeInOutQuad");            
+            else
+                this.pageContainer.switchClass("col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2", "col-md-10 col-lg-10 col-sm-10 pd-left-60px", 1000, "easeInOutQuad");            
         }
         else {
             $("#max-sidebar").hide();
-            this.pageContainer.removeClass('col-md-10 col-lg-10 col-sm-10 pd-left-60px')
-                .addClass('col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2');
-        }
-        
+            if (this.sideBar.css("display") === 'none')
+                this.pageContainer.switchClass("col-md-11 col-lg-11 col-sm-11", "col-md-10 col-lg-10 col-sm-10 pd-left-60px", 500, "easeInOutQuad");
+            else
+                this.pageContainer.switchClass("col-md-10 col-lg-10 col-sm-10 pd-left-60px", "col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2", 1000, "easeInOutQuad");        
+        }    
     };
 
+    this.minPgrid = function () {
+        this.pGcontainer.animate({
+            width: "toggle"
+        }, "fast", this.onPgToggle.bind(this));
+    };
+
+    this.onPgToggle = function () {
+        if (this.pGcontainer.css("display") === 'none') {
+            $("#max-pg").show();
+            if (this.sideBar.css("display") === 'none')
+                this.pageContainer.switchClass("col-md-10 col-lg-10 col-sm-10", "col-md-11 col-lg-11 col-sm-11", 1000, "easeInOutQuad");
+            else            
+                this.pageContainer.switchClass("col-md-8 col-lg-8 col-sm-8", "col-md-10 col-lg-10 col-sm-10", 1000, "easeInOutQuad");
+        }
+        else {
+            $("#max-pg").hide();
+            if (this.sideBar.css("display") === 'none')
+                this.pageContainer.switchClass("col-md-11 col-lg-11 col-sm-11", "col-md-10 col-lg-10 col-sm-10 pd-left-60px", 1000, "easeInOutQuad");
+            else
+                this.pageContainer.switchClass("col-md-10 col-lg-10 col-sm-10 pd-left-60px", "col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2", 1000, "easeInOutQuad");
+        }
+    };
     this.minMaxToolbar();
 }

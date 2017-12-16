@@ -141,6 +141,18 @@
     display:none;
     z-index:100;
 }
+.max-pg {
+    position: fixed;
+    background: #336699;
+    color: white;
+    padding: 7px;
+    font-size: 15px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    display: none;
+    z-index: 100;
+    right:0;
+}
 /*.draggable:hover {
     background-color: #a2dce4;
     border-radius: 4px;

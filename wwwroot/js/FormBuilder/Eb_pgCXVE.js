@@ -21,6 +21,8 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
+        $(this.pgCXE_Cont_Slctr).css("left", (24 + $(".pgCXEditor-Cont").length) + "%");//
+        $(this.pgCXE_Cont_Slctr).css("top", (14 + $(".pgCXEditor-Cont").length) + "vh");//
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurProplabel = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp;
@@ -40,8 +42,8 @@
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
         $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
-        $("#" + this.PGobj.wraperId +' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
-        
+        $("#" + this.PGobj.wraperId + ' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+
 
         if (this.PGobj.IsReadonly)
             this.PGobj.ReadOnly();

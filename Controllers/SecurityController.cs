@@ -19,19 +19,11 @@ namespace ExpressBase.Web.Controllers
         }
 		public IActionResult ManageRoles2(int itemid)
 		{
-			
-				//var fr = this.ServiceClient.Get<GetPermissionsResponse1>(new GetPermissionsRequest1 { id = itemid, TenantAccountId = ViewBag.cid });
-				////ViewBag.permissions = fr.Permissions;
-				//ViewBag.RoleName = fr.Data["rolename"];
-				//ViewBag.ApplicationId = fr.Data["applicationid"];
-				//ViewBag.ApplicationName = fr.Data["applicationname"];
-				//ViewBag.Description = fr.Data["description"];
-			
-
-			//var resultlist = this.ServiceClient.Get<GetApplicationResponse1>(new GetApplicationRequest1());
-			//ViewBag.dict = resultlist.Data;    // get application from application table
-			//ViewBag.roleid = itemid;
-
+			var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
+			ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);
+			ViewBag.SelectedRoleInfo = JsonConvert.SerializeObject(fr.SelectedRoleInfo);
+			ViewBag.PermissionList = JsonConvert.SerializeObject(fr.PermissionList);
+			ViewBag.RoleId = itemid;
 			return View();
 		}
 

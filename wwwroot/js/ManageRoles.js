@@ -1,10 +1,21 @@
-﻿var ManageRolesJs = function (r_Id) {
+﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission) {
+    this.appCollection = appCollection;
+    this.roleId = roleId;
+    this.roleInfo = roleInfo;
+    this.permission = permission;
+    this.selectApp = $("#selectApp");
 
-    this.selectApp = $("#appselect");
-    this.role_Id = r_Id;
 
     this.init = function () {
-        this.selectApp.on("change", this.selectAppChangeAction.bind(this));        
+        this.selectApp.on("change", this.selectAppChangeAction.bind(this));    
+        this.loadAppToSelect.bind(this)();
+    }
+
+    this.loadAppToSelect = function () {
+        $("#selectApp").children().remove();
+        $.each(this.appCollection, function (k, appOb) {
+            $("#selectApp").append(`<option data-id="${appOb.Id}">${appOb.Name}</option>`);
+        });
     }
 
     this.selectAppChangeAction = function (e) {        
@@ -19,8 +30,6 @@
 
     this.getObjectAndPermissionSuccess = function (data) {
         alert("dwd");
-
-
     }
     
     this.init();

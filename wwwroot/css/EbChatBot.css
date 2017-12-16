@@ -109,11 +109,12 @@
 
 .chat-ctrl-cont {
     position: relative;
-    width: 100%;
+    width: 98%;
     border: solid 5px #ffffff;
     border-radius: 0px 29px 29px 0px;
     background-color: #ffffff;
     line-height: 6px;
+    margin-left: 16px;
 }
 
 .bot-icon {
@@ -160,6 +161,11 @@
     display: inline-block;
 }
 
+.btn-box {
+    margin-left: 16px;
+    width: 98%;
+}
+
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {
     width: 100%;
     min-height: 28px;
@@ -194,7 +200,6 @@
     border: none;
     outline: none;
     padding: 4px;
-    margin-left: 5px;
 }
 
 .chat-ctrl-cont [name=ctrlsend] {
@@ -232,7 +237,7 @@
     margin-left: -5px
 }
 
-.watermark-cont {
+.poweredby-cont {
     position: fixed;
     bottom: 0;
     background-color: var(--botThemeColor);
@@ -241,8 +246,12 @@
     text-align: center;
 }
 
-.watermark {
+.poweredby {
     font-family: arial;
     font-size: 12px;
     color: white;
+}
+.botlink{
+    color:white;
+    font-style:italic;
 }

@@ -2,7 +2,7 @@
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
-    this.$watermark = $('<div class="watermark-cont"><span class="watermark">&nbsp;<i>Powered by</i> EXPRESSbase</span></div>');
+    this.$poweredby= $('<div class="poweredby-cont"><div class="poweredby"><i>powered by</i> EXPRESSbase</div><div class="poweredby"><a class="botlink" target="_blank" href="http://bot.expressbase.com">bot.expressbase.com</a></div></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
     this.$botMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-bot"><div class="msg-wraper-bot"></div></div>'));
     this.$botMsgBox.prepend('<div class="bot-icon"></div>');
@@ -28,7 +28,7 @@
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
-        this.$chatCont.append(this.$watermark);
+        this.$chatCont.append(this.$poweredby);
         this.$TypeAnim = $(`<div><svg class="lds-typing" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
                     <circle cx="27.5" cy="40.9532" r="5" fill="#999">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.5s"></animate>
@@ -273,9 +273,8 @@
             setTimeout(function () {
                 if (msg instanceof jQuery) {
                     $msg.find('.bot-icon').remove();
-                    $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width","98%").html(msg);
+                    $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width","99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
-                    $msg.css("margin-left", "26px");
                     if (this.curCtrl && $('#' + this.curCtrl.name).length === 1)
                         this.loadcontrol();
                 }

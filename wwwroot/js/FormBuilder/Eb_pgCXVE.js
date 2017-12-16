@@ -254,6 +254,10 @@
             ObjType = val[0].refId.split("-")[2];
         }.bind(this));
         this.PGobj.OSElist[ObjType] = data;
+
+        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append('<input class="searchinp" type="text"/>');
+        $(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").off("keyup").on("keyup", this.searchObj);
+
         $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").off("click").on("click", this.OTileClick.bind(this, data));
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("click").on("click", ".colTile", this.VTileClick.bind(this, data));
         if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
@@ -268,6 +272,11 @@
             else
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
         }
+    }.bind(this);
+
+    this.searchObj = function (event) {
+        var $e = $(event.target);
+        alert($e.val());
     }.bind(this);
 
     this.getOBjNameByval = function (data, refId) {
@@ -298,6 +307,7 @@
         if (this.PGobj.PropsObj[this.PGobj.CurProp] && this.OSECurVobj && $e.attr("name") === this.OSECurVobj.name)
             $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
     };
+
     this.VTileClick = function () {
         var $e = $(event.target);
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();

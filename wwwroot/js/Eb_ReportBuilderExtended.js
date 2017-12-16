@@ -1,4 +1,7 @@
 ﻿var ReportExtended = function () {
+    this.sideBar = $("#side-toolbar");
+    this.pageContainer = $("#page-outer-cont");
+
     this.headerSecSplitter = function (array) {
         Split(array, {
             direction: 'vertical',
@@ -81,4 +84,31 @@
             onDrag: this.splitterOndragFn.bind(this)
         });
     }
+
+    this.minMaxToolbar = function () {
+        $("#eb-toolBoxReport-min").on('click', this.toggleSideToolbar.bind(this));
+        $("#max-sidebar").on('click', this.toggleSideToolbar.bind(this));
+    }
+
+    this.toggleSideToolbar = function (e) {              
+        this.sideBar.animate({
+                    width: "toggle"
+        }, "fast",this.onsideBarToggle.bind(this));
+    };
+
+    this.onsideBarToggle = function (e) {
+        if (this.sideBar.css("display") === 'none') {
+            $("#max-sidebar").show();
+            this.pageContainer.removeClass('col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2')
+                .addClass('col-md-10 col-lg-10 col-sm-10 pd-left-60px');
+        }
+        else {
+            $("#max-sidebar").hide();
+            this.pageContainer.removeClass('col-md-10 col-lg-10 col-sm-10 pd-left-60px')
+                .addClass('col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2');
+        }
+        
+    };
+
+    this.minMaxToolbar();
 }

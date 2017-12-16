@@ -7,7 +7,7 @@
     width: 28%;
     height: 65%;
     border-radius: 3.5px;
-    background-color:white;
+    background-color: white;
     min-width: 300px;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
     z-index: 16777270;
@@ -16,8 +16,8 @@
 #loderdiv {
     display: flex;
     background-color: blueviolet;
-    background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
-    background-size: 40%;
+    background: url("https://expressbase.com/images/svg/botloder.svg") no-repeat center;
+    background-size: 30%;
     flex: 1 1 auto;
 }
 

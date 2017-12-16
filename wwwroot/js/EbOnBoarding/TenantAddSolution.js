@@ -9,10 +9,10 @@
         5: "Documents"
     }
     this.plans = {
-        1: "FREE",
-        2: "STANDARD",
-        3: "PRO",
-        4: "ENTERPRISE",
+        0: "FREE",
+        1: "STANDARD",
+        2: "PRO",
+        3: "ENTERPRISE"
     }
     this.editclientId = function () {
         $('#cid').removeAttr('readonly').val('');
@@ -54,7 +54,7 @@
     this.addProductTorev = function (prod) {
         $('#subscrib-info').append(`<div class="form-inline" revpid="${prod.attr('pid')}">
                     <label class="plan-label">${prod.attr('pid')}</label>
-                    <div class="plan-details" id="plan">FREE $0</div>
+                    <div class="plan-details" price="0">FREE $0</div>
                 </div>`);
     };
 
@@ -95,16 +95,17 @@
     };
 
     this.addPlanToRev = function (plan) {
-        $("#subscrib-info").children('[revpid=' + plan.attr('product') + ']').children('.plan-details').text(this.plans[plan.attr('plan')] + '($' + plan.attr('price') + ')').attr("price", plan.attr('price'));
-        this.calcAmount();
+        $("#subscrib-info").children('[revpid=' + plan.attr('product') + ']')
+            .children('.plan-details').text(this.plans[plan.attr('plan')] + '(' + plan.children().find('.T-add-amount').text() + ')').attr('price', plan.children().find('.T-add-amount').attr("amount"));
+        this.calcAmount(plan);
     };
 
-    this.calcAmount = function () {
+    this.calcAmount = function (){
         var tot = 0;
-        $('#subscrib-info').children().each(function (i, obj) {
-            var total = parseInt($(obj).children('.sol-name-review').attr('price'));
+        $('#subscrib-info').children().find('.plan-details').each(function (i, obj) {
+            var total = parseInt($(obj).attr('price'));
             tot = tot + total;
-            $('.total-count-cont').text('$' + tot);
+            $('#eb-sub-tot').text('$' + tot);
         });
     };
 
@@ -120,12 +121,12 @@
             if ($(obj).attr("plan") === this.object[obj2].Plan)
                 if ($(obj).attr("plan") === "0") {
                     if ($(obj).parent("tr").attr("pritem") === "ChatBot")
-                        $(obj).children().find(".T-add-amount").text(this.object[obj2].EvalDays + " days");
+                        $(obj).children().find(".T-add-amount").text(this.object[obj2].EvalDays + " days").attr('amount', this.object[obj2].Amount);
                     else
-                        $(obj).children().find(".T-add-amount").text("FOREVER");
+                        $(obj).children().find(".T-add-amount").text("FOREVER").attr('amount', this.object[obj2].Amount);
                 }
                 else
-                    $(obj).children().find(".T-add-amount").text("$" + this.object[obj2].Amount);
+                    $(obj).children().find(".T-add-amount").text("$" + this.object[obj2].Amount).attr('amount', this.object[obj2].Amount);
         }
     };
 

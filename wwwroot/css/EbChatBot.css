@@ -113,7 +113,6 @@
     border: solid 5px #ffffff;
     border-radius: 0px 29px 29px 0px;
     background-color: #ffffff;
-    line-height: 6px;
     margin-left: 16px;
 }
 
@@ -170,6 +169,7 @@
     width: 100%;
     min-height: 28px;
     min-width: inherit;
+    resize:none;
 }
 
 .eb-chat-inp-cont .btn {
@@ -221,7 +221,7 @@
     border: solid 1px #ccc;
 }
 
-    .ctrl-wraper input, .ctrl-wraper select {
+    .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
         height: 28px;
         border: none;
     }

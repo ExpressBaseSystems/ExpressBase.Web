@@ -42,7 +42,7 @@ namespace ExpressBase.Web.Controllers
         private ColumnColletion __columns = null;
 
         private EbReport Report = null;
-        private iTextSharp.text.Font f = FontFactory.GetFont(FontFactory.HELVETICA, 5);
+        private iTextSharp.text.Font f = FontFactory.GetFont(FontFactory.HELVETICA, 12);
         private PdfContentByte canvas;
         private PdfWriter writer;
         private Document d;
@@ -80,9 +80,8 @@ namespace ExpressBase.Web.Controllers
                 dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Report.DataSourceRefId, Draw = 1, Start = 0, Length = 100 });
                 dt = dresp.Data;
             }
-
-            iTextSharp.text.Rectangle rec = (Report.IsLandscape) ?
-                new iTextSharp.text.Rectangle(Report.Height, Report.Width) : new iTextSharp.text.Rectangle(Report.Width, Report.Height);
+            
+            iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
 
             d = new Document(rec);
             MemoryStream ms1 = new MemoryStream();
@@ -132,8 +131,12 @@ namespace ExpressBase.Web.Controllers
 
         public void CalculateDetailHeight()
         {
+            var a = dt.Count * detail_section_height;
+            var b = Report.Height - (ph_height + pf_height + rh_height + rf_height);
+            if (a < b && writer.PageNumber == 1)
+                IsLastpage = true;
             if (writer.PageNumber == 1 && IsLastpage == true)
-                dt_height = Report.Height - (ph_height + pf_height + pf_height + rf_height);
+                dt_height = Report.Height - (ph_height + pf_height + rh_height + rf_height);
             else if (writer.PageNumber == 1)
                 dt_height = Report.Height - (rh_height + ph_height + pf_height);
             else if (IsLastpage == true)
@@ -402,7 +405,7 @@ namespace ExpressBase.Web.Controllers
                 else if (field is EbPageXY)
                     column_val = writer.PageNumber + "/"/* + writer.PageCount*/;
                 else if (field is EbDateTime)
-                    column_val = field.Title;
+                    column_val = DateTime.Now.ToString();
 
                 field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop, column_val);
             }

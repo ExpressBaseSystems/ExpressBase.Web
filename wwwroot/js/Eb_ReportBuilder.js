@@ -61,6 +61,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.rulertype = "cm";
     this.copyStack = null;
     this.copyORcut = null;
+    this.repExtern = new ReportExtended();
+    this.pg = new Eb_PropertyGrid("propGrid");
     this.idCounter = {
         EbDataFieldTextCounter: 0,
         EbDataFieldDateTimeCounter: 0,
@@ -89,6 +91,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         EbByArrVCounter: 0,
         EbHlCounter: 0,
         EbVlCounter: 0,
+        EbSerialNumberCounter: 0
     };
 
     this.subSecIdCounter = {
@@ -114,7 +117,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         pgfooter: 'Pf',
         rptfooter: 'Rf'
     };
-
     this.RefreshControl = function (obj) {
         var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
@@ -394,10 +396,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.dropLoc = $(event.target);
         this.col = $(ui.draggable);
         this.Objtype = this.col.attr('eb-type');
-        var Title = "";
-        if (this.Objtype === 'DateTime')
-            Title = this.addCurrentDateTime();
-        else if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric')
+        var Title = "";       
+        if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric')
             Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
         else
             Title = this.col.text().trim();
@@ -680,17 +680,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         RefreshControl(obj);
     }
 
-    this.addCurrentDateTime = function () {
-        var currentdate = new Date();
-        var time = currentdate.getDate() + "/"
-            + (currentdate.getMonth() + 1) + "/"
-            + currentdate.getFullYear() + " @ "
-            + currentdate.getHours() + ":"
-            + currentdate.getMinutes() + ":"
-            + currentdate.getSeconds();
-        return time;
-    };
-
     this.onDrag_stop = function (event, ui) {
         $('#guid-v , #guid-h, #guid-vr, #guid-hb').remove();
         var dragId = $(event.target).attr("id");
@@ -788,10 +777,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (obj.IsLandscape === true) {
             this.height = pages[this.type].width;
             this.width = pages[this.type].height;
+            this.repExtern.splitterOndragFn();
         }
         else if (obj.IsLandscape === false) {
             this.height = pages[this.type].height;
             this.width = pages[this.type].width;
+            this.repExtern.splitterOndragFn();
         }
         $('.ruler,.rulerleft').empty();
         this.ruler();
@@ -829,9 +820,43 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         });
     };
 
+    this.pg.PropertyChanged = function (obj, pname) {
+        if ('SectionHeight' in obj) {
+            this.sizeArray = [];
+            this.idArray = []
+            $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
+            this.RefreshControl(obj);
+            this.repExtern.splitGeneric(this.idArray, this.sizeArray);
+        }
+        else if (pname === "DataSourceRefId") {
+            this.getDataSourceColoums(obj.DataSourceRefId);
+        }
+        else if (pname === "PaperSize") {
+            this.setpageSize(obj);
+        }
+        else if (pname === "IsLandscape") {
+            this.setpageMode(obj);
+        }
+        else if (pname === "Image") {
+            this.addImageFn(obj);
+        }
+        else if (pname === "WaterMark") {
+            this.addWaterMarkFn(obj);
+        }
+        else if (pname === "Function") {
+            this.changeSummaryFunc(obj);
+            this.RefreshControl(obj);
+        }
+        else {
+            this.RefreshControl(obj);
+        }
+    }.bind(this);
+
+    this.pg.Close = function () {
+        this.repExtern.minPgrid();   
+    }.bind(this);
+
     this.init = function () {
-        this.repExtern = new ReportExtended();
-        this.pg = new Eb_PropertyGrid("propGrid");
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbReport"]("Report1");
             this.height = pages[this.type].height;
@@ -845,38 +870,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.DragDrop_Items();
             //this.minimap();
         }
-        else { }
-        this.pg.PropertyChanged = function (obj, pname) {
-            if ('SectionHeight' in obj) {
-                this.sizeArray = [];
-                this.idArray = []
-                $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
-                this.RefreshControl(obj);
-                this.repExtern.splitGeneric(this.idArray, this.sizeArray);
-            }
-            else if (pname === "DataSourceRefId") {
-                this.getDataSourceColoums(obj.DataSourceRefId);
-            }
-            else if (pname === "PaperSize") {
-                this.setpageSize(obj);
-            }
-            else if (pname === "IsLandscape") {
-                this.setpageMode(obj);
-            }
-            else if (pname === "Image") {
-                this.addImageFn(obj);
-            }
-            else if (pname === "WaterMark") {
-                this.addWaterMarkFn(obj);
-            }
-            else if (pname === "Function") {
-                this.changeSummaryFunc(obj);
-                this.RefreshControl(obj);
-            }
-            else {
-                this.RefreshControl(obj);
-            }
-        }.bind(this);
+        else { }        
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
     };//report execution start func
     this.init();

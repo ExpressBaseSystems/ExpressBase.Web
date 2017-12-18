@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
+using System;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,22 +19,20 @@ namespace ExpressBase.Web.Controllers
         }
 		public IActionResult ManageRoles2(int itemid)
 		{
-			if (itemid > 0)
-			{
-				//var fr = this.ServiceClient.Get<GetPermissionsResponse1>(new GetPermissionsRequest1 { id = itemid, TenantAccountId = ViewBag.cid });
-				////ViewBag.permissions = fr.Permissions;
-				//ViewBag.RoleName = fr.Data["rolename"];
-				//ViewBag.ApplicationId = fr.Data["applicationid"];
-				//ViewBag.ApplicationName = fr.Data["applicationname"];
-				//ViewBag.Description = fr.Data["description"];
-
-			}
-
-			var resultlist = this.ServiceClient.Get<GetApplicationResponse1>(new GetApplicationRequest1());
-			ViewBag.dict = resultlist.Data;    // get application from application table
-			ViewBag.roleid = itemid;
-
+			var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
+			ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);
+			ViewBag.SelectedRoleInfo = JsonConvert.SerializeObject(fr.SelectedRoleInfo);
+			ViewBag.PermissionList = JsonConvert.SerializeObject(fr.PermissionList);
+			ViewBag.RoleId = itemid;
 			return View();
 		}
+
+
+		public object GetObjectAndPermission(string roleId, int appId)
+		{
+			var fr = this.ServiceClient.Get<GetObjectAndPermissionResponse>(new GetObjectAndPermissionRequest { RoleId = Convert.ToInt32(roleId), AppId = appId });
+			return JsonConvert.SerializeObject(fr);
+		}
+
 	}
 }

@@ -15,10 +15,21 @@
     </div>
     <div class="col-md-10 col-lg-10 pd-0 pull-right s-dash-workplace">
         <div class="col-md-12 pd-0 s-dash-solution-desc">
-            <div class="col-md-10 pd-0">
+            <div class="col-md-7 pd-0">
                 <h3 class="mr-t-0">@ViewBag.SolutionName</h3>
                 <p class="small">@ViewBag.Sid</p>
                 <p>@ViewBag.Desc </p>
+            </div>
+            @{
+                string urldev = "http://"+ ViewBag.Sid + ".localhost:5000/dev";
+                string urlusr = "http://" + ViewBag.Sid + ".localhost:5000";
+             }
+
+            <div class="col-md-3 pd-0">
+                <div class="form-inline text-center">
+                    <a class="btn btn-oval btn-blue" href="@urldev">Dev</a>
+                    <a class="btn btn-oval btn-orange" href="@urlusr">User</a>
+                </div>
             </div>
             <div class="col-md-2 pd-0">
                 <img class="solution-logo" src="~/images/your-logo.png" />

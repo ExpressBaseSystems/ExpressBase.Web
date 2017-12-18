@@ -31,7 +31,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost][HttpGet]
         public IActionResult Index()
         {
-            ViewBag.useremail = TempData[RequestEmail];
+            ViewBag.useremail = TempData.Peek(RequestEmail);
             return View();
         }
 

@@ -3,10 +3,14 @@
 @using ExpressBase.Common;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />@*amal*@
 <link rel="stylesheet" type="text/css" href="~/css/Eb_FontEditor.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>
 <script type="text/javascript" src="~/js/Eb_FontEditor.js"></script>
-<script type="text/javascript" src="~/js/Eb_ReportBuilderExtended.js"></script>
+<script type="text/javascript" src="~/js/ReportBuilder/textFit.min.js"></script>
+<script type="text/javascript" src="~/js/ReportBuilder/split.js"></script>
+<script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilder.js"></script>
+<script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilderExtended.js"></script>
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -65,6 +69,7 @@
 <div class="container-fluid">
     <div class="row pgB eb-rpt-container" id="eb-rpt-container">
         <div class="max-sidebar" id="max-sidebar"><i class="fa fa-wrench" aria-hidden="true"></i></div>
+        <div class="max-pg" id="max-pg"><i class="fa fa-wrench" aria-hidden="true"></i></div>
         <div class="col-md-2 col-lg-2 col-sm 2 side-toolbar" id="side-toolbar">
             <div class="toolbox eb-toolBoxReport">
                 <div class="eb-toolBoxReport-toggle-sec">
@@ -155,7 +160,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2 col-lg-2 col-sm-2 col-lg-offset-10 col-sm-offset-10 col-md-offset-10 PGgrid">
+        <div class="col-md-2 col-lg-2 col-sm-2 col-lg-offset-10 col-sm-offset-10 col-md-offset-10 PGgrid" id="PGgrid-report">
             <div class="pGreportBuilder">
                 <div id="propGrid"></div>
             </div>
@@ -249,5 +254,5 @@
             $("#Rptbgimg").change(function () {
                 setBackgroud(this);
             });
-        });
+    });
 </script>

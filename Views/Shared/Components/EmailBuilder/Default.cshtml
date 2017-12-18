@@ -31,48 +31,51 @@
     </div>
 
     <script>
-
-        var commonO;
-        if (@ViewBag.tabnum === 0) {
-            commonO = $("#layout_div").data("commonObj");
-        }
-
-        var w = $('.col-md-10').css("width");
-        $('#summernote@(ViewBag.tabnum)').summernote({
-            width: w,
-            height: 300,                 // set editor height
-            minHeight: null,             // set minimum height of editor
-            maxHeight: null,             // set maximum height of editor
-            focus: true,                  // set focus to editable area after initializing summernote
-            callbacks: {
-                onImageUpload: function (files) {
-                    // upload image to server and create imgNode...
-                    console.log(files);
-                    var form_data = new FormData();
-
-                   form_data.append('file', files[0]);
+        $(document).ready(function () {
 
 
-                    $.ajax({
-                        data: form_data,
-                        type: "POST",
-                        url: "../StaticFile/UploadImageAsync",
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        success: function (url) {
-                            alert(url.initialPreview);
-                            $('#summernote@(ViewBag.tabnum)').summernote("insertImage", url.initialPreview);
-                        }
-                    });
-                    //$summernote.summernote('insertNode', imgNode);
-                }
+       
+            var commonO;
+            if (@ViewBag.tabnum === 0) {
+                commonO = $("#layout_div").data("commonObj");
             }
+
+            var w = $('.col-md-10').css("width");
+            $('#summernote@(ViewBag.tabnum)').summernote({
+                width: w,
+                height: 300,                 // set editor height
+                minHeight: null,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: true,                  // set focus to editable area after initializing summernote
+                callbacks: {
+                    onImageUpload: function (files) {
+                        // upload image to server and create imgNode...
+                        console.log(files);
+                        var form_data = new FormData();
+
+                        form_data.append('file', files[0]);
+
+
+                        $.ajax({
+                            data: form_data,
+                            type: "POST",
+                            url: "../StaticFile/UploadImageAsync",
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (url) {
+                                alert(url.initialPreview);
+                                $('#summernote@(ViewBag.tabnum)').summernote("insertImage", url.initialPreview);
+                            }
+                        });
+                        //$summernote.summernote('insertNode', imgNode);
+                    }
+                }
+            });
+
+
+            commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EmailWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum);
         });
-
-
-       commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EmailWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum);
-
 </script>
 </body>
 </html>

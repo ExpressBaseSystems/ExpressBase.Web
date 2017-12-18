@@ -40,7 +40,12 @@
     iframe.frameBorder = "0";
     iframe.allowFullscreen = true;
     iframecont.appendChild(chatHead);
-    iframecont.appendChild(iframe);
+
+    var loaderDiv = d.createElement("div");
+    loaderDiv.id = "loderdiv";
+
+    loaderDiv.appendChild(iframe);
+    iframecont.appendChild(loaderDiv);
     d.body.appendChild(iframecont);
 
     var chatbtn = d.createElement("div");
@@ -79,6 +84,9 @@
     dpicon.style.height = "40px";
     botdp.appendChild(dpicon);
 
+    iframe.onload = function (e) {
+        iframe.style.visibility = 'visible';
+    };
 
     closeDiv.onclick = function () {
         document.getElementById("eb_iframecont").style.display = "none";

@@ -5,6 +5,30 @@
     --eb-fontweight-light:300;
     --eb-grey2:#fafafa;
 }
+.btn-orange {
+    background: #f37e1a;
+    color: white;  
+    padding: 6px 25px 6px 25px;
+    border-radius: 20px;
+    border: 2px #f37e1a;  
+    margin:0px 5px 0px 5px;
+}
+.btn-orange:hover{
+    background: #f37e1a;
+    color: white;
+}
+.btn-blue {
+    background: #4aade3;
+    color: white;
+    padding: 6px 25px 6px 25px;
+    border-radius: 20px;
+    border: 2px #f37e1a;
+    margin: 0px 5px 0px 5px;
+}
+.btn-blue:hover {
+    background: #4aade3;
+    color: white;
+}
 .eb-flex-center {
     display: flex;
     align-items: center;
@@ -279,3 +303,438 @@ margin-top:0;
     .s-dash-workplace .solution-logo{
         width:100%;
     }
+    /*tenant add solution*/
+
+.pd-0 {
+    padding: 0;
+}
+
+.eb-flex-end {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.Eb-product-container-bdy {
+    padding-bottom: 15px;
+    background: white;
+    padding-top: 15px;
+    text-align: center;
+    border: 1px solid #d7d7d7;
+    margin-top: 10px;
+}
+
+.pro-icon-bx {
+    padding: 0;
+}
+
+    .pro-icon-bx img {
+        height: 50px;
+        margin: auto;
+    }
+
+.pro-name-bx {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.client-id-sec {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+    .client-id-sec p {
+        margin-top: 10px;
+        font-size: 13px;
+    }
+
+.input-clientId {
+    width: 69%;
+    display: inline-block;
+}
+
+.clientId-auto {
+    font-size: 14px;
+    color: #9e9e9e;
+    display: inline;
+}
+
+.pricing-icon img {
+    height: 40px;
+}
+
+.T-add-amount {
+    font-size: 17px;
+    color: #8e8282;
+    font-weight: lighter;
+}
+
+.pricing-container {
+    padding: 10px;
+}
+
+.tadd-pricing-head {
+    text-align: center;
+    color: #797878;
+    font-weight: 100;
+}
+
+.eb-common-price-modal-container {
+    padding: 15px;
+    background-color: #F7F7F7;
+    margin: 0 auto;
+    border-radius: 2px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    font-family: roboto;
+}
+
+#eb-common-price-modal .modal-dialog {
+    width: 1000px;
+    margin: 30px auto;
+}
+/*cdgfdjhdtjykuflkjyh*/
+.tAddAcc {
+    font-family: open sans;
+    font-weight: 300;
+    background-color: #f8f8f8;
+}
+
+    .tAddAcc .btn {
+        border-radius: 0;
+        background: white;
+        border: 1px solid #e1e0e0;
+    }
+
+    .tAddAcc .form-control {
+        border-radius: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+    .tAddAcc .detailsec {
+        margin-top: 50px;
+    }
+
+.detailsec-name {
+    height: inherit;
+}
+
+.btn-upload i {
+    pointer-events: none !important;
+}
+
+.detailsec-form {
+    height: inherit;
+}
+
+.eb-products {
+    margin-top: 30px;
+}
+
+.products-head {
+    margin-top: 40px;
+    color: #3ea8dc;
+    font-family: sans-serif;
+}
+
+.detailsec-name-desc {
+    text-align: center;
+}
+
+.pricing-modal-btn {
+}
+
+.add-accPricing-sec-table {
+    background: white;
+}
+
+    .add-accPricing-sec-table .btn {
+        background: white;
+        border: 1px solid #e1e0e0;
+        font-size: 12px;
+    }
+
+    .add-accPricing-sec-table td {
+        text-align: center;
+        cursor: pointer;
+    }
+
+.tAddAcc table td {
+    vertical-align: central !important;
+    width: 200px;
+}
+
+.logo-upload-container {
+    padding: 10px 40px 0px 40px;
+    border-radius: 4px;
+}
+
+.logo-upload {
+    background: white;
+    height: 130px;
+    border: 1px solid #d7d7d7;
+}
+
+.eb-cropper .modal-dialog {
+    width: 500px;
+    margin: 100px auto;
+}
+
+.eb-cropper .eb-cropie-container {
+    height: 350px;
+    padding: 50px 50px 80px 50px;
+    background: white;
+    border-radius: 4px;
+}
+
+.subscribed {
+    background: #69ea69;
+    border: none;
+}
+
+.price-selected .T-add-amount {
+    font-size: 17px;
+    color: #ffffff;
+    font-weight: lighter;
+}
+
+.price-selected {
+    background: #69ea69;
+    border: none;
+}
+
+#save-subscrip {
+    background: var(--eb-blue);
+}
+
+.popover-clientid-edit {
+    display: none;
+    background: #3ea8dc;
+    position: fixed;
+    z-index: 10000;
+    top: 40vh;
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+    width: 400px;
+    /* height: 150px; */
+    padding: 20px;
+    border-radius: 4px;
+}
+
+    .popover-clientid-edit .popover-text {
+        width: 100%;
+        height: 78px;
+        color: white;
+        font-size: 16px;
+    }
+
+    .popover-clientid-edit .btn-section .btn {
+        display: inline-block;
+        color: #8c8989;
+        border-radius: 4px;
+        background: white;
+        border: none;
+    }
+
+.height-100 {
+    height: 100vh;
+    padding-top: 50px;
+}
+
+.card {
+    padding-top: 30px;
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    padding-bottom: 30px;
+}
+
+.card--content {
+    background: white;
+    border: 1px solid #ccc;
+    min-width: 60%;
+    margin: 5px;
+    border-radius: 6px;
+    height: 100%;
+}
+
+.card--content-large {
+    background: white;
+    border: 1px solid #ccc;
+    min-width: 80%;
+    margin: 5px;
+    border-radius: 6px;
+    height: 100%;
+}
+
+.card--form {
+    height: 100%;
+}
+
+.none {
+    min-width: 9%;
+    margin: 5px;
+    margin-top: 50px;
+}
+
+.mr-l-20 {
+    margin-left: 20%;
+}
+
+.mr-l-10 {
+    margin-left: 10%;
+}
+
+.desc-section {
+    background: #fafafa;
+    height: 100%;
+    padding: 15px;
+}
+
+.products-head {
+    margin-top: 0px;
+    padding: 10px 0px;
+    height: 50px;
+}
+
+.card--content-body {
+    height: calc(100% - 100px);
+    padding-top: 20px;
+}
+
+.card--content-footer {
+}
+
+.steps {
+    width: 100%;
+    text-align: center;
+}
+
+.step-no {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid;
+    border-color: #ccc;
+    margin: 5px;
+    padding: 3px;
+}
+
+.step-no-blue {
+    border-color: #3ea8e2;
+}
+
+.card--content-footer .btn {
+    background: #4aade3;
+    color: white;
+    border-radius: 20px;
+}
+
+.card--content-footer .btn-success {
+    background: green !important;
+}
+
+.subscript-submit {
+    margin-top: 15px;
+}
+
+.company-logo {
+    margin-top: 10px;
+}
+
+.company-logo {
+    height: 80px;
+}
+
+.pro-icon-bx img {
+    height: 50px;
+    margin: auto;
+}
+
+
+.small-desc{
+    height: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: open sans;
+}
+.flex-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: open sans;
+}
+
+.small-desc-last {
+    height: calc(100% - 75px);
+    padding-top: 30px;
+}
+
+.small-desc h4, p {
+    color: #6f6d6d;
+}
+
+.small-desc-img {
+    width: 50px;
+}
+
+.mr-10 {
+    margin-right: 10px;
+}
+
+.sol-name-review {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    margin: 0px;
+    resize: none;
+    width: 100%;
+}
+
+.plan-label {
+    width: 120px;
+}
+
+.plan-details {
+    display: inline;
+}
+
+.tot-container {
+    height: 50px;
+}
+
+.eb-sub-tot {
+    font-size: 42px;
+    text-align: center;
+    color: #4aade3;
+    font-weight: 600;
+}
+
+.total-head {
+    display: flex;
+    align-items: flex-end;
+    height: inherit;
+    font-size: 20px;
+    text-align: right;
+}
+
+.logo-upload-sec {
+    height: 100%;
+}
+
+.log-upload-btn {
+    background: #4aade3 !important;
+    color: white;
+    border-radius: 20px !important;
+}
+/*t addaacc latest----*/

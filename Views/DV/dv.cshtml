@@ -43,8 +43,7 @@
 @{
     string head = string.Empty;
     string html = string.Empty;
-
-    var dvRefId = ViewBag.dvRefId;
+    
     var dvobj = EbSerializers.Json_Serialize(ViewBag.dvObject);
 }
 <div class="row">
@@ -73,7 +72,7 @@
     </div>
 </div>
 @*<section class="minimaps" id="MinimapDiv" style="display:none;"></section>*@
-<div class="row splitdiv_parent" id="parent-div0"></div>
+<div class="row splitdiv_parent" id="parent-div@(ViewBag.tabNum)"></div>
 
 
 @section EbHead {
@@ -90,7 +89,10 @@
             dsobj:@Html.Raw(dvobj),
             cur_status:'@ViewBag.Status',
             ss_url: '@ViewBag.ServiceUrl',
-            wc: '@ViewBag.wc'
+            wc: '@ViewBag.wc',
+            rowData: '@ViewBag.rowData',
+            filterValues: '@Html.Raw(ViewBag.filterValues)',
+            tabnum : @ViewBag.tabNum,
         });
 
         $(document).ready(function () {

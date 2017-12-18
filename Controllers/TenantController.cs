@@ -111,6 +111,12 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
+        public IActionResult EbOnBoarding()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public IActionResult TenantAddAccount()
         {
             var resultset = this.ServiceClient.Get<GetProductPlanResponse>(new GetProductPlanRequest { } );

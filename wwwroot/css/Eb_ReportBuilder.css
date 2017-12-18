@@ -106,6 +106,7 @@
 .dropped:hover{
     cursor:pointer;   
 }
+
 .toolbox::-webkit-scrollbar-track {
     background-color: #F5F5F5;
 }

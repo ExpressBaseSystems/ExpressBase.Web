@@ -36,7 +36,7 @@ namespace ExpressBase.Web.Controllers
     }
     public class ReportRenderController : EbBaseNewController
     {
-        private RowColletion dt;
+        private RowColletion __datarows;
         private DataSourceColumnsResponse cresp = null;
         private DataSourceDataResponse dresp = null;
         private ColumnColletion __columns = null;
@@ -78,9 +78,9 @@ namespace ExpressBase.Web.Controllers
                 __columns = (cresp.Columns.Count > 1) ? cresp.Columns[1] : cresp.Columns[0];
 
                 dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Report.DataSourceRefId, Draw = 1, Start = 0, Length = 100 });
-                dt = dresp.Data;
+                __datarows = dresp.Data;
             }
-            
+
             iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
 
             d = new Document(rec);
@@ -95,12 +95,15 @@ namespace ExpressBase.Web.Controllers
             InitializeSummaryFields();
             d.NewPage();
 
-
             DrawReportHeader();
             DrawDetail();
             DrawReportFooter();
             d.Close();
             ms1.Position = 0;
+            PdfReader pdfReader = new PdfReader(ms1);
+            PdfStamper stamp = new PdfStamper(pdfReader, ms1);
+            Watermark(pdfReader, d, stamp);
+            ms1.Position = 0;//important
             return new FileStreamResult(ms1, "application/pdf");
         }
 
@@ -131,10 +134,14 @@ namespace ExpressBase.Web.Controllers
 
         public void CalculateDetailHeight()
         {
-            var a = dt.Count * detail_section_height;
-            var b = Report.Height - (ph_height + pf_height + rh_height + rf_height);
-            if (a < b && writer.PageNumber == 1)
-                IsLastpage = true;
+            if (__datarows != null)
+            {
+                var a = __datarows.Count * detail_section_height;
+                var b = Report.Height - (ph_height + pf_height + rh_height + rf_height);
+                if (a < b && writer.PageNumber == 1)
+                    IsLastpage = true;
+            }
+
             if (writer.PageNumber == 1 && IsLastpage == true)
                 dt_height = Report.Height - (ph_height + pf_height + rh_height + rf_height);
             else if (writer.PageNumber == 1)
@@ -229,7 +236,6 @@ namespace ExpressBase.Web.Controllers
 
         public void DrawReportHeader()
         {
-
             var rh_Yposition = 0;
             detailprintingtop = 0;
             foreach (EbReportHeader r_header in Report.ReportHeaders)
@@ -258,23 +264,22 @@ namespace ExpressBase.Web.Controllers
         {
             ph_Yposition = (writer.PageNumber == 1) ? rh_height : 0;
             dt_Yposition = ph_Yposition + ph_height;
-            if (dt != null)
+            if (__datarows != null)
             {
-                int i;
-                for (i = 0; i < dt.Count; i++)
+                for (Report.SerialNumber = 1; Report.SerialNumber <= __datarows.Count; Report.SerialNumber++)
                 {
                     if (detailprintingtop < dt_height && dt_height - detailprintingtop >= detail_section_height)
                     {
-                        DoLoopInDetail(i);
+                        DoLoopInDetail(Report.SerialNumber);
                     }
                     else
                     {
                         detailprintingtop = 0;
                         d.NewPage();
-                        DoLoopInDetail(i);
+                        DoLoopInDetail(Report.SerialNumber);
                     }
                 }
-                if (i == dt.Count)
+                if (Report.SerialNumber == __datarows.Count)
                 {
                     IsLastpage = true;
                     CalculateDetailHeight();
@@ -287,13 +292,13 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public void DoLoopInDetail(int i)
+        public void DoLoopInDetail(int serialnumber)
         {
             foreach (EbReportDetail detail in Report.Detail)
             {
                 foreach (EbReportField field in detail.Fields)
                 {
-                    DrawFields(field, dt_Yposition, i);
+                    DrawFields(field, dt_Yposition, serialnumber);
                 }
                 detailprintingtop += detail.Height;
             }
@@ -375,13 +380,13 @@ namespace ExpressBase.Web.Controllers
         }
 
         //NEED FIX OO
-        public void DrawFields(EbReportField field, float section_Yposition, int i)
+        public void DrawFields(EbReportField field, float section_Yposition, int serialnumber)
         {
             var column_name = string.Empty;
             var column_val = string.Empty;
             if (PageSummaryFields.ContainsKey(field.Title) || ReportSummaryFields.ContainsKey(field.Title))
-                CallSummerize(field.Title, i);
-            if ((field is EbDataField) || (field is EbPageNo) || (field is EbPageXY) || (field is EbDateTime))
+                CallSummerize(field.Title, serialnumber);
+            if ((field is EbDataField) || (field is EbPageNo) || (field is EbPageXY) || (field is EbDateTime) || (field is EbSerialNumber))
             {
                 if (field is EbDataField)
                 {
@@ -397,7 +402,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         var table = field.Title.Split('.')[0];
                         column_name = field.Title.Split('.')[1];
-                        column_val = GeFieldtData(column_name, i);
+                        column_val = GeFieldtData(column_name, serialnumber);
                     }
                 }
                 else if (field is EbPageNo)
@@ -406,7 +411,8 @@ namespace ExpressBase.Web.Controllers
                     column_val = writer.PageNumber + "/"/* + writer.PageCount*/;
                 else if (field is EbDateTime)
                     column_val = DateTime.Now.ToString();
-
+                else if (field is EbSerialNumber)
+                    column_val = Report.SerialNumber.ToString();
                 field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop, column_val);
             }
             else if ((field is EbText) || (field is EbCircle) || (field is EbRect) || (field is EbHl) || (field is EbVl) || (field is EbArrR) || (field is EbArrL) || (field is EbArrU) || (field is EbArrD) || (field is EbByArrH) || (field is EbByArrV))
@@ -423,12 +429,33 @@ namespace ExpressBase.Web.Controllers
             {
                 if (col.ColumnName == column_name)
                 {
-                    column_val = dt[i][columnindex].ToString();
+                    column_val = __datarows[i-1][columnindex].ToString();
                     return column_val;
                 }
                 columnindex++;
             }
             return column_val;
+        }
+
+        public void Watermark(PdfReader pdfReader, Document d, PdfStamper stamp)
+        {
+            //string WatermarkLocation = "F:/ExpressBase.Core/ExpressBase.ServiceStack/wwwroot/images/EB_Logo.png";
+            //iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(WatermarkLocation);
+            //img.RotationDegrees = 45;
+            //img.ScaleToFit(d.PageSize.Width, d.PageSize.Height);
+            //img.SetAbsolutePosition(0, d.PageSize.Height); // set the position of watermark to appear (0,0 = bottom left corner of the page)
+            // PdfContentByte waterMark;
+            PdfContentByte canvas;
+            iTextSharp.text.Font fo = new iTextSharp.text.Font(5, 20, 5, BaseColor.LightGray);
+            for (int page = 1; page <= pdfReader.NumberOfPages; page++)
+            {
+                //waterMark = stamp.GetUnderContent(page);
+                //waterMark.AddImage(img);
+                canvas = stamp.GetUnderContent(page);
+                ColumnText.ShowTextAligned(canvas, Element.ALIGN_CENTER, new Phrase("This is some extra text added to the left of the page", fo), d.PageSize.Width / 2, d.PageSize.Height / 2, 45);
+            }
+            stamp.FormFlattening = true;
+            stamp.Close();
         }
     }
 }

@@ -102,7 +102,7 @@
         if (this.sideBar.css("display") === 'none') {
             $("#max-sidebar").show();
             if (this.pGcontainer.css("display") === 'none') 
-                this.pageContainer.switchClass("col-md-10 col-lg-10 col-sm-10 col-sm-offset-2 col-lg-offset-2 col-md-offset-2", "col-md-11 col-lg-11 col-sm-11", 500, "easeInOutQuad");            
+                this.pageContainer.switchClass("col-md-10 col-lg-10 col-sm-10 col-sm-offset-2 col-lg-offset-2 col-md-offset-2", "col-md-11 col-lg-11 col-sm-11 pd-left-60px", 500, "easeInOutQuad");            
             else
                 this.pageContainer.switchClass("col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2", "col-md-10 col-lg-10 col-sm-10 pd-left-60px", 1000, "easeInOutQuad");            
         }

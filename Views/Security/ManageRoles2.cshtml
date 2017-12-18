@@ -35,10 +35,11 @@
         </div>
         <div class="col-md-8">
             <div class="form-group">
-                <label style="font-family: open sans; font-weight: 300; display:inline-block">Description</label>
+                <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Description</label>
                 <textarea class="form-control" id="txtRoleDescription" style="height:107px;width:100%;"></textarea>
             </div>
         </div>
+        
     </div>
 
     <div style="padding: 0px 15px;">
@@ -46,17 +47,18 @@
             <li class="active"><a data-toggle="tab" href="#divObjList">Permissions</a></li>
             <li><a data-toggle="tab" href="#rolesdiv">Sub Roles</a></li>
             <li><a data-toggle="tab" href="#usersdiv">Users</a></li>
+            <li><a data-toggle="tab" href="#constarintsdiv">Constraints</a></li>
         </ul>
         <div class="tab-content" style="padding: 15px 0px;">
 
             <div class="row tab-pane fade in active" id="divObjList" style="margin:0px">
-                <div class="list-group">
-                    @foreach (var ObjectType in Enum.GetValues(typeof(EbObjectTypesUI)))
+                <div class="list-group" id="">
+                    @*@foreach (var ObjectType in Enum.GetValues(typeof(EbObjectTypesUI)))
                     {
                         var intobj = (int)ObjectType;
                         <a class="list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#objtype_@intobj" onclick="GetTable(@intobj)" style="padding:5px">@ObjectType<i class="fa fa-caret-down pull-right" aria-hidden="true"></i></a>
                             <table class="objtype table table-responsive sub-menu collapse" id="objtype_@intobj"></table>
-                    }
+                    }*@
                 </div>
                 <input type="hidden" id="applicationid" />
                 <input type="hidden" id="roleid" name="roleid" value="@ViewBag.roleid" />
@@ -93,7 +95,10 @@
 <script>
     $('document').ready(function () {
 
-        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission);
+        var _dict = @Html.Raw(TempData.Peek("_dict"));
+
+        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict);
+
 
 
         $('#applicationid').val($('#appselect').val());

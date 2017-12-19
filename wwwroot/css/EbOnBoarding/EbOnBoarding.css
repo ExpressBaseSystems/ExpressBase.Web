@@ -553,6 +553,7 @@ margin-top:0;
     height: 100%;
     overflow-x: auto;
     padding-bottom: 30px;
+    overflow-y: hidden;
 }
 
 .card--content {
@@ -578,7 +579,7 @@ margin-top:0;
 }
 
 .none {
-    min-width: 9%;
+    min-width: 20%;
     margin: 5px;
     margin-top: 50px;
 }
@@ -586,7 +587,9 @@ margin-top:0;
 .mr-l-20 {
     margin-left: 20%;
 }
-
+.mr-l-15 {
+    margin-left: 15%;
+}
 .mr-l-10 {
     margin-left: 10%;
 }
@@ -738,3 +741,19 @@ margin-top:0;
     border-radius: 20px !important;
 }
 /*t addaacc latest----*/
+.sol-info{
+    display:none;
+}
+.prod-info{
+    display:none;
+}
+.prof-info-skip{
+    display:none;
+}
+.profimage {
+    text-align: center;
+    padding-top: 4%;
+}
+    .profimage img {
+        height: 90px;
+    }

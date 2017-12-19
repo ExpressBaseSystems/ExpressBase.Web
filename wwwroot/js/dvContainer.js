@@ -274,7 +274,9 @@ var DvContainerObj = function (settings) {
         
     }.bind(this);
 
-    this.drawdvFromTable = function () {
+    this.drawdvFromTable = function (row, filter) {
+        this.rowData = row;
+        this.filterValues = filter;
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
         $.LoadingOverlay("show");

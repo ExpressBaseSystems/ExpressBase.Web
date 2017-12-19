@@ -13,8 +13,8 @@
     this.bearerToken = null;
     this.refreshToken = null;
     this.botdpURL = 'url(../images/svg/chatBot.svg)center center no-repeat';
-    this.ebbotThemeColor = '#31d031';
-    this.initControls = new InitControls();
+    this.ebbotThemeColor = '#ffb100';//'#31d031';
+    this.initControls = new InitControls(this);
 
     this.formsList = {};
     this.formsDict = {};
@@ -63,6 +63,7 @@
     };
 
     this.contactSubmit = function (e) {
+        $(e.target).closest('.msg-cont').remove();
         this.getMsg("Thank you.");
     }.bind(this);
 
@@ -80,12 +81,15 @@
     this.FBlogin = function (e) {
         this.postmenuClick(e);
         if (this.CurFormIdx == 0)
-            login();
-        else {
-            this.getMsg("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
-            this.getMsg($('<input type="email"><br/><input type="tel"><button name="contactSubmit">submit</button>'));
-        }
+            this.login2FB();
+        else
+            this.collectContacts();
     }.bind(this);
+
+    this.collectContacts = function () {
+        this.getMsg("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
+        this.getMsg($('<input type="email"><br/><input type="tel"><button name="contactSubmit">submit</button>'));
+    };
 
     this.continueAsFBUser = function (e) {
         this.postmenuClick(e, "");
@@ -197,6 +201,10 @@
             inpVal = $input.find(":selected").text();
         else if ($input.attr("type") === "password")
             inpVal = $input.val().replace(/(^.)(.*)(.$)/, function (a, b, c, d) { return b + c.replace(/./g, '*') + d });
+        else if ($input.attr("type") === "file") {
+            inpVal = $input.val().split("\\");
+            inpVal = inpVal[inpVal.length - 1];
+        }
         else
             var inpVal = $input.val();
         return inpVal.trim();
@@ -208,7 +216,7 @@
         var $msgDiv = $btn.closest('.msg-cont-bot');
         var idx = parseInt($btn.attr('idx')) + 1;
         var $input = $('#' + id);
-        $input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
+        //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         var inpVal = this.getValue($input);
         this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         if (idx !== this.formControls.length) {
@@ -255,10 +263,12 @@
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').text(msg).append(this.getTime());
         this.$chatBox.append($msg);
+        $('.eb-chatBox').scrollTop(99999999999);
     };
 
     this.sendCtrl = function (msg) {
-        var $msg = this.$userMsgBox.clone().wrapInner($(msg));
+        var $msg = this.$userMsgBox.clone();
+        $msg.find('.msg-wraper-user').append(msg).append(this.getTime());
         this.$chatBox.append($msg)
         $('.eb-chatBox').scrollTop(99999999999);
     };
@@ -382,6 +392,16 @@
         this.isAlreadylogined = false;
         this.Query("Hello I am EBbot, Nice to meet you. Do you mind loging into facebook?", ["Login", "No, Sorry"], "fblogin");
     }.bind(this);
+
+    this.login2FB = function () {
+        this.FB.login(function (response) {
+            if (response.authResponse) {
+                statusChangeCallback(response);
+            } else {
+                this.collectContacts();
+            }
+        }.bind(this), { scope: 'email' });
+    }
 
     this.init();
 };

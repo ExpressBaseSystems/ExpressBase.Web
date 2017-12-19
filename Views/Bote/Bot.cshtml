@@ -48,16 +48,6 @@
         }
     }
 
-    function login() {
-        FB.login(function (response) {
-            if (response.authResponse) {
-                statusChangeCallback(response);
-            } else {
-                alert('Login Failed!'); 
-            }
-        }, { scope: 'email' });
-    }
-
     // This function is called when someone finishes with the Login
     function checkLoginState() {
         FB.getLoginStatus(function (response) {

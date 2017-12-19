@@ -239,7 +239,7 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     };
 };
 var Xlabel, Ylabel;
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, cellData, rowData) {
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
     this.columnInfo = null;
     this.data = null;
     this.ssurl = ssurl;
@@ -266,8 +266,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.MainData = (data === undefined) ? null : data;
     this.isPipped = false;
     this.isContextual = false;
-    this.filterValues = null;
-    this.cellData = cellData;
+    this.filterValues = (filterValues !== "") ? JSON.parse(filterValues) : [];
     this.rowData = rowData;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
@@ -307,9 +306,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.isPipped = true;
             this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
-        if (this.cellData !== null) {
+        if (this.rowData !== null && this.rowData !== "") {
             this.isContextual = true;
-            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
+            //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
         this.PcFlag = "False";
         obj = this.EbObject;

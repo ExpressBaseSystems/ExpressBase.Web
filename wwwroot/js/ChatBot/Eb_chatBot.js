@@ -2,13 +2,14 @@
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
-    this.$poweredby= $('<div class="poweredby-cont"><div class="poweredby"><i>powered by</i> EXPRESSbase</div><div class="poweredby"><a class="botlink" target="_blank" href="http://bot.expressbase.com">bot.expressbase.com</a></div></div>');
+    this.$poweredby = $('<div class="poweredby-cont"><div class="poweredby"><i>powered by</i> EXPRESSbase</div><div class="poweredby"><a class="botlink" target="_blank" href="http://bot.expressbase.com">bot.expressbase.com</a></div></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
     this.$botMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-bot"><div class="msg-wraper-bot"></div></div>'));
     this.$botMsgBox.prepend('<div class="bot-icon"></div>');
     this.$userMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-user"><div class="msg-wraper-user"></div></div>'));
     this.$userMsgBox.append('<div class="bot-icon-user"></div>');
     this.ready = true;
+    this.isAlreadylogined = true;
     this.bearerToken = null;
     this.refreshToken = null;
     this.botdpURL = 'url(../images/svg/chatBot.svg)center center no-repeat';
@@ -21,6 +22,7 @@
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
+    this.editingCtrlName = null;
     this.FB = null;
     this.FBResponse = {};
     this.EXPRESSbase_SOLUTION_ID;
@@ -147,7 +149,6 @@
     }.bind(this);
 
     this.greetings = function (name) {
-        this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
         var time = new Date().getHours();
         var greeting = null;
         if (time < 12) {
@@ -159,7 +160,14 @@
         else {
             greeting = 'Good evening!';
         }
-        this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
+        if (this.isAlreadylogined)
+            this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
+        else {
+            this.getMsg(`Hello ${this.FBResponse.name}, ${greeting}`);
+            setTimeout(function () {
+                this.authenticate();
+            }.bind(this), 901);
+        }
     }.bind(this);
 
     this.Query = function (msg, OptArr, For, ids) {
@@ -183,20 +191,28 @@
         this.getNextControl();
     }.bind(this);
 
+    this.getValue = function ($input) {
+        var inpVal;
+        if ($input[0].tagName === "SELECT")
+            inpVal = $input.find(":selected").text();
+        else if ($input.attr("type") === "password")
+            inpVal = $input.val().replace(/(^.)(.*)(.$)/, function (a, b, c, d) { return b + c.replace(/./g, '*') + d });
+        else
+            var inpVal = $input.val();
+        return inpVal.trim();
+    }
+
     this.ctrlSend = function (e) {
-        var id = this.curCtrl.name;
+        var id = this.editingCtrlName || this.curCtrl.name;
         var $btn = $(e.target).closest(".btn");
         var $msgDiv = $btn.closest('.msg-cont-bot');
         var idx = parseInt($btn.attr('idx')) + 1;
         var $input = $('#' + id);
-        $input.off("blur").on("blur", function () { $btn.click() });////////////////////////////////
-        var inpVal = $input.val();
-        if ($input[0].tagName === "SELECT")
-            inpVal = $input.find(":selected").text();
+        $input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
+        var inpVal = this.getValue($input);
         this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-
         if (idx !== this.formControls.length) {
-            if (!this.formValues[id])
+            if (!this.formValues[this.editingCtrlName])
                 this.getNextControl(idx);
         }
         else {
@@ -207,6 +223,7 @@
 
         }
         this.formValues[id] = $('#' + id).val();
+        this.editingCtrlName = "";
 
     }.bind(this);
 
@@ -215,7 +232,8 @@
         var idx = $btn.attr('idx');
         $('.msg-cont-bot [idx=' + idx + ']').closest('.msg-cont-bot').show(200);
         $btn.closest('.msg-cont').remove();
-    };
+        this.editingCtrlName = this.curForm.controls[idx].name;
+    }.bind(this);
 
     this.getNextControl = function (idx) {
         idx = idx || 0;
@@ -273,7 +291,7 @@
             setTimeout(function () {
                 if (msg instanceof jQuery) {
                     $msg.find('.bot-icon').remove();
-                    $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width","99%").html(msg);
+                    $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
                     if (this.curCtrl && $('#' + this.curCtrl.name).length === 1)
                         this.loadcontrol();
@@ -281,14 +299,14 @@
                 else
                     $msg.find('.msg-wraper-bot').text(msg).append(this.getTime());
                 this.ready = true;
-            }.bind(this), 1000);
+            }.bind(this), 900);
             this.ready = false;
         }
         else {
             $msg.remove();
             setTimeout(function () {
                 this.getMsg(msg);
-            }.bind(this), 1001);
+            }.bind(this), 901);
         }
         $('.eb-chatBox').scrollTop(99999999999);
     }.bind(this);
@@ -355,11 +373,13 @@
     this.FBLogined = function () {
         this.FB.api('/me?fields=id,name,picture', function (response) {
             this.FBResponse = response;
+            this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
             this.greetings();
         }.bind(this));
     }.bind(this);
 
     this.FBNotLogined = function () {
+        this.isAlreadylogined = false;
         this.Query("Hello I am EBbot, Nice to meet you. Do you mind loging into facebook?", ["Login", "No, Sorry"], "fblogin");
     }.bind(this);
 

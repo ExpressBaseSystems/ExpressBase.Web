@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, cellData, rowData) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -122,9 +122,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.cellData = cellData;
     this.rowData = rowData;
-    //this.filterValues = this.dtsettings.filterValues;
+    this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues):[] ;
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
     this.drake = null;
@@ -137,6 +136,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.columnDefDuplicate = null;
     this.extraCol = [];
     this.PcFlag = false;
+    this.modifyDVFlag = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -147,6 +147,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 focusedId = id;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
                 //if ($('#' + id).is(':last-child'))
+                if(this.login === "uc")
                     $(".splitdiv_parent").scrollTo($("#" + focusedId));
                 //if (this.login == "uc")
                 //    dvcontainerObj.firstWPos = $(".splitdiv_parent")
@@ -174,9 +175,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
             this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
-        if (this.cellData !== null) {
+        if (this.rowData !== null && this.rowData !== "" && this.rowData !== undefined) {
             this.isContextual = true;
-            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
+            //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
         this.PcFlag = "False";
         obj = this.EbObject;
@@ -427,7 +428,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.keys = true;
         this.filterValues = this.getFilterValues();
         var f = this.compareFilterValues();
-        if (this.MainData !== null && this.login == "uc" && f) {
+        if (this.MainData !== null && this.login == "uc" && f && this.isPipped) {
             o.dom = "<'col-md-12 noPadding'B>rt";
             dvcontainerObj.currentObj.data = this.MainData;
             o.ajax = function (data, callback, settings) {
@@ -483,7 +484,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = JSON.stringify(serachItems);
         dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined) ? this.filterValues : this.getFilterValues());
-        dq.cellData = this.cellData;
+        dq.rowData = this.rowData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (serachItems.length > 0) {
@@ -534,7 +535,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    this.Api.paging = dd.IsPaged;
         //    this.Api.lengthChange = false;
         //}
-        if (this.login == "uc" && this.isPipped) {
+        if (this.login == "uc") {
             dvcontainerObj.currentObj.data = dd;
             this.MainData = dd;
         }
@@ -728,7 +729,54 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
-        this.Api.rows().recalcHeight()
+        this.Api.rows().recalcHeight();
+        this.contextMenu();
+    }
+
+    this.contextMenu = function () {
+        $.contextMenu({
+            selector: ".tablelink_" + this.tableId, 
+            items: {
+                "OpenNewTab": { name: "Open in New Tab", icon: "fa-external-link-square", callback: this.OpeninNewTab.bind(this) }
+            }
+        });
+    }
+
+    this.OpeninNewTab = function (key, opt, event) {
+        this.tabNum++;
+        var idx = this.Api.row(opt.$trigger.parent().parent()).index();
+        this.rowData = this.Api.row(idx).data();
+        this.filterValues = this.getFilterValues();
+        var url = "http://eb_roby_dev.localhost:5000/DV/dv?refid=" + this.linkDV;
+
+        var _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "rowData";
+        input.value = this.rowData.toString();
+        _form.appendChild(input);
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "filterValues";
+        input.value = JSON.stringify(this.filterValues);
+        _form.appendChild(input);
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "tabNum";
+        input.value = this.tabNum;
+        _form.appendChild(input);
+
+        document.body.appendChild(_form);
+        
+        //note I am using a post.htm page since I did not want to make double request to the page 
+        //it might have some Page_Load call which might screw things up.
+        //window.open("post.htm", name, windowoption);       
+        _form.submit();
+        document.body.removeChild(_form);
+        
     }
 
     this.ModifyingDVs = function (parentName) {
@@ -739,12 +787,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     dvcontainerObj.dvcol[key].drawGraphHelper(this.Api.data());
                     this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name);
                 }
-                //else {
-                //    dvcontainerObj.dvcol[key].Api.clear().draw();
-                //    dvcontainerObj.dvcol[key].Api.rows.add(this.Api.data()); // Add new data
-                //    dvcontainerObj.dvcol[key].Api.columns.adjust().draw(); 
-                //    dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
-                //}
+                else {
+                    dvcontainerObj.dvcol[key].modifyDVFlag = true;
+                    dvcontainerObj.dvcol[key].Api.clear().rows.add(this.Api.data());
+                    dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
+                    dvcontainerObj.dvcol[key].Api.columns.adjust().draw(); 
+                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name);
+                }
             }
         }.bind(this));
     }
@@ -756,13 +805,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.summarize2();
         this.addFilterEventListeners();
         this.Api.columns.adjust();
-        //if (this.ebSettings.renderAs == "both") {
-        //if (this.chartJs !== null)
-        //    this.chartJs.drawGraphHelper(this.Api.data());
-        //}
-        //this.btnGo.attr("disabled", false);
-        //dvcontainerObj.currentObj.data = this.Api.data();
-        if(this.login === "uc")
+        if (this.login === "uc" && !this.modifyDVFlag)
             this.ModifyingDVs(dvcontainerObj.currentObj.Name);
     };
 
@@ -988,6 +1031,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
 
@@ -1377,8 +1421,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var idx = this.Api.row($(e.target).parent().parent()).index();
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues();
-        dvcontainerObj.drawdvFromTable();
+        if (this.login === "uc")
+            dvcontainerObj.drawdvFromTable();
+        else
+            this.OpeninNewTab();
     };
+    
 
     this.call2newTable = function () {
 

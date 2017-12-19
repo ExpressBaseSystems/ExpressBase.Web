@@ -429,7 +429,7 @@ namespace ExpressBase.Web.Controllers
             {
                 if (col.ColumnName == column_name)
                 {
-                    column_val = __datarows[i-1][columnindex].ToString();
+                    column_val = __datarows[i - 1][columnindex].ToString();
                     return column_val;
                 }
                 columnindex++;

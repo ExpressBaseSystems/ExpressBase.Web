@@ -290,6 +290,7 @@
 
     //Add a control name to Control DD
     this.addToDD = function (obj) {
+      //  this.AllObjects[obj.EbSid] = obj;
         var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
         var _name = (obj.Name || obj.name);
         if ($(".pgCXEditor-bg").css("display") !== "none") {

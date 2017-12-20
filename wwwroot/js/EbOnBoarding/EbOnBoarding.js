@@ -57,6 +57,9 @@
         $.ajax({
             type: 'POST',
             url: "../Tenant/ProfileSetup",
+            beforeSend: function () {
+                $("#save-profile i").show();
+            },
             data: {
                 Name: $("[name='Name']").val().trim(),
                 Company: $("[name='Company']").val().trim(),
@@ -66,7 +69,9 @@
                 Email: $("[name='Email']").val().trim(),
                 Password: $("[name='Password']").val().trim()
             }
-        }).done(function (data) {
+        }).done(function (data) {       
+            $('#eb-mesageBox').show().text("Profile Saved");   
+            $('#eb-mesageBox').fadeOut(5000);
             $("#save-profile").hide();
             $("#prof-info-skip, #basic-info, #product-info").show();
             this.scrollProfToLeft();
@@ -85,6 +90,9 @@
             $.ajax({
                 type: 'POST',
                 url: "../Tenant/EbOnBoarding",
+                beforeSend: function () {
+                    $("#save-subscrip i").show();               
+                },
                 data: {
                     Sname: $("[name='Sname']").val().trim(),
                     Esid: $("[name='Esid']").val().trim(),
@@ -93,11 +101,13 @@
                     Subscription: JSON.stringify(this.objSubscription)
                 }
             }).done(function (data) {
-                alert();
+                $('#eb-mesageBox').show().text("Solution Created");
+                $('#eb-mesageBox').fadeOut(5000);
             })
         }
         else
-            alert("select atleast one product");
+            $('#eb-mesageBox-error').show().text("select atleast one Product.");
+        $('#eb-mesageBox-error').fadeOut(5000);
     };
 
     this.scrollToProfSec = function () {

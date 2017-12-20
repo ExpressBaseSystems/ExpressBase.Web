@@ -22,6 +22,7 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
 		public IActionResult ManageRoles2(int itemid)
 		{
 			var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
@@ -30,23 +31,23 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.PermissionList = JsonConvert.SerializeObject(fr.PermissionList);
 			ViewBag.RoleId = itemid;
 			TempData["_dict"] = GetPermissionOperationsAsJs();
-
+			ViewBag.RoleList = JsonConvert.SerializeObject(fr.RoleList);
+			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
+			ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
 			return View();
 		}
 
-
-		public object GetObjectAndPermission(string roleId, int appId)
-		{
-			var fr = this.ServiceClient.Get<GetObjectAndPermissionResponse>(new GetObjectAndPermissionRequest { RoleId = Convert.ToInt32(roleId), AppId = appId });
-			return JsonConvert.SerializeObject(fr);
-		}
+		//public object GetObjectAndPermission(string roleId, int appId)
+		//{
+		//	var fr = this.ServiceClient.Get<GetObjectAndPermissionResponse>(new GetObjectAndPermissionRequest { RoleId = Convert.ToInt32(roleId), AppId = appId });
+		//	return JsonConvert.SerializeObject(fr);
+		//}
 
 		//GET  PERMISSION OPERATIONS AS JS
 		private string GetPermissionOperationsAsJs()
 		{
 			Assembly assembly = Assembly.GetAssembly(typeof(EbWebForm)); //DO NOT CHANGE
 			List<Eb_ObjectTypeOperations> _listObj = new List<Eb_ObjectTypeOperations>();
-			//Dictionary<string, List<string>> _dict = new Dictionary<string, List<string>>();
 			foreach (var ObjectType in Enum.GetValues(typeof(EbObjectTypesUI)))
 			{
 				string sObjectType = ObjectType.ToString();
@@ -54,15 +55,39 @@ namespace ExpressBase.Web.Controllers
 				var eOperations = assembly.GetType(string.Format("ExpressBase.Objects.{0}+Operations", sObjectType));
 				if (eOperations != null)
 				{
-					//_dict.Add(sObjectType, new List<string>());
 					Eb_ObjectTypeOperations _obj = new Eb_ObjectTypeOperations() {Op_Id = sIntObj, Op_Name = sObjectType, Operations = new List<string>() };
 					foreach (var Op in Enum.GetValues(eOperations))
-						//_dict[ObjectType.ToString()].Add(Op.ToString());
 						_obj.Operations.Add(Op.ToString());
 					_listObj.Add(_obj);
 				}
 			}
 			return EbSerializers.Json_Serialize(_listObj);
 		}
+
+		public string SaveRole(int _roleId,string _roleName,string _roleDesc,int _appId,string _permission)
+		{
+			Dictionary<string, object> Dict = new Dictionary<string, object>();
+			string return_msg;
+			Dict["roleid"] = _roleId;
+			Dict["applicationid"] = _appId;
+			Dict["role_name"] = _roleName;
+			Dict["Description"] = _roleDesc;
+			Dict["users"] = string.Empty;
+			Dict["permission"] = string.IsNullOrEmpty(_permission) ? string.Empty : _permission;
+			Dict["dependants"] =  string.Empty;
+
+			SaveRoleResponse res = this.ServiceClient.Post<SaveRoleResponse>(new SaveRoleRequest { Colvalues = Dict });
+			if (res.id == 0)
+			{
+				return_msg = "Success";
+			}
+			else
+			{
+				return_msg = "Failed";
+			}
+			return return_msg;
+
+		}
+
 	}
 }

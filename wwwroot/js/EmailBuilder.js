@@ -21,6 +21,15 @@
         else {
             this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
             $.each(this.EbObject.DsColumnsCollection.$values, function (i, value) {
+                var id = "DataField" + this.ObjId++;
+                var obj = new EbObjects["DsColumns"](id);
+                obj.Title = value.Title; 
+                var oldhtml = $('#summernot_container' + tabNum + ' .note-editable').html();
+                var newhtml = oldhtml.replace(value.Title, obj.$Control.outerHTML());
+                $('#summernot_container' + tabNum + ' .note-editable').html(newhtml);
+                this.RefreshControl(obj);
+                this.ObjCollect[id] = obj;
+                $('#' + id).attr('contenteditable', 'false');
                 this.emailpropG.addToDD(value);
             }.bind(this));            
         }

@@ -113,7 +113,6 @@
     border: solid 5px #ffffff;
     border-radius: 0px 29px 29px 0px;
     background-color: #ffffff;
-    line-height: 6px;
     margin-left: 16px;
 }
 
@@ -129,7 +128,8 @@
 }
 
 .bot-icon-user {
-    background: url(../images/rob.jpg)center center no-repeat;
+    background: url(https://expressbase.com/images/svg/user.svg)center center no-repeat;
+    background-color: var(--botThemeColor);
     width: 26px;
     background-size: 100% !important;
     height: 26px;
@@ -170,6 +170,7 @@
     width: 100%;
     min-height: 28px;
     min-width: inherit;
+    resize:none;
 }
 
 .eb-chat-inp-cont .btn {
@@ -221,7 +222,7 @@
     border: solid 1px #ccc;
 }
 
-    .ctrl-wraper input, .ctrl-wraper select {
+    .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
         height: 28px;
         border: none;
     }
@@ -230,7 +231,7 @@
             margin: 5px;
         }
         .ctrl-wraper span {
-            padding-right:5px;
+            /*padding-right:5px;*/
         }
 
 [name=ctrlsend] .fa {
@@ -241,6 +242,7 @@
     position: fixed;
     bottom: 0;
     background-color: var(--botThemeColor);
+    /*text-shadow: 1px 1px 1px rgba(0,0,0,0.51);*/
     WIDTH: 100%;
     padding: 1px;
     text-align: center;
@@ -254,4 +256,14 @@
 .botlink{
     color:white;
     font-style:italic;
+}
+
+.ctrl-wraper .input-group-addon:last-child {
+    border: none;
+    border-radius: 0;
+}
+
+.ctrl-wraper .input-group-addon:first-child {
+    border: none;
+    border-radius: 0;
 }

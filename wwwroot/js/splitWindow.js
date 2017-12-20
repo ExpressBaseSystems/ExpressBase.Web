@@ -48,8 +48,8 @@
         }       
     };
 
-    this.createContentWindow = function (id, type, className) {
-        $("#" + this.parent_div).append(`<div class='sub-windows ${className}' style='height:inherit;' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
+    this.createContentWindow = function (id, type, className) {// style='height:inherit;'
+        $("#" + this.parent_div).append(`<div class='sub-windows ${className}' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
                     <div class='col-md-2 padd-2 fd' id= 'sub_windows_sidediv_dv${id}' style= 'display:block'></div>
                     <div class='col-md-8' id='content_dv${id}' style='height:inherit;'></div>
                     <div class='col-md-2'><div class='no-padd pull-right' id='ppgrid_dv${id}'></div></div>

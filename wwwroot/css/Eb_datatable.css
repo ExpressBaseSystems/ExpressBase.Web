@@ -238,4 +238,9 @@ table.dataTable tbody td.dt-body-right {
     background-color: white;
     border-radius: 6px;
 }
+.dataTable tbody tr td{
+    height: 15px; /* or whatever height you need to make them all consistent */
+    white-space:nowrap;
+    padding:4px!important;
+}
 

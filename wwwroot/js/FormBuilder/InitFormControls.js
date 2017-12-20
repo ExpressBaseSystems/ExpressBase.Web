@@ -1,4 +1,5 @@
-﻿var InitControls = function () {
+﻿var InitControls = function (bot) {
+    this.Bot = bot;
     this.Date = function (ctrl) {
         var settings = { timepicker: false };
 
@@ -27,6 +28,12 @@
         //$('#' + ctrl.name).selectpicker();
     };
 
+    this.ImageUploader = function (ctrl) {
+        $('#' + ctrl.name).on("change", function (e) {
+            this.Bot.sendCtrl('<img src="https://expressbase.com/images/amal.jpg" alt="amal face" width="100%">');
+            $(this).closest(".ctrl-wraper").next("[name=ctrlsend]").click();
+        });
+    };
 
     this.RadioGroup = function (ctrl) {
         $('#' + ctrl.name).find("input").on("change", function (e) {
@@ -34,7 +41,6 @@
             $('#' + ctrl.name).val(val);
         });
     };
-
 
     this.CheckBoxGroup = function (ctrl) {
         $('#' + ctrl.name).find("input").on("change", function (e) {
@@ -99,7 +105,6 @@
                     //prevents exceeding integer part length when containes '.'
                     if (pi === (ctrl.maxLength - ctrl.decimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
                         $('#' + id).val(val);
-
                 }, 1);
             }
             //prevents exceeding integer-part length when no '.'

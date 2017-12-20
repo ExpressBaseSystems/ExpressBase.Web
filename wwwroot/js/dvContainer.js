@@ -8,7 +8,9 @@ var DvContainerObj = function (settings) {
     this.ver_num = settings.ver_num;
     this.cur_status = settings.cur_status;
     this.type = settings.type;
-    this.tabnum = 0;
+    this.rowData = settings.rowData;
+    this.filterValues = settings.filterValues;
+    this.tabnum = settings.tabnum;
     this.dvcol = {};
     this.MainData = null;
     this.UniqueId = null;
@@ -67,8 +69,8 @@ var DvContainerObj = function (settings) {
                 login = this.wc,
                 counter = counter,
                 data = this.MainData,
-                cellData = (prevfocusedId !== undefined) ? this.dvcol[prevfocusedId].cellData : null,
-                rowData = (prevfocusedId !== undefined) ? this.dvcol[prevfocusedId].rowData : null,
+                rowData = this.rowData,
+                filterValues= this.filterValues,
             );
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
@@ -83,8 +85,8 @@ var DvContainerObj = function (settings) {
                 login = this.wc,
                 counter = counter,
                 data = this.MainData,
-                cellData = (prevfocusedId !== undefined) ? this.dvcol[prevfocusedId].cellData : null,
-                rowData = (prevfocusedId !== undefined) ? this.dvcol[prevfocusedId].rowData : null,
+                rowData = this.rowData,
+                filterValues = this.filterValues,
             );
         }
         console.log("xxxxx", this.dvcol[focusedId]);
@@ -272,7 +274,9 @@ var DvContainerObj = function (settings) {
         
     }.bind(this);
 
-    this.drawdvFromTable = function () {
+    this.drawdvFromTable = function (row, filter) {
+        this.rowData = row;
+        this.filterValues = filter;
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
         $.LoadingOverlay("show");

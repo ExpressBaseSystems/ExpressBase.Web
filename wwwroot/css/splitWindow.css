@@ -18,8 +18,10 @@
     float: none;
     border: 1px solid #808080;
     display: inline-block;
-    height: calc(100vh - 87px);
+    //height: calc(100vh - 60px);
+    height:100vh;
     width: 100%;
+    padding: 30px 20px 30px 20px;
 }
 
 .sub-window-first {
@@ -116,4 +118,23 @@
     height: calc(100vh - 45px);
     padding-top:15px;
     overflow-y:hidden;
+}
+
+.slick-prev {
+    left: 0px !important;
+    z-index: 1 !important;
+    background-color: red !important;
+}
+.slick-next {
+    right: 0px !important;
+    z-index: 1 !important;
+    background-color: red !important;
+}
+.slick-next:hover {
+    color: none !important;
+    background-color: none !important;
+}
+.slick-prev:hover {
+    color: none !important;
+    background-color: none !important;
 }

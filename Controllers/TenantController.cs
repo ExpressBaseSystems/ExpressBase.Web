@@ -44,17 +44,9 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult ProfileSetup()
-        {
-            ViewBag.useremail = TempData.Peek("reqEmail");          
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult ProfileSetup(int i)
-        {
-           
+        public void ProfileSetup(int i)
+        {          
             var req = this.HttpContext.Request.Form;            
             var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
@@ -75,11 +67,8 @@ namespace ExpressBase.Web.Controllers
                     Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
                     this.ServiceClient.BearerToken = authResponse.BearerToken;
                     this.ServiceClient.RefreshToken =authResponse.RefreshToken;
-                }
-                return RedirectToAction("TenantDashboard","Tenant");
-            }
-
-            return View();
+                }              
+            }           
         }
 
       
@@ -113,7 +102,40 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult EbOnBoarding()
         {
+            ViewBag.useremail = TempData.Peek("reqEmail");
+            var result = this.ServiceClient.Get<AutoGenSolIdResponse>(new AutoGenSolIdRequest());           
+            ViewBag.iSid = result.Sid;           
             return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult EbOnBoarding(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            TempData[SolutionName] = req["Sname"].ToString();
+            TempData[Sid] = req["Esid"].ToString();
+            TempData[Desc] = req["Desc"].ToString();
+            var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
+            {
+                SolutionName = req["Sname"],
+                IsolutionId = req["Isid"],
+                EsolutionId = req["Esid"],
+                Description = req["Desc"],
+                Subscription = req["Subscription"]
+            });
+            if (res.Solnid > 0)
+            {
+                EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
+                {
+                    dbName = req["Isid"]
+                });
+                if (response.resp)
+                    return RedirectToAction("SolutionDashboard"); // convert get to post
+            }
+
+            return View();
+
         }
 
         [HttpGet]
@@ -121,7 +143,7 @@ namespace ExpressBase.Web.Controllers
         {
             var resultset = this.ServiceClient.Get<GetProductPlanResponse>(new GetProductPlanRequest { } );
             ViewBag.plans =JsonConvert.SerializeObject(resultset.Plans);
-            ViewBag.Sid = resultset.Sid;
+            //ViewBag.Sid = resultset.Sid;
             return View();
         }
 

@@ -137,6 +137,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.extraCol = [];
     this.PcFlag = false;
     this.modifyDVFlag = false;
+    this.initCompleteflag = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -266,6 +267,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.ebSettings = this.EbObject;
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
         this.dvName = this.ebSettings.Name;
+        this.initCompleteflag = false;
 
         $("#objname").text(this.dvName);
         if (this.login == "uc") {
@@ -340,6 +342,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             console.log('New page length: ' + len);
             //this.Api.ajax.reload();
         });
+
+        this.table_jQO.on('processing.dt', function (e, settings, processing) {
+            if (processing == true)
+                $(".toolicons .btn").prop("disabled", true);
+            else {
+                $(".toolicons .btn").prop("disabled", false);
+                if (this.login === "uc")
+                    dvcontainerObj.modifyNavigation();
+            }
+        }.bind(this));
     };
 
     this.addSerialAndCheckboxColumns = function () {
@@ -700,37 +712,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.initCompleteFunc = function (settings, json) {
-        //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
-        //    if (!this.flagAppendColumns)
         this.GenerateButtons();
-        //}
         this.createFilterRowHeader();
         if (this.eb_agginfo.length > 0) {
             this.createFooter(0);
             this.createFooter(1);
         }
         this.addFilterEventListeners();
-
-        //if (this.dtsettings.initComplete)
-        //    this.dtsettings.initComplete();
-        //setTimeout(function () {
-        //    var wid = parseInt($(".dataTables_scrollHead table:eq(0)").css("width"));
-        //    alert(wid);
-        //    $(".dataTables_scrollFoot table:eq(0)").css("width",wid);
-        //},500);
-        //if (this.ebSettings.renderAs == "both") {
-        //$("#graphcontainer_tab" + this.tableId).show();
-        //if (this.chartJs == null)
-        //    this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
-        //else
-        //    this.chartJs.drawGraphHelper(this.Api.data());
-        if (this.login == "uc") 
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name);
-        
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
         this.contextMenu();
+        if (this.login == "uc") {
+            this.initCompleteflag = true;
+            this.ModifyingDVs(dvcontainerObj.currentObj.Name,"initComplete");
+        }
     }
 
     this.contextMenu = function () {
@@ -779,20 +775,22 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         
     }
 
-    this.ModifyingDVs = function (parentName) {
+    this.ModifyingDVs = function (parentName,source) {
         $.each(dvcontainerObj.dvcol, function (key, obj) {
             if (parentName === obj.EbObject.Pippedfrom) {
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
                     dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
                     dvcontainerObj.dvcol[key].drawGraphHelper(this.Api.data());
-                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name);
+                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name,"draw");
                 }
                 else {
-                    dvcontainerObj.dvcol[key].modifyDVFlag = true;
-                    dvcontainerObj.dvcol[key].Api.clear().rows.add(this.Api.data());
-                    dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
-                    dvcontainerObj.dvcol[key].Api.columns.adjust().draw(); 
-                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name);
+                    if (source === "draw") {
+                        dvcontainerObj.dvcol[key].modifyDVFlag = true;
+                        dvcontainerObj.dvcol[key].Api.clear().rows.add(this.Api.data());
+                        dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
+                        dvcontainerObj.dvcol[key].Api.columns.adjust().draw();
+                        this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name, "draw");
+                    }
                 }
             }
         }.bind(this));
@@ -805,8 +803,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.summarize2();
         this.addFilterEventListeners();
         this.Api.columns.adjust();
-        if (this.login === "uc" && !this.modifyDVFlag)
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name);
+        if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
+            this.ModifyingDVs(dvcontainerObj.currentObj.Name,"draw");
+        }
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -1422,7 +1421,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues();
         if (this.login === "uc")
-            dvcontainerObj.drawdvFromTable();
+            dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues));
         else
             this.OpeninNewTab();
     };

@@ -660,16 +660,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.editElement = function (control) {
         this.control = control;
-        control.on('keydown', this.keyBoardShortcuts.bind(this));
+        this.control.on('keydown', this.keyBoardShortcuts.bind(this));
+            
     };//control edit options
-
-    this.keyBoardShortcuts = function (event) {
-        if (event.key === "Delete")
-            this.control.remove();
-        else if (event.key === "Control")
-            this.control.toggleClass("marked");
-    };
-
+    this.keyBoardShortcuts = function (e) {
+        e.preventDefault();
+        var obj = this.repExtern.keyboardevents(e, this.control, this.objCollection[this.control.attr('id')]);
+        this.pg.setObject(this.objCollection[this.control.attr('id')], AllMetas["Eb" + this.control.attr('eb-type')]);       
+    }
     this.removeElementFn = function (e) {
         if (!$(e.target).hasClass("pageHeaders"))
             this.control.remove();

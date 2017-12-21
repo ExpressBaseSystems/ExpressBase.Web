@@ -112,7 +112,7 @@
         for (var i = 0; i < obj.length; i++) {
             if (obj[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
                 if ($(divSelectedDisplay).find(`[data-id='${obj[i].Id}']`).length > 0)
-                    st = "checked";
+                    st = "checked disabled";
                 else
                     st = null;
                 this.appendToSearchResult(divSearchResults, st, obj[i]);
@@ -276,14 +276,14 @@
         for (i = 0; i < obj.length; i++) {
             st = null;
             if ($.grep(uroles, function (e) { return e === obj[i].Id; }).length > 0)
-                st = "checked";
+                st = "checked disabled";
             this.appendToSearchResult($("#divRoleSearchResults"), st, obj[i]);
         }
         this.drawSelectedDisplay(1);
         for (i = 0; i < obj2.length; i++) {
             st = null;
             if ($.grep(ugroups, function (e) { return e === obj2[i].Id; }).length > 0)
-                st = "checked";
+                st = "checked disabled";
             this.appendToSearchResult($("#divUserGroupSearchResults"), st, obj2[i]);
         }
         this.drawSelectedDisplay(2);

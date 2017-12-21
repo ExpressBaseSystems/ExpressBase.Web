@@ -74,7 +74,7 @@
 
 </style>
 <form id="formManageRoles" method="POST" action="">
-    <section class="outer-section-manageroles" style="height:1000px; margin: 0% 8%;">
+    <section class="outer-section-manageroles" style="height:1000px; margin: 4% 8% 0% 8%; padding-top: 1%;">
         <div class="row" style="margin:0px">
             <div class="col-md-4">
                 <div class="form-group">
@@ -181,12 +181,13 @@
         if (confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();
     }
+    
 
     $('document').ready(function () {
 
         var _dict = @Html.Raw(TempData.Peek("_dict"));
 
-        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList);
+        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList);
 
         
 

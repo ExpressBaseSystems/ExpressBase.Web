@@ -218,7 +218,7 @@
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         var inpVal = this.getValue($input);
-        this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         if (idx !== this.formControls.length) {
             if (!this.formValues[this.editingCtrlName])
                 this.getNextControl(idx);
@@ -269,6 +269,15 @@
     this.sendCtrl = function (msg) {
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').append(msg).append(this.getTime());
+        this.$chatBox.append($msg);
+        $('.eb-chatBox').scrollTop(99999999999);
+    };
+
+    this.sendImage = function (path, For) {
+        var $msg = this.$userMsgBox.clone();
+        $msg.find(".msg-wraper-user").css("padding", "5px");
+        var $imgtag = $(`<div class="img-box"><span class="img-edit" for="${For}" name="ctrledit"><i class="fa fa-pencil" aria-hidden="true"></i></span><img src="${path}" alt="amal face" width="100%">${this.getTime()}</div>`);
+        $msg.find('.msg-wraper-user').append($imgtag);
         this.$chatBox.append($msg)
         $('.eb-chatBox').scrollTop(99999999999);
     };

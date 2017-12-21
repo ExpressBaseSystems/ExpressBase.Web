@@ -15,6 +15,8 @@ using ExpressBase.Common;
 using ExpressBase.Objects;
 using System.Drawing;
 using static ExpressBase.Objects.ReportRelated.EbReportField;
+using System.Net.Http;
+using System.Net;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -242,7 +244,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in r_header.Fields)
                 {
-                    DrawFields(field, rh_Yposition, 0);
+                    DrawFields(field, rh_Yposition, 1);
                 }
             }
         }
@@ -255,7 +257,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in p_header.Fields)
                 {
-                    DrawFields(field, ph_Yposition, 0);
+                    DrawFields(field, ph_Yposition, 1);
                 }
             }
         }
@@ -314,7 +316,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in p_footer.Fields)
                 {
-                    DrawFields(field, pf_Yposition, 0);
+                    DrawFields(field, pf_Yposition, 1);
                 }
             }
         }
@@ -330,7 +332,7 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (EbReportField field in r_footer.Fields)
                 {
-                    DrawFields(field, rf_Yposition, 0);
+                    DrawFields(field, rf_Yposition, 1);
                 }
             }
         }
@@ -414,6 +416,30 @@ namespace ExpressBase.Web.Controllers
                 else if (field is EbSerialNumber)
                     column_val = Report.SerialNumber.ToString();
                 field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop, column_val);
+            }
+            else if (field is EbImg)
+            {
+                // field.DrawMe(d);
+                //byte[] fileByte = this.ServiceClient.Post<byte[]>
+                //     (new DownloadFileRequest
+                //     {
+                //         FileDetails = new FileMeta
+                //         {
+                //             FileName = "dp_1_micro.jpg",
+                //             FileType = "jpg"
+                //         }
+                //     });
+                var client = new WebClient();
+                client.Headers.Add(HttpRequestHeader.Authorization ,this.ServiceClient.BearerToken);
+                var x = client.DownloadString("http://eb-roby-dev.expressbase.com/staticFile?filename=5a3ba5116656d613acd3d0fa.jpg");
+                //var x = "";
+                //var x = "http://localhost:5000/static/dp_1_micro.jpg";
+                //iTextSharp.text.Image myImage = iTextSharp.text.Image.GetInstance(https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Googleplex-Patio-Aug-2014.JPG/800px-Googleplex-Patio-Aug-2014.JPG);
+                //myImage.ScaleToFit(300f, 250f);
+                //myImage.SpacingBefore = 50f;
+                //myImage.SpacingAfter = 10f;
+                //myImage.Alignment = Element.ALIGN_CENTER;
+                //d.Add(myImage);
             }
             else if ((field is EbText) || (field is EbCircle) || (field is EbRect) || (field is EbHl) || (field is EbVl) || (field is EbArrR) || (field is EbArrL) || (field is EbArrU) || (field is EbArrD) || (field is EbByArrH) || (field is EbByArrV))
             {

@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -84,6 +84,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.order_info.dir = 0;
     this.MainData = (data === undefined) ? null: data;
     this.isPipped = false;
+    this.isContextual = false;
     this.chartJs = null;
 
     this.EbObject = dsobj;
@@ -121,9 +122,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    //this.cellData = this.dtsettings.cellData;
-    //this.rowData = this.dtsettings.rowData;
-    //this.filterValues = this.dtsettings.filterValues;
+    this.rowData = rowData;
+    this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues):[] ;
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
     this.drake = null;
@@ -136,6 +136,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.columnDefDuplicate = null;
     this.extraCol = [];
     this.PcFlag = false;
+    this.modifyDVFlag = false;
+    this.initCompleteflag = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -146,7 +148,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 focusedId = id;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
                 //if ($('#' + id).is(':last-child'))
-                    $(".splitdiv_parent").scrollTo($("#" + focusedId));
+                //if(this.login === "uc")
+                //    $(".splitdiv_parent").scrollTo($("#" + focusedId));
                 //if (this.login == "uc")
                 //    dvcontainerObj.firstWPos = $(".splitdiv_parent")
             }
@@ -171,7 +174,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.isPipped = true;
             $("#Pipped").show();
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
-            this.filterValues = null;
+            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
+        }
+        if (this.rowData !== null && this.rowData !== "" && this.rowData !== undefined) {
+            this.isContextual = true;
+            //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
         this.PcFlag = "False";
         obj = this.EbObject;
@@ -197,7 +204,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             this.FD = true;
-            if (this.isPipped) {
+            if (this.isPipped || this.isContextual) {
+                if (this.filterValues.length > 0) {
+                    $.each(this.filterValues, function (i, param) {
+                        $(sideDivId + ' #' + param.name).val(param.value);
+                    });
+                }
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
@@ -255,6 +267,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.ebSettings = this.EbObject;
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
         this.dvName = this.ebSettings.Name;
+        this.initCompleteflag = false;
 
         $("#objname").text(this.dvName);
         if (this.login == "uc") {
@@ -329,6 +342,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             console.log('New page length: ' + len);
             //this.Api.ajax.reload();
         });
+
+        this.table_jQO.on('processing.dt', function (e, settings, processing) {
+            if (processing == true)
+                $(".toolicons .btn").prop("disabled", true);
+            else {
+                $(".toolicons .btn").prop("disabled", false);
+                //if (this.login === "uc")
+                //    dvcontainerObj.modifyNavigation();
+            }
+        }.bind(this));
     };
 
     this.addSerialAndCheckboxColumns = function () {
@@ -416,7 +439,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.retrieve = true;
         o.keys = true;
         this.filterValues = this.getFilterValues();
-        if (this.MainData !== null && this.login == "uc" && this.filterValues.length == 0) {
+        var f = this.compareFilterValues();
+        if (this.MainData !== null && this.login == "uc" && f && this.isPipped) {
             o.dom = "<'col-md-12 noPadding'B>rt";
             dvcontainerObj.currentObj.data = this.MainData;
             o.ajax = function (data, callback, settings) {
@@ -436,6 +460,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.login === "uc") {
                 dvcontainerObj.currentObj.Pippedfrom = "";
                 $("#Pipped").text("");
+                this.isPipped = false;
             }
             o.ajax = {
                 //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
@@ -471,6 +496,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = JSON.stringify(serachItems);
         dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined) ? this.filterValues : this.getFilterValues());
+        dq.rowData = this.rowData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (serachItems.length > 0) {
@@ -517,15 +543,36 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.receiveAjaxData = function (dd) {
-        this.MainData = dd;
         //if (!dd.IsPaged) {
         //    this.Api.paging = dd.IsPaged;
         //    this.Api.lengthChange = false;
         //}
-        if(this.login == "uc")
+        if (this.login == "uc") {
             dvcontainerObj.currentObj.data = dd;
+            this.MainData = dd;
+        }
+           
         return dd.data;
     };
+
+    this.compareFilterValues = function () {
+        var f = null;
+        if (prevfocusedId !== undefined) {
+            $.each(this.filterValues, function (i, obj) {
+                if (obj.value !== dvcontainerObj.dvcol[prevfocusedId].filterValues[i].value) {
+                    f = 0;
+                    return false;
+                }
+
+            });
+            if (f == null)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
 
     this.btnGoClick = function (e) {
         var controlIds = ["datefrom", "dateto"];// temp
@@ -665,52 +712,86 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.initCompleteFunc = function (settings, json) {
-        //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
-        //    if (!this.flagAppendColumns)
         this.GenerateButtons();
-        //}
         this.createFilterRowHeader();
         if (this.eb_agginfo.length > 0) {
             this.createFooter(0);
             this.createFooter(1);
         }
         this.addFilterEventListeners();
-
-        //if (this.dtsettings.initComplete)
-        //    this.dtsettings.initComplete();
-        //setTimeout(function () {
-        //    var wid = parseInt($(".dataTables_scrollHead table:eq(0)").css("width"));
-        //    alert(wid);
-        //    $(".dataTables_scrollFoot table:eq(0)").css("width",wid);
-        //},500);
-        //if (this.ebSettings.renderAs == "both") {
-        //$("#graphcontainer_tab" + this.tableId).show();
-        //if (this.chartJs == null)
-        //    this.chartJs = new eb_chart(this.ebSettings, this.ssurl, this.MainData, this.tableId);
-        //else
-        //    this.chartJs.drawGraphHelper(this.Api.data());
-        if (this.login == "uc") 
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name);
-        
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
-        this.Api.rows().recalcHeight()
+        this.Api.rows().recalcHeight();
+        this.contextMenu();
+        if (this.login == "uc") {
+            this.initCompleteflag = true;
+            this.ModifyingDVs(dvcontainerObj.currentObj.Name,"initComplete");
+        }
     }
 
-    this.ModifyingDVs = function (parentName) {
+    this.contextMenu = function () {
+        $.contextMenu({
+            selector: ".tablelink_" + this.tableId, 
+            items: {
+                "OpenNewTab": { name: "Open in New Tab", icon: "fa-external-link-square", callback: this.OpeninNewTab.bind(this) }
+            }
+        });
+    }
+
+    this.OpeninNewTab = function (key, opt, event) {
+        this.tabNum++;
+        var idx = this.Api.row(opt.$trigger.parent().parent()).index();
+        this.rowData = this.Api.row(idx).data();
+        this.filterValues = this.getFilterValues();
+        var url = "http://eb_roby_dev.localhost:5000/DV/dv?refid=" + this.linkDV;
+
+        var _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "rowData";
+        input.value = this.rowData.toString();
+        _form.appendChild(input);
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "filterValues";
+        input.value = JSON.stringify(this.filterValues);
+        _form.appendChild(input);
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "tabNum";
+        input.value = this.tabNum;
+        _form.appendChild(input);
+
+        document.body.appendChild(_form);
+        
+        //note I am using a post.htm page since I did not want to make double request to the page 
+        //it might have some Page_Load call which might screw things up.
+        //window.open("post.htm", name, windowoption);       
+        _form.submit();
+        document.body.removeChild(_form);
+        
+    }
+
+    this.ModifyingDVs = function (parentName,source) {
         $.each(dvcontainerObj.dvcol, function (key, obj) {
             if (parentName === obj.EbObject.Pippedfrom) {
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
                     dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
                     dvcontainerObj.dvcol[key].drawGraphHelper(this.Api.data());
-                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name);
+                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name,"draw");
                 }
-                //else {
-                //    dvcontainerObj.dvcol[key].Api.clear().draw();
-                //    dvcontainerObj.dvcol[key].Api.rows.add(this.Api.data()); // Add new data
-                //    dvcontainerObj.dvcol[key].Api.columns.adjust().draw(); 
-                //    dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
-                //}
+                else {
+                    if (source === "draw") {
+                        dvcontainerObj.dvcol[key].modifyDVFlag = true;
+                        dvcontainerObj.dvcol[key].Api.clear().rows.add(this.Api.data());
+                        dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
+                        dvcontainerObj.dvcol[key].Api.columns.adjust().draw();
+                        this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name, "draw");
+                    }
+                }
             }
         }.bind(this));
     }
@@ -722,14 +803,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.summarize2();
         this.addFilterEventListeners();
         this.Api.columns.adjust();
-        //if (this.ebSettings.renderAs == "both") {
-        //if (this.chartJs !== null)
-        //    this.chartJs.drawGraphHelper(this.Api.data());
-        //}
-        //this.btnGo.attr("disabled", false);
-        //dvcontainerObj.currentObj.data = this.Api.data();
-        if(this.login === "uc")
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name);
+        if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
+            this.ModifyingDVs(dvcontainerObj.currentObj.Name,"draw");
+        }
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -954,6 +1030,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
 
@@ -1008,9 +1085,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'> <i class='fa fa-th' aria-hidden='true'></i></button>")
             //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
             if (this.login == "uc") {
-                //this.appendRelatedDv();
-                dvcontainerObj.appendRelatedDv(this.tableId);
-                dvcontainerObj.check4Navigation();
+                if (!this.isContextual)
+                    dvcontainerObj.appendRelatedDv(this.tableId);
+                dvcontainerObj.modifyNavigation();
             }
             this.addFilterEventListeners();
         }
@@ -1343,78 +1420,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var idx = this.Api.row($(e.target).parent().parent()).index();
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues();
-        //this.NewTableModal();
-        //this.call2newTable();
+        if (this.login === "uc")
+            dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues));
+        else
+            this.OpeninNewTab();
     };
-
-    this.NewTableModal = function () {
-        index++;
-        $("#table_tabs").append("<li class='nav-item'>" +
-            " <a class='nav-link' href='#dv" + this.linkDV + "_tab_" + index + "' data-toggle='tab'>" +
-
-            "</a>" +
-            " </li>");
-        $("#table_tabcontent").append("<div id='dv" + this.linkDV + "_tab_" + index + "' class='tab-pane active'>" +
-            "<div id='TableControls_dv" + this.linkDV + "_" + index + "' class = 'well well-sm' style='margin-bottom:5px!important;'>" +
-            " <div style='display: inline;'>" +
-            "    <label id='dvName_lbldv" + this.linkDV + "_" + index + "'></label>" +
-            " </div>" +
-            "</div>" +
-            "<div style='width:auto;' id='dv" + this.linkDV + "_" + index + "divcont'>" +
-            " <table id='dv" + this.linkDV + "_" + index + "' class='table table-striped table-bordered'></table>" +
-            "  </div>" +
-            " <div id='graphcontainer_tabdv" + this.linkDV + "_" + index + "' style='display: none;'>" +
-            "  <div style='height: 50px;margin-bottom: 5px!important;>" +
-            "    <label id='dvName_lbldv" + this.linkDV + "_" + index + "'></label>" +
-            "      <div class='dropdown' id='graphDropdown_tabdv" + this.linkDV + "_" + index + "' style='display: inline-block;padding-top: 1px;float:right'>" +
-            "             <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>" +
-            "          <span class='caret'></span></button>" +
-            "        <ul class='dropdown-menu'>" +
-            "          <li><a href =  '#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
-            "          <li><a href = '#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
-            "         <li><a href = '#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
-            "        <li><a href = '#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
-            "       <li><a href = '#'> doughnut </a></li>" +
-            "        </ul>" +
-            "</div>" +
-            "<button id='reset_zoomdv" + this.linkDV + "_" + index + "' class='btn btn-default' style='float: right;'>Reset zoom</button>" +
-            "<div id = 'btnColumnCollapsedv" + this.linkDV + "_" + index + "' class='btn btn-default' style='float: right;'>" +
-            "     <i class='fa fa-cog' aria-hidden='true'></i>" +
-            "</div>" +
-            "</div>" +
-            "<div id ='columns4Dragdv" + this.linkDV + "_" + index + "' style='display:none;'>" +
-            "   <div style='display: inline-block;'>" +
-            " <label class='nav-header disabled'><center><strong>Columns</strong></center><center><font size='1'>Darg n Drop to X or Y Axis</font></center></label>" +
-            "  <input id='searchColumndv" + this.linkDV + "_" + index + "' type='text' class ='form-control' placeholder='search for column'/>" +
-            "      <ul class='list-group'  style='height: 470px; overflow-y: auto;'>" +
-            "     </ul>  " +
-            " </div>" +
-            "<div style='display: inline-block;vertical-align: top;width: 806px;'>" +
-            " <div class='input-group'>" +
-            "    <span class='input-group-addon' id='basic-addon3'>X-Axis</span>" +
-            "    <div class='form-control' style='padding: 4px;height:33px' id ='X_col_namedv" + this.linkDV + "_" + index + "'></div>" +
-            "  </div>" +
-            " <div class='input-group' style='padding-top: 1px;'>" +
-            "   <span class='input-group-addon' id='basic-addon3'>Y-Axis</span>" +
-            "  <div class='form-control' style='padding: 4px;height:33px' id ='Y_col_namedv" + this.linkDV + "_" + index + "'></div>" +
-            " </div>" +
-            "</div>" +
-            "</div>" +
-            "<canvas id='myChartdv" + this.linkDV + "_" + index + "' width='auto' height='auto'></canvas>" +
-            "</div>" +
-            "</div>");
-        //$("#newmodal").on('shown.bs.modal', this.call2newTable.bind(this));
-        //$("#newmodal").on('hidden.bs.modal', function (e) {
-        //    $('#Newtable').DataTable().destroy();
-        //    setTimeout(function () {
-        //        $("#newmodal").remove();
-        //    }, 500);
-        //});
-        //$("#newmodal").modal('show');
-
-        this.call2newTable();
-        $(".nav-tabs a[href='#dv" + this.linkDV + "_tab_" + index + "']").tab('show');
-    };
+    
 
     this.call2newTable = function () {
 
@@ -1526,7 +1537,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
-                this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
+                //this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
                 alert(this.linkDV);

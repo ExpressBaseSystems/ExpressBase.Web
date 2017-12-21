@@ -1,16 +1,15 @@
-﻿var UserJs = function (usr, sysroles, usergroup, uroles, ugroups) {
-    this.user = usr;
-    this.systemRoles = sysroles;
-    this.userGroup = usergroup;
-    this.U_Roles = uroles;
-    this.U_Groups = ugroups;
-    this.itemId = $("#userid").val();
-    
-    this.divFormHeading = $("#divFormHeading");
-    this.txtName = $("#txtName");
-    this.txtNickName = $("#txtNickName");
-    this.txtEmail = $("#txtEmail");
-    this.divPassword = $("#divPassword");
+﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList) {
+    this.appCollection = appCollection;
+    this.roleId = roleId;
+    this.roleInfo = roleInfo;
+    this.permission = permission;
+    this.opDict = _dict;
+    this.user = roleList;
+    this.selectApp = $("#selectApp");
+    this.divObjList = $("#divObjList");
+    this.txtRoleName = $("#txtRoleName");
+    this.txtRoleDescription = $("#txtRoleDescription");
+    this.btnSaveAll = $("#btnSaveAll");
 
     this.txtSearchRole = $("#txtSearchRole");
     this.btnModalOk = $("#btnModalOk");
@@ -19,54 +18,44 @@
     this.txtDemoRoleSearch = $("#txtDemoRoleSearch");
     this.btnClearDemoRoleSearch = $("#btnClearDemoRoleSearch");
 
-    this.txtSearchUserGroup = $("#txtSearchUserGroup");
-    this.btnUserGroupModalOk = $("#btnUserGroupModalOk");
-    this.divUserGroupSearchResults = $("#divUserGroupSearchResults");
-    this.divSelectedUserGroupDisplay = $("#divSelectedUserGroupDisplay");
-    this.txtDemoUserGroupSearch = $("#txtDemoUserGroupSearch");
-    this.btnClearDemoUserGroupSearch = $("#btnClearDemoUserGroupSearch");
-
     this.init = function () {
+        this.loadObjectsAndOperations.bind(this)();
+        $("#formManageRoles").on('submit', this.onclickbtnSaveAll.bind(this));
+
+        //INIT ROLES TAB
         this.txtSearchRole.on('keyup', this.KeyUptxtSearchRole.bind(this));
         this.btnModalOk.on('click', this.clickbtnModalOkAction.bind(this));
         $('#addRolesModal').on('shown.bs.modal', this.initModal1.bind(this));
         this.txtDemoRoleSearch.on('keyup', this.KeyUptxtDemoRoleSearch.bind(this));
         this.btnClearDemoRoleSearch.on('click', this.OnClickbtnClearDemoRoleSearch.bind(this));
 
-        this.txtSearchUserGroup.on('keyup', this.KeyUptxtSearchUserGroup.bind(this));
-        this.btnUserGroupModalOk.on('click', this.clickbtnUserGroupModalOkAction.bind(this));
-        $('#addUserGroupModal').on('shown.bs.modal', this.initModal2.bind(this));
-        this.txtDemoUserGroupSearch.on('keyup', this.KeyUptxtDemoUserGroupSearch.bind(this));
-        this.btnClearDemoUserGroupSearch.on('click', this.OnClickbtnClearDemoUserGroupSearch.bind(this));
-
-        $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
-
-        this.initForm();
-
-    }
-
-    this.initForm = function () {
-        if (this.itemId > 0) {
-            $(divFormHeading).text("Edit User");
-            $(btnCreateUser).text("Update");
-            this.txtName.attr("disabled", "true");
-            this.txtNickName.attr("disabled", "true");
-            this.txtEmail.attr("disabled", "true");
-            this.divPassword.css("display", "none");
-            this.loadUserRoles();
+        //INIT FORM
+        if (this.roleId > 0) {
+            $(this.txtRoleName).val(roleInfo["RoleName"]);
+            $(this.txtRoleName).attr("disabled", "true");
+            var apIndex = 0;
+            $.each(this.appCollection, function (i, obj) {
+                if (obj.Id == roleInfo["AppId"]) {
+                    apIndex = i;
+                    return false;
+                }
+            });
+            $(this.selectApp).append(`<option data-id="${roleInfo["AppId"]}" data-index="${apIndex}">${roleInfo["AppName"]}</option>`);
+            $(this.selectApp).attr("disabled", "true");
+            $(this.txtRoleDescription).text(roleInfo["RoleDescription"]);
+            
         }
         else {
-            $(divFormHeading).text("Create User");
-        }
-    }
+            this.selectApp.on("change", this.selectAppChangeAction.bind(this));
+            this.loadAppToSelect.bind(this)();
 
+        }
+        this.selectAppChangeAction();
+    }
+    //ROLE MANAGER-----------------------
     this.initModal1 = function () {
         this.txtSearchRole.focus();
         this.KeyUptxtSearchRole();
-    }
-    this.initModal2 = function () {
-        this.txtSearchUserGroup.focus();
-        this.KeyUptxtSearchUserGroup();
     }
 
     this.KeyUptxtSearchRole = function () {
@@ -77,16 +66,6 @@
         $('#addRolesModal').modal('toggle');
         this.SortDiv(1);
     }
-
-    this.KeyUptxtSearchUserGroup = function () {
-        this.drawSearchResults(2);
-    }
-    this.clickbtnUserGroupModalOkAction = function () {
-        this.drawSelectedDisplay(2);
-        $('#addUserGroupModal').modal('toggle');
-        this.SortDiv(2);
-    }
-
     this.drawSearchResults = function (flag) {
         var st = null;
         var txt = null;
@@ -99,13 +78,13 @@
             divSelectedDisplay = $("#divSelectedRoleDisplay");
             divSearchResults = $("#divRoleSearchResults");
         }
-        else if (flag === 2) {
-            obj = this.userGroup;
-            $("#divUserGroupSearchResults").children().remove();
-            txt = $("#txtSearchUserGroup").val().trim();
-            divSelectedDisplay = $("#divSelectedUserGroupDisplay");
-            divSearchResults = $("#divUserGroupSearchResults");
-        }
+        //else if (flag === 2) {
+        //    obj = this.userGroup;
+        //    $("#divUserGroupSearchResults").children().remove();
+        //    txt = $("#txtSearchUserGroup").val().trim();
+        //    divSelectedDisplay = $("#divSelectedUserGroupDisplay");
+        //    divSearchResults = $("#divUserGroupSearchResults");
+        //}
         else
             return;
 
@@ -131,7 +110,7 @@
                                         </div>
                                     </div>`);
     }
-       
+
     this.drawSelectedDisplay = function (flag) {
         var addModal;
         var divSearchResultsChecked;
@@ -141,11 +120,11 @@
             divSelectedDisplay = $('#divSelectedRoleDisplay');
             addModal = $('#addRolesModal');
         }
-        else if (flag === 2) {
-            divSearchResultsChecked = $('#divUserGroupSearchResults input:checked');
-            divSelectedDisplay = $('#divSelectedUserGroupDisplay');
-            addModal = $('#addUserGroupModal');
-        }
+        //else if (flag === 2) {
+        //    divSearchResultsChecked = $('#divUserGroupSearchResults input:checked');
+        //    divSelectedDisplay = $('#divSelectedUserGroupDisplay');
+        //    addModal = $('#addUserGroupModal');
+        //}
         else
             return;
         $(divSearchResultsChecked).each(function () {
@@ -171,15 +150,15 @@
                                                     </div>`);
             }
         });
-        
+
     }
 
     this.SortDiv = function (flag) {
         var mylist;
-        if (flag === 1) 
+        if (flag === 1)
             mylist = $('#divSelectedRoleDisplay');
-        else if (flag === 2)
-            mylist = $('#divSelectedUserGroupDisplay');
+        //else if (flag === 2)
+        //    mylist = $('#divSelectedUserGroupDisplay');
         else
             return;
         var listitems = mylist.children('div').get();
@@ -190,12 +169,9 @@
             mylist.append(item);
         });
     }
-        
+
     this.KeyUptxtDemoRoleSearch = function () {
         this.keyUpTxtDemoSearch(1);
-    }
-    this.KeyUptxtDemoUserGroupSearch = function () {
-        this.keyUpTxtDemoSearch(2);
     }
 
     this.keyUpTxtDemoSearch = function (flag) {
@@ -206,10 +182,10 @@
             txt = $("#txtDemoRoleSearch").val().trim();
             divSelectedDisplay = $("#divSelectedRoleDisplay");
         }
-        else if (flag === 2) {
-            txt = $("#txtDemoUserGroupSearch").val().trim();
-            divSelectedDisplay = $("#divSelectedUserGroupDisplay");
-        }
+        //else if (flag === 2) {
+        //    txt = $("#txtDemoUserGroupSearch").val().trim();
+        //    divSelectedDisplay = $("#divSelectedUserGroupDisplay");
+        //}
         else
             return;
         $($(divSelectedDisplay).children("div.col-md-4")).each(function () {
@@ -234,60 +210,82 @@
         $("#txtDemoRoleSearch").val("");
         this.KeyUptxtDemoRoleSearch();
     }
-    this.OnClickbtnClearDemoUserGroupSearch = function () {
-        $("#txtDemoUserGroupSearch").val("");
-        this.KeyUptxtDemoUserGroupSearch();
+    //---------------------------
+
+    this.loadAppToSelect = function () {
+        $("#selectApp").children().remove();
+        $.each(this.appCollection, function (k, appOb) {
+            $("#selectApp").append(`<option data-id="${appOb.Id}" data-index="${k}">${appOb.Name}</option>`);
+        });
+        
     }
 
-    this.clickbtnCreateUser = function () {
-        var selectedroles = "";
-        $($('#divSelectedRoleDisplay').children()).each(function () {
-            selectedroles += $(this).attr('data-id') + ",";
-        });
-        var selectedusergroups = "";
-        $($('#divSelectedUserGroupDisplay').children()).each(function () {
-            selectedusergroups += $(this).attr('data-id') + ",";
-        });
-        $("#btnCreateUser").attr("disabled","true");
-        $.post("../TenantUser/SaveUser",
-            {
-                "userid": $('#userid').val(),
-                "roles": selectedroles.substring(0, selectedroles.length - 1),
-                "usergroups": selectedusergroups.substring(0, selectedusergroups.length - 1),
-                "firstname": $('#txtName').val(),
-                "email": $('#txtEmail').val(),
-                "Pwd": $('#pwdPaasword').val()
-            }, function (result) {
-               
-                    //document.getElementById("usergrouplist").innerHTML = result;
-                    alert('Completed');
-                    $("#btnCreateUser").removeAttr("disabled");
+    this.loadObjectsAndOperations = function () {
+        $.each(this.opDict.$values, function (key, value) {
+            $("#divObjList").append(`<a class="objactiveclass list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#tbl${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name}</a>
+                            <table class="objtype table table-responsive sub-menu collapse" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table> <thead><tr>`);
+            var shtml = `<thead><tr><th style="width: 250px"></th>`;
+        $.each(value.Operations.$values, function (a, b) {
+                shtml += `<td align='center' style='font-size:14px; width: 100px'>${b}</td>`;
             });
+            shtml += `</tr></thead><tbody></tbody>`;
+            $("#tbl" + value.Op_Name).append(shtml);
+        });
+        $('.objactiveclass').click(function () {
+            $(this).toggleClass('active');
+        });
     }
 
-    this.loadUserRoles = function () {
-        obj = this.user;
-        obj2 = this.userGroup;
-        uroles = this.U_Roles;
-        ugroups = this.U_Groups;
-        $("#divRoleSearchResults").children().remove();
-        $("#divUserGroupSearchResults").children().remove();
-        var i, st;
-        for (i = 0; i < obj.length; i++) {
-            st = null;
-            if ($.grep(uroles, function (e) { return e === obj[i].Id; }).length > 0)
-                st = "checked";
-            this.appendToSearchResult($("#divRoleSearchResults"), st, obj[i]);
-        }
-        this.drawSelectedDisplay(1);
-        for (i = 0; i < obj2.length; i++) {
-            st = null;
-            if ($.grep(ugroups, function (e) { return e === obj2[i].Id; }).length > 0)
-                st = "checked";
-            this.appendToSearchResult($("#divUserGroupSearchResults"), st, obj2[i]);
-        }
-        this.drawSelectedDisplay(2);
+    this.selectAppChangeAction = function (e) {        
+        //var appindex = $(e.target).find(":selected").attr("data-index");
+        var appindex = $("#selectApp").find(":selected").attr("data-index");
+        appCollection = this.appCollection;
+        $.each(this.opDict.$values, function (i, value) {
+            $("#tbl" + value.Op_Name).find("tbody").children().remove();
+            $.each(appCollection[appindex].ObjectTypes, function (j, a) {
+                if (j == value.Op_Id) {
+                    $.each(a, function (k, b) {
+                        var st = `<tr data-id=${b.Obj_Id}><td style='font-size:14px'>${b.Obj_Name}</td>`;
+                        for (x = 0; x < value.Operations.$values.length; x++)
+                            st += `<td align='center'><input type='checkbox' class="checkboxclass" data-id=${b.Obj_Id + '_' + x}></td>`;
+                        st += `</tr>`;
+                        $("#tbl" + value.Op_Name).append(st);
+                    });
+                }
+            });
+            var rowCount = $("#tbl" + value.Op_Name).find("tbody tr").length;
+            $("#tbl" + value.Op_Name).prev("a").text(value.Op_Name + " (" + rowCount + ")" );
+        });
     }
 
+    this.onclickbtnSaveAll = function () {
+        var selected = "";
+        var appId = $("#selectApp").find(":selected").attr("data-id");
+        var roleDescription = $(this.txtRoleDescription).val().trim();
+        var roleName = $(this.txtRoleName).val().trim();
+        $('.checkboxclass:checked').each(function () {
+            selected += $(this).attr('data-id') + ",";
+        });
+        selected = selected.substring(0, selected.length - 1);
+        if (roleName === "" || roleDescription==="") {
+            return false;
+        }
+           
+        $(this.btnSaveAll).attr("disabled", "true");
+
+        $.ajax({
+            type: "POST",
+            url: "../Security/SaveRole",
+            data: {_roleId: this.role_Id, _roleName: roleName, _roleDesc: roleDescription, _appId: appId, _permission: selected},
+            success: this.saveRoleSuccess
+        });
+    }
+
+    this.saveRoleSuccess = function (msg) {
+        alert(msg);
+        $(this.btnSaveAll).removeAttr("disabled");
+    }
+    
+    
     this.init();
 }

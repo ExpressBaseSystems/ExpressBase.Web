@@ -239,7 +239,7 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
     };
 };
 var Xlabel, Ylabel;
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data ) {
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
     this.columnInfo = null;
     this.data = null;
     this.ssurl = ssurl;
@@ -265,7 +265,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.piedataFlag = false;
     this.MainData = (data === undefined) ? null : data;
     this.isPipped = false;
-    this.filterValues = null;
+    this.isContextual = false;
+    this.filterValues = (filterValues !== "") ? JSON.parse(filterValues) : [];
+    this.rowData = rowData;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -279,7 +281,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 else
                     this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 //if ($('#' + id).is(':last-child'))
-                    //$(".splitdiv_parent").scrollTo($("#" + focusedId));
+                    $(".splitdiv_parent").scrollTo($("#" + focusedId));
             }
         }
     }.bind(this);
@@ -302,7 +304,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#Pipped").show();
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
             this.isPipped = true;
-            this.filterValues = null;
+            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
+        }
+        if (this.rowData !== null && this.rowData !== "") {
+            this.isContextual = true;
+            //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
         this.PcFlag = "False";
         obj = this.EbObject;
@@ -328,8 +334,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         else {
             this.FD = true;
-            if (this.isPipped)
+            if (this.isPipped || this.isContextual) {
+                if (this.filterValues.length > 0) {
+                    $.each(this.filterValues, function (i, param) {
+                        $(sideDivId + ' #' + param.name).val(param.value);
+                    });
+                }
                 $("#btnGo" + this.tabNum).trigger("click");
+            }
             else {
                 $(sideDivId).css("display", "inline");
                 $.LoadingOverlay("hide");
@@ -397,8 +409,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
 
         this.filterValues = this.getFilterValues();
-
-        if (this.MainData !== null && this.login === "uc" && this.filterValues.length == 0) {
+        var f = this.compareFilterValues();
+        if (this.MainData !== null && this.login === "uc" && f) {
             dvcontainerObj.currentObj.data = this.MainData;
             this.drawGraphHelper(this.MainData.data);
         }
@@ -406,6 +418,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.login === "uc") {
                 dvcontainerObj.currentObj.Pippedfrom = "";
                 $("#Pipped").text("");
+                this.isPipped = false;
             }
             $.LoadingOverlay("show");
             $.ajax({
@@ -557,9 +570,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.EbObject !== null && this.EbObject.Type !== null)
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.EbObject.Type.trim() + "&nbsp;<span class = 'caret'></span>");
         if (this.login == "uc") {
-            //this.appendRelatedDv();
-            dvcontainerObj.appendRelatedDv(this.tableId);
-            dvcontainerObj.check4Navigation(); 
+            if (!this.isContextual)
+                dvcontainerObj.appendRelatedDv(this.tableId);
+            dvcontainerObj.modifyNavigation();
         }
         this.bindEvents();
 
@@ -698,6 +711,25 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
         return fltr_collection;
     };
+
+    this.compareFilterValues = function () {
+        var f = null;
+        if (prevfocusedId !== undefined) {
+            $.each(this.filterValues, function (i, obj) {
+                if (obj.value !== dvcontainerObj.dvcol[prevfocusedId].filterValues[i].value) {
+                    f = 0;
+                    return false;
+                }
+
+            });
+            if (f == null)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
 
     this.getDataSuccess = function (result) {
         $.LoadingOverlay("hide");

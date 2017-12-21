@@ -14,6 +14,11 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/2.1.2/jquery.scrollTo.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-scrollstop@1.2.0/jquery.scrollstop.min.js"></script>
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css" />
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css" />
+<script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
 <style>
     .scrollable-menu {
         height: auto;
@@ -43,8 +48,7 @@
 @{
     string head = string.Empty;
     string html = string.Empty;
-
-    var dvRefId = ViewBag.dvRefId;
+    
     var dvobj = EbSerializers.Json_Serialize(ViewBag.dvObject);
 }
 <div class="row">
@@ -73,7 +77,7 @@
     </div>
 </div>
 @*<section class="minimaps" id="MinimapDiv" style="display:none;"></section>*@
-<div class="row splitdiv_parent" id="parent-div0"></div>
+<div class="row splitdiv_parent" id="parent-div@(ViewBag.tabNum)"></div>
 
 
 @section EbHead {
@@ -84,13 +88,16 @@
         @Html.Raw(ViewBag.JsObjects);
 
         var dvcontainerObj = new DvContainerObj({
-            refid: '@ViewBag.Refid',
+            refid: '@ViewBag.dvRefId',
             ver_num: '@ViewBag.VersionNumber',
             type: '@ViewBag.ObjType',
             dsobj:@Html.Raw(dvobj),
             cur_status:'@ViewBag.Status',
             ss_url: '@ViewBag.ServiceUrl',
-            wc: '@ViewBag.wc'
+            wc: '@ViewBag.wc',
+            rowData: '@ViewBag.rowData',
+            filterValues: '@Html.Raw(ViewBag.filterValues)',
+            tabnum : @ViewBag.tabNum,
         });
 
         $(document).ready(function () {

@@ -34,25 +34,27 @@
 }
 
 .msg-wraper-user, .msg-wraper-bot {
+    font-family: Open Sans,sans-serif;
+    position: relative;
     display: inline-block;
     text-align: left;
-    font-size: 12px;
-    font-family: sans-serif;
+    color: #555;
     padding: 4px 10px;
+    font-size: 100%;
 }
 
 .msg-wraper-user {
-    border-radius: 3px 9px 0px 9px;
+    border-radius: 13px 13px 0px 13px;
     margin: 6px 5px 5px 50px;
     background-color: #fff;
-    padding-right: 40px;
+    padding-right: 41px;
 }
 
 .msg-wraper-bot {
-    border-radius: 9px 3px 9px 0px;
+    border-radius: 13px 13px 13px 0px;
     margin: 6px 5px 6px 5px;
     background-color: #fff;
-    padding-right: 40px;
+    padding-right: 41px;
 }
 
 .msg-cont {
@@ -108,11 +110,12 @@
 }
 
 .chat-ctrl-cont {
-    width: 100%;
+    position: relative;
+    width: 98%;
     border: solid 5px #ffffff;
-    border-radius: 0px 25px 25px 0px;
+    border-radius: 0px 29px 29px 0px;
     background-color: #ffffff;
-    line-height: 6px;
+    margin-left: 16px;
 }
 
 .bot-icon {
@@ -127,7 +130,8 @@
 }
 
 .bot-icon-user {
-    background: url(../images/rob.jpg)center center no-repeat;
+    background: url(https://expressbase.com/images/svg/user.svg)center center no-repeat;
+    background-color: var(--botThemeColor);
     width: 26px;
     background-size: 100% !important;
     height: 26px;
@@ -140,7 +144,7 @@
     color: #999;
     font-size: 9px;
     text-align: right;
-    margin-top: -10px;
+    margin-top: -12px;
     margin-right: -36px;
 }
 
@@ -159,10 +163,16 @@
     display: inline-block;
 }
 
+.btn-box {
+    margin-left: 16px;
+    width: 98%;
+}
+
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {
     width: 100%;
     min-height: 28px;
     min-width: inherit;
+    resize: none;
 }
 
 .eb-chat-inp-cont .btn {
@@ -193,7 +203,6 @@
     border: none;
     outline: none;
     padding: 4px;
-    margin-left: 5px;
 }
 
 .chat-ctrl-cont [name=ctrlsend] {
@@ -202,9 +211,11 @@
     padding: 6px 0px;
     width: 35px;
     min-width: 25px;
-    border-radius: 0px 54px 54px 0px;
+    border-radius: 0px 24px 24px 0px;
     vertical-align: top;
     box-shadow: none;
+    height: 100%;
+    position: absolute;
 }
 
 .ctrl-wraper {
@@ -213,31 +224,78 @@
     border: solid 1px #ccc;
 }
 
-    .ctrl-wraper input, .ctrl-wraper select {
+    .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
         height: 28px;
         border: none;
     }
 
-    .ctrl-wraper .input-group-addon:last-child, .ctrl-wraper .input-group-addon:first-child {
-        border-radius: 0px;
-        border: none;
+        .ctrl-wraper input[type=radio], .ctrl-wraper input[type=checkbox] {
+            height: inherit;
+            margin: 5px;
+        }
+
+    .ctrl-wraper span {
+        /*padding-right:5px;*/
     }
 
 [name=ctrlsend] .fa {
     margin-left: -5px
 }
 
-.watermark-cont {
+.poweredby-cont {
     position: fixed;
     bottom: 0;
     background-color: var(--botThemeColor);
+    /*text-shadow: 1px 1px 1px rgba(0,0,0,0.51);*/
     WIDTH: 100%;
     padding: 1px;
     text-align: center;
 }
 
-.watermark {
+.poweredby {
     font-family: arial;
     font-size: 12px;
     color: white;
+}
+
+.botlink {
+    color: white;
+    font-style: italic;
+}
+
+.ctrl-wraper .input-group-addon:last-child {
+    border: none;
+    border-radius: 0;
+}
+
+.ctrl-wraper .input-group-addon:first-child {
+    border: none;
+    border-radius: 0;
+}
+
+.img-box {
+    position: relative;
+}
+
+    .img-box .msg-time {
+        position: absolute;
+        padding: 1px 4px;
+        bottom: 1px;
+        left: 1px;
+        border-radius: 10px;
+        color: white;
+        background-color: rgba(0,0,0,.4);
+    }
+    .img-box img {
+        border-radius: 10px;
+    }
+
+.img-edit {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    color: #333;
+    border-radius: 18px;
+    padding: 2px 6px;
+    background-color: rgba(255,255,255,.5);
 }

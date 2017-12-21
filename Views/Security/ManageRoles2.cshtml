@@ -1,0 +1,297 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
+    @using ExpressBase.Common.Objects;
+
+    var _applicationCollection = Html.Raw(ViewBag.AppCollection);
+    var _roleId = ViewBag.RoleId;
+    var _roleInfo = Html.Raw(ViewBag.SelectedRoleInfo);
+    var _permission = Html.Raw(ViewBag.PermissionList);
+    var _roleList = Html.Raw(ViewBag.RoleList);
+    var _role2RoleList = Html.Raw(ViewBag.Role2RoleList);
+    var _usersList = Html.Raw(ViewBag.UsersList);
+    }
+<style>
+    .outer-section-manageroles {
+        height: 100vh;
+        font-family: open sans;
+        font-weight: 300;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding-bottom: 15px;
+    }
+
+    .searchRsulsItemsDiv:hover {
+        background-color: #eee;
+    }
+
+    .mydiv1:hover {
+        background-color: #f5f5f5;
+        border: none;
+    }
+
+    .mydiv1 {
+        border: 2px solid #f5f5f5;
+        background-color: #fdfdfd;
+        border-radius: 6px;
+        align-items: center;
+        height: 75px;
+        overflow: hidden;
+        padding: 10px 13px;
+        margin-top: 15px;
+    }
+
+    .icondiv1 {
+        display: inline-block;
+        font-size: xx-large;
+        padding-right: 10px;
+        vertical-align: top;
+    }
+
+    .textdiv1 {
+        width: 82%;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .closediv1 {
+        display: inline-block;
+        float: right;
+        cursor: pointer;
+        vertical-align: top;
+    }
+
+    .tilediv1 {
+        border: 1px solid;
+        border-color: #ccc;
+        padding: 10px;
+        height: 300px;
+        border-radius: 6px;
+        overflow: auto;
+        margin: 0px;
+    }
+
+</style>
+<form id="formManageRoles" method="POST" action="">
+    <section class="outer-section-manageroles" style="height:1000px; margin: 0% 8%;">
+        <div class="row" style="margin:0px">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Name</label>
+                    <input type="text" class="form-control" id="txtRoleName" data-id=@ViewBag.RoleId title="Role Name" required />
+                </div>
+                <div class="form-group">
+                    <label style="font-family: open sans; font-weight: 300; display:inline-block">Application</label>
+                    <select class="form-control" id="selectApp"></select>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Description</label>
+                    <textarea class="form-control" id="txtRoleDescription" style="height:107px;width:100%;" required></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 0px 15px;">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#divObjList">Permissions</a></li>
+                <li><a data-toggle="tab" href="#divroles">Sub Roles</a></li>
+                <li><a data-toggle="tab" href="#divusers">Users</a></li>
+                <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
+            </ul>
+            <div class="tab-content" style="padding: 15px 0px;">
+                <div id="divObjList" class="row tab-pane fade in active" style="margin:0px"></div>
+
+                <div id="divroles" class="tab-pane fade">
+
+
+
+
+                    <div class="row" style="padding:6px 0px">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-4">
+                            <input id="txtDemoRoleSearch" type="search" class="form-control" placeholder="Search" style="padding-right:30px; display:inline-block; width:80%" />
+                            <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
+                            <button id="btnClearDemoRoleSearch" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn" data-toggle="modal" data-target="#addRolesModal" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i> Add Roles</button>
+                        </div>
+
+                    </div>
+                    <div class="container">
+                        <!-- Modal -->
+                        <div class="modal fade" id="addRolesModal" role="dialog">
+                            <div class="modal-dialog">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Add Roles</h4>
+                                    </div>
+                                    <div class="modal-body" style="height:400px">
+                                        <div class="input-group ">
+                                            <input id="txtSearchRole" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                            <span class="input-group-btn">
+                                                <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                            </span>
+                                        </div>
+                                        <div id="divRoleSearchResults" style="height:300px; overflow-y:auto"></div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button id="btnModalOk" type="button" class="btn btn-default">OK</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divSelectedRoleDisplay" class="row tilediv1"></div>
+
+
+
+
+                </div>
+
+                <div id="divusers" class="tab-pane fade">
+                    @*<div id="users">
+                            <div id='div2' class='col-lg-6 well' style="height:300px">
+                            </div>
+                            @await Component.InvokeAsync("SearchUser", new { targetDivId = "div2" })
+                        </div>*@
+                </div>
+
+                <div id="divconstraints" class="tab-pane fade">
+                    <h4>Comming Soon</h4>
+                </div>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-info" value="Submit" id="btnSaveAll" style="float:right; margin-right:15px" />
+
+    </section>
+</form>
+
+
+<script>
+
+    function OnClickRemove(e) {
+        if (confirm("Click OK to Remove"))
+            $(e).parents("div.col-md-4").remove();
+    }
+
+    $('document').ready(function () {
+
+        var _dict = @Html.Raw(TempData.Peek("_dict"));
+
+        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList);
+
+        
+
+        $('#applicationid').val($('#appselect').val());
+
+        
+
+        //$('a').click(function () {
+        //    $(this).css("background-color", "#f5f5f5");
+        //});
+
+        //$('#formManageRoles').submit(function (ev) {
+        //    ev.preventDefault(); // to stop the form from submitting
+        //    /* Validations go here */
+        //    this.submit(); // If all the validations succeeded
+        //});
+
+
+        $("#appselect").change(function () {
+            var selected = $(this).find('option:selected');
+            $('#applicationid').val(selected.val());
+        });
+
+        $('#allsave').click(function () {
+            var selected = "";
+            $('.objtype input:checked').each(function () {
+                selected += $(this).attr('value')+",";
+            });
+
+            var selectedroles = "";
+            $('#rolesdiv input:checked').each(function () {
+                selectedroles += $(this).attr('value')+",";
+
+            });
+
+            var txt = $("#userslist").val().replace(/^,/, '');
+
+            $.post("../TenantUser/SaveRoles",
+            {
+                "Permissions": selected.substring(0, selected.length - 1),
+                "RoleName": $('#role_name').val(),
+                "RoleId": $('#roleid').val(),
+                "ApplicationId": $('#applicationid').val(),
+                "DominantRefiid": $('#dominantrefid').val(),
+                "Description": $('#Description').val(),
+                "subrolesid": selectedroles.substring(0, selectedroles.length - 1),
+                "users": txt,
+
+            }, function (result) {
+            });
+
+
+        });
+    })
+    function GetTable(type) {
+
+        $.post("../TenantUser/GetRowAndColumn",
+           {
+
+               "ApplicationId": $('#applicationid').val(),
+               "ObjectType": type,
+               "RoleId": $('#roleid').val()
+
+
+           }, function (result) {
+               if (result) {
+                   document.getElementById("objtype_" + type.toString()).innerHTML = result;
+               }
+           });
+    }
+
+    function GetSubRoles(roleid)
+    {
+
+        $.post("../TenantUser/GetSubRoles",
+              {
+                  "roleid": roleid,
+                  "applicationid" :  $('#applicationid').val()
+
+
+              }, function (result) {
+                  if (result) {
+                      document.getElementById("roles").innerHTML = result;
+                  }
+              });
+
+    }
+
+    function GetRoleUsers(roleid)
+    {
+        $.post("../TenantUser/GetRoleUsers",
+            { "roleid": roleid, },
+            function (result) {
+                if (result) {
+                    document.getElementById("div2").innerHTML = result;
+                    var Ids = "";
+                    $.each($('#div2').children(), function (i, obj) {
+                        Ids += $(obj).attr("id") + ",";
+                    });
+                    Ids = Ids.substring(0, Ids.length - 1);
+                    //var txt = $("#userslist").val();
+                    $("#userslist").val(Ids);
+
+                }
+        });
+    }
+
+</script>

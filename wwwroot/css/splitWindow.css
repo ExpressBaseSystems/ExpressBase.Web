@@ -18,8 +18,10 @@
     float: none;
     border: 1px solid #808080;
     display: inline-block;
-    height: calc(100vh - 87px);
+    /*height: calc(100vh - 60px);*/
+    height:100%;
     width: 100%;
+    padding: 30px 20px 30px 20px;
 }
 
 .sub-window-first {
@@ -112,8 +114,51 @@
 }
 .splitdiv_parent {
     white-space: nowrap;
-    margin-top: 25px;
-    height: calc(100vh - 45px);
-    padding-top:15px;
-    overflow-y:hidden;
+    /*margin-top: 25px;*/
+    padding-top: 25px;
+    /*height: 98vh;*/
+    height: calc(100vh - 24px);
+    /*padding-top:15px;*/
+    /*overflow-y: hidden;*/
+    overflow-x: hidden !important;
+    overflow-y: hidden !important
 }
+
+.slick-prev {
+    left: 0px !important;
+    z-index: 1 !important;
+    background-color: red !important;
+}
+.slick-next {
+    right: 0px !important;
+    z-index: 1 !important;
+    background-color: red !important;
+}
+.slick-next:hover {
+    color: none !important;
+    background-color: none !important;
+}
+.slick-prev:hover {
+    color: none !important;
+    background-color: none !important;
+}
+.slick-track{
+    height:inherit !important;
+}
+.slick-list {
+    height: inherit !important;
+}
+
+/*#parent-div0::-webkit-scrollbar-track {
+    background-color: white;
+}
+
+#parent-div0::-webkit-scrollbar {
+    width: 10px;
+    background-color: white;
+}
+
+#parent-div0::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 6px;
+}*/

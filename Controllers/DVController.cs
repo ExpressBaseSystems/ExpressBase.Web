@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Controllers
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
         [HttpGet][HttpPost]
-        public IActionResult dv( string refid)
+        public IActionResult dv( string refid, string rowData, string filterValues, int tabNum)
         {
             //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -56,49 +56,10 @@ namespace ExpressBase.Web.Controllers
             dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
             dsobj.AfterRedisGet(this.Redis);
             ViewBag.dvObject = dsobj;
-
-            {
-                //Edit mode
-                //if (objid != null)
-                //{
-                //    var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
-                //    var rlist = resultlist.Data;
-                //    foreach (var element in rlist)
-                //    {
-                //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-                //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-                //        ViewBag.LifeCycle = lifeCycle;
-                //        ViewBag.IsNew = "false";
-                //        ViewBag.ObjectName = element.Name;
-                //        ViewBag.ObjectDesc = element.Description;
-                //        ViewBag.Status = element.Status;
-                //        ViewBag.VersionNumber = element.VersionNumber;
-                //        ViewBag.Icon = "fa fa-database";
-                //        ViewBag.ObjType = (int)objtype;
-                //        ViewBag.Refid = element.RefId;
-                //        ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
-                //        ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
-                //        ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
-
-                //        EbDataVisualization dsobj = null;
-
-                //        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-                //        {
-                //            ViewBag.ReadOnly = true;
-                //            dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
-                //        }
-                //        else
-                //        {
-                //            ViewBag.ReadOnly = false;
-                //            dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
-                //        }
-
-                //        dsobj.AfterRedisGet(this.Redis);
-                //        ViewBag.dvObject = dsobj;
-                //    }
-
-                //}
-            }
+            ViewBag.dvRefId = refid;
+            ViewBag.rowData = rowData;
+            ViewBag.filterValues = filterValues;
+            ViewBag.tabNum = tabNum;
 
             return View();
         }

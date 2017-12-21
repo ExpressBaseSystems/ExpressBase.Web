@@ -31,7 +31,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost][HttpGet]
         public IActionResult Index()
         {
-            ViewBag.useremail = TempData[RequestEmail];
+            ViewBag.useremail = TempData.Peek(RequestEmail);
             return View();
         }
 
@@ -177,7 +177,7 @@ namespace ExpressBase.Web.Controllers
                         var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = "expressbase" });
 
                         if (Convert.ToInt32(res.UserId) >= 0)
-                           return RedirectToAction("ProfileSetup", new RouteValueDictionary(new { controller = "Tenant", action = "ProfileSetup"})); // convert get to post
+                           return RedirectToAction("EbOnBoarding", new RouteValueDictionary(new { controller = "Tenant", action = "EbOnBoarding" })); // convert get to post
                     }
                     else
                         return RedirectToAction("Index", new RouteValueDictionary(new { controller = "Ext", action = "Index" })); // convert get to post;

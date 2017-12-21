@@ -1,4 +1,5 @@
-﻿var InitControls = function () {
+﻿var InitControls = function (bot) {
+    this.Bot = bot;
     this.Date = function (ctrl) {
         var settings = { timepicker: false };
 
@@ -25,6 +26,51 @@
 
     this.SimpleSelect = function (ctrl) {
         //$('#' + ctrl.name).selectpicker();
+    };
+
+    this.ImageUploader = function (ctrl) {
+        $('#' + ctrl.name).on("change", function (input) {
+            $(input.target).closest(".ctrl-wraper").next("[name=ctrlsend]").click();
+            if (input.target.files && input.target.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    this.Bot.sendImage(e.target.result, ctrl.name);
+                    this.xxx(e.target.result);
+                }.bind(this);
+                reader.readAsDataURL(input.target.files[0]);
+            }
+            
+            
+
+        }.bind(this));
+    };
+    this.xxx = function (url) {
+        $.ajax({
+            type: 'POST',
+            url: "../StaticFile/UploadImageAsync",
+            data: url
+        }).done(function (result) {
+            console.log(result);
+        })
+    }
+    this.RadioGroup = function (ctrl) {
+        $('#' + ctrl.name).find("input").on("change", function (e) {
+            var val = $('#' + this.id + 'Lbl').text().trim();
+            $('#' + ctrl.name).val(val);
+        });
+    };
+
+    this.CheckBoxGroup = function (ctrl) {
+        $('#' + ctrl.name).find("input").on("change", function (e) {
+            var $ctrlDiv = $('#' + ctrl.name); var values = "";
+            $ctrlDiv.find("input").each(function (i, el) {
+                if (el.checked) {
+                    val = $('#' + el.id + 'Lbl').text().trim();
+                    values += "," + val;
+                }
+            });
+            $ctrlDiv.val(values.substring(1));
+        });
     };
 
     this.Numeric = function (ctrl) {
@@ -77,7 +123,6 @@
                     //prevents exceeding integer part length when containes '.'
                     if (pi === (ctrl.maxLength - ctrl.decimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
                         $('#' + id).val(val);
-
                 }, 1);
             }
             //prevents exceeding integer-part length when no '.'

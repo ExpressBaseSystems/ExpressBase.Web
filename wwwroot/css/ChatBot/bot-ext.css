@@ -5,15 +5,24 @@
     right: 24px;
     bottom: 70px;
     width: 28%;
-    height: 65%;
+    height: 75%;
     border-radius: 3.5px;
-    background-color: red;
+    background-color: white;
     min-width: 300px;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
     z-index: 16777270;
 }
 
+#loderdiv {
+    display: flex;
+    background-color: blueviolet;
+    background: url("https://expressbase.com/images/svg/botloder.svg") no-repeat center;
+    background-size: 30%;
+    flex: 1 1 auto;
+}
+
 #ebbot_iframe {
+    visibility: hidden;
     width: 100%;
     flex: 1 1 auto;
     border-radius: 0px 0px 3.5px 3.5px;
@@ -40,8 +49,9 @@
         bottom: 0;
         height: 100%;
     }
+
     #ebbot_iframe {
-        border-radius:0px;
+        border-radius: 0px;
     }
 }
 

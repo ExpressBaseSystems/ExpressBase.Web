@@ -24,7 +24,9 @@
         TableTdCounter: 0,
         RadioButtonCounter: 0,
         RadioGroupCounter: 0,
-        SimpleSelectCounter: 0
+        SimpleSelectCounter: 0,
+        CheckBoxGroupCounter: 0,
+        ImageUploaderCounter: 0,
     };
     this.currentProperty = null;
     this.CurRowCount = 2;

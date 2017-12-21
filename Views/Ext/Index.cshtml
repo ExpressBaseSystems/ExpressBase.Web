@@ -16,7 +16,7 @@
         s.async = 1;
         d.getElementsByTagName("head")[0].appendChild(s);
         d.ebbotName = "Live ChatBot";
-        d.ebbotThemeColor = "#31d031";
+        d.ebbotThemeColor = "#ffb100";//"#31d031";
     })();</script>
 
 @*<iframe width="30%" height="60%" class="eb-chat-frame" style="position: fixed;bottom: 0px;right: 0px;box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.46);min-width: 300px;z-index: 99999999999999;" src="//eb_roby_dev.localhost:5000/dev/Eb_chatBot" frameborder="0" allowfullscreen></iframe>*@
@@ -44,7 +44,7 @@
 
                     <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
                         <div class="input-group">
-                            <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                            <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
                             <span class="input-group-btn">
                                 <button type="submit" class="btn getstarted">Get Started</button>
                             </span>
@@ -333,8 +333,7 @@
 </script>
 @if (ViewBag.useremail != null)
 {
-    <script> 
-        alert("email exist");
+    <script>
             $("#login-modal").modal('toggle');
             $("#email-login").val("@ViewBag.useremail");
     </script>

@@ -22,6 +22,7 @@
 .propgrid-table-cont {
     flex: 1 1 auto;
     overflow-y: auto;
+    overflow-x:hidden;
     max-height: 526px;
     background-color: white;
     /*min-width: 250px;*/
@@ -511,4 +512,10 @@
 }
 .strE-texarea:focus{
     outline:none;
+}
+.searchinp {
+    float: left;
+    width: 50%;
+    padding: 3px;
+    border: solid 1px #dddddd;
 }

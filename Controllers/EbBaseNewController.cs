@@ -62,7 +62,7 @@ namespace ExpressBase.Web.Controllers
             {
                 var host = context.HttpContext.Request.Host.Host.Replace("www.", string.Empty);
                 var path = context.HttpContext.Request.Path.Value.ToLower();
-                if (!(context.Controller is ExpressBase.Web.Controllers.CommonController) && !(context.Controller is ExpressBase.Web.Controllers.BoteController))
+                if (!(context.Controller is ExpressBase.Web.Controllers.CommonController) && !(context.Controller is ExpressBase.Web.Controllers.BoteController) && !(context.Controller is ExpressBase.Web.Controllers.SMSController))
                 {
                     string[] subdomain = host.Split('.');
 

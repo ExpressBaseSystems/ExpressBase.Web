@@ -10,7 +10,7 @@
    
     this.Init = function () {
         // $('#summernot_container' + tabNum + ' .note-editable').bind('paste', this.SetCode.bind(this));
-        //// $('#summernot_container' + tabNum + ' .note-editable').bind('append', this.SetCode.bind(this));
+        // $('#summernot_container' + tabNum + ' .note-editable').bind('append', this.SetCode.bind(this));
         // $('#summernot_container' + tabNum + ' .note-editable').on('keyup', this.SetCode.bind(this));
    
         if (this.EbObject === null) {
@@ -21,8 +21,19 @@
         else {
             this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
             $.each(this.EbObject.DsColumnsCollection.$values, function (i, value) {
+                var id = "DataField" + this.ObjId++;
+                var obj = new EbObjects["DsColumns"](id);
+                obj.Title = value.Title; 
+                var oldhtml = $('#summernot_container' + tabNum + ' .note-editable').html();
+                var newhtml = oldhtml.replace(value.Title, obj.$Control.outerHTML());
+                $('#summernot_container' + tabNum + ' .note-editable').html(newhtml);
+                this.RefreshControl(obj);
+                this.ObjCollect[id] = obj;
+                $('#' + id).attr('contenteditable', 'false');
                 this.emailpropG.addToDD(value);
-            }.bind(this));            
+            }.bind(this));   
+            $(".ebdscols").attr("tabindex", "1").off("focus").on("focus", this.elementOnFocus);
+            
         }
         //this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
         this.Name = this.EbObject.Name;
@@ -33,15 +44,14 @@
         $(".note-editable").off("keyup").on("keyup", this.xxx.bind(this));
     };
     this.emailpropG.DD_onChange = function (event) {
-        //alert("Hii");
-       
+        //alert("Hii");       
         var SelItem = $(event.target).find("option:selected").attr("data-name");
         if (SelItem === "email")
             $("[contenteditable=true]").focus();
     }
 
     this.onDropFn = function (event, ui) {
-        $('#summernot_container' + tabNum + ' .note-editable').focus();
+        $('#summernot_container' + tabNum + '.note-editable').focus();
         this.dropLoc = $(event.target);
         this.col = $(ui.draggable);
         var id = "DataField" + this.ObjId++;
@@ -110,15 +120,13 @@
     this.elementOnFocus = function (event) {
         event.stopPropagation();
         console.log("In element focus");
-       
             var curControl = $(event.target);
             var id = curControl.attr("id");
             var curObject = this.ObjCollect[id];
             if (event.target.className === "note-editable panel-body ui-droppable")
                 this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
             else
-                this.emailpropG.setObject(curObject, AllMetas["DsColumns"]);
-          
+                this.emailpropG.setObject(curObject, AllMetas["DsColumns"]);        
        
     }.bind(this);
 

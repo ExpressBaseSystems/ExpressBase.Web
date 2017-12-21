@@ -34,11 +34,13 @@
 }
 
 .msg-wraper-user, .msg-wraper-bot {
+    font-family: Open Sans,sans-serif;
+    position: relative;
     display: inline-block;
     text-align: left;
-    font-size: 12px;
-    font-family: sans-serif;
+    color: #555;
     padding: 4px 10px;
+    font-size: 100%;
 }
 
 .msg-wraper-user {
@@ -170,7 +172,7 @@
     width: 100%;
     min-height: 28px;
     min-width: inherit;
-    resize:none;
+    resize: none;
 }
 
 .eb-chat-inp-cont .btn {
@@ -226,13 +228,15 @@
         height: 28px;
         border: none;
     }
+
         .ctrl-wraper input[type=radio], .ctrl-wraper input[type=checkbox] {
             height: inherit;
             margin: 5px;
         }
-        .ctrl-wraper span {
-            /*padding-right:5px;*/
-        }
+
+    .ctrl-wraper span {
+        /*padding-right:5px;*/
+    }
 
 [name=ctrlsend] .fa {
     margin-left: -5px
@@ -253,9 +257,10 @@
     font-size: 12px;
     color: white;
 }
-.botlink{
-    color:white;
-    font-style:italic;
+
+.botlink {
+    color: white;
+    font-style: italic;
 }
 
 .ctrl-wraper .input-group-addon:last-child {
@@ -266,4 +271,31 @@
 .ctrl-wraper .input-group-addon:first-child {
     border: none;
     border-radius: 0;
+}
+
+.img-box {
+    position: relative;
+}
+
+    .img-box .msg-time {
+        position: absolute;
+        padding: 1px 4px;
+        bottom: 1px;
+        left: 1px;
+        border-radius: 10px;
+        color: white;
+        background-color: rgba(0,0,0,.4);
+    }
+    .img-box img {
+        border-radius: 10px;
+    }
+
+.img-edit {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    color: #333;
+    border-radius: 18px;
+    padding: 2px 6px;
+    background-color: rgba(255,255,255,.5);
 }

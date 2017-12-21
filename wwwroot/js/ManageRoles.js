@@ -1,10 +1,12 @@
-﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList) {
+﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList) {
     this.appCollection = appCollection;
     this.roleId = roleId;
     this.roleInfo = roleInfo;
     this.permission = permission;
     this.opDict = _dict;
-    this.user = roleList;
+    this.roleList = roleList;
+    this.r2rList = r2rList;
+    this.dependentList = [];
     this.selectApp = $("#selectApp");
     this.divObjList = $("#divObjList");
     this.txtRoleName = $("#txtRoleName");
@@ -28,6 +30,7 @@
         $('#addRolesModal').on('shown.bs.modal', this.initModal1.bind(this));
         this.txtDemoRoleSearch.on('keyup', this.KeyUptxtDemoRoleSearch.bind(this));
         this.btnClearDemoRoleSearch.on('click', this.OnClickbtnClearDemoRoleSearch.bind(this));
+        //$(".SearchCheckbox").on('change', this.OnChangeSearchCheckbox.bind(this));
 
         //INIT FORM
         if (this.roleId > 0) {
@@ -52,6 +55,7 @@
         }
         this.selectAppChangeAction();
     }
+
     //ROLE MANAGER-----------------------
     this.initModal1 = function () {
         this.txtSearchRole.focus();
@@ -59,6 +63,7 @@
     }
 
     this.KeyUptxtSearchRole = function () {
+        this.dependentList = [];
         this.drawSearchResults(1);
     }
     this.clickbtnModalOkAction = function () {
@@ -66,13 +71,14 @@
         $('#addRolesModal').modal('toggle');
         this.SortDiv(1);
     }
+
     this.drawSearchResults = function (flag) {
         var st = null;
         var txt = null;
         var divSelectedDisplay;
         var divSearchResults;
         if (flag === 1) {
-            obj = this.user;
+            obj = this.roleList;
             $("#divRoleSearchResults").children().remove();
             txt = $("#txtSearchRole").val().trim();
             divSelectedDisplay = $("#divSelectedRoleDisplay");
@@ -88,13 +94,44 @@
         else
             return;
 
+        //$.each($(divSelectedDisplay).children(), function (i, ob) {
+        //    //if ($(divSelectedDisplay).find(`[data-id='${obj[i].Id}']`).length > 0) {
+        //        this.findDependentRoles($(ob).attr('data-id'));
+        //    //}
+        //}).bind(this);
+        
+
+
+        var app_id = $("#selectApp").find(":selected").attr("data-id");
         for (var i = 0; i < obj.length; i++) {
-            if (obj[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
-                if ($(divSelectedDisplay).find(`[data-id='${obj[i].Id}']`).length > 0)
-                    st = "checked";
-                else
-                    st = null;
-                this.appendToSearchResult(divSearchResults, st, obj[i]);
+            if (obj[i].App_Id == app_id) {
+                if (obj[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
+                    if ($(divSelectedDisplay).find(`[data-id='${obj[i].Id}']`).length > 0) {
+                        st = "checked disabled";
+                    }
+                    else if (this.dependentList.indexOf(obj[i].Id) !== -1)
+                        st = "checked";
+                    else
+                        st = null;
+                    this.appendToSearchResult(divSearchResults, st, obj[i]);
+                }
+            }            
+        }
+        $(".SearchCheckbox").on('change', this.OnChangeSearchCheckbox.bind(this));
+    }
+
+    this.OnChangeSearchCheckbox = function (e) {
+        this.dependentList = [];
+        if($(e.target).is(':checked'))
+            this.findDependentRoles($(e.target).attr("data-id"));
+        console.log(this.dependentList);
+    }
+
+    this.findDependentRoles = function (dominant) {
+        for (var i = 0; i < this.r2rList.length; i++) {
+            if (this.r2rList[i].Dominant == dominant) {
+                this.dependentList.push(this.r2rList[i].Dependent);
+                this.findDependentRoles(this.r2rList[i].Dependent);
             }
         }
     }
@@ -102,7 +139,7 @@
     this.appendToSearchResult = function (divSearchResults, st, obj) {
         $(divSearchResults).append(`<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id=${obj.Id}>
                                         <div class='col-md-1' style="padding:10px">
-                                            <input type ='checkbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d = '${obj.Description}' aria-label='...'>
+                                            <input type ='checkbox' class='SearchCheckbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d = '${obj.Description}' aria-label='...'>
                                         </div>
                                         <div class='col-md-10'>
                                             <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
@@ -141,7 +178,7 @@
                                                         <div class="closediv1">
                                                             <div class="dropdown">
                                                                 <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
-                                                                <ul class="dropdown-menu" style="left:-140px;">
+                                                                <ul class="dropdown-menu" style="left:-140px; width:160px;">
                                                                     <li><a href="#" onclick="OnClickRemove(this);">Remove</a></li>
                                                                 </ul>
                                                             </div>

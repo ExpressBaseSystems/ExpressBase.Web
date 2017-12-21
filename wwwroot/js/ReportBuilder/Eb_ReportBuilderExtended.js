@@ -137,5 +137,41 @@
                 this.pageContainer.switchClass("col-md-10 col-lg-10 col-sm-10 pd-left-60px", "col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2", 1000, "easeInOutQuad");
         }
     };
+
+    this.keyboardevents = function (event, control, obj) {
+        this.obj = obj;
+        this.control = control;
+        if (this.control.css("left") !== 0 || this.control.css("top") !== 0 ){
+            switch (event.which) {
+                case 46:    //delete key
+                    this.control.remove();
+                    break;
+                case 37:    //left arrow key
+                    this.control.finish().animate({
+                        left: "-=1"
+                    });
+                    this.obj.Left -= 1;
+                    break;
+                case 38:    //up arrow key
+                    this.control.finish().animate({
+                        top: "-=1"
+                    });
+                    this.obj.Top -= 1;
+                    break;
+                case 39:    //right arrow key
+                    this.control.finish().animate({
+                        left: "+=1"
+                    });
+                    this.obj.Left += 1;
+                    break;
+                case 40:    //bottom arrow key
+                    this.control.finish().animate({
+                        top: "+=1"
+                    });
+                    this.obj.Top += 1;
+                    break;
+            }
+        }
+    };
     this.minMaxToolbar();
 }

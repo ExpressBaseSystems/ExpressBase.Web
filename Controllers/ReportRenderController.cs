@@ -417,8 +417,16 @@ namespace ExpressBase.Web.Controllers
             }
             else if (field is EbImg)
             {
-               // field.DrawMe(d);
-
+                // field.DrawMe(d);
+                byte[] fileByte = this.ServiceClient.Post<byte[]>
+                     (new DownloadFileRequest
+                     {
+                         FileDetails = new FileMeta
+                         {
+                             FileName = "dp_1_micro.jpg",
+                             FileType = "jpg"
+                         }
+                     });
                 //var x = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Googleplex-Patio-Aug-2014.JPG/800px-Googleplex-Patio-Aug-2014.JPG";
                 var x = "http://localhost:5000/static/dp_1_micro.jpg";
                 iTextSharp.text.Image myImage = iTextSharp.text.Image.GetInstance(x);

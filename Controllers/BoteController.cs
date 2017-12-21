@@ -163,6 +163,39 @@ namespace ExpressBase.Web.Controllers
             return "SocialId not in Database";
         }
 
+        [HttpPost]
+        public async Task<string> UploadImageOrginal(string base64,string filename, string refreshToken, string bearerToken)
+        {
+            this.ServiceClient.BearerToken = bearerToken;
+            this.ServiceClient.RefreshToken = refreshToken;
+            string Id = string.Empty;
+            string url = string.Empty;
+            byte[] myFileContent;
+            try
+            {
+                UploadImageRequest uploadImageRequest = new UploadImageRequest();
+                uploadImageRequest.ImageInfo = new FileMeta();
+                uploadImageRequest.IsAsync = false;
+                myFileContent = System.Convert.FromBase64String(base64);
+                uploadImageRequest.ImageByte = myFileContent;
+                uploadImageRequest.ImageInfo.FileType = "jpg";
+                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                uploadImageRequest.ImageInfo.FileName = filename;
+
+                Id = this.ServiceClient.Post<string>(uploadImageRequest);
+                if (ViewBag.cid == "expressbase" && ViewBag.wc == "tc")
+                    url = string.Format("http://localhost:5000/static/{0}.{1}", Id, uploadImageRequest.ImageInfo.FileType);
+                else
+                    url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadImageRequest.ImageInfo.FileType);
+
+            }
+            catch (Exception e)
+            {
+                return "upload failed";
+            }
+
+            return url;
+        }
 
         [HttpPost]
         public List<object> AuthAndGetformlist(string cid, string socialId, string wc = "tc")

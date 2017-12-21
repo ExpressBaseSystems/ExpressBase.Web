@@ -148,8 +148,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 focusedId = id;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
                 //if ($('#' + id).is(':last-child'))
-                if(this.login === "uc")
-                    $(".splitdiv_parent").scrollTo($("#" + focusedId));
+                //if(this.login === "uc")
+                //    $(".splitdiv_parent").scrollTo($("#" + focusedId));
                 //if (this.login == "uc")
                 //    dvcontainerObj.firstWPos = $(".splitdiv_parent")
             }
@@ -348,8 +348,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $(".toolicons .btn").prop("disabled", true);
             else {
                 $(".toolicons .btn").prop("disabled", false);
-                if (this.login === "uc")
-                    dvcontainerObj.modifyNavigation();
+                //if (this.login === "uc")
+                //    dvcontainerObj.modifyNavigation();
             }
         }.bind(this));
     };

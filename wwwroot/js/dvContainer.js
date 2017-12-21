@@ -20,7 +20,8 @@ var DvContainerObj = function (settings) {
     this.user = settings.user;
     this.previewBody = null;
     this.scrollCounter = 0;
-    this.firstWPos =  null;
+    this.firstWPos = null;
+    this.slickApi = null;
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -341,25 +342,38 @@ var DvContainerObj = function (settings) {
     this.modifyNavigation = function () {
         $("#Save_btn").show();
         if (counter >= 1) {
-            $("#prev").show();
-            $("#next").show();
+            //$("#prev").show();
+            //$("#next").show();
+            if (this.slickApi === null) {
+                this.slickApi = $('.splitdiv_parent').slick({
+                    slidesToShow: 1,
+                    infinite: false,
+                    draggable: false,
+                    speed: 800,
+                    cssEase:'ease-in'
+                });
+            }
+            else {
+                $('.splitdiv_parent').slick('slickAdd', $("#" + focusedId));
+                $('.splitdiv_parent').slick('slickGoTo', counter, true);
+            }
         }
-        if ($("#" + focusedId).prev().attr("id") == undefined) {
-            $("#prev").attr("disabled", true);
-            $("#first").attr("disabled", true);
-        }
-        else {
-            $("#prev").attr("disabled", false);
-            $("#first").attr("disabled", false);
-        }
-        if ($("#" + focusedId).next().attr("id") !== undefined) {
-            $("#next").attr("disabled", false);
-            $("#last").attr("disabled", false);
-        }
-        else {
-            $("#next").attr("disabled", true);
-            $("#last").attr("disabled", true);
-        }
+        //if ($("#" + focusedId).prev().attr("id") == undefined) {
+        //    $("#prev").attr("disabled", true);
+        //    $("#first").attr("disabled", true);
+        //}
+        //else {
+        //    $("#prev").attr("disabled", false);
+        //    $("#first").attr("disabled", false);
+        //}
+        //if ($("#" + focusedId).next().attr("id") !== undefined) {
+        //    $("#next").attr("disabled", false);
+        //    $("#last").attr("disabled", false);
+        //}
+        //else {
+        //    $("#next").attr("disabled", true);
+        //    $("#last").attr("disabled", true);
+        //}
     }
 
     this.toggleminimap = function () {

@@ -314,7 +314,9 @@
 .file-name {
     display: none;
     position: absolute;
-    top: 45%;
+    top: calc(50% - 10px);
+    white-space: nowrap;
+    letter-spacing: 0.05mm;
     padding: 0 5px;
     color: white;
     direction: rtl;

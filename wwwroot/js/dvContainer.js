@@ -22,6 +22,7 @@ var DvContainerObj = function (settings) {
     this.scrollCounter = 0;
     this.firstWPos = null;
     this.slickApi = null;
+    this.nextSlide = null;
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -32,19 +33,6 @@ var DvContainerObj = function (settings) {
         //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#btnGo" + counter).trigger("click");
         $("#mini").off("click").on("click", this.toggleminimap.bind(this));
-        //$('#parent-div0').scroll(function () {
-        //    this.scrollCounter++;
-        //    if (this.scrollCounter == 500) {
-        //        $('.sub-windows').each(function () {
-        //            var post = $(this);
-        //            var position = post.position().left - $(window).scrollLeft();
-        //            if (position <= 500 || position >= -500) {
-        //                post.focus();
-        //            }
-        //        });
-        //    }
-            
-        //});
     };
 
 
@@ -253,7 +241,8 @@ var DvContainerObj = function (settings) {
                     this.dvcol[focusedId].GenerateButtons();
                 }
             }
-            this.modifyNavigation();
+            //this.modifyNavigation();
+            $('.splitdiv_parent').slick('slickGoTo', 0, true);
         }
         else {
             dvcontainerObj.previousObj = dvcontainerObj.currentObj;
@@ -350,14 +339,24 @@ var DvContainerObj = function (settings) {
                     infinite: false,
                     draggable: false,
                     speed: 800,
-                    cssEase:'ease-in'
+                    cssEase: 'ease-in',
+                    nextArrow: '<i class="fa fa-chevron-right" aria-hidden="true"></i>',
+                    prevArrow: '<i class="fa fa-chevron-left" aria-hidden="true"></i>',
                 });
-            }
-            else {
-                $('.splitdiv_parent').slick('slickAdd', $("#" + focusedId));
+                $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
                 $('.splitdiv_parent').slick('slickGoTo', counter, true);
             }
+            else {
+                if ($('.splitdiv_parent').children().find("#" + focusedId).length === 0) {
+                    $('.splitdiv_parent').slick('slickAdd', $("#" + focusedId));
+                    $('.splitdiv_parent').slick('slickGoTo', counter, true);
+                }
+                //else {
+                //    $('.splitdiv_parent').slick('slickGoTo', this.nextSlide, false);
+                //}
+            }
         }
+        
         //if ($("#" + focusedId).prev().attr("id") == undefined) {
         //    $("#prev").attr("disabled", true);
         //    $("#first").attr("disabled", true);
@@ -375,6 +374,35 @@ var DvContainerObj = function (settings) {
         //    $("#last").attr("disabled", true);
         //}
     }
+
+    this.focusChanged = function (event, slick, currentSlide, nextSlide) {
+        prevfocusedId = focusedId;
+        //this.nextSlide = nextSlide;
+        focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
+        //if (focusedId !== prevfocusedId) {
+            $("#" + focusedId).focus();
+            var dvobj = this.dvcol[focusedId].EbObject;
+            this.dvRefid = this.dvcol[focusedId].Refid;
+            dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+            dvcontainerObj.currentObj = dvobj;
+            if (dvcontainerObj.currentObj.Pippedfrom !== "")
+                $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
+            else
+                $("#Pipped").text("");
+            if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+                if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                    this.dvcol[focusedId].GenerateButtons();
+                }
+            }
+            else {
+                if ($("#" + focusedId).find("canvas").length > 0) {
+                    this.dvcol[focusedId].GenerateButtons();
+                }
+            }
+            console.log(nextSlide);
+        //}
+        
+    };
 
     this.toggleminimap = function () {
         $("#MinimapDiv").toggle();

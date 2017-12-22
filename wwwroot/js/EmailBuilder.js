@@ -9,10 +9,7 @@
     this.PosRight;
    
     this.Init = function () {
-        // $('#summernot_container' + tabNum + ' .note-editable').bind('paste', this.SetCode.bind(this));
-        // $('#summernot_container' + tabNum + ' .note-editable').bind('append', this.SetCode.bind(this));
-        // $('#summernot_container' + tabNum + ' .note-editable').on('keyup', this.SetCode.bind(this));
-   
+      
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbEmailTemplate"]("email");
             this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
@@ -35,16 +32,14 @@
             $(".ebdscols").attr("tabindex", "1").off("focus").on("focus", this.elementOnFocus);
             
         }
-        //this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
+        
         this.Name = this.EbObject.Name;
         this.DrawDsTree();
         $(".note-editable").droppable({ accept: ".coloums", drop: this.onDropFn.bind(this) });
         $("[contenteditable=true]").attr("tabindex", "1").off("focus").on("focus", this.elementOnFocus);
-        //$("body").off("focus").on("focus", ".ebdscols", this.elementOnFocus.bind(this));
-        $(".note-editable").off("keyup").on("keyup", this.xxx.bind(this));
+        $(".note-editable").off("keyup").on("keyup", this.delete_dscols.bind(this));
     };
     this.emailpropG.DD_onChange = function (event) {
-        //alert("Hii");       
         var SelItem = $(event.target).find("option:selected").attr("data-name");
         if (SelItem === "email")
             $("[contenteditable=true]").focus();
@@ -67,11 +62,9 @@
             this.EbObject.DsColumnsCollection.push(obj);
         this.placeCaretAtEnd(document.getElementById(id));
         $('#' + id).attr('contenteditable', 'false');
-        // this.SetCode();
-     //   $('#summernot_container' + tabNum + ' .note-editable').focus();
     };
 
-    this.xxx = function (event) {
+    this.delete_dscols = function (event) {
         var key = event.keyCode || event.charCode;
         var spanAfter = [];
         if (key == 8 || key == 46) {
@@ -115,7 +108,6 @@
         $("#" + obj.EbSid).attr("tabindex", "1").off("focus").on("focus", this.elementOnFocus);
 
     };//render after pgchange
-
 
     this.elementOnFocus = function (event) {
         event.stopPropagation();
@@ -197,15 +189,7 @@
         this.EbObject.Body = window.btoa($('.note-editable').html());
         commonO.Current_obj = this.EbObject;
     }
-
-    //this.SetCode = function (e) {
-    //   // console.log($('#summernote' + tabNum).summernote('code'));
-
-
-    //    this.EbObject.Body = window.btoa($('#summernote' + tabNum).summernote('code'));       
-    //    commonO.Current_obj = this.EbObject;
-    //}
-
+  
     this.pasteHtmlAtCaret = function (html) {
         var sel, range;
         if (window.getSelection) {
@@ -233,6 +217,7 @@
             document.selection.createRange().pasteHTML(html);
         }
     };
+
     this.DrawDsTree = function () {
         $.fn.extend({
             treed: function (o) {
@@ -283,6 +268,7 @@
             }
         });
     }
+
     this.Init();
 }
 

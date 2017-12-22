@@ -150,8 +150,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //if ($('#' + id).is(':last-child'))
                 //if(this.login === "uc")
                 //    $(".splitdiv_parent").scrollTo($("#" + focusedId));
-                //if (this.login == "uc")
-                //    dvcontainerObj.firstWPos = $(".splitdiv_parent")
             }
         }
     }.bind(this);

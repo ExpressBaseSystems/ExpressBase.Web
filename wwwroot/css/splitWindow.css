@@ -14,14 +14,14 @@
     }
 
 .sub-windows {
-    background-color: white;
+    background-color: #fafafa;
     float: none;
     border: 1px solid #808080;
     display: inline-block;
     /*height: calc(100vh - 60px);*/
     height: 100%;
     width: 100%;
-    padding: 40px 60px 60px 60px;
+    padding: 80px 60px 10px 60px;
 }
 
 .sub-window-first {
@@ -155,29 +155,41 @@
     border-radius: 10px;
     box-shadow: 4px 4px #dcd8d8fa;
     padding: 1px 10px 10px 10px;
+    background: white;
 }
 .dotsDiv {
-    height: 50px;
+    height: 40px;
     position: absolute;
     background: white;
     width: auto;
-    bottom: 0;
+    top: 0;
     left: 0;
     right: 0;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 34px;
+    z-index:1;
 }
 
-ul#dotsul li {
+.dotstable div {
     display: inline;
 }
-.ultable {
+.dotstable {
     display: table;
     margin: 0 auto;
+    margin-top: 2px;
 }
-ul#dotsul {
+.dot {
+    border-radius: 50%;
+    background-color: #ccc;
+    padding: 6px;
+}
+.dot a i:hover{
+    color:blue!important;
+}
+/*#dotsul {
     padding-top: 10px;
-}
+}*/
 
 /*#parent-div0::-webkit-scrollbar-track {
     background-color: white;

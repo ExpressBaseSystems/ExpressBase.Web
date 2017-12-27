@@ -55,8 +55,10 @@
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-4">
             <div class="col-md-12">
+                <button id='prev' class="btn" style="display:none;color:white; background-color:transparent;"><i class="fa fa-caret-left fa-lg" aria-hidden="true"></i></button>
                 <label id="objname" style="color:white"></label>
-                <label id="Pipped" style="display:none;color:white;font-size:10px"></label>
+                <button id='next' class="btn" style="display:none; color:white; background-color:transparent;"><i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></button>
+                @*<label id="Pipped" style="display:none;color:white;font-size:10px"></label>*@
             </div>
         </div>
         <div class="col-md-8 pd-0">
@@ -77,6 +79,7 @@
     </div>
 </div>
 @*<section class="minimaps" id="MinimapDiv" style="display:none;"></section>*@
+<div id='divDots' class='dotsDiv' style="display:none;"><div class='dotstable'></div></div>
 <div class="row splitdiv_parent" id="parent-div@(ViewBag.tabNum)"></div>
 
 

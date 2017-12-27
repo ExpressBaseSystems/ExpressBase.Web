@@ -331,8 +331,9 @@ var DvContainerObj = function (settings) {
     this.modifyNavigation = function () {
         $("#Save_btn").show();
         if (counter >= 1) {
-            //$("#prev").show();
-            //$("#next").show();
+            $("#prev").show();
+            $("#next").show();
+            $("#divDots").show();
             if (this.slickApi === null) {
                 this.slickApi = $('.splitdiv_parent').slick({
                     slidesToShow: 1,
@@ -342,10 +343,12 @@ var DvContainerObj = function (settings) {
                     cssEase: 'ease-in',
                     //arrows: false,
                     //dots: true,
-                    prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
-                    nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
+                    //prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
+                    //nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
+                    prevArrow: $("#prev"),
+                    nextArrow: $("#next")
                 });
-                $('.splitdiv_parent').append(`<div id='divDots' class='dotsDiv'><div class='ultable'><ul id='dotsul'></ul></div></div>`);
+                //$('.splitdiv_parent').prepend(`<div id='divDots' class='dotsDiv'><div class='dotstable'></div></div>`);
                 $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
                 $('.splitdiv_parent').slick('slickGoTo', counter, true);
             }
@@ -402,29 +405,56 @@ var DvContainerObj = function (settings) {
             }
             console.log(nextSlide);
         //}
-        
+            this.focusDot();
     };
 
     this.modifydivDots = function () {
-        $("#dotsul").empty();
+        $(".dotstable").empty();
         $.each(this.dvcol, function (key, obj) {
             if (obj.EbObject.Pippedfrom !== "") {
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                    $("#dotsul").append(`<li><img src="../images/svg/pipe.svg" style="width: 58px;height: 40px;"></li><li><a href="#"><i class="fa fa-bar-chart fa-2x" aria-hidden="true"></i></a></li>`);
+                    $(".dotstable").append(`<div><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 else {
-                    $("#dotsul").append(`<li><img src="../images/svg/pipe.svg" style="width: 58px;height: 40px;"></li><li><a href="#"><i class="fa fa-table fa-2x" aria-hidden="true"></i></a></li>`);
+                    $(".dotstable").append(`<div><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
             }
             else {
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                    $("#dotsul").append(`<li><a href="#"><i class="fa fa-table fa-2x" aria-hidden="true"></i></a></li>`);
+                    $(".dotstable").append(`<div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 else {
-                    $("#dotsul").append(`<li><a href="#"><i class="fa fa-bar-chart fa-2x" aria-hidden="true"></i></a></li>`);
+                    $(".dotstable").append(`<div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
             }
         });
+        $(".dot").off("click").on("click", this.focus2ClickedDot);
+        this.focusDot();
+    }
+
+    this.focusDot = function () {
+        $(".dot").each(function (i, obj) {
+            if ($(obj).attr("data-mapid") === focusedId)
+                $(this).children().find("i").css("color", "blue");
+            else
+                $(this).children().find("i").css("color", "black");
+        });
+
+        if ($("#prev").hasClass("slick-disabled"))
+            $("#prev").attr("disabled", true);
+        else
+            $("#prev").attr("disabled", false);
+
+        if ($("#next").hasClass("slick-disabled"))
+            $("#next").attr("disabled", true);
+        else
+            $("#next").attr("disabled", false);
+    }
+
+    this.focus2ClickedDot = function () {
+        var id = $(this).attr("data-mapid");
+        var lastChar = id.substr(id.length - 1);
+        $('.splitdiv_parent').slick('slickGoTo', lastChar, false);
     }
 
     this.toggleminimap = function () {

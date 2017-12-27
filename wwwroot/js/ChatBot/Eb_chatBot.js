@@ -23,6 +23,7 @@
     this.formControls = [];
     this.formValues = {};
     this.editingCtrlName = null;
+    this.lastctrlIdx = 0;
     this.FB = null;
     this.FBResponse = {};
     this.EXPRESSbase_SOLUTION_ID;
@@ -192,7 +193,7 @@
     this.setFormControls = function () {
         this.formControls = [];
         $.each(this.curForm.controls, function (i, control) { this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`)); }.bind(this));
-        this.getNextControl();
+        this.getControl(0);
     }.bind(this);
 
     this.getValue = function ($input) {
@@ -215,15 +216,16 @@
         var id = this.editingCtrlName || this.curCtrl.name;
         var $btn = $(e.target).closest(".btn");
         var $msgDiv = $btn.closest('.msg-cont');
-        var idx = parseInt($btn.attr('idx')) + 1;
+        var next_idx = parseInt($btn.attr('idx')) + 1;
+        this.lastctrlIdx = (next_idx > this.lastctrlIdx) ? next_idx : this.lastctrlIdx;
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         var inpVal = this.getValue($input);
         if (this.curCtrl.type === "ImageUploader")
-            this.replyAsImage($msgDiv, $input[0], idx);
+            this.replyAsImage($msgDiv, $input[0], next_idx);
         else {
-            this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-            this.callGetNextControl(idx);
+            this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.callGetControl(this.lastctrlIdx);
             this.lastval = $('#' + id).val();
         }
         this.formValues[id] = this.lastval;
@@ -231,10 +233,10 @@
         this.lastval = null;
     }.bind(this);
 
-    this.callGetNextControl = function (idx) {
+    this.callGetControl = function (idx) {
         if (idx !== this.formControls.length) {
             if (!this.formValues[this.editingCtrlName])
-                this.getNextControl(idx);
+                this.getControl(idx);
         }
         else {
             if ($("[name=formsubmit]").length === 0) {
@@ -281,7 +283,7 @@
             "bearerToken": this.bearerToken
         }).done(function (result) {
             $(`[for=${ctrlname}] .img-loader:last`).hide(100);
-            this.callGetNextControl(idx);
+            this.callGetControl(idx);
             this.lastval = result;
         }.bind(this))
     };
@@ -289,13 +291,13 @@
     this.ctrlEdit = function (e) {
         var $btn = $(e.target).closest("span");
         var idx = $btn.attr('idx');
-        $('.msg-cont-bot [idx=' + idx + ']').closest('.msg-cont-bot').show(200);
+        $('.msg-cont-bot [idx=' + idx + ']').closest('.msg-cont').show(200);
         $btn.closest('.msg-cont').remove();
         this.editingCtrlName = this.curForm.controls[idx].name;
+        $("#" + this.editingCtrlName).click().select();
     }.bind(this);
 
-    this.getNextControl = function (idx) {
-        idx = idx || 0;
+    this.getControl = function (idx) {
         if (idx === this.formControls.length)
             return;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);

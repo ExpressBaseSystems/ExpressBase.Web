@@ -42,11 +42,11 @@ var ruler = {
     }
 }
 var summaryFunc = {
-    0:"Average",
-    1:"Count",
-    2:"Max",
-    3:"Min",
-    4:"Sum"
+    0: "Average",
+    1: "Count",
+    2: "Max",
+    3: "Min",
+    4: "Sum"
 }
 var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
     this.EbObject = dsobj;
@@ -224,6 +224,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             handles: "s",
             resize: this.onPageResize.bind(this)
         });
+        $(".page .ui-resizable-s").addClass("pageReSizeHandle");
         this.pageSplitters();
     };
     this.onPageResize = function () {
@@ -242,7 +243,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.pushSubsecToRptObj = function (sections, obj) {
         if (sections === 'ReportHeader')
-            this.EbObject.ReportHeaders.push(obj);      
+            this.EbObject.ReportHeaders.push(obj);
         else if (sections === 'PageHeader')
             this.EbObject.PageHeaders.push(obj);
         else if (sections === 'ReportFooter')
@@ -397,7 +398,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.dropLoc = $(event.target);
         this.col = $(ui.draggable);
         this.Objtype = this.col.attr('eb-type');
-        var Title = "";       
+        var Title = "";
         if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric')
             Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
         else
@@ -446,7 +447,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.editElement(curControl);
             this.Resizable(curControl);
         }
-        this.contextMenu(curControl, curObject);        
+        this.contextMenu(curControl, curObject);
     };//obj send to pg on focus
 
     this.Resizable = function (object) {
@@ -473,7 +474,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         }
     };
 
-    this.resizing = function (object, handles) {       
+    this.resizing = function (object, handles) {
         object.resizable({
             containment: "parent", handles: handles, stop: this.onReSizeFn.bind(this)
         });
@@ -506,6 +507,15 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                         "Align Right": { name: "Align Right", icon: "fa-align-right", callback: this.contextMenuRight.bind(this) },
                         "Align Center": { name: "Align Center", icon: "fa-align-center", callback: this.contextMenuCenter.bind(this) },
                         "Align Justify": { name: "Align Justify", icon: "fa-align-justify", callback: this.contextMenuJustify.bind(this) },
+                    }
+                },
+                "fold2": {
+                    "name": "Align", icon: "",
+                    "items": {
+                        "Top": { name: "Top", icon: "fa-align-left", callback: this.repExtern.alignGroup.bind(this) },
+                        "Bottom": { name: "Bottom", icon: "fa-align-right", callback: this.repExtern.alignGroup.bind(this) },
+                        "Left": { name: "Left", icon: "fa-align-center", callback: this.repExtern.alignGroup.bind(this) },
+                        "Right": { name: "Right", icon: "fa-align-justify", callback: this.repExtern.alignGroup.bind(this) },
                     }
                 }
             }
@@ -559,11 +569,11 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         else
             alert('no permission');
     };
-    this.contextMenuJustify = function (eType, selector, action, originalEvent) {        
+    this.contextMenuJustify = function (eType, selector, action, originalEvent) {
         this.objCollection[$(selector.selector).attr("id")].TextAlign = TextAlign[3];
         this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
     };
-    this.contextMenuRight = function (eType, selector, action, originalEvent) {      
+    this.contextMenuRight = function (eType, selector, action, originalEvent) {
         this.objCollection[$(selector.selector).attr("id")].TextAlign = TextAlign[2];
         this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
     };
@@ -616,15 +626,15 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         $("#summarry-editor-modal-container").modal("toggle");
         this.selector = selector;
         this.$funcselect = $("#summarry-editor-modal-container #summary-func").empty();
-        this.$sectionselect = $("#summarry-editor-modal-container #summary-sections").empty();      
+        this.$sectionselect = $("#summarry-editor-modal-container #summary-sections").empty();
         var sections = this.getSectionToAddSum($(selector.selector));
-        if ($(selector.selector).hasClass("EbCol")) {            
-            $("#summarry-editor-modal-container #summary-fieldname").val($(selector.selector).text().trim()); 
+        if ($(selector.selector).hasClass("EbCol")) {
+            $("#summarry-editor-modal-container #summary-fieldname").val($(selector.selector).text().trim());
             for (var func in summaryFunc) {
                 this.$funcselect.append(`<option 
                 value="${summaryFunc[func]}">${summaryFunc[func]}</option>`);
             }
-            for (var i = 0; i < sections.length;i++) {
+            for (var i = 0; i < sections.length; i++) {
                 this.$sectionselect.append(`<option 
                 value="#${sections[i].attr("id")}">${sections[i].attr("eb-type") + sections[i].attr("id").slice(-1)}</option>`);
             }
@@ -632,20 +642,20 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         }
     };
 
-    this.appendSummaryField = function (e) {    
+    this.appendSummaryField = function (e) {
         $("#summarry-editor-modal-container").modal("toggle");
         var type = $(this.selector.selector).attr("eb-type");
-        var Objid = type+ "Summary" + this.idCounter["Eb" + type + "SummaryCounter"]++;
-        var obj = new EbObjects["Eb" + type+ "Summary"](Objid);
+        var Objid = type + "Summary" + this.idCounter["Eb" + type + "SummaryCounter"]++;
+        var obj = new EbObjects["Eb" + type + "Summary"](Objid);
         $(this.$sectionselect.val()).append(obj.$Control.outerHTML());
         obj.DataField = $(this.selector.selector).text().trim();
-        obj.Title = this.$funcselect.val()+"("+$(this.selector.selector).text().trim()+")";
+        obj.Title = this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")";
         obj.Function = this.$funcselect.val();
-        obj.Left = this.objCollection[$(this.selector.selector).attr("id")].Left;      
+        obj.Left = this.objCollection[$(this.selector.selector).attr("id")].Left;
         this.objCollection[Objid] = obj;
         this.RefreshControl(obj);
         $("#running-summary ul[id='running-summary-childul']").append("<li class='styl'><div tabindex='1' $(this).focus(); class='textval'> "
-            + this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")" + "</div></li>");        
+            + this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")" + "</div></li>");
     };
 
     this.getSectionToAddSum = function (selector) {
@@ -661,12 +671,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.editElement = function (control) {
         this.control = control;
         this.control.on('keydown', this.keyBoardShortcuts.bind(this));
-            
+
     };//control edit options
     this.keyBoardShortcuts = function (e) {
         e.preventDefault();
         var obj = this.repExtern.keyboardevents(e, this.control, this.objCollection[this.control.attr('id')]);
-        this.pg.setObject(this.objCollection[this.control.attr('id')], AllMetas["Eb" + this.control.attr('eb-type')]);       
+        this.pg.setObject(this.objCollection[this.control.attr('id')], AllMetas["Eb" + this.control.attr('eb-type')]);
     }
     this.removeElementFn = function (e) {
         if (!$(e.target).hasClass("pageHeaders"))
@@ -776,12 +786,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (obj.IsLandscape === true) {
             this.height = pages[this.type].width;
             this.width = pages[this.type].height;
-            this.repExtern.splitterOndragFn();
+            //this.repExtern.splitterOndragFn();
         }
         else if (obj.IsLandscape === false) {
             this.height = pages[this.type].height;
             this.width = pages[this.type].width;
-            this.repExtern.splitterOndragFn();
+            //this.repExtern.splitterOndragFn();
         }
         $('.ruler,.rulerleft').empty();
         this.ruler();
@@ -860,7 +870,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     }.bind(this);
 
     this.pg.Close = function () {
-        this.repExtern.minPgrid();   
+        this.repExtern.minPgrid();
     }.bind(this);
 
     this.init = function () {
@@ -877,7 +887,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.DragDrop_Items();
             //this.minimap();
         }
-        else { }        
+        else { }
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
     };//report execution start func
     this.init();

@@ -29,7 +29,7 @@
     };
 
     this.ImageUploader = function (ctrl) {
-        $('#' + ctrl.name).on("change", function (input) {
+        $('#' + ctrl.name).off("change").on("change", function (input) {
             $(input.target).closest(".ctrl-wraper").next("[name=ctrlsend]").click();  
         }.bind(this));
     };

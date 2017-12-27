@@ -64,6 +64,12 @@ namespace ExpressBase.Web.Controllers
 			return EbSerializers.Json_Serialize(_listObj);
 		}
 
+		public object GetUserDetails(string srchTxt)
+		{
+			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText=srchTxt, TenantAccountId = ViewBag.cid });
+			return fr.UserList;
+		}
+
 		public string SaveRole(int _roleId,string _roleName,string _roleDesc,int _appId,string _permission)
 		{
 			Dictionary<string, object> Dict = new Dictionary<string, object>();

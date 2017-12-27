@@ -162,6 +162,54 @@
                             </div>
                             @await Component.InvokeAsync("SearchUser", new { targetDivId = "div2" })
                         </div>*@
+
+
+
+                    <div class="row" style="padding:6px 0px">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-4">
+                            <input id="txtDemoUserSearch" type="search" class="form-control" placeholder="Search" style="padding-right:30px; display:inline-block; width:80%" />
+                            <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
+                            <button id="btnClearDemoUserSearch" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn" data-toggle="modal" data-target="#addUserModal" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i> Add Users</button>
+                        </div>
+
+                    </div>
+                    <div class="container">
+                        <!-- Modal -->
+                        <div class="modal fade" id="addUserModal" role="dialog">
+                            <div class="modal-dialog">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Add Users</h4>
+                                    </div>
+                                    <div class="modal-body" style="height:400px">
+                                        <div class="input-group ">
+                                            <input id="txtSearchUser" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                            <span class="input-group-btn">
+                                                <button id="btnSearchUser" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                            </span>
+                                        </div>
+                                        <div id="loader1" style=" margin-left:45%; margin-top:25% ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
+                                        <div id="divUserSearchResults" style="height:300px; overflow-y:auto"></div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button id="btnModal2Ok" type="button" class="btn btn-default">OK</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divSelectedUserDisplay" class="row tilediv1"></div>
+
+
+
                 </div>
 
                 <div id="divconstraints" class="tab-pane fade">
@@ -187,7 +235,7 @@
 
         var _dict = @Html.Raw(TempData.Peek("_dict"));
 
-        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList);
+        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList, @_usersList);
 
         
 

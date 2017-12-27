@@ -116,6 +116,7 @@
     border-radius: 0px 29px 29px 0px;
     background-color: #ffffff;
     margin-left: 16px;
+    line-height: 0;
 }
 
 .bot-icon {
@@ -173,6 +174,7 @@
     min-height: 28px;
     min-width: inherit;
     resize: none;
+    line-height: 1.4;
 }
 
 .eb-chat-inp-cont .btn {
@@ -227,6 +229,7 @@
     .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
         height: 28px;
         border: none;
+        padding:4px;
     }
 
         .ctrl-wraper input[type=radio], .ctrl-wraper input[type=checkbox] {
@@ -293,14 +296,19 @@
 
 .img-edit {
     position: absolute;
-    right: 0px;
-    top: 0px;
     color: #333;
     border-radius: 18px;
     padding: 2px 6px;
-    background-color: rgba(255,255,255,.5);
+    top: -1px;
+    font-size: 11px;
+    right: -1px;
 }
-
+.img-box .img-edit {
+    background-color: rgba(255,255,255,.5);
+    font-size:inherit;
+    right: 0px;
+    top: 0px;
+}
 .img-loader {
     display: none;
     background: url(../images/svg/imageLoader.svg) no-repeat center;
@@ -314,7 +322,9 @@
 .file-name {
     display: none;
     position: absolute;
-    top: 45%;
+    top: calc(50% - 10px);
+    white-space: nowrap;
+    letter-spacing: 0.05mm;
     padding: 0 5px;
     color: white;
     direction: rtl;

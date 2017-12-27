@@ -82,28 +82,28 @@ var DvContainerObj = function (settings) {
     };
 
     this.gotoNext = function () {
-        prevfocusedId = focusedId;
-            focusedId = $("#" + focusedId).next().attr("id");
-            $("#" + focusedId).focus();
-            var dvobj = this.dvcol[focusedId].EbObject;
-            this.dvRefid = this.dvcol[focusedId].Refid;
-            dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-            dvcontainerObj.currentObj = dvobj;
-            if (dvcontainerObj.currentObj.Pippedfrom !== "")
-                $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
-            else
-                $("#Pipped").text("");
-            if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-                if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                    this.dvcol[focusedId].GenerateButtons();
-                }
-            }
-            else{
-                if ($("#" + focusedId).find("canvas").length > 0) {
-                    this.dvcol[focusedId].GenerateButtons();
-                }
-            }
-            this.modifyNavigation();
+        //prevfocusedId = focusedId;
+        //    focusedId = $("#" + focusedId).next().attr("id");
+        //    $("#" + focusedId).focus();
+        //    var dvobj = this.dvcol[focusedId].EbObject;
+        //    this.dvRefid = this.dvcol[focusedId].Refid;
+        //    dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+        //    dvcontainerObj.currentObj = dvobj;
+        //    if (dvcontainerObj.currentObj.Pippedfrom !== "")
+        //        $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
+        //    else
+        //        $("#Pipped").text("");
+        //    if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+        //        if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+        //            this.dvcol[focusedId].GenerateButtons();
+        //        }
+        //    }
+        //    else{
+        //        if ($("#" + focusedId).find("canvas").length > 0) {
+        //            this.dvcol[focusedId].GenerateButtons();
+        //        }
+        //    }
+        //    this.modifyNavigation();
     };
 
     this.gotoPrevious = function () {
@@ -331,8 +331,9 @@ var DvContainerObj = function (settings) {
     this.modifyNavigation = function () {
         $("#Save_btn").show();
         if (counter >= 1) {
-            //$("#prev").show();
-            //$("#next").show();
+            $("#prev").show();
+            $("#next").show();
+            $("#divDots").show();
             if (this.slickApi === null) {
                 this.slickApi = $('.splitdiv_parent').slick({
                     slidesToShow: 1,
@@ -340,9 +341,14 @@ var DvContainerObj = function (settings) {
                     draggable: false,
                     speed: 800,
                     cssEase: 'ease-in',
-                    nextArrow: '<i class="fa fa-chevron-right" aria-hidden="true"></i>',
-                    prevArrow: '<i class="fa fa-chevron-left" aria-hidden="true"></i>',
+                    //arrows: false,
+                    //dots: true,
+                    //prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
+                    //nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
+                    prevArrow: $("#prev"),
+                    nextArrow: $("#next")
                 });
+                //$('.splitdiv_parent').prepend(`<div id='divDots' class='dotsDiv'><div class='dotstable'></div></div>`);
                 $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
                 $('.splitdiv_parent').slick('slickGoTo', counter, true);
             }
@@ -351,10 +357,8 @@ var DvContainerObj = function (settings) {
                     $('.splitdiv_parent').slick('slickAdd', $("#" + focusedId));
                     $('.splitdiv_parent').slick('slickGoTo', counter, true);
                 }
-                //else {
-                //    $('.splitdiv_parent').slick('slickGoTo', this.nextSlide, false);
-                //}
             }
+            this.modifydivDots();
         }
         
         //if ($("#" + focusedId).prev().attr("id") == undefined) {
@@ -401,8 +405,57 @@ var DvContainerObj = function (settings) {
             }
             console.log(nextSlide);
         //}
-        
+            this.focusDot();
     };
+
+    this.modifydivDots = function () {
+        $(".dotstable").empty();
+        $.each(this.dvcol, function (key, obj) {
+            if (obj.EbObject.Pippedfrom !== "") {
+                if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+                    $(".dotstable").append(`<div><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                }
+                else {
+                    $(".dotstable").append(`<div><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                }
+            }
+            else {
+                if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+                    $(".dotstable").append(`<div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                }
+                else {
+                    $(".dotstable").append(`<div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                }
+            }
+        });
+        $(".dot").off("click").on("click", this.focus2ClickedDot);
+        this.focusDot();
+    }
+
+    this.focusDot = function () {
+        $(".dot").each(function (i, obj) {
+            if ($(obj).attr("data-mapid") === focusedId)
+                $(this).children().find("i").css("color", "blue");
+            else
+                $(this).children().find("i").css("color", "black");
+        });
+
+        if ($("#prev").hasClass("slick-disabled"))
+            $("#prev").attr("disabled", true);
+        else
+            $("#prev").attr("disabled", false);
+
+        if ($("#next").hasClass("slick-disabled"))
+            $("#next").attr("disabled", true);
+        else
+            $("#next").attr("disabled", false);
+    }
+
+    this.focus2ClickedDot = function () {
+        var id = $(this).attr("data-mapid");
+        var lastChar = id.substr(id.length - 1);
+        $('.splitdiv_parent').slick('slickGoTo', lastChar, false);
+    }
 
     this.toggleminimap = function () {
         $("#MinimapDiv").toggle();

@@ -48,6 +48,8 @@ namespace ExpressBase.Web.Controllers
         private PdfContentByte canvas;
         private PdfWriter writer;
         private Document d;
+        private PdfReader pdfReader;
+        private PdfStamper stamp;
 
         private float rh_height;
         private float ph_height;
@@ -64,6 +66,7 @@ namespace ExpressBase.Web.Controllers
 
         private Dictionary<string, List<object>> PageSummaryFields = new Dictionary<string, List<object>>();
         private Dictionary<string, List<object>> ReportSummaryFields = new Dictionary<string, List<object>>();
+        private List<object> WaterMarkList = new List<object>();
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         public IActionResult Index(string refid)
@@ -101,10 +104,7 @@ namespace ExpressBase.Web.Controllers
             DrawDetail();
             DrawReportFooter();
             d.Close();
-            ms1.Position = 0;
-            PdfReader pdfReader = new PdfReader(ms1);
-            PdfStamper stamp = new PdfStamper(pdfReader, ms1);
-            Watermark(pdfReader, d, stamp);
+            DrawWaterMark(ms1);
             ms1.Position = 0;//important
             return new FileStreamResult(ms1, "application/pdf");
         }
@@ -419,27 +419,20 @@ namespace ExpressBase.Web.Controllers
             }
             else if (field is EbImg)
             {
-                // field.DrawMe(d);
-                //byte[] fileByte = this.ServiceClient.Post<byte[]>
-                //     (new DownloadFileRequest
-                //     {
-                //         FileDetails = new FileMeta
-                //         {
-                //             FileName = "dp_1_micro.jpg",
-                //             FileType = "jpg"
-                //         }
-                //     });
-                var client = new WebClient();
-                client.Headers.Add(HttpRequestHeader.Authorization ,this.ServiceClient.BearerToken);
-                var x = client.DownloadString("http://eb-roby-dev.expressbase.com/staticFile?filename=5a3ba5116656d613acd3d0fa.jpg");
-                //var x = "";
-                //var x = "http://localhost:5000/static/dp_1_micro.jpg";
-                //iTextSharp.text.Image myImage = iTextSharp.text.Image.GetInstance(https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Googleplex-Patio-Aug-2014.JPG/800px-Googleplex-Patio-Aug-2014.JPG);
-                //myImage.ScaleToFit(300f, 250f);
-                //myImage.SpacingBefore = 50f;
-                //myImage.SpacingAfter = 10f;
-                //myImage.Alignment = Element.ALIGN_CENTER;
-                //d.Add(myImage);
+                byte[] fileByte = this.ServiceClient.Post<byte[]>
+                     (new DownloadFileRequest
+                     {
+                         FileDetails = new FileMeta
+                         {
+                             FileName = (field as EbImg).Image + ".jpg",
+                             FileType = "jpg"
+                         }
+                     });
+                field.DrawMe(d, fileByte);
+            }
+            else if (field is EbWaterMark)
+            {
+                WaterMarkList.Add(field);
             }
             else if ((field is EbText) || (field is EbCircle) || (field is EbRect) || (field is EbHl) || (field is EbVl) || (field is EbArrR) || (field is EbArrL) || (field is EbArrU) || (field is EbArrD) || (field is EbByArrH) || (field is EbByArrV))
             {
@@ -463,25 +456,28 @@ namespace ExpressBase.Web.Controllers
             return column_val;
         }
 
-        public void Watermark(PdfReader pdfReader, Document d, PdfStamper stamp)
+        public void DrawWaterMark(MemoryStream ms1)
         {
-            //string WatermarkLocation = "F:/ExpressBase.Core/ExpressBase.ServiceStack/wwwroot/images/EB_Logo.png";
-            //iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(WatermarkLocation);
-            //img.RotationDegrees = 45;
-            //img.ScaleToFit(d.PageSize.Width, d.PageSize.Height);
-            //img.SetAbsolutePosition(0, d.PageSize.Height); // set the position of watermark to appear (0,0 = bottom left corner of the page)
-            // PdfContentByte waterMark;
-            PdfContentByte canvas;
-            iTextSharp.text.Font fo = new iTextSharp.text.Font(5, 20, 5, BaseColor.LightGray);
-            for (int page = 1; page <= pdfReader.NumberOfPages; page++)
+            ms1.Position = 0;
+            pdfReader = new PdfReader(ms1);
+            stamp = new PdfStamper(pdfReader, ms1);
+            byte[] fileByte = null;
+            foreach (var field in WaterMarkList)
             {
-                //waterMark = stamp.GetUnderContent(page);
-                //waterMark.AddImage(img);
-                canvas = stamp.GetUnderContent(page);
-                ColumnText.ShowTextAligned(canvas, Element.ALIGN_CENTER, new Phrase("This is some extra text added to the left of the page", fo), d.PageSize.Width / 2, d.PageSize.Height / 2, 45);
+                if ((field as EbWaterMark).Image != string.Empty)
+                {
+                    fileByte = this.ServiceClient.Post<byte[]>
+                  (new DownloadFileRequest
+                  {
+                      FileDetails = new FileMeta
+                      {
+                          FileName = (field as EbWaterMark).Image + ".jpg",
+                          FileType = "jpg"
+                      }
+                  });
+                }
+            (field as EbWaterMark).DrawMe(pdfReader, d, stamp, fileByte);
             }
-            stamp.FormFlattening = true;
-            stamp.Close();
         }
     }
 }

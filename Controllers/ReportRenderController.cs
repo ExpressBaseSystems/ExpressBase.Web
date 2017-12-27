@@ -419,7 +419,6 @@ namespace ExpressBase.Web.Controllers
             }
             else if (field is EbImg)
             {
-                // field.DrawMe(d);
                 byte[] fileByte = this.ServiceClient.Post<byte[]>
                      (new DownloadFileRequest
                      {
@@ -429,17 +428,7 @@ namespace ExpressBase.Web.Controllers
                              FileType = "jpg"
                          }
                      });
-                //var client = new WebClient();
-                //client.Headers.Add(HttpRequestHeader.Authorization ,this.ServiceClient.BearerToken);
-                //var x = client.DownloadString("http://eb-roby-dev.expressbase.com/staticFile?filename=5a3ba5116656d613acd3d0fa.jpg");
-                ////var x = "";
-                //var x = "http://localhost:5000/static/dp_1_micro.jpg";
-                iTextSharp.text.Image myImage = iTextSharp.text.Image.GetInstance(fileByte);
-                myImage.ScaleToFit(300f, 250f);
-                myImage.SpacingBefore = 50f;
-                myImage.SpacingAfter = 10f;
-                myImage.Alignment = Element.ALIGN_CENTER;
-                d.Add(myImage);
+                field.DrawMe(d, fileByte);
             }
             else if ((field is EbText) || (field is EbCircle) || (field is EbRect) || (field is EbHl) || (field is EbVl) || (field is EbArrR) || (field is EbArrL) || (field is EbArrU) || (field is EbArrD) || (field is EbByArrH) || (field is EbByArrV))
             {

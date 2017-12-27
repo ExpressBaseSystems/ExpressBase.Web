@@ -21,7 +21,7 @@
     /*height: calc(100vh - 60px);*/
     height: 100%;
     width: 100%;
-    padding: 60px 60px 30px 60px;
+    padding: 40px 60px 60px 60px;
 }
 
 .sub-window-first {
@@ -154,6 +154,29 @@
     border: 1px solid #d6cacafa;
     border-radius: 10px;
     box-shadow: 4px 4px #dcd8d8fa;
+    padding: 1px 10px 10px 10px;
+}
+.dotsDiv {
+    height: 50px;
+    position: absolute;
+    background: white;
+    width: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ul#dotsul li {
+    display: inline;
+}
+.ultable {
+    display: table;
+    margin: 0 auto;
+}
+ul#dotsul {
+    padding-top: 10px;
 }
 
 /*#parent-div0::-webkit-scrollbar-track {

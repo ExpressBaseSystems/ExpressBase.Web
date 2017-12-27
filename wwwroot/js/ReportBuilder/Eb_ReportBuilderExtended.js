@@ -2,6 +2,7 @@
     this.sideBar = $("#side-toolbar");
     this.pageContainer = $("#page-outer-cont");
     this.pGcontainer = $("#PGgrid-report");
+    this.GroupSelect = [];
 
     this.headerSecSplitter = function (array) {
         Split(array, {
@@ -173,5 +174,50 @@
             }
         }
     };
+    this.keyClickDoc = function () {
+        $(document).on("keydown", this.keydownDocument.bind(this));
+    };
+    this.keydownDocument = function (e) {
+        switch (e.which) {
+            case 17:    //ctrl key
+                this.ctrlClickForMulSel();
+                break;           
+        }
+    };
+
+    this.ctrlClickForMulSel = function () {
+        $('.dropped').on("click", function (event) {            
+            $(event.target).addClass("marked");
+            this.GroupSelect.push($(event.target));
+        }.bind(this))
+    };
+
+    this.alignGroup = function (eType, selector, action, originalEvent) {
+        var _this = this;
+        var top = $(selector.selector).css("top");
+        var left = $(selector.selector).css("left");
+        var right = $(selector.selector).css("right");        
+        switch (eType) {
+            case "Top":
+                _this.applyToGroupSelect("top",top);
+                break;
+            case "Left":   
+                this.applyToGroupSelect("left", left);
+                break;
+            case "Bottom":
+                
+                break;
+            case "Right":
+                this.applyToGroupSelect("right", right);
+                break;
+        }
+    };
+    this.applyToGroupSelect = function (item,val) {
+        for (id = 0; i < this.GroupSelect.length; i++) {
+            $("#" + this.GroupSelect[id]).css(item, val);
+        }
+    };
+
     this.minMaxToolbar();
+    this.keyClickDoc();
 }

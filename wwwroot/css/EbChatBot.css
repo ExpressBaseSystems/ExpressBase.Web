@@ -286,16 +286,47 @@
         color: white;
         background-color: rgba(0,0,0,.4);
     }
+
     .img-box img {
         border-radius: 10px;
     }
 
 .img-edit {
     position: absolute;
-    right: 1px;
-    top: 1px;
+    right: 0px;
+    top: 0px;
     color: #333;
     border-radius: 18px;
     padding: 2px 6px;
     background-color: rgba(255,255,255,.5);
+}
+
+.img-loader {
+    display: none;
+    background: url(../images/svg/imageLoader.svg) no-repeat center;
+    background-size: 12%;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.5215686274509);
+    position: absolute;
+}
+
+.file-name {
+    display: none;
+    position: absolute;
+    top: calc(50% - 10px);
+    white-space: nowrap;
+    letter-spacing: 0.05mm;
+    padding: 0 5px;
+    color: white;
+    direction: rtl;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+    background-color: rgba(0,0,0,.4);
+}
+
+.img-box:hover .file-name {
+    display: block;
 }

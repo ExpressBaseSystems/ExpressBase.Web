@@ -13,7 +13,7 @@
     this.bearerToken = null;
     this.refreshToken = null;
     this.botdpURL = 'url(../images/svg/chatBot.svg)center center no-repeat';
-    this.ebbotThemeColor = '#ffb100';//'#31d031';
+    this.ebbotThemeColor = '#31d031';
     this.initControls = new InitControls(this);
 
     this.formsList = {};
@@ -211,14 +211,27 @@
     }
 
     this.ctrlSend = function (e) {
+        console.log("ctrlSend()");
         var id = this.editingCtrlName || this.curCtrl.name;
         var $btn = $(e.target).closest(".btn");
-        var $msgDiv = $btn.closest('.msg-cont-bot');
+        var $msgDiv = $btn.closest('.msg-cont');
         var idx = parseInt($btn.attr('idx')) + 1;
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         var inpVal = this.getValue($input);
-        this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        if (this.curCtrl.type === "ImageUploader")
+            this.replyAsImage($msgDiv, $input[0], idx);
+        else {
+            this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.callGetNextControl(idx);
+            this.lastval = $('#' + id).val();
+        }
+        this.formValues[id] = this.lastval;
+        this.editingCtrlName = null;
+        this.lastval = null;
+    }.bind(this);
+
+    this.callGetNextControl = function (idx) {
         if (idx !== this.formControls.length) {
             if (!this.formValues[this.editingCtrlName])
                 this.getNextControl(idx);
@@ -230,10 +243,48 @@
             }
 
         }
-        this.formValues[id] = $('#' + id).val();
-        this.editingCtrlName = "";
+    };
 
-    }.bind(this);
+    this.replyAsImage = function ($prevMsg, input, idx) {
+        console.log("replyAsImage()");
+        var ctrlname = this.curCtrl.name;
+        var fname = input.files[0].name;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                this.sendImgAfter($prevMsg.hide(), e.target.result, ctrlname, fname);
+                $(`[for=${ctrlname}] .img-loader:last`).show(100);
+                this.uploadImage(e.target.result, ctrlname, idx);
+            }.bind(this);
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    this.sendImgAfter = function ($prevMsg, path, ctrlname, filename) {
+        console.log("sendImgAfter()");
+        var $msg = this.$userMsgBox.clone();
+        $msg.find(".msg-wraper-user").css("padding", "5px");
+        var $imgtag = $(`<div class="img-box" for="${ctrlname}"><div class="img-loader"></div><span class="img-edit"  idx="${ this.curForm.controls.indexOf(this.curCtrl) }"  for="${ctrlname}" name="ctrledit"><i class="fa fa-pencil" aria-hidden="true"></i></span><img src="${path}" alt="amal face" width="100%"><div class="file-name">${filename}</div>${this.getTime()}</div>`);
+        $msg.find('.msg-wraper-user').append($imgtag);
+        $msg.insertAfter($prevMsg);
+        $('.eb-chatBox').scrollTop(99999999999);
+    };
+
+
+    this.uploadImage = function (url, ctrlname, idx) {
+        console.log("uploadImage");
+        var URL = url.substring(url.indexOf(",/") + 1);
+        $.post("../Bote/UploadImageOrginal", {
+            'base64': URL,
+            "filename": ctrlname,
+            "refreshToken": this.refreshToken,
+            "bearerToken": this.bearerToken
+        }).done(function (result) {
+            $(`[for=${ctrlname}] .img-loader:last`).hide(100);
+            this.callGetNextControl(idx);
+            this.lastval = result;
+        }.bind(this))
+    };
 
     this.ctrlEdit = function (e) {
         var $btn = $(e.target).closest("span");
@@ -273,20 +324,10 @@
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
-    this.sendImage = function (path, For) {
-        var $msg = this.$userMsgBox.clone();
-        $msg.find(".msg-wraper-user").css("padding", "5px");
-        var $imgtag = $(`<div class="img-box"><span class="img-edit" for="${For}" name="ctrledit"><i class="fa fa-pencil" aria-hidden="true"></i></span><img src="${path}" alt="amal face" width="100%">${this.getTime()}</div>`);
-        $msg.find('.msg-wraper-user').append($imgtag);
-        this.$chatBox.append($msg)
-        $('.eb-chatBox').scrollTop(99999999999);
-    };
-
-    this.sendCtrlAfter = function ($ctrl, msg) {
-        $ctrl.attr("ctrlhidden", "true");
+    this.sendCtrlAfter = function ($prevMsg, msg) {
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').html(msg).append(this.getTime());;
-        $msg.insertAfter($ctrl);
+        $msg.insertAfter($prevMsg);
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
@@ -314,6 +355,8 @@
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
                     if (this.curCtrl && $('#' + this.curCtrl.name).length === 1)
                         this.loadcontrol();
+                    if (this.curForm)
+                        $msg.attr("form", this.curForm.name);
                 }
                 else
                     $msg.find('.msg-wraper-bot').text(msg).append(this.getTime());
@@ -348,7 +391,7 @@
 
     this.showConfirm = function () {
         this.formValues = {};
-        $("[ctrlhidden=true]").remove();
+        $(`[form=${this.curForm.name}]`).remove();
         var msg = 'Your leave application submitted successfully';
         this.getMsg(msg);
         this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));

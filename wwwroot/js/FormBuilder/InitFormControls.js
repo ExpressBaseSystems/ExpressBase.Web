@@ -29,30 +29,11 @@
     };
 
     this.ImageUploader = function (ctrl) {
-        $('#' + ctrl.name).on("change", function (input) {
-            $(input.target).closest(".ctrl-wraper").next("[name=ctrlsend]").click();
-            if (input.target.files && input.target.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    this.Bot.sendImage(e.target.result, ctrl.name);
-                    this.xxx(e.target.result);
-                }.bind(this);
-                reader.readAsDataURL(input.target.files[0]);
-            }
-            
-            
-
+        $('#' + ctrl.name).off("change").on("change", function (input) {
+            $(input.target).closest(".ctrl-wraper").next("[name=ctrlsend]").click();  
         }.bind(this));
     };
-    this.xxx = function (url) {
-        $.ajax({
-            type: 'POST',
-            url: "../StaticFile/UploadImageAsync",
-            data: url
-        }).done(function (result) {
-            console.log(result);
-        })
-    }
+
     this.RadioGroup = function (ctrl) {
         $('#' + ctrl.name).find("input").on("change", function (e) {
             var val = $('#' + this.id + 'Lbl').text().trim();

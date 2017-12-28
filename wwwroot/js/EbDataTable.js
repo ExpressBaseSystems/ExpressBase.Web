@@ -234,6 +234,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
 
     this.propGrid.PropertyChanged = function (obj, Pname) {
+        this.isSecondTime = true;
         this.EbObject = obj;
         if (this.login == "dc")
             commonO.Current_obj = obj;
@@ -723,7 +724,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.contextMenu();
         if (this.login == "uc") {
             this.initCompleteflag = true;
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name,"initComplete");
+            if (this.isSecondTime)
+                this.ModifyingDVs(dvcontainerObj.currentObj.EbSid,"initComplete");
         }
     }
 
@@ -779,7 +781,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
                     dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
                     dvcontainerObj.dvcol[key].drawGraphHelper(this.Api.data());
-                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name,"draw");
+                    this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.EbSid,"draw");
                 }
                 else {
                     if (source === "draw") {
@@ -787,7 +789,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         dvcontainerObj.dvcol[key].Api.clear().rows.add(this.Api.data());
                         dvcontainerObj.dvcol[key].EbObject.data = dvcontainerObj.currentObj.data;
                         dvcontainerObj.dvcol[key].Api.columns.adjust().draw();
-                        this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.Name, "draw");
+                        this.ModifyingDVs(dvcontainerObj.dvcol[key].EbObject.EbSid, "draw");
                     }
                 }
             }
@@ -802,7 +804,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addFilterEventListeners();
         this.Api.columns.adjust();
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name,"draw");
+            this.ModifyingDVs(dvcontainerObj.currentObj.EbSid,"draw");
         }
     };
 

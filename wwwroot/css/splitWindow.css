@@ -187,6 +187,23 @@
 .dot a i:hover{
     color:blue!important;
 }
+
+.ppcont {
+    width: 225px;
+    height: 75%;
+    position: absolute;
+    top: 86px;
+    right: 66px;
+    z-index: 1;
+}
+
+.filterCont {
+    width: 200px;
+    position: absolute;
+    top: 86px;
+    max-height: 526px;
+    z-index: 1;
+}
 /*#dotsul {
     padding-top: 10px;
 }*/

@@ -85,7 +85,7 @@
     }
 
     .form-buider-form .btn-group {
-        width: 100%!important;
+        width: 100% !important;
     }
 
 .form-save-wraper {
@@ -243,3 +243,38 @@
     .dev-chat-cont .Eb-ctrlContainer {
         /*background-color:white;*/
     }
+
+.cards-cont {
+    overflow-y: scroll;
+    border: solid 1px red;
+}
+
+.card-cont {
+    border: solid 1px #e5e5e5;
+    border-radius: 1.3em;
+    min-height: 300px;
+    display: inline-block;
+    width: 30%;
+    margin: 0 5px;
+    background-color: white;
+    padding: 8px 12px;
+    text-overflow: ellipsis;
+    font-family: 'Helvetica Neue', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+}
+
+.card-label {
+    font-size: 12pt;
+    line-height: 15pt;
+    font-weight: bold;
+}
+
+.card-content {
+    color: rgba(0, 0, 0, .40);
+}
+
+.card-bottom {
+    padding: 8px 12px;
+}
+.card-img {
+    border-radius: 1.3em 1.3em 0 0;
+}

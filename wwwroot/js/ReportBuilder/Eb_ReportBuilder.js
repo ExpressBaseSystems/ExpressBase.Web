@@ -220,13 +220,36 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.createPage = function () {
         this.createHeaderBox();
         $("#PageContainer").append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'>`);
+        $("#PageContainer").append(`<div class='page-reportLayer' id='page-reportLayer' style='display:none;position:relative;width:${this.width};height:${this.height}'>`);
+        this.repExtern.showReport();
+
         $(".page").resizable({
             handles: "s",
             resize: this.onPageResize.bind(this)
         });
+        //$(".page").droppable({ accept: ".draggable-to-page", drop: this.onDropFnofPage.bind(this) });
+        $(".page-reportLayer").droppable({ accept: ".draggable-to-page", drop: this.onDropFnofPage.bind(this) }); 
+        //$(".page-reportLayer").droppable({ accept: ".draggable-to-page", drop: this.onDropFn.bind(this) });
         $(".page .ui-resizable-s").addClass("pageReSizeHandle");
         this.pageSplitters();
     };
+
+    this.onDropFnofPage = function (event, ui) {
+        this.posLeft = event.pageX;
+        this.posTop = event.pageY;
+        this.dropLoc = $(event.target);
+        this.col = $(ui.draggable);
+        this.Objtype = this.col.attr('eb-type');
+        var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
+        var obj = new EbObjects["Eb" + this.Objtype](Objid);
+        this.dropLoc.append(obj.$Control.outerHTML());
+        obj.Top = (this.posTop - this.dropLoc.offset().top);
+        obj.Left = (this.posLeft - this.dropLoc.offset().left);
+        this.objCollection[Objid] = obj;
+        //this.RefreshControl(obj);
+        this.repExtern.refreshControlReport(obj);
+    };
+
     this.onPageResize = function () {
         $('.headersections,.multiSplit').css("height", $('.page').height());
         $(".rulerleft").css("height", $('.page').height());
@@ -371,7 +394,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.font = null;
         this.reDragLeft = null;
         this.reDragTop = null;
-        $('.draggable').draggable({
+        $('.draggable,.draggable-to-page').draggable({
             cancel: "a.ui-icon",
             revert: "invalid",
             helper: "clone",
@@ -512,10 +535,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 "fold2": {
                     "name": "Align", icon: "",
                     "items": {
-                        "Top": { name: "Top", icon: "fa-align-left", callback: this.repExtern.alignGroup.bind(this) },
-                        "Bottom": { name: "Bottom", icon: "fa-align-right", callback: this.repExtern.alignGroup.bind(this) },
-                        "Left": { name: "Left", icon: "fa-align-center", callback: this.repExtern.alignGroup.bind(this) },
-                        "Right": { name: "Right", icon: "fa-align-justify", callback: this.repExtern.alignGroup.bind(this) },
+                        "Top": { name: "Top", icon: "", callback: this.repExtern.alignGroup.bind(this) },
+                        "Bottom": { name: "Bottom", icon: "", callback: this.repExtern.alignGroup.bind(this) },
+                        "Left": { name: "Left", icon: "", callback: this.repExtern.alignGroup.bind(this) },
+                        "Right": { name: "Right", icon: "", callback: this.repExtern.alignGroup.bind(this) },
                     }
                 }
             }
@@ -723,6 +746,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.findPageSections = function (i, sections) {
         this.sections = $(sections).attr('id');
+        if ($(sections).attr("eb-type") === "WaterMark")
+            this.EbObject.WaterMarks.push(this.objCollection[this.sections]);
+        else
         $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
     };//........save/commit
 
@@ -864,6 +890,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.changeSummaryFunc(obj);
             this.RefreshControl(obj);
         }
+        else if (pname === "BackgroundImage")
+            this.repExtern.setBackgroud(obj.BackgroundImage);
         else {
             this.RefreshControl(obj);
         }
@@ -892,15 +920,5 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//report execution start func
     this.init();
 };
-//background image
-var setBackgroud = function (input) {
-    console.log(input);
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $('#page').css({ 'background-image': 'url(' + e.target.result + ')', 'width': $('#page').width(), 'background-repeat': 'no-repeat' });
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-};
+
 

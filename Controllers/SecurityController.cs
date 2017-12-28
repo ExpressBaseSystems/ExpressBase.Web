@@ -70,7 +70,7 @@ namespace ExpressBase.Web.Controllers
 			return fr.UserList;
 		}
 
-		public string SaveRole(int _roleId,string _roleName,string _roleDesc,int _appId,string _permission)
+		public string SaveRole(int _roleId,string _roleName,string _roleDesc,int _appId,string _permission, string _role2role, string _users)
 		{
 			Dictionary<string, object> Dict = new Dictionary<string, object>();
 			string return_msg;
@@ -78,9 +78,9 @@ namespace ExpressBase.Web.Controllers
 			Dict["applicationid"] = _appId;
 			Dict["role_name"] = _roleName;
 			Dict["Description"] = _roleDesc;
-			Dict["users"] = string.Empty;
+			Dict["users"] = string.IsNullOrEmpty(_users) ? string.Empty : _users;
 			Dict["permission"] = string.IsNullOrEmpty(_permission) ? string.Empty : _permission;
-			Dict["dependants"] =  string.Empty;
+			Dict["dependants"] = string.IsNullOrEmpty(_role2role) ? string.Empty : _role2role;
 
 			SaveRoleResponse res = this.ServiceClient.Post<SaveRoleResponse>(new SaveRoleRequest { Colvalues = Dict });
 			if (res.id == 0)

@@ -477,6 +477,22 @@
     float: left;   
 }
 
+.layers-container {
+    background: white;
+    margin: 10px 10px 10px 0px;
+}
+.layer-head {
+    width:100%;
+    background:#cccccc;
+}
+.layer-body {
+    padding: 10px;
+}
+.section-layer, .report-layer {
+    cursor: pointer;
+    padding: 5px;
+    margin-bottom: 5px;
+} 
 .measurement {
     height: 28px;
     border-left: 0;
@@ -709,11 +725,10 @@
     /* -webkit-user-select: none;
   user-select: none; */
 }
-.marked:before {
-    background-color: red;
-    opacity: .5;
-    content: "";
-    display: block;
-    height: 100%;
-    width: 100%;
+.marked{
+    background-color: #336699 !important;
+    color: white !important;
+}
+.page-reportLayer{
+    background:white;
 }

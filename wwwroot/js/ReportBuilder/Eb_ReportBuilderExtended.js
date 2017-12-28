@@ -178,44 +178,79 @@
         $(document).on("keydown", this.keydownDocument.bind(this));
     };
     this.keydownDocument = function (e) {
+        this.ctrl = e.which;
         switch (e.which) {
             case 17:    //ctrl key
                 this.ctrlClickForMulSel();
+                this.ctrl = null;
                 break;           
         }
     };
 
     this.ctrlClickForMulSel = function () {
-        $('.dropped').on("click", function (event) {            
-            $(event.target).addClass("marked");
-            this.GroupSelect.push($(event.target));
-        }.bind(this))
+        if (this.ctrl === 17)
+            $('.dropped').on("click", this.mark.bind(this)); 
+    };
+    this.mark = function (event) {
+        $(event.target).addClass("marked");        
     };
 
     this.alignGroup = function (eType, selector, action, originalEvent) {
-        var _this = this;
+        
         var top = $(selector.selector).css("top");
-        var left = $(selector.selector).css("left");
-        var right = $(selector.selector).css("right");        
+        var left = $(selector.selector).css("left");  
+        var parent = $(selector.selector).parent();
         switch (eType) {
             case "Top":
-                _this.applyToGroupSelect("top",top);
+                this.applyToGroupSelect(parent,"top",top);
                 break;
             case "Left":   
-                this.applyToGroupSelect("left", left);
+                this.applyToGroupSelect(parent,"left", left);
                 break;
             case "Bottom":
                 
                 break;
             case "Right":
-                this.applyToGroupSelect("right", right);
+                this.applyToGroupSelect(parent,"left", left);
                 break;
         }
+    }.bind(this);
+
+    this.applyToGroupSelect = function (parent,item,val) {
+        $.each(parent.children(".marked"), function (i, obj) {
+            $(obj).css(item, val);
+            $(obj).removeClass("marked");
+        });
     };
-    this.applyToGroupSelect = function (item,val) {
-        for (id = 0; i < this.GroupSelect.length; i++) {
-            $("#" + this.GroupSelect[id]).css(item, val);
-        }
+
+    this.setBackgroud = function (url) {
+        $(".page").css("background", "url(http://eb_roby_dev.localhost:5000/static/" + url + ".jpg) no-repeat");
+    };
+    this.showReport = function () {
+        $("#reportLayer").on("click", function (e) {
+            $("#page").hide();
+            $("#page-reportLayer").show();
+        });
+        $("#sectionLayer").on("click", function (e) {
+            $("#page").show();
+            $("#page-reportLayer").hide();
+        });
+    };
+    this.refreshControlReport = function (obj) {
+        var NewHtml = obj.$Control.outerHTML();
+        var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
+            }
+        });
+        $("#" + obj.EbSid).replaceWith(NewHtml);    
+            $("#" + obj.EbSid).draggable({
+                cursor: "crosshair", containment: ".page-reportLayer"               
+            });               
+        $("#" + obj.EbSid).attr("tabindex", "1");
+        //$("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));
     };
 
     this.minMaxToolbar();

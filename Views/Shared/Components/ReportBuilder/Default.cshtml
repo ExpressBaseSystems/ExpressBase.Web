@@ -115,7 +115,7 @@
                         <div class="draggable tool-box-div" eb-type="Text"><i class="fa fa-text-width" aria-hidden="true"></i> Text </div>
                         <div class="draggable tool-box-div" eb-type="Barcode"><i class="fa fa-barcode" aria-hidden="true"></i> Barcode </div>
                         <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-qrcode" aria-hidden="true"></i> QR Code </div>
-                        <div class="draggable tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Image </div>
+                        <div class="draggable draggable-to-page tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Image </div>                       
                         <div class="draggable-to-page tool-box-div" eb-type="WaterMark"><i class="fa fa-map-marker" aria-hidden="true"></i> Water Mark </div>
                         <div class="draggable tool-box-div" eb-type="SerialNumber"><i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Serial Number </div>
                         <button class="btn" id="font"><i> test </i></button>
@@ -167,10 +167,10 @@
             <div class="layers-container">
             <div class="layer-head">Layers</div>
                 <div class="layer-body">
-                    <div class="section-layer form-control" id="reportLayer">
+                    <div class="section-layer layer-focus form-control" tabindex="1" id="reportLayer">
                         <i class="fa fa-file-o" aria-hidden="true"></i>Report Layer 
                     </div>
-                    <div class="report-layer form-control" id="sectionLayer">
+                    <div class="report-layer layeractive form-control"  tabindex="1" id="sectionLayer">
                         <i class="fa fa-puzzle-piece" aria-hidden="true"></i>Sections Layer 
                     </div>
                 </div>              

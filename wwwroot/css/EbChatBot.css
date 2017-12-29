@@ -41,6 +41,7 @@
     color: #555;
     padding: 4px 10px;
     font-size: 100%;
+    border: .107em solid #00000021;
 }
 
 .msg-wraper-user {
@@ -197,15 +198,19 @@
     margin-bottom: 2px;
 }
 
-
-.eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
-    border-radius: 15px;
-    color: white;
-    background: var(--botThemeColor);
-    border: none;
+.msg-cont .btn:focus {
     outline: none;
-    padding: 4px;
+    filter: contrast(1.4);
+    box-shadow:none;
 }
+    .eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
+        border-radius: 15px;
+        color: white;
+        background: var(--botThemeColor);
+        border: none;
+        outline: none;
+        padding: 4px;
+    }
 
 .chat-ctrl-cont [name=ctrlsend] {
     font-size: 13px;
@@ -337,4 +342,12 @@
 
 .img-box:hover .file-name {
     display: block;
+}
+.eb-chatBox .card-cont {
+    width: 100%;
+    /*border:none;*/
+}
+
+.eb-chatBox .card-cont {
+    margin:0;
 }

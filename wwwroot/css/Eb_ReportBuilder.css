@@ -177,6 +177,14 @@
         color: #000000;
         border-right: 0;
     }
+.headersections-report-layer{
+    width: 80px;
+    float: left;
+    border: 1px solid #cccccc;
+    background-color: #fafafa;
+    color: #000000;
+    border-right: 0;
+}
 .reportmenu {   
     position: fixed;
     z-index: 5;      
@@ -407,6 +415,7 @@
 }
 .pGreportBuilder {
     margin-right: 10px;
+    height: 68vh;
 }
 
 .head_Box1 {
@@ -462,7 +471,7 @@
 }
 
 .eb-rpt-container .PGgrid {
-    min-height: 1000px;
+    height: 100%;
     padding: 0;
     z-index: 4;
     background-color: #f2f2f2;
@@ -570,35 +579,35 @@
 .tool-box-div {
     padding: 5px 4%;
 }
-.page .ui-resizable-handle {
+.ui-resizable-handle {
     background: #89c5dc;
     height: 7px;
     width: 7px;
 }
-.page .ui-resizable-n {          
+.ui-resizable-n {          
     top: -5px;
     left: 50%;
 }
-.page .ui-resizable-e {
+.ui-resizable-e {
     right: -5px;
     top: 49%;
 }
-.page .ui-resizable-w {  
+.ui-resizable-w {  
     left: -5px;
     top: 49%;   
 }
-.page .ui-resizable-s {   
+.ui-resizable-s {   
     bottom: -5px;
     left: 50%;
 }
-.page ui-resizable-se .ui-icon, .ui-widget-content .ui-icon {
+.ui-resizable-se .ui-icon, .ui-widget-content .ui-icon {
     background-image:none;   
 }
-.page .ui-resizable-se {   
+.ui-resizable-se {   
     right: -5px;
     bottom: -5px;
 }
-.page .dropped:focus {
+.dropped:focus {
     outline: none !important;
     border-color: #89c5dc;
 }
@@ -729,6 +738,13 @@
     background-color: #336699 !important;
     color: white !important;
 }
-.page-reportLayer{
-    background:white;
+.page-reportLayer {    
+    margin-left: 79px;
+    border: 1px solid #d8d8d8;
+    background-color: white;
+}
+.layeractive {
+    background: #336699;
+    color: white;
+    outline: none;
 }

@@ -23,7 +23,7 @@
     this.formControls = [];
     this.formValues = {};
     this.editingCtrlName = null;
-    this.lastctrlIdx = 0;
+    this.lastCtrlIdx = 0;
     this.FB = null;
     this.FBResponse = {};
     this.EXPRESSbase_SOLUTION_ID;
@@ -217,7 +217,7 @@
         var $btn = $(e.target).closest(".btn");
         var $msgDiv = $btn.closest('.msg-cont');
         var next_idx = parseInt($btn.attr('idx')) + 1;
-        this.lastctrlIdx = (next_idx > this.lastctrlIdx) ? next_idx : this.lastctrlIdx;
+        this.lastCtrlIdx = (next_idx > this.lastCtrlIdx) ? next_idx : this.lastCtrlIdx;
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         var inpVal = this.getValue($input);
@@ -225,7 +225,7 @@
             this.replyAsImage($msgDiv, $input[0], next_idx);
         else {
             this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-            this.callGetControl(this.lastctrlIdx);
+            this.callGetControl(this.lastCtrlIdx);
             this.lastval = $('#' + id).val();
         }
         this.formValues[id] = this.lastval;
@@ -237,15 +237,32 @@
         if (idx !== this.formControls.length) {
             if (!this.formValues[this.editingCtrlName])
                 this.getControl(idx);
+            else
+                this.enableCtrledit();
+
         }
         else {
             if ($("[name=formsubmit]").length === 0) {
                 this.getMsg('Are you sure? Can I submit?');
                 this.getMsg($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
             }
+            this.enableCtrledit();
 
         }
     };
+
+    this.getControl = function (idx) {
+        if (idx === this.formControls.length)
+            return;
+        var $ctrlCont = $(this.formControls[idx][0].outerHTML);
+        var $control = $('<div class="chat-ctrl-cont">' + this.formControls[idx][0].outerHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>');
+        this.curCtrl = this.curForm.controls[idx];
+        var lablel = this.curCtrl.label + ' ?';
+        if (this.curCtrl.helpText)
+            lablel += ` (${this.curCtrl.helpText})`;
+        this.getMsg(lablel);
+        this.getMsg($control);
+    }.bind(this);
 
     this.replyAsImage = function ($prevMsg, input, idx) {
         console.log("replyAsImage()");
@@ -266,7 +283,7 @@
         console.log("sendImgAfter()");
         var $msg = this.$userMsgBox.clone();
         $msg.find(".msg-wraper-user").css("padding", "5px");
-        var $imgtag = $(`<div class="img-box" for="${ctrlname}"><div class="img-loader"></div><span class="img-edit"  idx="${ this.curForm.controls.indexOf(this.curCtrl) }"  for="${ctrlname}" name="ctrledit"><i class="fa fa-pencil" aria-hidden="true"></i></span><img src="${path}" alt="amal face" width="100%"><div class="file-name">${filename}</div>${this.getTime()}</div>`);
+        var $imgtag = $(`<div class="img-box" for="${ctrlname}"><div class="img-loader"></div><span class="img-edit"  idx="${this.curForm.controls.indexOf(this.curCtrl)}"  for="${ctrlname}" name="ctrledit"><i class="fa fa-pencil" aria-hidden="true"></i></span><img src="${path}" alt="amal face" width="100%"><div class="file-name">${filename}</div>${this.getTime()}</div>`);
         $msg.find('.msg-wraper-user').append($imgtag);
         $msg.insertAfter($prevMsg);
         $('.eb-chatBox').scrollTop(99999999999);
@@ -295,19 +312,7 @@
         $btn.closest('.msg-cont').remove();
         this.editingCtrlName = this.curForm.controls[idx].name;
         $("#" + this.editingCtrlName).click().select();
-    }.bind(this);
-
-    this.getControl = function (idx) {
-        if (idx === this.formControls.length)
-            return;
-        var $ctrlCont = $(this.formControls[idx][0].outerHTML);
-        var $control = $('<div class="chat-ctrl-cont">' + this.formControls[idx][0].outerHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>');
-        this.curCtrl = this.curForm.controls[idx];
-        var lablel = this.curCtrl.label + ' ?';
-        if (this.curCtrl.helpText)
-            lablel += ` (${this.curCtrl.helpText})`;
-        this.getMsg(lablel);
-        this.getMsg($control);
+        this.disableCtrledit();
     }.bind(this);
 
     this.sendMsg = function (msg) {
@@ -393,6 +398,7 @@
 
     this.showConfirm = function () {
         this.formValues = {};
+        this.lastCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
         var msg = 'Your leave application submitted successfully';
         this.getMsg(msg);
@@ -413,6 +419,14 @@
 
     this.authFailed = function () {
         alert("auth failed");
+    };
+
+    this.enableCtrledit = function () {
+        $('[name="ctrledit"]').show(50);
+    };
+
+    this.disableCtrledit = function () {
+        $('[name="ctrledit"]').hide(50);
     };
 
     this.authenticate = function () {

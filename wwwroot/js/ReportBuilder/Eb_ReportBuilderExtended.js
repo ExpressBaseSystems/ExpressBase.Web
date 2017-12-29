@@ -226,33 +226,7 @@
     this.setBackgroud = function (url) {
         $(".page").css("background", "url(http://eb_roby_dev.localhost:5000/static/" + url + ".jpg) no-repeat");
     };
-    this.showReport = function () {
-        $("#reportLayer").on("click", function (e) {
-            $("#page").hide();
-            $("#page-reportLayer").show();
-        });
-        $("#sectionLayer").on("click", function (e) {
-            $("#page").show();
-            $("#page-reportLayer").hide();
-        });
-    };
-    this.refreshControlReport = function (obj) {
-        var NewHtml = obj.$Control.outerHTML();
-        var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
-        $.each(metas, function (i, meta) {
-            var name = meta.name;
-            if (meta.IsUIproperty) {
-                NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
-            }
-        });
-        $("#" + obj.EbSid).replaceWith(NewHtml);    
-            $("#" + obj.EbSid).draggable({
-                cursor: "crosshair", containment: ".page-reportLayer"               
-            });               
-        $("#" + obj.EbSid).attr("tabindex", "1");
-        //$("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));
-    };
-
+   
     this.minMaxToolbar();
     this.keyClickDoc();
 }

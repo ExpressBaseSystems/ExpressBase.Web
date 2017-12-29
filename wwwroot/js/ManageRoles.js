@@ -15,7 +15,7 @@
     this.btnSaveAll = $("#btnSaveAll");
     this.loader = $("#loader1");
 
-    this.tileSetup = null;
+    this.subRolesTile = null;
 
 
     this.txtSearchRole = $("#txtSearchRole");
@@ -36,6 +36,8 @@
     this.init = function () {
         this.loadObjectsAndOperations.bind(this)();
         $("#formManageRoles").on('submit', this.onclickbtnSaveAll.bind(this));
+
+       
 
         //INIT ROLES TAB
         this.txtSearchRole.on('keyup', this.KeyUptxtSearchRole.bind(this));
@@ -74,19 +76,9 @@
             this.loadAppToSelect.bind(this)();
 
         }
-        this.selectAppChangeAction();
         
-        //****************************
-        var app_id = $("#selectApp").find(":selected").attr("data-id");
-        var obj = [];
-        for (var i = 0; i < this.roleList.length; i++) {
-            if (this.roleList[i].App_Id == app_id) {
-                obj.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Data1: this.roleList[i].Description});
-            }
-        }
-        this.tileSetup = new TileSetupJs($("#divroles"), "Add Roles", null, obj, null);
-        //******************************
-
+        
+        this.selectAppChangeAction();
     }
 
     //SUBROLES-----START------------------------------------------------------------------------------------
@@ -349,13 +341,14 @@
         }
         else
             return;
-       // <img class='img-thumbnail pull-right' src= '../static/dp/dp_${this.Id}_micro.jpg'/>
+       // <b>${this.Name.substring(0, 1).toUpperCase()}</b>
         $(objArray).each(function () {
             if (($(divSelectedDisplay).find(`[data-id='${this.Id}']`).length) === 0) {
                 $(divSelectedDisplay).append(`<div class="col-md-4 container-md-4" data-id=${this.Id} data-name=${this.Name}>
                                                     <div class="mydiv1" style="overflow:visible;">
                                                         <div class="icondiv1">
-                                                            <b>${this.Name.substring(0, 1).toUpperCase()}</b>
+                                                            <img class='img-thumbnail pull-right' src= '../static/dp/dp_${this.Id}_micro.jpg'/>
+                                                            
                                                         </div>
                                                         <div class="textdiv1">
                                                             <b>${this.Name}</b>
@@ -433,6 +426,22 @@
                 $(headtag).hide();
             }
         });
+
+
+        //**************INIT SUBROLES TILE**************
+        var app_id = $("#selectApp").find(":selected").attr("data-id");
+        var obj = [];
+        for (var i = 0; i < this.roleList.length; i++) {
+            if (this.roleList[i].App_Id == app_id) {
+                obj.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Data1: this.roleList[i].Description });
+            }
+        }
+        if (this.subRolesTile === null)
+            this.subRolesTile = new TileSetupJs($("#divroles"), "Add Roles", null, obj, null, this.chkItemCustomFunc, this);
+        else
+            this.subRolesTile.setObjectList(obj);
+        //***********************************************
+
     }
 
     this.onclickbtnSaveAll = function () {
@@ -473,7 +482,50 @@
         alert(msg);
         $(this.btnSaveAll).removeAttr("disabled");
     }
-    
-    
+
+    this.chkItemCustomFunc = function (_this, e)
+    {
+        _this.dependentList = [];
+        if ($(e.target).is(':checked')) {
+            _this.findDependentRoles($(e.target).attr("data-id"));
+            var st = "";
+            var itemid = [];
+            $.each($(this.divSelectedDisplay).children(), function (i, ob) {
+                for (var i = 0; i < _this.dependentList.length; i++) {
+                    if (_this.dependentList[i] == $(ob).attr('data-id')) {
+                        st += '\n' + $(ob).attr('data-name');
+                        itemid.push($(ob).attr('data-id'));
+                    }
+                }
+            });
+            if (st !== '') {
+                if (confirm("Continuing this Operation will Remove the following Item(s)"+ st +"\n\nClick OK to Continue")) {
+                    for (i = 0; i < itemid.length; i++){
+                        $(this.divSelectedDisplay).children("[data-id='" + itemid[i] + "']").remove();
+                    }
+                }
+                else {
+                    $(e.target).removeAttr("checked");
+                }
+            }
+        }
+
+        $.each($(this.divSearchResults).find('.SearchCheckbox:checked'), function (i, ob) {
+            _this.findDependentRoles($(ob).attr('data-id'));
+        });
+        $.each($(this.divSelectedDisplay).children(), function (i, ob) {
+            _this.dependentList.push(parseInt($(ob).attr('data-id')));
+            _this.findDependentRoles($(ob).attr('data-id'));
+        });
+        $.each($(this.divSearchResults).find('input'), function (i, ob) {
+            if (_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+                $(ob).removeAttr("checked");
+                $(ob).attr("disabled", "true");
+            }
+            else
+                $(ob).removeAttr("disabled");
+        });
+    }
+
     this.init();
 }

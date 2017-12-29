@@ -11,6 +11,7 @@ var DvContainerObj = function (settings) {
     this.rowData = settings.rowData;
     this.filterValues = settings.filterValues;
     this.tabnum = settings.tabnum;
+    this.RelatedDvlist = settings.DvList;
     this.dvcol = {};
     this.MainData = null;
     this.UniqueId = null;
@@ -107,28 +108,28 @@ var DvContainerObj = function (settings) {
     };
 
     this.gotoPrevious = function () {
-        prevfocusedId = focusedId;
-        focusedId = $("#" + focusedId).prev().attr("id");
-        $("#" + focusedId).focus();
-        var dvobj = this.dvcol[focusedId].EbObject;
-        this.dvRefid = this.dvcol[focusedId].Refid;
-        dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        dvcontainerObj.currentObj = dvobj;
-        if (dvcontainerObj.currentObj.Pippedfrom !== "")
-            $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
-        else
-            $("#Pipped").text("");
-        if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.dvcol[focusedId].GenerateButtons();
-            }
-        }
-        else {
-            if ($("#" + focusedId).find("canvas").length > 0) {
-                this.dvcol[focusedId].GenerateButtons();
-            }
-        }
-        this.modifyNavigation();
+        //prevfocusedId = focusedId;
+        //focusedId = $("#" + focusedId).prev().attr("id");
+        //$("#" + focusedId).focus();
+        //var dvobj = this.dvcol[focusedId].EbObject;
+        //this.dvRefid = this.dvcol[focusedId].Refid;
+        //dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+        //dvcontainerObj.currentObj = dvobj;
+        //if (dvcontainerObj.currentObj.Pippedfrom !== "")
+        //    $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
+        //else
+        //    $("#Pipped").text("");
+        //if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+        //    if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+        //        this.dvcol[focusedId].GenerateButtons();
+        //    }
+        //}
+        //else {
+        //    if ($("#" + focusedId).find("canvas").length > 0) {
+        //        this.dvcol[focusedId].GenerateButtons();
+        //    }
+        //}
+        //this.modifyNavigation();
     };
 
     this.gotoFirst = function () {
@@ -200,23 +201,23 @@ var DvContainerObj = function (settings) {
         $.LoadingOverlay("hide");
     }
 
-    this.ToggleParamDiv = function () {
-        $("#" + focusedId).children(".fd").toggle();
-        if ($("#" + focusedId).children(".fd").css("display") === "none")
-            $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-8").addClass("col-md-10");
-        else
-            $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-10").addClass("col-md-8");
+    //this.ToggleParamDiv = function () {
+    //    $("#" + focusedId).children(".fd").toggle();
+    //    if ($("#" + focusedId).children(".fd").css("display") === "none")
+    //        $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-8").addClass("col-md-10");
+    //    else
+    //        $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-10").addClass("col-md-8");
 
-    };
+    //};
 
-    this.TogglePPGrid = function () {
-        $("#ppgrid").toggle();
-        if ($("#ppgrid").css("display") === "none")
-            $($("#" + focusedId).children()[2]).removeClass("col-md-10").addClass("col-md-12");
-        else
-            $($("#" + focusedId).children()[2]).removeClass("col-md-12").addClass("col-md-10");
+    //this.TogglePPGrid = function () {
+    //    $("#ppgrid").toggle();
+    //    if ($("#ppgrid").css("display") === "none")
+    //        $($("#" + focusedId).children()[2]).removeClass("col-md-10").addClass("col-md-12");
+    //    else
+    //        $($("#" + focusedId).children()[2]).removeClass("col-md-12").addClass("col-md-10");
 
-    };
+    //};
 
     this.drawDv = function (e) {
         this.dvRefid = $(e.target).attr("data-refid");
@@ -242,7 +243,7 @@ var DvContainerObj = function (settings) {
                 }
             }
             //this.modifyNavigation();
-            $('.splitdiv_parent').slick('slickGoTo', 0, true);
+            $('.splitdiv_parent').slick('slickGoTo', 0, false);
         }
         else {
             dvcontainerObj.previousObj = dvcontainerObj.currentObj;
@@ -255,7 +256,7 @@ var DvContainerObj = function (settings) {
                     counter++;
                     dvObj = JSON.parse(dvObj);
                     dvcontainerObj.currentObj = dvObj;
-                    dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
+                    dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.EbSid;
                     $.LoadingOverlay("hide");
                     dvcontainerObj.btnGoClick();
                 }
@@ -292,27 +293,28 @@ var DvContainerObj = function (settings) {
             "<ul class='dropdown-menu'>" +
             "</ul>" +
             "</div>");
-        $.ajax({
-            type: "POST",
-            url: "../DV/getAllRelatedDV",
-            data: { refid: this.currentObj.DataSourceRefId },
-            success: this.RealtedajaxSuccess.bind(this,tid)
-        });
+        //$.ajax({
+        //    type: "POST",
+        //    url: "../DV/getAllRelatedDV",
+        //    data: { refid: this.currentObj.DataSourceRefId },
+        //    success: this.RealtedajaxSuccess.bind(this,tid)
+        //});
+        this.RealtedajaxSuccess(tid);
     };
 
-    this.RealtedajaxSuccess = function (tid, DvList) {
+    this.RealtedajaxSuccess = function (tid) {
         $("#Related" + tid + " .dropdown-menu").empty();
-        $.each(DvList, function (i, obj) {
-            if (this.dvRefid !== obj.refId) {
-                if (this.dvcol[Object.keys(this.dvcol)[0]].Refid === obj.refId)
-                    $("#Related" + tid + " .dropdown-menu").append("<li style='display:inline-flex;'><a href='#' data-refid='" + obj.refId + "' objtype='" + obj.ebObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.name + "</a><label style='font-size:10px;margin-left:-15px;margin-top:3px;'>(Default)</label></li>");
+        $.each(this.RelatedDvlist, function (i, obj) {
+            if (this.dvRefid !== obj.RefId) {
+                if (this.dvcol[Object.keys(this.dvcol)[0]].Refid === obj.RefId)
+                    $("#Related" + tid + " .dropdown-menu").append("<li style='display:inline-flex;'><a href='#' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.Name + "</a><label style='font-size:10px;margin-left:-15px;margin-top:3px;'>(Default)</label></li>");
                 else
-                    $("#Related" + tid + " .dropdown-menu").append("<li><a href='#' data-refid='" + obj.refId + "' objtype='" + obj.ebObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.name + "</a></li>");
+                    $("#Related" + tid + " .dropdown-menu").append("<li><a href='#' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.Name + "</a></li>");
             }
 
         }.bind(this));
         $("#Related" + tid + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
-    }.bind(this);
+    };
 
     this.createGoButton = function () {
         $("#obj_icons").empty();
@@ -383,7 +385,7 @@ var DvContainerObj = function (settings) {
         prevfocusedId = focusedId;
         //this.nextSlide = nextSlide;
         focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
-        //if (focusedId !== prevfocusedId) {
+        if (focusedId !== prevfocusedId) {
             $("#" + focusedId).focus();
             var dvobj = this.dvcol[focusedId].EbObject;
             this.dvRefid = this.dvcol[focusedId].Refid;
@@ -403,9 +405,9 @@ var DvContainerObj = function (settings) {
                     this.dvcol[focusedId].GenerateButtons();
                 }
             }
-            console.log(nextSlide);
-        //}
             this.focusDot();
+        }
+            
     };
 
     this.modifydivDots = function () {

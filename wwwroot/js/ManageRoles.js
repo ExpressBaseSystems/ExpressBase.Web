@@ -15,6 +15,9 @@
     this.btnSaveAll = $("#btnSaveAll");
     this.loader = $("#loader1");
 
+    this.tileSetup = null;
+
+
     this.txtSearchRole = $("#txtSearchRole");
     this.btnModalOk = $("#btnModalOk");
     this.divRoleSearchResults = $("#divRoleSearchResults");
@@ -72,6 +75,18 @@
 
         }
         this.selectAppChangeAction();
+        
+        //****************************
+        var app_id = $("#selectApp").find(":selected").attr("data-id");
+        var obj = [];
+        for (var i = 0; i < this.roleList.length; i++) {
+            if (this.roleList[i].App_Id == app_id) {
+                obj.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Data1: this.roleList[i].Description});
+            }
+        }
+        this.tileSetup = new TileSetupJs($("#divroles"), "Add Roles", null, obj, null);
+        //******************************
+
     }
 
     //SUBROLES-----START------------------------------------------------------------------------------------
@@ -134,8 +149,10 @@
             this.findDependentRoles($(e.target).attr("data-id"));
 
         $.each($("#divRoleSearchResults").find('input'), function (i, ob) {
-            if (this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1)
+            if (this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+                $(ob).removeAttr("checked");
                 $(ob).attr("disabled", "true");
+            }
             else
                 $(ob).removeAttr("disabled");
         }.bind(this));
@@ -170,12 +187,13 @@
         }
         else
             return;
+        //
         $(divSearchResultsChecked).each(function () {
             if (($(divSelectedDisplay).find(`[data-id='${$(this).attr('data-id')}']`).length) === 0) {
                 $(divSelectedDisplay).append(`<div class="col-md-4 container-md-4" data-id=${$(this).attr('data-id')} data-name=${$(this).attr('data-name')}>
                                                     <div class="mydiv1" style="overflow:visible;">
                                                         <div class="icondiv1">
-                                                             <b>${$(this).attr('data-name').substring(0, 1).toUpperCase()}</b>
+                                                        <b>${$(this).attr('data-name').substring(0, 1).toUpperCase()}</b>
                                                         </div>
                                                         <div class="textdiv1">
                                                             <b>${$(this).attr('data-name')}</b>
@@ -331,12 +349,13 @@
         }
         else
             return;
+       // <img class='img-thumbnail pull-right' src= '../static/dp/dp_${this.Id}_micro.jpg'/>
         $(objArray).each(function () {
             if (($(divSelectedDisplay).find(`[data-id='${this.Id}']`).length) === 0) {
                 $(divSelectedDisplay).append(`<div class="col-md-4 container-md-4" data-id=${this.Id} data-name=${this.Name}>
                                                     <div class="mydiv1" style="overflow:visible;">
                                                         <div class="icondiv1">
-                                                             <b>${this.Name.substring(0, 1).toUpperCase()}</b>
+                                                            <b>${this.Name.substring(0, 1).toUpperCase()}</b>
                                                         </div>
                                                         <div class="textdiv1">
                                                             <b>${this.Name}</b>
@@ -355,8 +374,6 @@
             }
         });
     }
-
-
 
     //---------------------END------------------------------------------------------------
 
@@ -387,6 +404,7 @@
     this.selectAppChangeAction = function (e) {  
         var appindex = $("#selectApp").find(":selected").attr("data-index");
         appCollection = this.appCollection;
+        var _this = this;
         $('.collapse').collapse('hide');
         $.each(this.opDict.$values, function (i, value) {
             $("#tbl" + value.Op_Name).find("tbody").children().remove();
@@ -394,8 +412,13 @@
                 if (j == value.Op_Id) {
                     $.each(a, function (k, b) {
                         var st = `<tr data-id=${b.Obj_Id}><td style='font-size:14px'>${b.Obj_Name}</td>`;
-                        for (x = 0; x < value.Operations.$values.length; x++)
-                            st += `<td align='center'><input type='checkbox' class="checkboxclass" data-id=${b.Obj_Id + '_' + x}></td>`;
+                        for (x = 0; x < value.Operations.$values.length; x++) {
+                            var permissionString = b.Obj_Id + '_' + x;
+                            var checked = '';
+                            if (_this.permission.indexOf(permissionString) !== -1)
+                                checked = 'checked';
+                            st += `<td align='center'><input type='checkbox' ${checked} class="checkboxclass" data-id=${permissionString}></td>`;
+                        }
                         st += `</tr>`;
                         $("#tbl" + value.Op_Name).append(st);
                     });
@@ -413,24 +436,27 @@
     }
 
     this.onclickbtnSaveAll = function () {
-        var permission = "";
-        var role2role = "";
-        var users = "";
+        var permissionlist = "";
+        var role2rolelist = "";
+        var userslist = "";
         var appId = $("#selectApp").find(":selected").attr("data-id");
         var roleDescription = $(this.txtRoleDescription).val().trim();
         var roleName = $(this.txtRoleName).val().trim();
         $('.checkboxclass:checked').each(function () {
-            permission += $(this).attr('data-id') + ",";
+            permissionlist += $(this).attr('data-id') + ",";
         });
-        permission = permission.substring(0, permission.length - 1);
-        $.each($('#divSelectedUserDisplay').children(), function (i, ob) {
-            users += $(ob).attr('data-id') + ",";
-        });
-        users = users.substring(0, users.length - 1);
+        permissionlist = permissionlist.substring(0, permissionlist.length - 1);
+        
         $.each($('#divSelectedRoleDisplay').children(), function (i, ob) {
-            role2role += $(ob).attr('data-id') + ",";
+            role2rolelist += $(ob).attr('data-id') + ",";
         });
-        role2role = role2role.substring(0, role2role.length - 1);
+        role2rolelist = role2rolelist.substring(0, role2rolelist.length - 1);
+
+        $.each($('#divSelectedUserDisplay').children(), function (i, ob) {
+            userslist += $(ob).attr('data-id') + ",";
+        });
+        userslist = userslist.substring(0, userslist.length - 1);
+
         if (roleName === "" || roleDescription==="") {
             return false;
         }
@@ -438,7 +464,7 @@
         $.ajax({
             type: "POST",
             url: "../Security/SaveRole",
-            data: {_roleId: this.role_Id, _roleName: roleName, _roleDesc: roleDescription, _appId: appId, _permission: permission},
+            data: { _roleId: this.role_Id, _roleName: roleName, _roleDesc: roleDescription, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist},
             success: this.saveRoleSuccess
         });
     }

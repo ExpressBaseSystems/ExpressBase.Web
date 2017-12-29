@@ -257,7 +257,6 @@
     width: 30%;
     margin: 0 5px;
     background-color: white;
-    padding: 8px 12px;
     text-overflow: ellipsis;
     font-family: 'Helvetica Neue', 'HelveticaNeue', Helvetica, Arial, sans-serif;
 }
@@ -277,4 +276,5 @@
 }
 .card-img {
     border-radius: 1.3em 1.3em 0 0;
+    width:100%;
 }

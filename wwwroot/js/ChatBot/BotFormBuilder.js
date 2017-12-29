@@ -26,7 +26,8 @@
         RadioGroupCounter: 0,
         SimpleSelectCounter: 0,
         CheckBoxGroupCounter: 0,
-        ImageUploaderCounter: 0,
+        CardsCounter: 0,
+        CardCounter: 0,
     };
     this.currentProperty = null;
     this.CurRowCount = 2;

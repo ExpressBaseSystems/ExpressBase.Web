@@ -28,9 +28,12 @@ namespace ExpressBase.Web.Controllers
                 if (!System.IO.File.Exists(sFilePath))
                 {
                     byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = "jpg" } });
+                    if (fileByte.IsEmpty())
+                            return System.IO.File.OpenRead("wwwroot/images/proimg.jpg");
                     EbFile.Bytea_ToFile(fileByte, sFilePath);
                 }
                 HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=604800";
+
                 return System.IO.File.OpenRead(sFilePath);
             }
             else

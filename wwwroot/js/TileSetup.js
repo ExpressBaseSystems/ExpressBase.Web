@@ -1,26 +1,29 @@
-﻿var TileSetupJs = function (parentDiv, title, initObjList, searchObjList, searchAjax, chkUnChkItemCustomFunc, pthis) {
+﻿var TileSetupJs = function (parentDiv, title, initObjList, searchObjList, objMetadata, searchAjax, chkUnChkItemCustomFunc, parentThis) {
     
     this.parentDiv = parentDiv;
     this.title = title;
     this.resultObject = initObjList;
     this.objectList = searchObjList;
+    this.objectMetadata = objMetadata;
     this.searchAjaxUrl = searchAjax;
     
     this.txtDemoSearch = null;
     this.btnClearDemoSearch = null;
     this.btnAddModal = null;
     this.txtSearch = null;
+    this.btnSearch = null;
     this.loader = null;
     this.btnModalOk = null;
     this.addModal = null;
     this.divSelectedDisplay = null;
     this.divSearchResults = null;
     this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
-    this.parentthis = pthis;
+    this.parentthis = parentThis;
+    this.profilePicStatus = null;
     
     this.init = function () {
         this.createBody.bind(this)(this.parentDiv, this.title);
-       
+        
         
         
     }
@@ -51,11 +54,11 @@
                             <div class="input-group ">
                                 <input id="txtSearch${t}" title="Type to Search" type="text" class="form-control" placeholder="Search">
                                 <span class="input-group-btn">
-                                    <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                    <button id="btnSearch${t}" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
                                 </span>
                             </div>
                             <div id="loader${t}" style=" margin-left:45%; margin-top:25% ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
-                            <div id="divSearchResults${t}" style="height:300px; overflow-y:auto"></div>
+                            <div id="divSearchResults${t}" style="height:338px; overflow-y:auto"></div>
                         </div>
                         <div class="modal-footer">
                             <button id="btnModalOk${t}" type="button" class="btn btn-default">OK</button>
@@ -71,6 +74,7 @@
         this.btnClearDemoSearch = $('#btnClearDemoSearch' + t);
         this.btnAddModal = $('#btnAddModal' + t );
         this.txtSearch = $('#txtSearch' + t);
+        this.btnSearch = $('#btnSearch' + t);
         this.loader = $('#loader' + t);
         this.btnModalOk = $('#btnModalOk' + t);
         this.addModal = $('#addModal' + t);
@@ -80,6 +84,7 @@
         $(this.parentDiv).on('keyup', '#txtDemoSearch' + t, this.keyUpTxtDemoSearch.bind(this));
         $(this.parentDiv).on('click', '#btnClearDemoSearch' + t, this.onClickbtnClearDemoSearch.bind(this));
         $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
+        $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
         $(this.parentDiv).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
         $(this.parentDiv).on('shown.bs.modal', '#addModal' + t, this.initModal.bind(this));
 
@@ -91,7 +96,11 @@
             this.resultObject = [];
         this.initSelected.bind(this)(this.resultObject);
 
+        if (this.objectMetadata.indexOf('ProfilePicture') > -1)
+            this.profilePicStatus = true;
+
     }
+
 
     this.setObjectList = function (obj) {
         this.objectList = obj;
@@ -136,6 +145,7 @@
     this.initModal = function () {
         $(this.divSearchResults).children().remove();
         $(this.txtSearch).val("");
+        //this.getSearchResult(true);
         this.txtSearch.focus();
     }
     this.keyUptxtSearch = function (e) {
@@ -151,7 +161,7 @@
     this.getSearchResult = function (force) {
         var searchtext = $(this.txtSearch).val().trim();
         var Url = this.searchAjaxUrl;
-        if ((!force && searchtext.length < 1) || searchtext === "") {
+        if ((!force && searchtext.length < 1 && Url !== null)) {
             this.loader.hide();
             return;
         }
@@ -172,39 +182,51 @@
 
     this.getItemdetailsSuccess = function (data) {
         this.loader.hide();
-        //console.log(data);
-        //this.drawSearchResults2(1, data);
+        objlist = [];
+        for (var i = 0; i < data.length; i++) {
+            objlist.push({Id: data[i].id, Name: data[i].name, Data1: data[i].email});
+        }
+        this.drawSearchResults(objlist, "");
     };
 
     this.drawSearchResults = function (objList, srchTxt) {
-        var st = null;
         var txt = srchTxt;
         var divSelectedDisplay = this.divSelectedDisplay;
         var divSearchResults = this.divSearchResults;
         $(divSearchResults).children().remove();
         for (var i = 0; i < objList.length; i++) {
-            if (objList[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
-                if ($(divSelectedDisplay).find(`[data-id='${objList[i].Id}']`).length === 0) {
-                    this.appendToSearchResult(divSearchResults, st, objList[i]);
-                }                
+            var st = null;
+            if (objList[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase() ) {
+                if ($(divSelectedDisplay).find(`[data-id='${objList[i].Id}']`).length > 0) {
+                    st = 'checked disabled';
+                }
+                this.appendToSearchResult(divSearchResults, st, objList[i]);
             }
         }
     }
     
     this.OnChangeSearchCheckbox = function (e) {
-        this.doChkUnChkItemCustomFunc(pthis, e);
+        if (this.doChkUnChkItemCustomFunc !== null) {
+            this.doChkUnChkItemCustomFunc(parentThis, e);
+        }
     }
 
     this.appendToSearchResult = function (divSearchResults, st, obj) {
-        $(divSearchResults).append(`<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id=${obj.Id}>
-                                        <div class='col-md-1' style="padding:10px">
-                                            <input type ='checkbox' class='SearchCheckbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d1 = '${obj.Data1}' aria-label='...'>
-                                        </div>
-                                        <div class='col-md-10'>
-                                            <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
-                                            ${obj.Data1}
-                                        </div>
-                                    </div>`);
+        var temp= `<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id=${obj.Id}>
+                        <div class='col-md-1' style="padding:10px">
+                            <input type ='checkbox' class='SearchCheckbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d1 = '${obj.Data1}' aria-label='...'>
+                        </div>`;
+
+        if (this.profilePicStatus === true)
+            temp += `   <div class='col-md-2'>
+                            <img class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' />
+                        </div>`;
+        temp+=`         <div class='col-md-8'>
+                            <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
+                            ${obj.Data1}
+                        </div>
+                    </div>`;
+        $(divSearchResults).append(temp);
     }
     this.clickbtnModalOkAction = function () {
         this.drawSelected();
@@ -226,18 +248,21 @@
         $(checkedBoxList).each(function () {
             _this.appendToSelected(_this.divSelectedDisplay, { Id: $(this).attr('data-id'), Name: $(this).attr('data-name'), Data1: $(this).attr('data-d1')});
         });
+        this.initModal();
     }
     this.appendToSelected = function (divSelected, obj) {
         if ($(divSelected).find(`[data-id='${obj.Id}']`).length > 0) {
             return;
         }
         this.resultObject.push(obj);
-        $(divSelected).append(` 
-            <div class="col-md-4 container-md-4" data-id=${obj.Id} data-name=${obj.Name}>
-                <div class="mydiv1" style="overflow:visible;">
-                    <div class="icondiv1">
-                        <b>${obj.Name.substring(0, 1).toUpperCase()}</b>
-                    </div>
+        var temp = `<div class="col-md-4 container-md-4" data-id=${obj.Id} data-name=${obj.Name}>
+                        <div class="mydiv1" style="overflow:visible;">
+                            <div class="icondiv1">`;
+        if (this.profilePicStatus === true)
+            temp += `<img class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' />`;
+        else
+            temp += `<b>${obj.Name.substring(0, 1).toUpperCase()}</b>`;
+        temp+=`     </div>
                     <div class="textdiv1">
                         <b>${obj.Name}</b>
                         <div style="font-size: smaller;">&nbsp${obj.Data1}</div>
@@ -251,7 +276,8 @@
                         </div>
                     </div>
                 </div>
-            </div>`);
+            </div>`
+        $(divSelected).append(temp);
         
     }
     this.onClickRemoveFromSelected = function (e) {

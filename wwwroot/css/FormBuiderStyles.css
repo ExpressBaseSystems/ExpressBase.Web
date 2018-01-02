@@ -244,11 +244,6 @@
         /*background-color:white;*/
     }
 
-.cards-cont {
-    /*overflow-y: scroll;*/
-    border: solid 1px red;
-}
-
 .card-cont {
     border: solid 1px #e5e5e5;
     border-radius: 1.3em;

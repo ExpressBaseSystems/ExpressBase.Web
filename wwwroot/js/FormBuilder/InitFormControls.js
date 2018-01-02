@@ -28,9 +28,29 @@
         //$('#' + ctrl.name).selectpicker();
     };
 
+    this.Cards = function (ctrl) {
+        this.initCards($('#' + ctrl.ebSid));
+    }
+
+    this.initCards = function ($Ctrl) {
+        $Ctrl.slick({
+            slidesToShow: 1,
+            infinite: false,
+            draggable: false,
+            speed: 300,
+            cssEase: 'ease-in-out',
+            //arrows: false,
+            //dots: true,
+            //prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
+            //nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
+            //prevArrow: $("#prevcard"),
+            //nextArrow: $("#nextcard")
+        });
+    };
+
     this.ImageUploader = function (ctrl) {
         $('#' + ctrl.name).off("change").on("change", function (input) {
-            $(input.target).closest(".ctrl-wraper").next("[name=ctrlsend]").click();  
+            $(input.target).closest(".ctrl-wraper").next("[name=ctrlsend]").click();
         }.bind(this));
     };
 

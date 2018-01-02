@@ -15,6 +15,7 @@
     this.botdpURL = 'url(../images/svg/chatBot.svg)center center no-repeat';
     this.ebbotThemeColor = '#31d031';
     this.initControls = new InitControls(this);
+    this.typeDelay = 10;
 
     this.formsList = {};
     this.formsDict = {};
@@ -257,22 +258,8 @@
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx];
-        if (this.curCtrl && this.curCtrl.type === "Cards") {
+        if (this.curCtrl && this.curCtrl.type === "Cards")
             var $CtrlCont = $(control);
-            $CtrlCont.find(".cards-cont").slick({
-                slidesToShow: 1,
-                infinite: false,
-                draggable: false,
-                speed: 400,
-                cssEase: 'ease-in',
-                //arrows: false,
-                //dots: true,
-                //prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
-                //nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
-                //prevArrow: $("#prev"),
-                //nextArrow: $("#next")
-            });
-        }
         else
             var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
         var lablel = this.curCtrl.label + ' ?';
@@ -383,25 +370,28 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
-                    if (this.curCtrl && this.curCtrl.type === "Cards")
-                        $msg.find(".ctrl-wraper").css("width", "100%");
+                    if (this.curCtrl && this.curCtrl.type === "Cards") {
+                        $msg.find(".ctrl-wraper").css("width", "100%").css("border",'none');
+                        $msg.find(".msg-wraper-bot").css("margin-left", "12px");
+                    }
 
-                    if (this.curCtrl && $('#' + this.curCtrl.name).length === 1)
+                    if (this.curCtrl && $('#' + this.curCtrl.name).length === 1) {
                         this.loadcontrol();
+                    }
                     if (this.curForm)
                         $msg.attr("form", this.curForm.name);
                 }
                 else
                     $msg.find('.msg-wraper-bot').text(msg).append(this.getTime());
                 this.ready = true;
-            }.bind(this), 900);
+            }.bind(this), this.typeDelay);
             this.ready = false;
         }
         else {
             $msg.remove();
             setTimeout(function () {
                 this.msgFromBot(msg);
-            }.bind(this), 901);
+            }.bind(this), this.typeDelay + 1);
         }
         $('.eb-chatBox').scrollTop(99999999999);
     }.bind(this);

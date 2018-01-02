@@ -3,6 +3,7 @@
 
     this.getSolutionName = function (e) {
         $('#Hidd-sname').val($(e.target).val());
+        $("#solutionName-app").text($(e.target).val());
     };
     this.getClientId = function (e) {
         $('#Hidd-esid').text($(e.target).val());
@@ -52,30 +53,41 @@
             alert('solution canot be empty');
         return isvalid;
     }
+
+    this.validateProfileInfo = function(){
+        if ($("[name='Name']").val() !== "" && $("[name='Company']").val() !== "" && $("[name='Password']").val() !== "")
+            return true;
+        else
+            return false;
+    };
+
     this.submitProfile = function (e) {
         e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: "../Tenant/ProfileSetup",
-            beforeSend: function () {
-                $("#save-profile i").show();
-            },
-            data: {
-                Name: $("[name='Name']").val().trim(),
-                Company: $("[name='Company']").val().trim(),
-                Employees: $("[name='Employees']").val().trim(),
-                Designation: $("[name='Designation']").val().trim(),
-                Country: $("[name='Country']").val().trim(),
-                Email: $("[name='Email']").val().trim(),
-                Password: $("[name='Password']").val().trim()
-            }
-        }).done(function (data) {       
-            $('#eb-mesageBox').show().text("Profile Saved");   
-            $('#eb-mesageBox').fadeOut(5000);
-            $("#save-profile").hide();
-            $("#prof-info-skip, #basic-info, #product-info").show();
-            this.scrollProfToLeft();
-        }.bind(this));
+        var info = this.validateProfileInfo();
+        if (info) {
+            $.ajax({
+                type: 'POST',
+                url: "../Tenant/ProfileSetup",
+                beforeSend: function () {
+                    $("#save-profile i").show();
+                },
+                data: {
+                    Name: $("[name='Name']").val().trim(),
+                    Company: $("[name='Company']").val().trim(),
+                    Employees: $("[name='Employees']").val().trim(),
+                    Designation: $("[name='Designation']").val().trim(),
+                    Country: $("[name='Country']").val().trim(),
+                    Email: $("[name='Email']").val().trim(),
+                    Password: $("[name='Password']").val().trim()
+                }
+            }).done(function (data) {
+                $('#eb-mesageBox').show().text("Profile Saved");
+                $('#eb-mesageBox').fadeOut(5000);
+                $("#save-profile").hide();
+                $("#prof-info-skip, #basic-info, #product-info").show();
+                this.scrollProfToLeft();
+            }.bind(this));
+        }
     };
 
     this.scrollProfToLeft = function () {
@@ -91,7 +103,7 @@
                 type: 'POST',
                 url: "../Tenant/EbOnBoarding",
                 beforeSend: function () {
-                    $("#save-subscrip i").show();               
+                    $("#save-subscrip i").show();
                 },
                 data: {
                     Sname: $("[name='Sname']").val().trim(),
@@ -103,11 +115,17 @@
             }).done(function (data) {
                 $('#eb-mesageBox').show().text("Solution Created");
                 $('#eb-mesageBox').fadeOut(5000);
-            })
+                $("#app-info").show();
+                $("#save-subscrip").hide();
+                $("#app-next").show();
+                this.scrollToLast();
+            }.bind(this));
         }
         else
+            
             $('#eb-mesageBox-error').show().text("select atleast one Product.");
         $('#eb-mesageBox-error').fadeOut(5000);
+
     };
 
     this.scrollToProfSec = function () {
@@ -115,10 +133,29 @@
             scrollLeft: 0
         }, 500);
     };
+    this.scrollToLast = function () {
+        $('.card').animate({
+            scrollLeft: 3000
+        }, 500);
+    };
     this.scrollToProd = function () {
         $('.card').animate({
-            scrollLeft: 2000
+            scrollLeft: 1900
         }, 500);
+    };
+    this.submitApplicationReq = function () {
+        $("#app-form").on("submit", function (e) {
+            $.post("../Dev/SaveApplications",
+                {
+                    "AppType": $('#apptype').val(),
+                    "AppName": $('#appName').val(),
+                    "Desc": $('#DescApp').val(),
+                    "Isid": $('#Sid').val(),
+                    "itemid":
+                }, function (result) {
+
+                });
+        });
     };
 
     this.init = function () {
@@ -133,9 +170,12 @@
         $("#prof-submit").on("submit", this.submitProfile.bind(this));
         $("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));
         this.ProfileImgUpload();
-        $("#prof-info-skip").on('click', this.scrollProfToLeft.bind(this));
+        $("#prof-info-skip,#plan-prev").on('click', this.scrollProfToLeft.bind(this));
         $("#prof-to-prev").on('click', this.scrollToProfSec.bind(this));
-        $("#s-info-skip").on('click', this.scrollToProd.bind(this));
+        $("#s-info-skip").on('click', this.scrollToLast.bind(this));
+        $("#app-next").on('click', this.scrollToLast.bind(this));
+        $("#prod-prev").on('click', this.scrollToProd.bind(this));
+        this.submitApplicationReq();
     };
 
     this.init();

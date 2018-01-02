@@ -141,6 +141,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
+    this.init = function () {
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
+        if (this.login == "uc") {
+            $("#ppgrid_" + this.tableId).hide();
+            $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
+        }
+        else {
+            $("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
+        }
+    }
+
     split.windowOnFocus = function (ev) {
         $("#Relateddiv").hide();
         if ($(ev.target).attr("class") !== undefined) {
@@ -164,7 +175,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag, login: this.login },
             success: this.ajaxSucc
         });
-
     };
 
     this.ajaxSucc = function (text) {
@@ -225,11 +235,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum+"_"+counter, "EbTableVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        this.init();
     }
     else {
         split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        this.init();
         this.call2FD();
     }
 
@@ -257,11 +269,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
     //}
 
-    this.start = function () {
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
-    }
-
-
+    
     this.getColumnsSuccess = function () {
         this.extraCol = [];
         this.ebSettings = this.EbObject;
@@ -1679,13 +1687,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }, 500);
     };
 
-
-    //if (this.dtsettings.directLoad)
-    //    this.getColumns();
-    //if (this.dtsettings.linktable)
-    //    this.getColumns();
-
-
     this.ModifyDvname = function () {
         this.ebSettings.Name = $("#dvnametxt").val();
         $("label.dvname").text(this.ebSettings.Name);
@@ -1696,62 +1697,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.ebSettings.scrollY = (this.ebSettings.scrollY < 100) ? "300" : this.ebSettings.scrollY;
     };
 
-    //this.drawDv = function (e) {
-    //    dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-    //    $.LoadingOverlay("show");
-    //    $.ajax({
-    //        type: "POST",
-    //        url: "../DV/getdv",
-    //        data: { refid: $(e.target).attr("data-refid"), objtype: $(e.target).attr("objtype") },
-    //        success: function (dvObj) {
-    //            counter++;
-    //            dvObj = JSON.parse(dvObj);
-    //            dvcontainerObj.currentObj = dvObj;
-    //            dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
-    //            dvcontainerObj.dvRefid = dvObj.Refid;
-    //            $.LoadingOverlay("hide");
-    //            dvcontainerObj.btnGoClick();
-    //            //if (dvObj.$type.indexOf("EbTableVisualization") !== -1) {
-    //            //    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbTableVisualization");
-    //            //    pg["sub_window_dv" + dvObj.EbSid + "_" + counter].setObject(dvObj, AllMetas["EbTableVisualization"]);
-    //            //    call2dvView(dvObj);
-    //            //}
-    //            //else if (dvObj.$type.indexOf("EbChartVisualization") !== -1) {
-    //            //    split.createContentWindow(dvObj.EbSid + "_" + ++counter, "EbChartVisualization");
-    //            //    pg["sub_window_dv" + dvObj.EbSid + "_" + counter].setObject(dvObj, AllMetas["EbChartVisualization"]);
-    //            //    call2dvView(dvObj);
-    //            //}
-    //        }
-    //    });
-    //}.bind(this);
-
-    //this.appendRelatedDv = function () {
-    //    $("#obj_icons").prepend("<div class='dropdown' id='Related" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
-    //        "<button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>" +
-    //        "<span class='caret'></span>" +
-    //        "</button>" +
-    //        "<ul class='dropdown-menu'>" +
-    //        "</ul>" +
-    //        "</div>");
-    //    $.ajax({
-    //        type: "POST",
-    //        url: "../DV/getAllRelatedDV",
-    //        data: { refid: this.dsid },
-    //        success: this.RealtedajaxSuccess
-    //    });
-    //    //$("#Related" + this.tableId + " .dropdown-menu ul")
-    //};
-
-    //this.RealtedajaxSuccess = function (DvList) {
-    //    var tid = this.tableId;
-    //    $.each(DvList, function (i, obj) {
-    //        $("#Related" + tid + " .dropdown-menu").append("<li><a href='#' data-refid='" + obj.refId + "' objtype='" + obj.ebObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.name + "</a></li>");
-
-    //    });
-    //    $("#Related" + tid + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
-    //}.bind(this);
-
-    this.start();
+    //this.start();
 };
 
 

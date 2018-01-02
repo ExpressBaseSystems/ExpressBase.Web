@@ -245,7 +245,7 @@
     }
 
 .cards-cont {
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
     border: solid 1px red;
 }
 
@@ -274,7 +274,8 @@
 .card-bottom {
     padding: 8px 12px;
 }
+
 .card-img {
     border-radius: 1.3em 1.3em 0 0;
-    width:100%;
+    width: 100%;
 }

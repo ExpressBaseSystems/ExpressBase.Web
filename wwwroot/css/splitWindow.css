@@ -156,6 +156,7 @@
     box-shadow: 4px 4px #dcd8d8fa;
     padding: 1px 10px 10px 10px;
     background: white;
+    position: relative;
 }
 .dotsDiv {
     height: 40px;
@@ -190,19 +191,53 @@
 
 .ppcont {
     width: 225px;
-    height: 75%;
+    height: 100%;
     position: absolute;
-    top: 86px;
-    right: 66px;
-    z-index: 1;
+    right: 8px;
+    z-index: 3;
+    box-shadow: -4px 5px 8px 0px rgba(189,189,189,1);
 }
 
 .filterCont {
     width: 200px;
     position: absolute;
-    top: 86px;
-    max-height: 526px;
-    z-index: 1;
+    height: 100%;
+    z-index: 4;
+    //box-shadow: 11px 6px 21px 1px rgba(189,189,189,1);
+    box-shadow: 2px 9px 14px 0px rgba(189,189,189,1);
+}
+.relatedCont {
+    width: 300px;
+    height: 100vh;
+    position: absolute;
+    right: 0;
+    z-index: 5;
+    padding-top: 34px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0px 21px 0px rgba(189,189,189,1);
+}
+
+.relatedli {
+    margin: 5px 5px 5px 20px;
+    list-style: none;
+}
+.relatedli:hover {
+    background-color: #e4e8f7;
+}
+.relatedlabel {
+    font-size: 13px;
+    margin-left: 10px;
+    font-family: open sans;
+    font-weight: 100;
+    cursor:pointer;
+}
+.relatedHeader {
+    background-color: var(--ebbg);
+    color: white;
+    background-image: var(--ebbgimage);
+    padding: 7px;
 }
 /*#dotsul {
     padding-top: 10px;

@@ -1,27 +1,32 @@
-﻿var TileSetupJs = function (parentDiv, title, initObjList, searchObjList, searchAjax) {
+﻿var TileSetupJs = function (parentDiv, title, initObjList, searchObjList, searchAjax, chkUnChkItemCustomFunc, pthis) {
     
     this.parentDiv = parentDiv;
     this.title = title;
-    this.searchResultObject = [];
-    this.finalResultObject = initObjList;
+    this.resultObject = initObjList;
     this.objectList = searchObjList;
     this.searchAjaxUrl = searchAjax;
+    
     this.txtDemoSearch = null;
     this.btnClearDemoSearch = null;
+    this.btnAddModal = null;
     this.txtSearch = null;
     this.loader = null;
     this.btnModalOk = null;
     this.addModal = null;
     this.divSelectedDisplay = null;
     this.divSearchResults = null;
+    this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
+    this.parentthis = pthis;
     
     this.init = function () {
         this.createBody.bind(this)(this.parentDiv, this.title);
-
-
+       
+        
+        
     }
+
     this.createBody = function (parent, title) {
-        var t = title.replace(" ", "_")
+        var t = title.replace(" ", "_");
         $(parent).append(`
         <div class="row" style="padding:6px 0px">
             <div class="col-md-5"></div>
@@ -31,7 +36,7 @@
                 <button id="btnClearDemoSearch${t}" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
             </div>
             <div class="col-md-2">
-                <button type="button" class="btn" data-toggle="modal" data-target="#addModal${t}" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}</button>
+                <button type="button" class="btn" id="btnAddModal${t}" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}</button>
             </div>
         </div>
         <div class="container">
@@ -64,6 +69,7 @@
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
         this.btnClearDemoSearch = $('#btnClearDemoSearch' + t);
+        this.btnAddModal = $('#btnAddModal' + t );
         this.txtSearch = $('#txtSearch' + t);
         this.loader = $('#loader' + t);
         this.btnModalOk = $('#btnModalOk' + t);
@@ -71,12 +77,30 @@
         this.divSelectedDisplay = $('#divSelectedDisplay' + t);
         this.divSearchResults = $('#divSearchResults' + t);
 
-        $(this.txtDemoSearch).on('keyup', this.keyUpTxtDemoSearch.bind(this));
-        $(this.btnClearDemoSearch).on('click', this.onClickbtnClearDemoSearch.bind(this));
-        $(this.txtSearch).on('keyup', this.keyUptxtSearch.bind(this));
-        $(this.btnModalOk).on('click', this.clickbtnModalOkAction.bind(this));
-        $(this.addModal).on('shown.bs.modal', this.initModal.bind(this));
+        $(this.parentDiv).on('keyup', '#txtDemoSearch' + t, this.keyUpTxtDemoSearch.bind(this));
+        $(this.parentDiv).on('click', '#btnClearDemoSearch' + t, this.onClickbtnClearDemoSearch.bind(this));
+        $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
+        $(this.parentDiv).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
+        $(this.parentDiv).on('shown.bs.modal', '#addModal' + t, this.initModal.bind(this));
+
+        $(this.parentDiv).on('click', '#btnAddModal' + t, this.onClickBtnAddModal.bind(this));
+        $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
+        $(this.divSelectedDisplay).on('click', ".dropDownRemoveClass", this.onClickRemoveFromSelected.bind(this));
+
+        if (this.resultObject == null)
+            this.resultObject = [];
+        this.initSelected.bind(this)(this.resultObject);
+
     }
+
+    this.setObjectList = function (obj) {
+        this.objectList = obj;
+    }
+
+    this.onClickBtnAddModal = function () {
+        $(this.addModal).modal('show');
+    }
+
     this.keyUpTxtDemoSearch = function () {
         var f = 1;
         var divSelectedDisplay = this.divSelectedDisplay;
@@ -100,38 +124,41 @@
     }
     this.onClickbtnClearDemoSearch = function () {
         $(this.txtDemoSearch).val("");
-        this.keyUptxtDemoSearch();
+        this.keyUpTxtDemoSearch();
+    }
+
+    this.initSelected = function (objList) {
+        for (var i = 0; i < objList.length; i++) {
+            this.appendToSelected(this.divSelectedDisplay, { Id: objList[i].Id, Name: objList[i].Name, Data1: objList[i].Data1 });
+        }
     }
 
     this.initModal = function () {
+        $(this.divSearchResults).children().remove();
+        $(this.txtSearch).val("");
         this.txtSearch.focus();
-        //this.KeyUptxtSearchRole();
     }
-
     this.keyUptxtSearch = function (e) {
-        //this.dependentList = [];
-        //this.drawSearchResults();
         $(this.divSearchResults).children().remove();
         this.loader.show();
         clearTimeout($.data(this, 'timer'));
         if (e.keyCode === 13)
-            this.getSuggestion(true);
+            this.getSearchResult(true);
         else
             $(this).data('timer', setTimeout(this.getSearchResult.bind(this, false), 500));
     }
-
-
+    
     this.getSearchResult = function (force) {
         var searchtext = $(this.txtSearch).val().trim();
         var Url = this.searchAjaxUrl;
-        if ((!force && searchtext.length < 2) || searchtext === "") {
+        if ((!force && searchtext.length < 1) || searchtext === "") {
             this.loader.hide();
             return;
         }
         if (Url === null) {
             this.loader.hide();
-            this.drawSearchResults(this.objectList, searchtext);
-
+            if(this.objectList !== null )
+                this.drawSearchResults(this.objectList, searchtext);
         }
         else {
             $.ajax({
@@ -149,7 +176,6 @@
         //this.drawSearchResults2(1, data);
     };
 
-
     this.drawSearchResults = function (objList, srchTxt) {
         var st = null;
         var txt = srchTxt;
@@ -158,45 +184,21 @@
         $(divSearchResults).children().remove();
         for (var i = 0; i < objList.length; i++) {
             if (objList[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
-                if ($(divSelectedDisplay).find(`[data-id='${objList[i].Id}']`).length > 0) {
-                    st = "checked disabled";
-                }
-                //else if (this.dependentList.indexOf(obj[i].Id) !== -1)
-                //    st = "disabled";
-                else
-                    st = null;
-                this.appendToSearchResult(divSearchResults, st, objList[i]);
+                if ($(divSelectedDisplay).find(`[data-id='${objList[i].Id}']`).length === 0) {
+                    this.appendToSearchResult(divSearchResults, st, objList[i]);
+                }                
             }
         }
-        //$(".SearchCheckbox").on('change', this.OnChangeSearchCheckbox.bind(this));
     }
-
-
-
-
+    
     this.OnChangeSearchCheckbox = function (e) {
-        this.dependentList = [];
-        $.each($("#divSelectedRoleDisplay").children(), function (i, ob) {
-            this.dependentList.push(parseInt($(ob).attr('data-id')));
-            this.findDependentRoles($(ob).attr('data-id'));
-        }.bind(this));
-        if ($(e.target).is(':checked'))
-            this.findDependentRoles($(e.target).attr("data-id"));
-
-        $.each($("#divRoleSearchResults").find('input'), function (i, ob) {
-            if (this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
-                $(ob).removeAttr("checked");
-                $(ob).attr("disabled", "true");
-            }
-            else
-                $(ob).removeAttr("disabled");
-        }.bind(this));
+        this.doChkUnChkItemCustomFunc(pthis, e);
     }
 
     this.appendToSearchResult = function (divSearchResults, st, obj) {
         $(divSearchResults).append(`<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id=${obj.Id}>
                                         <div class='col-md-1' style="padding:10px">
-                                            <input type ='checkbox' class='SearchCheckbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d = '${obj.Description}' aria-label='...'>
+                                            <input type ='checkbox' class='SearchCheckbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d1 = '${obj.Data1}' aria-label='...'>
                                         </div>
                                         <div class='col-md-10'>
                                             <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
@@ -204,46 +206,65 @@
                                         </div>
                                     </div>`);
     }
-
-
     this.clickbtnModalOkAction = function () {
         this.drawSelected();
-        $('#addRolesModal').modal('toggle');
-        //this.SortDiv(1);
+        $(this.addModal).modal('toggle');
+        this.SortDiv(this.divSelectedDisplay);
     }
-
+    this.SortDiv = function (mylist) {
+        var listitems = mylist.children('div').get();
+        listitems.sort(function (a, b) {
+            return $(a).attr("data-name").toUpperCase().localeCompare($(b).attr("data-name").toUpperCase());
+        });
+        $.each(listitems, function (index, item) {
+            mylist.append(item);
+        });
+    }
     this.drawSelected = function () {
         var checkedBoxList = $('.SearchCheckbox:checked');
         var _this = this;
         $(checkedBoxList).each(function () {
-            //_this.appendToSelected(this.divSelected, {Id: this.Id, Name: this.Name, Data1: this.Data1});
+            _this.appendToSelected(_this.divSelectedDisplay, { Id: $(this).attr('data-id'), Name: $(this).attr('data-name'), Data1: $(this).attr('data-d1')});
         });
     }
-
     this.appendToSelected = function (divSelected, obj) {
-        //var finalResult = finalResultObj;
-        //var divSelectedDisplay = $(this.divSelectedDisplay);
-        //$(finalResult).each(function () {
-                $(divSelected).append(` <div class="col-md-4 container-md-4" data-id=${obj.Id} data-name=${obj.Name}>
-                                            <div class="mydiv1" style="overflow:visible;">
-                                                <div class="icondiv1">
-                                                    <b>${obj.Name.substring(0, 1).toUpperCase()}</b>
-                                                </div>
-                                                <div class="textdiv1">
-                                                    <b>${obj.Name}</b>
-                                                    <div style="font-size: smaller;">&nbsp${obj.Data1}</div>
-                                                </div>
-                                                <div class="closediv1">
-                                                    <div class="dropdown">
-                                                        <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
-                                                        <ul class="dropdown-menu" style="left:-140px; width:160px;">
-                                                            <li><a href="#" onclick="OnClickRemove(this);">Remove</a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>`);
-        //});
+        if ($(divSelected).find(`[data-id='${obj.Id}']`).length > 0) {
+            return;
+        }
+        this.resultObject.push(obj);
+        $(divSelected).append(` 
+            <div class="col-md-4 container-md-4" data-id=${obj.Id} data-name=${obj.Name}>
+                <div class="mydiv1" style="overflow:visible;">
+                    <div class="icondiv1">
+                        <b>${obj.Name.substring(0, 1).toUpperCase()}</b>
+                    </div>
+                    <div class="textdiv1">
+                        <b>${obj.Name}</b>
+                        <div style="font-size: smaller;">&nbsp${obj.Data1}</div>
+                    </div>
+                    <div class="closediv1">
+                        <div class="dropdown">
+                            <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
+                            <ul class="dropdown-menu" style="left:-140px; width:160px;">
+                                <li><a href="#" class='dropDownRemoveClass'>Remove</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>`);
+        
+    }
+    this.onClickRemoveFromSelected = function (e) {
+        if (confirm("Click OK to Remove")) {
+            var parent = $(e.target).parents("div.col-md-4");
+            for (var i = 0; i < this.resultObject.length; i++) {
+                if (this.resultObject[i].Id == parent.attr('data-id')) {
+                    this.resultObject.splice(i, 1);
+                    parent.remove();
+                    return;
+                }
+            }
+        }
     }
 
     this.init();

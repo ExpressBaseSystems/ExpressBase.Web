@@ -272,6 +272,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
     split.windowOnFocus = function (ev) {
+        $("#Relateddiv").hide();
         if ($(ev.target).attr("class") !== undefined) {
             if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
                 var id = $(ev.target).attr("id");
@@ -329,7 +330,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
-            $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
+            //$("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
             $("#btnGo" + this.tabNum).trigger("click");
         }
         else {
@@ -345,7 +346,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             else {
                 $(sideDivId).css("display", "inline");
                 $.LoadingOverlay("hide");
-                $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
+                //$("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
             }
         }
         $(subDivId).focus();
@@ -402,10 +403,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#ppgrid_" + this.tableId).css("display", "none");
         if (this.FD) {
             $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-            $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
+            //$("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
         }
         else {
-            $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            //$("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
         }
 
         this.filterValues = this.getFilterValues();
@@ -1104,34 +1105,38 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.toggleFilterdialog = function () {
         if ($("#sub_windows_sidediv_" + this.tableId).css("display") === "none") {
             $("#sub_windows_sidediv_" + this.tableId).css("display", "inline");
-            if ($("#content_" + this.tableId).hasClass("col-md-12"))
-                $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
-            else
-                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
+            //if ($("#content_" + this.tableId).hasClass("col-md-12"))
+            //    $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
+            //else
+            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
         }
         else {
             $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-            if ($("#content_" + this.tableId).hasClass("col-md-10"))
-                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-            else
-                $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
+            //if ($("#content_" + this.tableId).hasClass("col-md-10"))
+            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            //else
+            //    $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
         }
     };
 
     this.togglePPGrid = function () {
         if ($("#ppgrid_" + this.tableId).css("display") === "none") {
             $("#ppgrid_" + this.tableId).css("display", "inline");
-            if ($("#content_" + this.tableId).hasClass("col-md-12"))
-                $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
-            else
-                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
+            $("#ppgrid_" + this.tableId).parent().css("z-index", "3");
+            $("#Relateddiv").hide();
+            //if ($("#content_" + this.tableId).hasClass("col-md-12"))
+            //    $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
+            //else
+            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
         }
         else {
             $("#ppgrid_" + this.tableId).css("display", "none");
-            if ($("#content_" + this.tableId).hasClass("col-md-10"))
-                $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-            else
-                $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
+            $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
+            $("#Relateddiv").hide();
+            //if ($("#content_" + this.tableId).hasClass("col-md-10"))
+            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            //else
+            //    $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
         }
     };
 

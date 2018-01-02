@@ -23,17 +23,67 @@ namespace ExpressBase.Web.Controllers
     public partial class HeaderFooter : PdfPageEventHelper
     {
         private ReportRenderController Controller { get; set; }
-
+        public override void OnStartPage(PdfWriter writer, Document document)
+        {
+            //Controller.ms1.Position = 0;
+            //Controller.pdfReader = new PdfReader(Controller.ms1);
+            //Controller.stamp = new PdfStamper(Controller.pdfReader, Controller.ms1);
+            Controller.DrawWaterMark();
+            //if (condition)
+            //{
+            //    string watermarkText = "-whatever you want your watermark to say-";
+            //    float fontSize = 80;
+            //    float xPosition = 300;
+            //    float yPosition = 400;
+            //    float angle = 45;
+            //    try
+            //    {
+            //        PdfContentByte under = writer.DirectContentUnder;
+            //        BaseFont baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+            //        under.BeginText();
+            //        under.SetColorFill(iTextSharp.text.pdf.CMYKColor.LIGHT_GRAY);
+            //        under.SetFontAndSize(baseFont, fontSize);
+            //        under.ShowTextAligned(PdfContentByte.ALIGN_CENTER, watermarkText, xPosition, yPosition, angle);
+            //        under.EndText();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.Error.WriteLine(ex.Message);
+            //    }
+            //}
+        }
         public override void OnEndPage(PdfWriter writer, Document d)
         {
             Controller.DrawPageHeader();
 
             Controller.DrawPageFooter();
+            // Controller.DrawWaterMark(Controller.ms1);
+          
+                string watermarkText = "-whatever you want your watermark to say-";
+                float fontSize = 80;
+                float xPosition = 300;
+                float yPosition = 400;
+                float angle = 45;
+                try
+                {
+                    PdfContentByte under = writer.DirectContentUnder;
+                    BaseFont baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+                    under.BeginText();
+                    under.SetColorFill(iTextSharp.text.pdf.CmykColor.LightGray);
+                    under.SetFontAndSize(baseFont, fontSize);
+                    under.ShowTextAligned(PdfContentByte.ALIGN_CENTER, watermarkText, xPosition, yPosition, angle);
+                    under.EndText();
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine(ex.Message);
+                }
+            
         }
 
         public HeaderFooter(ReportRenderController _c) : base()
         {
-            this.Controller = _c;
+            this.Controller = _c;;
         }
     }
     public class ReportRenderController : EbBaseNewController
@@ -48,8 +98,9 @@ namespace ExpressBase.Web.Controllers
         private PdfContentByte canvas;
         private PdfWriter writer;
         private Document d;
-        private PdfReader pdfReader;
-        private PdfStamper stamp;
+        public PdfReader pdfReader;
+        public PdfStamper stamp;
+        public MemoryStream ms1;
 
         private float rh_height;
         private float ph_height;
@@ -89,7 +140,7 @@ namespace ExpressBase.Web.Controllers
             iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
 
             d = new Document(rec);
-            MemoryStream ms1 = new MemoryStream();
+            ms1 = new MemoryStream();
             writer = PdfWriter.GetInstance(d, ms1);
             writer.Open();
             d.Open();
@@ -104,7 +155,7 @@ namespace ExpressBase.Web.Controllers
             DrawDetail();
             DrawReportFooter();
             d.Close();
-            DrawWaterMark(ms1);
+            //DrawWaterMark(ms1);
             ms1.Position = 0;//important
             return new FileStreamResult(ms1, "application/pdf");
         }
@@ -456,11 +507,11 @@ namespace ExpressBase.Web.Controllers
             return column_val;
         }
 
-        public void DrawWaterMark(MemoryStream ms1)
+        public void DrawWaterMark()
         {
-            ms1.Position = 0;
-            pdfReader = new PdfReader(ms1);
-            stamp = new PdfStamper(pdfReader, ms1);
+            //ms1.Position = 0;
+            //pdfReader = new PdfReader(ms1);
+            //stamp = new PdfStamper(pdfReader, ms1);
             byte[] fileByte = null;
             foreach (var field in WaterMarkList)
             {
@@ -476,7 +527,7 @@ namespace ExpressBase.Web.Controllers
                       }
                   });
                 }
-            (field as EbWaterMark).DrawMe(pdfReader, d, stamp, fileByte);
+            (field as EbWaterMark).DrawMe(pdfReader, d, writer /*stamp*/, fileByte);
             }
         }
     }

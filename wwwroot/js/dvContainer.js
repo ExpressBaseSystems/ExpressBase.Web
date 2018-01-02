@@ -24,6 +24,7 @@ var DvContainerObj = function (settings) {
     this.firstWPos = null;
     this.slickApi = null;
     this.nextSlide = null;
+    this.tableId = null;
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -34,6 +35,8 @@ var DvContainerObj = function (settings) {
         //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#btnGo" + counter).trigger("click");
         $("#mini").off("click").on("click", this.toggleminimap.bind(this));
+        $("#Related_btn").off("click").on("click", this.showOrhideRelateddiv.bind(this));
+        //$("#Relateddiv").focusout(function () { $(this).hide();});
     };
 
 
@@ -41,6 +44,8 @@ var DvContainerObj = function (settings) {
         $("#prev").hide();
         $("#next").hide();
         $("#Save_btn").hide();
+        $("#Related_btn").hide();
+        $("#Relateddiv").hide();
 
         prevfocusedId = focusedId;
         focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + this.tabnum + "_" + counter;
@@ -220,7 +225,11 @@ var DvContainerObj = function (settings) {
     //};
 
     this.drawDv = function (e) {
-        this.dvRefid = $(e.target).attr("data-refid");
+        $("#Relateddiv").hide();
+        $("#ppgrid_" + this.tableId).hide();
+        $("#sub_windows_sidediv_" + this.tableId).hide();
+        $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
+        this.dvRefid = $(e.target).closest("li").attr("data-refid");
         if (this.dvRefid === this.dvcol[Object.keys(this.dvcol)[0]].Refid) {
             prevfocusedId = focusedId;
             focusedId = Object.keys(this.dvcol)[0];
@@ -256,7 +265,7 @@ var DvContainerObj = function (settings) {
                     counter++;
                     dvObj = JSON.parse(dvObj);
                     dvcontainerObj.currentObj = dvObj;
-                    dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.EbSid;
+                    dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
                     $.LoadingOverlay("hide");
                     dvcontainerObj.btnGoClick();
                 }
@@ -286,13 +295,13 @@ var DvContainerObj = function (settings) {
     }
 
     this.appendRelatedDv = function (tid) {
-        $("#obj_icons").prepend("<div class='dropdown' id='Related" + tid +"' style='display: inline-block;padding-top: 1px;'>" +
-            "<button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>" +
-            "<span class='caret'></span>" +
-            "</button>" +
-            "<ul class='dropdown-menu'>" +
-            "</ul>" +
-            "</div>");
+        //$("#obj_icons").prepend("<div class='dropdown' id='Related" + tid +"' style='display: inline-block;padding-top: 1px;'>" +
+        //    "<button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>" +
+        //    "<span class='caret'></span>" +
+        //    "</button>" +
+        //    "<ul class='dropdown-menu'>" +
+        //    "</ul>" +
+        //    "</div>");
         //$.ajax({
         //    type: "POST",
         //    url: "../DV/getAllRelatedDV",
@@ -302,18 +311,36 @@ var DvContainerObj = function (settings) {
         this.RealtedajaxSuccess(tid);
     };
 
-    this.RealtedajaxSuccess = function (tid) {
-        $("#Related" + tid + " .dropdown-menu").empty();
+    this.RealtedajaxSuccess = function (tid) {// + tid + " .dropdown-menu"
+        //$("#Relateddiv").empty();
+        this.tableId = tid;
+        $("#relatedPipableDiv .relatedBody").empty();
+        $("#relatedStartDiv .relatedBody").empty();
         $.each(this.RelatedDvlist, function (i, obj) {
-            if (this.dvRefid !== obj.RefId) {
-                if (this.dvcol[Object.keys(this.dvcol)[0]].Refid === obj.RefId)
-                    $("#Related" + tid + " .dropdown-menu").append("<li style='display:inline-flex;'><a href='#' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.Name + "</a><label style='font-size:10px;margin-left:-15px;margin-top:3px;'>(Default)</label></li>");
-                else
-                    $("#Related" + tid + " .dropdown-menu").append("<li><a href='#' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><i class='fa fa-line-chart custom'></i>" + obj.Name + "</a></li>");
+            var $icon = "";
+            if (obj.EbObjectType === EbObjectTypes.ChartVisualization)
+                $icon = "<i class='fa fa-line-chart custom'></i>";
+            else
+                $icon = "<i class='fa fa-table custom'></i>";
+            if (this.dvRefid === obj.RefId) {
+                $("#relatedCurrentDiv .relatedBody").empty();
+                $("#relatedCurrentDiv .relatedBody").append("<li class='relatedli'  data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon+"<label class='relatedlabel'>" + obj.Name + "</label></a></li>");
+            }
+            else if (this.dvcol[Object.keys(this.dvcol)[0]].Refid === obj.RefId) {
+                $("#relatedStartDiv .relatedBody").append("<li style='display:inline-flex;' class='relatedli'  data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon +"<label class='relatedlabel'>" + obj.Name + "</label></a><label style='font-size:10px;margin-left:5px;margin-top:5px;'>(Default)</label></li>");
+            }
+            else {
+                $("#relatedPipableDiv .relatedBody").append("<li class='relatedli'  data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon +"<label class='relatedlabel'>" + obj.Name + "</label></a></li>");
             }
 
         }.bind(this));
-        $("#Related" + tid + " .dropdown-menu li a").off("click").on("click", this.drawDv.bind(this));
+        $("#Relateddiv li").off("click").on("click", this.drawDv.bind(this));
+        $("#Relateddiv .relatedBody").each(function (i, obj) {
+            if ($(this).children().length === 0)
+                $(this).parent().hide();
+            else
+                $(this).parent().show();
+        });
     };
 
     this.createGoButton = function () {
@@ -321,17 +348,18 @@ var DvContainerObj = function (settings) {
         $("#obj_icons").append(`<button id='btnGo${counter}' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>`);
     };
 
-    this.check4Navigation = function () {
-        $("#Save_btn").css("display", "inline");
-        if (counter >= 1) {
-            $("#prev").show();
-            $("#next").show();
-            $("#next").attr("disabled", true);
-        }
-    };
+    //this.check4Navigation = function () {
+    //    $("#Save_btn").css("display", "inline");
+    //    if (counter >= 1) {
+    //        $("#prev").show();
+    //        $("#next").show();
+    //        $("#next").attr("disabled", true);
+    //    }
+    //};
 
     this.modifyNavigation = function () {
         $("#Save_btn").show();
+        $("#Related_btn").show();
         if (counter >= 1) {
             $("#prev").show();
             $("#next").show();
@@ -382,6 +410,10 @@ var DvContainerObj = function (settings) {
     }
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
+        $("#Relateddiv").hide();
+        $("#ppgrid_" + this.tableId).hide();
+        $("#sub_windows_sidediv_" + this.tableId).hide();
+        $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         prevfocusedId = focusedId;
         //this.nextSlide = nextSlide;
         focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
@@ -404,10 +436,9 @@ var DvContainerObj = function (settings) {
                 if ($("#" + focusedId).find("canvas").length > 0) {
                     this.dvcol[focusedId].GenerateButtons();
                 }
-            }
-            this.focusDot();
+            }           
         }
-            
+        this.focusDot();   
     };
 
     this.modifydivDots = function () {
@@ -481,6 +512,10 @@ var DvContainerObj = function (settings) {
         //        this.previewBody.hide();
         //}
     };
+
+    this.showOrhideRelateddiv = function () {
+        $("#Relateddiv").toggle();
+    }
 
     this.init();
 }

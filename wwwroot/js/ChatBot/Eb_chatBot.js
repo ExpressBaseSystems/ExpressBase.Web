@@ -65,7 +65,7 @@
 
     this.contactSubmit = function (e) {
         $(e.target).closest('.msg-cont').remove();
-        this.getMsg("Thank you.");
+        this.msgFromBot("Thank you.");
     }.bind(this);
 
     this.postmenuClick = function (e, reply) {
@@ -88,8 +88,8 @@
     }.bind(this);
 
     this.collectContacts = function () {
-        this.getMsg("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
-        this.getMsg($('<input type="email"><br/><input type="tel"><button name="contactSubmit">submit</button>'));
+        this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
+        this.msgFromBot($('<input type="email"><br/><input type="tel"><button name="contactSubmit">submit</button>'));
     };
 
     this.continueAsFBUser = function (e) {
@@ -98,7 +98,7 @@
             this.authenticate();
         else
             this.FB.logout(function (response) {
-                this.getMsg("You are successfully logout from our App");
+                this.msgFromBot("You are successfully logout from our App");
             }.bind(this));
     }.bind(this);
 
@@ -168,7 +168,7 @@
         if (this.isAlreadylogined)
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
         else {
-            this.getMsg(`Hello ${this.FBResponse.name}, ${greeting}`);
+            this.msgFromBot(`Hello ${this.FBResponse.name}, ${greeting}`);
             setTimeout(function () {
                 this.authenticate();
             }.bind(this), 901);
@@ -176,9 +176,9 @@
     }.bind(this);
 
     this.Query = function (msg, OptArr, For, ids) {
-        this.getMsg(msg);
+        this.msgFromBot(msg);
         var Options = this.getButtons(OptArr, For, ids);
-        this.getMsg($('<div class="btn-box" >' + Options + '</div>'));
+        this.msgFromBot($('<div class="btn-box" >' + Options + '</div>'));
 
     };
 
@@ -243,8 +243,8 @@
         }
         else {
             if ($("[name=formsubmit]").length === 0) {
-                this.getMsg('Are you sure? Can I submit?');
-                this.getMsg($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
+                this.msgFromBot('Are you sure? Can I submit?');
+                this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
             }
             this.enableCtrledit();
 
@@ -255,14 +255,36 @@
         if (idx === this.formControls.length)
             return;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
-        var $control = $('<div class="chat-ctrl-cont">' + this.formControls[idx][0].outerHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>');
+        var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx];
+        if (this.curCtrl && this.curCtrl.type === "Cards") {
+            var $CtrlCont = $(control);
+            $CtrlCont.find(".cards-cont").slick({
+                slidesToShow: 1,
+                infinite: false,
+                draggable: false,
+                speed: 400,
+                cssEase: 'ease-in',
+                //arrows: false,
+                //dots: true,
+                //prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
+                //nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
+                //prevArrow: $("#prev"),
+                //nextArrow: $("#next")
+            });
+        }
+        else
+            var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
         var lablel = this.curCtrl.label + ' ?';
         if (this.curCtrl.helpText)
             lablel += ` (${this.curCtrl.helpText})`;
-        this.getMsg(lablel);
-        this.getMsg($control);
+        this.msgFromBot(lablel);
+        this.msgFromBot($CtrlCont);
     }.bind(this);
+
+    this.wrapIn_chat_ctrl_cont = function (idx, control) {
+        return '<div class="chat-ctrl-cont">' + control + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
+    };
 
     this.replyAsImage = function ($prevMsg, input, idx) {
         console.log("replyAsImage()");
@@ -350,7 +372,7 @@
         this.$TypeAnimMsg.remove();
     }.bind(this);
 
-    this.getMsg = function (msg) {
+    this.msgFromBot = function (msg) {
         var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
         this.startTypingAnim($msg);
@@ -360,6 +382,10 @@
                     $msg.find('.bot-icon').remove();
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
+
+                    if (this.curCtrl && this.curCtrl.type === "Cards")
+                        $msg.find(".ctrl-wraper").css("width", "100%");
+
                     if (this.curCtrl && $('#' + this.curCtrl.name).length === 1)
                         this.loadcontrol();
                     if (this.curForm)
@@ -374,7 +400,7 @@
         else {
             $msg.remove();
             setTimeout(function () {
-                this.getMsg(msg);
+                this.msgFromBot(msg);
             }.bind(this), 901);
         }
         $('.eb-chatBox').scrollTop(99999999999);
@@ -401,7 +427,7 @@
         this.lastCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
         var msg = 'Your leave application submitted successfully';
-        this.getMsg(msg);
+        this.msgFromBot(msg);
         this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
     }.bind(this);
 

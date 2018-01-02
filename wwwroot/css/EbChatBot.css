@@ -343,3 +343,11 @@
 .img-box:hover .file-name {
     display: block;
 }
+.eb-chatBox .card-cont {
+    width: 100%;
+    /*border:none;*/
+}
+
+.eb-chatBox .card-cont {
+    margin:0;
+}

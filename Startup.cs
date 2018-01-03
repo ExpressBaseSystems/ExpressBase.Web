@@ -85,7 +85,7 @@ namespace ExpressBase.Web2
 
             services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
             {
-                return new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
+                return new RedisClient(string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort));
             });
         }
 

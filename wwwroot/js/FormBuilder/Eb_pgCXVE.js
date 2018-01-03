@@ -20,6 +20,12 @@
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
     };
 
+    this.pgCXEshowCallback = function () {
+        $(this.pgCXE_Cont_Slctr + " .CE-add").click(this.CE_AddFn.bind(this));
+
+        console.log(this.pgCXE_Cont_Slctr + "  -bind no:" + $(this.pgCXE_Cont_Slctr + " .CE-add").length);
+    };
+
     this.pgCXE_BtnClicked = function (e) {
         $(this.pgCXE_Cont_Slctr).css("left", (24 + $(".pgCXEditor-Cont").length) + "%");//
         $(this.pgCXE_Cont_Slctr).css("top", (14 + $(".pgCXEditor-Cont").length) + "vh");//
@@ -27,7 +33,7 @@
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurProplabel = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp;
         if (this.editor !== 17)
-            $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450);
+            $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
         if (this.editor > 6 && this.editor < 11)
@@ -419,8 +425,10 @@
     };
 
     this.CE_AddFn = function () {
+        console.log(this.pgCXE_Cont_Slctr + "/n" + this.PGobj.wraperId);
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
-        var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, '')) + 1);
+        var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
+        var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (lastItemCount + 1);
         if (this.PGobj.CurProp === "Controls")
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         else
@@ -448,7 +456,6 @@
             + '</div>'
             + '</div>';
         $(this.PGobj.$wraper).append(CXVE_html);
-        $(this.pgCXE_Cont_Slctr).on("click", ".CE-add", this.CE_AddFn.bind(this));
 
         $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div>');
     }

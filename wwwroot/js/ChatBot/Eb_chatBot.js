@@ -60,6 +60,7 @@
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
+        $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
     };
@@ -225,9 +226,14 @@
         if (this.curCtrl.type === "ImageUploader")
             this.replyAsImage($msgDiv, $input[0], next_idx);
         else {
+            if (this.curCtrl.type === "Cards") {
+                this.lastval = $btn.text();
+                inpVal = $btn.text();
+            }
+            else
+                this.lastval = $('#' + id).val();
             this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.callGetControl(this.lastCtrlIdx);
-            this.lastval = $('#' + id).val();
         }
         this.formValues[id] = this.lastval;
         this.editingCtrlName = null;
@@ -371,7 +377,7 @@
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
                     if (this.curCtrl && this.curCtrl.type === "Cards") {
-                        $msg.find(".ctrl-wraper").css("width", "100%").css("border",'none');
+                        $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
 

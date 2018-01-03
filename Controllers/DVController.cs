@@ -188,7 +188,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult dvCommon(string dvobj, string dvRefId, bool flag)
         {
             var dvObject = EbSerializers.Json_Deserialize(dvobj);
-            dvObject.AfterRedisGet(this.Redis);
+            dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
 
             if (!string.IsNullOrEmpty(dvobj) && !string.IsNullOrEmpty(dvRefId) && !flag)
                 return ViewComponent("ParameterDiv", new { paramDiv = dvObject.EbDataSource.FilterDialog });

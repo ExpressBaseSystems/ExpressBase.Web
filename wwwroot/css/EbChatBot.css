@@ -258,6 +258,7 @@
     WIDTH: 100%;
     padding: 1px;
     text-align: center;
+    z-index: 2;
 }
 
 .poweredby {
@@ -343,11 +344,24 @@
 .img-box:hover .file-name {
     display: block;
 }
-.eb-chatBox .card-cont {
-    width: 100%;
-    /*border:none;*/
-}
 
 .eb-chatBox .card-cont {
-    margin:0;
+    border:none;
+    margin: 0;
+    width: 100%;
+    height: inherit;
 }
+.slick-track{
+    display:flex!important;
+}
+.slick-next {
+    right: -20px ;
+}
+.slick-prev {
+    left: -30px;
+    z-index: 1;
+}
+    .slick-next:before, .slick-prev:before {
+        font-size: 30px ;
+        opacity:1;
+    }

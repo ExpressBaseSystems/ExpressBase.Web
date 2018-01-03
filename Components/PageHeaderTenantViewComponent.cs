@@ -23,8 +23,8 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
-            User _user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
-            ViewBag.ImgSrc = _user.Proimg;
+            //User _user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
+            //ViewBag.ImgSrc = _user.Proimg;
             return View();
         }
     }

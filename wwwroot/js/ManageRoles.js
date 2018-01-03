@@ -21,7 +21,7 @@
    
     this.init = function () {
         this.loadObjectsAndOperations.bind(this)();
-        $("#formManageRoles").on('submit', this.onclickbtnSaveAll.bind(this));
+        $(this.btnSaveAll).on('click', this.onclickbtnSaveAll.bind(this));
         
         //INIT FORM
         if (this.roleId > 0) {
@@ -178,27 +178,26 @@
         
         //**************INIT SUBROLES TILE**************
         var app_id = $("#selectApp").find(":selected").attr("data-id");
-        var obj = [];
+        var objAll = [];
         var subRoles = null;
         var metadata1 = ['Id', 'Name', 'Description'];
         for (var i = 0; i < this.roleList.length; i++) {
             if (this.roleList[i].App_Id == app_id) {
-                obj.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Data1: this.roleList[i].Description });
+                objAll.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Data1: this.roleList[i].Description });
             }
         }
         if (this.roleId > 0) {
             this.findDependentRoles(this.roleId);
             subRoles = [];
-            for (var i = 0; i < this.dependentList.length; i++) 
-                for (var j = 0; j < this.roleList.length; j++) 
-                    if (this.dependentList[i] === this.roleList[j].Id) 
-                        subRoles.push({ Id: this.roleList[j].Id, Name: this.roleList[j].Name, Data1: this.roleList[j].Description});
+            for (var j = 0; j < this.roleList.length; j++) 
+                if (this.dependentList.indexOf(this.roleList[j].Id) !== -1) 
+                     subRoles.push({ Id: this.roleList[j].Id, Name: this.roleList[j].Name, Data1: this.roleList[j].Description });
         }
 
         if (this.subRolesTile === null)
-            this.subRolesTile = new TileSetupJs($("#divroles"), "Add Roles", subRoles, obj, metadata1, null, this.chkItemCustomFunc, this);
+            this.subRolesTile = new TileSetupJs($("#divroles"), "Add Roles", subRoles, objAll, metadata1, null, this.chkItemCustomFunc, this);
         else
-            this.subRolesTile.setObjectList(obj);
+            this.subRolesTile.setObjectList(objAll);
         //***********************************************
 
         //------------------INIT USERS TILE------------------
@@ -217,9 +216,10 @@
     }
 
     this.onclickbtnSaveAll = function () {
+        var rid = this.roleId;
         var permissionlist = "";
-        var role2rolelist = "";
-        var userslist = "";
+        var role2rolelist = this.subRolesTile.getItemIds();
+        var userslist = this.usersTile.getItemIds();
         var appId = $("#selectApp").find(":selected").attr("data-id");
         var roleDescription = $(this.txtRoleDescription).val().trim();
         var roleName = $(this.txtRoleName).val().trim();
@@ -228,15 +228,15 @@
         });
         permissionlist = permissionlist.substring(0, permissionlist.length - 1);
         
-        $.each($('#divSelectedRoleDisplay').children(), function (i, ob) {
-            role2rolelist += $(ob).attr('data-id') + ",";
-        });
-        role2rolelist = role2rolelist.substring(0, role2rolelist.length - 1);
+        //$.each($('#divSelectedRoleDisplay').children(), function (i, ob) {
+        //    role2rolelist += $(ob).attr('data-id') + ",";
+        //});
+        //role2rolelist = role2rolelist.substring(0, role2rolelist.length - 1);
 
-        $.each($('#divSelectedUserDisplay').children(), function (i, ob) {
-            userslist += $(ob).attr('data-id') + ",";
-        });
-        userslist = userslist.substring(0, userslist.length - 1);
+        //$.each($('#divSelectedUserDisplay').children(), function (i, ob) {
+        //    userslist += $(ob).attr('data-id') + ",";
+        //});
+        //userslist = userslist.substring(0, userslist.length - 1);
 
         if (roleName === "" || roleDescription==="") {
             return false;
@@ -245,8 +245,8 @@
         $.ajax({
             type: "POST",
             url: "../Security/SaveRole",
-            data: { _roleId: this.role_Id, _roleName: roleName, _roleDesc: roleDescription, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist},
-            success: this.saveRoleSuccess
+            data: { _roleId: rid, _roleName: roleName, _roleDesc: roleDescription, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist},
+            success: this.saveRoleSuccess.bind(this)
         });
     }
 

@@ -92,18 +92,25 @@
         $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
         $(this.divSelectedDisplay).on('click', ".dropDownRemoveClass", this.onClickRemoveFromSelected.bind(this));
 
-        if (this.resultObject == null)
-            this.resultObject = [];
-        this.initSelected.bind(this)(this.resultObject);
-
         if (this.objectMetadata.indexOf('ProfilePicture') > -1)
             this.profilePicStatus = true;
 
+        if (this.resultObject == null)
+            this.resultObject = [];
+        this.initSelected.bind(this)(this.resultObject);
     }
 
 
     this.setObjectList = function (obj) {
         this.objectList = obj;
+    }
+
+    this.getItemIds = function () {
+        var itemid= '';
+        for (i = 0; i < this.resultObject.length; i++)
+            itemid += this.resultObject[i].Id + ',';
+        itemid = itemid.substring(0, itemid.length - 1);
+        return itemid;
     }
 
     this.onClickBtnAddModal = function () {
@@ -254,12 +261,17 @@
         if ($(divSelected).find(`[data-id='${obj.Id}']`).length > 0) {
             return;
         }
-        this.resultObject.push(obj);
+        var itempresent = $.grep(this.resultObject, function (a) {
+            if (a.Id === obj.Id)
+                return true;
+        });
+        if (itempresent.length === 0)
+            this.resultObject.push(obj);
         var temp = `<div class="col-md-4 container-md-4" data-id=${obj.Id} data-name=${obj.Name}>
                         <div class="mydiv1" style="overflow:visible;">
                             <div class="icondiv1">`;
         if (this.profilePicStatus === true)
-            temp += `<img class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' />`;
+            temp += `<img style = "width:52px" class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' />`;
         else
             temp += `<b>${obj.Name.substring(0, 1).toUpperCase()}</b>`;
         temp+=`     </div>

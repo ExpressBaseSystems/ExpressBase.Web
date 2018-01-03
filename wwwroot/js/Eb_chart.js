@@ -271,6 +271,18 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
+    this.start = function () {
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
+        if (this.login == "uc") {
+            $("#ppgrid_" + this.tableId).hide();
+            $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
+        }
+        else {
+            $("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
+            $("#sub_window_" + this.tableId).css("padding-top", "15px");
+        }
+    }
+
     split.windowOnFocus = function (ev) {
         $("#Relateddiv").hide();
         if ($(ev.target).attr("class") !== undefined) {
@@ -357,11 +369,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        this.start();
     }
     else {
         split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        this.start();
         this.call2FD();
     }
 
@@ -401,6 +415,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
 
         $("#ppgrid_" + this.tableId).css("display", "none");
+        $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         if (this.FD) {
             $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
             //$("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
@@ -690,7 +705,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
+        var paramstxt = "";//$('#hiddenparams').val().trim();datefrom,dateto
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
         if (paramstxt.length > 0) {
             var params = paramstxt.split(',');

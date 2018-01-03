@@ -6,7 +6,7 @@
     border-radius: 3px;
 }
 
-.eb-chatBox {
+.eb-chatBox, .eb-chatBox-dev {
     overflow-y: auto;
     height: 100%;
     padding: 0px 5px;

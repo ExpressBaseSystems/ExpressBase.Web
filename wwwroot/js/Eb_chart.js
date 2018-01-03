@@ -266,8 +266,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.MainData = (data === undefined) ? null : data;
     this.isPipped = false;
     this.isContextual = false;
-    this.filterValues = (filterValues !== "") ? JSON.parse(filterValues) : [];
-    this.rowData = rowData;
+    this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues) : [];
+    this.rowData = (rowData !== undefined) ? rowData : null ;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 

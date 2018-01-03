@@ -144,17 +144,23 @@
         }, 500);
     };
     this.submitApplicationReq = function () {
-        $("#app-form").on("submit", function (e) {
-            $.post("../Dev/SaveApplications",
-                {
+        $("#app-form").on("submit", function (e) {           
+            $.ajax({
+                type: 'POST',
+                url: "../Dev/SaveApplications",
+                beforeSend: function () {
+                  
+                },
+                data: {
                     "AppType": $('#apptype').val(),
                     "AppName": $('#appName').val(),
                     "Desc": $('#DescApp').val(),
                     "Isid": $('#Sid').val(),
-                    "itemid":
-                }, function (result) {
-
-                });
+                    "itemid": 0
+                }
+            }).done(function (data) {
+                
+            });
         });
     };
 

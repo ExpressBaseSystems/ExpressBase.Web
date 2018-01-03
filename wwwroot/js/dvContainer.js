@@ -360,7 +360,7 @@ var DvContainerObj = function (settings) {
     this.modifyNavigation = function () {
         $("#Save_btn").show();
         $("#Related_btn").show();
-        if (counter >= 1) {
+       //if (counter >= 1) {
             $("#prev").show();
             $("#next").show();
             $("#divDots").show();
@@ -389,7 +389,7 @@ var DvContainerObj = function (settings) {
                 }
             }
             this.modifydivDots();
-        }
+        //}
         
         //if ($("#" + focusedId).prev().attr("id") == undefined) {
         //    $("#prev").attr("disabled", true);
@@ -462,6 +462,8 @@ var DvContainerObj = function (settings) {
             }
         });
         $(".dot").off("click").on("click", this.focus2ClickedDot);
+        $(".dot").off("mouseenter").on("mouseenter", this.dotOnHover);
+        $(".dot").off("mouseleave").on("mouseleave", this.dotOffHover);
         this.focusDot();
     }
 
@@ -489,6 +491,33 @@ var DvContainerObj = function (settings) {
         var lastChar = id.substr(id.length - 1);
         $('.splitdiv_parent').slick('slickGoTo', lastChar, false);
     }
+
+    this.dotOnHover = function (e) {
+        var id = $(e.target).attr("data-mapid");
+        var dvObj = this.dvcol[id];
+        $(".dotheader").text(dvObj.EbObject.Name);
+        var lastChar = id.substr(id.length - 1);
+        this.previewBody = $('#parent').minimap({
+            heightRatio: 0.25,
+            widthRatio: 0.15,
+            offsetHeightRatio: 0.1,
+            offsetWidthRatio: 0.5,
+            position: "left",
+            touch: true,
+            smoothScroll: true,
+            smoothScrollDelay: 200,
+        });
+        this.previewBody.show();
+        $("#dotsDetail").show();
+        $("#dotsDetail").css("margin-left", e.pageX + "px");
+        $("#dotsDetail").css("margin-top", e.pageY + "px");
+        //$('.splitdiv_parent').slick('slickGoTo', lastChar, false);
+    }.bind(this);
+
+    this.dotOffHover = function (e) {
+       // $("#dotsDetail").hide();
+        //this.previewBody.hide();
+    }.bind(this);
 
     this.toggleminimap = function () {
         $("#MinimapDiv").toggle();

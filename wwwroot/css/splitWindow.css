@@ -239,6 +239,23 @@
     background-image: var(--ebbgimage);
     padding: 7px;
 }
+
+#dotsDetail {
+    width: 225px;
+    height: 175px;
+    position: absolute;
+    z-index: 1;
+    z-index: 1;
+    background: #ffffff;
+    box-shadow: -4px 0px 21px 0px rgba(189,189,189,1);
+}
+
+.dotheader {
+    background-color: var(--ebbg);
+    color: white;
+    background-image: var(--ebbgimage);
+    padding: 7px;
+}
 /*#dotsul {
     padding-top: 10px;
 }*/

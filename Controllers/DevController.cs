@@ -350,7 +350,8 @@ namespace ExpressBase.Web.Controllers
             if (resultlist.id > 0)
             {
                 ViewBag.Message = "Successfully Added";
-                return RedirectToAction("CreateApplication");
+                return RedirectToAction("SolutionDashBoard", "Tenant");
+
                 // check redirection
             }
             else

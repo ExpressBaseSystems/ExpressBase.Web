@@ -108,9 +108,8 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-
         [HttpPost]
-        public IActionResult EbOnBoarding(int i)
+        public void EbCreateSolution(int i)
         {
             var req = this.HttpContext.Request.Form;
             TempData[SolutionName] = req["Sname"].ToString();
@@ -129,12 +128,8 @@ namespace ExpressBase.Web.Controllers
                 EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
                 {
                     dbName = req["Isid"]
-                });
-                if (response.resp)
-                    return RedirectToAction("SolutionDashboard"); // convert get to post
+                });               
             }
-
-            return View();
 
         }
 

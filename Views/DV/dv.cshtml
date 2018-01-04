@@ -19,6 +19,8 @@
 <!-- Add the slick-theme.css if you want default styling -->
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css" />
 <script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
+<script type="text/javascript" src="~/js/pagemap.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 <style>
     .scrollable-menu {
         height: auto;
@@ -48,7 +50,7 @@
 @{
     string head = string.Empty;
     string html = string.Empty;
-    
+
     var dvobj = EbSerializers.Json_Serialize(ViewBag.dvObject);
 }
 <div class="row">
@@ -81,7 +83,13 @@
 </div>
 @*<section class="minimaps" id="MinimapDiv" style="display:none;"></section>*@
 <div id='divDots' class='dotsDiv' style="display:none;"><div class='dotstable'></div></div>
-<div id='dotsDetail'></div>
+<div id='dotsDetail' style="display:none;">
+    <div class="dotheader">Name</div>
+    <div class="dotsnapshot"><canvas id="copyCanvas" style="width:200px;"></canvas></div>
+    @*<div class="dotfilterValues">filter</div>
+    <div class="dottype">type</div>
+    <button id='Go' class='btn'><i class="fa fa-arrow-right" aria-hidden="true"></i></button>*@
+</div>
 <div id="Relateddiv" class='relatedCont' style="display:none;">
     <div id="relatedCurrentDiv">
         <div class="relatedHeader">Current</div>
@@ -104,8 +112,7 @@
         <div class="relatedBody"></div>
     </div>
 </div>
-<div class="row splitdiv_parent" id="parent-div@(ViewBag.tabNum)"></div>
-
+<div id="parent"><div class="row splitdiv_parent" id="parent-div@(ViewBag.tabNum)"></div></div>
 
 @section EbHead {
     <script>

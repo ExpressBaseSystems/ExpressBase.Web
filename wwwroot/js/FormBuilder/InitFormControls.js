@@ -1,5 +1,6 @@
 ﻿var InitControls = function (bot) {
     this.Bot = bot;
+
     this.Date = function (ctrl) {
         var settings = { timepicker: false };
 
@@ -33,7 +34,9 @@
     }
 
     this.initCards = function ($Ctrl) {
-        $Ctrl.slick({
+        console.log("initCards");
+        $Ctrl.find(".card-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl))
+        $Ctrl.not('.slick-initialized').slick({
             slidesToShow: 1,
             infinite: false,
             draggable: false,

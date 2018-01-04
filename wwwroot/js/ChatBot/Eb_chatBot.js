@@ -60,6 +60,7 @@
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
+        $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
     };
@@ -166,8 +167,14 @@
         else {
             greeting = 'Good evening!';
         }
-        if (this.isAlreadylogined)
+        if (this.isAlreadylogined) {
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
+
+            /////////////////////////////////////////////////
+            setTimeout(function () {
+                $(".btn-box").find("[idx=0]").click();
+            }.bind(this), this.typeDelay*2 + 100);
+        }
         else {
             this.msgFromBot(`Hello ${this.FBResponse.name}, ${greeting}`);
             setTimeout(function () {
@@ -225,9 +232,14 @@
         if (this.curCtrl.type === "ImageUploader")
             this.replyAsImage($msgDiv, $input[0], next_idx);
         else {
+            if (this.curCtrl.type === "Cards") {
+                this.lastval = $btn.closest(".card-cont").find(".card-label").text();
+                inpVal = this.lastval;
+            }
+            else
+                this.lastval = $('#' + id).val();
             this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.callGetControl(this.lastCtrlIdx);
-            this.lastval = $('#' + id).val();
         }
         this.formValues[id] = this.lastval;
         this.editingCtrlName = null;
@@ -371,11 +383,11 @@
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
                     if (this.curCtrl && this.curCtrl.type === "Cards") {
-                        $msg.find(".ctrl-wraper").css("width", "100%").css("border",'none');
+                        $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
 
-                    if (this.curCtrl && $('#' + this.curCtrl.name).length === 1) {
+                    if (this.curCtrl && $('#' + this.curCtrl.name).length === 1 && ($msg.find(".ctrl-wraper").length === 1)) {
                         this.loadcontrol();
                     }
                     if (this.curForm)
@@ -416,7 +428,7 @@
         this.formValues = {};
         this.lastCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
-        var msg = 'Your leave application submitted successfully';
+        var msg = `Your ${this.curForm.name} application submitted successfully`;
         this.msgFromBot(msg);
         this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
     }.bind(this);
@@ -461,6 +473,11 @@
                 this.refreshToken = result[0].refreshToken;
                 this.formNames = Object.values(this.formsDict);
                 this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
+
+                /////////////////////////////////////////////////
+                setTimeout(function () {
+                    $(".btn-box .btn:last").click();
+                }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

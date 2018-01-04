@@ -49,7 +49,8 @@ var DvContainerObj = function (settings) {
 
         prevfocusedId = focusedId;
         focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + this.tabnum + "_" + counter;
-
+        if (counter == 0)
+            this.currentObj.Pippedfrom = "";
         this.MainData = (this.currentObj.Pippedfrom !== null && this.currentObj.Pippedfrom !== "") ? this.previousObj.data : null;
 
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
@@ -194,11 +195,11 @@ var DvContainerObj = function (settings) {
     };
    
     this.saveSettings = function () {
-        $.LoadingOverlay("show");
-        if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1)
-            $.post('../Eb_Object/SaveEbObject', { _refid: this.dvRefid, _json: JSON.stringify(dvcontainerObj.currentObj), _rel_obj: "aaa", _tags: "aa" }, this.saveSuccess.bind(this));
-        else
-            $.post('../Eb_Object/SaveEbObject', { _refid: this.dvRefid, _json: JSON.stringify(dvcontainerObj.currentObj), _rel_obj: "aaa", _tags: "aaa" }, this.saveSuccess.bind(this));
+        //$.LoadingOverlay("show");
+        //if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1)
+        //    $.post('../Eb_Object/SaveEbObject', { _refid: this.dvRefid, _json: JSON.stringify(dvcontainerObj.currentObj), _rel_obj: "aaa", _tags: "aa" }, this.saveSuccess.bind(this));
+        //else
+        //    $.post('../Eb_Object/SaveEbObject', { _refid: this.dvRefid, _json: JSON.stringify(dvcontainerObj.currentObj), _rel_obj: "aaa", _tags: "aaa" }, this.saveSuccess.bind(this));
     };
 
     this.saveSuccess = function () {
@@ -364,6 +365,8 @@ var DvContainerObj = function (settings) {
             $("#prev").show();
             $("#next").show();
             $("#divDots").show();
+            $(".miniregion").remove();
+            $(".minimap").remove();
             if (this.slickApi === null) {
                 this.slickApi = $('.splitdiv_parent').slick({
                     slidesToShow: 1,
@@ -493,21 +496,53 @@ var DvContainerObj = function (settings) {
     }
 
     this.dotOnHover = function (e) {
-        var id = $(e.target).attr("data-mapid");
+        var id = $(e.target).closest("div").attr("data-mapid");
         var dvObj = this.dvcol[id];
         $(".dotheader").text(dvObj.EbObject.Name);
         var lastChar = id.substr(id.length - 1);
-        this.previewBody = $('#parent').minimap({
-            heightRatio: 0.25,
-            widthRatio: 0.15,
-            offsetHeightRatio: 0.1,
-            offsetWidthRatio: 0.5,
-            position: "left",
-            touch: true,
-            smoothScroll: true,
-            smoothScrollDelay: 200,
-        });
-        this.previewBody.show();
+        var temp = id.substring(11);
+        $(".miniregion").remove();
+        $(".minimap").remove();
+        if (dvObj.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
+            $(".dotsnapshot").empty();
+            $(".dotsnapshot").append(`<div id="copydiv" style="width:200px;"></canvas>`);
+            //this.previewBody = null;
+            //this.previewBody = $('#parent').minimap({
+            //    heightRatio: 0.25,
+            //    widthRatio: 0.15,
+            //    offsetHeightRatio: 0.1,
+            //    offsetWidthRatio: 0.5,
+            //    position: "left",
+            //    touch: true,
+            //    smoothScroll: true,
+            //    smoothScrollDelay: 200,
+            //});
+            //this.previewBody.show();
+            //$("#copydiv").html($("#content_" + temp).html());
+            html2canvas($("#content_" + temp), {
+                onrendered: function (canvas) {
+                    theCanvas = canvas;
+                    document.body.appendChild(canvas);
+
+                    // Convert and download as image 
+                    //Canvas2Image.saveAsPNG(canvas);
+                    $("#copydiv").append(canvas);
+                    // Clean up 
+                    //document.body.removeChild(canvas);
+                }
+            });
+        }
+        else {
+            var canvas = document.getElementById('myChart' + temp);
+            var image = new Image();
+            image.id = "pic"
+            image.src = canvas.toDataURL();
+            $(".dotsnapshot").empty();
+            $(".dotsnapshot").append(`<canvas id="copyCanvas" style="width:200px;"></canvas>`);
+            var dest = document.getElementById('copyCanvas'),
+            destcontext = dest.getContext('2d');
+            destcontext.drawImage(image, 10, 10, 200, 200);
+        }
         $("#dotsDetail").show();
         $("#dotsDetail").css("margin-left", e.pageX + "px");
         $("#dotsDetail").css("margin-top", e.pageY + "px");
@@ -515,8 +550,10 @@ var DvContainerObj = function (settings) {
     }.bind(this);
 
     this.dotOffHover = function (e) {
-       // $("#dotsDetail").hide();
-        //this.previewBody.hide();
+        //$("#dotsDetail").hide();
+        //if(this.previewBody)
+        //    this.previewBody.hide();
+        //$(".dotsnapshot").empty();
     }.bind(this);
 
     this.toggleminimap = function () {

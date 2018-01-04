@@ -149,6 +149,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             $("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
+            $("#sub_window_" + this.tableId).css("padding-top", "15px");
         }
     }
 
@@ -278,6 +279,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.initCompleteflag = false;
 
         $("#objname").text(this.dvName);
+        $("#ppgrid_" + this.tableId).hide();
+        $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         if (this.login == "uc") {
             $("#ppgrid_" + this.tableId).hide();
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
@@ -364,6 +367,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.addSerialAndCheckboxColumns = function () {
+        this.CheckforColumnID();
         var chkObj = new Object();
         chkObj.data = null;
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
@@ -385,15 +389,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //this.ebSettings.columnsext.unshift(JSON.parse('{"name":"serial"}'));
     }
 
-    this.CheckforColumnID = function (i, col) {
-        if (col.name === "id") {
-            //this.FlagPresentId = true;
-            this.ebSettings.Columns.$values[i].bVisible = false;
-            //this.ebSettings.Columns.$values[1].bVisible = true;
-            //this.ebSettings.Columns.$values[1].sTitle = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-            //this.ebSettings.Columns.$values[1].render = this.renderCheckBoxCol.bind(this);
-            return false;
-        }
+    this.CheckforColumnID = function () {
+        $.each(this.ebSettings.Columns.$values, function (i, col) {
+            if (col.name === "id") {
+                this.FlagPresentId = true;
+                return false;
+            }
+        });
+        //if (col.name === "id") {
+        //    //this.FlagPresentId = true;
+        //    this.ebSettings.Columns.$values[i].bVisible = false;
+        //    //this.ebSettings.Columns.$values[1].bVisible = true;
+        //    //this.ebSettings.Columns.$values[1].sTitle = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
+        //    //this.ebSettings.Columns.$values[1].render = this.renderCheckBoxCol.bind(this);
+        //    return false;
+        //}
     };
 
     this.createTblObject = function () {
@@ -466,6 +476,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
+            if (this.ebSettings.IsPaged == "false") {
+
+                o.dom = "<'col-md-12 noPadding'B>rt";
+            }
             if (this.login === "uc") {
                 dvcontainerObj.currentObj.Pippedfrom = "";
                 $("#Pipped").text("");
@@ -1391,13 +1405,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
-        //if (this.FlagPresentId) {
+        if (this.FlagPresentId) {
         var idpos = $.grep(this.ebSettings.Columns.$values, function (e) { return e.name === "id"; })[0].data;
         this.rowId = meta.row; //do not remove - for updateAlSlct
         return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
-        //}
-        //else
-        //    return "<input type='checkbox'";
+        }
+        else
+            return "<input type='checkbox'";
     };
 
     this.updateAlSlct = function (e) {

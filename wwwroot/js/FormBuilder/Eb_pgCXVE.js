@@ -21,9 +21,7 @@
     };
 
     this.pgCXEshowCallback = function () {
-        $(this.pgCXE_Cont_Slctr + " .CE-add").click(this.CE_AddFn.bind(this));
-
-        console.log(this.pgCXE_Cont_Slctr + "  -bind no:" + $(this.pgCXE_Cont_Slctr + " .CE-add").length);
+        $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -425,7 +423,6 @@
     };
 
     this.CE_AddFn = function () {
-        console.log(this.pgCXE_Cont_Slctr + "/n" + this.PGobj.wraperId);
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
         var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
         var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (lastItemCount + 1);

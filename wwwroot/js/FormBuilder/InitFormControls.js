@@ -33,6 +33,7 @@
     }
 
     this.initCards = function ($Ctrl) {
+        $Ctrl.find(".card-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl))
         $Ctrl.slick({
             slidesToShow: 1,
             infinite: false,

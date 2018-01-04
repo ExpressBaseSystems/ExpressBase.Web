@@ -248,6 +248,7 @@ namespace ExpressBase.Web.Controllers
                 else if (control is EbCards)
                 {
                     (control as EbCards).InitFromDataBase(this.ServiceClient);
+                    (control as EbCards).BareControlHtml = (control as EbCards).GetBareHtml();
                 }
             }
             return obj;

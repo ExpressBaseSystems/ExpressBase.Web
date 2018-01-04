@@ -101,7 +101,7 @@
         if (!$.isEmptyObject(this.objSubscription)) {
             $.ajax({
                 type: 'POST',
-                url: "../Tenant/EbOnBoarding",
+                url: "../Tenant/EbCreateSolution",
                 beforeSend: function () {
                     $("#save-subscrip i").show();
                 },
@@ -152,16 +152,27 @@
                   
                 },
                 data: {
+                    "Sname": $("[name='Sname']").val().trim(),
+                    "Sdesc": $("[name='Desc']").val().trim(),
                     "AppType": $('#apptype').val(),
                     "AppName": $('#appName').val(),
                     "Desc": $('#DescApp').val(),
                     "Isid": $('#Sid').val(),
+                    "AppIcon": $("#AppIcon").val().trim(),
                     "itemid": 0
                 }
             }).done(function (data) {
                 
             });
         });
+    };
+    this.whichAppType = function (e) {
+        var ob = $(e.target).closest(".apps-wrapper-fchiled");
+        ob.addClass("appselected");
+        $.each(ob.parent().siblings(), function (i, obj) {
+            $(obj).children(".apps-wrapper-fchiled").removeClass("appselected");
+        }.bind(this))
+        $("[name='AppType']").val(ob.attr("type"));
     };
 
     this.init = function () {
@@ -181,6 +192,7 @@
         $("#s-info-skip").on('click', this.scrollToLast.bind(this));
         $("#app-next").on('click', this.scrollToLast.bind(this));
         $("#prod-prev").on('click', this.scrollToProd.bind(this));
+        $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));
         this.submitApplicationReq();
     };
 

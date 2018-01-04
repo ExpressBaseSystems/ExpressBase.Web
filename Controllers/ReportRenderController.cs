@@ -25,60 +25,12 @@ namespace ExpressBase.Web.Controllers
         private ReportRenderController Controller { get; set; }
         public override void OnStartPage(PdfWriter writer, Document document)
         {
-            //Controller.ms1.Position = 0;
-            //Controller.pdfReader = new PdfReader(Controller.ms1);
-            //Controller.stamp = new PdfStamper(Controller.pdfReader, Controller.ms1);
-            Controller.DrawWaterMark();
-            //if (condition)
-            //{
-            //    string watermarkText = "-whatever you want your watermark to say-";
-            //    float fontSize = 80;
-            //    float xPosition = 300;
-            //    float yPosition = 400;
-            //    float angle = 45;
-            //    try
-            //    {
-            //        PdfContentByte under = writer.DirectContentUnder;
-            //        BaseFont baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
-            //        under.BeginText();
-            //        under.SetColorFill(iTextSharp.text.pdf.CMYKColor.LIGHT_GRAY);
-            //        under.SetFontAndSize(baseFont, fontSize);
-            //        under.ShowTextAligned(PdfContentByte.ALIGN_CENTER, watermarkText, xPosition, yPosition, angle);
-            //        under.EndText();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.Error.WriteLine(ex.Message);
-            //    }
-            //}
         }
         public override void OnEndPage(PdfWriter writer, Document d)
         {
             Controller.DrawPageHeader();
-
             Controller.DrawPageFooter();
-            // Controller.DrawWaterMark(Controller.ms1);
-          
-                string watermarkText = "-whatever you want your watermark to say-";
-                float fontSize = 80;
-                float xPosition = 300;
-                float yPosition = 400;
-                float angle = 45;
-                try
-                {
-                    PdfContentByte under = writer.DirectContentUnder;
-                    BaseFont baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
-                    under.BeginText();
-                    under.SetColorFill(iTextSharp.text.pdf.CmykColor.LightGray);
-                    under.SetFontAndSize(baseFont, fontSize);
-                    under.ShowTextAligned(PdfContentByte.ALIGN_CENTER, watermarkText, xPosition, yPosition, angle);
-                    under.EndText();
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine(ex.Message);
-                }
-            
+            Controller.DrawWaterMark();
         }
 
         public HeaderFooter(ReportRenderController _c) : base()
@@ -118,6 +70,8 @@ namespace ExpressBase.Web.Controllers
         private Dictionary<string, List<object>> PageSummaryFields = new Dictionary<string, List<object>>();
         private Dictionary<string, List<object>> ReportSummaryFields = new Dictionary<string, List<object>>();
         private List<object> WaterMarkList = new List<object>();
+        private Dictionary<string, byte[]> watermarkImages = new Dictionary<string, byte[]>();
+
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         public IActionResult Index(string refid)
@@ -149,13 +103,13 @@ namespace ExpressBase.Web.Controllers
             canvas = writer.DirectContent;
             CalculateSectionHeights();
             InitializeSummaryFields();
+            GetWatermarkImages();
             d.NewPage();
 
             DrawReportHeader();
             DrawDetail();
             DrawReportFooter();
             d.Close();
-            //DrawWaterMark(ms1);
             ms1.Position = 0;//important
             return new FileStreamResult(ms1, "application/pdf");
         }
@@ -239,7 +193,6 @@ namespace ExpressBase.Web.Controllers
                         }
                         else
                         {
-                            //  SummaryFieldsList.Add(f);
                             PageSummaryFields[f.DataField].Add(f);
                         }
                     }
@@ -278,7 +231,6 @@ namespace ExpressBase.Web.Controllers
                         }
                         else
                         {
-                            //SummaryFieldsList.Add(f);
                             ReportSummaryFields[f.DataField].Add(f);
                         }
                     }
@@ -287,6 +239,26 @@ namespace ExpressBase.Web.Controllers
 
         }
 
+        public void GetWatermarkImages()
+        {
+            byte[] fileByte = null;
+            foreach (var field in Report.ReportObjects)
+            {
+                if ((field as EbWaterMark).Image != string.Empty)
+                {
+                    fileByte = this.ServiceClient.Post<byte[]>
+                  (new DownloadFileRequest
+                  {
+                      FileDetails = new FileMeta
+                      {
+                          FileName = (field as EbWaterMark).Image + ".jpg",
+                          FileType = "jpg"
+                      }
+                  });
+                }
+                watermarkImages.Add((field as EbWaterMark).Image, fileByte);
+            }
+        }
         public void DrawReportHeader()
         {
             var rh_Yposition = 0;
@@ -481,10 +453,6 @@ namespace ExpressBase.Web.Controllers
                      });
                 field.DrawMe(d, fileByte);
             }
-            else if (field is EbWaterMark)
-            {
-                WaterMarkList.Add(field);
-            }
             else if ((field is EbText) || (field is EbCircle) || (field is EbRect) || (field is EbHl) || (field is EbVl) || (field is EbArrR) || (field is EbArrL) || (field is EbArrU) || (field is EbArrD) || (field is EbByArrH) || (field is EbByArrV))
             {
                 field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop);
@@ -509,25 +477,15 @@ namespace ExpressBase.Web.Controllers
 
         public void DrawWaterMark()
         {
-            //ms1.Position = 0;
-            //pdfReader = new PdfReader(ms1);
-            //stamp = new PdfStamper(pdfReader, ms1);
+            
             byte[] fileByte = null;
-            foreach (var field in WaterMarkList)
+            foreach (var field in Report.ReportObjects)
             {
                 if ((field as EbWaterMark).Image != string.Empty)
                 {
-                    fileByte = this.ServiceClient.Post<byte[]>
-                  (new DownloadFileRequest
-                  {
-                      FileDetails = new FileMeta
-                      {
-                          FileName = (field as EbWaterMark).Image + ".jpg",
-                          FileType = "jpg"
-                      }
-                  });
+                    fileByte = watermarkImages[(field as EbWaterMark).Image];
                 }
-            (field as EbWaterMark).DrawMe(pdfReader, d, writer /*stamp*/, fileByte);
+            (field as EbWaterMark).DrawMe(pdfReader, d, writer, fileByte,Report.Height);
             }
         }
     }

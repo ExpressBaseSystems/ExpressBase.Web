@@ -1,0 +1,123 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+
+    Dictionary<string, object> Dict = ViewBag.dict;
+}
+
+@using (Html.BeginForm(FormMethod.Post, new { itemid = 9 }))
+{
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="text-center">Create User groups</h3>
+            <div class="form-group">
+                <input type="text" class="form-control" name="groupname" placeholder="Group Name" value="@ViewBag.UGName" />
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="description" placeholder="Description" value="@ViewBag.UGDescription" />
+            </div>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#users">Search for Users</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="users" class="tab-pane fade in active">
+            <div id="usr">
+                <div class='row'>
+                    <div id='div2' class='col-lg-6 well' style="height:300px">
+                        @Html.Raw(ViewBag.UserList)
+                    </div>
+                    @await Component.InvokeAsync("SearchUser", new { targetDivId = "div2" })
+                </div>
+                <input type="hidden" name="groupid" value="@ViewBag.itemid" />
+            </div>
+
+        </div>
+
+
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn btn-primary" value="Create" />
+    </div>
+}
+
+
+<style>
+    table {
+        width: 100%;
+    }
+
+    .col-md-4 {
+        padding-left: 0 !important;
+    }
+
+    .col-md-8 {
+        padding-right: 0 !important;
+    }
+
+    tr {
+        text-align: center;
+    }
+
+    input[type=checkbox] {
+        margin-left: 5px;
+    }
+
+
+    .scrollable-menu {
+        border: 1px solid #eee;
+        overflow-x: hidden;
+    }
+
+    .stylish-input-group .input-group-addon {
+        background: white !important;
+    }
+
+    .stylish-input-group .form-control {
+        border-right: 0;
+        box-shadow: 0 0 0;
+        border-color: #ccc;
+    }
+
+    .stylish-input-group button {
+        border: 0;
+        background: transparent;
+    }
+</style>
+<script>
+    $('document').ready(function () {
+
+        var userid ="";
+        $.each($('#div2').children(), function (i, obj) {
+            userid += $(obj).attr("id")+ ",";
+        });
+       var Ids = userid.substring(0, userid.length - 1);
+       $('#userslist').val(Ids);
+        //$.post("../TenantUser/GetRoles",
+        //         {
+
+        //         }, function (result) {
+        //             if (result) {
+        //                 document.getElementById("userroles").innerHTML = result;
+        //             }
+        //         });
+        //    $('#sendmail').change(function () {
+        //        if (!this.checked)
+        //            $('#pw').fadeIn();
+        //        else
+        //            $('#pw').fadeOut();
+        //    });
+        //    var f = true;
+        //    $('.selectpicker').on('rendered.bs.select', function (e) {
+        //        if (f)
+        //            $("#roleSel").find("span:eq(0)").text("Select Role")
+        //        f = false;
+        //    });
+        });
+
+</script>

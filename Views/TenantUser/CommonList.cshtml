@@ -12,17 +12,17 @@
 
     if (ViewBag.ListType == "user")
     {
-        editor = "CreateUser";
-        whichController = "TenantUser";
+        editor = "ManageUser";
+        whichController = "Security";
     }
+    //else if (ViewBag.ListType == "roles")
+    //{
+    //    editor = "ManageRoles";
+    //    whichController = "TenantUser";
+    //}
     else if (ViewBag.ListType == "roles")
     {
         editor = "ManageRoles";
-        whichController = "TenantUser";
-    }
-    else if (ViewBag.ListType == "roles2")
-    {
-        editor = "ManageRoles2";
         whichController = "Security";
     }
     else

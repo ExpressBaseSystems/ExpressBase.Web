@@ -183,7 +183,7 @@
         var metadata1 = ['Id', 'Name', 'Description'];
         for (var i = 0; i < this.roleList.length; i++) {
             if (this.roleList[i].App_Id == app_id) {
-                objAll.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Data1: this.roleList[i].Description });
+                objAll.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Description: this.roleList[i].Description });
             }
         }
         if (this.roleId > 0) {
@@ -191,7 +191,7 @@
             subRoles = [];
             for (var j = 0; j < this.roleList.length; j++) 
                 if (this.dependentList.indexOf(this.roleList[j].Id) !== -1) 
-                     subRoles.push({ Id: this.roleList[j].Id, Name: this.roleList[j].Name, Data1: this.roleList[j].Description });
+                     subRoles.push({ Id: this.roleList[j].Id, Name: this.roleList[j].Name, Description: this.roleList[j].Description });
         }
 
         if (this.subRolesTile === null)
@@ -206,7 +206,7 @@
         if (this.roleId > 0) {
             initUserList = [];
             for (i = 0; i < this.usersList.length; i++) {
-                initUserList.push({ Id: this.usersList[i].Id, Name: this.usersList[i].Name, Data1: this.usersList[i].Email});
+                initUserList.push({ Id: this.usersList[i].Id, Name: this.usersList[i].Name, Email: this.usersList[i].Email});
             }
         }
         if (this.usersTile === null) {

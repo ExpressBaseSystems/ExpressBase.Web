@@ -1,0 +1,501 @@
+﻿@using ExpressBase.Security.Core;
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.css" />
+<link rel="stylesheet" href="~/css/EbImageCropper.css" />
+<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.js"></script>
+<script src="~/js/EbImageCropper.js" type="text/javascript"></script>
+
+@*@using (Html.BeginForm(FormMethod.Post))
+    {*@
+@*<div class="row">
+        <div class="col-md-6">
+            <h3 class="text-center">Create User</h3>
+            <div class="form-group">
+                <input type="text" class="form-control" id="firstname" name="firstname" value="@ViewBag.Name" placeholder="Name" />
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="email" name="email" value="@ViewBag.email" placeholder="Email" />
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="pw" name="pwd" placeholder="Password" />
+            </div>
+            <div class="form-group">
+                <span>Send mail. </span><input type="checkbox" id="sendmail" />
+            </div>
+        </div>
+    </div>*@
+
+<style>
+    .outer-section-createuser {
+        height: 100vh;
+        font-family: open sans;
+        font-weight: 300;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding-bottom: 15px;
+    }
+
+    .set-form-head {
+        width: 100%;
+        background: #339bb3;
+        color: white;
+        font-size: 20px;
+        padding: 10px;
+    }
+
+    .center {
+        margin: auto;
+        width: 90%;
+        padding: 10px;
+    }
+
+    .searchRsulsItemsDiv:hover {
+        background-color: #eee;
+    }
+
+    .mydiv1:hover {
+        background-color: #f5f5f5;
+        border: none;
+    }
+
+    .mydiv1 {
+        border: 2px solid #f5f5f5;
+        background-color: #fdfdfd;
+        border-radius: 6px;
+        align-items: center;
+        height: 75px;
+        overflow: hidden;
+        padding: 10px 13px;
+        margin-top: 15px;
+    }
+
+    .icondiv1 {
+        display: inline-block;
+        font-size: xx-large;
+        padding-right: 10px;
+        vertical-align: top;
+    }
+
+    .textdiv1 {
+        width: 82%;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .closediv1 {
+        display: inline-block;
+        float: right;
+        cursor: pointer;
+        vertical-align: top;
+    }
+
+    .tilediv1 {
+        border: 1px solid;
+        border-color: #ccc;
+        padding: 10px;
+        height: 300px;
+        border-radius: 6px;
+        overflow: auto;
+        margin: 0px;
+    }
+</style>
+@{
+    var RoleObj = Html.Raw(ViewBag.Roles);
+    var SystemRoles = Html.Raw(ViewBag.SystemRoles);
+    var UserGroupObj = Html.Raw(ViewBag.EBUserGroups);
+    var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
+    var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
+}
+<div class="center">
+    <section class="outer-section-createuser" style="height: 640px;">
+        <div class="set-form-head">
+            <div id="divFormHeading" class="">Create User</div>
+        </div>
+        <div class="row">
+            <br />
+            <div class="col-md-8" style="margin-left:4%">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        @*<label style="font-family: open sans; font-weight: 300; display:inline-block">Name</label>*@
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-user" aria-hidden="true" style="display:inline-block"></i></span>
+                            <input id="txtName" style="display:inline-block; width:100%; margin-left: 0px;" class="form-control" type="text" name="Name" value="@ViewBag.U_Name" placeholder="Name" title="Name">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6" style="">
+                        @*<label style="font-family: open sans; font-weight: 300;">Nick Name</label>*@
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-user-o" aria-hidden="true"></i></span>
+                            <input id="txtNickName" style="display:inline-block; width:100% " class="form-control" type="text" placeholder="Nick Name" title="Nick Name">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        @*<label style="font-family: open sans; font-weight: 300;">Email ID</label>*@
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                            <input id="txtEmail" style="display:inline-block; width:100%" class="form-control" type="text" value="@ViewBag.U_Email" placeholder="Email ID" title="Email ID">
+                        </div>
+                    </div>
+                    <div id="divPassword" class="form-group col-md-6">
+                        @*<label for="pwd" style="font-family: open sans; font-weight: 300;">Password</label>*@
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
+                            <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2" style="margin-left:70px">
+                <img src="~/images/proimg.jpg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" style="height:100px" />
+            </div>
+        </div>
+
+        <div class="row" style="padding-left:50px; padding-right:50px; ">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home">General</a></li>
+                <li><a data-toggle="tab" href="#menu1">Roles</a></li>
+                <li><a data-toggle="tab" href="#menu2">Constraints</a></li>
+                <li><a data-toggle="tab" href="#menu3">User Groups</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="home" class="tab-pane fade in active" style="padding-top:30px">
+                    <div class="row tilediv1">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id=""><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                    <input class="form-control" type="text" id="txtDateOfBirth" title="Date of Birth">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Gender</label>
+                                <select class="form-control" id="" title="Gender">
+                                    <option selected disabled>Select Gender</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Primary Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id=""><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                    <input class="form-control" type="text" title="Primary Phone Number">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Secondary Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id=""><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                    <input class="form-control" type="text" title="Secondary Phone Number">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Alternate Email ID</label>
+                                <input class="form-control" type="text" title="Alternate Email ID">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Facebook ID</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id=""><i class="fa fa-facebook-square" aria-hidden="true"></i></span>
+                                    <input class="form-control" type="text" title="Facebook ID">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span>Send mail. </span><input type="checkbox" id="sendmail" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="menu1" class="tab-pane fade">
+
+                    @*<div class="row" style="padding:6px 0px">
+                        <div class="col-md-5">
+                            
+                        </div>
+                        <div class="col-md-4">
+                            <input id="txtDemoRoleSearch" type="search" class="form-control" placeholder="Search" style="padding-right:30px; display:inline-block; width:80%" />
+                            <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
+                            <button id="btnClearDemoRoleSearch" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn" data-toggle="modal" data-target="#addRolesModal" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i> Add Roles</button>
+                        </div>
+
+                    </div>
+                    <div class="container">
+                        <!-- Modal -->
+                        <div class="modal fade" id="addRolesModal" role="dialog">
+                            <div class="modal-dialog">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Add Roles</h4>
+                                    </div>
+                                    <div class="modal-body" style="height:400px">
+                                        <div class="input-group ">
+                                            <input id="txtSearchRole" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                            <span class="input-group-btn">
+                                                <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                            </span>
+                                        </div>
+                                        
+                                        <div id="divRoleSearchResults" style="height:300px; overflow-y:auto"></div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button id="btnModalOk" type="button" class="btn btn-default">OK</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divSelectedRoleDisplay" class="row tilediv1"></div>*@
+                </div>
+                <div id="menu2" class="tab-pane fade">
+                    <h4>Comming Soon</h4>
+
+                </div>
+                <div id="menu3" class="tab-pane fade">
+                    @*<div class="row" style="padding:6px 0px">
+                        <div class="col-md-5">
+
+                        </div>
+                        <div class="col-md-4">
+                            <input id="txtDemoUserGroupSearch" type="search" class="form-control" placeholder="Search" style="padding-right:30px; display:inline-block; width:80%" />
+                            <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
+                            <button id="btnClearDemoUserGroupSearch" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn" data-toggle="modal" data-target="#addUserGroupModal" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i> Add to User Groups</button>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <!-- Modal -->
+                        <div class="modal fade" id="addUserGroupModal" role="dialog">
+                            <div class="modal-dialog">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">User Groups</h4>
+                                    </div>
+                                    <div class="modal-body" style="height:400px">
+                                        <div class="input-group ">
+                                            <input id="txtSearchUserGroup" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                            <span class="input-group-btn">
+                                                <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                            </span>
+                                        </div>
+                                        <div id="divUserGroupSearchResults" style="height:300px; overflow-y:auto"></div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button id="btnUserGroupModalOk" type="button" class="btn btn-default">OK</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divSelectedUserGroupDisplay" class="row tilediv1"></div>*@
+                </div>
+            </div>
+
+        </div>
+        <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
+        <button id="btnCreateUser" type="button" class="btn btn-default" style="margin:20px 40px; float:right">Create</button>
+    </section>
+    <div class="prof-setup-cropie">
+        <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="loginmodal-container cropie" id="cropsection">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@*<ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#roles">Roles</a></li>
+        <li><a onclick="Getusergroups()" data-toggle="tab" href="#usergroup">User Groups</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade in active" id="roles">
+            <div id="userroles" class="scrollable-menu">
+                <div class="form-inline" id="searchbar" style="width:100%">
+                    <div class="input-group pull-right">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false">Search<span class="caret"></span></button>
+                        </div>
+                        <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="usergroup" class="tab-pane fade">
+            <div id="usergrouplist" class="scrollable-menu">
+                <div class="form-inline" id="searchbar" style="width:100%">
+                    <div class="input-group pull-right">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false">Search<span class="caret"></span></button>
+                        </div>
+                        <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
+        <input type="submit" class="btn btn-primary" id="save" value="Create" />
+    </div>*@
+@*}*@
+
+
+@*<style>
+        table {
+            width: 100%;
+        }
+
+        .col-md-4 {
+            padding-left: 0 !important;
+        }
+
+        .col-md-8 {
+            padding-right: 0 !important;
+        }
+
+        tr {
+            text-align: center;
+        }
+
+        input[type=checkbox] {
+            margin-left: 5px;
+        }
+
+
+        .scrollable-menu {
+            border: 1px solid #eee;
+            overflow-x: hidden;
+        }
+
+        .stylish-input-group .input-group-addon {
+            background: white !important;
+        }
+
+        .stylish-input-group .form-control {
+            border-right: 0;
+            box-shadow: 0 0 0;
+            border-color: #ccc;
+        }
+
+        .stylish-input-group button {
+            border: 0;
+            background: transparent;
+        }
+    </style>*@
+<script>
+
+    var userobj = new UserJs(@RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups);
+    function OnClickRemove(e) {
+        if(confirm("Click OK to Remove"))
+            $(e).parents("div.col-md-4").remove();
+    }
+    $('document').ready(function () {
+        $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "Y/m/d"});
+        //    $.post("../TenantUser/GetRoles",
+        //        {
+        //            "userid": $('#userid').val()
+        //             }, function (result) {
+        //                 if (result) {
+        //                     document.getElementById("userroles").innerHTML = result;
+        //                 }
+        //        });
+
+
+        //        $('#sendmail').change(function () {
+        //            if (!this.checked)
+        //                $('#pw').fadeIn();
+        //            else
+        //                $('#pw').fadeOut();
+        //        });
+        //        var f = true;
+        //        $('.selectpicker').on('rendered.bs.select', function (e) {
+        //            if (f)
+        //                $("#roleSel").find("span:eq(0)").text("Select Role")
+        //            f = false;
+        //        });
+
+        //        $('#save').click(function () {
+        //            var selectedroles = "";
+        //            $('#userroles input:checked').each(function () {
+        //                selectedroles += $(this).attr('value') + ",";
+
+        //            });
+
+        //            var selectedusergroups = "";
+        //            $('#usergrouplist input:checked').each(function () {
+        //                selectedusergroups += $(this).attr('value') + ",";
+
+        //            });
+        //            $.post("../TenantUser/SaveUser",
+        //                {
+
+        //                    "userid": $('#userid').val(),
+        //                    "roles": selectedroles.substring(0, selectedroles.length - 1),
+        //                    "usergroups": selectedusergroups.substring(0, selectedusergroups.length - 1),
+        //                    "firstname": $('#firstname').val(),
+        //                    "email": $('#email').val(),
+        //                    "Pwd":$('#pw').val()
+
+        //                }, function (result) {
+        //                    if (result) {
+        //                        document.getElementById("usergrouplist").innerHTML = result;
+        //                    }
+        //                });
+
+        //        });
+
+
+        //});
+
+        //function Getusergroups() {
+
+        //    $.post("../TenantUser/GetUserGroups",
+        //        {
+        //            "userid": $('#userid').val(),
+
+        //        }, function (result) {
+        //            if (result) {
+        //                document.getElementById("usergrouplist").innerHTML = result;
+        //            }
+        //        });
+
+        var upload = new EbImageCropper({
+            preview: 'profimage',
+            cropperContainer: 'cropsection'
+        });
+
+    });
+</script>
+

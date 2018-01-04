@@ -239,12 +239,15 @@ namespace ExpressBase.Web.Controllers
             this.ServiceClient.RefreshToken = refreshToken;
             var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             EbBotForm obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-            string _selects = string.Empty;
             foreach (EbControl control in obj.Controls)
             {
                 if (control is EbSimpleSelect)
                 {
-                    (control as EbSimpleSelect).GetOptionsHtml(this.ServiceClient);    
+                    (control as EbSimpleSelect).GetOptionsHtml(this.ServiceClient);
+                }
+                else if (control is EbCards)
+                {
+                    (control as EbCards).InitFromDataBase(this.ServiceClient);
                 }
             }
             return obj;

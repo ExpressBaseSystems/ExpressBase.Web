@@ -132,7 +132,7 @@
 }
 
 .bot-icon-user {
-    background: url(https://expressbase.com/images/svg/user.svg)center center no-repeat;
+    background: url(https://png.icons8.com/ios/40/000000/anonymous-mask.png)center center no-repeat;
     background-color: var(--botThemeColor);
     width: 26px;
     background-size: 100% !important;
@@ -380,4 +380,53 @@
     .card-btn-cont .btn {
         margin-top: 5px;
         padding: 3px 12px;
+    }
+
+.contct-cont {
+    padding: .5em;
+    text-align: center;
+    border-radius: 0.4em;
+    background-color: #1e6c7d;
+}
+
+.contact-inp-wrap {
+    border-radius: 3em;
+    background-color: white;
+    padding: 2px;
+    WIDTH: 100%;
+    margin-bottom: 0.4em;
+}
+
+.plain-inp {
+    width: calc(100% - 2.5em);
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+    .plain-inp:focus {
+        outline: none;
+    }
+
+.contactSubmit {
+    color: #fff;
+    background-color: transparent;
+    border-radius: 3em;
+    text-align: center;
+    cursor: pointer;
+    padding: 2PX 3PX 2PX 6PX;
+    border: solid 1px white;
+}
+
+    .contactSubmit:focus {
+        outline: none;
+        filter: contrast(1.4);
+    }
+
+    .contactSubmit .fa-chevron-right {
+        font-size: 0.9em;
+        background-color: white;
+        color: #1e6c7d;
+        border-radius: 3em;
+        padding: 6px 6px 4px 7px;
     }

@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Controllers
 
         public HeaderFooter(ReportRenderController _c) : base()
         {
-            this.Controller = _c;;
+            this.Controller = _c; 
         }
     }
     public class ReportRenderController : EbBaseNewController
@@ -53,13 +53,13 @@ namespace ExpressBase.Web.Controllers
         public PdfReader pdfReader;
         public PdfStamper stamp;
         public MemoryStream ms1;
-       
+
         private float rf_Yposition;
         private float pf_Yposition;
         private float ph_Yposition;
         private float dt_Yposition;
         private float detailprintingtop = 0;
-       
+
         private List<object> WaterMarkList = new List<object>();
         private Dictionary<string, byte[]> watermarkImages = new Dictionary<string, byte[]>();
 
@@ -105,25 +105,28 @@ namespace ExpressBase.Web.Controllers
             ms1.Position = 0;//important
             return new FileStreamResult(ms1, "application/pdf");
         }
-      
+
         public void GetWatermarkImages()
         {
             byte[] fileByte = null;
-            foreach (var field in Report.ReportObjects)
+            if (Report.ReportObjects != null)
             {
-                if ((field as EbWaterMark).Image != string.Empty)
+                foreach (var field in Report.ReportObjects)
                 {
-                    fileByte = this.ServiceClient.Post<byte[]>
-                  (new DownloadFileRequest
-                  {
-                      FileDetails = new FileMeta
+                    if ((field as EbWaterMark).Image != string.Empty)
+                    {
+                        fileByte = this.ServiceClient.Post<byte[]>
+                      (new DownloadFileRequest
                       {
-                          FileName = (field as EbWaterMark).Image + ".jpg",
-                          FileType = "jpg"
-                      }
-                  });
+                          FileDetails = new FileMeta
+                          {
+                              FileName = (field as EbWaterMark).Image + ".jpg",
+                              FileType = "jpg"
+                          }
+                      });
+                    }
+                    watermarkImages.Add((field as EbWaterMark).Image, fileByte);
                 }
-                watermarkImages.Add((field as EbWaterMark).Image, fileByte);
             }
         }
         public void DrawReportHeader()
@@ -153,7 +156,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         public void DrawDetail()
-        {          
+        {
             if (__datarows != null)
             {
                 for (Report.SerialNumber = 1; Report.SerialNumber <= __datarows.Count; Report.SerialNumber++)
@@ -170,10 +173,10 @@ namespace ExpressBase.Web.Controllers
                         DoLoopInDetail(Report.SerialNumber);
                     }
                 }
-                if (Report.SerialNumber-1 == __datarows.Count)
+                if (Report.SerialNumber - 1 == __datarows.Count)
                 {
                     Report.IsLastpage = true;
-                   // Report.CalculateDetailHeight(Report.IsLastpage, __datarows, Report.PageNumber);
+                    // Report.CalculateDetailHeight(Report.IsLastpage, __datarows, Report.PageNumber);
                 }
             }
             else
@@ -239,14 +242,7 @@ namespace ExpressBase.Web.Controllers
                     var table = title.Split('.')[0];
                     column_name = title.Split('.')[1];
                     column_val = GeFieldtData(column_name, i);
-                    if (item is EbDataFieldNumericSummary)
-                        (item as EbDataFieldNumericSummary).Summarize(column_val);
-                    else if (item is EbDataFieldBooleanSummary)
-                        (item as EbDataFieldBooleanSummary).Summarize();
-                    else if (item is EbDataFieldTextSummary)
-                        (item as EbDataFieldTextSummary).Summarize(column_val);
-                    else if (item is EbDataFieldDateTimeSummary)
-                        (item as EbDataFieldDateTimeSummary).Summarize(column_val);
+                    (item as IEbDataFieldSummary).Summarize(column_val);
                 }
             }
             if (Report.ReportSummaryFields.ContainsKey(title))
@@ -257,14 +253,7 @@ namespace ExpressBase.Web.Controllers
                     var table = title.Split('.')[0];
                     column_name = title.Split('.')[1];
                     column_val = GeFieldtData(column_name, i);
-                    if (item is EbDataFieldNumericSummary)
-                        (item as EbDataFieldNumericSummary).Summarize(column_val);
-                    else if (item is EbDataFieldBooleanSummary)
-                        (item as EbDataFieldBooleanSummary).Summarize();
-                    else if (item is EbDataFieldTextSummary)
-                        (item as EbDataFieldTextSummary).Summarize(column_val);
-                    else if (item is EbDataFieldDateTimeSummary)
-                        (item as EbDataFieldDateTimeSummary).Summarize(column_val);
+                    (item as IEbDataFieldSummary).Summarize(column_val);
                 }
             }
 
@@ -277,26 +266,23 @@ namespace ExpressBase.Web.Controllers
             var column_val = string.Empty;
             if (Report.PageSummaryFields.ContainsKey(field.Title) || Report.ReportSummaryFields.ContainsKey(field.Title))
                 CallSummerize(field.Title, serialnumber);
-            if ((field is EbDataField) || (field is EbPageNo) || (field is EbPageXY) || (field is EbDateTime) || (field is EbSerialNumber))
+            if (field is EbDataField)
             {
-                if (field is EbDataField)
+                if (field is IEbDataFieldSummary)
                 {
-                    if (field is EbDataFieldNumericSummary)
-                        column_val = (field as EbDataFieldNumericSummary).SummarizedValue.ToString();
-                    else if (field is EbDataFieldBooleanSummary)
-                        column_val = (field as EbDataFieldBooleanSummary).SummarizedValue.ToString();
-                    else if (field is EbDataFieldTextSummary)
-                        column_val = (field as EbDataFieldTextSummary).SummarizedValue.ToString();
-                    else if (field is EbDataFieldDateTimeSummary)
-                        column_val = (field as EbDataFieldDateTimeSummary).SummarizedValue.ToString();
-                    else
-                    {
-                        var table = field.Title.Split('.')[0];
-                        column_name = field.Title.Split('.')[1];
-                        column_val = GeFieldtData(column_name, serialnumber);
-                    }
+                    column_val = (field as IEbDataFieldSummary).SummarizedValue.ToString();
                 }
-                else if (field is EbPageNo)
+                else
+                {
+                    var table = field.Title.Split('.')[0];
+                    column_name = field.Title.Split('.')[1];
+                    column_val = GeFieldtData(column_name, serialnumber);
+                }
+                field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop, column_val);
+            }
+            if ((field is EbPageNo) || (field is EbPageXY) || (field is EbDateTime) || (field is EbSerialNumber))
+            {
+                if (field is EbPageNo)
                     column_val = Report.PageNumber.ToString();
                 else if (field is EbPageXY)
                     column_val = Report.PageNumber + "/"/* + writer.PageCount*/;
@@ -319,7 +305,7 @@ namespace ExpressBase.Web.Controllers
                      });
                 field.DrawMe(d, fileByte);
             }
-            else if ((field is EbText) || (field is EbCircle) || (field is EbRect) || (field is EbHl) || (field is EbVl) || (field is EbArrR) || (field is EbArrL) || (field is EbArrU) || (field is EbArrD) || (field is EbByArrH) || (field is EbByArrV))
+            else if ((field is EbText) || (field is EbReportFieldShape))
             {
                 field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop);
             }
@@ -343,15 +329,18 @@ namespace ExpressBase.Web.Controllers
 
         public void DrawWaterMark()
         {
-            
+
             byte[] fileByte = null;
-            foreach (var field in Report.ReportObjects)
+            if (Report.ReportObjects != null)
             {
-                if ((field as EbWaterMark).Image != string.Empty)
+                foreach (var field in Report.ReportObjects)
                 {
-                    fileByte = watermarkImages[(field as EbWaterMark).Image];
+                    if ((field as EbWaterMark).Image != string.Empty)
+                    {
+                        fileByte = watermarkImages[(field as EbWaterMark).Image];
+                    }
+                (field as EbWaterMark).DrawMe(pdfReader, d, writer, fileByte, Report.Height);
                 }
-            (field as EbWaterMark).DrawMe(pdfReader, d, writer, fileByte,Report.Height);
             }
         }
     }

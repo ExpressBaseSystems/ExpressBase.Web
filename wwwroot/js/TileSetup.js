@@ -2,7 +2,8 @@
     
     this.parentDiv = parentDiv;
     this.title = title;
-    this.resultObject = initObjList;
+    this.resultObject = [];
+    this.initObjectList = initObjList;
     this.objectList = searchObjList;
     this.objectMetadata = objMetadata;
     this.searchAjaxUrl = searchAjax;
@@ -99,9 +100,11 @@
         if (this.objectMetadata.indexOf('ProfilePicture') > -1)
             this.profilePicStatus = true;
 
-        if (this.resultObject == null)
-            this.resultObject = [];
-        this.initSelected.bind(this)(this.resultObject);
+        if (this.initObjectList != null){
+            for (var i = 0; i < this.initObjectList.length; i++) {
+                this.appendToSelected(this.divSelectedDisplay, { Id: this.initObjectList[i][this.objectMetadata[0]], Name: this.initObjectList[i][this.objectMetadata[1]], Data1: this.initObjectList[i][this.objectMetadata[2]] });
+            }
+        }
     }
 
 
@@ -147,11 +150,7 @@
         this.keyUpTxtDemoSearch();
     }
 
-    this.initSelected = function (objList) {
-        for (var i = 0; i < objList.length; i++) {
-            this.appendToSelected(this.divSelectedDisplay, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });
-        }
-    }
+    
 
     this.initModal = function () {
         this.divMessage.show();
@@ -205,20 +204,14 @@
 
     this.getItemdetailsSuccess = function (data) {
         this.loader.hide();
-        objlist = [];
         if (data.length === 0) {
             this.divMessage.text("... Nothing Found ...");
             this.divMessage.show();
             return;
         }
-        for (var i = 0; i < data.length; i++) {
-            objlist.push({ Id: data[i][this.objectMetadata[0].toLowerCase()], Name: data[i][this.objectMetadata[1].toLowerCase()], Data1: data[i][this.objectMetadata[2].toLowerCase()]});
-        }
-        this.drawSearchResults(objlist, "");
+        this.drawSearchResults(data, "");
     };
-
-    //this.objectMetadata[0].charAt(0).toUpperCase() + this.objectMetadata[0].slice(1)
-
+    
     this.drawSearchResults = function (objList, srchTxt) {
         var txt = srchTxt;
         var divSelectedDisplay = this.divSelectedDisplay;
@@ -226,14 +219,11 @@
         $(divSearchResults).children().remove();
         for (var i = 0; i < objList.length; i++) {
             var st = null;
-            if (objList[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase() ) {
-                if ($(divSelectedDisplay).find(`[data-id='${objList[i].Id}']`).length > 0) {
+            if (objList[i][this.objectMetadata[1]].substr(0, txt.length).toLowerCase() === txt.toLowerCase() ) {
+                if ($(divSelectedDisplay).find(`[data-id='${objList[i][this.objectMetadata[0]]}']`).length > 0) {
                     st = 'checked disabled';
                 }
-                if (this.searchAjaxUrl === null)
-                    this.appendToSearchResult(divSearchResults, st, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });
-                else
-                    this.appendToSearchResult(divSearchResults, st, objList[i]);  //old
+                this.appendToSearchResult(divSearchResults, st, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });            
             }
         }
         if ($(this.divSearchResults).children().length === 0) {

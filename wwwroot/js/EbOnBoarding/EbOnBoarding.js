@@ -54,7 +54,7 @@
         return isvalid;
     }
 
-    this.validateProfileInfo = function(){
+    this.validateProfileInfo = function () {
         if ($("[name='Name']").val() !== "" && $("[name='Company']").val() !== "" && $("[name='Password']").val() !== "")
             return true;
         else
@@ -122,7 +122,7 @@
             }.bind(this));
         }
         else
-            
+
             $('#eb-mesageBox-error').show().text("select atleast one Product.");
         $('#eb-mesageBox-error').fadeOut(5000);
 
@@ -143,29 +143,7 @@
             scrollLeft: 1900
         }, 500);
     };
-    this.submitApplicationReq = function () {
-        $("#app-form").on("submit", function (e) {           
-            $.ajax({
-                type: 'POST',
-                url: "../Dev/SaveApplications",
-                beforeSend: function () {
-                  
-                },
-                data: {
-                    "Sname": $("[name='Sname']").val().trim(),
-                    "Sdesc": $("[name='Desc']").val().trim(),
-                    "AppType": $('#apptype').val(),
-                    "AppName": $('#appName').val(),
-                    "Desc": $('#DescApp').val(),
-                    "Isid": $('#Sid').val(),
-                    "AppIcon": $("#AppIcon").val().trim(),
-                    "itemid": 0
-                }
-            }).done(function (data) {
-                
-            });
-        });
-    };
+   
     this.whichAppType = function (e) {
         var ob = $(e.target).closest(".apps-wrapper-fchiled");
         ob.addClass("appselected");
@@ -192,8 +170,7 @@
         $("#s-info-skip").on('click', this.scrollToLast.bind(this));
         $("#app-next").on('click', this.scrollToLast.bind(this));
         $("#prod-prev").on('click', this.scrollToProd.bind(this));
-        $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));
-        this.submitApplicationReq();
+        $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));        
     };
 
     this.init();

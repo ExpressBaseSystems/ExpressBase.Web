@@ -338,22 +338,7 @@ namespace ExpressBase.Web.Controllers
         //    ViewBag.description = resultlist.Data["description"];
         //    ViewBag.Obj_id = req["itemid"];
         //    return View();          
-        //}
-        [HttpPost]
-        public IActionResult SaveApplications()
-        {
-            var req = this.HttpContext.Request.Form;
-            TempData["SolutionName"] = req["Sname"];
-            TempData["Sid"] = req["Isid"];
-            TempData["Desc"] = req["Sdesc"];
-            IServiceClient client = this.ServiceClient;
-            var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest {Id = (req["itemid"] != "")? Convert.ToInt32(req["itemid"]) : 0, Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-            if (resultlist.id > 0)          
-                return RedirectToAction("SolutionDashBoard", "Tenant");          
-            else
-                return RedirectToAction("CreateApplication");       
-        }
-
+        //}       
         public IActionResult CreateApplicationModule()
         {
             return View();

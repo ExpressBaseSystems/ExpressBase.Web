@@ -46,12 +46,12 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public void ProfileSetup(int i)
-        {          
-            var req = this.HttpContext.Request.Form;            
+        {
+            var req = this.HttpContext.Request.Form;
             var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
-               
+
                 MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
@@ -60,18 +60,18 @@ namespace ExpressBase.Web.Controllers
                     Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", "expressbase" } },
                     //UseTokenCookie = true
                 });
-                if(authResponse != null)
+                if (authResponse != null)
                 {
                     CookieOptions options = new CookieOptions();
                     Response.Cookies.Append("bToken", authResponse.BearerToken, options);
                     Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
                     this.ServiceClient.BearerToken = authResponse.BearerToken;
-                    this.ServiceClient.RefreshToken =authResponse.RefreshToken;
-                }              
-            }           
+                    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+                }
+            }
         }
 
-      
+
         public IActionResult TenantDashboard()
         {
             return View();
@@ -103,8 +103,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult EbOnBoarding()
         {
             ViewBag.useremail = TempData.Peek("reqEmail");
-            var result = this.ServiceClient.Get<AutoGenSolIdResponse>(new AutoGenSolIdRequest());           
-            ViewBag.iSid = result.Sid;           
+            var result = this.ServiceClient.Get<AutoGenSolIdResponse>(new AutoGenSolIdRequest());
+            ViewBag.iSid = result.Sid;
             return View();
         }
 
@@ -128,16 +128,31 @@ namespace ExpressBase.Web.Controllers
                 EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
                 {
                     dbName = req["Isid"]
-                });               
+                });
             }
 
+        }
+
+        [HttpPost]
+        public IActionResult EbOnBoarding(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            //TempData[SolutionName] = req["Sname"];
+            //TempData[Sid] = req["Isid"];
+            //TempData[Desc] = req["Sdesc"];
+            IServiceClient client = this.ServiceClient;
+            var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+            if (resultlist.id > 0)
+                return RedirectToAction("SolutionDashBoard", "Tenant");
+            else
+                return View();
         }
 
         [HttpGet]
         public IActionResult TenantAddAccount()
         {
-            var resultset = this.ServiceClient.Get<GetProductPlanResponse>(new GetProductPlanRequest { } );
-            ViewBag.plans =JsonConvert.SerializeObject(resultset.Plans);
+            var resultset = this.ServiceClient.Get<GetProductPlanResponse>(new GetProductPlanRequest { });
+            ViewBag.plans = JsonConvert.SerializeObject(resultset.Plans);
             //ViewBag.Sid = resultset.Sid;
             return View();
         }
@@ -149,7 +164,8 @@ namespace ExpressBase.Web.Controllers
             TempData[SolutionName] = req["Sname"].ToString();
             TempData[Sid] = req["esid"].ToString();
             TempData[Desc] = req["Desc"].ToString();
-            var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest {
+            var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
+            {
                 SolutionName = req["Sname"],
                 IsolutionId = req["isid"],
                 EsolutionId = req["esid"],
@@ -158,18 +174,19 @@ namespace ExpressBase.Web.Controllers
             });
             if (res.Solnid > 0)
             {
-                EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest {
+                EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
+                {
                     dbName = req["isid"]
-                });                
-                if(response.resp)
+                });
+                if (response.resp)
                     return RedirectToAction("SolutionDashboard"); // convert get to post
             }
-            
+
             return View();
-          
+
         }
 
-       
+
         public IActionResult TenantHome()
         {
             return View();
@@ -239,7 +256,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-     
+
 
         public IActionResult SimpleAdvanced()
         {
@@ -255,23 +272,23 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-        
-      //public JsonResult GetEbObjects_json()
-      //  {
-      //      var req = this.HttpContext.Request.Form;
-      //      IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-      //      var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-      //      var rlist = resultlist.Data;
-      //      Dictionary<int, string> ObjList = new Dictionary<int, string>();
-      //      foreach (var element in rlist)
-      //      {
-      //          if (element.EbObjectType.ToString() == req["ebobjtype"])
-      //          {
-      //              ObjList[element.Id] = element.Name;
-      //          }
-      //      }
-      //      return Json(ObjList);
-      //  }
+
+        //public JsonResult GetEbObjects_json()
+        //  {
+        //      var req = this.HttpContext.Request.Form;
+        //      IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+        //      var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
+        //      var rlist = resultlist.Data;
+        //      Dictionary<int, string> ObjList = new Dictionary<int, string>();
+        //      foreach (var element in rlist)
+        //      {
+        //          if (element.EbObjectType.ToString() == req["ebobjtype"])
+        //          {
+        //              ObjList[element.Id] = element.Name;
+        //          }
+        //      }
+        //      return Json(ObjList);
+        //  }
 
         public IActionResult CreateApplications()
         {

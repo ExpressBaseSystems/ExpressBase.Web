@@ -2,12 +2,14 @@
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Security.Core;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,8 +24,93 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+		//--------------MANAGE USER START------------------------------------
+		public IActionResult ManageUser(int itemid)
+		{
+			List<EbRole> Sysroles = new List<EbRole>();
+			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
+			{
+				Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
+			}
+			ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
+			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, TenantAccountId = ViewBag.cid });
+			ViewBag.Roles = JsonConvert.SerializeObject(fr.Roles);
+			ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
+			if (itemid > 0)
+			{
+				ViewBag.U_Name = fr.UserData["name"];
+				ViewBag.U_Email = fr.UserData["email"];
+				ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
+				ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
+			}
+			else
+			{
+				ViewBag.U_Roles = "";
+				ViewBag.U_Groups = "";
+			}
+			ViewBag.itemid = itemid;
+			return View();
+		}
 
-		public IActionResult ManageRoles2(int itemid)
+		public void SaveUser(int userid, string roles, string usergroups)
+		{
+			var req = this.HttpContext.Request.Form;
+			Dictionary<string, object> Dict = new Dictionary<string, object>();
+
+			Dict["firstname"] = req["firstname"];
+			Dict["email"] = req["email"];
+			Dict["pwd"] = req["pwd"];
+			Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
+			Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
+
+			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+
+			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest { Id = userid, Colvalues = Dict });
+
+		}
+
+
+		//----------------MANAGE USERGROUPS START----------------------------
+		//[HttpGet]
+		//public IActionResult ManageUserGroups()
+		//{
+		//	return View();
+		//}
+
+		//[HttpPost]
+		public IActionResult ManageUserGroups(int itemid)
+		{
+			var req = this.HttpContext.Request.Form;
+			if (itemid > 0)
+			{
+				var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, TenantAccountId = ViewBag.cid });
+				List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[", "").Replace("]", "").Split(',').Select(int.Parse).ToList() : new List<int>();
+				ViewBag.UGName = fr.Data["name"];
+				ViewBag.UGDescription = fr.Data["description"];
+				ViewBag.itemid = itemid;
+				string html = "";
+				if (fr.Data.ContainsKey("userslist"))
+				{
+					foreach (var element in userlist)
+					{
+						html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[element.ToString()].ToString()).Replace("@userid", element.ToString());
+					}
+
+				}
+				ViewBag.UserList = html;
+
+			}
+			else
+			{
+				int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
+				CreateUserGroupResponse res = this.ServiceClient.Post<CreateUserGroupResponse>(new CreateUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Id = groupid });
+			}
+			return View();
+		}
+
+
+		//---------------MANAGE ROLES START----------------------------------
+		public IActionResult ManageRoles(int itemid)
 		{
 			var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
 			ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);
@@ -94,6 +181,8 @@ namespace ExpressBase.Web.Controllers
 			return return_msg;
 
 		}
+
+
 
 	}
 }

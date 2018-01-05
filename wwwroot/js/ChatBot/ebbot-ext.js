@@ -13,7 +13,7 @@
     //var inlineDiv = d.createElement("div");
     //inlineDiv.className = "inline-block";
 
-    var botHeadDiv= d.createElement("div");
+    var botHeadDiv = d.createElement("div");
     botHeadDiv.className = "bot-head";
     botHeadDiv.innerHTML = "&nbsp; " + d.ebbotName;
 
@@ -30,8 +30,8 @@
     chatHead.appendChild(botdp);
     //inlineDiv.appendChild(botHeadDiv);
     //inlineDiv.appendChild(poweredbyDiv);
-    chatHead.appendChild(botHeadDiv);   
-    
+    chatHead.appendChild(botHeadDiv);
+
     var iframecont = d.createElement("div");
     iframecont.id = "eb_iframecont";
 
@@ -109,4 +109,7 @@
             iframecont.style.display = "none";
         }
     }
+
+    chatbtn.click();////////////////////////////////
+
 })();

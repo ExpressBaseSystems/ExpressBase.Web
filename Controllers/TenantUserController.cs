@@ -89,10 +89,10 @@ namespace ExpressBase.Web2.Controllers
             return RedirectToAction("UsrSignIn", "Ext");
         }
 
-		public IActionResult ManageRoles2()
-		{
-			return View();
-		}
+		//public IActionResult ManageRoles2()
+		//{
+		//	return View();
+		//}
 
 		[HttpGet]
         public IActionResult ManageRoles()

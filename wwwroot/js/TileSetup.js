@@ -13,6 +13,7 @@
     this.txtSearch = null;
     this.btnSearch = null;
     this.loader = null;
+    this.divMessage = null;
     this.btnModalOk = null;
     this.addModal = null;
     this.divSelectedDisplay = null;
@@ -29,12 +30,12 @@
     }
 
     this.createBody = function (parent, title) {
-        var t = title.replace(" ", "_");
+        var t = title.replace(/\s/g, "_");
         $(parent).append(`
         <div class="row" style="padding:6px 0px">
             <div class="col-md-5"></div>
             <div class="col-md-4">
-                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" style="padding-right:30px; display:inline-block; width:80%" />
+                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:80%" />
                 <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
                 <button id="btnClearDemoSearch${t}" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
             </div>
@@ -57,6 +58,7 @@
                                     <button id="btnSearch${t}" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
                                 </span>
                             </div>
+                            <div id="message${t}" style=" margin-left: 32%; margin-top: 25% ;font-size: 24px; color: #bbb; display:none;">Type Few Characters</div>
                             <div id="loader${t}" style=" margin-left:45%; margin-top:25% ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
                             <div id="divSearchResults${t}" style="height:338px; overflow-y:auto"></div>
                         </div>
@@ -76,6 +78,7 @@
         this.txtSearch = $('#txtSearch' + t);
         this.btnSearch = $('#btnSearch' + t);
         this.loader = $('#loader' + t);
+        this.divMessage = $('#message' + t);
         this.btnModalOk = $('#btnModalOk' + t);
         this.addModal = $('#addModal' + t);
         this.divSelectedDisplay = $('#divSelectedDisplay' + t);
@@ -87,6 +90,7 @@
         $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
         $(this.parentDiv).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
         $(this.parentDiv).on('shown.bs.modal', '#addModal' + t, this.initModal.bind(this));
+        $(this.parentDiv).on('hidden.bs.modal', '#addModal' + t, this.finalizeModal.bind(this));
 
         $(this.parentDiv).on('click', '#btnAddModal' + t, this.onClickBtnAddModal.bind(this));
         $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
@@ -124,7 +128,7 @@
         $($(divSelectedDisplay).children("div.col-md-4")).each(function () {
             $(this).children().css('box-shadow', '1px 1px 2px 1px #fff');
             if ($(this).attr('data-name').toLowerCase().substring(0, txt.length) === txt.toLowerCase() && txt !== "") {
-                $(this).children().css('box-shadow', '1px 1px 2px 1px red');
+                $(this).children().css('box-shadow', '1px 1px 2px 1px #5bc0de');
                 //scroll to search result
                 if (f) {
                     var elem = $(this);
@@ -145,21 +149,25 @@
 
     this.initSelected = function (objList) {
         for (var i = 0; i < objList.length; i++) {
-            this.appendToSelected(this.divSelectedDisplay, { Id: objList[i].Id, Name: objList[i].Name, Data1: objList[i].Data1 });
+            this.appendToSelected(this.divSelectedDisplay, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });
         }
     }
 
     this.initModal = function () {
-        $(this.divSearchResults).children().remove();
-        $(this.txtSearch).val("");
-        //this.getSearchResult(true);
+        this.divMessage.show();
         this.txtSearch.focus();
+        this.getSearchResult(false);
+    }
+    this.finalizeModal = function () {
+        $(this.txtSearch).val("");
+        $(this.divSearchResults).children().remove();
     }
     this.keyUptxtSearch = function (e) {
         $(this.divSearchResults).children().remove();
+        this.divMessage.hide();
         this.loader.show();
         clearTimeout($.data(this, 'timer'));
-        if (e.keyCode === 13)
+        if (e.keyCode === 13 || this.searchAjaxUrl === null)
             this.getSearchResult(true);
         else
             $(this).data('timer', setTimeout(this.getSearchResult.bind(this, false), 500));
@@ -168,14 +176,22 @@
     this.getSearchResult = function (force) {
         var searchtext = $(this.txtSearch).val().trim();
         var Url = this.searchAjaxUrl;
-        if ((!force && searchtext.length < 1 && Url !== null)) {
-            this.loader.hide();
-            return;
-        }
         if (Url === null) {
             this.loader.hide();
-            if(this.objectList !== null )
+            if (this.objectList !== null) {
+                this.divMessage.hide();
                 this.drawSearchResults(this.objectList, searchtext);
+            }
+            else {
+                this.divMessage.text("... Nothing Found ...");
+                this.divMessage.show();
+            } 
+        }
+        else if (!force && searchtext.length < 2) {
+            this.loader.hide();
+            this.divMessage.text("Type Few Characters");
+            this.divMessage.show();
+            return;
         }
         else {
             $.ajax({
@@ -190,11 +206,18 @@
     this.getItemdetailsSuccess = function (data) {
         this.loader.hide();
         objlist = [];
+        if (data.length === 0) {
+            this.divMessage.text("... Nothing Found ...");
+            this.divMessage.show();
+            return;
+        }
         for (var i = 0; i < data.length; i++) {
-            objlist.push({Id: data[i].id, Name: data[i].name, Data1: data[i].email});
+            objlist.push({ Id: data[i][this.objectMetadata[0].toLowerCase()], Name: data[i][this.objectMetadata[1].toLowerCase()], Data1: data[i][this.objectMetadata[2].toLowerCase()]});
         }
         this.drawSearchResults(objlist, "");
     };
+
+    //this.objectMetadata[0].charAt(0).toUpperCase() + this.objectMetadata[0].slice(1)
 
     this.drawSearchResults = function (objList, srchTxt) {
         var txt = srchTxt;
@@ -207,8 +230,15 @@
                 if ($(divSelectedDisplay).find(`[data-id='${objList[i].Id}']`).length > 0) {
                     st = 'checked disabled';
                 }
-                this.appendToSearchResult(divSearchResults, st, objList[i]);
+                if (this.searchAjaxUrl === null)
+                    this.appendToSearchResult(divSearchResults, st, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });
+                else
+                    this.appendToSearchResult(divSearchResults, st, objList[i]);  //old
             }
+        }
+        if ($(this.divSearchResults).children().length === 0) {
+            this.divMessage.text("... Nothing Found ...");
+            this.divMessage.show();
         }
     }
     
@@ -255,7 +285,6 @@
         $(checkedBoxList).each(function () {
             _this.appendToSelected(_this.divSelectedDisplay, { Id: $(this).attr('data-id'), Name: $(this).attr('data-name'), Data1: $(this).attr('data-d1')});
         });
-        this.initModal();
     }
     this.appendToSelected = function (divSelected, obj) {
         if ($(divSelected).find(`[data-id='${obj.Id}']`).length > 0) {

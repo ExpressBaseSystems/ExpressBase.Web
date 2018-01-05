@@ -112,9 +112,56 @@
     //SUBROLES-------------END------------------------------------------------------------------
 
 
-    //USERS --------------BEGIN---------------------------------------------------------
+    //TABLE --------------BEGIN---------------------------------------------------------
 
+    this.setTable = function (tbl) {
+
+        $(tbl).dataTable({
+            paging: false,
+            dom: 't',
+            fixedHeader: true,
+            scrollY: "80px",
+            scrollX: true,
+            fixedColumns: { leftColumns: 1 }
+        });
+
+        //$(tbl).table_scroll({
+        //    rowsInHeader: 1,
+        //    fixedColumnsLeft: 1,
+        //    columnsInScrollableArea: 2,
+        //    scrollX: 2,
+        //    scrollY: 2
+            //// Number of rows in table header.
+            //rowsInHeader: null,
+
+            //// Number of rows in table footer.
+            //rowsInFooter: null,
+
+            //// Number of columns at the left side of scrollable area that will not be scrolled
+            //fixedColumnsLeft: 0,
+
+            //// Number of columns at the right side of scrollable area that will not be scrolled
+            //fixedColumnsRight: 0,
+
+            //// Number of columns to scroll to
+            //scrollX: 0,
+
+            //// Number of rows to scroll to
+            //scrollY: 0,
+
+            //// Number of rows that remains visible in scrollable area
+            //rowsInScrollableArea: 5,
+
+            //// Number of columns that remains visible in scrollable area
+            //columnsInScrollableArea: 2,
+
+            //// scroll or auto
+            //overflowY: 'auto',
+            //overflowX: 'auto'
+        //});
+    }
     
+
    
    
     //---------------------END------------------------------------------------------------
@@ -130,13 +177,14 @@
     this.loadObjectsAndOperations = function () {
         $.each(this.opDict.$values, function (key, value) {
             $("#divObjList").append(`<a class="objactiveclass list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#tbl${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
-                            <table class="objtype table table-responsive sub-menu collapse" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table> <thead><tr>`);
+                            <table class="objtype table table-responsive sub-menu collapse table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table> <thead><tr>`);
             var shtml = `<thead><tr><th style="width: 250px"></th>`;
-        $.each(value.Operations.$values, function (a, b) {
+            $.each(value.Operations.$values, function (a, b) {
                 shtml += `<td align='center' style='font-size:14px; width: 100px'>${b}</td>`;
             });
             shtml += `</tr></thead><tbody></tbody>`;
             $("#tbl" + value.Op_Name).append(shtml);
+            //this.setTable($("#tbl" + value.Op_Name));
         });
         $('.objactiveclass').click(function () {
             $(this).toggleClass('active');
@@ -148,8 +196,21 @@
         appCollection = this.appCollection;
         var _this = this;
         $('.collapse').collapse('hide');
+        //$("#divObjList").children().remove();
         $.each(this.opDict.$values, function (i, value) {
-            $("#tbl" + value.Op_Name).find("tbody").children().remove();
+
+
+            //$("#divObjList").append(`<a class="objactiveclass list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#tbl${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
+            //                <table class="objtype table table-responsive sub-menu collapse table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table> <thead><tr>`);
+            //var shtml = `<thead><tr><th style="width: 250px"></th>`;
+            //$.each(value.Operations.$values, function (a, b) {
+            //    shtml += `<td align='center' style='font-size:14px; width: 100px'>${b}</td>`;
+            //});
+            //shtml += `</tr></thead><tbody></tbody>`;
+            //$("#tbl" + value.Op_Name).append(shtml);
+            
+
+            //$("#tbl" + value.Op_Name).find("tbody").children().remove();
             $.each(appCollection[appindex].ObjectTypes, function (j, a) {
                 if (j == value.Op_Id) {
                     $.each(a, function (k, b) {
@@ -164,7 +225,11 @@
                         st += `</tr>`;
                         $("#tbl" + value.Op_Name).append(st);
                     });
+
+                    
                 }
+                //_this.setTable($("#tbl" + value.Op_Name));
+                
             });
             var rowCount = $("#tbl" + value.Op_Name).find("tbody tr").length;
             var headtag = $("#tbl" + value.Op_Name).prev("a");
@@ -202,11 +267,11 @@
 
         //------------------INIT USERS TILE------------------
         var initUserList = null;
-        var metadata2 = ['Id', 'Name', 'Email', 'ProfilePicture'];
+        var metadata2 = ['id', 'name', 'email', 'ProfilePicture'];
         if (this.roleId > 0) {
             initUserList = [];
             for (i = 0; i < this.usersList.length; i++) {
-                initUserList.push({ Id: this.usersList[i].Id, Name: this.usersList[i].Name, Email: this.usersList[i].Email});
+                initUserList.push({ id: this.usersList[i].Id, name: this.usersList[i].Name, email: this.usersList[i].Email});
             }
         }
         if (this.usersTile === null) {

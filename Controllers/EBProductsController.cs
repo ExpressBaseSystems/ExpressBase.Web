@@ -10,9 +10,9 @@ using ServiceStack.Redis;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class EBProductsController : EbBaseNewController
+    public class EbProductsController : EbBaseNewController
     {
-        public EBProductsController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+        public EbProductsController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -20,7 +20,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult Bot()
+        public IActionResult Bots()
         {
             return View();
         }

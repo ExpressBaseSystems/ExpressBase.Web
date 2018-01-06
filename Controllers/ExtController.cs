@@ -645,7 +645,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var authClient = this.ServiceClient;
-                MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+                MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate  
                 {
                     provider = CredentialsAuthProvider.Name,
                     UserName = "NIL",

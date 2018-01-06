@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Enums;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-
 
 namespace ExpressBase.Web.Filters
 {
@@ -47,63 +44,50 @@ namespace ExpressBase.Web.Filters
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            var host = context.HttpContext.Request.Host.Host.Replace("www.", string.Empty);
+            var host = context.HttpContext.Request.Host.Host.Replace(DomainConstants.WWWDOT, string.Empty);
             var path = context.HttpContext.Request.Path;
-            string[] subdomain = host.Split('.');
-            if (subdomain[0] == "bot")
-            {
-                context.RouteData.Values["controller"] = "EBProducts"; //Goes to the relevant Controller  class
-                context.RouteData.Values["action"] = "Bot";
-            }
-            else if (subdomain[0] == "sms")
-            {
-                context.RouteData.Values["controller"] = "SMS"; //Goes to the relevant Controller  class
-                context.RouteData.Values["action"] = "CallBack";
-            }
-            else if (path == "/")
-            {
-                if (host.EndsWith("expressbase.com") || host.EndsWith("expressbase.org"))
-                {
-                    if (subdomain.Length == 3) // USER CONSOLE
-                    {
-                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                        context.RouteData.Values["action"] = "UsrSignIn";
-                    }
-                    else // TENANT CONSOLE
-                    {
-                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                        context.RouteData.Values["action"] = "Index";
-                    }
-                }
-                else if (host.EndsWith("localhost"))
-                {
-                    if (subdomain.Length == 2) // USER CONSOLE
-                    {
-                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                        context.RouteData.Values["action"] = "UsrSignIn";
-                    }
-                    else // TENANT CONSOLE
-                    {
-                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                        context.RouteData.Values["action"] = "Index";
-                    }
-                }
+            string[] hostParts = host.Split(DomainConstants.DOT);
 
-                else if (host.EndsWith("nip.io") || host.EndsWith("xip.io"))
+            object _subDomain = null;
+            if (Enum.TryParse(typeof(SubDomains), hostParts[0], out _subDomain))
+            {
+                context.RouteData.Values[DomainConstants.CONTROLLER] = DomainConstants.EB_PRODUCTS;
+                context.RouteData.Values[DomainConstants.ACTION] = ((SubDomains)_subDomain).ToString();
+            }
+            
+            else if (path.Value.Equals(DomainConstants.BACKSLASH.ToString())) // '/'
+            {
+                if (host.EndsWith(DomainConstants.EXPRESSBASEDOTCOM))
+                    this.RouteToCorrectPage(context, (hostParts.Length == DomainConstants.HOSTPARTSLEN_IS_3));
+
+                else if (host.EndsWith(DomainConstants.EBTESTINFO))
+                    this.RouteToCorrectPage(context, (hostParts.Length == DomainConstants.HOSTPARTSLEN_IS_3));
+
+                else if (host.EndsWith(DomainConstants.LOCALHOST))
+                    this.RouteToCorrectPage(context, (hostParts.Length == DomainConstants.HOSTPARTSLEN_IS_2));
+
+                else
                 {
-                    if (subdomain.Length == 7) // USER CONSOLE
-                    {
-                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                        context.RouteData.Values["action"] = "UsrSignIn";
-                    }
-                    else // TENANT CONSOLE
-                    {
-                        context.RouteData.Values["controller"] = "Ext"; //Goes to the relevant Controller  class
-                        context.RouteData.Values["action"] = "Index";
-                    }
+                    context.RouteData.Values[DomainConstants.CONTROLLER] = DomainConstants.EXTCONTROLLER;
+                    context.RouteData.Values[DomainConstants.ACTION] = DomainConstants.INDEX;
                 }
             }
+
             await base.RouteAsync(context);
+        }
+
+        private void RouteToCorrectPage(RouteContext context, bool isGoing2SignIn2UC)
+        {
+            if (isGoing2SignIn2UC) // USER CONSOLE
+            {
+                context.RouteData.Values[DomainConstants.CONTROLLER] = DomainConstants.EXTCONTROLLER; 
+                context.RouteData.Values[DomainConstants.ACTION] = DomainConstants.USERSIGNIN2UC;
+            }
+            else // TENANT CONSOLE
+            {
+                context.RouteData.Values[DomainConstants.CONTROLLER] = DomainConstants.EXTCONTROLLER;
+                context.RouteData.Values[DomainConstants.ACTION] = DomainConstants.INDEX;
+            }
         }
     }
 }

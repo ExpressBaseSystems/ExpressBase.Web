@@ -17,7 +17,7 @@ using System.Data;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class RBController : EbBaseNewController
+    public class RBController : EbBaseIntController
     {
         public RBController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

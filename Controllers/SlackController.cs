@@ -11,7 +11,7 @@ using ExpressBase.Common;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class SlackController : EbBaseNewController
+    public class SlackController : EbBaseIntController
     {
         public SlackController(IServiceClient _ssclient) : base(_ssclient) { }
 

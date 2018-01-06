@@ -30,7 +30,7 @@ using ExpressBase.Security;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class DVController : EbBaseNewController
+    public class DVController : EbBaseIntController
     {
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 

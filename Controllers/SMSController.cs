@@ -12,7 +12,7 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class SMSController : EbBaseNewController
+    public class SMSController : EbBaseIntController
     {
         public SMSController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 

@@ -16,7 +16,7 @@ using System.Reflection;
 
 namespace ExpressBase.Web.Controllers
 {
-	public class SecurityController : EbBaseNewController
+	public class SecurityController : EbBaseIntController
 	{
 		public SecurityController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 		// GET: /<controller>/

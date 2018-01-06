@@ -18,7 +18,7 @@ using ExpressBase.Common;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class BoteController : EbBaseNewController
+    public class BoteController : EbBaseIntController
     {
         public BoteController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

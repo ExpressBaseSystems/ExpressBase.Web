@@ -32,7 +32,7 @@ using ExpressBase.Objects.EmailRelated;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class DevController : EbBaseNewController
+    public class DevController : EbBaseIntController
     {
 
         public DevController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }

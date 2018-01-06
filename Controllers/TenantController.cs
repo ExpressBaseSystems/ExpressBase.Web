@@ -28,7 +28,7 @@ using Newtonsoft.Json;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class TenantController : EbBaseNewController
+    public class TenantController : EbBaseIntController
     {
         public const string SolutionName = "SolutionName";
 

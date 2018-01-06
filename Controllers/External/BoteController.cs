@@ -15,10 +15,11 @@ using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Common;
+using ExpressBase.Web.BaseControllers;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class BoteController : EbBaseIntController
+    public class BoteController : EbBaseExtController
     {
         public BoteController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

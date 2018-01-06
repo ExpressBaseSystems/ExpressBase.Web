@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common.Extensions;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ExtController : EbBaseIntController
+    public class ExtController : EbBaseExtController
     {
         public const string RequestEmail = "reqEmail";
         public const string Email = "email";      

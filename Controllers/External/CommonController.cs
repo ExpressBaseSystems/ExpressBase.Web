@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class CommonController : EbBaseIntController
+    public class CommonController : EbBaseExtController
     {
         public CommonController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
         // GET: /<controller>/

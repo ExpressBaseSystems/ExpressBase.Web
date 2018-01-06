@@ -23,13 +23,14 @@ namespace ExpressBase.Web.Controllers
     public class ExtController : EbBaseExtController
     {
         public const string RequestEmail = "reqEmail";
-        public const string Email = "email";      
+        public const string Email = "email";
 
         public ExtController(IServiceClient _client, IRedisClient _redis)
             : base(_client, _redis) { }
 
         // GET: /<controller>/
-        [HttpPost][HttpGet]
+        [HttpPost]
+        [HttpGet]
         public IActionResult Index()
         {
             ViewBag.useremail = TempData.Peek(RequestEmail);
@@ -44,7 +45,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-       
+
         public IActionResult SignupSuccess(string email)
         {
             ViewBag.SignupEmail = email;
@@ -58,7 +59,6 @@ namespace ExpressBase.Web.Controllers
             ViewBag.errMsg = TempData["ErrorMessage"] as string;
             return View();
         }
-
 
 
         public IActionResult UsrSignIn()
@@ -75,12 +75,15 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+
         public IActionResult test()
         {
-           
+
             ViewBag.StripePublishKey = "pk_test_s1b6p5MmoOrYVcev3IPk3UMd";
             return View();
         }
+
+
         [HttpPost]
         public IActionResult StripeResponse()
         {
@@ -88,6 +91,8 @@ namespace ExpressBase.Web.Controllers
             var stripeEvent = StripeEventUtility.ParseEvent(json);
             return View();
         }
+
+
         public ActionResult Charge(string stripeEmail, string stripeToken)
         {
             var req = this.HttpContext.Request.Form;
@@ -106,7 +111,7 @@ namespace ExpressBase.Web.Controllers
                 Description = "Sample Charge",
                 Currency = "usd",
                 CustomerId = customer.Id
-              
+
             });
 
             StripeSubscriptionService subscriptionSvc = new StripeSubscriptionService();
@@ -129,15 +134,17 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+
         public IActionResult TenanatAcc()
         {
             return View();
         }
 
+
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()
         {
-           // Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", req["g-recaptcha-response"]);
+            // Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", req["g-recaptcha-response"]);
             //if (!data.Success)
             //{
             //    if (data.ErrorCodes.Count > 0)
@@ -167,29 +174,30 @@ namespace ExpressBase.Web.Controllers
             //}
             //else
             //{
-                
-                try
-                {
-                    string reqEmail = this.HttpContext.Request.Form[Email];
-                    TempData[RequestEmail] = reqEmail;
 
-                    if (!this.ServiceClient.Post<bool>(new UniqueRequest { email = reqEmail }))
-                    {
-                        var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = "expressbase" });
+            try
+            {
+                string reqEmail = this.HttpContext.Request.Form[Email];
+                TempData[RequestEmail] = reqEmail;
 
-                        if (Convert.ToInt32(res.UserId) >= 0)
-                           return RedirectToAction("EbOnBoarding", new RouteValueDictionary(new { controller = "Tenant", action = "EbOnBoarding" })); // convert get to post
-                    }
-                    else
-                        return RedirectToAction("Index", new RouteValueDictionary(new { controller = "Ext", action = "Index" })); // convert get to post;
-                }
-                catch (WebServiceException e)
+                if (!this.ServiceClient.Post<bool>(new UniqueRequest { email = reqEmail }))
                 {
+                    var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = "expressbase" });
+
+                    if (Convert.ToInt32(res.UserId) >= 0)
+                        return RedirectToAction("EbOnBoarding", new RouteValueDictionary(new { controller = "Tenant", action = "EbOnBoarding" })); // convert get to post
                 }
-           // }
+                else
+                    return RedirectToAction("Index", new RouteValueDictionary(new { controller = "Ext", action = "Index" })); // convert get to post;
+            }
+            catch (WebServiceException e)
+            {
+            }
+            // }
 
             return View();
         }
+
 
         private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
         {
@@ -202,423 +210,162 @@ namespace ExpressBase.Web.Controllers
             return d;
         }
 
+
         [HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
-
-            // string url = this.HttpContext.Request.Headers["HOST"];
             var host = this.HttpContext.Request.Host;
             string[] subdomain = host.Host.Split('.');
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
 
+            string _controller = null;
+            string _action = null;
 
+            //CHECK WHETHER SOLUTION ID IS VALID
 
-            if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
-            {
-                if (subdomain.Length == 3) // USER CONSOLE
-                {
-                    if (!string.IsNullOrEmpty(req["console"]))
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "dc";
-                    }
-                    else
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "uc";
-                    }
+            bool bOK2AttemptLogin = true;
 
-                }
-                else // TENANT CONSOLE
-                {
-                    ViewBag.cid = "expressbase";
-                    whichconsole = "tc";
-                }
-            }
+            if (host.Host.EndsWith("expressbase.com"))
+                this.DecideConsole(req["console"], subdomain[0], (subdomain.Length == 3), out whichconsole);
+
+            else if (host.Host.EndsWith("eb-test.info"))
+                this.DecideConsole(req["console"], subdomain[0], (subdomain.Length == 3), out whichconsole);
+
             else if (host.Host.EndsWith("localhost"))
-            {
-                if (subdomain.Length == 2) // USER CONSOLE
-                {
-                    if (!string.IsNullOrEmpty(req["console"]))
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "dc";
-                    }
-                    else
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "uc";
-                    }
-                }
-                else // TENANT CONSOLE
-                {
-                    ViewBag.cid = "expressbase";
-                    whichconsole = "tc";
-                }
-            }
-            else if (host.Host.EndsWith("nip.io") || host.Host.EndsWith("xip.io"))
-            {
-                if (subdomain.Length == 7) // USER CONSOLE
-                {
-                    if (!string.IsNullOrEmpty(req["console"]))
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "dc";
-                    }
-                    else
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "uc";
-                    }
-                }
-                else // TENANT CONSOLE
-                {
-                    ViewBag.cid = "expressbase";
-                    whichconsole = "tc";
-                }
-            }
+                this.DecideConsole(req["console"], subdomain[0], (subdomain.Length == 2), out whichconsole);
+
             else
             {
-                if (subdomain.Length == 5) // USER CONSOLE
-                {
-                    if (!string.IsNullOrEmpty(req["console"]))
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "dc";
-                    }
-                    else
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "uc";
-                    }
-                }
-                else
-                {
-                    ViewBag.cid = "expressbase";
-                    whichconsole = "tc";
-                }
+                bOK2AttemptLogin = false;
+                _controller = "Ext";
+                _action = "Error";
             }
 
-            MyAuthenticateResponse authResponse = null;
-
-            string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
-            if (!data.Success)
+            if (bOK2AttemptLogin)
             {
-                if (data.ErrorCodes.Count <= 0)
+                string token = req["g-recaptcha-response"];
+                Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
+                if (!data.Success)
                 {
+                    if (data.ErrorCodes.Count <= 0)
+                    {
+                        return RedirectToAction("Error", "Ext");
+                    }
+                    var error = data.ErrorCodes[0].ToLower();
+                    switch (error)
+                    {
+                        case ("missing-input-secret"):
+                            ViewBag.CaptchaMessage = "The secret parameter is missing.";
+                            break;
+                        case ("invalid-input-secret"):
+                            ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
+                            break;
+
+                        case ("missing-input-response"):
+                            ViewBag.CaptchaMessage = "The captcha input is missing.";
+                            break;
+                        case ("invalid-input-response"):
+                            ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
+                            break;
+
+                        default:
+                            ViewBag.CaptchaMessage = "Error occured. Please try again";
+                            break;
+                    }
                     return RedirectToAction("Error", "Ext");
                 }
-                var error = data.ErrorCodes[0].ToLower();
-                switch (error)
+                else
                 {
-                    case ("missing-input-secret"):
-                        ViewBag.CaptchaMessage = "The secret parameter is missing.";
-                        break;
-                    case ("invalid-input-secret"):
-                        ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
-                        break;
+                    MyAuthenticateResponse authResponse = null;
+                    try
+                    {
+                        string tenantid = ViewBag.cid;
+                        var authClient = this.ServiceClient;
+                        authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                        {
+                            provider = CredentialsAuthProvider.Name,
+                            UserName = req["uname"],
+                            Password = (req["pass"] + req["uname"]).ToMD5Hash(),
+                            Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", tenantid } },
+                            //UseTokenCookie = true
+                        });
 
-                    case ("missing-input-response"):
-                        ViewBag.CaptchaMessage = "The captcha input is missing.";
-                        break;
-                    case ("invalid-input-response"):
-                        ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
-                        break;
+                    }
+                    catch (WebServiceException wse)
+                    {
+                        TempData["ErrorMessage"] = wse.Message;
+                        return errorredirect(whichconsole);
+                    }
+                    catch (Exception wse)
+                    {
+                        TempData["ErrorMessage"] = wse.Message;
+                        return errorredirect(whichconsole);
+                    }
+                    if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+                    {
+                        TempData["ErrorMessage"] = "EbUnauthorized";
+                        return errorredirect(whichconsole);
+                    }
+                    else //AUTH SUCCESS
+                    {
+                        CookieOptions options = new CookieOptions();
 
-                    default:
-                        ViewBag.CaptchaMessage = "Error occured. Please try again";
-                        break;
+                        Response.Cookies.Append("bToken", authResponse.BearerToken, options);
+                        Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+
+                        if (req.ContainsKey("remember"))
+                            Response.Cookies.Append("UserName", req["uname"], options);
+
+                        this.RouteToDashboard(authResponse.User.HasSystemRole(), whichconsole, out _controller, out _action);
+                    }
                 }
-                return RedirectToAction("Error", "Ext");
+            }
+
+            return RedirectToAction(_action, _controller);
+        }
+
+        private void DecideConsole(string reqConsole, string cid, bool isNotTenantUser, out string whichconsole)
+        {
+            if (isNotTenantUser)
+            {
+                ViewBag.cid = cid;
+                whichconsole = (!string.IsNullOrEmpty(reqConsole)) ? "dc" : "uc";
+            }
+            else // TENANT CONSOLE
+            {
+                ViewBag.cid = "expressbase";
+                whichconsole = "tc";
+            }
+        }
+
+        private void RouteToDashboard(bool hasSystemRole, string whichconsole, out string _controller, out string _action)
+        {
+            if (ViewBag.cid == "expressbase")
+            {
+                _controller = "Tenant";
+                _action = "TenantDashboard";
             }
             else
             {
-                try
+                if (hasSystemRole && whichconsole == "dc")
                 {
-                    Console.WriteLine("..............................In try for authenticate");
-                    string tenantid = ViewBag.cid;
-                    var authClient = this.ServiceClient;
-                    authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
-                    {
-                        provider = CredentialsAuthProvider.Name,
-                        UserName = req["uname"],
-                        Password = (req["pass"] + req["uname"]).ToMD5Hash(),
-                        Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", tenantid } },
-                        //UseTokenCookie = true
-                    });
-
+                    _controller = "Dev";
+                    _action = "DevConsole";
                 }
-                catch (WebServiceException wse)
+                else if (whichconsole == "uc")
                 {
-                    TempData["ErrorMessage"] = wse.Message;
-                    return errorredirect(whichconsole);
-                }
-                catch (Exception wse)
-                {
-                    TempData["ErrorMessage"] = wse.Message;
-                    return errorredirect(whichconsole);
-                }
-                if (authResponse != null && authResponse.ResponseStatus != null
-                    && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
-                {
-                    TempData["ErrorMessage"] = "EbUnauthorized";
-                    return errorredirect(whichconsole);
+                    _controller = "TenantUser";
+                    _action = "UserDashboard";
                 }
                 else
                 {
-                    Console.WriteLine("...........................Authentication Success");
-                    CookieOptions options = new CookieOptions();
-
-                    Response.Cookies.Append("bToken", authResponse.BearerToken, options);
-                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
-
-                    if (req.ContainsKey("remember"))
-                    {
-                        Response.Cookies.Append("UserName", req["uname"], options);
-                    }
-
-                    if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
-                    {
-                        Console.WriteLine("..........................Authentication Success expressbase.com/ expressbase.org");
-                        if (ViewBag.cid == "expressbase")
-                        {
-                            Console.WriteLine("....................Authentication Success expressbase.com/ expressbase.org tenandid=expressbase");
-                            if (subdomain.Length == 3 && authResponse.User.HasEbSystemRole() && whichconsole == "dc")
-                            {
-                                Console.WriteLine(".................Authentication Success expressbase.com/ expressbase.org tenandid=expressbase DevConsole");
-                                return RedirectToAction("DevConsole", "Dev");
-                            }
-                            else if (subdomain.Length == 3 && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
-                            {
-                                Console.WriteLine("..................Authentication Success expressbase.com/ expressbase.org tenandid=expressbase UserConsole");
-                                return RedirectToAction("UserDashboard", "TenantUser");
-                            }
-                            else if (authResponse.User.loginattempts <= 2) // TENANT CONSOLE
-                            {
-                                Console.WriteLine("........................Authentication Success expressbase.com/ expressbase.org tenandid=expressbase ProfileSetup");
-                                return RedirectToAction("ProfileSetup", "Tenant");
-                            }
-                            else
-                            {
-                                Console.WriteLine("..................Authentication Success expressbase.com/ expressbase.org tenandid=expressbase TenantConsole");
-                                return RedirectToAction("TenantDashboard", "Tenant");
-                            }
-                               
-                        }
-                        else
-                        {
-                            Console.WriteLine(".....................Authentication Success expressbase.com/ expressbase.org tenandid=eb_roby_dev");
-
-                            if (subdomain.Length == 3 && authResponse.User.HasSystemRole() && whichconsole == "dc")
-                            {
-                                Console.WriteLine(".................Authentication Success expressbase.com/ expressbase.org tenandid=eb_roby_dev DevConsole");
-                                return RedirectToAction("DevConsole", "Dev");
-                            }                          
-                            else if (subdomain.Length == 3 && whichconsole == "uc") // USER CONSOLE
-                            {
-                                Console.WriteLine(".....................Authentication Success expressbase.com/ expressbase.org tenandid=eb_roby_dev UserConsole");
-                                return RedirectToAction("UserDashboard", "TenantUser");
-                            }                                
-                            else if (authResponse.User.loginattempts <= 2) // TENANT CONSOLE
-                            {
-                                Console.WriteLine("...................Authentication Success expressbase.com/ expressbase.org tenandid=eb_roby_dev ProfileSetup");
-                                return RedirectToAction("ProfileSetup", "Tenant");
-                            }                                
-                            else
-                            {
-                                Console.WriteLine("...................Authentication Success expressbase.com/ expressbase.org tenandid=eb_roby_dev TenantConsole");
-                                return RedirectToAction("TenantDashboard", "Tenant");
-                            }
-                                
-                        }
-
-                    }
-
-                    else if (host.Host.EndsWith("localhost"))
-                    {
-                        Console.WriteLine(".....................Authentication Success localhost");
-                        if (ViewBag.cid == "expressbase")
-                        {
-                            Console.WriteLine(".....................Authentication Success localhost tenandid=expressbase");
-                            if (subdomain.Length == 2 && authResponse.User.HasEbSystemRole() && whichconsole == "dc")
-                            {
-                                Console.WriteLine(".................Authentication Success localhost tenandid=expressbase DevConsole");
-                                return RedirectToAction("DevConsole", "Dev");
-                            }
-                            else if (subdomain.Length == 2 && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
-                            {
-                                Console.WriteLine(".................Authentication Success localhost tenandid=expressbase UserConsole");
-                                return RedirectToAction("UserDashboard", "TenantUser");
-                            }
-                            else if (authResponse.User.loginattempts <= 2) // TENANT CONSOLE
-                            {
-                                Console.WriteLine(".................Authentication Success localhost tenandid=expressbase ProfileSetUp");
-                                return RedirectToAction("ProfileSetup", "Tenant");
-                            }
-                            else
-                            {
-                                Console.WriteLine(".................Authentication Success localhost tenandid=expressbase TenantConsole");
-                                return RedirectToAction("TenantDashboard", "Tenant");
-                            }
-                                
-                        }
-                        else
-                        {
-                            Console.WriteLine(".....................Authentication Success localhost tenandid=eb_roby_dev");
-                            if (subdomain.Length == 2 && authResponse.User.HasSystemRole() && whichconsole == "dc")
-                            {
-                                Console.WriteLine(".................Authentication Success localhost tenandid=eb_roby_dev DevConsole");
-                                return RedirectToAction("DevConsole", "Dev");
-                            }
-                            else if (subdomain.Length == 2 && whichconsole == "uc") // USER CONSOLE
-                            {
-                                Console.WriteLine(".................Authentication Success localhost tenandid=eb_roby_dev UserConsole");
-                                return RedirectToAction("UserDashboard", "TenantUser");
-                            }
-                            else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
-                            {
-                                Console.WriteLine(".................Authentication Success localhost tenandid=eb_roby_dev ProfileSetUp");
-                                return RedirectToAction("ProfileSetup", "Tenant");
-                            }      
-                            else
-                            {
-                                Console.WriteLine(".................Authentication Success localhost tenandid=eb_roby_dev TenantConsole");
-                                return RedirectToAction("TenantDashboard", "Tenant");
-                            }
-                               
-                        }
-                    }
-                    else if (host.Host.EndsWith("nip.io") || host.Host.EndsWith("xip.io"))
-                    {
-                        Console.WriteLine(".....................Authentication Success nip.io/xip.io");
-                        if (ViewBag.cid == "expressbase")
-                        {
-                            Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=expressbase");
-                            if (subdomain.Length == 7 && authResponse.User.HasEbSystemRole() && whichconsole == "dc")
-                            {
-                                Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=expressbase DevConsole");
-                                return RedirectToAction("DevConsole", "Dev");
-                            }
-                            else if (subdomain.Length == 7 && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
-                            {
-                                Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=expressbase UserConsole");
-                                return RedirectToAction("UserDashboard", "TenantUser");
-                            }
-                            else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
-                            {
-                                Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=expressbase ProfileSetup");
-                                return RedirectToAction("ProfileSetup", "Tenant");
-                            } 
-                            else
-                            {
-                                Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=expressbase TenantConsole");
-                                return RedirectToAction("TenantDashboard", "Tenant");
-                            }
-                               
-                        }
-                        else
-                        {
-                            Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=eb_roby_dev");
-                            if (subdomain.Length == 7 && authResponse.User.HasSystemRole() && whichconsole == "dc")
-                            {
-                                Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=eb_roby_dev DevConsole");
-                                return RedirectToAction("DevConsole", "Dev");
-                            }
-                                
-
-                            else if (subdomain.Length == 7 && whichconsole == "uc") // USER CONSOLE
-                            {
-                                Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=eb_roby_dev UserConsole");
-                                return RedirectToAction("UserDashboard", "TenantUser");
-                            }
-                            else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
-                            {
-                                Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=eb_roby_dev ProfileSetup");
-                                return RedirectToAction("ProfileSetup", "Tenant");
-                            }                       
-                            else
-                            {
-                                Console.WriteLine(".....................Authentication Success nip.io/xip.io tenantid=eb_roby_dev TenantConsole");
-                                return RedirectToAction("TenantDashboard", "Tenant");
-                            }
-                            
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(".....................Authentication Success Normal IP");
-                        if (ViewBag.cid == "expressbase")
-                        {
-                            Console.WriteLine(".....................Authentication Success Normal IP tenandid=expressbase");
-                            if (subdomain.Length == 5 && authResponse.User.HasEbSystemRole() && whichconsole == "dc")
-                            {
-                                Console.WriteLine(".....................Authentication Success Normal IP tenandid=expressbase DevConsole");
-                                return RedirectToAction("DevConsole", "Dev");
-                            }
-                            else if (subdomain.Length == 5 && authResponse.User.Roles.Contains("Eb_User") && whichconsole == "uc") // USER CONSOLE
-                            {
-                                Console.WriteLine(".....................Authentication Success Normal IP tenandid=expressbase UserConsole");
-                                return RedirectToAction("UserDashboard", "TenantUser");
-                            }
-                            else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
-                            {
-                                Console.WriteLine(".....................Authentication Success Normal IP tenandid=expressbase ProfileSetup");
-                                return RedirectToAction("ProfileSetup", "Tenant");
-                            }
-                            else
-                            {
-                                Console.WriteLine(".....................Authentication Success Normal IP tenandid=expressbase TenantConsole");
-                                return RedirectToAction("TenantDashboard", "Tenant");
-                            }
-                           
-                        }
-                        else
-                        {
-                            Console.WriteLine(".....................Authentication Success Normal IP tenandid=eb_roby_dev");
-                            if (subdomain.Length == 5 && authResponse.User.HasSystemRole() && whichconsole == "dc")
-                            {
-                                Console.WriteLine(".....................Authentication Success Normal IP tenandid=eb_roby_dev DevConsole");
-                                return RedirectToAction("DevConsole", "Dev");
-                            }
-                                
-
-                            else if (subdomain.Length == 5 && whichconsole == "uc") // USER CONSOLE
-                            {
-                                Console.WriteLine(".....................Authentication Success Normal IP tenandid=eb_roby_dev UserConsole");
-                                return RedirectToAction("UserDashboard", "TenantUser");
-                            }    
-                            else if (authResponse.User.loginattempts == 2) // TENANT CONSOLE  
-                            {
-                                Console.WriteLine(".....................Authentication Success Normal IP tenandid=eb_roby_dev ProfileSetup");
-                                return RedirectToAction("ProfileSetup", "Tenant");
-                            }          
-                            else
-                            {
-                                Console.WriteLine(".....................Authentication Success Normal IP tenandid=eb_roby_dev TenantConsole");
-                                return RedirectToAction("TenantDashboard", "Tenant");
-                            }
-                            
-                        }
-                    }
-
-
-                    //if (subdomain.Length == 2)
-                    //{
-                    //    if(authResponse.User.loginattempts <= 2)
-                    //        return RedirectToAction("ProfileSetup", "Tenant");
-                    //    else
-                    //        return RedirectToAction("TenantDashboard", "Tenant");
-                    //}                      
-                    //else if (subdomain.Length == 3 && authResponse.User.RoleCollection.HasSystemRole())
-                    //    return RedirectToAction("DevConsole", "Dev");
-                    //else
-                    //    return RedirectToAction("UserDashboard", "TenantUser");
-
+                    _controller = "Ext";
+                    _action = "Error";
                 }
             }
         }
+
         public IActionResult errorredirect(string console)
         {
             if (console == "tc")
@@ -638,6 +385,7 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+
         [HttpGet]
         public IActionResult AfterSignInSocial(string provider, string providerToken,
             string email, string socialId, int lg)
@@ -646,7 +394,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var authClient = this.ServiceClient;
-                MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate  
+                MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
                     UserName = "NIL",
@@ -665,7 +413,7 @@ namespace ExpressBase.Web.Controllers
                     //    return RedirectToAction("ProfileSetup", "Tenant");
                     //}
                     //{
-                        return RedirectToAction("TenantDashboard", "Tenant");
+                    return RedirectToAction("TenantDashboard", "Tenant");
                     //}
                 }
                 else
@@ -705,11 +453,13 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+
         [HttpGet]
         public IActionResult SMSCallBack()
         {
             return View();
         }
+
 
         [HttpPost]
         public void SMSCallBack(int i)

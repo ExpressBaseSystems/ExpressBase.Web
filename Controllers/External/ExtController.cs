@@ -1,4 +1,5 @@
-﻿using ExpressBase.Common.Extensions;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Extensions;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web2.Models;
@@ -215,7 +216,7 @@ namespace ExpressBase.Web.Controllers
         public async Task<IActionResult> TenantSignin(int i)
         {
             var host = this.HttpContext.Request.Host;
-            string[] subdomain = host.Host.Split('.');
+            string[] hostParts = host.Host.Split('.');
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
 
@@ -226,14 +227,14 @@ namespace ExpressBase.Web.Controllers
 
             bool bOK2AttemptLogin = true;
 
-            if (host.Host.EndsWith("expressbase.com"))
-                this.DecideConsole(req["console"], subdomain[0], (subdomain.Length == 3), out whichconsole);
+            if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+                this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (host.Host.EndsWith("eb-test.info"))
-                this.DecideConsole(req["console"], subdomain[0], (subdomain.Length == 3), out whichconsole);
+            else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
+                this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (host.Host.EndsWith("localhost"))
-                this.DecideConsole(req["console"], subdomain[0], (subdomain.Length == 2), out whichconsole);
+            else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
+                this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 2), out whichconsole);
 
             else
             {
@@ -311,8 +312,8 @@ namespace ExpressBase.Web.Controllers
                     {
                         CookieOptions options = new CookieOptions();
 
-                        Response.Cookies.Append("bToken", authResponse.BearerToken, options);
-                        Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
 
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
@@ -369,20 +370,11 @@ namespace ExpressBase.Web.Controllers
         public IActionResult errorredirect(string console)
         {
             if (console == "tc")
-            {
-
                 return RedirectToAction("SignIn", "Ext");
-            }
             else if (console == "dc")
-            {
-
                 return RedirectToAction("DevSignIn", "Ext");
-            }
             else
-            {
-
                 return RedirectToAction("UsrSignIn", "Ext");
-            }
         }
 
 
@@ -406,21 +398,18 @@ namespace ExpressBase.Web.Controllers
                 if (authResponse.User != null)
                 {
                     CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append("bToken", authResponse.BearerToken, options);
-                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    return RedirectToAction("TenantDashboard", "Tenant");
                     //if (lg <= 1)
                     //{
                     //    return RedirectToAction("ProfileSetup", "Tenant");
                     //}
                     //{
-                    return RedirectToAction("TenantDashboard", "Tenant");
                     //}
                 }
                 else
-                {
                     return RedirectToAction("Error", "Ext");
-                }
-
             }
             catch (WebServiceException wse)
             {

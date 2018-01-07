@@ -30,16 +30,16 @@ namespace ExpressBase.Web.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var host = context.HttpContext.Request.Host.Host.Replace(DomainConstants.WWWDOT, string.Empty);
-            string[] hostParts = host.Split(DomainConstants.DOT);
+            var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(RoutingConstants.DOT);
             var path = context.HttpContext.Request.Path.Value.ToLower();
 
             try
             {
-                var jwtToken = new JwtSecurityToken(context.HttpContext.Request.Cookies[DomainConstants.BEARER_TOKEN]);
+                var jwtToken = new JwtSecurityToken(context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN]);
 
-                this.ServiceClient.BearerToken = context.HttpContext.Request.Cookies[DomainConstants.BEARER_TOKEN];
-                this.ServiceClient.RefreshToken = context.HttpContext.Request.Cookies[DomainConstants.REFRESH_TOKEN];
+                this.ServiceClient.BearerToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+                this.ServiceClient.RefreshToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
 
                 var controller = context.Controller as Controller;
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
@@ -55,7 +55,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (System.ArgumentNullException ane)
             {
-                if (ane.ParamName == DomainConstants.BEARER_TOKEN || ane.ParamName == DomainConstants.REFRESH_TOKEN)
+                if (ane.ParamName == RoutingConstants.BEARER_TOKEN || ane.ParamName == RoutingConstants.REFRESH_TOKEN)
                 {
                     context.Result = new RedirectResult("~/Ext/Index");
                     return;
@@ -68,7 +68,7 @@ namespace ExpressBase.Web.Controllers
             if (ControllerContext.ActionDescriptor.ActionName != "Logout")
             {
                 if (!string.IsNullOrEmpty(this.ServiceClient.BearerToken))
-                    Response.Cookies.Append(DomainConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
             }
 
             base.OnActionExecuted(context);

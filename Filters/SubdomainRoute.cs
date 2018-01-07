@@ -44,32 +44,32 @@ namespace ExpressBase.Web.Filters
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            var host = context.HttpContext.Request.Host.Host.Replace(DomainConstants.WWWDOT, string.Empty);
+            var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             var path = context.HttpContext.Request.Path;
-            string[] hostParts = host.Split(DomainConstants.DOT);
+            string[] hostParts = host.Split(RoutingConstants.DOT);
 
             object _subDomain = null;
             if (Enum.TryParse(typeof(SubDomains), hostParts[0], out _subDomain))
             {
-                context.RouteData.Values[DomainConstants.CONTROLLER] = DomainConstants.EB_PRODUCTS;
-                context.RouteData.Values[DomainConstants.ACTION] = ((SubDomains)_subDomain).ToString();
+                context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EB_PRODUCTS;
+                context.RouteData.Values[RoutingConstants.ACTION] = ((SubDomains)_subDomain).ToString();
             }
             
-            else if (path.Value.Equals(DomainConstants.BACKSLASH.ToString())) // '/'
+            else if (path.Value.Equals(RoutingConstants.BACKSLASH.ToString())) // '/'
             {
-                if (host.EndsWith(DomainConstants.EXPRESSBASEDOTCOM))
-                    this.RouteToCorrectPage(context, (hostParts.Length == DomainConstants.HOSTPARTSLEN_IS_3));
+                if (host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+                    this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_3));
 
-                else if (host.EndsWith(DomainConstants.EBTESTINFO))
-                    this.RouteToCorrectPage(context, (hostParts.Length == DomainConstants.HOSTPARTSLEN_IS_3));
+                else if (host.EndsWith(RoutingConstants.EBTESTINFO))
+                    this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_3));
 
-                else if (host.EndsWith(DomainConstants.LOCALHOST))
-                    this.RouteToCorrectPage(context, (hostParts.Length == DomainConstants.HOSTPARTSLEN_IS_2));
+                else if (host.EndsWith(RoutingConstants.LOCALHOST))
+                    this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_2));
 
                 else
                 {
-                    context.RouteData.Values[DomainConstants.CONTROLLER] = DomainConstants.EXTCONTROLLER;
-                    context.RouteData.Values[DomainConstants.ACTION] = DomainConstants.INDEX;
+                    context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EXTCONTROLLER;
+                    context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.INDEX;
                 }
             }
 
@@ -80,13 +80,13 @@ namespace ExpressBase.Web.Filters
         {
             if (isGoing2SignIn2UC) // USER CONSOLE
             {
-                context.RouteData.Values[DomainConstants.CONTROLLER] = DomainConstants.EXTCONTROLLER; 
-                context.RouteData.Values[DomainConstants.ACTION] = DomainConstants.USERSIGNIN2UC;
+                context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EXTCONTROLLER; 
+                context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.USERSIGNIN2UC;
             }
             else // TENANT CONSOLE
             {
-                context.RouteData.Values[DomainConstants.CONTROLLER] = DomainConstants.EXTCONTROLLER;
-                context.RouteData.Values[DomainConstants.ACTION] = DomainConstants.INDEX;
+                context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EXTCONTROLLER;
+                context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.INDEX;
             }
         }
     }

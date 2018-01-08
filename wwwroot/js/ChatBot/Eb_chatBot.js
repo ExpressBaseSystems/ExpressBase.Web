@@ -91,7 +91,7 @@
 
     this.collectContacts = function () {
         this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
-        this.msgFromBot($('<input type="email"><br/><input type="tel"><button name="contactSubmit">submit</button>'));
+        this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input type="email" class="plain-inp"><i class="fa fa-envelope-o" aria-hidden="true"></i></div><div class="contact-inp-wrap"><input type="tel" class="plain-inp"><i class="fa fa-phone" aria-hidden="true"></i></div><button name="contactSubmit" class="contactSubmit">submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
     };
 
     this.continueAsFBUser = function (e) {

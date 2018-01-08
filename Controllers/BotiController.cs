@@ -12,7 +12,7 @@ using ServiceStack.Redis;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class BotiController : EbBaseNewController
+    public class BotiController : EbBaseIntController
     {
         public BotiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

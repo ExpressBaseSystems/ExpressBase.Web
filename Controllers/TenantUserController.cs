@@ -25,7 +25,7 @@ using ExpressBase.Security.Core;
 
 namespace ExpressBase.Web2.Controllers
 {
-    public class TenantUserController : EbBaseNewController
+    public class TenantUserController : EbBaseIntController
     {
 
         public TenantUserController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }

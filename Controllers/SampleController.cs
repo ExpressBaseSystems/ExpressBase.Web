@@ -12,7 +12,7 @@ using System;
 namespace ExpressBase.Web2.Controllers
 {
 
-    public class SampleController : EbBaseNewController
+    public class SampleController : EbBaseIntController
     {
         public SampleController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 

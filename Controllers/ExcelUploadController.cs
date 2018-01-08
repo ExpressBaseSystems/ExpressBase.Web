@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ExcelUploadController : EbBaseNewController
+    public class ExcelUploadController : EbBaseIntController
     {
         public ExcelUploadController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

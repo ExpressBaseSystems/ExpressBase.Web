@@ -39,7 +39,7 @@ namespace ExpressBase.Web.Controllers
             this.Controller = _c;
         }
     }
-    public class ReportRenderController : EbBaseNewController
+    public class ReportRenderController : EbBaseIntController
     {
         //private RowColletion __datarows;
         private DataSourceColumnsResponse cresp = null;

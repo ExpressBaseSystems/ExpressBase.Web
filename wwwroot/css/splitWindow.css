@@ -245,7 +245,6 @@
     height: 175px;
     position: absolute;
     z-index: 1;
-    z-index: 1;
     background: #ffffff;
     box-shadow: -4px 0px 21px 0px rgba(189,189,189,1);
 }

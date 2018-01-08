@@ -30,22 +30,23 @@ namespace ExpressBase.Web.Controllers
         {
             Controller.DrawPageHeader();
             Controller.DrawPageFooter();
-            Controller.DrawWaterMark();
+            if (Controller.Report.IsLastpage == true) Controller.DrawReportFooter();
+            Controller.Report.DrawWaterMark(Controller.pdfReader, d, writer);
         }
 
         public HeaderFooter(ReportRenderController _c) : base()
         {
-            this.Controller = _c; 
+            this.Controller = _c;
         }
     }
     public class ReportRenderController : EbBaseIntController
     {
-        private RowColletion __datarows;
+        //private RowColletion __datarows;
         private DataSourceColumnsResponse cresp = null;
         private DataSourceDataResponse dresp = null;
-        private ColumnColletion __columns = null;
+        //private ColumnColletion __columns = null;
 
-        private EbReport Report = null;
+        public EbReport Report = null;
         private iTextSharp.text.Font f = FontFactory.GetFont(FontFactory.HELVETICA, 12);
         private PdfContentByte canvas;
         private PdfWriter writer;
@@ -54,14 +55,12 @@ namespace ExpressBase.Web.Controllers
         public PdfStamper stamp;
         public MemoryStream ms1;
 
+        private float rh_Yposition;
         private float rf_Yposition;
         private float pf_Yposition;
         private float ph_Yposition;
         private float dt_Yposition;
-        private float detailprintingtop = 0;
-
-        private List<object> WaterMarkList = new List<object>();
-        private Dictionary<string, byte[]> watermarkImages = new Dictionary<string, byte[]>();
+        private float detailprintingtop = 0;       
 
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
@@ -70,16 +69,18 @@ namespace ExpressBase.Web.Controllers
             var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
             Report.IsLastpage = false;
+            Report.watermarkImages = new Dictionary<string, byte[]>();
+            Report.WaterMarkList = new List<object>();
             if (Report.DataSourceRefId != string.Empty)
             {
                 cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", Report.DataSourceRefId));
                 if (cresp.IsNull)
                     cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = Report.DataSourceRefId });
 
-                __columns = (cresp.Columns.Count > 1) ? cresp.Columns[1] : cresp.Columns[0];
+                Report.DataColumns = (cresp.Columns.Count > 1) ? cresp.Columns[1] : cresp.Columns[0];
 
                 dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Report.DataSourceRefId, Draw = 1, Start = 0, Length = 100 });
-                __datarows = dresp.Data;
+                Report.DataRow = dresp.Data;
             }
 
             iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
@@ -93,14 +94,13 @@ namespace ExpressBase.Web.Controllers
             writer.CloseStream = true;//important
             canvas = writer.DirectContent;
             Report.PageNumber = writer.PageNumber;
-            Report.DataRowCount = __datarows.Count;
+            //Report.DataRow = __datarows;
             Report.InitializeSummaryFields();
             GetWatermarkImages();
             d.NewPage();
 
             DrawReportHeader();
             DrawDetail();
-            DrawReportFooter();
             d.Close();
             ms1.Position = 0;//important
             return new FileStreamResult(ms1, "application/pdf");
@@ -125,13 +125,13 @@ namespace ExpressBase.Web.Controllers
                           }
                       });
                     }
-                    watermarkImages.Add((field as EbWaterMark).Image, fileByte);
+                    Report.watermarkImages.Add((field as EbWaterMark).Image, fileByte);
                 }
             }
         }
         public void DrawReportHeader()
         {
-            var rh_Yposition = 0;
+            rh_Yposition = 0;
             detailprintingtop = 0;
             foreach (EbReportHeader r_header in Report.ReportHeaders)
             {
@@ -139,6 +139,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     DrawFields(field, rh_Yposition, 1);
                 }
+                rh_Yposition += r_header.Height;
             }
         }
 
@@ -152,14 +153,15 @@ namespace ExpressBase.Web.Controllers
                 {
                     DrawFields(field, ph_Yposition, 1);
                 }
+                ph_Yposition += p_header.Height;
             }
         }
 
         public void DrawDetail()
         {
-            if (__datarows != null)
+            if (Report.DataRow != null)
             {
-                for (Report.SerialNumber = 1; Report.SerialNumber <= __datarows.Count; Report.SerialNumber++)
+                for (Report.SerialNumber = 1; Report.SerialNumber <= Report.DataRow.Count; Report.SerialNumber++)
                 {
                     if (detailprintingtop < Report.DT_FillHeight && Report.DT_FillHeight - detailprintingtop >= Report.DetailHeight)
                     {
@@ -173,7 +175,7 @@ namespace ExpressBase.Web.Controllers
                         DoLoopInDetail(Report.SerialNumber);
                     }
                 }
-                if (Report.SerialNumber - 1 == __datarows.Count)
+                if (Report.SerialNumber - 1 == Report.DataRow.Count)
                 {
                     Report.IsLastpage = true;
                     // Report.CalculateDetailHeight(Report.IsLastpage, __datarows, Report.PageNumber);
@@ -203,6 +205,7 @@ namespace ExpressBase.Web.Controllers
         public void DrawPageFooter()
         {
             detailprintingtop = 0;
+            ph_Yposition = (Report.PageNumber == 1) ? Report.ReportHeaderHeight : 0;
             dt_Yposition = ph_Yposition + Report.PageHeaderHeight;
             pf_Yposition = dt_Yposition + Report.DT_FillHeight;
             foreach (EbPageFooter p_footer in Report.PageFooters)
@@ -211,6 +214,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     DrawFields(field, pf_Yposition, 1);
                 }
+                pf_Yposition += p_footer.Height;
             }
         }
 
@@ -226,38 +230,40 @@ namespace ExpressBase.Web.Controllers
                 {
                     DrawFields(field, rf_Yposition, 1);
                 }
+                rf_Yposition += r_footer.Height;
             }
         }
-        public void CallSummerize(string title, int i)
-        {
-            var column_name = string.Empty;
-            var column_val = string.Empty;
 
-            List<object> SummaryList;
-            if (Report.PageSummaryFields.ContainsKey(title))
-            {
-                SummaryList = Report.PageSummaryFields[title];
-                foreach (var item in SummaryList)
-                {
-                    var table = title.Split('.')[0];
-                    column_name = title.Split('.')[1];
-                    column_val = GeFieldtData(column_name, i);
-                    (item as IEbDataFieldSummary).Summarize(column_val);
-                }
-            }
-            if (Report.ReportSummaryFields.ContainsKey(title))
-            {
-                SummaryList = Report.ReportSummaryFields[title];
-                foreach (var item in SummaryList)
-                {
-                    var table = title.Split('.')[0];
-                    column_name = title.Split('.')[1];
-                    column_val = GeFieldtData(column_name, i);
-                    (item as IEbDataFieldSummary).Summarize(column_val);
-                }
-            }
+        //public void CallSummerize(string title, int i)
+        //{
+        //    var column_name = string.Empty;
+        //    var column_val = string.Empty;
 
-        }
+        //    List<object> SummaryList;
+        //    if (Report.PageSummaryFields.ContainsKey(title))
+        //    {
+        //        SummaryList = Report.PageSummaryFields[title];
+        //        foreach (var item in SummaryList)
+        //        {
+        //            var table = title.Split('.')[0];
+        //            column_name = title.Split('.')[1];
+        //            column_val = Report.GeFieldtData(column_name, i);
+        //            (item as IEbDataFieldSummary).Summarize(column_val);
+        //        }
+        //    }
+        //    if (Report.ReportSummaryFields.ContainsKey(title))
+        //    {
+        //        SummaryList = Report.ReportSummaryFields[title];
+        //        foreach (var item in SummaryList)
+        //        {
+        //            var table = title.Split('.')[0];
+        //            column_name = title.Split('.')[1];
+        //            column_val = Report.GeFieldtData(column_name, i);
+        //            (item as IEbDataFieldSummary).Summarize(column_val);
+        //        }
+        //    }
+
+        //}
 
         //NEED FIX OO
         public void DrawFields(EbReportField field, float section_Yposition, int serialnumber)
@@ -265,7 +271,7 @@ namespace ExpressBase.Web.Controllers
             var column_name = string.Empty;
             var column_val = string.Empty;
             if (Report.PageSummaryFields.ContainsKey(field.Title) || Report.ReportSummaryFields.ContainsKey(field.Title))
-                CallSummerize(field.Title, serialnumber);
+               Report.CallSummerize(field.Title, serialnumber);
             if (field is EbDataField)
             {
                 if (field is IEbDataFieldSummary)
@@ -276,7 +282,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     var table = field.Title.Split('.')[0];
                     column_name = field.Title.Split('.')[1];
-                    column_val = GeFieldtData(column_name, serialnumber);
+                    column_val = Report.GeFieldtData(column_name, serialnumber);
                 }
                 field.DrawMe(canvas, Report.Height, section_Yposition, detailprintingtop, column_val);
             }
@@ -311,37 +317,21 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public string GeFieldtData(string column_name, int i)
-        {
-            var columnindex = 0;
-            var column_val = "";
-            foreach (var col in __columns)
-            {
-                if (col.ColumnName == column_name)
-                {
-                    column_val = __datarows[i - 1][columnindex].ToString();
-                    return column_val;
-                }
-                columnindex++;
-            }
-            return column_val;
-        }
+        //public void DrawWaterMark()
+        //{
 
-        public void DrawWaterMark()
-        {
-
-            byte[] fileByte = null;
-            if (Report.ReportObjects != null)
-            {
-                foreach (var field in Report.ReportObjects)
-                {
-                    if ((field as EbWaterMark).Image != string.Empty)
-                    {
-                        fileByte = watermarkImages[(field as EbWaterMark).Image];
-                    }
-                (field as EbWaterMark).DrawMe(pdfReader, d, writer, fileByte, Report.Height);
-                }
-            }
-        }
+        //    byte[] fileByte = null;
+        //    if (Report.ReportObjects != null)
+        //    {
+        //        foreach (var field in Report.ReportObjects)
+        //        {
+        //            if ((field as EbWaterMark).Image != string.Empty)
+        //            {
+        //                fileByte = watermarkImages[(field as EbWaterMark).Image];
+        //            }
+        //        (field as EbWaterMark).DrawMe(pdfReader, d, writer, fileByte, Report.Height);
+        //        }
+        //    }
+        //}
     }
 }

@@ -24,7 +24,7 @@ using System.Reflection;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class CEController : EbBaseNewController
+    public class CEController : EbBaseIntController
     {
         public CEController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 

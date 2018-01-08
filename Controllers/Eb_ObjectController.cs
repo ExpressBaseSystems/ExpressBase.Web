@@ -22,7 +22,7 @@ using ExpressBase.Objects.EmailRelated;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class Eb_ObjectController : EbBaseNewController
+    public class Eb_ObjectController : EbBaseIntController
     {
         private Context2Js _c2js;
 

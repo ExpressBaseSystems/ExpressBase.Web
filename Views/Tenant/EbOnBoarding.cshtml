@@ -142,6 +142,7 @@
                             <label>Description</label>
                             <textarea class="form-control" id="Desc" name="Desc"></textarea>
                         </div>   
+                        <input type="hidden" name="ProfileInfo" id="ProfileInfo" />
                         <input type="hidden" id="isid" name="Isid" value="@ViewBag.iSid" />                       
                         <input type="submit" id="sol-form-sub" style="display:none;" />
                     </form>
@@ -332,7 +333,7 @@
                                 <input type="text" class="form-control" name="AppIcon" value="fa fa-archive" id="AppIcon" />
                                 <span class="input-group-addon"><i class="fa fa-archive"></i></span>
                             </div>
-                        </div>           
+                        </div>                                              
                         <input type="hidden" id="Sid" name="Sid" value="@ViewBag.iSid" />
                         <input type="submit" id="app-form-sub" style="display:none;" />
                     </form>

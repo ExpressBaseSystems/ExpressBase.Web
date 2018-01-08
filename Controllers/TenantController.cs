@@ -51,7 +51,7 @@ namespace ExpressBase.Web.Controllers
             var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
-
+                TempData["TenantId"] = res.id;
                 MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
@@ -74,6 +74,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult TenantDashboard()
         {
+            
             return View();
         }
 
@@ -112,16 +113,13 @@ namespace ExpressBase.Web.Controllers
         public void EbCreateSolution(int i)
         {
             var req = this.HttpContext.Request.Form;
+            Dictionary<string, object> ProfileInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(req["ProfileInfo"]);
             TempData[SolutionName] = req["Sname"].ToString();
             TempData[Sid] = req["Esid"].ToString();
             TempData[Desc] = req["Desc"].ToString();
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
-                SolutionName = req["Sname"],
-                IsolutionId = req["Isid"],
-                EsolutionId = req["Esid"],
-                Description = req["Desc"],
-                Subscription = req["Subscription"]
+                Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),TenanantId = Convert.ToInt32(TempData["TenantId"])
             });
             if (res.Solnid > 0)
             {
@@ -129,21 +127,19 @@ namespace ExpressBase.Web.Controllers
                 {
                     dbName = req["Isid"]
                 });
+                if (response.resp)
+                   this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { Colvalues = ProfileInfo, Token = ViewBag.token, DbName= req["Isid"] });
             }
-
         }
 
         [HttpPost]
         public IActionResult EbOnBoarding(int i)
         {
             var req = this.HttpContext.Request.Form;
-            //TempData[SolutionName] = req["Sname"];
-            //TempData[Sid] = req["Isid"];
-            //TempData[Desc] = req["Sdesc"];
             IServiceClient client = this.ServiceClient;
-            var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-            if (resultlist.id > 0)
-                return RedirectToAction("SolutionDashBoard", "Tenant");
+            var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
+            if (resultlist.id > 0)                
+                return RedirectToAction("TenantDashboard", "Tenant");
             else
                 return View();
         }
@@ -156,36 +152,6 @@ namespace ExpressBase.Web.Controllers
             //ViewBag.Sid = resultset.Sid;
             return View();
         }
-
-        [HttpPost]
-        public IActionResult TenantAddAccount(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            TempData[SolutionName] = req["Sname"].ToString();
-            TempData[Sid] = req["esid"].ToString();
-            TempData[Desc] = req["Desc"].ToString();
-            var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
-            {
-                SolutionName = req["Sname"],
-                IsolutionId = req["isid"],
-                EsolutionId = req["esid"],
-                Description = req["Desc"],
-                Subscription = req["Subscription"]
-            });
-            if (res.Solnid > 0)
-            {
-                EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
-                {
-                    dbName = req["isid"]
-                });
-                if (response.resp)
-                    return RedirectToAction("SolutionDashboard"); // convert get to post
-            }
-
-            return View();
-
-        }
-
 
         public IActionResult TenantHome()
         {

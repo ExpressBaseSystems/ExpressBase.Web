@@ -505,32 +505,36 @@ var DvContainerObj = function (settings) {
         $(".minimap").remove();
         if (dvObj.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
             $(".dotsnapshot").empty();
-            $(".dotsnapshot").append(`<div id="copydiv" style="width:200px;"></canvas>`);
-            //this.previewBody = null;
-            //this.previewBody = $('#parent').minimap({
-            //    heightRatio: 0.25,
-            //    widthRatio: 0.15,
-            //    offsetHeightRatio: 0.1,
-            //    offsetWidthRatio: 0.5,
-            //    position: "left",
-            //    touch: true,
-            //    smoothScroll: true,
-            //    smoothScrollDelay: 200,
-            //});
-            //this.previewBody.show();
-            //$("#copydiv").html($("#content_" + temp).html());
-            html2canvas($("#content_" + temp), {
-                onrendered: function (canvas) {
-                    theCanvas = canvas;
-                    document.body.appendChild(canvas);
-
-                    // Convert and download as image 
-                    //Canvas2Image.saveAsPNG(canvas);
-                    $("#copydiv").append(canvas);
-                    // Clean up 
-                    //document.body.removeChild(canvas);
-                }
+            $(".dotsnapshot").append(`<div id="copydiv" style="width:200px;"></div>`);
+            this.previewBody = null;
+            this.previewBody = $("#content_" + temp).minimap({
+                heightRatio: 0.15,
+                widthRatio: 0.1,
+                offsetHeightRatio: 0,
+                offsetWidthRatio: 0,
+                position: "left",
+                touch: true,
+                smoothScroll: true,
+                smoothScrollDelay: 200,
             });
+            $(".miniregion").css("top", e.pageY+37+"px");
+            $(".miniregion").css("left", e.pageX + 37 + "px");
+            $(".minimap").css("top", "5px");
+            $(".minimap").css("left", "196px");
+            this.previewBody.show();
+            //$("#copydiv").html($("#content_" + temp).html());
+            //html2canvas($("#content_" + temp)).then(function (canvas) {
+            //    imageTimeout: 100,
+            //    $("#copydiv").append(canvas);
+            //});
+
+            //html2canvas($("#content_" + temp), {
+            //    imageTimeout: 100,
+            //    onrendered: function (canvas) {
+            //        $("#copydiv").append(canvas);
+            //    },
+
+            //});
         }
         else {
             var canvas = document.getElementById('myChart' + temp);

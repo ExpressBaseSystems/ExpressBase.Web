@@ -256,6 +256,10 @@
     background-image: var(--ebbgimage);
     padding: 7px;
 }
+
+#copydiv canvas{
+    width:200px;
+}
 /*#dotsul {
     padding-top: 10px;
 }*/

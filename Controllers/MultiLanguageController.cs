@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class MultiLanguageController : EbBaseNewController
+    public class MultiLanguageController : EbBaseIntController
     {
 
         public MultiLanguageController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class StaticFileController : EbBaseNewController
+    public class StaticFileController : EbBaseIntController
     {
         public StaticFileController(IServiceClient _ssclient) : base(_ssclient) { }
 

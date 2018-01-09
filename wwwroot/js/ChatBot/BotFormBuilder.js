@@ -28,7 +28,9 @@
         CheckBoxGroupCounter: 0,
         CardsCounter: 0,
         CardCounter: 0,
+        ImageUploaderCounter: 0,
     };
+
     this.currentProperty = null;
     this.CurRowCount = 2;
     this.CurColCount = 2;

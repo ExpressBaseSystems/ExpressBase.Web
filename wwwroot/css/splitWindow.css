@@ -172,7 +172,7 @@
     z-index:1;
 }
 
-.dotstable div {
+.dotstable .dottool {
     display: inline;
 }
 .dotstable {
@@ -241,13 +241,12 @@
 }
 
 #dotsDetail {
-    width: 200px;
+    /*width: 200px;
     height: 175px;
     position: absolute;
     z-index: 1;
-    z-index: 1;
     background: #ffffff;
-    box-shadow: -4px 0px 21px 0px rgba(189,189,189,1);
+    box-shadow: -4px 0px 21px 0px rgba(189,189,189,1);*/
 }
 
 .dotheader {

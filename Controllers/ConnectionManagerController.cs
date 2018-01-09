@@ -11,7 +11,7 @@ using System;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ConnectionManagerController : EbBaseNewController
+    public class ConnectionManagerController : EbBaseIntController
     {
         public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 

@@ -54,7 +54,7 @@
         return isvalid;
     }
 
-    this.validateProfileInfo = function(){
+    this.validateProfileInfo = function () {
         if ($("[name='Name']").val() !== "" && $("[name='Company']").val() !== "" && $("[name='Password']").val() !== "")
             return true;
         else
@@ -64,6 +64,15 @@
     this.submitProfile = function (e) {
         e.preventDefault();
         var info = this.validateProfileInfo();
+        var profInfo = {
+            Name: $("[name='Name']").val().trim(),
+            Company: $("[name='Company']").val().trim(),
+            Employees: $("[name='Employees']").val().trim(),
+            Designation: $("[name='Designation']").val().trim(),
+            Country: $("[name='Country']").val().trim(),
+            Email: $("[name='Email']").val().trim(),
+            Password: $("[name='Password']").val().trim()
+        }
         if (info) {
             $.ajax({
                 type: 'POST',
@@ -71,20 +80,13 @@
                 beforeSend: function () {
                     $("#save-profile i").show();
                 },
-                data: {
-                    Name: $("[name='Name']").val().trim(),
-                    Company: $("[name='Company']").val().trim(),
-                    Employees: $("[name='Employees']").val().trim(),
-                    Designation: $("[name='Designation']").val().trim(),
-                    Country: $("[name='Country']").val().trim(),
-                    Email: $("[name='Email']").val().trim(),
-                    Password: $("[name='Password']").val().trim()
-                }
+                data: profInfo
             }).done(function (data) {
                 $('#eb-mesageBox').show().text("Profile Saved");
                 $('#eb-mesageBox').fadeOut(5000);
                 $("#save-profile").hide();
                 $("#prof-info-skip, #basic-info, #product-info").show();
+                $("#sol-form-submit #ProfileInfo").val(JSON.stringify(profInfo));
                 this.scrollProfToLeft();
             }.bind(this));
         }
@@ -110,7 +112,8 @@
                     Esid: $("[name='Esid']").val().trim(),
                     Desc: $("[name='Desc']").val().trim(),
                     Isid: $("[name='Isid']").val().trim(),
-                    Subscription: JSON.stringify(this.objSubscription)
+                    Subscription: JSON.stringify(this.objSubscription),
+                    ProfileInfo: $("[name='ProfileInfo']").val()
                 }
             }).done(function (data) {
                 $('#eb-mesageBox').show().text("Solution Created");
@@ -122,7 +125,7 @@
             }.bind(this));
         }
         else
-            
+
             $('#eb-mesageBox-error').show().text("select atleast one Product.");
         $('#eb-mesageBox-error').fadeOut(5000);
 
@@ -143,29 +146,7 @@
             scrollLeft: 1900
         }, 500);
     };
-    this.submitApplicationReq = function () {
-        $("#app-form").on("submit", function (e) {           
-            $.ajax({
-                type: 'POST',
-                url: "../Dev/SaveApplications",
-                beforeSend: function () {
-                  
-                },
-                data: {
-                    "Sname": $("[name='Sname']").val().trim(),
-                    "Sdesc": $("[name='Desc']").val().trim(),
-                    "AppType": $('#apptype').val(),
-                    "AppName": $('#appName').val(),
-                    "Desc": $('#DescApp').val(),
-                    "Isid": $('#Sid').val(),
-                    "AppIcon": $("#AppIcon").val().trim(),
-                    "itemid": 0
-                }
-            }).done(function (data) {
-                
-            });
-        });
-    };
+   
     this.whichAppType = function (e) {
         var ob = $(e.target).closest(".apps-wrapper-fchiled");
         ob.addClass("appselected");
@@ -173,6 +154,9 @@
             $(obj).children(".apps-wrapper-fchiled").removeClass("appselected");
         }.bind(this))
         $("[name='AppType']").val(ob.attr("type"));
+    };
+    this.showLoaderOnAppSub = function (e) {
+        $("#save-application i").show();
     };
 
     this.init = function () {
@@ -193,7 +177,7 @@
         $("#app-next").on('click', this.scrollToLast.bind(this));
         $("#prod-prev").on('click', this.scrollToProd.bind(this));
         $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));
-        this.submitApplicationReq();
+        $("#app-form").on("submit", this.showLoaderOnAppSub.bind(this));
     };
 
     this.init();

@@ -20,7 +20,7 @@
     
    
     this.init = function () {
-        this.loadObjectsAndOperations.bind(this)();
+        //this.loadObjectsAndOperations.bind(this)();
         $(this.btnSaveAll).on('click', this.onclickbtnSaveAll.bind(this));
         
         //INIT FORM
@@ -112,9 +112,88 @@
     //SUBROLES-------------END------------------------------------------------------------------
 
 
-    //USERS --------------BEGIN---------------------------------------------------------
+    //TABLE --------------BEGIN---------------------------------------------------------
 
+    this.setTable = function (tbl, cols, dt) {
+
+
+        var table = $(tbl).DataTable({
+            scrollY: "100px",
+            scrollX: true,
+            scrollCollapse: true,
+            paging: false,
+            dom: 't',
+            //ordering: false,
+            fixedHeader: true,
+            //autoWidth: false,
+            columns: cols,
+            data: dt,
+            fixedColumns: {
+                leftColumns: 1,
+                //rightColumns: 1
+            },
+            //drawCallback: function () {
+            //    $(".dataTables_scrollHeadInner").css({ "width": "100%" });
+            //    $(".dataTables_scrollHeadInner .table ").css({ "width": "100%" });
+            //    $(tbl).DataTable().columns.adjust();
+            //    $(tbl).DataTable().fixedColumns().relayout();
+            //    $(tbl).DataTable().rows().recalcHeight();
+            //},
+            initComplete: function () {
+                //$(tbl+" .dataTables_scrollHeadInner").css({ "width": "inherit" });
+                //$(tbl+" .dataTables_scrollHeadInner .table ").css({ "width": "inherit" });
+                //$(tbl).DataTable().columns.adjust().draw();
+                //$(tbl).DataTable().fixedColumns().relayout();
+                //$(tbl).DataTable().rows().recalcHeight();
+            }
+        });
+
+        //$(tbl).dataTable({
+        //    paging: false,
+        //    dom: 't',
+        //    fixedHeader: true,
+        //    scrollY: "80px",
+        //    scrollX: true,
+        //    fixedColumns: { leftColumns: 1 }
+        //});
+
+        //$(tbl).table_scroll({
+        //    rowsInHeader: 1,
+        //    fixedColumnsLeft: 1,
+        //    columnsInScrollableArea: 2,
+        //    scrollX: 2,
+        //    scrollY: 2
+            //// Number of rows in table header.
+            //rowsInHeader: null,
+
+            //// Number of rows in table footer.
+            //rowsInFooter: null,
+
+            //// Number of columns at the left side of scrollable area that will not be scrolled
+            //fixedColumnsLeft: 0,
+
+            //// Number of columns at the right side of scrollable area that will not be scrolled
+            //fixedColumnsRight: 0,
+
+            //// Number of columns to scroll to
+            //scrollX: 0,
+
+            //// Number of rows to scroll to
+            //scrollY: 0,
+
+            //// Number of rows that remains visible in scrollable area
+            //rowsInScrollableArea: 5,
+
+            //// Number of columns that remains visible in scrollable area
+            //columnsInScrollableArea: 2,
+
+            //// scroll or auto
+            //overflowY: 'auto',
+            //overflowX: 'auto'
+        //});
+    }
     
+
    
    
     //---------------------END------------------------------------------------------------
@@ -124,56 +203,75 @@
         $.each(this.appCollection, function (k, appOb) {
             $("#selectApp").append(`<option data-id="${appOb.Id}" data-index="${k}">${appOb.Name}</option>`);
         });
-        
     }
 
-    this.loadObjectsAndOperations = function () {
-        $.each(this.opDict.$values, function (key, value) {
-            $("#divObjList").append(`<a class="objactiveclass list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#tbl${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
-                            <table class="objtype table table-responsive sub-menu collapse" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table> <thead><tr>`);
-            var shtml = `<thead><tr><th style="width: 250px"></th>`;
-        $.each(value.Operations.$values, function (a, b) {
-                shtml += `<td align='center' style='font-size:14px; width: 100px'>${b}</td>`;
-            });
-            shtml += `</tr></thead><tbody></tbody>`;
-            $("#tbl" + value.Op_Name).append(shtml);
-        });
-        $('.objactiveclass').click(function () {
-            $(this).toggleClass('active');
-        });
-    }
+    //this.loadObjectsAndOperations = function () {
+    //    $.each(this.opDict.$values, function (key, value) {
+    //        $("#divObjList").append(`<a class="objactiveclass list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#tbl${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
+    //                        <table class="objtype table table-responsive sub-menu collapse table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>`);
+    //        var shtml = `<thead><tr><th style="width: 250px"></th>`;
+    //        $.each(value.Operations.$values, function (a, b) {
+    //            shtml += `<td align='center' style='font-size:14px; width: 100px'>${b}</td>`;
+    //        });
+    //        shtml += `</tr></thead><tbody></tbody>`;
+    //        $("#tbl" + value.Op_Name).append(shtml);
+    //        //this.setTable($("#tbl" + value.Op_Name));
+    //    });
+    //    $('.objactiveclass').click(function () {
+    //        $(this).toggleClass('active');
+    //    });
+    //}
+    this.tblColumnRender = function (data, type, row, meta) {
+        var checked = '';
+        if (this.permission.indexOf(data) !== -1)
+            checked = 'checked';
+        return `<input type='checkbox' ${checked} class="checkboxclass" data-id=${data}>`;
+    }.bind(this);
+
 
     this.selectAppChangeAction = function (e) {  
         var appindex = $("#selectApp").find(":selected").attr("data-index");
         appCollection = this.appCollection;
         var _this = this;
-        $('.collapse').collapse('hide');
+        $('#divObjList').children().remove();
         $.each(this.opDict.$values, function (i, value) {
-            $("#tbl" + value.Op_Name).find("tbody").children().remove();
+            var tblColumn = [];
+            var tblData = [];
+            var shtml = `<a class="objactiveclass list-group-item list-group-item-action collapse in" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
+                            <div id='div${value.Op_Name}' class='collapsed collapse in' style='width:inherit;'>
+                            <table style='width:inherit;' class="objtype table table-responsive sub-menu table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>`;
+            $("#divObjList").append(shtml);
+
+            tblColumn.push({ data: 'x0', title: "Objects", width: '200px'});
+            $.each(value.Operations.$values, function (a, b) {
+                tblColumn.push({ data: 'x' + (a + 1), title: b, render: _this.tblColumnRender, width: '100px', orderable: false, className: "text-center"});
+            });
             $.each(appCollection[appindex].ObjectTypes, function (j, a) {
                 if (j == value.Op_Id) {
                     $.each(a, function (k, b) {
-                        var st = `<tr data-id=${b.Obj_Id}><td style='font-size:14px'>${b.Obj_Name}</td>`;
-                        for (x = 0; x < value.Operations.$values.length; x++) {
-                            var permissionString = b.Obj_Id + '_' + x;
-                            var checked = '';
-                            if (_this.permission.indexOf(permissionString) !== -1)
-                                checked = 'checked';
-                            st += `<td align='center'><input type='checkbox' ${checked} class="checkboxclass" data-id=${permissionString}></td>`;
+                        var obt= new Object();
+                        obt.x0= b.Obj_Name;
+                        for (y = 0; y < value.Operations.$values.length; y++) {
+                            var permissionString = b.Obj_Id + '_' + y;
+                            obt["x" + (y + 1)] = permissionString;
                         }
-                        st += `</tr>`;
-                        $("#tbl" + value.Op_Name).append(st);
+                        tblData.push(obt);
                     });
                 }
             });
-            var rowCount = $("#tbl" + value.Op_Name).find("tbody tr").length;
-            var headtag = $("#tbl" + value.Op_Name).prev("a");
-            $(headtag).text(value.Op_Name.substring(2) + " (" + rowCount + ")");
-            $(headtag).removeClass('active');
-            $(headtag).show();
-            if (rowCount === 0) {
-                $(headtag).hide();
-            }
+
+            if (tblData.length !== 0)
+                _this.setTable("#tbl" + value.Op_Name, tblColumn, tblData);
+
+            //var rowCount = $("#tbl" + value.Op_Name).find("tbody tr").length;
+            //var headtag = $("#tbl" + value.Op_Name).prev("a");
+            //$(headtag).text(value.Op_Name.substring(2) + " (" + rowCount + ")");
+            //$(headtag).removeClass('active');
+            //$(headtag).show();
+            //if (rowCount === 0) {
+            //    $(headtag).hide();
+            //    $("#tbl" + value.Op_Name).hide();
+            //}
         });
         
         //**************INIT SUBROLES TILE**************
@@ -202,11 +300,11 @@
 
         //------------------INIT USERS TILE------------------
         var initUserList = null;
-        var metadata2 = ['Id', 'Name', 'Email', 'ProfilePicture'];
+        var metadata2 = ['id', 'name', 'email', 'ProfilePicture'];
         if (this.roleId > 0) {
             initUserList = [];
             for (i = 0; i < this.usersList.length; i++) {
-                initUserList.push({ Id: this.usersList[i].Id, Name: this.usersList[i].Name, Email: this.usersList[i].Email});
+                initUserList.push({ id: this.usersList[i].Id, name: this.usersList[i].Name, email: this.usersList[i].Email});
             }
         }
         if (this.usersTile === null) {
@@ -258,4 +356,49 @@
     
 
     this.init();
+
+
+    //$.each(this.opDict.$values, function (i, value) {
+    //    var shtml = `<a class="objactiveclass list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
+    //                        <div id='div${value.Op_Name}' class='collapse'><table class="objtype table table-responsive sub-menu table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'>
+    //                        <thead><tr><th style="width: 250px"></th>`;
+    //    $.each(value.Operations.$values, function (a, b) {
+    //        shtml += `<td align='center' style='font-size:14px; width: 100px'><b>${b}</b></td>`;
+    //    });
+    //    shtml += `</tr></thead><tbody></tbody></table></div>`;
+    //    $("#divObjList").append(shtml);
+
+    //    //$("#tbl" + value.Op_Name).append(shtml);
+    //    //$("#tbl" + value.Op_Name).find("tbody").children().remove();
+
+    //    $.each(appCollection[appindex].ObjectTypes, function (j, a) {
+    //        if (j == value.Op_Id) {
+    //            $.each(a, function (k, b) {
+    //                var st = `<tr data-id=${b.Obj_Id}><td style='font-size:14px'>${b.Obj_Name}</td>`;
+    //                for (x = 0; x < value.Operations.$values.length; x++) {
+    //                    var permissionString = b.Obj_Id + '_' + x;
+    //                    var checked = '';
+    //                    if (_this.permission.indexOf(permissionString) !== -1)
+    //                        checked = 'checked';
+    //                    st += `<td align='center'><input type='checkbox' ${checked} class="checkboxclass" data-id=${permissionString}></td>`;
+    //                }
+    //                st += `</tr>`;
+    //                $("#tbl" + value.Op_Name).append(st);
+    //            });
+
+    //            _this.setTable($("#tbl" + value.Op_Name));
+    //        }
+
+
+    //    });
+    //    var rowCount = $("#tbl" + value.Op_Name).find("tbody tr").length;
+    //    var headtag = $("#tbl" + value.Op_Name).prev("a");
+    //    $(headtag).text(value.Op_Name.substring(2) + " (" + rowCount + ")");
+    //    $(headtag).removeClass('active');
+    //    $(headtag).show();
+    //    if (rowCount === 0) {
+    //        $(headtag).hide();
+    //        $("#tbl" + value.Op_Name).hide();
+    //    }
+    //});
 }

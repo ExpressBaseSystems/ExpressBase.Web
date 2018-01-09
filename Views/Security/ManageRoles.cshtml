@@ -11,7 +11,13 @@
     var _role2RoleList = Html.Raw(ViewBag.Role2RoleList);
     var _usersList = Html.Raw(ViewBag.UsersList);
     }
+
+<script type="text/javascript" src="~/js/TableScroll.js"></script>
+
 <style>
+
+   
+
     .outer-section-manageroles {
         height: 100vh;
         font-family: open sans;
@@ -64,9 +70,18 @@
         overflow: auto;
         margin: 0px;
     }
-
+    .dataTables_scrollHead {
+        padding-bottom: 10px;
+        margin-bottom: -10px;
+    }
+    .dataTables_scroll {
+        height: inherit;
+    }
+    /*.dataTables_scrollHeadInner > table{
+       table-layout:fixed;
+    }*/
 </style>
-<section class="outer-section-manageroles" style="height:625px; margin: 1% 8% 0% 8%; padding-top: 1%;">
+<section class="outer-section-manageroles" style="height:625px; margin: 1% 6% 0% 6%; padding-top: 1%;">
     <form id="formManageRoles" data-toggle="validator" method="POST" action="">
         <div class="row" style="margin:0px">
             <div class="col-md-4">

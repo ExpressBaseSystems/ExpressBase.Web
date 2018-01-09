@@ -505,38 +505,53 @@ var DvContainerObj = function (settings) {
         $(".minimap").remove();
         if (dvObj.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
             $(".dotsnapshot").empty();
-            $(".dotsnapshot").append(`<div id="copydiv" style="width:200px;"></canvas>`);
+            $(".dotsnapshot").append(`<div id="copydiv" style="width:200px;"></div>`);
+            $("#copydiv").append(`<img src="../images/table.png" style='width:inherit;'>`);
             //this.previewBody = null;
-            //this.previewBody = $('#parent').minimap({
-            //    heightRatio: 0.25,
-            //    widthRatio: 0.15,
-            //    offsetHeightRatio: 0.1,
-            //    offsetWidthRatio: 0.5,
+            //this.previewBody = $("#content_" + temp).minimap({
+            //    heightRatio: 0.15,
+            //    widthRatio: 0.1,
+            //    offsetHeightRatio: 0,
+            //    offsetWidthRatio: 0,
             //    position: "left",
             //    touch: true,
             //    smoothScroll: true,
             //    smoothScrollDelay: 200,
             //});
+            //$(".miniregion").css("top", e.pageY+37+"px");
+            //$(".miniregion").css("left", e.pageX + 37 + "px");
+            //$(".minimap").css("top", "-100px");
+            //$(".minimap").css("left", "196px");
+            //$(".minimap").css("position", "absolute");
+            //$(".miniregion").css("position", "absolute");
             //this.previewBody.show();
             //$("#copydiv").html($("#content_" + temp).html());
-            html2canvas($("#content_" + temp), {
-                onrendered: function (canvas) {
-                    theCanvas = canvas;
-                    document.body.appendChild(canvas);
+            //html2canvas($("#content_" + temp)).then(function (canvas) {
+            //    imageTimeout: 100,
+            //    $("#copydiv").append(canvas);
+            //});
 
-                    // Convert and download as image 
-                    //Canvas2Image.saveAsPNG(canvas);
-                    $("#copydiv").append(canvas);
-                    // Clean up 
-                    //document.body.removeChild(canvas);
-                }
-            });
+            //html2canvas($("#content_" + temp), {
+            //    imageTimeout: 100,
+            //    onrendered: function (canvas) {
+            //        var myImage = canvas.toDataURL();
+            //        var link = document.createElement("a");
+
+            //        link.download = "MaSimulation.png";
+            //        link.href = myImage;
+            //        document.body.appendChild(link);
+            //        link.click(); 
+            //        link.remove();
+            //    },
+
+            //});
         }
         else {
             var canvas = document.getElementById('myChart' + temp);
             var image = new Image();
             image.id = "pic"
             image.src = canvas.toDataURL();
+            image.style.width = "inherit";
             $(".dotsnapshot").empty();
             $(".dotsnapshot").append(`<canvas id="copyCanvas" style="width:200px;"></canvas>`);
             var dest = document.getElementById('copyCanvas'),
@@ -544,8 +559,8 @@ var DvContainerObj = function (settings) {
             destcontext.drawImage(image, 10, 10, 200, 200);
         }
         $("#dotsDetail").show();
-        $("#dotsDetail").css("margin-left", e.pageX + "px");
-        $("#dotsDetail").css("margin-top", e.pageY + "px");
+        $("#dotsDetail").css("margin-left", e.pageX-92 + "px");
+        $("#dotsDetail").css("margin-top", e.pageY+8 + "px");
         //$('.splitdiv_parent').slick('slickGoTo', lastChar, false);
     }.bind(this);
 

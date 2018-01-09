@@ -474,9 +474,9 @@
                 this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
 
                 /////////////////////////////////////////////////
-                setTimeout(function () {
-                    $(".btn-box .btn:last").click();
-                }.bind(this), this.typeDelay * 2 + 100);
+                //setTimeout(function () {
+                //    $(".btn-box .btn:last").click();
+                //}.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

@@ -16,7 +16,6 @@
     this.ebbotThemeColor = '#31d031';
     this.initControls = new InitControls(this);
     this.typeDelay = 10;
-
     this.formsList = {};
     this.formsDict = {};
     this.formNames = [];
@@ -173,7 +172,7 @@
             /////////////////////////////////////////////////
             setTimeout(function () {
                 $(".btn-box").find("[idx=0]").click();
-            }.bind(this), this.typeDelay*2 + 100);
+            }.bind(this), this.typeDelay * 2 + 100);
         }
         else {
             this.msgFromBot(`Hello ${this.FBResponse.name}, ${greeting}`);

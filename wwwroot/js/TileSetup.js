@@ -9,7 +9,9 @@
     this.searchAjaxUrl = searchAjax;
     
     this.txtDemoSearch = null;
-    this.btnClearDemoSearch = null;
+    this.spanSrch = null;
+    this.spanRemv = null;
+    //this.btnClearDemoSearch = null;
     this.btnAddModal = null;
     this.txtSearch = null;
     this.btnSearch = null;
@@ -29,16 +31,17 @@
         
         
     }
-
+    //<button id="btnClearDemoSearch${t}" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
         $(parent).append(`
         <div class="row" style="padding:6px 0px">
-            <div class="col-md-5"></div>
-            <div class="col-md-4">
-                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:80%" />
-                <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
-                <button id="btnClearDemoSearch${t}" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
+            <div class="col-md-7"></div>
+            <div class="col-md-3">
+                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:100%" />
+                <span id="spanSrch${t}" class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 16px;"></span>
+                <span id="spanRemv${t}" class="glyphicon glyphicon-remove form-control-feedback" style="top: 0px; right: 16px; display:none;"></span>
+                
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn" id="btnAddModal${t}" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}</button>
@@ -74,7 +77,9 @@
         <div id="divSelectedDisplay${t}" class="row tilediv1"></div>`);
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
-        this.btnClearDemoSearch = $('#btnClearDemoSearch' + t);
+        this.spanSrch = $('#spanSrch' + t);
+        this.spanRemv = $('#spanRemv'+ t);
+        //this.btnClearDemoSearch = $('#btnClearDemoSearch' + t);
         this.btnAddModal = $('#btnAddModal' + t );
         this.txtSearch = $('#txtSearch' + t);
         this.btnSearch = $('#btnSearch' + t);
@@ -86,7 +91,8 @@
         this.divSearchResults = $('#divSearchResults' + t);
 
         $(this.parentDiv).on('keyup', '#txtDemoSearch' + t, this.keyUpTxtDemoSearch.bind(this));
-        $(this.parentDiv).on('click', '#btnClearDemoSearch' + t, this.onClickbtnClearDemoSearch.bind(this));
+        //$(this.parentDiv).on('click', '#btnClearDemoSearch' + t, this.onClickbtnClearDemoSearch.bind(this));
+        $(this.parentDiv).on('click', '#spanRemv' + t, this.onClickbtnClearDemoSearch.bind(this));
         $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
         $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
         $(this.parentDiv).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
@@ -128,6 +134,15 @@
         var f = 1;
         var divSelectedDisplay = this.divSelectedDisplay;
         var txt = $(this.txtDemoSearch).val().trim();
+        if (txt === '') {
+            $(this.spanRemv).hide();
+            $(this.spanSrch).show();
+        }
+        else {
+            $(this.spanSrch).hide();
+            $(this.spanRemv).show();
+        }
+
         $($(divSelectedDisplay).children("div.col-md-4")).each(function () {
             $(this).children().css('box-shadow', '1px 1px 2px 1px #fff');
             if ($(this).attr('data-name').toLowerCase().substring(0, txt.length) === txt.toLowerCase() && txt !== "") {

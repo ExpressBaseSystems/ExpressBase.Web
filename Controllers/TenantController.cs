@@ -51,7 +51,6 @@ namespace ExpressBase.Web.Controllers
             var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
-                TempData["TenantId"] = res.id;
                 MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
@@ -71,10 +70,11 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public IActionResult TenantDashboard()
         {
-            
+            var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
+            ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);
             return View();
         }
 
@@ -119,7 +119,7 @@ namespace ExpressBase.Web.Controllers
             TempData[Desc] = req["Desc"].ToString();
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
-                Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),TenanantId = Convert.ToInt32(TempData["TenantId"])
+                Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)
             });
             if (res.Solnid > 0)
             {
@@ -128,7 +128,7 @@ namespace ExpressBase.Web.Controllers
                     dbName = req["Isid"]
                 });
                 if (response.resp)
-                   this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { Colvalues = ProfileInfo, Token = ViewBag.token, DbName= req["Isid"] });
+                   this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { Colvalues = ProfileInfo, DbName= req["Isid"] });
             }
         }
 

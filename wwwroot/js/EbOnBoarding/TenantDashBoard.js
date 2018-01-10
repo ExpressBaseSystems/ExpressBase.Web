@@ -16,7 +16,7 @@
         }
     };
     this.goToSolutionWindow = function (e) {
-        window.open("http://localhost:5000/Tenant/SolutionDashBoard");
+        window.open("http://localhost:5000/Tenant/SolutionDashBoard");       
         $("#confTo-solution").modal("toggle");
     };
 

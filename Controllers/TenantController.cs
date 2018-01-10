@@ -127,8 +127,12 @@ namespace ExpressBase.Web.Controllers
                 {
                     dbName = req["Isid"]
                 });
+
                 if (response.resp)
-                   this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { Colvalues = ProfileInfo, DbName= req["Isid"] });
+                {
+                    this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { Colvalues = ProfileInfo, DbName = req["Isid"] });
+                    this.ServiceClient.Post(new InitialSolutionConnectionsRequest {SolutionId = req["Isid"] });
+                }
             }
         }
 
@@ -138,8 +142,10 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.ServiceClient;
             var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
-            if (resultlist.id > 0)                
+            if (resultlist.id > 0)
+            {                
                 return RedirectToAction("TenantDashboard", "Tenant");
+            }                            
             else
                 return View();
         }

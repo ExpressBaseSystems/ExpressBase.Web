@@ -103,11 +103,20 @@
         overflow: auto;
         margin: 0px;
     }
+
+    .nav-tabs > li.active {
+        border-top: 3px solid #339bb3;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+       
+
 </style>
 @{
     var RoleObj = Html.Raw(ViewBag.Roles);
     var SystemRoles = Html.Raw(ViewBag.SystemRoles);
     var UserGroupObj = Html.Raw(ViewBag.EBUserGroups);
+    var Role2RoleList = Html.Raw(ViewBag.Role2RoleList);
     var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
 }
@@ -273,7 +282,6 @@
                 </div>
                 <div id="menu2" class="tab-pane fade">
                     <h4>Comming Soon</h4>
-
                 </div>
                 <div id="menu3" class="tab-pane fade">
                     @*<div class="row" style="padding:6px 0px">
@@ -323,7 +331,7 @@
 
         </div>
         <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
-        <button id="btnCreateUser" type="button" class="btn btn-default" style="margin:20px 40px; float:right">Create</button>
+        <button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right">Create</button>
     </section>
     <div class="prof-setup-cropie">
         <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
@@ -420,7 +428,7 @@
     </style>*@
 <script>
 
-    var userobj = new UserJs(@RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups);
+    var userobj = new UserJs(@RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList);
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();

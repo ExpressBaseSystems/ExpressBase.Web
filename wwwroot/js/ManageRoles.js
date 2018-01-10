@@ -176,12 +176,16 @@
     }
 
     this.onClickObjActiveClass = function () {
-        $(this).toggleClass('active');
-        $(this).next('div').toggle();
-        if ($(this).hasClass("active"))
-            $(this).css("width", "84%");
-        else
+        if ($(this).hasClass("active123") || ! $(this).hasClass("collapsed")) {
             $(this).css("width", "100%");
+            $(this).next('div').hide();
+            $(this).removeClass('active123');
+        }
+        else {
+            $(this).css("width", "84%");
+            $(this).next('div').show();
+            $(this).addClass('active123');
+        }
     }
 
     //this.loadObjectsAndOperations = function () {
@@ -219,9 +223,9 @@
             var tblData = [];
 
             var shtml = `<div>   
-                            <a class="objactiveclass list-group-item list-group-item-action collapse in active" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:84%; margin-top:20px;" id='a${value.Op_Name}'>${value.Op_Name.substring(2)}</a>
+                            <a class="objactiveclass list-group-item list-group-item-action collapse in active123" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:84%; margin-top:20px; cursor: pointer;" id='a${value.Op_Name}'>${value.Op_Name.substring(2)}</a>
                             <div class="form-group has-feedback" style="width:15%; display:inline-block;">
-                                <input type="text" class="form-control" id="txtSrch${value.Op_Name}" placeholder="Search" style="height:32px;" title="Search"/>
+                                <input type="text" class="form-control" id="txtSrch${value.Op_Name}" placeholder="Search" style="height: 32px; background-color: #EEE;" title="Search"/>
                                 <span id="spanSrch${value.Op_Name}" class="glyphicon glyphicon-search form-control-feedback" style="top:0px;"></span>
                                 <span id="spanRemv${value.Op_Name}" class="glyphicon glyphicon-remove form-control-feedback" style="top:0px; display:none;"></span>
                             </div>
@@ -325,7 +329,8 @@
         });
         permissionlist = permissionlist.substring(0, permissionlist.length - 1);
 
-        if (roleName === "" || roleDescription==="") {
+        if (roleName === "" || roleDescription === "") {
+            this.alertFunc("Fill Role Name/Description",4000);
             return false;
         }
         $(this.btnSaveAll).attr("disabled", "true");
@@ -338,8 +343,23 @@
     }
 
     this.saveRoleSuccess = function (msg) {
-        alert(msg);
+        if (msg === "Success") {
+            alert("Role Saved Successfully");
+            window.top.close();
+        }
+        else
+            alert("Submission Failed");
         $(this.btnSaveAll).removeAttr("disabled");
+    }
+
+    this.alertFunc = function tempAlert(msg, duration) {
+        var el = document.createElement("div");
+        el.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
+        el.innerHTML = msg;
+        setTimeout(function () {
+            el.parentNode.removeChild(el);
+        }, duration);
+        document.body.appendChild(el);
     }
 
     

@@ -329,3 +329,24 @@ li:hover {
     .img-thumbnail{
         padding: 2px;
     }
+
+ .category-container > .bootstrap-tagsinput {
+    height: 97px;
+    overflow-y: auto;
+    background-color: #fafafa;
+    border: none;
+    box-shadow: none;
+    width: 100%;
+}
+
+.bootstrap-tagsinput .label-info {
+    background-color: #676a8e;
+}
+.bootstrap-tagsinput .twitter-typeahead {
+    position: inherit !important;
+}
+
+.category-container .tt-dropdown-menu {
+    box-shadow: 5px 5px 5px 5px;
+    background:white;
+}

@@ -8,6 +8,7 @@
     this.r2rList = r2rList;
     this.usersList = usersList;
     this.dependentList = [];
+    this.dominantList = [];
     this.selectApp = $("#selectApp");
     this.divObjList = $("#divObjList");
     this.txtRoleName = $("#txtRoleName");
@@ -22,6 +23,7 @@
     this.init = function () {
         //this.loadObjectsAndOperations.bind(this)();
         $(this.btnSaveAll).on('click', this.onclickbtnSaveAll.bind(this));
+        $(this.divObjList).on('click', '.objactiveclass', this.onClickObjActiveClass);
         
         //INIT FORM
         if (this.roleId > 0) {
@@ -37,14 +39,14 @@
             $(this.selectApp).append(`<option data-id="${roleInfo["AppId"]}" data-index="${apIndex}">${roleInfo["AppName"]}</option>`);
             $(this.selectApp).attr("disabled", "true");
             $(this.txtRoleDescription).text(roleInfo["RoleDescription"]);
-            
+
+            this.findDominantRoles(this.roleId);
         }
         else {
             this.selectApp.on("change", this.selectAppChangeAction.bind(this));
             this.loadAppToSelect.bind(this)();
 
         }
-        
         
         this.selectAppChangeAction();
     }
@@ -53,15 +55,32 @@
     
     this.findDependentRoles = function (dominant) {
         for (var i = 0; i < this.r2rList.length; i++) {
-            if (this.r2rList[i].Dominant == dominant) {
+            if (this.r2rList[i].Dominant == dominant && this.dependentList.indexOf(this.r2rList[i].Dependent) === -1) {
                 this.dependentList.push(this.r2rList[i].Dependent);
                 this.findDependentRoles(this.r2rList[i].Dependent);
             }
         }
     }
 
+    this.findDominantRoles = function (dependent) {
+        for (var i = 0; i < this.r2rList.length; i++) {
+            if (this.r2rList[i].Dependent == dependent && this.dominantList.indexOf(this.r2rList[i].Dominant) === -1) {
+                this.dominantList.push(this.r2rList[i].Dominant);
+                this.findDominantRoles(this.r2rList[i].Dominant);
+            }
+        }
+    }
+
     this.chkItemCustomFunc = function (_this, e) {
         _this.dependentList = [];
+
+        $.each($(this.divSearchResults).find('input'), function (i, ob) {
+            if (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+                $(ob).removeAttr("checked");
+                $(ob).attr("disabled", "true");
+            }
+        });
+        
         if ($(e.target).is(':checked')) {
             _this.findDependentRoles($(e.target).attr("data-id"));
             var st = "";
@@ -94,7 +113,7 @@
             _this.findDependentRoles($(ob).attr('data-id'));
         });
         $.each($(this.divSearchResults).find('input'), function (i, ob) {
-            if (_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+            if ((_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) || (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1)) {
                 $(ob).removeAttr("checked");
                 $(ob).attr("disabled", "true");
             }
@@ -105,7 +124,6 @@
                 $(ob).attr("disabled", "true");
                 $(ob).prop("checked", "true");
             }
-
         }.bind(this));
     }
       
@@ -114,18 +132,17 @@
 
     //TABLE --------------BEGIN---------------------------------------------------------
 
-    this.setTable = function (tbl, cols, dt) {
-
-
+    this.setTable = function (t, cols, dt) {
+        var tbl = "#tbl" + t;
         var table = $(tbl).DataTable({
-            scrollY: "100px",
+            scrollY: "300px",
             scrollX: true,
             scrollCollapse: true,
             paging: false,
             dom: 't',
             //ordering: false,
             fixedHeader: true,
-            //autoWidth: false,
+            autoWidth: true,
             columns: cols,
             data: dt,
             fixedColumns: {
@@ -147,54 +164,24 @@
                 //$(tbl).DataTable().rows().recalcHeight();
             }
         });
-
-        //$(tbl).dataTable({
-        //    paging: false,
-        //    dom: 't',
-        //    fixedHeader: true,
-        //    scrollY: "80px",
-        //    scrollX: true,
-        //    fixedColumns: { leftColumns: 1 }
-        //});
-
-        //$(tbl).table_scroll({
-        //    rowsInHeader: 1,
-        //    fixedColumnsLeft: 1,
-        //    columnsInScrollableArea: 2,
-        //    scrollX: 2,
-        //    scrollY: 2
-            //// Number of rows in table header.
-            //rowsInHeader: null,
-
-            //// Number of rows in table footer.
-            //rowsInFooter: null,
-
-            //// Number of columns at the left side of scrollable area that will not be scrolled
-            //fixedColumnsLeft: 0,
-
-            //// Number of columns at the right side of scrollable area that will not be scrolled
-            //fixedColumnsRight: 0,
-
-            //// Number of columns to scroll to
-            //scrollX: 0,
-
-            //// Number of rows to scroll to
-            //scrollY: 0,
-
-            //// Number of rows that remains visible in scrollable area
-            //rowsInScrollableArea: 5,
-
-            //// Number of columns that remains visible in scrollable area
-            //columnsInScrollableArea: 2,
-
-            //// scroll or auto
-            //overflowY: 'auto',
-            //overflowX: 'auto'
-        //});
+        $('#txtSrch' + t).on('keyup', function () {
+            if (this.value === "") {
+                $("#spanRemv" + t).hide();
+                $("#spanSrch" + t).show();
+            }
+            else {
+                $("#spanSrch" + t).hide();
+                $("#spanRemv" + t).show();
+            }
+            table.search(this.value).draw();
+        });
+        $("#spanRemv" + t).on('click', function () {
+            $('#txtSrch' + t).val("");
+            $("#spanRemv" + t).hide();
+            $("#spanSrch" + t).show();
+            table.search("").draw();
+        });
     }
-    
-
-   
    
     //---------------------END------------------------------------------------------------
 
@@ -205,18 +192,32 @@
         });
     }
 
+    this.onClickObjActiveClass = function () {
+        if ($(this).hasClass("active123") || ! $(this).hasClass("collapsed")) {
+            $(this).css("width", "100%");
+            $(this).next('div').hide();
+            $(this).removeClass('active123');
+        }
+        else {
+            $(this).css("width", "84%");
+            $(this).next('div').show();
+            $(this).addClass('active123');
+        }
+    }
+
     //this.loadObjectsAndOperations = function () {
-    //    $.each(this.opDict.$values, function (key, value) {
-    //        $("#divObjList").append(`<a class="objactiveclass list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#tbl${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
-    //                        <table class="objtype table table-responsive sub-menu collapse table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>`);
-    //        var shtml = `<thead><tr><th style="width: 250px"></th>`;
-    //        $.each(value.Operations.$values, function (a, b) {
-    //            shtml += `<td align='center' style='font-size:14px; width: 100px'>${b}</td>`;
-    //        });
-    //        shtml += `</tr></thead><tbody></tbody>`;
-    //        $("#tbl" + value.Op_Name).append(shtml);
-    //        //this.setTable($("#tbl" + value.Op_Name));
-    //    });
+        //$.each(this.opDict.$values, function (key, value) {
+            //$("#divObjList").append(`<a class="objactiveclass list-group-item list-group-item-action collapse" data-toggle="collapse" data-target="#tbl${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
+            //                <table class="objtype table table-responsive sub-menu collapse table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>`);
+            //var shtml = `<thead><tr><th style="width: 250px"></th>`;
+            //$.each(value.Operations.$values, function (a, b) {
+            //    shtml += `<td align='center' style='font-size:14px; width: 100px'>${b}</td>`;
+            //});
+            //shtml += `</tr></thead><tbody></tbody>`;
+            //$("#tbl" + value.Op_Name).append(shtml);
+            //this.setTable($("#tbl" + value.Op_Name));
+
+        //});
     //    $('.objactiveclass').click(function () {
     //        $(this).toggleClass('active');
     //    });
@@ -237,14 +238,23 @@
         $.each(this.opDict.$values, function (i, value) {
             var tblColumn = [];
             var tblData = [];
-            var shtml = `<a class="objactiveclass list-group-item list-group-item-action collapse in" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500;">${value.Op_Name.substring(2)}</a>
+
+            var shtml = `<div>   
+                            <a class="objactiveclass list-group-item list-group-item-action collapse in active123" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:84%; margin-top:20px; cursor: pointer;" id='a${value.Op_Name}'>${value.Op_Name.substring(2)}</a>
+                            <div class="form-group has-feedback" style="width:15%; display:inline-block;">
+                                <input type="text" class="form-control" id="txtSrch${value.Op_Name}" placeholder="Search" style="height: 32px; background-color: #EEE;" title="Search"/>
+                                <span id="spanSrch${value.Op_Name}" class="glyphicon glyphicon-search form-control-feedback" style="top:0px;"></span>
+                                <span id="spanRemv${value.Op_Name}" class="glyphicon glyphicon-remove form-control-feedback" style="top:0px; display:none;"></span>
+                            </div>
                             <div id='div${value.Op_Name}' class='collapsed collapse in' style='width:inherit;'>
-                            <table style='width:inherit;' class="objtype table table-responsive sub-menu table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>`;
+                                <table style='width:inherit;' class="objtype table table-responsive sub-menu table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>
+                            </div>
+                        </div>`;
             $("#divObjList").append(shtml);
 
-            tblColumn.push({ data: 'x0', title: "Objects", width: '200px'});
+            tblColumn.push({ data: 'x0', title: "Objects     ", width: '200px', className: "dataTableColumnStyle"});
             $.each(value.Operations.$values, function (a, b) {
-                tblColumn.push({ data: 'x' + (a + 1), title: b, render: _this.tblColumnRender, width: '100px', orderable: false, className: "text-center"});
+                tblColumn.push({ data: 'x' + (a + 1), title: b, render: _this.tblColumnRender, width: '80px', orderable: false, className: "text-center"});
             });
             $.each(appCollection[appindex].ObjectTypes, function (j, a) {
                 if (j == value.Op_Id) {
@@ -259,10 +269,15 @@
                     });
                 }
             });
-
-            if (tblData.length !== 0)
-                _this.setTable("#tbl" + value.Op_Name, tblColumn, tblData);
-
+            var rowCount = tblData.length;
+            var headtag = $("#a" + value.Op_Name);
+            if (rowCount !== 0) {
+                $(headtag).text(value.Op_Name.substring(2) + " (" + rowCount + ")");
+                _this.setTable(value.Op_Name, tblColumn, tblData);
+            }
+            else {
+                $(headtag).parent().remove();
+            }
             //var rowCount = $("#tbl" + value.Op_Name).find("tbody tr").length;
             //var headtag = $("#tbl" + value.Op_Name).prev("a");
             //$(headtag).text(value.Op_Name.substring(2) + " (" + rowCount + ")");
@@ -273,7 +288,12 @@
             //    $("#tbl" + value.Op_Name).hide();
             //}
         });
+        if ($('#divObjList').children().length === 0) 
+            $('#divObjList').append(`<div style="text-align: center; margin-top: 12%; font-size: 28px; color: #bbb; "> Nothing to Display </div>`);
         
+
+
+
         //**************INIT SUBROLES TILE**************
         var app_id = $("#selectApp").find(":selected").attr("data-id");
         var objAll = [];
@@ -321,22 +341,18 @@
         var appId = $("#selectApp").find(":selected").attr("data-id");
         var roleDescription = $(this.txtRoleDescription).val().trim();
         var roleName = $(this.txtRoleName).val().trim();
+
+        $.each(this.opDict.$values, function (i, value) {
+            $("#spanRemv" + value.Op_Name).trigger("click");
+        });
+
         $('.checkboxclass:checked').each(function () {
             permissionlist += $(this).attr('data-id') + ",";
         });
         permissionlist = permissionlist.substring(0, permissionlist.length - 1);
-        
-        //$.each($('#divSelectedRoleDisplay').children(), function (i, ob) {
-        //    role2rolelist += $(ob).attr('data-id') + ",";
-        //});
-        //role2rolelist = role2rolelist.substring(0, role2rolelist.length - 1);
 
-        //$.each($('#divSelectedUserDisplay').children(), function (i, ob) {
-        //    userslist += $(ob).attr('data-id') + ",";
-        //});
-        //userslist = userslist.substring(0, userslist.length - 1);
-
-        if (roleName === "" || roleDescription==="") {
+        if (roleName === "" || roleDescription === "") {
+            this.alertFunc("Fill Role Name/Description",4000);
             return false;
         }
         $(this.btnSaveAll).attr("disabled", "true");
@@ -349,8 +365,23 @@
     }
 
     this.saveRoleSuccess = function (msg) {
-        alert(msg);
+        if (msg === "Success") {
+            alert("Role Saved Successfully");
+            window.top.close();
+        }
+        else
+            alert("Submission Failed");
         $(this.btnSaveAll).removeAttr("disabled");
+    }
+
+    this.alertFunc = function tempAlert(msg, duration) {
+        var el = document.createElement("div");
+        el.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
+        el.innerHTML = msg;
+        setTimeout(function () {
+            el.parentNode.removeChild(el);
+        }, duration);
+        document.body.appendChild(el);
     }
 
     
@@ -401,4 +432,51 @@
     //        $("#tbl" + value.Op_Name).hide();
     //    }
     //});
+
+     //$(tbl).dataTable({
+        //    paging: false,
+        //    dom: 't',
+        //    fixedHeader: true,
+        //    scrollY: "80px",
+        //    scrollX: true,
+        //    fixedColumns: { leftColumns: 1 }
+        //});
+
+        //$(tbl).table_scroll({
+        //    rowsInHeader: 1,
+        //    fixedColumnsLeft: 1,
+        //    columnsInScrollableArea: 2,
+        //    scrollX: 2,
+        //    scrollY: 2
+            //// Number of rows in table header.
+            //rowsInHeader: null,
+
+            //// Number of rows in table footer.
+            //rowsInFooter: null,
+
+            //// Number of columns at the left side of scrollable area that will not be scrolled
+            //fixedColumnsLeft: 0,
+
+            //// Number of columns at the right side of scrollable area that will not be scrolled
+            //fixedColumnsRight: 0,
+
+            //// Number of columns to scroll to
+            //scrollX: 0,
+
+            //// Number of rows to scroll to
+            //scrollY: 0,
+
+            //// Number of rows that remains visible in scrollable area
+            //rowsInScrollableArea: 5,
+
+            //// Number of columns that remains visible in scrollable area
+            //columnsInScrollableArea: 2,
+
+            //// scroll or auto
+            //overflowY: 'auto',
+            //overflowX: 'auto'
+        //});
+
 }
+
+

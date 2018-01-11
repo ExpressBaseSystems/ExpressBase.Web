@@ -51,7 +51,6 @@ namespace ExpressBase.Web.Controllers
             var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
             if (res.id >= 0)
             {
-                TempData["TenantId"] = res.id;
                 MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
@@ -71,19 +70,18 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public IActionResult TenantDashboard()
         {
-            
+            var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
+            ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);
             return View();
         }
 
         [HttpGet]
         public IActionResult SolutionDashBoard()
-        {
-            ViewBag.SolutionName = TempData.Peek(SolutionName);
-            ViewBag.Sid = TempData.Peek(Sid);
-            ViewBag.Desc = TempData.Peek(Desc);
+        {            
+
             return View();
         }
 
@@ -112,14 +110,13 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public void EbCreateSolution(int i)
         {
-            var req = this.HttpContext.Request.Form;
-            Dictionary<string, object> ProfileInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(req["ProfileInfo"]);
+            var req = this.HttpContext.Request.Form;           
             TempData[SolutionName] = req["Sname"].ToString();
             TempData[Sid] = req["Esid"].ToString();
             TempData[Desc] = req["Desc"].ToString();
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
-                Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value),TenanantId = Convert.ToInt32(TempData["TenantId"])
+                Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)
             });
             if (res.Solnid > 0)
             {
@@ -127,8 +124,8 @@ namespace ExpressBase.Web.Controllers
                 {
                     dbName = req["Isid"]
                 });
-                if (response.resp)
-                   this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { Colvalues = ProfileInfo, Token = ViewBag.token, DbName= req["Isid"] });
+                if (response.resp)                                
+                    this.ServiceClient.Post(new InitialSolutionConnectionsRequest {SolutionId = req["Isid"] });                
             }
         }
 
@@ -138,8 +135,10 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             IServiceClient client = this.ServiceClient;
             var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
-            if (resultlist.id > 0)                
+            if (resultlist.id > 0)
+            {                
                 return RedirectToAction("TenantDashboard", "Tenant");
+            }                            
             else
                 return View();
         }

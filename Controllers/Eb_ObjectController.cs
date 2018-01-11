@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Refid = element.RefId;
                     ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
                     ViewBag.Tags = element.Tags;
-                    ViewBag.AppId = element.AppId;
+                    ViewBag.AppId = element.Apps;
                     ViewBag.DashboardTiles = element.Dashboard_Tiles;
 
                     if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
@@ -138,7 +138,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, int _appid)
+        public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, string _apps)
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
@@ -152,7 +152,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Relations = _rel_obj;
                 ds.IsSave = false;
                 ds.Tags = _tags;
-                ds.AppId = _appid;
+                ds.Apps = _apps;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -168,7 +168,7 @@ namespace ExpressBase.Web.Controllers
                 ds.RefId = _refid;
                 ds.ChangeLog = _changeLog;
                 ds.Tags = _tags;
-                ds.AppId = _appid;
+                ds.Apps = _apps;
 
                 var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
                 refid = res.RefId;
@@ -177,7 +177,7 @@ namespace ExpressBase.Web.Controllers
             return refid;
         }
 
-        public string SaveEbObject(string _refid, string _json, string _rel_obj, string _tags, int _appid)
+        public string SaveEbObject(string _refid, string _json, string _rel_obj, string _tags, string _apps)
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
@@ -191,7 +191,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Relations = _rel_obj;
                 ds.IsSave = true;
                 ds.Tags = _tags;
-                ds.AppId = _appid;
+                ds.Apps = _apps;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
@@ -205,7 +205,7 @@ namespace ExpressBase.Web.Controllers
                 ds.Json = _json;
                 ds.Relations = _rel_obj;
                 ds.Tags = _tags;
-                ds.AppId = _appid;
+                ds.Apps = _apps;
 
                 var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
                 refid = res.RefId;
@@ -448,7 +448,7 @@ namespace ExpressBase.Web.Controllers
             string _vernum = "";
             string[] _workcopies = { };
             string _tags = "";
-            int? _appid = null;
+            string _apps = "";
             EbObjectWrapper_Dashboard _dashbord_tiles = new EbObjectWrapper_Dashboard();
             foreach (var element in rlist)
             {
@@ -457,10 +457,10 @@ namespace ExpressBase.Web.Controllers
                 _vernum = element.VersionNumber;
                 _workcopies = element.Wc_All;
                 _tags = element.Tags;
-                _appid = element.AppId;
+                _apps = element.Apps;
                 _dashbord_tiles = element.Dashboard_Tiles;
             }
-            return ViewComponent("ObjectDashboard", new { refid = refid, objname = _objname, status = _status, vernum= _vernum, workcopies = _workcopies, _tags =_tags, _appId = _appid , _dashbord_tiles = _dashbord_tiles });
+            return ViewComponent("ObjectDashboard", new { refid = refid, objname = _objname, status = _status, vernum= _vernum, workcopies = _workcopies, _tags =_tags, _apps = _apps , _dashbord_tiles = _dashbord_tiles });
         }
 
     }

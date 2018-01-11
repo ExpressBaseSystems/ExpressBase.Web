@@ -3,13 +3,15 @@
     this.parentDiv = parentDiv;
     this.title = title;
     this.resultObject = [];
-    this.initObjectList = initObjList;
-    this.objectList = searchObjList;
+    this.initObjectList = (initObjList === null) ? [] : initObjList;
+    this.objectList = (searchObjList === null) ? [] : searchObjList;
     this.objectMetadata = objMetadata;
     this.searchAjaxUrl = searchAjax;
     
     this.txtDemoSearch = null;
-    this.btnClearDemoSearch = null;
+    this.spanSrch = null;
+    this.spanRemv = null;
+    //this.btnClearDemoSearch = null;
     this.btnAddModal = null;
     this.txtSearch = null;
     this.btnSearch = null;
@@ -18,6 +20,7 @@
     this.btnModalOk = null;
     this.addModal = null;
     this.divSelectedDisplay = null;
+    //this.divMessageOnSelected = null;
     this.divSearchResults = null;
     this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
     this.parentthis = parentThis;
@@ -29,16 +32,17 @@
         
         
     }
-
+    //<button id="btnClearDemoSearch${t}" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
         $(parent).append(`
         <div class="row" style="padding:6px 0px">
-            <div class="col-md-5"></div>
-            <div class="col-md-4">
-                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:80%" />
-                <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
-                <button id="btnClearDemoSearch${t}" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
+            <div class="col-md-7"></div>
+            <div class="col-md-3">
+                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:100%" />
+                <span id="spanSrch${t}" class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 16px;"></span>
+                <span id="spanRemv${t}" class="glyphicon glyphicon-remove form-control-feedback" style="top: 0px; right: 16px; display:none;"></span>
+                
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn" id="btnAddModal${t}" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}</button>
@@ -71,10 +75,16 @@
                 </div>
             </div>
         </div>
-        <div id="divSelectedDisplay${t}" class="row tilediv1"></div>`);
+        <div id="divSelectedDisplay${t}" class="row tilediv1">
+
+        
+
+        </div>`);
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
-        this.btnClearDemoSearch = $('#btnClearDemoSearch' + t);
+        this.spanSrch = $('#spanSrch' + t);
+        this.spanRemv = $('#spanRemv'+ t);
+        //this.btnClearDemoSearch = $('#btnClearDemoSearch' + t);
         this.btnAddModal = $('#btnAddModal' + t );
         this.txtSearch = $('#txtSearch' + t);
         this.btnSearch = $('#btnSearch' + t);
@@ -83,10 +93,12 @@
         this.btnModalOk = $('#btnModalOk' + t);
         this.addModal = $('#addModal' + t);
         this.divSelectedDisplay = $('#divSelectedDisplay' + t);
+        //this.divMessageOnSelected = $('#divMsgOnSelected' + t);
         this.divSearchResults = $('#divSearchResults' + t);
 
         $(this.parentDiv).on('keyup', '#txtDemoSearch' + t, this.keyUpTxtDemoSearch.bind(this));
-        $(this.parentDiv).on('click', '#btnClearDemoSearch' + t, this.onClickbtnClearDemoSearch.bind(this));
+        //$(this.parentDiv).on('click', '#btnClearDemoSearch' + t, this.onClickbtnClearDemoSearch.bind(this));
+        $(this.parentDiv).on('click', '#spanRemv' + t, this.onClickbtnClearDemoSearch.bind(this));
         $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
         $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
         $(this.parentDiv).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
@@ -97,13 +109,17 @@
         $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
         $(this.divSelectedDisplay).on('click', ".dropDownRemoveClass", this.onClickRemoveFromSelected.bind(this));
 
+
         if (this.objectMetadata.indexOf('ProfilePicture') > -1)
             this.profilePicStatus = true;
 
-        if (this.initObjectList != null){
+        if (this.initObjectList.length !== 0){
             for (var i = 0; i < this.initObjectList.length; i++) {
                 this.appendToSelected(this.divSelectedDisplay, { Id: this.initObjectList[i][this.objectMetadata[0]], Name: this.initObjectList[i][this.objectMetadata[1]], Data1: this.initObjectList[i][this.objectMetadata[2]] });
             }
+        }
+        else {
+            this.divSelectedDisplay.append(`<div style="text-align: center; margin-top: 10%; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
         }
     }
 
@@ -128,6 +144,15 @@
         var f = 1;
         var divSelectedDisplay = this.divSelectedDisplay;
         var txt = $(this.txtDemoSearch).val().trim();
+        if (txt === '') {
+            $(this.spanRemv).hide();
+            $(this.spanSrch).show();
+        }
+        else {
+            $(this.spanSrch).hide();
+            $(this.spanRemv).show();
+        }
+
         $($(divSelectedDisplay).children("div.col-md-4")).each(function () {
             $(this).children().css('box-shadow', '1px 1px 2px 1px #fff');
             if ($(this).attr('data-name').toLowerCase().substring(0, txt.length) === txt.toLowerCase() && txt !== "") {
@@ -177,7 +202,7 @@
         var Url = this.searchAjaxUrl;
         if (Url === null) {
             this.loader.hide();
-            if (this.objectList !== null) {
+            if (this.objectList.length !== 0) {
                 this.divMessage.hide();
                 this.drawSearchResults(this.objectList, searchtext);
             }
@@ -277,6 +302,9 @@
         });
     }
     this.appendToSelected = function (divSelected, obj) {
+        if (this.resultObject.length === 0)
+            this.divSelectedDisplay.children().remove();
+
         if ($(divSelected).find(`[data-id='${obj.Id}']`).length > 0) {
             return;
         }
@@ -318,9 +346,11 @@
                 if (this.resultObject[i].Id == parent.attr('data-id')) {
                     this.resultObject.splice(i, 1);
                     parent.remove();
-                    return;
+                    break;
                 }
             }
+            if (this.resultObject.length === 0)
+                this.divSelectedDisplay.append(`<div style="text-align: center; margin-top: 10%; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
         }
     }
 

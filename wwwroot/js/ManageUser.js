@@ -1,10 +1,12 @@
-﻿var UserJs = function (usr, sysroles, usergroup, uroles, ugroups) {
+﻿var UserJs = function (usr, sysroles, usergroup, uroles, ugroups, r2rList) {
     this.user = usr;
     this.systemRoles = sysroles;
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
+    this.r2rList = r2rList;
     this.itemId = $("#userid").val();
+    this.dependentList = [];
     
     this.divFormHeading = $("#divFormHeading");
     this.txtName = $("#txtName");
@@ -43,6 +45,10 @@
         //this.btnClearDemoUserGroupSearch.on('click', this.OnClickbtnClearDemoUserGroupSearch.bind(this));
 
         $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $("#btnCreateUser").focus();
+        });
        
         this.initForm();
         this.initTiles();
@@ -62,6 +68,64 @@
         }
     }
 
+    this.findDependentRoles = function (dominant) {
+        for (var i = 0; i < this.r2rList.length; i++) {
+            if (this.r2rList[i].Dominant == dominant) {
+                this.dependentList.push(this.r2rList[i].Dependent);
+                this.findDependentRoles(this.r2rList[i].Dependent);
+            }
+        }
+    }
+
+    this.chkItemCustomFunc = function (_this, e) {
+        _this.dependentList = [];
+        if ($(e.target).is(':checked')) {
+            _this.findDependentRoles($(e.target).attr("data-id"));
+            var st = "";
+            var itemid = [];
+            $.each($(this.divSelectedDisplay).children(), function (i, ob) {
+                for (var i = 0; i < _this.dependentList.length; i++) {
+                    if (_this.dependentList[i] == $(ob).attr('data-id')) {
+                        st += '\n' + $(ob).attr('data-name');
+                        itemid.push($(ob).attr('data-id'));
+                    }
+                }
+            });
+            if (st !== '') {
+                if (confirm("Continuing this Operation will Remove the following Item(s)" + st + "\n\nClick OK to Continue")) {
+                    for (i = 0; i < itemid.length; i++) {
+                        $(this.divSelectedDisplay).children("[data-id='" + itemid[i] + "']").remove();
+                    }
+                }
+                else {
+                    $(e.target).removeAttr("checked");
+                }
+            }
+        }
+
+        $.each($(this.divSearchResults).find('.SearchCheckbox:checked'), function (i, ob) {
+            _this.findDependentRoles($(ob).attr('data-id'));
+        });
+        $.each($(this.divSelectedDisplay).children(), function (i, ob) {
+            _this.dependentList.push(parseInt($(ob).attr('data-id')));
+            _this.findDependentRoles($(ob).attr('data-id'));
+        });
+        $.each($(this.divSearchResults).find('input'), function (i, ob) {
+            if (_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+                $(ob).removeAttr("checked");
+                $(ob).attr("disabled", "true");
+            }
+            else
+                $(ob).removeAttr("disabled");
+
+            if ($(this.divSelectedDisplay).children("[data-id=" + $(ob).attr('data-id') + "]").length > 0) {
+                $(ob).attr("disabled", "true");
+                $(ob).prop("checked", "true");
+            }
+
+        }.bind(this));
+    }
+
     this.initTiles = function () {
         //INIT ROLES
         var metadata1 = ['Id', 'Name', 'Description'];
@@ -70,7 +134,7 @@
             for (var i = 0; i < this.user.length; i++)
                 if (this.U_Roles.indexOf(this.user[i].Id) !== -1)
                     initroles.push(this.user[i]);
-        this.rolesTile = new TileSetupJs($("#menu1"), "Add Roles", initroles, this.user, metadata1, null, null, this);
+        this.rolesTile = new TileSetupJs($("#menu1"), "Add Roles", initroles, this.user, metadata1, null, this.chkItemCustomFunc, this);
 
         //INIT USER GROUPS
         var initgroups = [];
@@ -83,13 +147,7 @@
 
     this.clickbtnCreateUser = function () {
         var selectedroles = this.rolesTile.getItemIds();
-        //$($('#divSelectedRoleDisplay').children()).each(function () {
-        //    selectedroles += $(this).attr('data-id') + ",";
-        //});
         var selectedusergroups = this.userGroupTile.getItemIds();
-        //$($('#divSelectedUserGroupDisplay').children()).each(function () {
-        //    selectedusergroups += $(this).attr('data-id') + ",";
-        //});
         $("#btnCreateUser").attr("disabled", "true");
         $.post("../Security/SaveUser",
             {
@@ -100,9 +158,10 @@
                 "email": $('#txtEmail').val(),
                 "Pwd": $('#pwdPaasword').val()
             }, function (result) {
-
-                //document.getElementById("usergrouplist").innerHTML = result;
-                alert('Completed');
+                if (result > -1){
+                    alert("Saved Successfully");
+                    window.top.close();
+                }
                 $("#btnCreateUser").removeAttr("disabled");
             });
     }

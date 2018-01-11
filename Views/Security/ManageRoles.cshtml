@@ -16,7 +16,7 @@
 
 <style>
 
-   
+
 
     .outer-section-manageroles {
         height: 100vh;
@@ -70,9 +70,89 @@
         overflow: auto;
         margin: 0px;
     }
+    .dataTables_scrollHead {
+        padding-bottom: 10px;
+        margin-bottom: -10px;
+    }
+    .dataTables_scroll {
+        height: inherit;
+    }
+    .dataTableColumnStyle{
+        font-size: 14px;
+    }
+    /*.dataTables_scrollHeadInner > table{
+       table-layout:fixed;
+    }*/
+    .active123 {
+        background-color: #eee;
+    }
+
+
+
+    /*.nav-tabs {
+        border-bottom: 2px solid #DDD;
+    }
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+            border-width: 0;
+        }
+        .nav-tabs > li > a {
+            border: none;
+            color: #666;
+        }
+            .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+                border: none;
+                color: #4285F4 !important;
+                background: transparent;
+            }
+            .nav-tabs > li > a::after {
+                content: "";
+                background: #4285F4;
+                height: 2px;
+                position: absolute;
+                width: 100%;
+                left: 0px;
+                bottom: -1px;
+                transition: all 250ms ease 0s;
+                transform: scale(0);
+            }
+        .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
+            transform: scale(1);
+        }
+    .tab-nav > li > a::after {
+        background: #21527d none repeat scroll 0% 0%;
+        color: #fff;
+    }
+    .tab-pane {
+        padding: 15px 0;
+    }*/
+
+    .nav-tabs > li.active {
+        border-top: 3px solid #339bb3;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+       
+
+
+    /*.tab-content {
+        padding: 20px
+    }*/
+    /*.card {
+        background: #FFF none repeat scroll 0% 0%;
+        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+        margin-bottom: 30px;
+    }
+    body {
+        background: #EDECEC;
+        padding: 50px
+    }*/
+
+
+
+
 
 </style>
-<section class="outer-section-manageroles" style="height:625px; margin: 1% 8% 0% 8%; padding-top: 1%;">
+<section class="outer-section-manageroles" style="height:625px; margin: 1% 6% 0% 6%; padding-top: 1%;">
     <form id="formManageRoles" data-toggle="validator" method="POST" action="">
         <div class="row" style="margin:0px">
             <div class="col-md-4">

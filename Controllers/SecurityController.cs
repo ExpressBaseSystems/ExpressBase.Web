@@ -36,6 +36,7 @@ namespace ExpressBase.Web.Controllers
 			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, TenantAccountId = ViewBag.cid });
 			ViewBag.Roles = JsonConvert.SerializeObject(fr.Roles);
 			ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
+			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
 			if (itemid > 0)
 			{
 				ViewBag.U_Name = fr.UserData["name"];
@@ -52,7 +53,7 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 
-		public void SaveUser(int userid, string roles, string usergroups)
+		public int SaveUser(int userid, string roles, string usergroups)
 		{
 			var req = this.HttpContext.Request.Form;
 			Dictionary<string, object> Dict = new Dictionary<string, object>();
@@ -66,7 +67,7 @@ namespace ExpressBase.Web.Controllers
 			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 
 			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest { Id = userid, Colvalues = Dict });
-
+			return res.id;
 		}
 
 

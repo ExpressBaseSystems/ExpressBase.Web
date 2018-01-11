@@ -449,22 +449,32 @@ var DvContainerObj = function (settings) {
         $.each(this.dvcol, function (key, obj) {
             if (obj.EbObject.Pippedfrom !== "") {
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                    $(".dotstable").append(`<div><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    $(".dotstable").append(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 else {
-                    $(".dotstable").append(`<div><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    $(".dotstable").append(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
             }
             else {
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                    $(".dotstable").append(`<div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 else {
-                    $(".dotstable").append(`<div class='dot' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
             }
         });
-        $(".dot").off("click").on("click", this.focus2ClickedDot);
+        $(".dot").off("click").on("click", this.focus2ClickedDot);        
+        $(".dot").popover({
+            title:'Name',
+            html: true,
+            content: function () {
+                return `<div id='dotsDetail'>
+                        <div class="dotsnapshot"></div>                      
+                    </div>`;
+            },
+            placement: 'bottom'
+        });
         $(".dot").off("mouseenter").on("mouseenter", this.dotOnHover);
         $(".dot").off("mouseleave").on("mouseleave", this.dotOffHover);
         this.focusDot();
@@ -496,70 +506,43 @@ var DvContainerObj = function (settings) {
     }
 
     this.dotOnHover = function (e) {
-        var id = $(e.target).closest("div").attr("data-mapid");
+        var curdiv = $(e.target).closest("div");
+        var id = curdiv.attr("data-mapid");
         var dvObj = this.dvcol[id];
-        $(".dotheader").text(dvObj.EbObject.Name);
+        //$(".dotheader").text(dvObj.EbObject.Name);
         var lastChar = id.substr(id.length - 1);
         var temp = id.substring(11);
-        $(".miniregion").remove();
-        $(".minimap").remove();
+        $(".dot").popover('show');
+        $('.dot').not(curdiv).popover('hide');
+        curdiv.next().children(".popover-title").text(dvObj.EbObject.Name);
+        $(".popover-title").css("text-align", "center");
         if (dvObj.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
-            $(".dotsnapshot").empty();
-            $(".dotsnapshot").append(`<div id="copydiv" style="width:200px;"></div>`);
-            this.previewBody = null;
-            this.previewBody = $("#content_" + temp).minimap({
-                heightRatio: 0.15,
-                widthRatio: 0.1,
-                offsetHeightRatio: 0,
-                offsetWidthRatio: 0,
-                position: "left",
-                touch: true,
-                smoothScroll: true,
-                smoothScrollDelay: 200,
-            });
-            $(".miniregion").css("top", e.pageY+37+"px");
-            $(".miniregion").css("left", e.pageX + 37 + "px");
-            $(".minimap").css("top", "5px");
-            $(".minimap").css("left", "196px");
-            this.previewBody.show();
-            //$("#copydiv").html($("#content_" + temp).html());
-            //html2canvas($("#content_" + temp)).then(function (canvas) {
-            //    imageTimeout: 100,
-            //    $("#copydiv").append(canvas);
-            //});
-
-            //html2canvas($("#content_" + temp), {
-            //    imageTimeout: 100,
-            //    onrendered: function (canvas) {
-            //        $("#copydiv").append(canvas);
-            //    },
-
-            //});
+            curdiv.next().children().find(".dotsnapshot").empty();
+            curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
+            $("#copydiv_"+temp).append(`<img src="../images/table.png" style='width:inherit;'>`);
         }
         else {
             var canvas = document.getElementById('myChart' + temp);
             var image = new Image();
             image.id = "pic"
             image.src = canvas.toDataURL();
-            $(".dotsnapshot").empty();
-            $(".dotsnapshot").append(`<canvas id="copyCanvas" style="width:200px;"></canvas>`);
-            var dest = document.getElementById('copyCanvas'),
-            destcontext = dest.getContext('2d');
-            destcontext.drawImage(image, 10, 10, 200, 200);
+            image.style.width = "inherit";
+            curdiv.next().children().find(".dotsnapshot").empty();
+            //curdiv.next().children().find(".dotsnapshot").append(`<canvas id="copyCanvas_${temp}" style="width:200px;"></canvas>`);
+            //var dest = document.getElementById('copyCanvas_'+temp),
+            //destcontext = dest.getContext('2d');
+            //destcontext.drawImage(image, 10, 10, 200, 200);
+            curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
+            $("#copydiv_" + temp).append(image);
         }
-        $("#dotsDetail").show();
-        $("#dotsDetail").css("margin-left", e.pageX + "px");
-        $("#dotsDetail").css("margin-top", e.pageY + "px");
-        //$('.splitdiv_parent').slick('slickGoTo', lastChar, false);
+        curdiv.next().css("left", e.pageX - curdiv.next().width() / 2);
     }.bind(this);
 
     this.dotOffHover = function (e) {
-        //$("#dotsDetail").hide();
-        //if(this.previewBody)
-        //    this.previewBody.hide();
-        //$(".dotsnapshot").empty();
+        $(".dot").popover('hide');
     }.bind(this);
 
+    
     this.toggleminimap = function () {
         $("#MinimapDiv").toggle();
         //if ($("#MinimapDiv").css("display") === "block") {

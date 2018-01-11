@@ -64,6 +64,15 @@
     this.submitProfile = function (e) {
         e.preventDefault();
         var info = this.validateProfileInfo();
+        var profInfo = {
+            Name: $("[name='Name']").val().trim(),
+            Company: $("[name='Company']").val().trim(),
+            Employees: $("[name='Employees']").val().trim(),
+            Designation: $("[name='Designation']").val().trim(),
+            Country: $("[name='Country']").val().trim(),
+            Email: $("[name='Email']").val().trim(),
+            Password: $("[name='Password']").val().trim()
+        }
         if (info) {
             $.ajax({
                 type: 'POST',
@@ -71,20 +80,13 @@
                 beforeSend: function () {
                     $("#save-profile i").show();
                 },
-                data: {
-                    Name: $("[name='Name']").val().trim(),
-                    Company: $("[name='Company']").val().trim(),
-                    Employees: $("[name='Employees']").val().trim(),
-                    Designation: $("[name='Designation']").val().trim(),
-                    Country: $("[name='Country']").val().trim(),
-                    Email: $("[name='Email']").val().trim(),
-                    Password: $("[name='Password']").val().trim()
-                }
+                data: profInfo
             }).done(function (data) {
                 $('#eb-mesageBox').show().text("Profile Saved");
                 $('#eb-mesageBox').fadeOut(5000);
                 $("#save-profile").hide();
                 $("#prof-info-skip, #basic-info, #product-info").show();
+                $("#sol-form-submit #ProfileInfo").val(JSON.stringify(profInfo));
                 this.scrollProfToLeft();
             }.bind(this));
         }
@@ -110,7 +112,8 @@
                     Esid: $("[name='Esid']").val().trim(),
                     Desc: $("[name='Desc']").val().trim(),
                     Isid: $("[name='Isid']").val().trim(),
-                    Subscription: JSON.stringify(this.objSubscription)
+                    Subscription: JSON.stringify(this.objSubscription),
+                    ProfileInfo: $("[name='ProfileInfo']").val()
                 }
             }).done(function (data) {
                 $('#eb-mesageBox').show().text("Solution Created");
@@ -152,6 +155,9 @@
         }.bind(this))
         $("[name='AppType']").val(ob.attr("type"));
     };
+    this.showLoaderOnAppSub = function (e) {
+        $("#save-application i").show();
+    };
 
     this.init = function () {
         this.upload = new EbImageCropper({
@@ -170,7 +176,8 @@
         $("#s-info-skip").on('click', this.scrollToLast.bind(this));
         $("#app-next").on('click', this.scrollToLast.bind(this));
         $("#prod-prev").on('click', this.scrollToProd.bind(this));
-        $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));        
+        $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));
+        $("#app-form").on("submit", this.showLoaderOnAppSub.bind(this));
     };
 
     this.init();

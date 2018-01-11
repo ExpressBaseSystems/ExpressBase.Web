@@ -221,7 +221,7 @@ namespace ExpressBase.Web.Controllers
 
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
                 var Ids = String.Join(",", user.EbObjectIds);
-                var formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
+                GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
                 List<object> returnlist = new List<object>();
                 returnlist.Add(authResponse);
                 returnlist.Add(formlist.BotForms);
@@ -234,25 +234,38 @@ namespace ExpressBase.Web.Controllers
            
         }
 
-        public EbBotForm GetCurForm(string refreshToken, string bearerToken, string refid)
+        public EbObject GetCurForm(string refreshToken, string bearerToken, string refid)
         {
             this.ServiceClient.BearerToken = bearerToken;
             this.ServiceClient.RefreshToken = refreshToken;
             var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-            EbBotForm obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-            foreach (EbControl control in obj.Controls)
+
+            var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+            if (Obj is EbBotForm)
             {
-                if (control is EbSimpleSelect)
+                //EbBotForm obj = Obj as EbBotForm;
+                foreach (EbControl control in Obj.Controls)
                 {
-                    (control as EbSimpleSelect).GetOptionsHtml(this.ServiceClient);
-                }
-                else if (control is EbCards)
-                {
-                    (control as EbCards).InitFromDataBase(this.ServiceClient);
-                    (control as EbCards).BareControlHtml = (control as EbCards).GetBareHtml();
+                    if (control is EbSimpleSelect)
+                    {
+                        (control as EbSimpleSelect).GetOptionsHtml(this.ServiceClient);
+                    }
+                    else if (control is EbCards)
+                    {
+                        (control as EbCards).InitFromDataBase(this.ServiceClient);
+                        (control as EbCards).BareControlHtml = (control as EbCards).GetBareHtml();
+                    }
                 }
             }
-            return obj;
+            //else if (Obj is EbTableVisualization)
+            //{
+
+            //}
+            //else if (Obj is EbChartVisualization)
+            //{
+
+            //}
+            return Obj;
         }
     }
 }

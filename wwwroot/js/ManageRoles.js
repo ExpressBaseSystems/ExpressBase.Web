@@ -8,6 +8,7 @@
     this.r2rList = r2rList;
     this.usersList = usersList;
     this.dependentList = [];
+    this.dominantList = [];
     this.selectApp = $("#selectApp");
     this.divObjList = $("#divObjList");
     this.txtRoleName = $("#txtRoleName");
@@ -38,14 +39,14 @@
             $(this.selectApp).append(`<option data-id="${roleInfo["AppId"]}" data-index="${apIndex}">${roleInfo["AppName"]}</option>`);
             $(this.selectApp).attr("disabled", "true");
             $(this.txtRoleDescription).text(roleInfo["RoleDescription"]);
-            
+
+            this.findDominantRoles(this.roleId);
         }
         else {
             this.selectApp.on("change", this.selectAppChangeAction.bind(this));
             this.loadAppToSelect.bind(this)();
 
         }
-        
         
         this.selectAppChangeAction();
     }
@@ -54,15 +55,32 @@
     
     this.findDependentRoles = function (dominant) {
         for (var i = 0; i < this.r2rList.length; i++) {
-            if (this.r2rList[i].Dominant == dominant) {
+            if (this.r2rList[i].Dominant == dominant && this.dependentList.indexOf(this.r2rList[i].Dependent) === -1) {
                 this.dependentList.push(this.r2rList[i].Dependent);
                 this.findDependentRoles(this.r2rList[i].Dependent);
             }
         }
     }
 
+    this.findDominantRoles = function (dependent) {
+        for (var i = 0; i < this.r2rList.length; i++) {
+            if (this.r2rList[i].Dependent == dependent && this.dominantList.indexOf(this.r2rList[i].Dominant) === -1) {
+                this.dominantList.push(this.r2rList[i].Dominant);
+                this.findDominantRoles(this.r2rList[i].Dominant);
+            }
+        }
+    }
+
     this.chkItemCustomFunc = function (_this, e) {
         _this.dependentList = [];
+
+        $.each($(this.divSearchResults).find('input'), function (i, ob) {
+            if (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+                $(ob).removeAttr("checked");
+                $(ob).attr("disabled", "true");
+            }
+        });
+        
         if ($(e.target).is(':checked')) {
             _this.findDependentRoles($(e.target).attr("data-id"));
             var st = "";
@@ -95,7 +113,7 @@
             _this.findDependentRoles($(ob).attr('data-id'));
         });
         $.each($(this.divSearchResults).find('input'), function (i, ob) {
-            if (_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+            if ((_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) || (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1)) {
                 $(ob).removeAttr("checked");
                 $(ob).attr("disabled", "true");
             }
@@ -106,7 +124,6 @@
                 $(ob).attr("disabled", "true");
                 $(ob).prop("checked", "true");
             }
-
         }.bind(this));
     }
       
@@ -271,7 +288,12 @@
             //    $("#tbl" + value.Op_Name).hide();
             //}
         });
+        if ($('#divObjList').children().length === 0) 
+            $('#divObjList').append(`<div style="text-align: center; margin-top: 12%; font-size: 28px; color: #bbb; "> Nothing to Display </div>`);
         
+
+
+
         //**************INIT SUBROLES TILE**************
         var app_id = $("#selectApp").find(":selected").attr("data-id");
         var objAll = [];
@@ -456,3 +478,5 @@
         //});
 
 }
+
+

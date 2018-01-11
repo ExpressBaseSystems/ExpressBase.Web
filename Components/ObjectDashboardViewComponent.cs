@@ -8,6 +8,7 @@ using ServiceStack.Redis;
 using ServiceStack;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using Newtonsoft.Json;
 
 namespace ExpressBase.Web.Components
 {
@@ -23,7 +24,7 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(string refid, string objname, string status, string vernum, string[] workcopies, string _tags, int _appId, EbObjectWrapper_Dashboard _dashbord_tiles)
+        public async Task<IViewComponentResult> InvokeAsync(string refid, string objname, string status, string vernum, string[] workcopies, string _tags, string _apps, EbObjectWrapper_Dashboard _dashbord_tiles)
         {
             ViewBag.Refid = refid;
             ViewBag.ObjName = objname;
@@ -33,8 +34,8 @@ namespace ExpressBase.Web.Components
             ViewBag.Workingcopy = workcopies;
             ViewBag.Tags = _tags;
             var resultlist = this.ServiceClient.Get<GetApplicationResponse>(new GetApplicationRequest());
-            ViewBag.Apps = resultlist.Data;
-            ViewBag.AppId = _appId;
+            ViewBag.Apps =JsonConvert.SerializeObject(resultlist.Data);
+            ViewBag.AppId = _apps;
             if (_dashbord_tiles != null)
             {
                 ViewBag._major = _dashbord_tiles.MajorVersionNumber;

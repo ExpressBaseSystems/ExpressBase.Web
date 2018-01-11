@@ -308,7 +308,7 @@
         this.FlagSave = true;
         $.LoadingOverlay("show");
         var tagvalues = $('#tags').val();
-        var appid = $("#apps").find("option:selected").val();
+        var apps = $("#apps").val();
         var getNav = $("#versionNav li.active a").attr("href");
         if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {
             this.ObjCollection[getNav].BeforeSave();
@@ -318,14 +318,14 @@
             _json: JSON.stringify(this.Current_obj),
             _rel_obj: this.ObjCollection[getNav].relatedObjects,
             _tags: tagvalues,
-            _appid: appid
+            _apps: apps
         }, this.UpdateTab.bind(this));
     };
 
     this.Commit = function () {
         $.LoadingOverlay("show");
         var tagvalues = $('#tags').val();
-        var appid = $("#apps").find("option:selected").val();
+        var apps= $("#apps").val();
         var changeLog = $('#obj_changelog').val();
         var getNav = $("#versionNav li.active a").attr("href");
         if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {
@@ -336,7 +336,7 @@
             _json: JSON.stringify(this.Current_obj),
             _rel_obj: this.ObjCollection[getNav].relatedObjects,
             _tags: tagvalues,
-            _appid: appid
+            _apps: apps
         }, this.UpdateTab.bind(this));
     };
 

@@ -1,4 +1,6 @@
-﻿
+﻿@{
+    var appdata = @Html.Raw(ViewBag.Apps);
+}
 <div class="row" id="">
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-4 pd-0">
@@ -145,8 +147,14 @@
             }
         </div>
        
-        <div class="col-md-2 app_div">
-            <div class="firstcommit">
+        <div class="col-md-2  card1 box5 ">
+            <div class="head text-center">
+                <i class="fa fa-tags" aria-hidden="true"></i> Application
+            </div>            
+            <div class="category-container">
+                <input type="text" id="apps" class="typeahead form-control" data-role="tagsinput" />
+            </div>
+            @*<div class="firstcommit">
                 <h6 class="smallfont">Owner/Assignee</h6>
                 <div style="display:block">
                     <div class="userimg">
@@ -169,14 +177,14 @@
                         }
                     }
                 </select>
-            </div>
+            </div>*@
         </div>
 
-        <div class="col-md-3 card1 box5">
+        <div class="col-md-2 card1 box5">
             <div class="head text-center">
                 <i class="fa fa-tags" aria-hidden="true"></i> Tags
             </div>
-            <input type="text" class="tags" id="tags" data-role="tagsinput" />
+            <input type="text" class="tags" id="tags" data-role="tagsinput" />           
         </div>
     </div>
 </div>
@@ -254,7 +262,36 @@
     </div>
 </div>
 
+
 <script>
+   // var data = [{ "value": 1, "text": "Amsterdam", "continent": "Europe" }, { "value": 4, "text": "Washington", "continent": "America" }, { "value": 7, "text": "Sydney", "continent": "Australia" }, { "value": 10, "text": "Beijing", "continent": "Asia" }, { "value": 13, "text": "Cairo", "continent": "Africa" }];
+    var data = @appdata;
+    var citynames = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+       
+        local: $.map(data, function (city, i) {           
+            return {
+                name: city
+            };
+        })
+    });
+    citynames.initialize();
+
+    $('.category-container input').tagsinput({
+        typeaheadjs: [{
+            minLength: 1,
+            highlight: true,
+        }, {
+            minlength: 1,
+            name: 'citynames',
+            displayKey: 'name',
+            valueKey: 'name',
+            source: citynames.ttAdapter()
+        }],
+        freeInput: true
+    });
+    
     var commonO = $("#layout_div").data("commonObj");
     if ('@ViewBag.Refid'.length > 0)
         commonO.UpdateCreateVersionDD();
@@ -285,28 +322,7 @@
         //    }
         //});
     });
-    //var countries = new Bloodhound({
-    //    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-    //    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    //    prefetch: {
-    //        url: 'countries.json',
-    //        filter: function (list) {
-    //            return $.map(list, function (name) {
-    //                return { name: name };
-    //            });
-    //        }
-    //    }
-    //});
-    //countries.initialize();
 
-    //$('#tags').tagsinput({
-    //    typeaheadjs: {
-    //        name: 'countries',
-    //        displayKey: 'name',
-    //        valueKey: 'name',
-    //        source: countries.ttAdapter()
-    //    }
-    //});
         $('#minmize').click(function () {
             $('.dashbord').animate({ height: 'toggle' }, minMaxDash.bind(this));
         });
@@ -324,3 +340,87 @@
         }
 
 </script>
+<style>
+    /*.tt-query,
+    .tt-hint {
+        width: 396px;
+        height: 30px;
+        padding: 8px 12px;
+        font-size: 24px;
+        line-height: 30px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    .tt-query {
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
+
+    .tt-hint {
+        color: #999;
+    }
+
+    .tt-menu { 
+        width: 422px;
+        margin-top: 12px;
+        padding: 8px 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    }
+
+    .tt-suggestion {
+        padding: 3px 20px;
+    }
+
+        .tt-suggestion.tt-is-under-cursor { 
+            color: #fff;
+            background-color: #0097cf;
+            border-bottom: 1px solid #555;
+        }
+
+        .tt-suggestion p {
+            margin: 0;
+        }*/
+    .tt-query {
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
+
+    .tt-hint {
+        color: #999
+    }
+
+    .tt-menu { /* used to be tt-dropdown-menu in older versions */
+        width: 422px;
+        margin-top: 4px;
+        padding: 4px 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+        -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+        box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    }
+
+    .tt-suggestion {
+        padding: 3px 20px;
+        line-height: 24px;
+    }
+
+        .tt-suggestion.tt-cursor, .tt-suggestion:hover {
+            color: #fff;
+            background-color: #0097cf;
+        }
+
+        .tt-suggestion p {
+            margin: 0;
+        }
+</style>

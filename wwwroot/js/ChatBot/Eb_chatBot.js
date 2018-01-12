@@ -117,8 +117,8 @@
                 "bearerToken": this.bearerToken,
                 "refid": RefId
             }, function (data) {
-                    this.hideTypingAnim();
-                    data = JSON.parse(data);
+                this.hideTypingAnim();
+                data = JSON.parse(data);
                 this.formsList[RefId] = data;
                 if (data.ObjType === "BotForm") {
                     this.curForm = data;
@@ -280,11 +280,18 @@
     };
 
     this.showTblViz = function (e) {
-        this.$chatBox.append($('<div class="table-cont">' + this.curTblViz.BareControlHtml + '</div>'));
+        var $tableCont = $('<div class="table-cont">' + this.curTblViz.BareControlHtml + '</div>');
+        this.$chatBox.append($tableCont.hide());
+        this.showTypingAnim();
         $(`#${this.curTblViz.Name}`).DataTable({
-            columns: this.curTblViz.Columns,
+            columns: this.curTblViz.Columns.$values,
             processing: true,
             serverSide: true,
+            initComplete: function () {
+                this.hideTypingAnim();
+                this.AskWhatU()
+                $tableCont.show(100);
+            }.bind(this),
             dom: "rt",
             ajax: {
                 url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
@@ -304,7 +311,6 @@
                 crossDomain: true
             }
         });
-        this.AskWhatU();    
     }.bind(this);
 
     this.txtboxKeyup = function (e) {
@@ -657,7 +663,7 @@
                 /////////////////////////////////////////////////
                 setTimeout(function () {
                     //$(".btn-box .btn:last").click();
-                    //$(".btn-box").find("[idx=6]").click();
+                    //$(".btn-box").find("[idx=5]").click();
                 }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);

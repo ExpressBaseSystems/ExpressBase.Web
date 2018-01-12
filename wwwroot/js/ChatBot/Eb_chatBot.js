@@ -117,18 +117,21 @@
                 "bearerToken": this.bearerToken,
                 "refid": RefId
             }, function (data) {
-                this.hideTypingAnim();
+                    this.hideTypingAnim();
+                    data = JSON.parse(data);
                 this.formsList[RefId] = data;
-                if (data.type === "BotForm") {
+                if (data.ObjType === "BotForm") {
                     this.curForm = data;
                     this.setFormControls();
                 }
-                else if (data.type === "TableVisualization") {
+                else if (data.ObjType === "TableVisualization") {
                     this.curTblViz = data;
                     this.showTblViz();
                 }
-                else if (data.type === "ChartVisualization")
-                    alert("ChartVisualization");
+                else if (data.ObjType === "ChartVisualization") {
+                    this.curChartViz = data;
+                    this.showChartViz();
+                }
             }.bind(this));
         }
         else {
@@ -138,221 +141,170 @@
         }
     }
 
-    this.showTblViz = function (e) {
-        {
-    //        this.curTblViz.bareControlHtml = `<table id="${this.curTblViz.name}" class="display" cellspacing="0" width="100%">
-    //    <thead>
-    //        <tr>
-    //            <th>Name</th>
-    //            <th>Position</th>
-    //            <th>Office</th>
-    //            <th>Age</th>
-    //            <th>Start date</th>
-    //            <th>Salary</th>
-    //        </tr>
-    //    </thead>
-    //    <tfoot>
-    //        <tr>
-    //            <th>Name</th>
-    //            <th>Position</th>
-    //            <th>Office</th>
-    //            <th>Age</th>
-    //            <th>Start date</th>
-    //            <th>Salary</th>
-    //        </tr>
-    //    </tfoot>
-    //    <tbody>
-    //        <tr>
-    //            <td>Tiger Nixon</td>
-    //            <td>System Architect</td>
-    //            <td>Edinburgh</td>
-    //            <td>61</td>
-    //            <td>2011/04/25</td>
-    //            <td>$320,800</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Shou Itou</td>
-    //            <td>Regional Marketing</td>
-    //            <td>Tokyo</td>
-    //            <td>20</td>
-    //            <td>2011/08/14</td>
-    //            <td>$163,000</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Michelle House</td>
-    //            <td>Integration Specialist</td>
-    //            <td>Sidney</td>
-    //            <td>37</td>
-    //            <td>2011/06/02</td>
-    //            <td>$95,400</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Suki Burks</td>
-    //            <td>Developer</td>
-    //            <td>London</td>
-    //            <td>53</td>
-    //            <td>2009/10/22</td>
-    //            <td>$114,500</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Prescott Bartlett</td>
-    //            <td>Technical Author</td>
-    //            <td>London</td>
-    //            <td>27</td>
-    //            <td>2011/05/07</td>
-    //            <td>$145,000</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Gavin Cortez</td>
-    //            <td>Team Leader</td>
-    //            <td>San Francisco</td>
-    //            <td>22</td>
-    //            <td>2008/10/26</td>
-    //            <td>$235,500</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Martena Mccray</td>
-    //            <td>Post-Sales support</td>
-    //            <td>Edinburgh</td>
-    //            <td>46</td>
-    //            <td>2011/03/09</td>
-    //            <td>$324,050</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Unity Butler</td>
-    //            <td>Marketing Designer</td>
-    //            <td>San Francisco</td>
-    //            <td>47</td>
-    //            <td>2009/12/09</td>
-    //            <td>$85,675</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Howard Hatfield</td>
-    //            <td>Office Manager</td>
-    //            <td>San Francisco</td>
-    //            <td>51</td>
-    //            <td>2008/12/16</td>
-    //            <td>$164,500</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Hope Fuentes</td>
-    //            <td>Secretary</td>
-    //            <td>San Francisco</td>
-    //            <td>41</td>
-    //            <td>2010/02/12</td>
-    //            <td>$109,850</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Vivian Harrell</td>
-    //            <td>Financial Controller</td>
-    //            <td>San Francisco</td>
-    //            <td>62</td>
-    //            <td>2009/02/14</td>
-    //            <td>$452,500</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Timothy Mooney</td>
-    //            <td>Office Manager</td>
-    //            <td>London</td>
-    //            <td>37</td>
-    //            <td>2008/12/11</td>
-    //            <td>$136,200</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Jackson Bradshaw</td>
-    //            <td>Director</td>
-    //            <td>New York</td>
-    //            <td>65</td>
-    //            <td>2008/09/26</td>
-    //            <td>$645,750</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Olivia Liang</td>
-    //            <td>Support Engineer</td>
-    //            <td>Singapore</td>
-    //            <td>64</td>
-    //            <td>2011/02/03</td>
-    //            <td>$234,500</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Bruno Nash</td>
-    //            <td>Software Engineer</td>
-    //            <td>London</td>
-    //            <td>38</td>
-    //            <td>2011/05/03</td>
-    //            <td>$163,500</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Sakura Yamamoto</td>
-    //            <td>Support Engineer</td>
-    //            <td>Tokyo</td>
-    //            <td>37</td>
-    //            <td>2009/08/19</td>
-    //            <td>$139,575</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Thor Walton</td>
-    //            <td>Developer</td>
-    //            <td>New York</td>
-    //            <td>61</td>
-    //            <td>2013/08/11</td>
-    //            <td>$98,540</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Finn Camacho</td>
-    //            <td>Support Engineer</td>
-    //            <td>San Francisco</td>
-    //            <td>47</td>
-    //            <td>2009/07/07</td>
-    //            <td>$87,500</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Serge Baldwin</td>
-    //            <td>Data Coordinator</td>
-    //            <td>Singapore</td>
-    //            <td>64</td>
-    //            <td>2012/04/09</td>
-    //            <td>$138,575</td>
-    //        </tr>
-    //        <tr>
-    //            <td>Donna Snider</td>
-    //            <td>Customer Support</td>
-    //            <td>New York</td>
-    //            <td>27</td>
-    //            <td>2011/01/25</td>
-    //            <td>$112,000</td>
-    //        </tr>
-    //    </tbody>
-    //</table>`;
-            }
-        this.$chatBox.append($('<div class="table-cont">' + this.curTblViz.bareControlHtml + '</div>'));
+    this.showChartViz = function (e) {
+        this.showTypingAnim();
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8000/ds/data/' + this.curChartViz.DataSourceRefId,
+            data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            }.bind(this),
+            success: this.getDataSuccess.bind(this),
+            error: function () { }
+        });
+    }.bind(this);
 
-        setTimeout(function () {
-            $(`#${this.curTblViz.name}`).DataTable({
-                columns: this.curTblViz.columns,
-                processing : true,
-                serverSide : true,
-                ajax: {
-                    url: 'http://localhost:8000/ds/data/' + this.curTblViz.dataSourceRefId,
-                    type: 'POST',
-                    timeout: 180000,
-                    searchable: true,
-                    data: function (dq) {
-                        delete dq.columns; delete dq.order; delete dq.search;
-                        dq.RefId = this.curTblViz.dataSourceRefId;
-                        return dq;
-                    }.bind(this),
-                    dataSrc: function (dd) {
-                        return dd.data;
+    this.getDataSuccess = function (result) {
+        this.Gdata = result.data;
+        this.$chatBox.append($('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>'));
+        this.drawGeneralGraph();
+        this.hideTypingAnim();
+    };
+
+    this.drawGeneralGraph = function () {
+        this.getBarData();
+        this.gdata = {
+            labels: this.XLabel,
+            datasets: this.dataset,
+        };
+        this.animateOPtions = (this.curChartViz.ShowValue) ? new animateObj(0) : false;
+        this.goptions = {
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: (this.type !== "pie") ? true : false,
+                        labelString: (this.curChartViz.YaxisTitle !== "") ? this.curChartViz.YaxisTitle : "YLabel",
+                        fontColor: (this.curChartViz.YaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisTitleColor : "#000000"
                     },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-                    }.bind(this),
-                    crossDomain: true
-                }
-            });
-        }.bind(this), this.typeDelay + 2);
+                    stacked: false,
+                    gridLines: {
+                        display: (this.curChartViz.Type !== "pie") ? true : false
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        fontColor: (this.curChartViz.YaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisLabelColor : "#000000"
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: (this.type !== "pie") ? true : false,
+                        labelString: (this.curChartViz.XaxisTitle !== "") ? this.curChartViz.XaxisTitle : "XLabel",
+                        fontColor: (this.curChartViz.XaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisTitleColor : "#000000"
+                    },
+                    gridLines: {
+                        display: (this.type !== "pie") ? true : false
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        fontColor: (this.curChartViz.XaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisLabelColor : "#000000"
+                    }
+                }]
+            },
+            zoom: {
+                // Boolean to enable zooming
+                enabled: true,
 
+                // Zooming directions. Remove the appropriate direction to disable 
+                // Eg. 'y' would only allow zooming in the y direction
+                mode: 'x',
+            },
+            pan: {
+                enabled: true,
+                mode: 'x',
+            },
+            legend: {
+                //onClick: this.legendClick.bind(this)
+            },
+
+            tooltips: {
+                enabled: this.curChartViz.ShowTooltip
+            },
+            animation: this.animateOPtions
+
+        };
+        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Xaxis.$values.length > 0)
+            this.drawGraph();
+
+    };
+
+    this.getBarData = function () {
+        this.Xindx = [];
+        this.Yindx = [];
+        this.dataset = [];
+        this.XLabel = [];
+        this.YLabel = [];
+        var xdx = [], ydx = [];
+        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Yaxis.$values.length > 0) {
+
+            $.each(this.curChartViz.Xaxis.$values, function (i, obj) {
+                xdx.push(obj.data);
+            });
+
+            $.each(this.curChartViz.Yaxis.$values, function (i, obj) {
+                ydx.push(obj.data);
+            });
+
+            $.each(this.Gdata, this.getBarDataLabel.bind(this, xdx));
+
+            for (k = 0; k < ydx.length; k++) {
+                this.YLabel = [];
+                for (j = 0; j < this.Gdata.length; j++)
+                    this.YLabel.push(this.Gdata[j][ydx[k]]);
+                if (this.curChartViz.Type !== "googlemap") {
+                    if (this.curChartViz.Type !== "pie") {
+                        this.piedataFlag = false;
+                        this.dataset.push(new datasetObj(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
+                    }
+                    else {
+                        this.dataset.push(new datasetObj4Pie(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
+                        this.piedataFlag = true;
+                    }
+                }
+            }
+        }
+    };
+
+    this.getBarDataLabel = function (xdx, i, value) {
+        for (k = 0; k < xdx.length; k++)
+            this.XLabel.push(value[xdx[k]]);
+    };
+
+    this.drawGraph = function () {
+        var canvas = document.getElementById(this.curChartViz.Name);
+        this.chartApi = new Chart(canvas, {
+            type: this.curChartViz.Type,
+            data: this.gdata,
+            options: this.goptions,
+        });
+    };
+
+    this.showTblViz = function (e) {
+        this.$chatBox.append($('<div class="table-cont">' + this.curTblViz.BareControlHtml + '</div>'));
+        $(`#${this.curTblViz.Name}`).DataTable({
+            columns: this.curTblViz.Columns,
+            processing: true,
+            serverSide: true,
+            dom: "rt",
+            ajax: {
+                url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
+                type: 'POST',
+                timeout: 180000,
+                data: function (dq) {
+                    delete dq.columns; delete dq.order; delete dq.search;
+                    dq.RefId = this.curTblViz.DataSourceRefId;
+                    return dq;
+                }.bind(this),
+                dataSrc: function (dd) {
+                    return dd.data;
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+                }.bind(this),
+                crossDomain: true
+            }
+        });
+        this.AskWhatU();    
     }.bind(this);
 
     this.txtboxKeyup = function (e) {
@@ -453,10 +405,10 @@
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         var inpVal = this.getValue($input);
-        if (this.curCtrl.type === "ImageUploader")
+        if (this.curCtrl.ObjType === "ImageUploader")
             this.replyAsImage($msgDiv, $input[0], next_idx);
         else {
-            if (this.curCtrl.type === "Cards") {
+            if (this.curCtrl.ObjType === "Cards") {
                 this.lastval = $btn.closest(".card-cont").find(".card-label").text();
                 inpVal = this.lastval;
             }
@@ -494,7 +446,7 @@
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx];
-        if (this.curCtrl && this.curCtrl.type === "Cards")
+        if (this.curCtrl && this.curCtrl.ObjType === "Cards")
             var $CtrlCont = $(control);
         else
             var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
@@ -606,7 +558,7 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
-                    if (this.curCtrl && this.curCtrl.type === "Cards") {
+                    if (this.curCtrl && this.curCtrl.ObjType === "Cards") {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
@@ -636,8 +588,8 @@
     this.loadcontrol = function () {
         if (!this.curCtrl)
             return;
-        if (this.initControls[this.curCtrl.type] !== undefined)
-            this.initControls[this.curCtrl.type](this.curCtrl);
+        if (this.initControls[this.curCtrl.ObjType] !== undefined)
+            this.initControls[this.curCtrl.ObjType](this.curCtrl);
     }.bind(this);
 
     this.formSubmit = function (e) {
@@ -654,8 +606,12 @@
         $(`[form=${this.curForm.name}]`).remove();
         var msg = `Your ${this.curForm.name} application submitted successfully`;
         this.msgFromBot(msg);
-        this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
+        this.AskWhatU();
     }.bind(this);
+
+    this.AskWhatU = function () {
+        this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
+    };
 
     this.showDate = function () {
         this.$chatBox.append(`<div class="chat-date"><span>13-Nov-17</span></div>`);
@@ -696,12 +652,13 @@
                 this.bearerToken = result[0].bearerToken;
                 this.refreshToken = result[0].refreshToken;
                 this.formNames = Object.values(this.formsDict);
-                this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
+                this.AskWhatU();
 
                 /////////////////////////////////////////////////
-                //setTimeout(function () {
-                //    $(".btn-box .btn:last").click();
-                //}.bind(this), this.typeDelay * 2 + 100);
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    //$(".btn-box").find("[idx=6]").click();
+                }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 
@@ -729,4 +686,12 @@
     }
 
     this.init();
+};
+
+var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
+    this.label = label;
+    this.data = data;
+    this.backgroundColor = backgroundColor;
+    this.borderColor = borderColor;
+    this.fill = fill;
 };

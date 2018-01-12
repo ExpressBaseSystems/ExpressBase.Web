@@ -131,7 +131,6 @@
             }.bind(this));
         }
         else
-
             $('#eb-mesageBox-error').show().text("select atleast one Product.");
         $('#eb-mesageBox-error').fadeOut(5000);
 

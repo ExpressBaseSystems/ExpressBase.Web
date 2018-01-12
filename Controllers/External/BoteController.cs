@@ -234,7 +234,7 @@ namespace ExpressBase.Web.Controllers
            
         }
 
-        public EbObject GetCurForm(string refreshToken, string bearerToken, string refid)
+        public string GetCurForm(string refreshToken, string bearerToken, string refid)
         {
             this.ServiceClient.BearerToken = bearerToken;
             this.ServiceClient.RefreshToken = refreshToken;
@@ -265,7 +265,7 @@ namespace ExpressBase.Web.Controllers
             //{
 
             //}
-            return Obj;
+            return EbSerializers.Json_Serialize(Obj);
         }
     }
 }

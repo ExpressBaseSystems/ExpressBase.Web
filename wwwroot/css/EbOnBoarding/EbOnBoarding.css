@@ -243,7 +243,6 @@ margin-top:0;
 }
 .s-dash-container {
     min-height: 100vh;
-    padding-top: 50px;
 }
 .s-dash-workplace {
     font-family: open sans;
@@ -303,8 +302,55 @@ margin-top:0;
     .s-dash-workplace .solution-logo{
         width:100%;
     }
-    /*tenant add solution*/
+    .s-dash-workplace .tab-pane {
+        padding:10px;
+    }
+.s-dash-container .connectons-container {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.s-dash-headComm {
+    width: 100%;
+    padding: 5px;
+    background: #336699;
+    color: white;
+}
 
+.s-dash-bodyComm {
+    width: 100%;
+}
+    .s-dash-bodyComm thead {
+        background: #efefef;
+    }
+    .s-dash-bodyComm td {
+        border: 1px solid #adaaaa;
+        padding:0 !important;
+    }
+    .s-dash-bodyComm .form-control {
+        border: none;
+        border-radius: 0;
+        -webkit-box-shadow:none;
+         box-shadow:none; 
+        -webkit-transition:none;
+        -o-transition: none;
+        transition:none;
+    }
+    .s-dash-bodyComm .table > thead > tr > th {
+        vertical-align: bottom;
+        border-bottom: none; 
+        text-align: center;
+        font-weight: 400;
+        border: 1px solid #adaaaa;
+    }
+.table-btn {
+    background-color: transparent;
+}
+.s-dash-bodyComm .edit-row {
+    width: 100px;
+    text-align:center;
+}
+
+/*tenant add solution*/
 .pd-0 {
     padding: 0;
 }

@@ -80,10 +80,8 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet]
         public IActionResult SolutionDashBoard()
-        {
-            ViewBag.SolutionName = TempData.Peek(SolutionName);
-            ViewBag.Sid = TempData.Peek(Sid);
-            ViewBag.Desc = TempData.Peek(Desc);
+        {            
+
             return View();
         }
 
@@ -112,8 +110,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public void EbCreateSolution(int i)
         {
-            var req = this.HttpContext.Request.Form;
-            Dictionary<string, object> ProfileInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(req["ProfileInfo"]);
+            var req = this.HttpContext.Request.Form;           
             TempData[SolutionName] = req["Sname"].ToString();
             TempData[Sid] = req["Esid"].ToString();
             TempData[Desc] = req["Desc"].ToString();
@@ -127,12 +124,8 @@ namespace ExpressBase.Web.Controllers
                 {
                     dbName = req["Isid"]
                 });
-
-                if (response.resp)
-                {
-                    this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { Colvalues = ProfileInfo, DbName = req["Isid"] });
-                    this.ServiceClient.Post(new InitialSolutionConnectionsRequest {SolutionId = req["Isid"] });
-                }
+                if (response.resp)                                
+                    this.ServiceClient.Post(new InitialSolutionConnectionsRequest {SolutionId = req["Isid"] });                
             }
         }
 

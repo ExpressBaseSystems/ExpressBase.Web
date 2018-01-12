@@ -24,6 +24,11 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
+		public IActionResult ConnectToFb()
+		{
+			return View();
+		}
 		//--------------MANAGE USER START------------------------------------
 		public IActionResult ManageUser(int itemid)
 		{
@@ -104,7 +109,7 @@ namespace ExpressBase.Web.Controllers
 			else
 			{
 				int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
-				CreateUserGroupResponse res = this.ServiceClient.Post<CreateUserGroupResponse>(new CreateUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Id = groupid });
+				GetManageUserGroupResponse res = this.ServiceClient.Post<GetManageUserGroupResponse>(new GetManageUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), id = groupid });
 			}
 			return View();
 		}

@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
 
-            var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid });
+            var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid , Ids = _user.EbObjectIds.ToString()});
             var dsobj = resultlist.Dsobj;
             dsobj.AfterRedisGet(this.Redis);
             ViewBag.dvObject = dsobj;
@@ -59,7 +59,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;
             ViewBag.DvList =JsonConvert.SerializeObject( resultlist.DvList);
-
+            ViewBag.DvTaggedList = JsonConvert.SerializeObject(resultlist.DvTaggedList);
             return View();
         }
 

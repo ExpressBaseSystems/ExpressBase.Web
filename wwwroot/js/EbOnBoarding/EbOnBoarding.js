@@ -32,11 +32,18 @@
     };
 
     this.ProfileImgUpload = function () {
-        var upload = new EbImageCropper({
+        var uploadProf = new EbImageCropper({
             preview: 'profimage',
             cropperContainer: 'cropsection'
         });
     };
+    this.LogoImageUpload = function () {
+        var uploadLogo = new EbImageCropper({
+            preview: 's-logo-prev',
+            cropperContainer: 'eb-cropie-inner'
+        });
+    };
+
     this.ValidateForm = function () {
         var isvalid = false;
         if ($('#solutionname').val() !== '') {
@@ -85,8 +92,7 @@
                 $('#eb-mesageBox').show().text("Profile Saved");
                 $('#eb-mesageBox').fadeOut(5000);
                 $("#save-profile").hide();
-                $("#prof-info-skip, #basic-info, #product-info").show();
-                $("#sol-form-submit #ProfileInfo").val(JSON.stringify(profInfo));
+                $("#prof-info-skip, #basic-info, #product-info").show();                
                 this.scrollProfToLeft();
             }.bind(this));
         }
@@ -159,18 +165,15 @@
         $("#save-application i").show();
     };
 
-    this.init = function () {
-        this.upload = new EbImageCropper({
-            preview: 's-logo-prev',
-            cropperContainer: 'eb-cropie-inner'
-        });
+    this.init = function () {     
+        this.ProfileImgUpload();
+        this.LogoImageUpload();
         $('#solutionname').on("change", this.getSolutionName.bind(this));
         $('#cid').on("change", this.getClientId.bind(this));
         $("#Desc").on("change", this.getDesc.bind(this));
         $('.btn-upload').on('click', this.subscribeProd.bind(this));
         $("#prof-submit").on("submit", this.submitProfile.bind(this));
-        $("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));
-        this.ProfileImgUpload();
+        $("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));       
         $("#prof-info-skip,#plan-prev").on('click', this.scrollProfToLeft.bind(this));
         $("#prof-to-prev").on('click', this.scrollToProfSec.bind(this));
         $("#s-info-skip").on('click', this.scrollToLast.bind(this));

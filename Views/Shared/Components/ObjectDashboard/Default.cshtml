@@ -184,8 +184,10 @@
             <div class="head text-center">
                 <i class="fa fa-tags" aria-hidden="true"></i> Tags
             </div>
-            <input type="text" class="tags" id="tags" data-role="tagsinput" />           
-        </div>
+            <div class="app-container">
+                <input type="text" class="typeahead form-control" id="tags" data-role="tagsinput" />
+            </div>
+            </div>
     </div>
 </div>
 
@@ -266,17 +268,17 @@
 <script>
    // var data = [{ "value": 1, "text": "Amsterdam", "continent": "Europe" }, { "value": 4, "text": "Washington", "continent": "America" }, { "value": 7, "text": "Sydney", "continent": "Australia" }, { "value": 10, "text": "Beijing", "continent": "Asia" }, { "value": 13, "text": "Cairo", "continent": "Africa" }];
     var data = @appdata;
-    var citynames = new Bloodhound({
+    var Applications = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
 
-        local: $.map(data, function (city, i) {
+        local: $.map(data, function (app, i) {
             return {
-                name: city
+                name: app
             };
         })
     });
-    citynames.initialize();
+    Applications.initialize();
 
     $('.category-container input').tagsinput({
         typeaheadjs: [{
@@ -284,14 +286,40 @@
             highlight: true,
         }, {
             minlength: 1,
-            name: 'citynames',
+            name: 'Applications',
             displayKey: 'name',
             valueKey: 'name',
-            source: citynames.ttAdapter()
+            source: Applications.ttAdapter()
         }],
         freeInput: true
     });
 
+    var Tagdata ="@ViewBag.AllTags".split(",");
+    var Tags = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+
+        local: $.map(Tagdata, function (tag, i) {
+            return {
+                name: tag
+            };
+        })
+    });
+    Tags.initialize();
+
+    $('.app-container input').tagsinput({
+        typeaheadjs: [{
+            minLength: 1,
+            highlight: true,
+        }, {
+            minlength: 1,
+            name: 'Tags',
+            displayKey: 'name',
+            valueKey: 'name',
+            source: Tags.ttAdapter()
+        }],
+        freeInput: true
+    });
     var commonO = $("#layout_div").data("commonObj");
     if ('@ViewBag.Refid'.length > 0)
         commonO.UpdateCreateVersionDD();
@@ -345,50 +373,6 @@
 
 </script>
 <style>
-    /*.tt-query,
-    .tt-hint {
-        width: 396px;
-        height: 30px;
-        padding: 8px 12px;
-        font-size: 24px;
-        line-height: 30px;
-        border: 2px solid #ccc;
-        border-radius: 8px;
-        outline: none;
-    }
-
-    .tt-query {
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    }
-
-    .tt-hint {
-        color: #999;
-    }
-
-    .tt-menu { 
-        width: 422px;
-        margin-top: 12px;
-        padding: 8px 0;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        box-shadow: 0 5px 10px rgba(0,0,0,.2);
-    }
-
-    .tt-suggestion {
-        padding: 3px 20px;
-    }
-
-        .tt-suggestion.tt-is-under-cursor { 
-            color: #fff;
-            background-color: #0097cf;
-            border-bottom: 1px solid #555;
-        }
-
-        .tt-suggestion p {
-            margin: 0;
-        }*/
     .tt-query {
         -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
         -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);

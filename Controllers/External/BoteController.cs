@@ -234,7 +234,7 @@ namespace ExpressBase.Web.Controllers
            
         }
 
-        public string GetCurForm(string refreshToken, string bearerToken, string refid)
+        public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
         {
             this.ServiceClient.BearerToken = bearerToken;
             this.ServiceClient.RefreshToken = refreshToken;
@@ -257,15 +257,15 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
-            //else if (Obj is EbTableVisualization)
-            //{
-
-            //}
+            if (Obj is EbTableVisualization || Obj is EbChartVisualization)
+            {
+                return EbSerializers.Json_Serialize(Obj);
+            }
             //else if (Obj is EbChartVisualization)
             //{
 
             //}
-            return EbSerializers.Json_Serialize(Obj);
+            return Obj;
         }
     }
 }

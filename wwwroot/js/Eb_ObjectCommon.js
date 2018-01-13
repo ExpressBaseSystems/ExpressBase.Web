@@ -309,6 +309,8 @@
         $.LoadingOverlay("show");
         var tagvalues = $('#tags').val();
         var apps = $("#apps").val();
+        if (apps === "")
+            apps = "0";
         var getNav = $("#versionNav li.active a").attr("href");
         if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {
             this.ObjCollection[getNav].BeforeSave();
@@ -325,7 +327,9 @@
     this.Commit = function () {
         $.LoadingOverlay("show");
         var tagvalues = $('#tags').val();
-        var apps= $("#apps").val();
+        var apps = $("#apps").val();
+        if (apps === "")
+            apps = "0";
         var changeLog = $('#obj_changelog').val();
         var getNav = $("#versionNav li.active a").attr("href");
         if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {

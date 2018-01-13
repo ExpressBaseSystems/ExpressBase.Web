@@ -87,7 +87,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Majorv = 0;
                 ViewBag.Workingcopy = new string[0];
                 ViewBag.Tags = string.Empty;
-                ViewBag.AppId = 0;
+                ViewBag.AppId = "";
                 ViewBag.DashboardTiles = null;
                 ViewBag.VersionNumber = "1.0.0.w";
 

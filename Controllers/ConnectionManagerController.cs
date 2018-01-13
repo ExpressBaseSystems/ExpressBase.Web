@@ -91,8 +91,9 @@ namespace ExpressBase.Web.Controllers
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
             var req = this.HttpContext.Request.Form;
-            EbDataDbConnection dbcon = new EbDataDbConnection();
-            dbcon.NickName = req["nickname"];
+           
+            EbDataDbConnection dbcon = new EbDataDbConnection();       
+            dbcon.NickName = req["nickname"];          
             dbcon.Server = req["server"];
             dbcon.Port = Int32.Parse(req["port"]);
             dbcon.UserName = req["username"];

@@ -351,8 +351,8 @@ namespace ExpressBase.Web.Controllers
             {
                 if (hasSystemRole && whichconsole == "dc")
                 {
-                    _controller = "Dev";
-                    _action = "DevConsole";
+                    _controller = "Tenant";
+                    _action = "SolutionDashBoard";
                 }
                 else if (whichconsole == "uc")
                 {

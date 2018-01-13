@@ -2,6 +2,8 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
+<script src="~/js/validator.js" type="text/javascript"></script>
+<script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
 <div class="row s-dash-container">
     <div class="col-md-2 col-lg-2 pd-0 tdasboard-sidebar">
         <div class="t-container">
@@ -16,24 +18,22 @@
     <div class="col-md-10 col-lg-10 pull-right s-dash-workplace">
         <div class="col-md-12 s-dash-solution-desc">
             <div class="col-md-7 pd-0">
-                <h3 class="mr-t-0">@ViewBag.SolutionName</h3>
-                <p class="small">@ViewBag.Sid</p>
-                <p>@ViewBag.Desc </p>
+                <h3 class="mr-t-0">SolutionName</h3>
+                <p class="small">Solution Id</p>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
+                </p>
             </div>
-            @{
-                string urldev = "http://"+ ViewBag.Sid + ".localhost:5000/dev";
-                string urlusr = "http://" + ViewBag.Sid + ".localhost:5000";
-             }
-
             <div class="col-md-3 pd-0">
                 <div class="form-inline text-center">
-                    <a class="btn btn-oval btn-blue" href="@urldev">Dev</a>
-                    <a class="btn btn-oval btn-orange" href="@urlusr">User</a>
+                    <a class="btn btn-oval btn-blue" href="">Dev</a>
+                    <a class="btn btn-oval btn-orange" href="">User</a>
                 </div>
             </div>
             <div class="col-md-2 pd-0">
                 <img class="solution-logo" src="~/images/your-logo.png" />
-            </div>   
+            </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <ul class="nav nav-tabs" role="tablist">
@@ -52,10 +52,112 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
-                                                    
+
                 </div>
                 <div class="tab-pane" id="Connections" role="tabpanel">
-
+                    <div class="connectons-container">
+                        <div class="s-dash-headComm form-inline">
+                            <button class="btn btn-sm table-btn"><i class="fa fa-database"></i></button>
+                            Database Connections
+                            <button class="btn btn-sm table-btn pull-right" data-toggle="collapse" data-target="#dbConnection"><i class="fa fa-chevron-down"></i></button>
+                            <button whichmodal="dbConnectionEdit" op="new" class="btn btn-sm table-btn pull-right addConnection"><i class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="s-dash-bodyComm collapse in" id="dbConnection">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Database Vendor</th>
+                                        <th>Database Name</th>
+                                        <th>Server Address</th>
+                                        <th>Port</th>
+                                        <th>Nick Name</th>
+                                        <th>UserName</th>
+                                        <th>TimeOut</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="connection-row">
+                                        <td field="WhichDb">PGSQL</td>
+                                        <td field="DbName">gdg</td>
+                                        <td field="Server">fdsf</td>
+                                        <td field="Port">4315</td>
+                                        <td field="NickName">4315</td>
+                                        <td field="UserName">username</td>
+                                        <td field="TimeOut">1000</td>
+                                        <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="connectons-container">
+                        <div class="s-dash-headComm form-inline">
+                            <button class="btn btn-sm table-btn"><i class="fa fa-envelope-o" aria-hidden="true"></i></button>
+                            Email Accounts
+                            <button class="btn btn-sm table-btn pull-right" data-toggle="collapse" data-target="#smtpConnections"><i class="fa fa-chevron-down"></i></button>
+                            <button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn pull-right addConnection"><i class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="s-dash-bodyComm collapse in" id="smtpConnections">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mail Server</th>
+                                        <th>Nick Name</th>
+                                        <th>SMTP Server</th>
+                                        <th>Port</th>
+                                        <th>Email</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td field="WhichMailServer">Google</td>
+                                        <td field="Name">sdfds</td>
+                                        <td field="SMTP">fdsfsd</td>
+                                        <td field="Port">fdsfsd</td>
+                                        <td field="Email">dsfdsf</td>
+                                        <td class="edit-row"><button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="connectons-container">
+                        <div class="s-dash-headComm form-inline">
+                            <button class="btn btn-sm table-btn"><i class="fa fa-commenting-o" aria-hidden="true"></i></button>
+                            SMS Accounts
+                            <button class="btn btn-sm table-btn pull-right" data-toggle="collapse" data-target="#smsConnections"><i class="fa fa-chevron-down"></i></button>
+                            <button class="btn btn-sm table-btn pull-right"><i class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="s-dash-bodyComm collapse in" id="smsConnections">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Provider Name</th>
+                                        <th>UserName</th>
+                                        <th>Password</th>
+                                        <th>Sender Number</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select class="form-control">
+                                                <option>Twilio</option>
+                                                <option>Others</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" class="form-control table-input" /></td>
+                                        <td><input type="text" class="form-control table-input" /></td>
+                                        <td><input type="text" class="form-control table-input" /></td>
+                                        <td class="edit-row"><button class="btn btn-sm table-btn"><i class="fa fa-pencil"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="tab-pane" id="team" role="tabpanel">
 
@@ -67,3 +169,173 @@
         </div>
     </div>
 </div>
+<div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="" method="post" id="dbConnectionSubmit" data-toggle="validator">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">DataBase Connection</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Database</label>
+                                <select name="WhichDb" class="form-control">
+                                    <option>PGSQL</option>
+                                    <option>MySQL</option>
+                                    <option>ORACLE</option>
+                                    <option>PGSQL</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>DataBase Name</label>
+                                <input name="DbName" type="text" class="form-control" required/>
+                            </div>
+                            <div class="form-group">
+                                <label>Nick Name</label>
+                                <input name="NickName" type="text" class="form-control" required/>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label>User Name</label>
+                            <div class="col-md-12 pd-0">
+                                <table class="table table-bordered table-form">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:130px;"></th>
+                                            <th>User Name</th>
+                                            <th>Password</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Admin</td>
+                                            <td><input name="AdminUname" type="text" class="form-control" required/></td>
+                                            <td><input name="AdminPw" type="text" class="form-control" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Read-Write User</td>
+                                            <td><input name="RWUname" type="text" class="form-control" required/></td>
+                                            <td><input name="RWPw" type="text" class="form-control" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td>ReadOnly User</td>
+                                            <td><input name="ReadOnlyUname" type="text" class="form-control" required/></td>
+                                            <td><input name="ReadOnlyPw" type="text" class="form-control" required/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Server Address</label>
+                                <input name="Server" type="text" class="form-control" required/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Port</label>
+                                <input name="Port" pattern="^[_0-9]{1,}$" type="text" class="form-control" required/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>TimeOut</label>
+                                <input name="TimeOut" type="text" class="form-control" required/>
+                            </div>
+                        </div>
+                        <input type="hidden" name="IsNew" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="EmailConnectionEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Email Accounts</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="col-md-12 pd-0">
+                        <div class="col-md-6 pd-l-0">
+                            <div class="form-group">
+                                <label>Mail Server</label>
+                                <select name="WhichMailServer" class="form-control">
+                                    <option>Google</option>
+                                    <option>Zoho</option>
+                                    <option>MSN</option>
+                                    <option>Others</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pd-r-0">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input name="Name" type="text" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 pd-0">
+                        <div class="col-md-6 pd-l-0">
+                            <div class="form-group">
+                                <label>SMTP Server</label>
+                                <input name="SMTP" type="text" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6 pd-r-0">
+                            <div class="form-group">
+                                <label>Port</label>
+                                <input name="Port" type="text" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input name="Email" type="text" class="form-control" />
+                    </div>
+                    <input type="hidden" name="isNew" />
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="SmsConnectionEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Sms Accounts</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    var sdb = new SolutionDashBoard();
+</script>

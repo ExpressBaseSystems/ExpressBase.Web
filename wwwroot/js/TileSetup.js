@@ -3,8 +3,8 @@
     this.parentDiv = parentDiv;
     this.title = title;
     this.resultObject = [];
-    this.initObjectList = initObjList;
-    this.objectList = searchObjList;
+    this.initObjectList = (initObjList === null) ? [] : initObjList;
+    this.objectList = (searchObjList === null) ? [] : searchObjList;
     this.objectMetadata = objMetadata;
     this.searchAjaxUrl = searchAjax;
     
@@ -20,6 +20,7 @@
     this.btnModalOk = null;
     this.addModal = null;
     this.divSelectedDisplay = null;
+    //this.divMessageOnSelected = null;
     this.divSearchResults = null;
     this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
     this.parentthis = parentThis;
@@ -74,7 +75,11 @@
                 </div>
             </div>
         </div>
-        <div id="divSelectedDisplay${t}" class="row tilediv1"></div>`);
+        <div id="divSelectedDisplay${t}" class="row tilediv1">
+
+        
+
+        </div>`);
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
         this.spanSrch = $('#spanSrch' + t);
@@ -88,6 +93,7 @@
         this.btnModalOk = $('#btnModalOk' + t);
         this.addModal = $('#addModal' + t);
         this.divSelectedDisplay = $('#divSelectedDisplay' + t);
+        //this.divMessageOnSelected = $('#divMsgOnSelected' + t);
         this.divSearchResults = $('#divSearchResults' + t);
 
         $(this.parentDiv).on('keyup', '#txtDemoSearch' + t, this.keyUpTxtDemoSearch.bind(this));
@@ -103,13 +109,17 @@
         $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
         $(this.divSelectedDisplay).on('click', ".dropDownRemoveClass", this.onClickRemoveFromSelected.bind(this));
 
+
         if (this.objectMetadata.indexOf('ProfilePicture') > -1)
             this.profilePicStatus = true;
 
-        if (this.initObjectList != null){
+        if (this.initObjectList.length !== 0){
             for (var i = 0; i < this.initObjectList.length; i++) {
                 this.appendToSelected(this.divSelectedDisplay, { Id: this.initObjectList[i][this.objectMetadata[0]], Name: this.initObjectList[i][this.objectMetadata[1]], Data1: this.initObjectList[i][this.objectMetadata[2]] });
             }
+        }
+        else {
+            this.divSelectedDisplay.append(`<div style="text-align: center; margin-top: 10%; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
         }
     }
 
@@ -192,7 +202,7 @@
         var Url = this.searchAjaxUrl;
         if (Url === null) {
             this.loader.hide();
-            if (this.objectList !== null) {
+            if (this.objectList.length !== 0) {
                 this.divMessage.hide();
                 this.drawSearchResults(this.objectList, searchtext);
             }
@@ -292,6 +302,9 @@
         });
     }
     this.appendToSelected = function (divSelected, obj) {
+        if (this.resultObject.length === 0)
+            this.divSelectedDisplay.children().remove();
+
         if ($(divSelected).find(`[data-id='${obj.Id}']`).length > 0) {
             return;
         }
@@ -333,9 +346,11 @@
                 if (this.resultObject[i].Id == parent.attr('data-id')) {
                     this.resultObject.splice(i, 1);
                     parent.remove();
-                    return;
+                    break;
                 }
             }
+            if (this.resultObject.length === 0)
+                this.divSelectedDisplay.append(`<div style="text-align: center; margin-top: 10%; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
         }
     }
 

@@ -430,14 +430,27 @@
         border-radius: 3em;
         padding: 6px 6px 4px 7px;
     }
-.table-cont {
+
+.table-cont, .chart-cont {
     background-color: white;
     border: solid 1px #e0e0e0;
-    padding: 10px 3px;
+    padding: 3px;
 }
-.table-cont table{
-    width:100%;
-}
+
+    .table-cont table {
+        width: 100%;
+        border: 1px solid #ddd !important;
+    }
+
+    .table-cont td {
+        padding: 3px !important;
+        border-right: 1px solid #ddd!important;
+    }
+    .table-cont th {
+        border-right: 1px solid #ddd !important;
+    }
+
+
 .dataTables_wrapper .dataTables_filter input {
     border: solid 1px #aaaaaa;
 }

@@ -25,12 +25,17 @@
         editor = "ManageRoles";
         whichController = "Security";
     }
-    else
+    //else if (ViewBag.ListType == "usergroup")
+    //{
+    //    editor = "UserGroups";
+    //    whichController = "TenantUser";
+    //}
+    else if (ViewBag.ListType == "usergroup")
     {
-        editor = "UserGroups";
-        whichController = "TenantUser";
-
+        editor = "ManageUserGroups";
+        whichController = "Security";
     }
+
     Dictionary<string, object> Dict = ViewBag.dict;
 }
 <script>

@@ -12,6 +12,7 @@ var DvContainerObj = function (settings) {
     this.filterValues = settings.filterValues;
     this.tabnum = settings.tabnum;
     this.RelatedDvlist = settings.DvList;
+    this.TaggedDvlist = settings.DvTagList;
     this.dvcol = {};
     this.MainData = null;
     this.UniqueId = null;
@@ -34,7 +35,6 @@ var DvContainerObj = function (settings) {
         $("#last").off("click").on("click", this.gotoLast.bind(this));
         //$("#Save_btn").off("click").on("click", this.saveSettings.bind(this));
         $("#btnGo" + counter).trigger("click");
-        $("#mini").off("click").on("click", this.toggleminimap.bind(this));
         $("#Related_btn").off("click").on("click", this.showOrhideRelateddiv.bind(this));
         //$("#Relateddiv").focusout(function () { $(this).hide();});
     };
@@ -139,59 +139,59 @@ var DvContainerObj = function (settings) {
     };
 
     this.gotoFirst = function () {
-        focusedId = $("#" + focusedId).siblings().first().attr("id");
-        $("#" + focusedId).focus();
-        var dvobj = this.dvcol[focusedId];
-        dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        dvcontainerObj.currentObj = dvobj;
-        if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.ebdtable[focusedId].GenerateButtons();
-            }
-        }
-        else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            if ($("#" + focusedId).find("canvas").length > 0) {
-                this.chartJs[focusedId].createButtons();
-            }
-        }
-        if ($("#" + focusedId).prev().attr("id") == undefined) {
-            $("#prev").attr("disabled", true).css("color", "darkgray");
-            $("#first").attr("disabled", true).css("color", "darkgray");
-        }
-        if ($("#" + focusedId).next().attr("id") !== undefined) {
-            $("#next").attr("disabled", false).css("color", "black");
-            $("#last").attr("disabled", false).css("color", "black");
-        }
+    //    focusedId = $("#" + focusedId).siblings().first().attr("id");
+    //    $("#" + focusedId).focus();
+    //    var dvobj = this.dvcol[focusedId];
+    //    dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+    //    dvcontainerObj.currentObj = dvobj;
+    //    if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+    //        $("#Toolbar").children(":not(.commonControls)").remove();
+    //        if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+    //            this.ebdtable[focusedId].GenerateButtons();
+    //        }
+    //    }
+    //    else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
+    //        $("#Toolbar").children(":not(.commonControls)").remove();
+    //        if ($("#" + focusedId).find("canvas").length > 0) {
+    //            this.chartJs[focusedId].createButtons();
+    //        }
+    //    }
+    //    if ($("#" + focusedId).prev().attr("id") == undefined) {
+    //        $("#prev").attr("disabled", true).css("color", "darkgray");
+    //        $("#first").attr("disabled", true).css("color", "darkgray");
+    //    }
+    //    if ($("#" + focusedId).next().attr("id") !== undefined) {
+    //        $("#next").attr("disabled", false).css("color", "black");
+    //        $("#last").attr("disabled", false).css("color", "black");
+    //    }
     };
 
     this.gotoLast = function () {
-        focusedId = $("#" + focusedId).siblings().last().attr("id");
-        $("#" + focusedId).focus();
-        var dvobj = this.dvcol[focusedId];
-        dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        dvcontainerObj.currentObj = dvobj;
-        if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.ebdtable[focusedId].GenerateButtons();
-            }
-        }
-        else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
-            $("#Toolbar").children(":not(.commonControls)").remove();
-            if ($("#" + focusedId).find("canvas").length > 0) {
-                this.chartJs[focusedId].createButtons();
-            }
-        }
-        if ($("#" + focusedId).next().attr("id") == undefined) {
-            $("#next").attr("disabled", true).css("color", "darkgray");
-            $("#last").attr("disabled", true).css("color", "darkgray");
-        }
-        if ($("#" + focusedId).prev().attr("id") !== undefined) {
-            $("#prev").attr("disabled", false).css("color", "black");
-            $("#first").attr("disabled", false).css("color", "black");
-        }
+    //    focusedId = $("#" + focusedId).siblings().last().attr("id");
+    //    $("#" + focusedId).focus();
+    //    var dvobj = this.dvcol[focusedId];
+    //    dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+    //    dvcontainerObj.currentObj = dvobj;
+    //    if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+    //        $("#Toolbar").children(":not(.commonControls)").remove();
+    //        if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+    //            this.ebdtable[focusedId].GenerateButtons();
+    //        }
+    //    }
+    //    else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
+    //        $("#Toolbar").children(":not(.commonControls)").remove();
+    //        if ($("#" + focusedId).find("canvas").length > 0) {
+    //            this.chartJs[focusedId].createButtons();
+    //        }
+    //    }
+    //    if ($("#" + focusedId).next().attr("id") == undefined) {
+    //        $("#next").attr("disabled", true).css("color", "darkgray");
+    //        $("#last").attr("disabled", true).css("color", "darkgray");
+    //    }
+    //    if ($("#" + focusedId).prev().attr("id") !== undefined) {
+    //        $("#prev").attr("disabled", false).css("color", "black");
+    //        $("#first").attr("disabled", false).css("color", "black");
+    //    }
     };
    
     this.saveSettings = function () {
@@ -231,8 +231,9 @@ var DvContainerObj = function (settings) {
         $("#sub_windows_sidediv_" + this.tableId).hide();
         $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         this.dvRefid = $(e.target).closest("li").attr("data-refid");
+        var dvtype = $(e.target).closest("li").attr("data-dvType");
         if (this.dvRefid === this.dvcol[Object.keys(this.dvcol)[0]].Refid) {
-            prevfocusedId = focusedId;
+            //prevfocusedId = focusedId;
             focusedId = Object.keys(this.dvcol)[0];
             $("#" + focusedId).focus();
             var dvobj = this.dvcol[focusedId].EbObject;
@@ -261,15 +262,20 @@ var DvContainerObj = function (settings) {
             $.ajax({
                 type: "POST",
                 url: "../DV/getdv",
-                data: { refid: this.dvRefid, objtype: $(e.target).attr("objtype") },
+                data: { refid: this.dvRefid, objtype: $(e.target).attr("objtype"), dsrefid: dvcontainerObj.currentObj.DataSourceRefId},
                 success: function (dvObj) {
                     counter++;
                     dvObj = JSON.parse(dvObj);
-                    dvcontainerObj.currentObj = dvObj;
-                    dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
+                    dvcontainerObj.currentObj = dvObj.DsObj;
+                    this.TaggedDvlist = dvObj.DvTaggedList.$values;
+                    if (dvtype === "pipped")
+                        dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
+                    else
+                        this.RelatedDvlist = dvObj.DvList.$values;
+                    //this.removeDupliateDV();
                     $.LoadingOverlay("hide");
                     dvcontainerObj.btnGoClick();
-                }
+                }.bind(this),
             });
         }
         
@@ -284,16 +290,31 @@ var DvContainerObj = function (settings) {
         $.ajax({
             type: "POST",
             url: "../DV/getdv",
-            data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2] },
+            data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2], dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
             success: function (dvObj) {
                 counter++;
                 dvObj = JSON.parse(dvObj);
-                dvcontainerObj.currentObj = dvObj;
+                dvcontainerObj.currentObj = dvObj.DsObj;
+                this.TaggedDvlist = dvObj.DvTaggedList.$values;
+                if (dvObj.DvList.$values.length > 0) {
+                    this.RelatedDvlist = dvObj.DvList.$values;
+                }
+                //this.removeDupliateDV();
                 $.LoadingOverlay("hide");
                 dvcontainerObj.btnGoClick();
-            }
+            }.bind(this),
         });
-    }
+    };
+
+    this.removeDupliateDV = function () {
+        $.each(this.RelatedDvlist, function (i, obj) {
+            this.TaggedDvlist = $.grep(this.TaggedDvlist, function (TObj) { return TObj.RefId !== obj.RefId });
+            //$.each(this.TaggedDvlist, function (j, Tobj) {
+            //    if (Tobj.RefId === obj.RefId)
+            //        this.TaggedDvlist.splice(j,1);
+            //}.bind(this));
+        }.bind(this));
+    }.bind(this);
 
     this.appendRelatedDv = function (tid) {
         //$("#obj_icons").prepend("<div class='dropdown' id='Related" + tid +"' style='display: inline-block;padding-top: 1px;'>" +
@@ -314,6 +335,7 @@ var DvContainerObj = function (settings) {
 
     this.RealtedajaxSuccess = function (tid) {// + tid + " .dropdown-menu"
         //$("#Relateddiv").empty();
+        this.removeDupliateDV();
         this.tableId = tid;
         $("#relatedPipableDiv .relatedBody").empty();
         $("#relatedStartDiv .relatedBody").empty();
@@ -331,10 +353,22 @@ var DvContainerObj = function (settings) {
                 $("#relatedStartDiv .relatedBody").append("<li style='display:inline-flex;' class='relatedli'  data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon +"<label class='relatedlabel'>" + obj.Name + "</label></a><label style='font-size:10px;margin-left:5px;margin-top:5px;'>(Default)</label></li>");
             }
             else {
-                $("#relatedPipableDiv .relatedBody").append("<li class='relatedli'  data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon +"<label class='relatedlabel'>" + obj.Name + "</label></a></li>");
+                $("#relatedPipableDiv .relatedBody").append("<li class='relatedli'  data-dvType='pipped' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon +"<label class='relatedlabel'>" + obj.Name + "</label></a></li>");
             }
 
         }.bind(this));
+
+        $.each(this.TaggedDvlist, function (i, obj) {
+            var $icon = "";
+            if (obj.EbObjectType === EbObjectTypes.ChartVisualization)
+                $icon = "<i class='fa fa-line-chart custom'></i>";
+            else
+                $icon = "<i class='fa fa-table custom'></i>";
+            $("#relatedTagedDiv .relatedBody").append("<li class='relatedli'  data-dvType='tagged' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon + "<label class='relatedlabel'>" + obj.Name + "</label></a></li>");
+
+        }.bind(this));
+
+
         $("#Relateddiv li").off("click").on("click", this.drawDv.bind(this));
         $("#Relateddiv .relatedBody").each(function (i, obj) {
             if ($(this).children().length === 0)
@@ -417,10 +451,11 @@ var DvContainerObj = function (settings) {
         $("#ppgrid_" + this.tableId).hide();
         $("#sub_windows_sidediv_" + this.tableId).hide();
         $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
-        prevfocusedId = focusedId;
+        //prevfocusedId = focusedId;
         //this.nextSlide = nextSlide;
-        focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
-        if (focusedId !== prevfocusedId) {
+        //focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
+        if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) {
+            focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
             $("#" + focusedId).focus();
             var dvobj = this.dvcol[focusedId].EbObject;
             this.dvRefid = this.dvcol[focusedId].Refid;
@@ -446,6 +481,7 @@ var DvContainerObj = function (settings) {
 
     this.modifydivDots = function () {
         $(".dotstable").empty();
+        var firstKey = Object.keys(this.dvcol)[0];
         $.each(this.dvcol, function (key, obj) {
             if (obj.EbObject.Pippedfrom !== "") {
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
@@ -462,6 +498,9 @@ var DvContainerObj = function (settings) {
                 else {
                     $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
+                //if (obj.isContextual)
+                if (firstKey !== key)
+                    $(".dotstable .dot[data-mapid=" + key + "]").css("margin-left", "12px");
             }
         });
         $(".dot").off("click").on("click", this.focus2ClickedDot);        
@@ -501,15 +540,14 @@ var DvContainerObj = function (settings) {
 
     this.focus2ClickedDot = function () {
         var id = $(this).attr("data-mapid");
-        var lastChar = id.substr(id.length - 1);
-        $('.splitdiv_parent').slick('slickGoTo', lastChar, false);
+        var lastChar = id.split("_");
+        $('.splitdiv_parent').slick('slickGoTo', lastChar[lastChar.length-1], false);
     }
 
     this.dotOnHover = function (e) {
         var curdiv = $(e.target).closest("div");
         var id = curdiv.attr("data-mapid");
         var dvObj = this.dvcol[id];
-        //$(".dotheader").text(dvObj.EbObject.Name);
         var lastChar = id.substr(id.length - 1);
         var temp = id.substring(11);
         $(".dot").popover('show');
@@ -541,31 +579,7 @@ var DvContainerObj = function (settings) {
     this.dotOffHover = function (e) {
         $(".dot").popover('hide');
     }.bind(this);
-
     
-    this.toggleminimap = function () {
-        $("#MinimapDiv").toggle();
-        //if ($("#MinimapDiv").css("display") === "block") {
-        //    if (this.previewBody)
-        //        this.previewBody = null;
-        //    this.previewBody = $('.splitdiv_parent').minimap({
-        //        heightRatio: 0.2,
-        //        widthRatio: 0.2,
-        //        offsetHeightRatio: 0.1,
-        //        offsetWidthRatio: 0.02,
-        //        position: "left",
-        //        touch: true,
-        //        smoothScroll: true,
-        //        smoothScrollDelay: 200,
-        //    });
-        //    this.previewBody.show();
-        //}
-        //else {
-        //    if (this.previewBody)
-        //        this.previewBody.hide();
-        //}
-    };
-
     this.showOrhideRelateddiv = function () {
         $("#Relateddiv").toggle();
     }

@@ -34,8 +34,8 @@ namespace ExpressBase.Web.Controllers
     {
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        [HttpGet][HttpPost]
-        public IActionResult dv( string refid, string rowData, string filterValues, int tabNum)
+        [HttpGet] [HttpPost]
+        public IActionResult dv(string refid, string rowData, string filterValues, int tabNum)
         {
             //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
 
-            var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid , Ids = _user.EbObjectIds.ToString()});
+            var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid=null });
             var dsobj = resultlist.Dsobj;
             dsobj.AfterRedisGet(this.Redis);
             ViewBag.dvObject = dsobj;
@@ -58,11 +58,12 @@ namespace ExpressBase.Web.Controllers
             ViewBag.rowData = rowData;
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;
-            ViewBag.DvList =JsonConvert.SerializeObject( resultlist.DvList);
+            ViewBag.DvList = JsonConvert.SerializeObject(resultlist.DvList);
             ViewBag.DvTaggedList = JsonConvert.SerializeObject(resultlist.DvTaggedList);
             return View();
         }
 
+        
         //[HttpGet][HttpPost]
         //public IActionResult dvTable(string objid, EbObjectType objtype)
         //{
@@ -185,6 +186,7 @@ namespace ExpressBase.Web.Controllers
         //    return View();
         //}
         
+        
         public IActionResult dvCommon(string dvobj, string dvRefId, bool flag)
         {
             var dvObject = EbSerializers.Json_Deserialize(dvobj);
@@ -215,19 +217,23 @@ namespace ExpressBase.Web.Controllers
             return DvList;
         }
 
-        public string getdv(string refid, EbObjectType objtype)
+        public string getdv(string refid, EbObjectType objtype, string dsrefid)
         {
-            EbDataVisualization dsobj = null;
+            DvObjectWithRelatedObjects Obj = new DvObjectWithRelatedObjects();
             if (refid != null)
             {
-                var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-                dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-                dsobj.Status = resultlist.Data[0].Status;
-                dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-
-                
+                //var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+                var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, DsRefid = dsrefid });
+                var dsobj = resultlist.Dsobj;
+                dsobj.AfterRedisGet(this.Redis);
+                Obj.DsObj = dsobj;
+                Obj.DvList = resultlist.DvList;
+                Obj.DvTaggedList = resultlist.DvTaggedList;
+                //dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+                //dsobj.Status = resultlist.Data[0].Status;
+                //dsobj.VersionNumber = resultlist.Data[0].VersionNumber;                
             }
-             return EbSerializers.Json_Serialize(dsobj); 
+             return EbSerializers.Json_Serialize(Obj); 
         }
 
         public IActionResult dvgoogle()
@@ -241,6 +247,15 @@ namespace ExpressBase.Web.Controllers
             var ObjDVListAll = resultlist.Data;
 
             return ObjDVListAll;
+        }
+
+        public class DvObjectWithRelatedObjects
+        {
+            public EbDataVisualization DsObj { get; set; }
+
+            public List<EbObjectWrapper> DvList { get; set; }
+
+            public List<EbObjectWrapper> DvTaggedList { get; set; }
         }
 
     }

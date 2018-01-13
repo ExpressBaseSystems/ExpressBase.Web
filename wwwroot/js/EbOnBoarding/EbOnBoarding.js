@@ -70,16 +70,7 @@
 
     this.submitProfile = function (e) {
         e.preventDefault();
-        var info = this.validateProfileInfo();
-        var profInfo = {
-            Name: $("[name='Name']").val().trim(),
-            Company: $("[name='Company']").val().trim(),
-            Employees: $("[name='Employees']").val().trim(),
-            Designation: $("[name='Designation']").val().trim(),
-            Country: $("[name='Country']").val().trim(),
-            Email: $("[name='Email']").val().trim(),
-            Password: $("[name='Password']").val().trim()
-        }
+        var info = this.validateProfileInfo();        
         if (info) {
             $.ajax({
                 type: 'POST',
@@ -87,7 +78,7 @@
                 beforeSend: function () {
                     $("#save-profile i").show();
                 },
-                data: profInfo
+                data: $(e.target).serializeArray()
             }).done(function (data) {
                 $('#eb-mesageBox').show().text("Profile Saved");
                 $('#eb-mesageBox').fadeOut(5000);

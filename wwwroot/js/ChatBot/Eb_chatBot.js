@@ -118,17 +118,23 @@
                 "refid": RefId
             }, function (data) {
                 this.hideTypingAnim();
-                data = JSON.parse(data);
+
+                if (typeof data === "string") {
+                    data = JSON.parse(data);
+                    data.objType = data.ObjType;
+                }
+
+
                 this.formsList[RefId] = data;
-                if (data.ObjType === "BotForm") {
+                if (data.objType === "BotForm") {
                     this.curForm = data;
                     this.setFormControls();
                 }
-                else if (data.ObjType === "TableVisualization") {
+                else if (data.objType === "TableVisualization") {
                     this.curTblViz = data;
                     this.showTblViz();
                 }
-                else if (data.ObjType === "ChartVisualization") {
+                else if (data.objType === "ChartVisualization") {
                     this.curChartViz = data;
                     this.showChartViz();
                 }
@@ -411,10 +417,10 @@
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         var inpVal = this.getValue($input);
-        if (this.curCtrl.ObjType === "ImageUploader")
+        if (this.curCtrl.objType === "ImageUploader")
             this.replyAsImage($msgDiv, $input[0], next_idx);
         else {
-            if (this.curCtrl.ObjType === "Cards") {
+            if (this.curCtrl.objType === "Cards") {
                 this.lastval = $btn.closest(".card-cont").find(".card-label").text();
                 inpVal = this.lastval;
             }
@@ -452,7 +458,7 @@
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx];
-        if (this.curCtrl && this.curCtrl.ObjType === "Cards")
+        if (this.curCtrl && this.curCtrl.objType === "Cards")
             var $CtrlCont = $(control);
         else
             var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
@@ -564,7 +570,7 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
-                    if (this.curCtrl && this.curCtrl.ObjType === "Cards") {
+                    if (this.curCtrl && this.curCtrl.objType === "Cards") {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
@@ -594,8 +600,8 @@
     this.loadcontrol = function () {
         if (!this.curCtrl)
             return;
-        if (this.initControls[this.curCtrl.ObjType] !== undefined)
-            this.initControls[this.curCtrl.ObjType](this.curCtrl);
+        if (this.initControls[this.curCtrl.objType] !== undefined)
+            this.initControls[this.curCtrl.objType](this.curCtrl);
     }.bind(this);
 
     this.formSubmit = function (e) {

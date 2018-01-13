@@ -23,7 +23,7 @@
         preference = "UserPreferences";
     }
 }
-
+    <input id="hiddenTxtUserId" type="hidden" style="display:none" value=@ViewBag.UId>
     <div class="col-md-3" style="height:100%;">
         <a href="#"><img alt="Brand" src="~/images/EB_Logo.png" style="width: 100%;height: 100%;"></a>
     </div>
@@ -55,7 +55,7 @@
             <div class="dropdown dd">
                 <img id="prof" class="img-responsive" alt="dropdown-toggle" data-toggle="dropdown" src="~/images/proimg.jpg" style="border-radius:50%;width: 66%;"/>
                 <ul class="dropdown-menu">
-                    <li><a href="loadMyProfile()">My Profile<span class="fa fa-user pull-right"></span></a></li>
+                    <li><a onclick="LoadMyProfile()" href="#">My Profile<span class="fa fa-user pull-right"></span></a></li>
                     <li class="divider"></li>
                     <li><a href="@preference">My Preferences<span class="fa fa-user pull-right"></span></a></li>
                     <li class="divider"></li>
@@ -136,8 +136,21 @@
     }
 
     function LoadMyProfile() {
-        //event.preventDefault();
-        
+        event.preventDefault();
+        //var _container = $("#layout_div");
+        //$.LoadingOverlay("show");
+        //$.ajax({
+        //    url: "../Security/ManageUser",
+        //    type: "POST",
+        //    cache: false,
+        //    data: { "itemid": 1 },
+        //    success: function (result) {
+        //        _container.html(result);
+        //        $.LoadingOverlay("hide");
+        //        $("#ObjModal").modal('hide');
+        //    }
+        //});
+        window.open("../Security/ManageUser?itemid=" + $("#hiddenTxtUserId").val(), "_blank");
     }
 
 </script>

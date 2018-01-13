@@ -449,6 +449,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             });
             //$.post(this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId, { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(getFilterValues()) }, this.getDataSuccess.bind(this));
         }
+        this.GenerateButtons();
     };
 
     this.createChartDivs = function () {
@@ -477,7 +478,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 "<div id='canvasDiv" + this.tableId +"' style='height:100%;padding-bottom:10px;'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
                 "</div> " +
                 "</div>");
-            this.GenerateButtons();
+            //this.GenerateButtons();
         //}
         //else {
 
@@ -705,7 +706,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var paramstxt = "";//$('#hiddenparams').val().trim();datefrom,dateto
+        var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
         if (paramstxt.length > 0) {
             var params = paramstxt.split(',');

@@ -438,7 +438,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //}
         //o.paging = false;
         //o.rowReorder = true;
-        o.order = [[8, "asc"]];
+        //o.order = [[8, "asc"]];
         //o.bAutoWidth = false;
         //o.autowidth = false;
         o.serverSide = true;
@@ -460,6 +460,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.filterValues = this.getFilterValues();
         var f = this.compareFilterValues();
         if (this.MainData !== null && this.login == "uc" && f && this.isPipped) {
+            //o.serverSide = false;
             o.dom = "<'col-md-12 noPadding'B>rt";
             dvcontainerObj.currentObj.data = this.MainData;
             o.ajax = function (data, callback, settings) {
@@ -531,7 +532,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var paramstxt = "";//$('#hiddenparams').val().trim();datefrom,dateto
+        var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
         if (paramstxt.length > 0) {
             var params = paramstxt.split(',');

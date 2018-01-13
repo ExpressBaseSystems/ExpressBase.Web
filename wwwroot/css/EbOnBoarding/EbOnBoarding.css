@@ -326,21 +326,34 @@ margin-top:0;
         border: 1px solid #adaaaa;
         padding:0 !important;
     }
-    .s-dash-bodyComm .form-control {
-        border: none;
-        border-radius: 0;
-        -webkit-box-shadow:none;
-         box-shadow:none; 
-        -webkit-transition:none;
-        -o-transition: none;
-        transition:none;
+    .table-form{
+        margin-bottom:52px;        
     }
+.table-form .form-control {
+    border: none;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-transition: none;
+    -o-transition: none;
+    transition: none;
+}
+.table-form td {
+    padding: 0 !important;
+    vertical-align:middle !important;
+    text-align:center;
+}
     .s-dash-bodyComm .table > thead > tr > th {
         vertical-align: bottom;
         border-bottom: none; 
         text-align: center;
         font-weight: 400;
         border: 1px solid #adaaaa;
+    }
+    .s-dash-bodyComm .table > tbody > tr > td {
+        vertical-align: middle;
+        font-size:14px;
+        text-align: center;
     }
 .table-btn {
     background-color: transparent;
@@ -349,7 +362,12 @@ margin-top:0;
     width: 100px;
     text-align:center;
 }
-
+.s-dash-modal .modal-dialog{
+    width:800px;
+}
+.s-dash-modal label{
+    font-weight:400;
+}
 /*tenant add solution*/
 .pd-0 {
     padding: 0;

@@ -3,72 +3,130 @@
 *@
 @{
 
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
 <button class="btn btn-info" id="loginbutton" style=" margin:2%">Login to Al-Arz systems Using facebook</button>
 <button class="btn btn-info" id="test" style=" margin:2%">Logout from App</button>
+<button class="btn btn-info" id="test222" style=" margin:2%">check status</button>
+<button class="btn btn-info" id="test333" style=" margin:2%">prof img</button>
 <script>
 
     $('document').ready(function () {
 
-        function FBsignUp() {
-            // variables
-            this.FBobj = null;
-            this.isLogined = false;
-
-            // functions
-            this.Init = function () {
-                $.ajaxSetup({ cache: true });
-                $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
-                    FB.init({
-                        appId: '149537802493867',
-                        version: 'v2.11' // or v2.1, v2.2, v2.3, ...
-                    });
-                    this.FBobj = FB;
-                    FB.getLoginStatus(this.updateStatusCallback);
-                }.bind(this));
-
-                //bindings
-                $('#loginbutton').click(this.FBlogin.bind(this));
-                $('#test').click(function () { this.FBobj.logout(this.logoutCallBack); }.bind(this));
-            };
-
-            this.updateStatusCallback = function (respose) {
-                if (respose.status === "connected") {
-                    this.isLogined = true;
-                }
-                else if (respose.status === "not_authorized") {
-                    this.isLogined = false;
-                }
-            }.bind(this);
-
-            this.FBlogin = function () {
-                if (this.isLogined) {
-                    alert("You are already Loginged to The App");
-                }
-                else
-                    this.FBobj.login(this.loginCallBack);
-            }
-
-            this.loginCallBack = function (respose) {
-                this.isLogined = true;
-                var uid = respose.authResponse.userID;
-                alert("Login success : " + uid);
-                this.FBobj.getLoginStatus(updateStatusCallback);
-            }
-
-            this.logoutCallBack = function (respose) {
-                this.isLogined = false;
-                alert("You are Logout from App");
-            }
-
-            //starting point
-            this.Init();
+        $.ajaxSetup({ cache: true });
+        $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+            FB.init({
+                appId: '149537802493867',
+                version: 'v2.11' // or v2.1, v2.2, v2.3, ...
+            });
+            //$('#loginbutton,#feedbutton').removeAttr('disabled');
+            FB.getLoginStatus(updateStatusCallback);
+        });
+        function updateStatusCallback(r) {
+            console.log(r);
+            if (r.authResponse !== null)
+                console.log("UserId :" + r.authResponse.userID);
         };
 
-        FBsignUp();
+        $('#loginbutton').click(FBlogin);
+       function FBlogin () {
+            FB.login(loginCallBack);
+       }
+       function loginCallBack(respose) {
+           console.log(respose);
+       }
+
+       $('#test').click(FBlogout);
+       function FBlogout() {
+           FB.logout(logoutCallBack);
+       }
+       function logoutCallBack(respose) {
+           console.log(respose);
+       }
+
+       $('#test222').click(FBstatus);
+       function FBstatus() {
+           FB.getLoginStatus(updateStatusCallback);
+       }
+
+       $('#test333').click(FBpicture);
+       function FBpicture() {
+
+           FB.api(
+               '/me?fields=name,picture.type(large)',
+               function (response) {
+                   alert(response.picture.data.url);
+               }
+           );
+       }
+       
+
+
     });
+
+
+
+
+
+
+    //    function FBsignUp() {
+    //        // variables
+    //        this.FBobj = null;
+    //        this.isLogined = false;
+
+    //        // functions
+    //        this.Init = function () {
+    //            $.ajaxSetup({ cache: true });
+    //            $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+    //                FB.init({
+    //                    appId: '149537802493867',
+    //                    version: 'v2.11' // or v2.1, v2.2, v2.3, ...
+    //                });
+    //                this.FBobj = FB;
+    //                FB.getLoginStatus(this.updateStatusCallback);
+    //            }.bind(this));
+
+    //            //bindings
+    //            $('#loginbutton').click(this.FBlogin.bind(this));
+    //            $('#test').click(function () { this.FBobj.logout(this.logoutCallBack); }.bind(this));
+    //        };
+
+    //        this.updateStatusCallback = function (respose) {
+    //            if (respose.status === "connected") {
+    //                this.isLogined = true;
+    //            }
+    //            else if (respose.status === "not_authorized") {
+    //                this.isLogined = false;
+    //            }
+    //        }.bind(this);
+
+    //        this.FBlogin = function () {
+    //            if (this.isLogined) {
+    //                alert("You are already Loginged to The App");
+    //            }
+    //            else
+    //                this.FBobj.login(this.loginCallBack);
+    //        }
+
+    //        this.loginCallBack = function (respose) {
+    //            this.isLogined = true;
+    //            var uid = respose.authResponse.userID;
+    //            alert("Login success : " + uid);
+    //            this.FBobj.getLoginStatus(updateStatusCallback);
+    //        }
+
+    //        this.logoutCallBack = function (respose) {
+    //            this.isLogined = false;
+    //            alert("You are Logout from App");
+    //        }
+
+    //        //starting point
+    //        this.Init();
+    //    };
+
+    //    FBsignUp();
+  
 
 
 

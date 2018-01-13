@@ -13,6 +13,7 @@
     this.txtNickName = $("#txtNickName");
     this.txtEmail = $("#txtEmail");
     this.divPassword = $("#divPassword");
+    this.btnFbConnect = $("#btnFbConnect");
 
     this.rolesTile = null;
     this.userGroupTile = null;
@@ -44,7 +45,10 @@
         //this.txtDemoUserGroupSearch.on('keyup', this.KeyUptxtDemoUserGroupSearch.bind(this));
         //this.btnClearDemoUserGroupSearch.on('click', this.OnClickbtnClearDemoUserGroupSearch.bind(this));
 
+        $('#btnFbConnect').on('click', this.clickbtnFbConnect.bind(this));
+
         $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
+
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             $("#btnCreateUser").focus();
@@ -62,9 +66,11 @@
             this.txtNickName.attr("disabled", "true");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
+            
         }
         else {
             $(divFormHeading).text("Create User");
+            this.btnFbConnect.css("display", "none");
         }
     }
 
@@ -143,6 +149,37 @@
                 if (this.U_Groups.indexOf(this.userGroup[i].Id) !== -1)
                     initgroups.push(this.userGroup[i]);
         this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
+    }
+
+    this.clickbtnFbConnect = function () {
+        this.btnFbConnect.attr("disabled", "true");
+        $.ajaxSetup({ cache: true });
+        $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+            FB.init({
+                appId: '149537802493867',
+                version: 'v2.11' // or v2.1, v2.2, v2.3, ...
+            });
+            this.btnFbConnect.removeAttr('disabled');
+            FB.getLoginStatus(updateStatusCallback);
+        }.bind(this));
+        function updateStatusCallback(r) {
+            console.log(r);
+            if (r.authResponse !== null) {
+                console.log("UserId :" + r.authResponse.userID);
+            }
+            else
+                FB.login(loginCallBack);
+        };
+        function loginCallBack(response) {
+            console.log(response);
+            if (response.authResponse !== null) {
+                console.log("UserId :" + response.authResponse.userID);
+                FB.logout(logoutCallBack);
+            }
+        }
+        function logoutCallBack(respose) {
+            console.log(respose);
+        }
     }
 
     this.clickbtnCreateUser = function () {

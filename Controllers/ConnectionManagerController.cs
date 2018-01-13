@@ -91,15 +91,22 @@ namespace ExpressBase.Web.Controllers
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
             var req = this.HttpContext.Request.Form;
-           
-            EbDataDbConnection dbcon = new EbDataDbConnection();       
-            dbcon.NickName = req["nickname"];          
-            dbcon.Server = req["server"];
-            dbcon.Port = Int32.Parse(req["port"]);
-            dbcon.UserName = req["username"];
-            dbcon.Password = req["pwd"];
-            if (!String.IsNullOrEmpty(req["Isdef"]))
-                dbcon.IsDefault = false;
+
+            EbDataDbConnection dbcon = new EbDataDbConnection() {
+                DatabaseName=req["DbName"],
+                Server = req["Server"],
+                Port = Convert.ToInt32(req["Port"]),
+                UserName = req["AdminUname"],
+                Password = req["AdminPw"],
+                ReadWriteUserName = req["RWUname"],
+                ReadWritePassword = req["RWPw"],
+                ReadOnlyUserName = req["ReadOnlyUname"],
+                ReadOnlyPassword = req["ReadOnlyPw"],
+                Timeout = Convert.ToInt32(req["TimeOut"])
+            }; 
+            
+            ////if (!String.IsNullOrEmpty(req["Isdef"]))
+            //    dbcon.IsDefault = false;
 
             if (solutionConnections.EBSolutionConnections.DataDbConnection != null)
             {

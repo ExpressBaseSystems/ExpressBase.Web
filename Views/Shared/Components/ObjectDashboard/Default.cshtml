@@ -269,8 +269,8 @@
     var citynames = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-       
-        local: $.map(data, function (city, i) {           
+
+        local: $.map(data, function (city, i) {
             return {
                 name: city
             };
@@ -291,7 +291,7 @@
         }],
         freeInput: true
     });
-    
+
     var commonO = $("#layout_div").data("commonObj");
     if ('@ViewBag.Refid'.length > 0)
         commonO.UpdateCreateVersionDD();
@@ -307,8 +307,12 @@
         {
             $('#tags').tagsinput('add', '@ViewBag.Tags');
         }
-        $('select[name=Apps]').val(@ViewBag.AppId);
-        $('.selectpicker').selectpicker('refresh');
+        if ('@ViewBag.AppId'.length > 0)
+        {
+            $('#apps').tagsinput('add', '@ViewBag.AppId');
+        }
+        @*$('select[name=Apps]').val(@ViewBag.AppId);
+        $('.selectpicker').selectpicker('refresh');*@
 
         //$(window).scroll(function () {
         //    if ($('.dashbord').css("display") === "block") {

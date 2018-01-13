@@ -29,12 +29,7 @@ using Newtonsoft.Json;
 namespace ExpressBase.Web.Controllers
 {
     public class TenantController : EbBaseIntController
-    {
-        public const string SolutionName = "SolutionName";
-
-        public const string Sid = "Sid";
-
-        public const string Desc = "Desc";
+    {      
 
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
@@ -106,14 +101,12 @@ namespace ExpressBase.Web.Controllers
             ViewBag.iSid = result.Sid;
             return View();
         }
-
+        
         [HttpPost]
         public void EbCreateSolution(int i)
         {
-            var req = this.HttpContext.Request.Form;           
-            TempData[SolutionName] = req["Sname"].ToString();
-            TempData[Sid] = req["Esid"].ToString();
-            TempData[Desc] = req["Desc"].ToString();
+            var req = this.HttpContext.Request.Form;
+            string DbName = req["Isid"];
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
                 Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)
@@ -122,10 +115,10 @@ namespace ExpressBase.Web.Controllers
             {
                 EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
                 {
-                    dbName = req["Isid"]
+                    dbName = DbName.ToLower()
                 });
                 if (response.resp)                                
-                    this.ServiceClient.Post(new InitialSolutionConnectionsRequest {SolutionId = req["Isid"] });                
+                    this.ServiceClient.Post(new InitialSolutionConnectionsRequest {SolutionId = DbName.ToLower() });                
             }
         }
 

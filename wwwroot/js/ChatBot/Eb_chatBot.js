@@ -277,7 +277,7 @@
     };
 
     this.drawGraph = function () {
-        var canvas = document.getElementById(this.curChartViz.Name);
+        var canvas = document.getElementById(this.curChartViz.EbSid);
         this.chartApi = new Chart(canvas, {
             type: this.curChartViz.Type,
             data: this.gdata,
@@ -289,7 +289,7 @@
         var $tableCont = $('<div class="table-cont">' + this.curTblViz.BareControlHtml + '</div>');
         this.$chatBox.append($tableCont.hide());
         this.showTypingAnim();
-        $(`#${this.curTblViz.Name}`).DataTable({
+        $(`#${this.curTblViz.EbSid}`).DataTable({
             columns: this.curTblViz.Columns.$values,
             processing: true,
             serverSide: true,

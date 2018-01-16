@@ -1,0 +1,89 @@
+﻿@{
+    if (ViewBag.isAjaxCall)
+    {
+        Layout = null;
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout1.cshtml";
+    }
+    string editor="";
+    string whichController = "";
+
+    if (ViewBag.ListType == "user")
+    {
+        editor = "ManageUser";
+        whichController = "Security";
+    }
+    else if (ViewBag.ListType == "TestUser")//new commonlist test version
+    {
+        editor = "ManageUser";
+        whichController = "Security";
+    }
+    else if (ViewBag.ListType == "roles")
+    {
+        editor = "ManageRoles";
+        whichController = "Security";
+    }
+    //else if (ViewBag.ListType == "usergroup")
+    //{
+    //    editor = "UserGroups";
+    //    whichController = "TenantUser";
+    //}
+    else if (ViewBag.ListType == "usergroup")
+    {
+        editor = "ManageUserGroups";
+        whichController = "Security";
+    }
+
+    Dictionary<string, object> Dict = ViewBag.dict;
+}
+
+<div style="margin-top:50px">
+    <div class="row">
+        <div class="form-inline">
+            @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
+            {
+                <button href="" class="btn btn-primary"><i class="fa fa-plus-circle"></i> New</button>
+            }
+        </div>
+    </div>
+    @{
+        foreach (var element in Dict.Keys)
+        {
+            <div class="row objitems" name="objBox">
+                <div class="col-md-1">
+                    <input type="checkbox" aria-label="...">
+                </div>
+
+                <div class="col-md-8">
+                    <h4 name="head4" style="color:black;">@Dict[element]</h4>
+                    <p class="text-justify">dsgfds dgfrdhg dfhgdrewteberyrt reyhrtu6trujhfg reyer5y54</p>
+                    <h6>
+                        <i style="font-style:italic;">Created by Mr X on 12/09/2017 at 02:00 pm</i>
+                        <a style="margin-left:10px;">
+                            <span name="Status" class="label label-primary">Status</span>
+                            <span name="Version" class="label label-default">Version</span>
+                            <span class="label label-success">Dependency</span>
+                            <span name="Application" class="label label-danger">Application</span>
+                            <span name="Module" class="label label-default">Module</span>
+                        </a>
+                    </h6>
+                </div>
+                @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
+            {
+            <div class="col-md-2 pull-right">
+                <input type="hidden" id="itemid" name="itemid" value="@element" />
+                <input type="submit" class="btn btn-primary fa-input" value="Open &#xf054;" style="font-family: FontAwesome;">
+            </div>
+            }
+            </div>
+        }
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        var Dict= @ViewBag.dict;
+    });
+</script>

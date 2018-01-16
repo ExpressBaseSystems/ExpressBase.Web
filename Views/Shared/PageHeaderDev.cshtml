@@ -37,8 +37,8 @@
                     <li><a onclick="LoadCommonList('usergroup')" href="CommonList?type='usergroup'"><i class="fa fa-caret-right"></i> User Groups</a></li>
                     <li class="divider"></li>
                     <li><a onclick="LoadCommonList('roles')" href="CommonList?type='roles'"><i class="fa fa-caret-right"></i> Roles</a></li>
-                    @*<li class="divider"></li>
-                    <li><a onclick="LoadCommonList('roles2')" href="CommonList?type='roles2'"><i class="fa fa-caret-right"></i> Roles2</a></li>*@
+                    <li class="divider"></li>
+                    <li><a onclick="LoadNewCommonList('TestUser')" href="CommonList"><i class="fa fa-caret-right"></i>Test List Usr</a></li>
 
                 </ul>
             </div>
@@ -135,21 +135,25 @@
         });
     }
 
+    function LoadNewCommonList(type) {
+        event.preventDefault();
+        var _container = $("#layout_div");
+        $.LoadingOverlay("show");
+        $.ajax({
+            url: "../Security/CommonList",
+            type: "POST",
+            cache: false,
+            data: { "type": type },
+            success: function (result) {
+                _container.html(result);
+                $.LoadingOverlay("hide");
+                $("#ObjModal").modal('hide');
+            }
+        });
+    }
+
     function LoadMyProfile() {
         event.preventDefault();
-        //var _container = $("#layout_div");
-        //$.LoadingOverlay("show");
-        //$.ajax({
-        //    url: "../Security/ManageUser",
-        //    type: "POST",
-        //    cache: false,
-        //    data: { "itemid": 1 },
-        //    success: function (result) {
-        //        _container.html(result);
-        //        $.LoadingOverlay("hide");
-        //        $("#ObjModal").modal('hide');
-        //    }
-        //});
         window.open("../Security/ManageUser?itemid=" + $("#hiddenTxtUserId").val(), "_blank");
     }
 

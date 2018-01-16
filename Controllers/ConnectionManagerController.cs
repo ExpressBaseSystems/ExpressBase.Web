@@ -87,7 +87,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult DataDb(int i)
+        public EbDataDbConnection DataDb(int i)
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
             var req = this.HttpContext.Request.Form;
@@ -116,7 +116,7 @@ namespace ExpressBase.Web.Controllers
             }
             else
                 this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });
-            return Redirect("/ConnectionManager");
+            return dbcon;
         }
 
         [HttpPost]

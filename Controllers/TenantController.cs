@@ -21,6 +21,7 @@ using ExpressBase.Security;
 using ServiceStack.Auth;
 using ExpressBase.Common.Extensions;
 using Newtonsoft.Json;
+using ExpressBase.Common.Connections;
 
 
 
@@ -75,7 +76,20 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet]
         public IActionResult SolutionDashBoard()
-        {            
+        {
+            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = 0 });
+            if ((solutionConnections.EBSolutionConnections.FilesDbConnection.IsDefault == true))
+                solutionConnections.EBSolutionConnections.FilesDbConnection = new EbFilesDbConnection();
+            if ((solutionConnections.EBSolutionConnections.DataDbConnection.IsDefault == true))
+                solutionConnections.EBSolutionConnections.DataDbConnection = new EbDataDbConnection();
+            if ((solutionConnections.EBSolutionConnections.SMTPConnection == null))
+                solutionConnections.EBSolutionConnections.SMTPConnection = new SMTPConnection();
+            if (solutionConnections.EBSolutionConnections == null)
+                solutionConnections.EBSolutionConnections.SMSConnection = new SMSConnection();
+            if ((solutionConnections.EBSolutionConnections.ObjectsDbConnection.IsDefault == true))
+                solutionConnections.EBSolutionConnections.ObjectsDbConnection = new EbObjectsDbConnection();
+
+            ViewBag.Connections = solutionConnections.EBSolutionConnections;
 
             return View();
         }

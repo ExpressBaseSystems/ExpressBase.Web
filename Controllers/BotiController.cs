@@ -22,6 +22,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult BotDashBoard()
+        {
+            return View();
+        }
+
         [HttpPost]
         public IActionResult addBot(string _name, string _fullname, string _url, string _sol_id, string _wel_msg, string chatid, string botid)
         {

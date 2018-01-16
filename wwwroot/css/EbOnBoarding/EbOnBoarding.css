@@ -368,6 +368,10 @@ margin-top:0;
 .s-dash-modal label{
     font-weight:400;
 }
+.dbConnectionEdit{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 /*tenant add solution*/
 .pd-0 {
     padding: 0;

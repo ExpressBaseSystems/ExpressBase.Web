@@ -6,7 +6,7 @@ using MongoDB.Driver;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
-
+using Newtonsoft.Json;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -87,27 +87,25 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public EbDataDbConnection DataDb(int i)
+        public string DataDb(int i)
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
             var req = this.HttpContext.Request.Form;
-
-            EbDataDbConnection dbcon = new EbDataDbConnection() {
-                DatabaseName=req["DbName"],
-                Server = req["Server"],
-                Port = Convert.ToInt32(req["Port"]),
-                UserName = req["AdminUname"],
-                Password = req["AdminPw"],
-                ReadWriteUserName = req["RWUname"],
-                ReadWritePassword = req["RWPw"],
-                ReadOnlyUserName = req["ReadOnlyUname"],
-                ReadOnlyPassword = req["ReadOnlyPw"],
-                Timeout = Convert.ToInt32(req["TimeOut"])
-            }; 
-            
-            ////if (!String.IsNullOrEmpty(req["Isdef"]))
-            //    dbcon.IsDefault = false;
-
+           
+            EbDataDbConnection dbcon = new EbDataDbConnection()
+            {        
+                DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
+                DatabaseName =req["databaseName"],
+                Server = req["server"],
+                Port = Convert.ToInt32(req["port"]),
+                UserName = req["userName"],
+                Password = req["password"],
+                ReadWriteUserName = req["readWriteUserName"],
+                ReadWritePassword = req["readWritePassword"],
+                ReadOnlyUserName = req["readOnlyUserName"],
+                ReadOnlyPassword = req["readOnlyPassword"],
+                Timeout = Convert.ToInt32(req["timeout"])
+            };
             if (solutionConnections.EBSolutionConnections.DataDbConnection != null)
             {
                 if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
@@ -115,8 +113,8 @@ namespace ExpressBase.Web.Controllers
                 this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false });
             }
             else
-                this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });
-            return dbcon;
+                this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });            
+            return JsonConvert.SerializeObject(dbcon);
         }
 
         [HttpPost]

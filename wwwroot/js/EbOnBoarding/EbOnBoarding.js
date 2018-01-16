@@ -106,9 +106,9 @@
                 },
                 data: {
                     Sname: $("[name='Sname']").val().trim(),
-                    Esid: $("[name='Esid']").val().trim(),
+                    Esid: $("[name='Esid']").val().toLowerCase().trim(),
                     Desc: $("[name='Desc']").val().trim(),
-                    Isid: $("[name='Isid']").val().trim(),
+                    Isid: $("[name='Isid']").val().toLowerCase().trim(),
                     Subscription: JSON.stringify(this.objSubscription),
                     ProfileInfo: $("[name='ProfileInfo']").val()
                 }

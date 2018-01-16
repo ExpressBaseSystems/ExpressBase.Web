@@ -7,13 +7,16 @@
     this.r2rList = r2rList;
     this.itemId = $("#userid").val();
     this.dependentList = [];
-    
+    this.dominantList = [];
+
     this.divFormHeading = $("#divFormHeading");
     this.txtName = $("#txtName");
     this.txtNickName = $("#txtNickName");
     this.txtEmail = $("#txtEmail");
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
+    this.FB = null;
+    this.fbId = null;
 
     this.rolesTile = null;
     this.userGroupTile = null;
@@ -45,7 +48,7 @@
         //this.txtDemoUserGroupSearch.on('keyup', this.KeyUptxtDemoUserGroupSearch.bind(this));
         //this.btnClearDemoUserGroupSearch.on('click', this.OnClickbtnClearDemoUserGroupSearch.bind(this));
 
-        $('#btnFbConnect').on('click', this.clickbtnFbConnect.bind(this));
+        //$('#btnFbConnect').on('click', this.clickbtnFbConnect.bind(this));
 
         $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
 
@@ -53,7 +56,7 @@
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             $("#btnCreateUser").focus();
         });
-       
+
         this.initForm();
         this.initTiles();
     }
@@ -66,13 +69,118 @@
             this.txtNickName.attr("disabled", "true");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
-            
+
+            this.initFbConnect();
+
         }
         else {
             $(divFormHeading).text("Create User");
             this.btnFbConnect.css("display", "none");
+            $("#btnFbInvite").show();
         }
     }
+
+    this.initFbConnect = function () {
+        $.ajaxSetup({ cache: true });
+        $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+            FB.init({
+                appId: '149537802493867',
+                version: 'v2.11'
+            });
+            FB.getLoginStatus(updateStatusCallback);
+        });
+        function updateStatusCallback(response) {
+            if (response.authResponse !== null) {
+                //this.fbId = response.authResponse.userID;
+                if ($("#lblFbId").attr("data-id") === "") {
+                    $("#btnFbConnect").show();
+                }
+                else {
+                    $("#userFbLink").attr("href", "www.facebook.com/" + $("#lblFbId").attr("data-id"));
+                    $("#userFbLink").show();
+                    $("#imgUserFbProfPic").attr("src", "http://graph.facebook.com/" + $("#lblFbId").attr("data-id") + "/picture?type=square");
+                    $("#imgUserFbProfPic").show();
+                    FBpicture();
+                }
+            }
+            else {
+                if ($("#lblFbId").attr("data-id") === "")
+                    $("#btnFbConnect").show();
+                else {
+                    $("#imgUserFbProfPic").attr("src", "http://graph.facebook.com/" + $("#lblFbId").attr("data-id") + "/picture?type=square");
+                    $("#imgUserFbProfPic").show();
+                    $("#userFbLink").attr("href", "http://www.facebook.com/" + $("#lblFbId").attr("data-id"));
+                    $("#userFbLink").show();
+                }
+            }
+        };
+        $('#btnFbConnect').off("click").on("click",
+            function () {
+                FB.login(loginCallBack);
+            }
+        );
+        function loginCallBack(response) {
+            if (response.authResponse !== null) {
+                this.fbId = response.authResponse.userID;
+                $("#lblFbId").attr("data-id", this.fbId);
+                $("#userFbLink").attr("href", "http://www.facebook.com/" + this.fbId);
+                $("#userFbLink").show();
+                $("#btnFbConnect").hide();
+                FBpicture();
+                FB.logout(logoutCallBack);
+            }
+            else
+                console.log("fb login failed - Response: " + response);
+        }
+
+        function logoutCallBack(respose) {
+            console.log("logout");
+        }
+
+        function FBpicture() {
+            FB.api(
+                '/me?fields=name,picture.type(large)',
+                function (response) {
+                    //alert(response.picture.data.url);
+                    //$("#userFbLink").attr("href", "http://www.facebook.com/" + $("#lblFbId").attr("data-id"));
+                    $("#userFbLink").text(response.name);
+                    $("#imgUserFbProfPic").attr("src", response.picture.data.url);
+                    $("#imgUserFbProfPic").show();
+                }
+            );
+        }
+    }
+
+    //this.clickbtnFbConnect = function () {
+    //    this.btnFbConnect.attr("disabled", "true");
+    //    $.ajaxSetup({ cache: true });
+    //    $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+    //        FB.init({
+    //            appId: '149537802493867',
+    //            version: 'v2.11' // or v2.1, v2.2, v2.3, ...
+    //        });
+    //        this.btnFbConnect.removeAttr('disabled');
+    //        FB.getLoginStatus(updateStatusCallback);
+    //    }.bind(this));
+    //    function updateStatusCallback(r) {
+    //        console.log(r);
+    //        if (r.authResponse !== null) {
+    //            console.log("UserId :" + r.authResponse.userID);
+    //        }
+    //        else
+    //            FB.login(loginCallBack);
+    //    };
+    //    function loginCallBack(response) {
+    //        console.log(response);
+    //        if (response.authResponse !== null) {
+    //            console.log("UserId :" + response.authResponse.userID);
+    //            FB.logout(logoutCallBack);
+    //        }
+    //    }
+    //    function logoutCallBack(respose) {
+    //        console.log(respose);
+    //    }
+    //}
 
     this.findDependentRoles = function (dominant) {
         for (var i = 0; i < this.r2rList.length; i++) {
@@ -83,8 +191,25 @@
         }
     }
 
+    this.findDominantRoles = function (dependent) {
+        for (var i = 0; i < this.r2rList.length; i++) {
+            if (this.r2rList[i].Dependent == dependent && this.dominantList.indexOf(this.r2rList[i].Dominant) === -1) {
+                this.dominantList.push(this.r2rList[i].Dominant);
+                this.findDominantRoles(this.r2rList[i].Dominant);
+            }
+        }
+    }
+
     this.chkItemCustomFunc = function (_this, e) {
         _this.dependentList = [];
+
+        $.each($(this.divSearchResults).find('input'), function (i, ob) {
+            if (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+                $(ob).removeAttr("checked");
+                $(ob).attr("disabled", "true");
+            }
+        });
+
         if ($(e.target).is(':checked')) {
             _this.findDependentRoles($(e.target).attr("data-id"));
             var st = "";
@@ -117,7 +242,7 @@
             _this.findDependentRoles($(ob).attr('data-id'));
         });
         $.each($(this.divSearchResults).find('input'), function (i, ob) {
-            if (_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+            if ((_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) || (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1)) {
                 $(ob).removeAttr("checked");
                 $(ob).attr("disabled", "true");
             }
@@ -128,7 +253,6 @@
                 $(ob).attr("disabled", "true");
                 $(ob).prop("checked", "true");
             }
-
         }.bind(this));
     }
 
@@ -151,36 +275,7 @@
         this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
     }
 
-    this.clickbtnFbConnect = function () {
-        this.btnFbConnect.attr("disabled", "true");
-        $.ajaxSetup({ cache: true });
-        $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
-            FB.init({
-                appId: '149537802493867',
-                version: 'v2.11' // or v2.1, v2.2, v2.3, ...
-            });
-            this.btnFbConnect.removeAttr('disabled');
-            FB.getLoginStatus(updateStatusCallback);
-        }.bind(this));
-        function updateStatusCallback(r) {
-            console.log(r);
-            if (r.authResponse !== null) {
-                console.log("UserId :" + r.authResponse.userID);
-            }
-            else
-                FB.login(loginCallBack);
-        };
-        function loginCallBack(response) {
-            console.log(response);
-            if (response.authResponse !== null) {
-                console.log("UserId :" + response.authResponse.userID);
-                FB.logout(logoutCallBack);
-            }
-        }
-        function logoutCallBack(respose) {
-            console.log(respose);
-        }
-    }
+    
 
     this.clickbtnCreateUser = function () {
         var selectedroles = this.rolesTile.getItemIds();
@@ -193,9 +288,11 @@
                 "usergroups": selectedusergroups,
                 "firstname": $('#txtName').val(),
                 "email": $('#txtEmail').val(),
-                "Pwd": $('#pwdPaasword').val()
+                "Pwd": $('#pwdPaasword').val(),
+                "socialid": $("#lblFbId").attr("data-id"),
+                "socialname": $("#userFbLink").text()
             }, function (result) {
-                if (result > -1){
+                if (result > -1) {
                     alert("Saved Successfully");
                     window.top.close();
                 }
@@ -274,7 +371,7 @@
     //                                    </div>
     //                                </div>`);
     //}
-       
+
     //this.drawSelectedDisplay = function (flag) {
     //    var addModal;
     //    var divSearchResultsChecked;
@@ -314,7 +411,7 @@
     //                                                </div>`);
     //        }
     //    });
-        
+
     //}
 
     //this.SortDiv = function (flag) {
@@ -333,7 +430,7 @@
     //        mylist.append(item);
     //    });
     //}
-        
+
     //this.KeyUptxtDemoRoleSearch = function () {
     //    this.keyUpTxtDemoSearch(1);
     //}
@@ -382,7 +479,7 @@
     //    this.KeyUptxtDemoUserGroupSearch();
     //}
 
-    
+
 
     //this.loadUserRoles = function () {
     //    obj = this.user;

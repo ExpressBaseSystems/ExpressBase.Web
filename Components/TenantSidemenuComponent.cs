@@ -10,6 +10,7 @@ namespace ExpressBase.Web.Components
     {
         public async Task<IViewComponentResult> InvokeAsync(string refid)
         {
+            ViewBag.bot = new { name = "jith"};
             return View();
         }
     }

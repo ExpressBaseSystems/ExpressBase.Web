@@ -147,8 +147,12 @@ namespace ExpressBase.Web.Controllers
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbFILES });
             var req = this.HttpContext.Request.Form;
-            EbFilesDbConnection dbcon = new EbFilesDbConnection();
-            dbcon.FilesDB_url = req["url"].ToString();
+            EbFilesDbConnection dbcon = new EbFilesDbConnection()
+            {
+                FilesDB_url = req["ConnectionString"].ToString(),
+                NickName = req["NickName"].ToString()
+            };
+            
             if (solutionConnections.EBSolutionConnections.FilesDbConnection != null)
                 this.ServiceClient.Post<bool>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = false });
             else

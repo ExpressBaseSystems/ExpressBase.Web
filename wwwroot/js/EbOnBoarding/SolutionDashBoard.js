@@ -38,6 +38,21 @@
         }.bind(this));      
     };
 
+    this.FilesDbSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/FilesDb",
+            data: postData,
+            beforeSend: function () {
+
+            }
+        }).done(function (data) {
+            $("#" + this.whichModal).modal("toggle");                                       
+        }.bind(this));      
+    };
+
     this.appendDataDb = function (object) { 
         var Server = "";
         var DatabaseName = "";
@@ -63,7 +78,7 @@
                                         <td field="DatabaseVendor">MongoDB</td>
                                         <td field="FilesDB_url" style="max-width: 337px;text-overflow:ellipsis;overflow: hidden;">${FilesDB_url}</td>
                                         <td field="NickName">${object.NickName}</td>
-                                        <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
+                                        <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="filesDbConnectEdit"><i class="fa fa-pencil"></i></button></td>
                                             </tr>`);
     };
 
@@ -74,6 +89,7 @@
         $(".s-dash-bodyComm .edit-btn").on("click", this.editConnectionRow.bind(this));
         //$(".addConnection").on("click", this.addConnectionRow.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
+        $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
     };
 
     this.init();

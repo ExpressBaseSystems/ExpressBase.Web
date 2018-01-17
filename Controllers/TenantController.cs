@@ -77,10 +77,10 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult SolutionDashBoard()
         {
-            //GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest ());
+            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest ());
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = 0 });          
             ViewBag.Connections = JsonConvert.SerializeObject(solutionConnections.EBSolutionConnections);
-
+            ViewBag.SolutionInfo = resp.Data;
             return View();
         }
 
@@ -129,7 +129,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult EbOnBoarding(int i)
         {
-            var req = this.HttpContext.Request.Form;
+            var req = this.HttpContext.Request.Form;           
             IServiceClient client = this.ServiceClient;
             var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
             if (resultlist.id > 0)

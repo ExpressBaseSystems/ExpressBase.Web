@@ -38,8 +38,7 @@ namespace ExpressBase.Web.Controllers
 			if (type == "TestUser")
 			{
 				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1());
-				ViewBag.dict = fr.Data;
-
+				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
 			else if (type == "usergroup")
 			{

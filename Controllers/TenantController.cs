@@ -77,20 +77,10 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult SolutionDashBoard()
         {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = 0 });
-            if ((solutionConnections.EBSolutionConnections.FilesDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.FilesDbConnection = new EbFilesDbConnection();
-            if ((solutionConnections.EBSolutionConnections.DataDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.DataDbConnection = new EbDataDbConnection();
-            if ((solutionConnections.EBSolutionConnections.SMTPConnection == null))
-                solutionConnections.EBSolutionConnections.SMTPConnection = new SMTPConnection();
-            if (solutionConnections.EBSolutionConnections == null)
-                solutionConnections.EBSolutionConnections.SMSConnection = new SMSConnection();
-            if ((solutionConnections.EBSolutionConnections.ObjectsDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.ObjectsDbConnection = new EbObjectsDbConnection();
-
-            ViewBag.Connections = solutionConnections.EBSolutionConnections;
-
+            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest ());
+            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = 0 });          
+            ViewBag.Connections = JsonConvert.SerializeObject(solutionConnections.EBSolutionConnections);
+            ViewBag.SolutionInfo = resp.Data;
             return View();
         }
 
@@ -139,7 +129,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult EbOnBoarding(int i)
         {
-            var req = this.HttpContext.Request.Form;
+            var req = this.HttpContext.Request.Form;           
             IServiceClient client = this.ServiceClient;
             var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
             if (resultlist.id > 0)

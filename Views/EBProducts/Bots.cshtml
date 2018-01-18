@@ -1,6 +1,24 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
 }
+
+<script type="text/javascript">
+    window.EXPRESSbase_SOLUTION_ID = "eb_roby_dev";
+    window.EXPRESSbase_BOT_ID = "123";
+    (function () {
+        d = document;
+        s = d.createElement("script");
+        s.src = "/js/ChatBot/ebbot-ext.js";
+        //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
+        s.async = 1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+        d.ebbotName = "Live ChatBot";
+        d.ebbotThemeColor = "#31d031";
+        d.isebdemo = true;
+    })();
+</script>
+<svg id="boticon" height="0"></svg>
+
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
 <div class="container-fluid pd-0">

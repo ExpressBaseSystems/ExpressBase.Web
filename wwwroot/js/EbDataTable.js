@@ -148,8 +148,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         }
         else {
-            $("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
+            //$("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
             $("#sub_window_" + this.tableId).css("padding-top", "15px");
+            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
         }
     }
 
@@ -281,12 +282,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#objname").text(this.dvName);
         $("#ppgrid_" + this.tableId).hide();
         $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
+        $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
         if (this.login == "uc") {
             $("#ppgrid_" + this.tableId).hide();
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
 
             if (this.FD) {
-                $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
+                //$("#sub_windows_sidediv_" + this.tableId).css("display", "none");
                 //$("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
             }
             else {

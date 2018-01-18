@@ -22,79 +22,47 @@
                         <div class="collapsible-header"><i class="fa fa-television tdash-icon" aria-hidden="true"></i> Web</div>
                         <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 1
-                                        @ViewBag.bot
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 2
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 3
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 4
-                                    </div>
-                                </li>
+                                @{
+                                    int l = 3;//ViewBag.webApps.Length;
+                                    for (var i = 0; i <= @ViewBag.botlength; i +=2)
+                                    {
+                                        <li>
+                                            <div class="collapsible-header" appid="@ViewBag.webApps[@i + 1]">
+                                                @ViewBag.webApps[@i]
+                                            </div>
+                                        </li>
+                                    }
+                                }
                             </ul>
                         </div>
                     </li>
                     <li>
-                        <div class="collapsible-header"><i class="fa fa-mobile fa-lg tdash-icon" aria-hidden="true"></i> Mobile</div><div class="collapsible-body">
+                        <div class="collapsible-header"><i class="fa fa-mobile fa-lg tdash-icon" aria-hidden="true"></i> Mobile</div>
+                        <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 1
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 2
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 3
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 4
-                                    </div>
-                                </li>
+                                @foreach (var name in ViewBag.mobApps)
+                                {
+                                    <li>
+                                        <div class="collapsible-header">
+                                            @name
+                                        </div>
+                                    </li>
+                                }
                             </ul>
                         </div>
                     </li>
                     <li>
-                        <div class="collapsible-header"><i class="fa fa-comment-o fa-lg tdash-icon" aria-hidden="true"></i> Bot</div><div class="collapsible-body">
+                        <div class="collapsible-header"><i class="fa fa-comment-o fa-lg tdash-icon" aria-hidden="true"></i> Bot</div>
+                        <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 1
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 2
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 3
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="collapsible-header">
-                                        app 4
-                                    </div>
-                                </li>
+                                @foreach (var name in ViewBag.botApps)
+                                {
+                                    <li>
+                                        <div class="collapsible-header">
+                                            @name
+                                        </div>
+                                    </li>
+                                }
                             </ul>
                         </div>
                     </li>
@@ -137,6 +105,7 @@
 
     .l1 .collapsible-header {
         font-size: .9rem;
+        padding: 10px;
     }
 
     .l1 .fa {
@@ -149,6 +118,11 @@
     }
 
         .l2 .collapsible-header {
+            border: none;
+        }
+
+        .l2 .collapsible-header {
             font-size: .85rem;
+            padding: 5px;
         }
 </style>

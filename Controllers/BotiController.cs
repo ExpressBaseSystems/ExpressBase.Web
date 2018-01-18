@@ -87,8 +87,8 @@ namespace ExpressBase.Web.Controllers
         {
             int _sol_id = 100;
             var bot = new BotListRequest();
-            bot.SolutionId = _sol_id;
-            List<ChatBot> Bots = ServiceClient.Get<BotListResponse>(bot).Data;
+                bot.SolutionId = _sol_id;
+                List<ChatBot> Bots = ServiceClient.Get<BotListResponse>(bot).Data;
 
             string _html = string.Empty;
 

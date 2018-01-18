@@ -17,6 +17,10 @@ using System.Drawing;
 using static ExpressBase.Objects.ReportRelated.EbReportField;
 using System.Net.Http;
 using System.Net;
+using System.Xml;
+using System.Web;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -60,7 +64,7 @@ namespace ExpressBase.Web.Controllers
         private float pf_Yposition;
         private float ph_Yposition;
         private float dt_Yposition;
-        private float detailprintingtop = 0;       
+        private float detailprintingtop = 0;
 
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
@@ -82,7 +86,9 @@ namespace ExpressBase.Web.Controllers
                 dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Report.DataSourceRefId, Draw = 1, Start = 0, Length = 100 });
                 Report.DataRow = dresp.Data;
             }
-
+            EbDataTable tab = new EbDataTable();
+            tab.Columns = Report.DataColumns;
+            tab.Rows = Report.DataRow;
             iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
 
             d = new Document(rec);
@@ -98,11 +104,8 @@ namespace ExpressBase.Web.Controllers
             Report.InitializeSummaryFields();
             GetWatermarkImages();
             iTextSharp.text.Font link = FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.UNDERLINE, BaseColor.DarkGray);
-
             Anchor anchor = new Anchor("xyz", link);
-            anchor.ToPostUrl();
-            anchor.Reference = "http://eb_roby_dev.localhost:5000/ReportRender?refid=eb_roby_dev-eb_roby_dev-3-1127-1854";
-
+            anchor.Reference = "http://eb_roby_dev.localhost:5000/ReportRender?refid=eb_roby_dev-eb_roby_dev-3-1127-1854?tab=" + JsonConvert.SerializeObject(tab.Rows[Report.SerialNumber - 1]);
             d.Add(anchor);
             d.NewPage();
 
@@ -112,6 +115,51 @@ namespace ExpressBase.Web.Controllers
             ms1.Position = 0;//important
             return new FileStreamResult(ms1, "application/pdf");
         }
+
+        //public string BitLy()
+        //{
+        //    string statusCode = string.Empty;                       // The variable which we will be storing the status code of the server response
+        //    string statusText = string.Empty;                       // The variable which we will be storing the status text of the server response
+        //    string shortUrl = string.Empty;                         // The variable which we will be storing the shortened url
+        //    string longUrl = string.Empty;                          // The variable which we will be storing the long url
+
+        //    string urlToShorten =      // The url we want to shorten
+        //    XmlDocument xmlDoc = new XmlDocument();                 // The xml document which we will use to parse the response from the server
+
+        //    WebRequest request = WebRequest.Create("http://api.bitly.com/v3/shorten");
+        //    byte[] data = Encoding.UTF8.GetBytes(string.Format("login={0}&apiKey={1}&longUrl={2}&format={3}",
+        //     "o_6id5o5bl64",                             // Your username
+        //     "R_9c60829c301c4fc9b68f5cf229f0efdf",                              // Your API key
+        //     HttpUtility.UrlEncode(urlToShorten),         // Encode the url we want to shorten
+        //     "xml"));                                     // The format of the response we want the server to reply with
+
+        //    request.Method = "POST";
+        //    request.ContentType = "application/x-www-form-urlencoded";
+        //    request.ContentLength = data.Length;
+        //    using (Stream ds = request.GetRequestStream())
+        //    {
+        //        ds.Write(data, 0, data.Length);
+        //    }
+        //    using (WebResponse response = request.GetResponse())
+        //    {
+        //        using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+        //        {
+        //            xmlDoc.LoadXml(sr.ReadToEnd());
+        //        }
+        //    }
+
+        //    statusCode = xmlDoc.GetElementsByTagName("status_code")[0].InnerText;
+        //    statusText = xmlDoc.GetElementsByTagName("status_txt")[0].InnerText;
+        //    shortUrl = xmlDoc.GetElementsByTagName("url")[0].InnerText;
+        //    longUrl = xmlDoc.GetElementsByTagName("long_url")[0].InnerText;
+
+        //    Console.WriteLine(statusCode);      // Outputs "200"
+        //    Console.WriteLine(statusText);      // Outputs "OK"
+        //    Console.WriteLine(shortUrl);        // Outputs "http://bit.ly/WVk1qN"
+        //    Console.WriteLine(longUrl);         // Outputs "http://www.fluxbytes.com/"
+
+        //    return shortUrl;
+        //}
 
         public void GetWatermarkImages()
         {
@@ -278,7 +326,7 @@ namespace ExpressBase.Web.Controllers
             var column_name = string.Empty;
             var column_val = string.Empty;
             if (Report.PageSummaryFields.ContainsKey(field.Title) || Report.ReportSummaryFields.ContainsKey(field.Title))
-               Report.CallSummerize(field.Title, serialnumber);
+                Report.CallSummerize(field.Title, serialnumber);
             if (field is EbDataField)
             {
                 if (field is IEbDataFieldSummary)

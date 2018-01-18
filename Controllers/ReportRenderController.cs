@@ -97,6 +97,13 @@ namespace ExpressBase.Web.Controllers
             //Report.DataRow = __datarows;
             Report.InitializeSummaryFields();
             GetWatermarkImages();
+            iTextSharp.text.Font link = FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.UNDERLINE, BaseColor.DarkGray);
+
+            Anchor anchor = new Anchor("xyz", link);
+            anchor.ToPostUrl();
+            anchor.Reference = "http://eb_roby_dev.localhost:5000/ReportRender?refid=eb_roby_dev-eb_roby_dev-3-1127-1854";
+
+            d.Add(anchor);
             d.NewPage();
 
             DrawReportHeader();

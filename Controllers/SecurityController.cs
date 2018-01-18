@@ -29,6 +29,67 @@ namespace ExpressBase.Web.Controllers
 		{
 			return View();
 		}
+
+		
+		public IActionResult CommonList(string type)
+		{
+			IServiceClient client = this.ServiceClient;
+			ViewBag.ListType = type;
+			if (type == "TestUser")
+			{
+				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1());
+				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
+			}
+			else if (type == "usergroup")
+			{
+				var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
+				ViewBag.dict = fr.Data;
+			}
+			else if (type == "roles")
+			{
+				var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
+				ViewBag.dict = fr.Data;
+			}
+			else
+			{
+				var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
+				ViewBag.dict = fr.Data;
+			}
+			if (ViewBag.isAjaxCall)
+				return PartialView();
+			else
+				return View();
+		}
+
+
+
+
+		[HttpGet]
+		public IActionResult UserPreferences()
+		{
+			var res = this.ServiceClient.Post<EditUserPreferenceResponse>(new EditUserPreferenceRequest());
+			if (res.Data != null)
+			{
+				ViewBag.dateformat = res.Data["dateformat"];
+				ViewBag.timezone = res.Data["timezone"];
+				ViewBag.numformat = res.Data["numformat"];
+				ViewBag.timezoneabbre = res.Data["timezoneabbre"];
+				ViewBag.timezonefull = res.Data["timezonefull"];
+				ViewBag.locale = res.Data["locale"];
+
+			}
+
+			return View();
+		}
+
+		[HttpPost]
+		public IActionResult UserPreferences(int i)
+		{
+			var req = this.HttpContext.Request.Form;
+			var res = this.ServiceClient.Post<UserPreferenceResponse>(new UserPreferenceRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+			return View();
+		}
+
 		//--------------MANAGE USER START------------------------------------
 		public IActionResult ManageUser(int itemid)
 		{
@@ -44,9 +105,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
 			if (itemid > 0)
 			{
-				ViewBag.U_Name = fr.UserData["name"];
-				ViewBag.U_Email = fr.UserData["email"];
-				ViewBag.U_Fb_Id = fr.UserData["socialid"];
+				ViewBag.U_Info = fr.UserData;
 				ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
 				ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
 			}
@@ -67,6 +126,8 @@ namespace ExpressBase.Web.Controllers
 			Dict["firstname"] = req["firstname"];
 			Dict["email"] = req["email"];
 			Dict["pwd"] = req["pwd"];
+			Dict["socialid"] = req["socialid"];
+			Dict["socialname"] = req["socialname"];
 			Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
 			Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
 

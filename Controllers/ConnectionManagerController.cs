@@ -6,7 +6,7 @@ using MongoDB.Driver;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
-
+using Newtonsoft.Json;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -87,36 +87,41 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult DataDb(int i)
+        public string DataDb(int i)
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
             var req = this.HttpContext.Request.Form;
-
-            EbDataDbConnection dbcon = new EbDataDbConnection() {
-                DatabaseName=req["DbName"],
-                Server = req["Server"],
-                Port = Convert.ToInt32(req["Port"]),
-                UserName = req["AdminUname"],
-                Password = req["AdminPw"],
-                ReadWriteUserName = req["RWUname"],
-                ReadWritePassword = req["RWPw"],
-                ReadOnlyUserName = req["ReadOnlyUname"],
-                ReadOnlyPassword = req["ReadOnlyPw"],
-                Timeout = Convert.ToInt32(req["TimeOut"])
-            }; 
-            
-            ////if (!String.IsNullOrEmpty(req["Isdef"]))
-            //    dbcon.IsDefault = false;
-
+           
+            EbDataDbConnection dbcon = new EbDataDbConnection()
+            {        
+                DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
+                DatabaseName =req["databaseName"],
+                Server = req["server"],
+                Port = Convert.ToInt32(req["port"]),
+                UserName = req["userName"],
+                Password = req["password"],
+                ReadWriteUserName = req["readWriteUserName"],
+                ReadWritePassword = req["readWritePassword"],
+                ReadOnlyUserName = req["readOnlyUserName"],
+                ReadOnlyPassword = req["readOnlyPassword"],
+                Timeout = Convert.ToInt32(req["timeout"])
+            };
             if (solutionConnections.EBSolutionConnections.DataDbConnection != null)
             {
                 if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
                     dbcon.Password = solutionConnections.EBSolutionConnections.DataDbConnection.Password;
-                this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false });
+                if(!this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false }))
+                {
+                    if (req["databaseVendor"].ToString() == "ORACLE")
+                         this.ServiceClient.Post<bool>(new EbCreateOracleDBRequest { });
+
+
+                }
+
             }
             else
-                this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });
-            return Redirect("/ConnectionManager");
+                this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });            
+            return JsonConvert.SerializeObject(dbcon);
         }
 
         [HttpPost]
@@ -149,8 +154,12 @@ namespace ExpressBase.Web.Controllers
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbFILES });
             var req = this.HttpContext.Request.Form;
-            EbFilesDbConnection dbcon = new EbFilesDbConnection();
-            dbcon.FilesDB_url = req["url"].ToString();
+            EbFilesDbConnection dbcon = new EbFilesDbConnection()
+            {
+                FilesDB_url = req["ConnectionString"].ToString(),
+                NickName = req["NickName"].ToString()
+            };
+            
             if (solutionConnections.EBSolutionConnections.FilesDbConnection != null)
                 this.ServiceClient.Post<bool>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = false });
             else

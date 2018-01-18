@@ -28,25 +28,24 @@
             ordering: true,
             columns: tblcols,
             data: tbldata,
-            //columnDefs: [{
-            //    searchable: false,
-            //    orderable: false,
-            //    targets: [0, 7]
-            //}],
             order: [[2, 'asc']]
-
         });
         table.on('order.dt search.dt', function () {
             table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
                 cell.innerHTML = i + 1;
             });
         }).draw();
+        $("#tblCommonList").on('click', '.fa-pencil', this.onClickEdit.bind(this));
     }
+
+    this.onClickEdit = function (e) {
+        var id = $(e.target).attr("data-id");
+        //if user then
+        window.open("../Security/ManageUser?itemid=" + id, "_blank");
+    }
+
     this.tblEditColumnRender = function (data, type, row, meta) {
-        //var checked = '';
-        //if (this.permission.indexOf(data) !== -1)
-        //    checked = 'checked';
-        return `<i class="fa fa-pencil fa-2x" aria-hidden="true"></i>`;
+        return `<i class="fa fa-pencil fa-2x" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]}></i>`;
     }
 
 

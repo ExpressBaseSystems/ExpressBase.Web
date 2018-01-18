@@ -113,10 +113,12 @@
 
 </style>
 @{
+    @using Newtonsoft.Json;
     var RoleObj = Html.Raw(ViewBag.Roles);
     var SystemRoles = Html.Raw(ViewBag.SystemRoles);
     var UserGroupObj = Html.Raw(ViewBag.EBUserGroups);
     var Role2RoleList = Html.Raw(ViewBag.Role2RoleList);
+    var UInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.U_Info));
     var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
 }
@@ -130,14 +132,12 @@
             <div class="col-md-8" style="margin-left:4%">
                 <div class="row">
                     <div class="form-group col-md-6">
-                        @*<label style="font-family: open sans; font-weight: 300; display:inline-block">Name</label>*@
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-user" aria-hidden="true" style="display:inline-block"></i></span>
-                            <input id="txtName" style="display:inline-block; width:100%; margin-left: 0px;" class="form-control" type="email" name="Name" value="@ViewBag.U_Name" placeholder="Name" title="Name" pattern="[0-9]">
+                            <input id="txtFullName" style="display:inline-block; width:100%; margin-left: 0px;" class="form-control" type="email" name="Name" placeholder="Name" title="Name" pattern="[0-9]">
                         </div>
                     </div>
                     <div class="form-group col-md-6" style="">
-                        @*<label style="font-family: open sans; font-weight: 300;">Nick Name</label>*@
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-user-o" aria-hidden="true"></i></span>
                             <input id="txtNickName" style="display:inline-block; width:100% " class="form-control" type="text" placeholder="Nick Name" title="Nick Name">
@@ -146,14 +146,12 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        @*<label style="font-family: open sans; font-weight: 300;">Email ID</label>*@
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-envelope" aria-hidden="true"></i></span>
-                            <input id="txtEmail" style="display:inline-block; width:100%" class="form-control" type="text" value="@ViewBag.U_Email" placeholder="Email ID" title="Email ID" pattern="[a-z0-9._%+-]+@("@")[a-z0-9.-]+\.[a-z]{2,3}$">
+                            <input id="txtEmail" style="display:inline-block; width:100%" class="form-control" type="text" placeholder="Email ID" title="Email ID" pattern="[a-z0-9._%+-]+@("@")[a-z0-9.-]+\.[a-z]{2,3}$">
                         </div>
                     </div>
                     <div id="divPassword" class="form-group col-md-6">
-                        @*<label for="pwd" style="font-family: open sans; font-weight: 300;">Password</label>*@
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
                             <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password">
@@ -186,18 +184,18 @@
                                     <span class="input-group-addon" id=""><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="divGender">
                                 <label style="font-family: open sans; font-weight: 300;">Gender</label>
                                 <br />
-                                <label class="radio-inline"><input type="radio" name="optradio">Male</label>
-                                <label class="radio-inline"><input type="radio" name="optradio">Female</label>
-                                <label class="radio-inline"><input type="radio" name="optradio">Other</label>
+                                <label class="radio-inline"><input type="radio" value="Male">Male</label>
+                                <label class="radio-inline"><input type="radio" value="Female">Female</label>
+                                <label class="radio-inline"><input type="radio" value="Other">Other</label>
                             </div>
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Alternate Email ID</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id=""><i class="fa fa-envelope" aria-hidden="true"></i></span>
-                                    <input class="form-control" type="text" title="Alternate Email ID" pattern="[a-z0-9._%+-]+@("@")[a-z0-9.-]+\.[a-z]{2,3}$">
+                                    <input id="txtAlternateEmail" class="form-control" type="text" title="Alternate Email ID" pattern="[a-z0-9._%+-]+@("@")[a-z0-9.-]+\.[a-z]{2,3}$">
                                 </div>
                             </div>
                            
@@ -207,7 +205,7 @@
                                 <label style="font-family: open sans; font-weight: 300;">Primary Phone Number</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id=""><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                    <input class="form-control" type="text" title="Primary Phone Number">
+                                    <input id="txtPhPrimary" class="form-control" type="text" title="Primary Phone Number">
                                 </div>
                             </div>
 
@@ -215,27 +213,27 @@
                                 <label style="font-family: open sans; font-weight: 300;">Secondary Phone Number</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id=""><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                    <input class="form-control" type="text" title="Secondary Phone Number">
+                                    <input id="txtPhSecondary" class="form-control" type="text" title="Secondary Phone Number">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Land Phone Number</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id=""><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                    <input class="form-control" type="text" title="Land Phone Number">
+                                    <input id="txtLandPhone" class="form-control" type="text" title="Land Phone Number">
                                 </div>
                                 <div class="form-group">
                                     <label style="font-family: open sans; font-weight: 300;">Extension :</label>
-                                    <input class="form-control" type="text" title="Extension" style="display: inline;width: 50%;margin-top: 10px;">
+                                    <input id="txtExtension" class="form-control" type="text" title="Extension" style="display: inline;width: 50%;margin-top: 10px;">
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label id="lblFbId" style="font-family: open sans; font-weight: 300;" data-id=@ViewBag.U_Fb_Id><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
+                                <label id="lblFbId" style="font-family: open sans; font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
                                 <br />
                                 <img id="imgUserFbProfPic" src="" alt="Prof Pic" height="42" width="42" style="display:none;">
-                                <a id="userFbLink" href="#" target="_blank" style="display:none;">@ViewBag.U_Fb_Name</a>
+                                <a id="userFbLink" href="#" target="_blank" style="display:none;"></a>
                                 <button id="btnFbConnect" class="" title="Connect Facebook" style="display:none;">Connect Facebook</button>
                                 <button id="btnFbInvite" class="" title="Invite Facebook" style="display:none;">Invite Facebook</button>
                             </div>
@@ -436,7 +434,8 @@
 
         </div>
         <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
-        <button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right">Create</button>
+        <button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right; display:none;">Create</button>
+        <label style="color:red;"> Sorry, Unable to Continue </label>
     </section>
     <div class="prof-setup-cropie">
         <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
@@ -533,7 +532,7 @@
     </style>*@
 <script>
 
-    var userobj = new UserJs(@RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList);
+    var userobj = new UserJs(@UInfo, @RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList);
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();

@@ -105,10 +105,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
 			if (itemid > 0)
 			{
-				ViewBag.U_Name = fr.UserData["name"];
-				ViewBag.U_Email = fr.UserData["email"];
-				ViewBag.U_Fb_Id = fr.UserData["socialid"];
-				ViewBag.U_Fb_Name = fr.UserData["socialname"];
+				ViewBag.U_Info = fr.UserData;
 				ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
 				ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
 			}

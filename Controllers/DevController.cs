@@ -46,7 +46,9 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DevConsole()
         {
-           // var result = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest { dbName = "TESTDB" });
+             //var result = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest { dbName = "TESTDB" });
+            //var resultlist = this.ServiceClient.Post<TestResponse>(new TestRequest { });
+           // var x = resultlist;
             return View();
         }
 

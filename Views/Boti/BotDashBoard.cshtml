@@ -2,13 +2,6 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
-<div id="tenantsidemenu">
-    @await Component.InvokeAsync("TenantSideMenu", new { refid = "" })
-</div>
-
-<div id="tenantsidemenu">
-    @await Component.InvokeAsync("FilterDialogBuilder")
-</div>
 
 
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
@@ -17,12 +10,10 @@
 <div class="row s-dash-container">
     <div class="col-md-2 col-lg-2 pd-0 tdasboard-sidebar">
         <div class="t-container">
-            <ul class="list-group">
-                <li class="list-group-item"><i class="fa fa-cog fa-lg tdash-icon" aria-hidden="true"></i> Solutions<div class="tr-on-hov"></div></li>
-                <li class="list-group-item"><i class="fa fa-usd fa-lg tdash-icon" aria-hidden="true"></i> Billing<div class="tr-on-hov"></div></li>
-                <li class="list-group-item"><i class="fa fa-life-ring fa-lg tdash-icon" aria-hidden="true"></i> Support<div class="tr-on-hov"></div></li>
 
-            </ul>
+            <div id="tenantsidemenu">
+                @await Component.InvokeAsync("TenantSideMenu", new { refid = "" })
+            </div>
         </div>
     </div>
     <div class="col-md-10 col-lg-10 pull-right s-dash-workplace">

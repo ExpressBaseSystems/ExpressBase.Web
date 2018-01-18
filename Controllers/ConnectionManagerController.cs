@@ -110,7 +110,14 @@ namespace ExpressBase.Web.Controllers
             {
                 if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
                     dbcon.Password = solutionConnections.EBSolutionConnections.DataDbConnection.Password;
-                this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false });
+                if(!this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false }))
+                {
+                    if (req["databaseVendor"].ToString() == "ORACLE")
+                         this.ServiceClient.Post<bool>(new EbCreateOracleDBRequest { });
+
+
+                }
+
             }
             else
                 this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });            

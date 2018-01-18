@@ -1,9 +1,10 @@
 ﻿body {
     --eb-blue: #339bb3;
-    --eb-grey:#efefef;
-    --eb-font:open sans;
-    --eb-fontweight-light:300;
-    --eb-grey2:#fafafa;
+    --eb-grey: #efefef;
+    --eb-font: open sans;
+    --eb-fontweight-light: 300;
+    --eb-grey2: #fafafa;
+    --on-boarding-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
 }
 .btn-orange {
     background: #f37e1a;
@@ -240,6 +241,7 @@ margin-top:0;
     padding: 10px;
     margin-bottom: 20px;
     border-radius: 4px;
+    box-shadow: var(--on-boarding-box-shadow);
 }
 .s-dash-container {
     min-height: 100vh;
@@ -253,6 +255,7 @@ margin-top:0;
         background: white;
         min-height: 80vh;
         border-radius: 4px;
+        box-shadow: var(--on-boarding-box-shadow);
     }
     .s-dash-workplace .nav-tabs {
         border-bottom: 2px solid #DDD;
@@ -632,9 +635,9 @@ margin-top:0;
     background: white;
     border: 1px solid #ccc;
     min-width: 60%;
-    
-    border-radius: 6px;
+    border-radius: 4px;
     height: 100%;
+    box-shadow:var(--on-boarding-box-shadow);
 }
 
 .card--content-large {
@@ -670,6 +673,8 @@ margin-top:0;
     background: #fafafa;
     height: 100%;
     padding: 15px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
 .products-head {

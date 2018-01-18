@@ -1,0 +1,154 @@
+﻿<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!--Import materialize.css-->  <!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css">
+
+
+<!--Import jQuery before materialize.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script><!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+
+<div class="side-menu-cont">
+
+    <ul class="collapsible" data-collapsible="accordion">
+        <li>
+            <div class="collapsible-header"><i class="fa fa-home tdash-icon" aria-hidden="true"></i> Solution Home</div>
+        </li>
+        <li>
+            <div class="collapsible-header"><i class="fa fa-bars tdash-icon" aria-hidden="true"></i> Application</div>
+            <div class="collapsible-body l1">
+                <ul class="collapsible" data-collapsible="accordion">
+                    <li>
+                        <div class="collapsible-header"><i class="fa fa-television tdash-icon" aria-hidden="true"></i> Web</div>
+                        <div class="collapsible-body l2">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 1
+                                        @ViewBag.bot
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 2
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 3
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 4
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="fa fa-mobile fa-lg tdash-icon" aria-hidden="true"></i> Mobile</div><div class="collapsible-body">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 1
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 2
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 3
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 4
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="fa fa-comment-o fa-lg tdash-icon" aria-hidden="true"></i> Bot</div><div class="collapsible-body">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 1
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 2
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 3
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header">
+                                        app 4
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.collapsible').collapsible();
+    });
+</script>
+
+<style>
+    .side-menu-cont {
+        /*border: solid 1px red;*/
+        height: 100vh;
+        width: calc(100% - 24px);
+    }
+
+    .collapsible {
+        margin: 0;
+        height: inherit;
+        background: white;
+        box-shadow: none;
+        border-radius: 4px;
+        border: none;
+    }
+
+    .collapsible-body {
+        padding: 1rem;
+    }
+
+    .l2 .collapsible-header {
+        padding: .2rem;
+    }
+
+    .l1 .collapsible-header {
+        font-size: .9rem;
+    }
+
+    .l1 .fa {
+        font-size: 1.3rem !important;
+    }
+
+    .l2 {
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+
+        .l2 .collapsible-header {
+            font-size: .85rem;
+        }
+</style>

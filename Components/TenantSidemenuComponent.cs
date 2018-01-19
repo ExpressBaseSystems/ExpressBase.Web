@@ -27,7 +27,9 @@ namespace ExpressBase.Web.Components
             ViewBag.botApps = AppListResp.AppList["Bot"];
             ViewBag.webApps = AppListResp.AppList["Web"];
             ViewBag.mobApps = AppListResp.AppList["Mobile"];
-            ViewBag.botlength = AppListResp.AppList["Mobile"].Count;
+            ViewBag.botlength = AppListResp.AppList["Bot"].Count;
+            ViewBag.weblength = AppListResp.AppList["Web"].Count;
+            ViewBag.moblength = AppListResp.AppList["Mobile"].Count;
             return View();
         }
     }

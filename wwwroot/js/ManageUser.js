@@ -1,11 +1,12 @@
-﻿var UserJs = function (userinfo, usr, sysroles, usergroup, uroles, ugroups, r2rList) {
+﻿var UserJs = function (userinfo, usr, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList) {
     this.userinfo = userinfo;
-    this.user = usr;
+    this.user = usr;//custom roles
     this.systemRoles = sysroles;
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
     this.r2rList = r2rList;
+    this.statusList = userstatusList;
     this.itemId = $("#userid").val();
     this.dependentList = [];
     this.dominantList = [];
@@ -14,12 +15,16 @@
     this.txtName = $("#txtFullName");
     this.txtNickName = $("#txtNickName");
     this.txtEmail = $("#txtEmail");
+    //this.pwdPassword = $("#pwdPassword");
     this.txtDateOfBirth = $("#txtDateOfBirth");
     this.txtAlternateEmail = $("#txtAlternateEmail");
     this.txtPhPrimary = $("#txtPhPrimary");
     this.txtPhSecondary = $("#txtPhSecondary");
     this.txtLandPhone = $("#txtLandPhone");
     this.txtExtension = $("#txtExtension");
+    this.chkboxActive = $("#chkboxActive");
+    this.chkboxTerminate = $("#chkboxTerminate");
+    this.chkboxHide = $("#chkboxHide");
     
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
@@ -76,6 +81,17 @@
         $(st).attr("checked", "checked");
         $("#lblFbId").attr("data-id", this.userinfo["fbid"]);
         $("#userFbLink").text(this.userinfo["fbname"]);
+        var stus = this.statusList[this.userinfo["statusid"]];
+        if (stus === "Active")
+            this.chkboxActive.prop("checked", "true");
+        else if (stus === "Deactivated")
+            this.chkboxActive.removeAttr("checked");
+        else if (stus === "Terminated") {
+            this.chkboxTerminate.prop("checked", "true");
+            this.chkboxActive.removeAttr("checked");
+        }
+        if (this.userinfo["hide"] === "yes")
+            this.chkboxHide.prop("checked", "true");
     }
 
     this.initFbConnect = function () {
@@ -243,20 +259,29 @@
     
 
     this.clickbtnCreateUser = function () {
-        //$('#divGender input:radio:checked').val()
-        var selectedroles = this.rolesTile.getItemIds();
-        var selectedusergroups = this.userGroupTile.getItemIds();
         $("#btnCreateUser").attr("disabled", "true");
+
+        var dict = new Object();
+        dict["fullname"] = this.txtName.val();
+        dict["nickname"] = this.txtNickName.val();
+        dict["email"] = this.txtEmail.val();
+        //dict["Pwd"] = this.PwdPassword.val();
+        dict["dob"] = this.txtDateOfBirth.val();
+        dict["sex"] = $("#divGender input:radio:checked").attr("value");
+        dict["alternateemail"] = this.txtAlternateEmail.val();
+        dict["phoneprimary"] = this.txtPhPrimary.val();
+        dict["phonesecondary"] = this.txtPhSecondary.val();
+        dict["landline"] = this.txtLandPhone.val();
+        dict["extension"] = this.txtExtension.val();
+        dict["fbid"] = $("#lblFbId").attr("data-id");
+        dict["fbname"] = $("#userFbLink").text();
+        dict["roles"] = this.rolesTile.getItemIds();
+        dict["usergroups"] = this.userGroupTile.getItemIds();
+
         $.post("../Security/SaveUser",
             {
                 "userid": $('#userid').val(),
-                "roles": selectedroles,
-                "usergroups": selectedusergroups,
-                "firstname": $('#txtName').val(),
-                "email": $('#txtEmail').val(),
-                "Pwd": $('#pwdPassword').val(),
-                "socialid": $("#lblFbId").attr("data-id"),
-                "socialname": $("#userFbLink").text()
+                "usrinfo": JSON.stringify(dict)
             }, function (result) {
                 if (result > -1) {
                     alert("Saved Successfully");

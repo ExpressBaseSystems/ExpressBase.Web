@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Controllers
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
         [HttpGet] [HttpPost]
-        public IActionResult dv(string refid, string rowData, string filterValues, int tabNum)
+        public IActionResult dv(string refid, string filterValues, int tabNum)
         {
             //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
@@ -55,7 +55,6 @@ namespace ExpressBase.Web.Controllers
             dsobj.AfterRedisGet(this.Redis);
             ViewBag.dvObject = dsobj;
             ViewBag.dvRefId = refid;
-            ViewBag.rowData = rowData;
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;
             ViewBag.DvList = JsonConvert.SerializeObject(resultlist.DvList);

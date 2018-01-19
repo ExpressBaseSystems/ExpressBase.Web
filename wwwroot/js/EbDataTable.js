@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, filterValues) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -122,7 +122,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = rowData;
+    this.rowData = null;
     this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues):[] ;
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
@@ -148,8 +148,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         }
         else {
-            $("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
+            //$("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
             $("#sub_window_" + this.tableId).css("padding-top", "15px");
+            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
         }
     }
 
@@ -184,12 +185,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.isPipped = true;
             $("#Pipped").show();
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
+        }
+        if (this.login === "uc") {
             this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
-        }
-        if (this.rowData !== null && this.rowData !== "" && this.rowData !== undefined) {
             this.isContextual = true;
-            //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
+
         this.PcFlag = "False";
         obj = this.EbObject;
         $("#obj_icons").empty();
@@ -209,7 +210,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
-            //$("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
             $("#btnGo" + this.tabNum).trigger("click");
         }
         else {
@@ -224,7 +224,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             else {
                 $(sideDivId).css("display", "inline");
-                //$("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
             }
             $.LoadingOverlay("hide");
         }
@@ -281,12 +280,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#objname").text(this.dvName);
         $("#ppgrid_" + this.tableId).hide();
         $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
+        $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
         if (this.login == "uc") {
             $("#ppgrid_" + this.tableId).hide();
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
 
             if (this.FD) {
-                $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
+                //$("#sub_windows_sidediv_" + this.tableId).css("display", "none");
                 //$("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
             }
             else {
@@ -532,38 +532,40 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
+        var paramstxt = $("#all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
-        if (paramstxt.length > 0) {
+        if (paramstxt != undefined) {
             var params = paramstxt.split(',');
-            $.each(params, function (i, id) {
-                var v = null;
-                var dtype = $(FdCont +' #' + id).attr('data-ebtype');
-                if (dtype === '6')
-                    v = $(FdCont +' #' + id).val().substring(0, 10);
-                else
-                    v = $(FdCont + ' #' + id).val();
-                if(v !== "")
-                    fltr_collection.push(new fltr_obj(dtype, id, v));
-            });
+            if (params.length > 0) {
+                $.each(params, function (i, id) {
+                    var v = null;
+                    var dtype = $(FdCont + ' #' + id).attr('data-ebtype');
+                    if (dtype === '6')
+                        v = $(FdCont + ' #' + id).val().substring(0, 10);
+                    else
+                        v = $(FdCont + ' #' + id).val();
+                    if (v !== "")
+                        fltr_collection.push(new fltr_obj(dtype, id, v));
+                });
+            }
         }
 
-        //if (this.rowData !== null) {
-        //    $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection));
-        //}
+        if (this.rowData !== null) {
+            $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection));
+        }
 
         return fltr_collection;
     };
 
     this.rowObj2filter = function (fltr_collection, i, data) {
-        var type = this.Api.settings().init().columns[i + 2].type;
-        if (type === "System.Int32" || type === "System.Int16")
-            type = 12;
-        else if (type === "System.Decimal" || type === "System.Double" || type === "System.Int64")
-            type = 7;
-        else if (type === "System.String")
-            type = 16;
-        fltr_collection.push(new fltr_obj(type, this.Api.settings().init().columns[i + 2].name, data));
+        var type = this.Api.settings().init().aoColumns[i+2].type;
+        //if (type === "System.Int32" || type === "System.Int16")
+        //    type = 12;
+        //else if (type === "System.Decimal" || type === "System.Double" || type === "System.Int64")
+        //    type = 7;
+        //else if (type === "System.String")
+        //    type = 16;
+        fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i+2].name, data));
     };
 
     this.receiveAjaxData = function (dd) {
@@ -774,11 +776,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         _form.setAttribute("method", "post");
         _form.setAttribute("action", url);
         _form.setAttribute("target", "_blank");
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "rowData";
-        input.value = this.rowData.toString();
-        _form.appendChild(input);
+        //var input = document.createElement('input');
+        //input.type = 'hidden';
+        //input.name = "rowData";
+        //input.value = this.rowData.toString();
+        //_form.appendChild(input);
         var input = document.createElement('input');
         input.type = 'hidden';
         input.name = "filterValues";
@@ -1452,7 +1454,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.login === "uc")
             dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues));
         else
-            this.OpeninNewTab();
+            this.OpeninNewTab(idx);
     };
     
 

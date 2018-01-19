@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="inp-block">
                                         <label>Short Name:</label>
-                                        <input type="text" name="_name" value="@ViewBag.botname" class="inp-control" required id="botname" placeholder="Enter a short name for your bot">
+                                        <input type="text" name="_name" value="@ViewBag.botname" class="inp-control" required id="shortname" placeholder="Enter a short name for your bot">
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="inp-block">
                                         <label>Bot ID:</label>
-                                        <input readonly class="inp-control" value="@ViewBag.chatid">
+                                        <input readonly id="chatid" class="inp-control" value="@ViewBag.chatid">
                                         <input type="hidden" value="@ViewBag.chatid" name="chatid" />
                                         <input type="hidden" value="@ViewBag.botid" name="botid" />
                                     </div>
@@ -86,7 +86,7 @@
                                     <input type="hidden" id="sol_id" value="sampleSOLid" name="_sol_id" />
                                     <button type="submit" id="submit" style="display:none" class="btn btn-default">Submit</button>
                                     @if (ViewBag.chatid != null)
-                                {
+                                    {
                                         <div class="embededscript-cont">
                                             <label style="color:white; font-weight:100;">Embedable script:</label>
                                             @*<button type="submit" id="copy" class="btn btn-sm btn-primary pull-right"><i class="fa fa-clipboard" aria-hidden="true"></i></button><br>*@
@@ -117,7 +117,7 @@
                                         })();&lt;/script&gt;".Replace("$botid", ViewBag.chatid));" name="_sol_id" />
 
                                         </div>
-                                }
+                                    }
                                 </div>
                                 <div class="form-group savebtn">
                                     <button type="submit" id="save" value="Save" class="btn">Save Chatbot</button>
@@ -144,6 +144,40 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+
+        $(".inp-block label").each(function (i, e) {
+            $e = $(e);
+            $inp = $e.siblings(".inp-control");
+            if ($inp.val() !== "")
+                $(e).show();;
+        });
+
+        $("body").on("click", ".input-group-addon", function () {
+            $("#embedtxt").select();
+            document.execCommand('copy');
+            $("#embedtxt").blur()
+        });
+
+        $("body").on("click", ".outer-row-profsetup [value=Save]", function () {
+            $("#submit").click();
+        });
+
+        $(".inp-block").on("keyup load change", ".inp-control", function (e) {
+            var inp = $(e.target);
+            var label = inp.closest(".inp-block").find("label")
+            if ($(e.target).val() !== "")
+                label.show(150);
+            else
+                label.hide(100);
+        });
+    });
+
+
+
+</script>
+
 <style>
     .no-padd {
         padding: 0;
@@ -189,15 +223,20 @@
         }
 
     .inp-control {
-        border: none;
-        padding: 3px;
-        padding-top: 20px;
-        font-size: 14px;
-        width: 100%;
-        background-color: transparent;
-        border: none;
-        outline: none;
+        border: none !important;
+        padding: 3px !important;
+        padding-top: 20px !important;
+        font-size: 14px !important;
+        width: 100% !important;
+        background-color: transparent !important;
+        border: none !important;
+        outline: none !important;
+        height: inherit !important;
     }
+
+        .inp-control:focus {
+            border: none !important;
+        }
 
     .inp-block {
         margin-bottom: 25px;
@@ -251,46 +290,15 @@
         .general-cont .profimage .p-st-dp {
             height: 100%;
         }
+
     .general-cont .savebtn {
         text-align: center;
         margin-top: 30px;
         margin-bottom: 0;
-        margin-bottom:20px;
+        margin-bottom: 20px;
     }
+
     .general-cont {
         padding: 0 30px;
     }
 </style>
-<script>
-    $(document).ready(function () {
-
-        $(".inp-block label").each(function (i, e) {
-            $e = $(e);
-            $inp = $e.siblings(".inp-control");
-            if ($inp.val() !== "")
-                $(e).show();;
-        });
-
-        $("body").on("click", ".input-group-addon", function () {
-            $("#embedtxt").select();
-            document.execCommand('copy');
-            $("#embedtxt").blur()
-        });
-
-        $("body").on("click", ".outer-row-profsetup [value=Save]", function () {
-            $("#submit").click();
-        });
-
-        $(".inp-block").on("keyup load", ".inp-control", function (e) {
-            var inp = $(e.target);
-            var label = inp.closest(".inp-block").find("label")
-            if ($(e.target).val() !== "")
-                label.show(150);
-            else
-                label.hide(100);
-        });
-    });
-
-
-
-</script>

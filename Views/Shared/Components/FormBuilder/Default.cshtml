@@ -8,7 +8,7 @@
     EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
     int typeInt = Convert.ToInt32(ViewBag.ObjType);
 
-    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
+    var _builderType = (BuilderType)BuilderType.FilterDialog;//(BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
     var _toolBox = new EbToolbox(_builderType);
 }
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>

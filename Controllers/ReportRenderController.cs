@@ -21,6 +21,7 @@ using System.Xml;
 using System.Web;
 using System.Text;
 using Newtonsoft.Json;
+using ExpressBase.Web2;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -114,53 +115,20 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult SS_Report(string refid)
         {
-            var resultlist1 = this.ServiceClient.Get<FileStreamResult>(new ReportRenderRequest { Refid = refid });
-            return new FileStreamResult(resultlist1.memorystream, "application/pdf");
+            var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
+            pclient.BearerToken = this.ServiceClient.BearerToken;
+            ReportRenderResponse resultlist1 = null;
+            try
+            {
+                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid });
+            }catch(Exception e)
+            {
+
+            }
+            Console.WriteLine(">>>>>>> Len: " + resultlist1.MemoryStream.Memorystream.Length + "\n");
+            resultlist1.MemoryStream.Memorystream.Position = 0;
+            return new FileStreamResult(resultlist1.MemoryStream.Memorystream, "application/pdf");
         }
-            //public string BitLy()
-            //{
-            //    string statusCode = string.Empty;                       // The variable which we will be storing the status code of the server response
-            //    string statusText = string.Empty;                       // The variable which we will be storing the status text of the server response
-            //    string shortUrl = string.Empty;                         // The variable which we will be storing the shortened url
-            //    string longUrl = string.Empty;                          // The variable which we will be storing the long url
-
-            //    string urlToShorten =      // The url we want to shorten
-            //    XmlDocument xmlDoc = new XmlDocument();                 // The xml document which we will use to parse the response from the server
-
-            //    WebRequest request = WebRequest.Create("http://api.bitly.com/v3/shorten");
-            //    byte[] data = Encoding.UTF8.GetBytes(string.Format("login={0}&apiKey={1}&longUrl={2}&format={3}",
-            //     "o_6id5o5bl64",                             // Your username
-            //     "R_9c60829c301c4fc9b68f5cf229f0efdf",                              // Your API key
-            //     HttpUtility.UrlEncode(urlToShorten),         // Encode the url we want to shorten
-            //     "xml"));                                     // The format of the response we want the server to reply with
-
-            //    request.Method = "POST";
-            //    request.ContentType = "application/x-www-form-urlencoded";
-            //    request.ContentLength = data.Length;
-            //    using (Stream ds = request.GetRequestStream())
-            //    {
-            //        ds.Write(data, 0, data.Length);
-            //    }
-            //    using (WebResponse response = request.GetResponse())
-            //    {
-            //        using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-            //        {
-            //            xmlDoc.LoadXml(sr.ReadToEnd());
-            //        }
-            //    }
-
-            //    statusCode = xmlDoc.GetElementsByTagName("status_code")[0].InnerText;
-            //    statusText = xmlDoc.GetElementsByTagName("status_txt")[0].InnerText;
-            //    shortUrl = xmlDoc.GetElementsByTagName("url")[0].InnerText;
-            //    longUrl = xmlDoc.GetElementsByTagName("long_url")[0].InnerText;
-
-            //    Console.WriteLine(statusCode);      // Outputs "200"
-            //    Console.WriteLine(statusText);      // Outputs "OK"
-            //    Console.WriteLine(shortUrl);        // Outputs "http://bit.ly/WVk1qN"
-            //    Console.WriteLine(longUrl);         // Outputs "http://www.fluxbytes.com/"
-
-            //    return shortUrl;
-            //}
 
             public void GetWatermarkImages()
         {
@@ -290,36 +258,6 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        //public void CallSummerize(string title, int i)
-        //{
-        //    var column_name = string.Empty;
-        //    var column_val = string.Empty;
-
-        //    List<object> SummaryList;
-        //    if (Report.PageSummaryFields.ContainsKey(title))
-        //    {
-        //        SummaryList = Report.PageSummaryFields[title];
-        //        foreach (var item in SummaryList)
-        //        {
-        //            var table = title.Split('.')[0];
-        //            column_name = title.Split('.')[1];
-        //            column_val = Report.GeFieldtData(column_name, i);
-        //            (item as IEbDataFieldSummary).Summarize(column_val);
-        //        }
-        //    }
-        //    if (Report.ReportSummaryFields.ContainsKey(title))
-        //    {
-        //        SummaryList = Report.ReportSummaryFields[title];
-        //        foreach (var item in SummaryList)
-        //        {
-        //            var table = title.Split('.')[0];
-        //            column_name = title.Split('.')[1];
-        //            column_val = Report.GeFieldtData(column_name, i);
-        //            (item as IEbDataFieldSummary).Summarize(column_val);
-        //        }
-        //    }
-
-        //}
 
         //NEED FIX OO
         public void DrawFields(EbReportField field, float section_Yposition, int serialnumber)

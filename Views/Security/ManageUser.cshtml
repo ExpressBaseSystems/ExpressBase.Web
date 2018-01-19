@@ -118,6 +118,7 @@
     var SystemRoles = Html.Raw(ViewBag.SystemRoles);
     var UserGroupObj = Html.Raw(ViewBag.EBUserGroups);
     var Role2RoleList = Html.Raw(ViewBag.Role2RoleList);
+    var StatusList = Html.Raw(JsonConvert.SerializeObject(ViewBag.UserStatusList));
     var UInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.U_Info));
     var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
@@ -176,7 +177,7 @@
             <div class="tab-content">
                 <div id="home" class="tab-pane fade in active" style="padding-top:30px">
                     <div class="row tilediv1">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
                                 <div class="input-group" style="">
@@ -228,7 +229,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label id="lblFbId" style="font-family: open sans; font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
                                 <br />
@@ -245,7 +246,34 @@
                                 <label id="" style="font-family: open sans; font-weight: 300;">API Key</label>
                                 <button class="form-control" title="Generate API Key">Generate JWT Key</button>
                             </div>
-
+                        </div>
+                        <div class="col-md-2">
+                            <label id="" style="font-family: open sans; font-weight: 500; margin-bottom:20px;">Status</label>
+                            <br />
+                            <div class="form-group row">
+                                <div class="col-md-6" style="padding-top: 8px;">
+                                    <label id="" style="font-family: open sans; font-weight: 300;">Active:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="chkboxActive" type="checkbox" checked data-toggle="toggle">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-6" style="padding-top: 8px;">
+                                    <label id="" style="font-family: open sans; font-weight: 300;">Terminate:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="chkboxTerminate" type="checkbox" data-toggle="toggle">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-6" style="padding-top: 8px;">
+                                    <label id="" style="font-family: open sans; font-weight: 300;">Hide:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="chkboxHide" type="checkbox" data-toggle="toggle">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -434,7 +462,7 @@
 
         </div>
         <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
-        <button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right; display:none;">Create</button>
+        <button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;display:none;">Create</button>
         <label style="color:red;"> Sorry, Unable to Continue </label>
     </section>
     <div class="prof-setup-cropie">
@@ -532,7 +560,7 @@
     </style>*@
 <script>
 
-    var userobj = new UserJs(@UInfo, @RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList);
+    var userobj = new UserJs(@UInfo, @RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList);
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();

@@ -125,9 +125,9 @@ namespace ExpressBase.Web.Controllers
             {
 
             }
-            Console.WriteLine(">>>>>>> Len: " + resultlist1.MemoryStream.Memorystream.Length + "\n");
-            resultlist1.MemoryStream.Memorystream.Position = 0;
-            return new FileStreamResult(resultlist1.MemoryStream.Memorystream, "application/pdf");
+            Console.WriteLine(">>>>>>> Len: " + resultlist1.StreamWrapper.Memorystream.Length + "\n");
+            resultlist1.StreamWrapper.Memorystream.Position = 0;
+            return new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");
         }
 
             public void GetWatermarkImages()

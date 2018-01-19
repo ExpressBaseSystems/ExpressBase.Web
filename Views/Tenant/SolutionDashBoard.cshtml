@@ -119,26 +119,28 @@
                             <button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn pull-right addConnection"><i class="fa fa-plus"></i></button>
                         </div>
                         <div class="s-dash-bodyComm collapse in" id="smtpConnections">
-                            <table class="table">
+                            <table class="table EmailConnectionEdit mr-b-0">
                                 <thead>
                                     <tr>
-                                        <th>Mail Server</th>
-                                        <th>Nick Name</th>
+                                        <th>Email Vendor</th>
+                                        <th>Email</th>                                       
+                                        <th>Password</th>
                                         <th>SMTP Server</th>
                                         <th>Port</th>
-                                        <th>Email</th>
+                                        <th>Nick Name</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td field="WhichMailServer">Google</td>
-                                        <td field="Name">sdfds</td>
+                                    @*<tr>
+                                        <td field="EmailVendor">Google</td>
+                                        <td field="Email">sdfds</td>                                     
+                                        <td field="Password">sdfds</td>
                                         <td field="SMTP">fdsfsd</td>
                                         <td field="Port">fdsfsd</td>
-                                        <td field="Email">dsfdsf</td>
+                                        <td field="NickName">dsfdsf</td>
                                         <td class="edit-row"><button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
-                                    </tr>
+                                    </tr>*@
                                 </tbody>
                             </table>
                         </div>
@@ -292,16 +294,16 @@
                     <div class="form-group">
                         <label>Database Vendor</label>
                         <select name="DatabaseVendor" class="form-control">
-                            <option>MongoDb</option>
+                            <option value="MongoDB">MongoDB</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Connection String</label>
-                        <textarea name="ConnectionString" class="form-control"></textarea>
+                        <textarea name="ConnectionString" class="form-control" required></textarea>
                     </div>
                     <div class="form-group">
                         <label>NickName</label>
-                        <input type="text" name="NickName" class="form-control" />
+                        <input type="text" name="NickName" class="form-control" required />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -314,61 +316,69 @@
 </div>
 <div id="EmailConnectionEdit" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
-        <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Email Accounts</h4>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="col-md-12 pd-0">
-                        <div class="col-md-6 pd-l-0">
-                            <div class="form-group">
-                                <label>Mail Server</label>
-                                <select name="WhichMailServer" class="form-control">
-                                    <option>Google</option>
-                                    <option>Zoho</option>
-                                    <option>MSN</option>
-                                    <option>Others</option>
-                                </select>
+            <form method="post" id="EmailConnectionSubmit" data-toggle="validator">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Email Accounts</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-6 pd-l-0">
+                                <div class="form-group">
+                                    <label>Email Vendor</label>
+                                    <select name="Emailvendor" class="form-control">
+                                        <option>Google</option>
+                                        <option>Zoho</option>
+                                        <option>MSN</option>
+                                        <option>Others</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 pd-r-0">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input name="NickName" type="text" class="form-control" required />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6 pd-r-0">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input name="Name" type="text" class="form-control" />
+                        <div class="col-md-12">
+                            <div class="col-md-6 pd-l-0">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input name="Email" type="text" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6 pd-r-0">
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input name="Password" type="text" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-6 pd-l-0">
+                                <div class="form-group">
+                                    <label>SMTP Server</label>
+                                    <input name="SMTP" type="text" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6 pd-r-0">
+                                <div class="form-group">
+                                    <label>Port</label>
+                                    <input name="Port" type="text" class="form-control" required />
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 pd-0">
-                        <div class="col-md-6 pd-l-0">
-                            <div class="form-group">
-                                <label>SMTP Server</label>
-                                <input name="SMTP" type="text" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="col-md-6 pd-r-0">
-                            <div class="form-group">
-                                <label>Port</label>
-                                <input name="Port" type="text" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input name="Email" type="text" class="form-control" />
-                    </div>
-                    <input type="hidden" name="isNew" />
-
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
         </div>
-
     </div>
 </div>
 <div id="SmsConnectionEdit" class="modal fade" role="dialog">

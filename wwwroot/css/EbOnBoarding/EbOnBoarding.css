@@ -41,7 +41,9 @@
 .mr-t-0{
 margin-top:0;
  }
-
+.mr-b-0{
+    margin-bottom:0;
+}
 .pd-r-0 {
     padding-right: 0
 }
@@ -374,6 +376,11 @@ margin-top:0;
 .dbConnectionEdit{
     margin-top: 10px;
     margin-bottom: 10px;
+}
+.table-message {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #adaaaa;
 }
 /*tenant add solution*/
 .pd-0 {

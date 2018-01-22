@@ -91,11 +91,11 @@ namespace ExpressBase.Web.Controllers
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
             var req = this.HttpContext.Request.Form;
-           
+
             EbDataDbConnection dbcon = new EbDataDbConnection()
-            {        
+            {
                 DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
-                DatabaseName =req["databaseName"],
+                DatabaseName = req["databaseName"],
                 Server = req["server"],
                 Port = Convert.ToInt32(req["port"]),
                 UserName = req["userName"],
@@ -110,17 +110,17 @@ namespace ExpressBase.Web.Controllers
             {
                 if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
                     dbcon.Password = solutionConnections.EBSolutionConnections.DataDbConnection.Password;
-                if(!this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false }))
+                if (!this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false }))
                 {
                     if (req["databaseVendor"].ToString() == "ORACLE")
-                         this.ServiceClient.Post<bool>(new EbCreateOracleDBRequest { });
+                        this.ServiceClient.Post<bool>(new EbCreateOracleDBRequest { });
 
 
                 }
 
             }
             else
-                this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });            
+                this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });
             return JsonConvert.SerializeObject(dbcon);
         }
 
@@ -150,21 +150,22 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult FilesDb(int i)
+        public string FilesDb(int i)
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbFILES });
             var req = this.HttpContext.Request.Form;
             EbFilesDbConnection dbcon = new EbFilesDbConnection()
             {
+                FilesDbVendor = Enum.Parse<FilesDbVendors>(req["DatabaseVendor"].ToString()),
                 FilesDB_url = req["ConnectionString"].ToString(),
                 NickName = req["NickName"].ToString()
             };
-            
+
             if (solutionConnections.EBSolutionConnections.FilesDbConnection != null)
                 this.ServiceClient.Post<bool>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = false });
             else
                 this.ServiceClient.Post<bool>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = true });
-            return Redirect("/ConnectionManager");
+            return JsonConvert.SerializeObject(dbcon);
         }
 
         [HttpPost]
@@ -191,26 +192,28 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult SMTP(int i)
+        public string SMTP(int i)
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP });
             var req = this.HttpContext.Request.Form;
-            SMTPConnection smtpcon = new SMTPConnection();
-            smtpcon.NickName = req["nickname"];
-            smtpcon.Smtp = req["smtp"];
-            smtpcon.Port = Int32.Parse(req["port"]);
-            smtpcon.EmailAddress = req["email"];
-            smtpcon.Password = req["pwd"];
-
-            if (!String.IsNullOrEmpty(solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress))
+            SMTPConnection smtpcon = new SMTPConnection()
             {
-                if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
-                    smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
+                ProviderName = req["Emailvendor"],
+                NickName = req["NickName"],
+                Smtp = req["SMTP"],
+                Port = Convert.ToInt32(req["Port"]),
+                EmailAddress = req["Email"],
+                Password = req["Password"]
+            };
+
+            if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
+            {
+                smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
                 this.ServiceClient.Post<bool>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = false });
             }
             else
                 this.ServiceClient.Post<bool>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = true });
-            return Redirect("/ConnectionManager");
+            return JsonConvert.SerializeObject(smtpcon);
         }
 
         //[HttpGet]

@@ -33,28 +33,28 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet]
         public string GetSamp(string refid, string socialId)
-        {
-            string result = "SocialId not in Database";
-
-            try
             {
-                string cid = refid.Split('-')[0].Trim();
-                // string authResponse = AuthAndGetformlist(refid, socialId);
-                if (AuthAndGetformlist(refid, socialId) != null)
+                string result = "SocialId not in Database";
+
+                try
                 {
-                    var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-                    var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-                    dsobj.Status = resultlist.Data[0].Status;
-                    dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-                    result = dsobj.GetHtml();
+                    string cid = refid.Split('-')[0].Trim();
+                    // string authResponse = AuthAndGetformlist(refid, socialId);
+                    if (AuthAndGetformlist(refid, socialId) != null)
+                    {
+                        var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+                        var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+                        dsobj.Status = resultlist.Data[0].Status;
+                        dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
+                        result = dsobj.GetHtml();
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                result = e.Message;
-            }
+                catch (Exception e)
+                {
+                    result = e.Message;
+                }
 
-            return result;
+                return result;
         }
 
         [HttpGet]

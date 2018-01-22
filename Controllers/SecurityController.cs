@@ -137,7 +137,7 @@ namespace ExpressBase.Web.Controllers
 				Id = userid,
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],
-				EmailParimary = Dict["email"],
+				EmailPrimary = Dict["email"],
 				EmailSecondary = Dict["alternateemail"],
 				DateOfBirth = Dict["dob"],
 				Sex = Dict["sex"],
@@ -148,10 +148,19 @@ namespace ExpressBase.Web.Controllers
 				FbId = Dict["fbid"],
 				FbName = Dict["fbname"],
 				Roles = string.IsNullOrEmpty(Dict["roles"]) ? string.Empty : Dict["roles"],
-				UserGroups = string.IsNullOrEmpty(Dict["usergroups"]) ? string.Empty : Dict["usergroups"]
+				UserGroups = string.IsNullOrEmpty(Dict["usergroups"]) ? string.Empty : Dict["usergroups"],
+				StatusId = Dict["statusid"],
+				Hide = Dict["hide"]
 			});
 			return res.id;
 		}
+
+		public bool isValidEmail(string reqEmail)
+		{
+			var temp = this.ServiceClient.Post<bool>(new UniqueCheckRequest { email = reqEmail });
+			return temp;
+		}
+		
 
 
 		//----------------MANAGE USERGROUPS START----------------------------

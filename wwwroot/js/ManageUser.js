@@ -1,6 +1,6 @@
-﻿var UserJs = function (userinfo, usr, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList) {
+﻿var UserJs = function (userinfo, cusroles, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList) {
     this.userinfo = userinfo;
-    this.user = usr;//custom roles
+    this.customRoles = cusroles;
     this.systemRoles = sysroles;
     this.userGroup = usergroup;
     this.U_Roles = uroles;
@@ -16,6 +16,7 @@
     this.txtNickName = $("#txtNickName");
     this.txtEmail = $("#txtEmail");
     //this.pwdPassword = $("#pwdPassword");
+    this.lblMessage = $("#lblMessage");
     this.txtDateOfBirth = $("#txtDateOfBirth");
     this.txtAlternateEmail = $("#txtAlternateEmail");
     this.txtPhPrimary = $("#txtPhPrimary");
@@ -37,12 +38,14 @@
 
    
     this.init = function () {
+
+        this.txtEmail.on('change', this.validateEmail.bind(this));
         
         $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
         
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            $("#btnCreateUser").focus();
-        });
+        //$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //    $("#btnCreateUser").focus();
+        //});
 
         this.initForm();
         this.initTiles();
@@ -52,8 +55,8 @@
         if (this.itemId > 0) {
             $(divFormHeading).text("Edit User");
             $(btnCreateUser).text("Update");
-            this.txtName.attr("disabled", "true");
-            this.txtNickName.attr("disabled", "true");
+            //this.txtName.attr("disabled", "true");
+            //this.txtNickName.attr("disabled", "true");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
 
@@ -242,10 +245,10 @@
         var metadata1 = ['Id', 'Name', 'Description'];
         var initroles = [];
         if (this.U_Roles !== null)
-            for (var i = 0; i < this.user.length; i++)
-                if (this.U_Roles.indexOf(this.user[i].Id) !== -1)
-                    initroles.push(this.user[i]);
-        this.rolesTile = new TileSetupJs($("#menu1"), "Add Roles", initroles, this.user, metadata1, null, this.chkItemCustomFunc, this);
+            for (var i = 0; i < this.customRoles.length; i++)
+                if (this.U_Roles.indexOf(this.customRoles[i].Id) !== -1)
+                    initroles.push(this.customRoles[i]);
+        this.rolesTile = new TileSetupJs($("#menu1"), "Add Roles", initroles, this.customRoles, metadata1, null, this.chkItemCustomFunc, this);
 
         //INIT USER GROUPS
         var initgroups = [];
@@ -256,10 +259,45 @@
         this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
     }
 
+
+    this.validateEmail = function (e) {
+        var val = $(e.target).val();
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (regex.test(val)) {
+            $(e.target).css("border-color", "rgb(204, 204, 204)");
+            this.lblMessage.hide();
+            $.ajax({
+                type: "POST",
+                url: "../Security/isValidEmail",
+                data: { reqEmail: val },
+                success: function (result) {
+                    if (result) {
+                        $(e.target).css("border-color", "rgb(204, 0, 0)");
+                        this.lblMessage.text("Email ID Already Exists");
+                        this.lblMessage.show();
+                    }
+                }.bind(this)
+            });
+        }
+        else {
+            $(e.target).css("border-color", "rgb(204, 0, 0)");
+            this.lblMessage.text("Invalid Email ID");
+            this.lblMessage.show();
+        }
+    }
     
 
     this.clickbtnCreateUser = function () {
         $("#btnCreateUser").attr("disabled", "true");
+
+        var oldstus = parseInt(this.userinfo["statusid"]);
+        var newstus = 0;
+        if (!this.chkboxActive.prop("checked"))
+            newstus = 1;
+        if (this.chkboxTerminate.prop("checked"))
+            newstus = 2;
+        if (oldstus === newstus)
+            newstus = oldstus + 100;//Status not changed, so adding 100 to oldstus just to infirm that no change in stus
 
         var dict = new Object();
         dict["fullname"] = this.txtName.val();
@@ -277,6 +315,8 @@
         dict["fbname"] = $("#userFbLink").text();
         dict["roles"] = this.rolesTile.getItemIds();
         dict["usergroups"] = this.userGroupTile.getItemIds();
+        dict["statusid"] = newstus;
+        dict["hide"] = this.chkboxHide.prop("checked") ? "yes" : "no";
 
         $.post("../Security/SaveUser",
             {
@@ -285,7 +325,7 @@
             }, function (result) {
                 if (result > -1) {
                     alert("Saved Successfully");
-                    window.top.close();
+                    //window.top.close();
                 }
                 $("#btnCreateUser").removeAttr("disabled");
             });
@@ -324,7 +364,7 @@
     //    var divSelectedDisplay;
     //    var divSearchResults;
     //    if (flag === 1) {
-    //        obj = this.user;
+    //        obj = this.customRoles;
     //        $("#divRoleSearchResults").children().remove();
     //        txt = $("#txtSearchRole").val().trim();
     //        divSelectedDisplay = $("#divSelectedRoleDisplay");
@@ -473,7 +513,7 @@
 
 
     //this.loadUserRoles = function () {
-    //    obj = this.user;
+    //    obj = this.customRoles;
     //    obj2 = this.userGroup;
     //    uroles = this.U_Roles;
     //    ugroups = this.U_Groups;

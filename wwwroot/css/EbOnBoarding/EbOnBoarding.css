@@ -382,6 +382,9 @@ margin-top:0;
     padding: 10px;
     border: 1px solid #adaaaa;
 }
+.td-width15{
+    width:15%;
+}
 /*tenant add solution*/
 .pd-0 {
     padding: 0;

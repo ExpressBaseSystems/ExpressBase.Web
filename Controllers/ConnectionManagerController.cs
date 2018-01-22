@@ -169,26 +169,24 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult SMSAccount(int i)
+        public string SMSAccount(int i)
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS });
             var req = this.HttpContext.Request.Form;
-            SMSConnection smscon = new SMSConnection();
-            smscon.ProviderName = req["provider"];
-            smscon.NickName = req["nickname"];
-            smscon.UserName = req["username"];
-            smscon.From = req["from"];
-            smscon.Password = req["pwd"];
-
-            if (!String.IsNullOrEmpty(solutionConnections.EBSolutionConnections.SMSConnection.UserName))
+            SMSConnection smscon = new SMSConnection()
             {
-                if (String.IsNullOrEmpty(smscon.Password) && smscon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName)
-                    smscon.Password = solutionConnections.EBSolutionConnections.SMSConnection.Password;
+                ProviderName = req["ProviderName"],
+                NickName = req["NickName"],
+                UserName = req["UserName"],
+                From = req["From"],
+                Password = req["Password"]
+            };
+
+            if (String.IsNullOrEmpty(smscon.Password) && smscon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName)
                 this.ServiceClient.Post<bool>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false });
-            }
             else
                 this.ServiceClient.Post<bool>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true });
-            return Redirect("/ConnectionManager");
+            return JsonConvert.SerializeObject(smscon);
         }
 
         [HttpPost]

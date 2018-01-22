@@ -74,6 +74,26 @@
         }.bind(this));   
     }
 
+    this.smsAccountSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/SMSAccount",
+            data: postData,
+            beforeSend: function () {
+
+            }
+        }).done(function (data) {
+            $(".SmsConnectionEdit tbody").empty();
+            $(".SmsConnectionEdit .table-message").remove();
+            var d = JSON.parse(data);
+            d.FilesDB_url = atob(d.FilesDB_url);
+            this.appendSmsConnection(d);
+            $("#" + this.whichModal).modal("toggle");
+        }.bind(this));
+    };
+
     this.appendDataDb = function (object) { 
         var Server = "";
         var DatabaseName = "";
@@ -108,25 +128,53 @@
         else
         $(".EmailConnectionEdit tbody").append(`<tr>
                                         <td field="EmailVendor">${object.ProviderName}</td>
-                                        <td field="Email">${EmailAddress}</td>                                        
-                                        <td field="Password">${object.Password}</td>
+                                        <td field="Email">${object.EmailAddress}</td>                                                                                
                                         <td field="SMTP">${object.Smtp}</td>
                                         <td field="Port">${object.Port}</td>
                                         <td field="NickName">${object.NickName}</td>
                                         <td class="edit-row"><button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
                                     </tr>`);
     };
+    this.appendSmsConnection = function (object) {
+        if ($.isEmptyObject(object))
+            $(".SmsConnectionEdit").parent().append(`<div class="table-message">No SMS Accounts added..</div>`);
+        else
+            $(".SmsConnectionEdit tbody").append(`<tr>
+                                         <td field="ProviderName">${object.ProviderName}</td>
+                                        <td field="UserName">${object.UserName}</td>
+                                        <td field="From">${object.From}</td>
+                                        <td field="NickName">${object.NickName}</td>
+                                        <td class="edit-row"><button whichmodal="SmsConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
+                                    </tr>`);
+    };
 
+    this.testConnection = function (e) {
+        var form = this.objectifyForm($("#" + $(e.target).attr("whichform")).serializeArray());
+        if ($(e.target).attr("whichform") === "dbConnectionSubmit"){
+
+        }
+    };
+
+    this.objectifyForm =  function(formArray) {//serialize data function
+        var returnArray = {};
+        for (var i = 0; i < formArray.length; i++) {
+            returnArray[formArray[i]['name']] = formArray[i]['value'];
+        }
+        return returnArray;
+    }
 
     this.init = function () {
         this.appendDataDb(this.Connections.DataDbConnection);
         this.appendFilesDb(this.Connections.FilesDbConnection);
         this.appendEmailConnection(this.Connections.SMTPConnection);
+        this.appendSmsConnection(this.Connections.SMSConnection);
         $(".s-dash-bodyComm .edit-btn").on("click", this.editConnectionRow.bind(this));
         $(".addConnection").on("click", this.addConnectionRow.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#EmailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
+        $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
+        $(".testConnection").on("click", this.testConnection.bind(this));
     };
 
     this.init();

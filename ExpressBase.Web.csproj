@@ -15,7 +15,6 @@
   <ItemGroup>
     <PackageReference Include="DiffPlex" Version="1.4.1" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
-    <PackageReference Include="FOSS.ServiceStack.Api.OpenApi.Core" Version="5.0.2" />
     <PackageReference Include="FOSS.ServiceStack.Server.Core" Version="5.0.2" />
     <PackageReference Include="Jint" Version="2.11.58" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />

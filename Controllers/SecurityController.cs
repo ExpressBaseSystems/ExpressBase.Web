@@ -103,6 +103,12 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.Roles = JsonConvert.SerializeObject(fr.Roles);
 			ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
 			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
+			List<string> UserStatus = new List<string>();
+			foreach (var status in Enum.GetValues(typeof(EbUserStatus)))
+			{
+				UserStatus.Add(status.ToString());
+			}
+			ViewBag.UserStatusList = UserStatus;
 			if (itemid > 0)
 			{
 				ViewBag.U_Info = fr.UserData;
@@ -118,22 +124,32 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 
-		public int SaveUser(int userid, string roles, string usergroups)
+		public int SaveUser(int userid, string roles, string usergroups, string usrinfo)
 		{
-			var req = this.HttpContext.Request.Form;
-			Dictionary<string, object> Dict = new Dictionary<string, object>();
-
-			Dict["firstname"] = req["firstname"];
-			Dict["email"] = req["email"];
-			Dict["pwd"] = req["pwd"];
-			Dict["socialid"] = req["socialid"];
-			Dict["socialname"] = req["socialname"];
-			Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
-			Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
+			//var req = this.HttpContext.Request.Form;
+			Dictionary<string, string> Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
+			//Dictionary<string, object> Dict = new Dictionary<string, object>();
+			//Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
+			//Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
 
 			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-
-			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest { Id = userid, Colvalues = Dict });
+			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
+				Id = userid,
+				FullName = Dict["fullname"],
+				NickName = Dict["nickname"],
+				EmailParimary = Dict["email"],
+				EmailSecondary = Dict["alternateemail"],
+				DateOfBirth = Dict["dob"],
+				Sex = Dict["sex"],
+				PhonePrimary = Dict["phoneprimary"],
+				PhoneSecondary = Dict["phonesecondary"],
+				LandPhone = Dict["landline"],
+				PhoneExtension = Dict["extension"],
+				FbId = Dict["fbid"],
+				FbName = Dict["fbname"],
+				Roles = string.IsNullOrEmpty(Dict["roles"]) ? string.Empty : Dict["roles"],
+				UserGroups = string.IsNullOrEmpty(Dict["usergroups"]) ? string.Empty : Dict["usergroups"]
+			});
 			return res.id;
 		}
 

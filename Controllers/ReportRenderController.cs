@@ -17,6 +17,11 @@ using System.Drawing;
 using static ExpressBase.Objects.ReportRelated.EbReportField;
 using System.Net.Http;
 using System.Net;
+using System.Xml;
+using System.Web;
+using System.Text;
+using Newtonsoft.Json;
+using ExpressBase.Web2;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -41,10 +46,8 @@ namespace ExpressBase.Web.Controllers
     }
     public class ReportRenderController : EbBaseIntController
     {
-        //private RowColletion __datarows;
         private DataSourceColumnsResponse cresp = null;
         private DataSourceDataResponse dresp = null;
-        //private ColumnColletion __columns = null;
 
         public EbReport Report = null;
         private iTextSharp.text.Font f = FontFactory.GetFont(FontFactory.HELVETICA, 12);
@@ -60,12 +63,14 @@ namespace ExpressBase.Web.Controllers
         private float pf_Yposition;
         private float ph_Yposition;
         private float dt_Yposition;
-        private float detailprintingtop = 0;       
+        private float detailprintingtop = 0;
 
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         public IActionResult Index(string refid)
         {
+            var resultlist1 = this.ServiceClient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid });
+
             var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
             Report.IsLastpage = false;
@@ -82,7 +87,6 @@ namespace ExpressBase.Web.Controllers
                 dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Report.DataSourceRefId, Draw = 1, Start = 0, Length = 100 });
                 Report.DataRow = dresp.Data;
             }
-
             iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(Report.Width, Report.Height);
 
             d = new Document(rec);
@@ -98,11 +102,8 @@ namespace ExpressBase.Web.Controllers
             Report.InitializeSummaryFields();
             GetWatermarkImages();
             iTextSharp.text.Font link = FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.UNDERLINE, BaseColor.DarkGray);
-
             Anchor anchor = new Anchor("xyz", link);
-            anchor.ToPostUrl();
-            anchor.Reference = "http://eb_roby_dev.localhost:5000/ReportRender?refid=eb_roby_dev-eb_roby_dev-3-1127-1854";
-
+            anchor.Reference = "http://eb_roby_dev.localhost:5000/ReportRender?refid=eb_roby_dev-eb_roby_dev-3-1127-1854?tab=" + JsonConvert.SerializeObject(Report.DataRow[Report.SerialNumber - 1]);
             d.Add(anchor);
             d.NewPage();
 
@@ -112,8 +113,24 @@ namespace ExpressBase.Web.Controllers
             ms1.Position = 0;//important
             return new FileStreamResult(ms1, "application/pdf");
         }
+        public IActionResult SS_Report(string refid)
+        {
+            var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
+            pclient.BearerToken = this.ServiceClient.BearerToken;
+            ReportRenderResponse resultlist1 = null;
+            try
+            {
+                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid });
+            }catch(Exception e)
+            {
 
-        public void GetWatermarkImages()
+            }
+            Console.WriteLine(">>>>>>> Len: " + resultlist1.StreamWrapper.Memorystream.Length + "\n");
+            resultlist1.StreamWrapper.Memorystream.Position = 0;
+            return new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");
+        }
+
+            public void GetWatermarkImages()
         {
             byte[] fileByte = null;
             if (Report.ReportObjects != null)
@@ -241,36 +258,6 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        //public void CallSummerize(string title, int i)
-        //{
-        //    var column_name = string.Empty;
-        //    var column_val = string.Empty;
-
-        //    List<object> SummaryList;
-        //    if (Report.PageSummaryFields.ContainsKey(title))
-        //    {
-        //        SummaryList = Report.PageSummaryFields[title];
-        //        foreach (var item in SummaryList)
-        //        {
-        //            var table = title.Split('.')[0];
-        //            column_name = title.Split('.')[1];
-        //            column_val = Report.GeFieldtData(column_name, i);
-        //            (item as IEbDataFieldSummary).Summarize(column_val);
-        //        }
-        //    }
-        //    if (Report.ReportSummaryFields.ContainsKey(title))
-        //    {
-        //        SummaryList = Report.ReportSummaryFields[title];
-        //        foreach (var item in SummaryList)
-        //        {
-        //            var table = title.Split('.')[0];
-        //            column_name = title.Split('.')[1];
-        //            column_val = Report.GeFieldtData(column_name, i);
-        //            (item as IEbDataFieldSummary).Summarize(column_val);
-        //        }
-        //    }
-
-        //}
 
         //NEED FIX OO
         public void DrawFields(EbReportField field, float section_Yposition, int serialnumber)
@@ -278,7 +265,7 @@ namespace ExpressBase.Web.Controllers
             var column_name = string.Empty;
             var column_val = string.Empty;
             if (Report.PageSummaryFields.ContainsKey(field.Title) || Report.ReportSummaryFields.ContainsKey(field.Title))
-               Report.CallSummerize(field.Title, serialnumber);
+                Report.CallSummerize(field.Title, serialnumber);
             if (field is EbDataField)
             {
                 if (field is IEbDataFieldSummary)

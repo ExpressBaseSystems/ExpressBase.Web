@@ -10,27 +10,32 @@
 
 <div class="side-menu-cont">
 
-    <ul class="collapsible" data-collapsible="accordion">
+    <ul class="collapsible">
         <li>
-            <div class="collapsible-header"><i class="fa fa-home tdash-icon" aria-hidden="true"></i> Solution Home</div>
+            <div class="ebcollapsible-header"><i class="fa fa-home tdash-icon" aria-hidden="true"></i> Solution Home</div>
         </li>
         <li>
-            <div class="collapsible-header"><i class="fa fa-bars tdash-icon" aria-hidden="true"></i> Application</div>
+            <div class="collapsible-header active"><i class="fa fa-bars tdash-icon" aria-hidden="true"></i> Application</div>
             <div class="collapsible-body l1">
-                <ul class="collapsible" data-collapsible="accordion">
-                    <li>
-                        <div class="collapsible-header"><i class="fa fa-television tdash-icon" aria-hidden="true"></i> Web</div>
+                <ul class="collapsible">
+                    <li class="coll">
+                        <div class="collapsible-header active"><i class="fa fa-television tdash-icon" aria-hidden="true"></i> Web</div>
                         <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
                                 @{
-                                    int l = 3;//ViewBag.webApps.Length;
-                                    for (var i = 0; i <= @ViewBag.botlength; i +=2)
+                                    try
                                     {
-                                        <li>
-                                            <div class="collapsible-header" appid="@ViewBag.webApps[@i + 1]">
-                                                @ViewBag.webApps[@i]
-                                            </div>
-                                        </li>
+                                        for (var i = 0; i < @ViewBag.botlength; i += 2)
+                                        {
+                                            <li>
+                                                <div class="collapsible-header" appid="@ViewBag.webApps[@i + 1]">@ViewBag.webApps[@i]</div>
+                                            </li>
+                                        }
+
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        ;
                                     }
                                 }
                             </ul>
@@ -40,13 +45,21 @@
                         <div class="collapsible-header"><i class="fa fa-mobile fa-lg tdash-icon" aria-hidden="true"></i> Mobile</div>
                         <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
-                                @foreach (var name in ViewBag.mobApps)
-                                {
-                                    <li>
-                                        <div class="collapsible-header">
-                                            @name
-                                        </div>
-                                    </li>
+                                @{
+                                    try
+                                    {
+                                        for (var i = 0; i < @ViewBag.moblength; i += 2)
+                                        {
+                                            <li>
+                                                <div class="collapsible-header" appid="@ViewBag.mobApps[@i + 1]">@ViewBag.mobApps[@i]</div>
+                                            </li>
+                                        }
+
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        ;
+                                    }
                                 }
                             </ul>
                         </div>
@@ -55,15 +68,28 @@
                         <div class="collapsible-header"><i class="fa fa-comment-o fa-lg tdash-icon" aria-hidden="true"></i> Bot</div>
                         <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
-                                @foreach (var name in ViewBag.botApps)
-                                {
-                                    <li>
-                                        <div class="collapsible-header">
-                                            @name
-                                        </div>
-                                    </li>
+                                @{
+                                    try
+                                    {
+                                        for (var i = 0; i < @ViewBag.botlength; i += 2)
+                                        {
+                                            <li>
+                                                <div class="collapsible-header" appid="@ViewBag.botApps[@i + 1]">
+                                                    @ViewBag.botApps[@i]
+                                                </div>
+                                            </li>
+                                        }
+
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        ;
+                                    }
                                 }
                             </ul>
+
+
+
                         </div>
                     </li>
                 </ul>
@@ -75,7 +101,24 @@
 
 <script>
     $(document).ready(function () {
-        $('.collapsible').collapsible();
+        //$('.coll .collapsible').collapsible();
+        $(".l2 .collapsible-header").on("click", function () {
+            var appid = $(event.target).attr("appid");
+            $.ajax({
+                url: "../Dev/GetBotDetails",
+                type: "POST",
+                data: { _appId: appid },
+                success: function (bot) {
+                    console.log(bot);
+                    $("#botname").val(bot.fullName);
+                    $("#shortname").val(bot.name);
+                    $("#websitename").val(bot.url);
+                    $("#welcomemsg").val(bot.welcomeMsg);
+                    $("#chatid").val(bot.botId);
+                    $(".inp-control").closest(".inp-block").find("label").show(150);
+                }
+            });
+        })
     });
 </script>
 
@@ -124,5 +167,26 @@
         .l2 .collapsible-header {
             font-size: .85rem;
             padding: 5px;
+        }
+
+    .ebcollapsible-header {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        line-height: 1.5;
+        padding: 1rem;
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+        .ebcollapsible-header i {
+            width: 2rem;
+            font-size: 1.6rem;
+            display: inline-block;
+            text-align: center;
+            margin-right: 1rem;
         }
 </style>

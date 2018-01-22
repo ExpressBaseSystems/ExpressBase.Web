@@ -131,6 +131,8 @@
                     this.setFormControls();
                 }
                 else if (data.objType === "TableVisualization") {
+                    data.BotCols = JSON.parse(data.BotCols);
+                    data.BotData = JSON.parse(data.BotData);
                     this.curTblViz = data;
                     this.showTblViz();
                 }
@@ -146,6 +148,42 @@
             this.setFormControls();
         }
     }
+
+    this.showTblViz = function (e) {
+        var $tableCont = $('<div class="table-cont">' + this.curTblViz.BareControlHtml + '</div>');
+        this.$chatBox.append($tableCont.hide());
+        this.showTypingAnim();
+        $(`#${this.curTblViz.EbSid}`).DataTable({
+            processing: true,
+            serverSide: false,
+            dom: 'rt',
+            columns: this.curTblViz.BotCols,
+            data: this.curTblViz.BotData,
+            initComplete: function () {
+                this.hideTypingAnim();
+                this.AskWhatU()
+                $tableCont.show(100);
+            }.bind(this)
+            //dom: "rt",
+            //ajax: {
+            //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
+            //    type: 'POST',
+            //    timeout: 180000,
+            //    data: function (dq) {
+            //        delete dq.columns; delete dq.order; delete dq.search;
+            //        dq.RefId = this.curTblViz.DataSourceRefId;
+            //        return dq;
+            //    }.bind(this),
+            //    dataSrc: function (dd) {
+            //        return dd.data;
+            //    },
+            //    beforeSend: function (xhr) {
+            //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //    }.bind(this),
+            //    crossDomain: true
+            //}
+        });
+    }.bind(this);
 
     this.showChartViz = function (e) {
         this.showTypingAnim();
@@ -284,40 +322,6 @@
             options: this.goptions,
         });
     };
-
-    this.showTblViz = function (e) {
-        var $tableCont = $('<div class="table-cont">' + this.curTblViz.BareControlHtml + '</div>');
-        this.$chatBox.append($tableCont.hide());
-        this.showTypingAnim();
-        $(`#${this.curTblViz.EbSid}`).DataTable({
-            columns: this.curTblViz.Columns.$values,
-            processing: true,
-            serverSide: true,
-            initComplete: function () {
-                this.hideTypingAnim();
-                this.AskWhatU()
-                $tableCont.show(100);
-            }.bind(this),
-            dom: "rt",
-            ajax: {
-                url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
-                type: 'POST',
-                timeout: 180000,
-                data: function (dq) {
-                    delete dq.columns; delete dq.order; delete dq.search;
-                    dq.RefId = this.curTblViz.DataSourceRefId;
-                    return dq;
-                }.bind(this),
-                dataSrc: function (dd) {
-                    return dd.data;
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-                }.bind(this),
-                crossDomain: true
-            }
-        });
-    }.bind(this);
 
     this.txtboxKeyup = function (e) {
         if (e.which === 13)/////////////////////////////
@@ -653,7 +657,7 @@
         this.showTypingAnim();
         $.post("../bote/AuthAndGetformlist",
             {
-                "cid": "eb_roby_dev",
+                "cid": this.EXPRESSbase_SOLUTION_ID,
                 "socialId": this.FBResponse.id,
                 "wc": "uc",
             }, function (result) {
@@ -669,7 +673,7 @@
                 /////////////////////////////////////////////////
                 setTimeout(function () {
                     //$(".btn-box .btn:last").click();
-                    //$(".btn-box").find("[idx=5]").click();
+                    $(".btn-box").find("[idx=5]").click();
                 }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);

@@ -1,0 +1,192 @@
+﻿<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!--Import materialize.css-->  <!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css">
+
+
+<!--Import jQuery before materialize.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script><!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+
+<div class="side-menu-cont">
+
+    <ul class="collapsible">
+        <li>
+            <div class="ebcollapsible-header"><i class="fa fa-home tdash-icon" aria-hidden="true"></i> Solution Home</div>
+        </li>
+        <li>
+            <div class="collapsible-header active"><i class="fa fa-bars tdash-icon" aria-hidden="true"></i> Application</div>
+            <div class="collapsible-body l1">
+                <ul class="collapsible">
+                    <li class="coll">
+                        <div class="collapsible-header active"><i class="fa fa-television tdash-icon" aria-hidden="true"></i> Web</div>
+                        <div class="collapsible-body l2">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                @{
+                                    try
+                                    {
+                                        for (var i = 0; i < @ViewBag.botlength; i += 2)
+                                        {
+                                            <li>
+                                                <div class="collapsible-header" appid="@ViewBag.webApps[@i + 1]">@ViewBag.webApps[@i]</div>
+                                            </li>
+                                        }
+
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        ;
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="fa fa-mobile fa-lg tdash-icon" aria-hidden="true"></i> Mobile</div>
+                        <div class="collapsible-body l2">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                @{
+                                    try
+                                    {
+                                        for (var i = 0; i < @ViewBag.moblength; i += 2)
+                                        {
+                                            <li>
+                                                <div class="collapsible-header" appid="@ViewBag.mobApps[@i + 1]">@ViewBag.mobApps[@i]</div>
+                                            </li>
+                                        }
+
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        ;
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="fa fa-comment-o fa-lg tdash-icon" aria-hidden="true"></i> Bot</div>
+                        <div class="collapsible-body l2">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                @{
+                                    try
+                                    {
+                                        for (var i = 0; i < @ViewBag.botlength; i += 2)
+                                        {
+                                            <li>
+                                                <div class="collapsible-header" appid="@ViewBag.botApps[@i + 1]">
+                                                    @ViewBag.botApps[@i]
+                                                </div>
+                                            </li>
+                                        }
+
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        ;
+                                    }
+                                }
+                            </ul>
+
+
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        //$('.coll .collapsible').collapsible();
+        $(".l2 .collapsible-header").on("click", function () {
+            var appid = $(event.target).attr("appid");
+            $.ajax({
+                url: "../Dev/GetBotDetails",
+                type: "POST",
+                data: { _appId: appid },
+                success: function (bot) {
+                    console.log(bot);
+                    $("#botname").val(bot.fullName);
+                    $("#shortname").val(bot.name);
+                    $("#websitename").val(bot.url);
+                    $("#welcomemsg").val(bot.welcomeMsg);
+                    $("#chatid").val(bot.botId);
+                    $(".inp-control").closest(".inp-block").find("label").show(150);
+                }
+            });
+        })
+    });
+</script>
+
+<style>
+    .side-menu-cont {
+        /*border: solid 1px red;*/
+        height: 100vh;
+        width: calc(100% - 24px);
+    }
+
+    .collapsible {
+        margin: 0;
+        height: inherit;
+        background: white;
+        box-shadow: none;
+        border-radius: 4px;
+        border: none;
+    }
+
+    .collapsible-body {
+        padding: 1rem;
+    }
+
+    .l2 .collapsible-header {
+        padding: .2rem;
+    }
+
+    .l1 .collapsible-header {
+        font-size: .9rem;
+        padding: 10px;
+    }
+
+    .l1 .fa {
+        font-size: 1.3rem !important;
+    }
+
+    .l2 {
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+
+        .l2 .collapsible-header {
+            border: none;
+        }
+
+        .l2 .collapsible-header {
+            font-size: .85rem;
+            padding: 5px;
+        }
+
+    .ebcollapsible-header {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        line-height: 1.5;
+        padding: 1rem;
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+        .ebcollapsible-header i {
+            width: 2rem;
+            font-size: 1.6rem;
+            display: inline-block;
+            text-align: center;
+            margin-right: 1rem;
+        }
+</style>

@@ -16,6 +16,7 @@ using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Common;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Objects.Objects.DVRelated;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -32,28 +33,28 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet]
         public string GetSamp(string refid, string socialId)
-        {
-            string result = "SocialId not in Database";
-
-            try
             {
-                string cid = refid.Split('-')[0].Trim();
-               // string authResponse = AuthAndGetformlist(refid, socialId);
-                if (AuthAndGetformlist(refid, socialId) != null)
+                string result = "SocialId not in Database";
+
+                try
                 {
-                    var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-                    var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-                    dsobj.Status = resultlist.Data[0].Status;
-                    dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-                    result = dsobj.GetHtml();
+                    string cid = refid.Split('-')[0].Trim();
+                    // string authResponse = AuthAndGetformlist(refid, socialId);
+                    if (AuthAndGetformlist(refid, socialId) != null)
+                    {
+                        var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+                        var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+                        dsobj.Status = resultlist.Data[0].Status;
+                        dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
+                        result = dsobj.GetHtml();
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                result = e.Message;
-            }
+                catch (Exception e)
+                {
+                    result = e.Message;
+                }
 
-            return result;
+                return result;
         }
 
         [HttpGet]
@@ -150,7 +151,7 @@ namespace ExpressBase.Web.Controllers
                 }
             }
 
-           // string authResponse = ;
+            // string authResponse = ;
 
             if (AuthAndGetformlist(refid, socialId, whichconsole) != null)
             {
@@ -165,7 +166,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<string> UploadImageOrginal(string base64,string filename, string refreshToken, string bearerToken)
+        public async Task<string> UploadImageOrginal(string base64, string filename, string refreshToken, string bearerToken)
         {
             this.ServiceClient.BearerToken = bearerToken;
             this.ServiceClient.RefreshToken = refreshToken;
@@ -208,7 +209,7 @@ namespace ExpressBase.Web.Controllers
                 Password = "NIL",
                 Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId } },
             });
-            if(authResponse != null)
+            if (authResponse != null)
             {
                 this.ServiceClient.BearerToken = authResponse.BearerToken;
                 this.ServiceClient.RefreshToken = authResponse.RefreshToken;
@@ -231,7 +232,7 @@ namespace ExpressBase.Web.Controllers
             {
                 return null;
             }
-           
+
         }
 
         public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
@@ -257,7 +258,39 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
-            if (Obj is EbTableVisualization || Obj is EbChartVisualization)
+            if (Obj is EbTableVisualization)
+            {
+                EbTableVisualization Tobj = (Obj as EbTableVisualization);
+                string BotCols = "[";
+                string BotData = "[";
+                int i = 0;
+
+                foreach (DVBaseColumn col in Tobj.Columns)
+                {
+                    BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
+                }
+                BotCols = BotCols.TrimEnd(',') + "]";
+
+                DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
+                var data = dresp.Data;
+                foreach (EbDataRow row in data)
+                {
+                    i = 0;
+                    BotData += "{";
+                    foreach (var item in row)
+                    {
+                        BotData += "\"" + i++ + "\":\"" + item + "\",";
+                        //BotData += "\"" + item + "\",";
+                    }
+                    BotData = BotData.TrimEnd(',') + "},";
+                }
+                BotData = BotData.TrimEnd(',') + "]";
+
+                Tobj.BotCols = BotCols;
+                Tobj.BotData = BotData;
+                return EbSerializers.Json_Serialize(Tobj);
+            }
+            if (Obj is EbChartVisualization)
             {
                 return EbSerializers.Json_Serialize(Obj);
             }

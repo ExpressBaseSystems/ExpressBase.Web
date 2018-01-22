@@ -1,59 +1,49 @@
-﻿var UserJs = function (usr, sysroles, usergroup, uroles, ugroups, r2rList) {
-    this.user = usr;
+﻿var UserJs = function (userinfo, usr, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList) {
+    this.userinfo = userinfo;
+    this.user = usr;//custom roles
     this.systemRoles = sysroles;
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
     this.r2rList = r2rList;
+    this.statusList = userstatusList;
     this.itemId = $("#userid").val();
     this.dependentList = [];
-    
+    this.dominantList = [];
+
     this.divFormHeading = $("#divFormHeading");
-    this.txtName = $("#txtName");
+    this.txtName = $("#txtFullName");
     this.txtNickName = $("#txtNickName");
     this.txtEmail = $("#txtEmail");
+    //this.pwdPassword = $("#pwdPassword");
+    this.txtDateOfBirth = $("#txtDateOfBirth");
+    this.txtAlternateEmail = $("#txtAlternateEmail");
+    this.txtPhPrimary = $("#txtPhPrimary");
+    this.txtPhSecondary = $("#txtPhSecondary");
+    this.txtLandPhone = $("#txtLandPhone");
+    this.txtExtension = $("#txtExtension");
+    this.chkboxActive = $("#chkboxActive");
+    this.chkboxTerminate = $("#chkboxTerminate");
+    this.chkboxHide = $("#chkboxHide");
+    
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
+    this.FB = null;
+    this.fbId = null;
+    this.fbName = null;
 
     this.rolesTile = null;
     this.userGroupTile = null;
 
-    //this.txtSearchRole = $("#txtSearchRole");
-    //this.btnModalOk = $("#btnModalOk");
-    //this.divRoleSearchResults = $("#divRoleSearchResults");
-    //this.divSelectedRoleDisplay = $("#divSelectedRoleDisplay");
-    //this.txtDemoRoleSearch = $("#txtDemoRoleSearch");
-    //this.btnClearDemoRoleSearch = $("#btnClearDemoRoleSearch");
-
-    //this.txtSearchUserGroup = $("#txtSearchUserGroup");
-    //this.btnUserGroupModalOk = $("#btnUserGroupModalOk");
-    //this.divUserGroupSearchResults = $("#divUserGroupSearchResults");
-    //this.divSelectedUserGroupDisplay = $("#divSelectedUserGroupDisplay");
-    //this.txtDemoUserGroupSearch = $("#txtDemoUserGroupSearch");
-    //this.btnClearDemoUserGroupSearch = $("#btnClearDemoUserGroupSearch");
-
+   
     this.init = function () {
-        //this.txtSearchRole.on('keyup', this.KeyUptxtSearchRole.bind(this));
-        //this.btnModalOk.on('click', this.clickbtnModalOkAction.bind(this));
-        //$('#addRolesModal').on('shown.bs.modal', this.initModal1.bind(this));
-        //this.txtDemoRoleSearch.on('keyup', this.KeyUptxtDemoRoleSearch.bind(this));
-        //this.btnClearDemoRoleSearch.on('click', this.OnClickbtnClearDemoRoleSearch.bind(this));
-
-        //this.txtSearchUserGroup.on('keyup', this.KeyUptxtSearchUserGroup.bind(this));
-        //this.btnUserGroupModalOk.on('click', this.clickbtnUserGroupModalOkAction.bind(this));
-        //$('#addUserGroupModal').on('shown.bs.modal', this.initModal2.bind(this));
-        //this.txtDemoUserGroupSearch.on('keyup', this.KeyUptxtDemoUserGroupSearch.bind(this));
-        //this.btnClearDemoUserGroupSearch.on('click', this.OnClickbtnClearDemoUserGroupSearch.bind(this));
-
-        $('#btnFbConnect').on('click', this.clickbtnFbConnect.bind(this));
-
+        
         $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
-
-
+        
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             $("#btnCreateUser").focus();
         });
-       
+
         this.initForm();
         this.initTiles();
     }
@@ -66,11 +56,110 @@
             this.txtNickName.attr("disabled", "true");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
-            
+
+            this.initUserInfo();
+            this.initFbConnect();
         }
         else {
             $(divFormHeading).text("Create User");
             this.btnFbConnect.css("display", "none");
+            $("#btnFbInvite").show();
+        }
+    }
+
+    this.initUserInfo = function () {
+        this.txtName.val(this.userinfo["fullname"]);
+        this.txtNickName.val(this.userinfo["nickname"]);
+        this.txtEmail.val(this.userinfo["email"]);
+        this.txtDateOfBirth.val(this.userinfo["dob"]);
+        this.txtAlternateEmail.val(this.userinfo["alternateemail"]);
+        this.txtPhPrimary.val(this.userinfo["phnoprimary"]);
+        this.txtPhSecondary.val(this.userinfo["phnosecondary"]);
+        this.txtLandPhone.val(this.userinfo["landline"]);
+        this.txtExtension.val(this.userinfo["phextension"]);
+        var st = "#divGender input:radio[value='"+this.userinfo["sex"]+"']";
+        $(st).attr("checked", "checked");
+        $("#lblFbId").attr("data-id", this.userinfo["fbid"]);
+        $("#userFbLink").text(this.userinfo["fbname"]);
+        var stus = this.statusList[this.userinfo["statusid"]];
+        if (stus === "Active")
+            this.chkboxActive.prop("checked", "true");
+        else if (stus === "Deactivated")
+            this.chkboxActive.removeAttr("checked");
+        else if (stus === "Terminated") {
+            this.chkboxTerminate.prop("checked", "true");
+            this.chkboxActive.removeAttr("checked");
+        }
+        if (this.userinfo["hide"] === "yes")
+            this.chkboxHide.prop("checked", "true");
+    }
+
+    this.initFbConnect = function () {
+        $.ajaxSetup({ cache: true });
+        $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+            FB.init({
+                appId: '149537802493867',
+                version: 'v2.11'
+            });
+            FB.getLoginStatus(updateStatusCallback);
+        });
+        function updateStatusCallback(response) {
+            if (response.authResponse !== null) {
+                if ($("#lblFbId").attr("data-id") === "") {
+                    $("#btnFbConnect").show();
+                }
+                else {
+                    $("#userFbLink").attr("href", "www.facebook.com/" + $("#lblFbId").attr("data-id"));
+                    $("#userFbLink").show();
+                    $("#imgUserFbProfPic").attr("src", "http://graph.facebook.com/" + $("#lblFbId").attr("data-id") + "/picture?type=square");
+                    $("#imgUserFbProfPic").show();
+                    FBpicture();
+                }
+            }
+            else {
+                if ($("#lblFbId").attr("data-id") === "")
+                    $("#btnFbConnect").show();
+                else {
+                    $("#imgUserFbProfPic").attr("src", "http://graph.facebook.com/" + $("#lblFbId").attr("data-id") + "/picture?type=square");
+                    $("#imgUserFbProfPic").show();
+                    $("#userFbLink").attr("href", "http://www.facebook.com/" + $("#lblFbId").attr("data-id"));
+                    $("#userFbLink").show();
+                }
+            }
+        };
+        $('#btnFbConnect').off("click").on("click",
+            function () {
+                FB.login(loginCallBack);
+            }
+        );
+        function loginCallBack(response) {
+            if (response.authResponse !== null) {
+                this.fbId = response.authResponse.userID;
+                $("#lblFbId").attr("data-id", this.fbId);
+                $("#userFbLink").attr("href", "http://www.facebook.com/" + this.fbId);
+                $("#userFbLink").show();
+                $("#btnFbConnect").hide();
+                FBpicture();
+                FB.logout(logoutCallBack);
+            }
+            else
+                console.log("fb login failed - Response: " + response);
+        }
+
+        function logoutCallBack(respose) {
+            console.log("logout");
+        }
+
+        function FBpicture() {
+            FB.api(
+                '/me?fields=name,picture.type(large)',
+                function (response) {
+                    $("#userFbLink").text(response.name);
+                    this.fbName = response.name;
+                    $("#imgUserFbProfPic").attr("src", response.picture.data.url);
+                    $("#imgUserFbProfPic").show();
+                }
+            );
         }
     }
 
@@ -83,8 +172,25 @@
         }
     }
 
+    this.findDominantRoles = function (dependent) {
+        for (var i = 0; i < this.r2rList.length; i++) {
+            if (this.r2rList[i].Dependent == dependent && this.dominantList.indexOf(this.r2rList[i].Dominant) === -1) {
+                this.dominantList.push(this.r2rList[i].Dominant);
+                this.findDominantRoles(this.r2rList[i].Dominant);
+            }
+        }
+    }
+
     this.chkItemCustomFunc = function (_this, e) {
         _this.dependentList = [];
+
+        $.each($(this.divSearchResults).find('input'), function (i, ob) {
+            if (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+                $(ob).removeAttr("checked");
+                $(ob).attr("disabled", "true");
+            }
+        });
+
         if ($(e.target).is(':checked')) {
             _this.findDependentRoles($(e.target).attr("data-id"));
             var st = "";
@@ -117,7 +223,7 @@
             _this.findDependentRoles($(ob).attr('data-id'));
         });
         $.each($(this.divSearchResults).find('input'), function (i, ob) {
-            if (_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+            if ((_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) || (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1)) {
                 $(ob).removeAttr("checked");
                 $(ob).attr("disabled", "true");
             }
@@ -128,7 +234,6 @@
                 $(ob).attr("disabled", "true");
                 $(ob).prop("checked", "true");
             }
-
         }.bind(this));
     }
 
@@ -151,51 +256,34 @@
         this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
     }
 
-    this.clickbtnFbConnect = function () {
-        this.btnFbConnect.attr("disabled", "true");
-        $.ajaxSetup({ cache: true });
-        $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
-            FB.init({
-                appId: '149537802493867',
-                version: 'v2.11' // or v2.1, v2.2, v2.3, ...
-            });
-            this.btnFbConnect.removeAttr('disabled');
-            FB.getLoginStatus(updateStatusCallback);
-        }.bind(this));
-        function updateStatusCallback(r) {
-            console.log(r);
-            if (r.authResponse !== null) {
-                console.log("UserId :" + r.authResponse.userID);
-            }
-            else
-                FB.login(loginCallBack);
-        };
-        function loginCallBack(response) {
-            console.log(response);
-            if (response.authResponse !== null) {
-                console.log("UserId :" + response.authResponse.userID);
-                FB.logout(logoutCallBack);
-            }
-        }
-        function logoutCallBack(respose) {
-            console.log(respose);
-        }
-    }
+    
 
     this.clickbtnCreateUser = function () {
-        var selectedroles = this.rolesTile.getItemIds();
-        var selectedusergroups = this.userGroupTile.getItemIds();
         $("#btnCreateUser").attr("disabled", "true");
+
+        var dict = new Object();
+        dict["fullname"] = this.txtName.val();
+        dict["nickname"] = this.txtNickName.val();
+        dict["email"] = this.txtEmail.val();
+        //dict["Pwd"] = this.PwdPassword.val();
+        dict["dob"] = this.txtDateOfBirth.val();
+        dict["sex"] = $("#divGender input:radio:checked").attr("value");
+        dict["alternateemail"] = this.txtAlternateEmail.val();
+        dict["phoneprimary"] = this.txtPhPrimary.val();
+        dict["phonesecondary"] = this.txtPhSecondary.val();
+        dict["landline"] = this.txtLandPhone.val();
+        dict["extension"] = this.txtExtension.val();
+        dict["fbid"] = $("#lblFbId").attr("data-id");
+        dict["fbname"] = $("#userFbLink").text();
+        dict["roles"] = this.rolesTile.getItemIds();
+        dict["usergroups"] = this.userGroupTile.getItemIds();
+
         $.post("../Security/SaveUser",
             {
                 "userid": $('#userid').val(),
-                "roles": selectedroles,
-                "usergroups": selectedusergroups,
-                "firstname": $('#txtName').val(),
-                "email": $('#txtEmail').val(),
-                "Pwd": $('#pwdPaasword').val()
+                "usrinfo": JSON.stringify(dict)
             }, function (result) {
-                if (result > -1){
+                if (result > -1) {
                     alert("Saved Successfully");
                     window.top.close();
                 }
@@ -274,7 +362,7 @@
     //                                    </div>
     //                                </div>`);
     //}
-       
+
     //this.drawSelectedDisplay = function (flag) {
     //    var addModal;
     //    var divSearchResultsChecked;
@@ -314,7 +402,7 @@
     //                                                </div>`);
     //        }
     //    });
-        
+
     //}
 
     //this.SortDiv = function (flag) {
@@ -333,7 +421,7 @@
     //        mylist.append(item);
     //    });
     //}
-        
+
     //this.KeyUptxtDemoRoleSearch = function () {
     //    this.keyUpTxtDemoSearch(1);
     //}
@@ -382,7 +470,7 @@
     //    this.KeyUptxtDemoUserGroupSearch();
     //}
 
-    
+
 
     //this.loadUserRoles = function () {
     //    obj = this.user;
@@ -407,6 +495,34 @@
     //    }
     //    this.drawSelectedDisplay(2);
     //}
+
+     //this.txtSearchRole = $("#txtSearchRole");
+    //this.btnModalOk = $("#btnModalOk");
+    //this.divRoleSearchResults = $("#divRoleSearchResults");
+    //this.divSelectedRoleDisplay = $("#divSelectedRoleDisplay");
+    //this.txtDemoRoleSearch = $("#txtDemoRoleSearch");
+    //this.btnClearDemoRoleSearch = $("#btnClearDemoRoleSearch");
+
+    //this.txtSearchUserGroup = $("#txtSearchUserGroup");
+    //this.btnUserGroupModalOk = $("#btnUserGroupModalOk");
+    //this.divUserGroupSearchResults = $("#divUserGroupSearchResults");
+    //this.divSelectedUserGroupDisplay = $("#divSelectedUserGroupDisplay");
+    //this.txtDemoUserGroupSearch = $("#txtDemoUserGroupSearch");
+    //this.btnClearDemoUserGroupSearch = $("#btnClearDemoUserGroupSearch");
+
+    //this.txtSearchRole.on('keyup', this.KeyUptxtSearchRole.bind(this));
+        //this.btnModalOk.on('click', this.clickbtnModalOkAction.bind(this));
+        //$('#addRolesModal').on('shown.bs.modal', this.initModal1.bind(this));
+        //this.txtDemoRoleSearch.on('keyup', this.KeyUptxtDemoRoleSearch.bind(this));
+        //this.btnClearDemoRoleSearch.on('click', this.OnClickbtnClearDemoRoleSearch.bind(this));
+
+        //this.txtSearchUserGroup.on('keyup', this.KeyUptxtSearchUserGroup.bind(this));
+        //this.btnUserGroupModalOk.on('click', this.clickbtnUserGroupModalOkAction.bind(this));
+        //$('#addUserGroupModal').on('shown.bs.modal', this.initModal2.bind(this));
+        //this.txtDemoUserGroupSearch.on('keyup', this.KeyUptxtDemoUserGroupSearch.bind(this));
+        //this.btnClearDemoUserGroupSearch.on('click', this.OnClickbtnClearDemoUserGroupSearch.bind(this));
+
+
 
     this.init();
 }

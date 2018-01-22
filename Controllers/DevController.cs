@@ -46,7 +46,9 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DevConsole()
         {
-           // var result = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest { dbName = "TESTDB" });
+             //var result = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest { dbName = "TESTDB" });
+            //var resultlist = this.ServiceClient.Post<TestResponse>(new TestRequest { });
+           // var x = resultlist;
             return View();
         }
 
@@ -62,6 +64,13 @@ namespace ExpressBase.Web.Controllers
             var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest());
             ViewBag.dict = resultlist.Data;
             return View();
+        }
+
+        [HttpPost]
+        public GetBotDetailsResponse GetBotDetails(int _appId)
+        {
+            GetBotDetailsResponse Botdtls = ServiceClient.Get<GetBotDetailsResponse>(new BotDetailsRequest { AppId = _appId });
+            return Botdtls;
         }
 
 

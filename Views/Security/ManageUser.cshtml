@@ -113,10 +113,13 @@
 
 </style>
 @{
+    @using Newtonsoft.Json;
     var RoleObj = Html.Raw(ViewBag.Roles);
     var SystemRoles = Html.Raw(ViewBag.SystemRoles);
     var UserGroupObj = Html.Raw(ViewBag.EBUserGroups);
     var Role2RoleList = Html.Raw(ViewBag.Role2RoleList);
+    var StatusList = Html.Raw(JsonConvert.SerializeObject(ViewBag.UserStatusList));
+    var UInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.U_Info));
     var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
 }
@@ -130,14 +133,12 @@
             <div class="col-md-8" style="margin-left:4%">
                 <div class="row">
                     <div class="form-group col-md-6">
-                        @*<label style="font-family: open sans; font-weight: 300; display:inline-block">Name</label>*@
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-user" aria-hidden="true" style="display:inline-block"></i></span>
-                            <input id="txtName" style="display:inline-block; width:100%; margin-left: 0px;" class="form-control" type="text" name="Name" value="@ViewBag.U_Name" placeholder="Name" title="Name">
+                            <input id="txtFullName" style="display:inline-block; width:100%; margin-left: 0px;" class="form-control" type="email" name="Name" placeholder="Name" title="Name" pattern="[0-9]">
                         </div>
                     </div>
                     <div class="form-group col-md-6" style="">
-                        @*<label style="font-family: open sans; font-weight: 300;">Nick Name</label>*@
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-user-o" aria-hidden="true"></i></span>
                             <input id="txtNickName" style="display:inline-block; width:100% " class="form-control" type="text" placeholder="Nick Name" title="Nick Name">
@@ -146,14 +147,12 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        @*<label style="font-family: open sans; font-weight: 300;">Email ID</label>*@
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-envelope" aria-hidden="true"></i></span>
-                            <input id="txtEmail" style="display:inline-block; width:100%" class="form-control" type="text" value="@ViewBag.U_Email" placeholder="Email ID" title="Email ID">
+                            <input id="txtEmail" style="display:inline-block; width:100%" class="form-control" type="text" placeholder="Email ID" title="Email ID" pattern="[a-z0-9._%+-]+@("@")[a-z0-9.-]+\.[a-z]{2,3}$">
                         </div>
                     </div>
                     <div id="divPassword" class="form-group col-md-6">
-                        @*<label for="pwd" style="font-family: open sans; font-weight: 300;">Password</label>*@
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
                             <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password">
@@ -173,163 +172,298 @@
                 <li><a data-toggle="tab" href="#menu1">Roles</a></li>
                 <li><a data-toggle="tab" href="#menu2">Constraints</a></li>
                 <li><a data-toggle="tab" href="#menu3">User Groups</a></li>
+                <li><a data-toggle="tab" href="#menu4">Preference</a></li>
             </ul>
             <div class="tab-content">
                 <div id="home" class="tab-pane fade in active" style="padding-top:30px">
                     <div class="row tilediv1">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon" id=""><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                <div class="input-group" style="">
                                     <input class="form-control" type="text" id="txtDateOfBirth" title="Date of Birth">
+                                    <span class="input-group-addon" id=""><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="divGender">
                                 <label style="font-family: open sans; font-weight: 300;">Gender</label>
-                                <select class="form-control" id="" title="Gender">
-                                    <option selected disabled>Select Gender</option>
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                </select>
+                                <br />
+                                <label class="radio-inline"><input type="radio" value="Male">Male</label>
+                                <label class="radio-inline"><input type="radio" value="Female">Female</label>
+                                <label class="radio-inline"><input type="radio" value="Other">Other</label>
                             </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Alternate Email ID</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id=""><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                                    <input id="txtAlternateEmail" class="form-control" type="text" title="Alternate Email ID" pattern="[a-z0-9._%+-]+@("@")[a-z0-9.-]+\.[a-z]{2,3}$">
+                                </div>
+                            </div>
+                           
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Primary Phone Number</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id=""><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                    <input class="form-control" type="text" title="Primary Phone Number">
+                                    <input id="txtPhPrimary" class="form-control" type="text" title="Primary Phone Number">
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Secondary Phone Number</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id=""><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                    <input class="form-control" type="text" title="Secondary Phone Number">
+                                    <input id="txtPhSecondary" class="form-control" type="text" title="Secondary Phone Number">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label style="font-family: open sans; font-weight: 300;">Alternate Email ID</label>
-                                <input class="form-control" type="text" title="Alternate Email ID">
+                                <label style="font-family: open sans; font-weight: 300;">Land Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id=""><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                    <input id="txtLandPhone" class="form-control" type="text" title="Land Phone Number">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Extension :</label>
+                                    <input id="txtExtension" class="form-control" type="text" title="Extension" style="display: inline;width: 50%;margin-top: 10px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label id="lblFbId" style="font-family: open sans; font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
+                                <br />
+                                <img id="imgUserFbProfPic" src="" alt="Prof Pic" height="42" width="42" style="display:none;">
+                                <a id="userFbLink" href="#" target="_blank" style="display:none;"></a>
+                                <button id="btnFbConnect" class="" title="Connect Facebook" style="display:none;">Connect Facebook</button>
+                                <button id="btnFbInvite" class="" title="Invite Facebook" style="display:none;">Invite Facebook</button>
                             </div>
 
-                        </div>
-                        <div class="col-md-4">
                             <div class="form-group">
-                                <label style="font-family: open sans; font-weight: 300;">Facebook ID</label>
-                                <a href="https://www.facebook.com/"  target="_blank">Goto facebook</a>
-                                <button id="btnFbConnect" class="" title="Connect Facebook">Connect Facebook</button>
-                            </div>
-                            <div class="form-group">
-                                <span>Send mail. </span><input type="checkbox" id="sendmail" />
+                                @*<span>Send mail. </span><input type="checkbox" id="sendmail" />*@
                             </div>
                             <div class="input-group">
-                                <button class="form-control" title="Generate API Key">Generate API Key</button>
+                                <label id="" style="font-family: open sans; font-weight: 300;">API Key</label>
+                                <button class="form-control" title="Generate API Key">Generate JWT Key</button>
                             </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div id="menu1" class="tab-pane fade">
-
-                    @*<div class="row" style="padding:6px 0px">
-                        <div class="col-md-5">
-                            
-                        </div>
-                        <div class="col-md-4">
-                            <input id="txtDemoRoleSearch" type="search" class="form-control" placeholder="Search" style="padding-right:30px; display:inline-block; width:80%" />
-                            <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
-                            <button id="btnClearDemoRoleSearch" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
                         </div>
                         <div class="col-md-2">
-                            <button type="button" class="btn" data-toggle="modal" data-target="#addRolesModal" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i> Add Roles</button>
-                        </div>
-
-                    </div>
-                    <div class="container">
-                        <!-- Modal -->
-                        <div class="modal fade" id="addRolesModal" role="dialog">
-                            <div class="modal-dialog">
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Add Roles</h4>
-                                    </div>
-                                    <div class="modal-body" style="height:400px">
-                                        <div class="input-group ">
-                                            <input id="txtSearchRole" title="Type to Search" type="text" class="form-control" placeholder="Search">
-                                            <span class="input-group-btn">
-                                                <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
-                                            </span>
-                                        </div>
-                                        
-                                        <div id="divRoleSearchResults" style="height:300px; overflow-y:auto"></div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button id="btnModalOk" type="button" class="btn btn-default">OK</button>
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                    </div>
+                            <label id="" style="font-family: open sans; font-weight: 500; margin-bottom:20px;">Status</label>
+                            <br />
+                            <div class="form-group row">
+                                <div class="col-md-6" style="padding-top: 8px;">
+                                    <label id="" style="font-family: open sans; font-weight: 300;">Active:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="chkboxActive" type="checkbox" checked data-toggle="toggle">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-6" style="padding-top: 8px;">
+                                    <label id="" style="font-family: open sans; font-weight: 300;">Terminate:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="chkboxTerminate" type="checkbox" data-toggle="toggle">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-6" style="padding-top: 8px;">
+                                    <label id="" style="font-family: open sans; font-weight: 300;">Hide:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="chkboxHide" type="checkbox" data-toggle="toggle">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="divSelectedRoleDisplay" class="row tilediv1"></div>*@
                 </div>
+                <div id="menu1" class="tab-pane fade"></div>
+
                 <div id="menu2" class="tab-pane fade">
                     <div style="text-align: center; margin: 13%; font-size: 32px; color: #bbb; "> Comming Soon </div>
                 </div>
-                <div id="menu3" class="tab-pane fade">
-                    @*<div class="row" style="padding:6px 0px">
-                        <div class="col-md-5">
 
-                        </div>
+                <div id="menu3" class="tab-pane fade"></div>
+
+                <div id="menu4" class="tab-pane fade" style="padding-top:30px">
+                    <div class="row tilediv1">
                         <div class="col-md-4">
-                            <input id="txtDemoUserGroupSearch" type="search" class="form-control" placeholder="Search" style="padding-right:30px; display:inline-block; width:80%" />
-                            <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 86px;"></span>
-                            <button id="btnClearDemoUserGroupSearch" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn" data-toggle="modal" data-target="#addUserGroupModal" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i> Add to User Groups</button>
-                        </div>
-                    </div>
-                    <div class="container">
-                        <!-- Modal -->
-                        <div class="modal fade" id="addUserGroupModal" role="dialog">
-                            <div class="modal-dialog">
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">User Groups</h4>
-                                    </div>
-                                    <div class="modal-body" style="height:400px">
-                                        <div class="input-group ">
-                                            <input id="txtSearchUserGroup" title="Type to Search" type="text" class="form-control" placeholder="Search">
-                                            <span class="input-group-btn">
-                                                <button id="" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
-                                            </span>
-                                        </div>
-                                        <div id="divUserGroupSearchResults" style="height:300px; overflow-y:auto"></div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button id="btnUserGroupModalOk" type="button" class="btn btn-default">OK</button>
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Select Locale:</label>
+                                <select class="form-control" id="locale" name="locale">
+                                    @*if(@ViewBag.locale != null)
+                                    {
+                                    <option selected="selected">@ViewBag.locale</option>
+                                    }
+                                    else
+                                    {*@
+                                    <option selected>en_US</option>
+                                    @*}*@
+                                    <option>en-BZ</option>
+                                    <option>en-CA</option>
+                                    <option>en-GB</option>
+                                    <option>en-IE</option>
+                                    <option>en-IN</option>
+                                    <option>en-NZ</option>
+                                    <option>fr_FR</option>
+                                    <option>fr_CA</option>
+                                    <option>ja_JP</option>
+                                    <option>ar-ae</option>
+                                    <option>ar-sa</option>
+                                </select>
                             </div>
+
+
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Select Date Format:</label>
+                                <select class="form-control" id="dateformat" name="dateformat">
+                                    @*if(@ViewBag.dateformat != null)
+                                    {
+                                    <option selected="selected">@ViewBag.dateformat</option>
+                                    }
+                                    else
+                                    {*@
+                                    <option selected>dd/mm/yyyy</option>
+                                    @*}*@
+                                    <option>mm/dd/yyyy</option>
+                                    <option>yyyy/mm/dd</option>
+                                    <option>dd-mm-yyyy</option>
+                                    <option>mm-dd-yyyy</option>
+                                    <option>yyyy-mm-dd</option>
+                                    <option>dd.mm.yyyy</option>
+                                    <option>mm.dd.yyyy</option>
+                                    <option>yyyy.mm.dd</option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
+                                <select id="timezone" name="timezone" class="form-control">
+                                    @*if(@ViewBag.timezone != null)
+                                    {
+                                    <option selected value="@ViewBag.timezonefull" data-utc="@ViewBag.timezone">(@ViewBag.timezone) @ViewBag.timezonefull</option>
+                                    }
+                                    else
+                                    {*@
+                                    <option selected value="Dateline Standard Time" data-utc="UTC-12:00">(UTC-12:00) International Date Line West</option>
+                                    @*}*@
+                                    <option value="UTC-11" data-utc="UTC-11:00">(UTC-11:00) Coordinated Universal Time-11</option>
+                                    <option value="Hawaiian Standard Time" data-utc="UTC-10:00">(UTC-10:00) Hawaii</option>
+                                    <option value="Alaskan Standard Time" data-utc="UTC-09:00">(UTC-09:00) Alaska</option>
+                                    <option value="Pacific Standard Time (Mexico)" data-utc="UTC-08:00">(UTC-08:00) Baja California</option>
+                                    <option value="Pacific Standard Time" data-utc="UTC-08:00">(UTC-08:00) Pacific Time (US & Canada)</option>
+                                    <option value="US Mountain Standard Time" data-utc="UTC-07:00">(UTC-07:00) Arizona</option>
+                                    <option value="Mountain Standard Time (Mexico)" data-utc="UTC-07:00">(UTC-07:00) Chihuahua, La Paz, Mazatlan</option>
+                                    <option value="Mountain Standard Time" data-utc="UTC-07:00">(UTC-07:00) Mountain Time (US & Canada)</option>
+                                    <option value="Central America Standard Time" data-utc="UTC-06:00">(UTC-06:00) Central America</option>
+                                    <option value="Central Standard Time" data-utc="UTC-06:00">(UTC-06:00) Central Time (US & Canada)</option>
+                                    <option value="Central Standard Time (Mexico)" data-utc="UTC-06:00">(UTC-06:00) Guadalajara, Mexico City, Monterrey</option>
+                                    <option value="Canada Central Standard Time" data-utc="UTC-06:00">(UTC-06:00) Saskatchewan</option>
+                                    <option value="SA Pacific Standard Time" data-utc="UTC-05:00">(UTC-05:00) Bogota, Lima, Quito, Rio Branco</option>
+                                    <option value="Eastern Standard Time" data-utc="UTC-05:00">(UTC-05:00) Eastern Time (US & Canada)</option>
+                                    <option value="US Eastern Standard Time" data-utc="UTC-05:00">(UTC-05:00) Indiana (East)</option>
+                                    <option value="Venezuela Standard Time" data-utc="UTC-04:30">(UTC-04:30) Caracas</option>
+                                    <option value="Paraguay Standard Time" data-utc="UTC-04:00">(UTC-04:00) Asuncion</option>
+                                    <option value="Atlantic Standard Time" data-utc="UTC-04:00">(UTC-04:00) Atlantic Time (Canada)</option>
+                                    <option value="Central Brazilian Standard Time" data-utc="UTC-04:00">(UTC-04:00) Cuiaba</option>
+                                    <option value="SA Western Standard Time" data-utc="UTC-04:00">(UTC-04:00) Georgetown, La Paz, Manaus, San Juan</option>
+                                    <option value="Pacific SA Standard Time" data-utc="UTC-04:00">(UTC-04:00) Santiago</option>
+                                    <option value="Newfoundland Standard Time" data-utc="UTC-03:30">(UTC-03:30) Newfoundland</option>
+                                    <option value="E. South America Standard Time" data-utc="UTC-03:00">(UTC-03:00) Brasilia</option>
+                                    <option value="Argentina Standard Time" data-utc="UTC-03:00">(UTC-03:00) Buenos Aires</option>
+                                    <option value="SA Eastern Standard Time" data-utc="UTC-03:00">(UTC-03:00) Cayenne, Fortaleza</option>
+                                    <option value="Greenland Standard Time" data-utc="UTC-03:00">(UTC-03:00) Greenland</option>
+                                    <option value="Montevideo Standard Time" data-utc="UTC-03:00">(UTC-03:00) Montevideo</option>
+                                    <option value="Bahia Standard Time" data-utc="UTC-03:00">(UTC-03:00) Salvador</option>
+                                    <option value="UTC-02" data-utc="UTC-02:00">(UTC-02:00) Coordinated Universal Time-02</option>
+                                    <option value="Mid-Atlantic Standard Time" data-utc="UTC-02:00">(UTC-02:00) Mid-Atlantic - Old</option>
+                                    <option value="Azores Standard Time" data-utc="UTC-01:00">(UTC-01:00) Azores</option>
+                                    <option value="Cape Verde Standard Time" data-utc="UTC-01:00">(UTC-01:00) Cape Verde Is.</option>
+                                    <option value="Morocco Standard Time" data-utc="UTC">(UTC) Casablanca</option>
+                                    <option value="UTC" data-utc="UTC">(UTC) Coordinated Universal Time</option>
+                                    <option value="GMT Standard Time" data-utc="UTC">(UTC) Dublin, Edinburgh, Lisbon, London</option>
+                                    <option value="Greenwich Standard Time" data-utc="UTC">(UTC) Monrovia, Reykjavik</option>
+                                    <option value="W. Europe Standard Time" data-utc="UTC+01:00">(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
+                                    <option value="Central Europe Standard Time" data-utc="UTC+01:00">(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
+                                    <option value="Romance Standard Time" data-utc="UTC+01:00">(UTC+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+                                    <option value="Central European Standard Time" data-utc="UTC+01:00">(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
+                                    <option value="W. Central Africa Standard Time" data-utc="UTC+01:00">(UTC+01:00) West Central Africa</option>
+                                    <option value="Namibia Standard Time" data-utc="UTC+01:00">(UTC+01:00) Windhoek</option>
+                                    <option value="Jordan Standard Time" data-utc="UTC+02:00">(UTC+02:00) Amman</option>
+                                    <option value="GTB Standard Time" data-utc="UTC+02:00">(UTC+02:00) Athens, Bucharest</option>
+                                    <option value="Middle East Standard Time" data-utc="UTC+02:00">(UTC+02:00) Beirut</option>
+                                    <option value="Egypt Standard Time" data-utc="UTC+02:00">(UTC+02:00) Cairo</option>
+                                    <option value="Syria Standard Time" data-utc="UTC+02:00">(UTC+02:00) Damascus</option>
+                                    <option value="E. Europe Standard Time" data-utc="UTC+02:00">(UTC+02:00) E. Europe</option>
+                                    <option value="South Africa Standard Time" data-utc="UTC+02:00">(UTC+02:00) Harare, Pretoria</option>
+                                    <option value="FLE Standard Time" data-utc="UTC+02:00">(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
+                                    <option value="Turkey Standard Time" data-utc="UTC+02:00">(UTC+02:00) Istanbul</option>
+                                    <option value="Israel Standard Time" data-utc="UTC+02:00">(UTC+02:00) Jerusalem</option>
+                                    <option value="Libya Standard Time" data-utc="UTC+02:00">(UTC+02:00) Tripoli</option>
+                                    <option value="Arabic Standard Time" data-utc="UTC+03:00">(UTC+03:00) Baghdad</option>
+                                    <option value="Kaliningrad Standard Time" data-utc="UTC+03:00">(UTC+03:00) Kaliningrad, Minsk</option>
+                                    <option value="Arab Standard Time" data-utc="UTC+03:00">(UTC+03:00) Kuwait, Riyadh</option>
+                                    <option value="E. Africa Standard Time" data-utc="UTC+03:00">(UTC+03:00) Nairobi</option>
+                                    <option value="Iran Standard Time" data-utc="UTC+03:30">(UTC+03:30) Tehran</option>
+                                    <option value="Arabian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Abu Dhabi, Muscat</option>
+                                    <option value="Azerbaijan Standard Time" data-utc="UTC+04:00">(UTC+04:00) Baku</option>
+                                    <option value="Russian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Moscow, St. Petersburg, Volgograd</option>
+                                    <option value="Mauritius Standard Time" data-utc="UTC+04:00">(UTC+04:00) Port Louis</option>
+                                    <option value="Georgian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Tbilisi</option>
+                                    <option value="Caucasus Standard Time" data-utc="UTC+04:00">(UTC+04:00) Yerevan</option>
+                                    <option value="Afghanistan Standard Time" data-utc="UTC+04:30">(UTC+04:30) Kabul</option>
+                                    <option value="West Asia Standard Time" data-utc="UTC+05:00">(UTC+05:00) Ashgabat, Tashkent</option>
+                                    <option value="Pakistan Standard Time" data-utc="UTC+05:00">(UTC+05:00) Islamabad, Karachi</option>
+                                    <option value="India Standard Time" data-utc="UTC+05:30">(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+                                    <option value="Sri Lanka Standard Time" data-utc="UTC+05:30">(UTC+05:30) Sri Jayawardenepura</option>
+                                    <option value="Nepal Standard Time" data-utc="UTC+05:45">(UTC+05:45) Kathmandu</option>
+                                    <option value="Central Asia Standard Time" data-utc="UTC+06:00">(UTC+06:00) Astana</option>
+                                    <option value="Bangladesh Standard Time" data-utc="UTC+06:00">(UTC+06:00) Dhaka</option>
+                                    <option value="Ekaterinburg Standard Time" data-utc="UTC+06:00">(UTC+06:00) Ekaterinburg</option>
+                                    <option value="Myanmar Standard Time" data-utc="UTC+06:30">(UTC+06:30) Yangon (Rangoon)</option>
+                                    <option value="SE Asia Standard Time" data-utc="UTC+07:00">(UTC+07:00) Bangkok, Hanoi, Jakarta</option>
+                                    <option value="N. Central Asia Standard Time" data-utc="UTC+07:00">(UTC+07:00) Novosibirsk</option>
+                                    <option value="China Standard Time" data-utc="UTC+08:00">(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
+                                    <option value="North Asia Standard Time" data-utc="UTC+08:00">(UTC+08:00) Krasnoyarsk</option>
+                                    <option value="Singapore Standard Time" data-utc="UTC+08:00">(UTC+08:00) Kuala Lumpur, Singapore</option>
+                                    <option value="W. Australia Standard Time" data-utc="UTC+08:00">(UTC+08:00) Perth</option>
+                                    <option value="Taipei Standard Time" data-utc="UTC+08:00">(UTC+08:00) Taipei</option>
+                                    <option value="Ulaanbaatar Standard Time" data-utc="UTC+08:00">(UTC+08:00) Ulaanbaatar</option>
+                                    <option value="North Asia East Standard Time" data-utc="UTC+09:00">(UTC+09:00) Irkutsk</option>
+                                    <option value="Tokyo Standard Time" data-utc="UTC+09:00">(UTC+09:00) Osaka, Sapporo, Tokyo</option>
+                                    <option value="Korea Standard Time" data-utc="UTC+09:00">(UTC+09:00) Seoul</option>
+                                    <option value="Cen. Australia Standard Time" data-utc="UTC+09:30">(UTC+09:30) Adelaide</option>
+                                    <option value="AUS Central Standard Time" data-utc="UTC+09:30">(UTC+09:30) Darwin</option>
+                                    <option value="E. Australia Standard Time" data-utc="UTC+10:00">(UTC+10:00) Brisbane</option>
+                                    <option value="AUS Eastern Standard Time" data-utc="UTC+10:00">(UTC+10:00) Canberra, Melbourne, Sydney</option>
+                                    <option value="West Pacific Standard Time" data-utc="UTC+10:00">(UTC+10:00) Guam, Port Moresby</option>
+                                    <option value="Tasmania Standard Time" data-utc="UTC+10:00">(UTC+10:00) Hobart</option>
+                                    <option value="Yakutsk Standard Time" data-utc="UTC+10:00">(UTC+10:00) Yakutsk</option>
+                                    <option value="Central Pacific Standard Time" data-utc="UTC+11:00">(UTC+11:00) Solomon Is., New Caledonia</option>
+                                    <option value="Vladivostok Standard Time" data-utc="UTC+11:00">(UTC+11:00) Vladivostok</option>
+                                    <option value="New Zealand Standard Time" data-utc="UTC+12:00">(UTC+12:00) Auckland, Wellington</option>
+                                    <option value="UTC+12" data-utc="UTC+12:00">(UTC+12:00) Coordinated Universal Time+12</option>
+                                    <option value="Fiji Standard Time" data-utc="UTC+12:00">(UTC+12:00) Fiji</option>
+                                    <option value="Magadan Standard Time" data-utc="UTC+12:00">(UTC+12:00) Magadan</option>
+                                    <option value="Kamchatka Standard Time" data-utc="UTC+12:00">(UTC+12:00) Petropavlovsk-Kamchatsky - Old</option>
+                                    <option value="Tonga Standard Time" data-utc="UTC+13:00">(UTC+13:00) Nuku'alofa</option>
+                                    <option value="Samoa Standard Time" data-utc="UTC+13:00">(UTC+13:00) Samoa</option>
+                                    <option value="Line Islands Standard Time" data-utc="UTC+14:00">(UTC+14:00) Kiritimati Island</option>
+                                </select>
+                            </div>
+
+
+
                         </div>
                     </div>
-                    <div id="divSelectedUserGroupDisplay" class="row tilediv1"></div>*@
                 </div>
             </div>
 
         </div>
         <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
-        <button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right">Create</button>
+        <button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;display:none;">Create</button>
+        <label style="color:red;"> Sorry, Unable to Continue </label>
     </section>
     <div class="prof-setup-cropie">
         <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
@@ -426,7 +560,7 @@
     </style>*@
 <script>
 
-    var userobj = new UserJs(@RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList);
+    var userobj = new UserJs(@UInfo, @RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList);
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();

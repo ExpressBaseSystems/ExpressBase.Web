@@ -16,7 +16,7 @@
         }
     };
     this.goToSolutionWindow = function (e) {
-        window.open("http://" + this.EbSolutionColl.IsolutionId + ".localhost:5000/dev");       
+        window.open("http://" + this.EbSolutionColl[0].IsolutionId + ".localhost:5000/dev");       
         $("#confTo-solution").modal("toggle");
     };
 

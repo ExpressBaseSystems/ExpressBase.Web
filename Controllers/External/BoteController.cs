@@ -17,6 +17,7 @@ using ExpressBase.Objects;
 using ExpressBase.Common;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Objects.Objects.DVRelated;
+using ExpressBase.Common.EbServiceStack.ReqNRes;
 
 namespace ExpressBase.Web.Controllers
 {

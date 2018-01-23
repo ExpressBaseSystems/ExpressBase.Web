@@ -187,7 +187,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
         }
         if (this.login === "uc") {
-            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
+            //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
             this.isContextual = true;
         }
 
@@ -206,7 +206,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.EbObject = commonO.Current_obj;
         else
             this.EbObject = dvcontainerObj.currentObj;
-        if ($("#filterBox").children().length == 0) {
+        if ($(sideDivId+" #filterBox").children().length == 0) {
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -532,8 +532,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var paramstxt = $("#all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
+        var paramstxt = $(FdCont+" #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         if (paramstxt != undefined) {
             var params = paramstxt.split(',');
             if (params.length > 0) {
@@ -558,7 +558,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.rowObj2filter = function (fltr_collection, i, data) {
-        var type = this.Api.settings().init().aoColumns[i+2].type;
+        var type = this.Api.settings().init().aoColumns[i+2].Type;
         //if (type === "System.Int32" || type === "System.Int16")
         //    type = 12;
         //else if (type === "System.Decimal" || type === "System.Double" || type === "System.Int64")

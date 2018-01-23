@@ -214,6 +214,27 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeObject(smtpcon);
         }
 
+        [HttpPost]
+        public bool DataDbTest()
+        {           
+            var req = this.HttpContext.Request.Form;
+            EbDataDbConnection dbcon = new EbDataDbConnection()
+            {
+                DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
+                DatabaseName = req["databaseName"],
+                Server = req["server"],
+                Port = Convert.ToInt32(req["port"]),
+                UserName = req["userName"],
+                Password = req["password"],
+                ReadWriteUserName = req["readWriteUserName"],
+                ReadWritePassword = req["readWritePassword"],
+                ReadOnlyUserName = req["readOnlyUserName"],
+                ReadOnlyPassword = req["readOnlyPassword"],
+                Timeout = Convert.ToInt32(req["timeout"])
+            };
+            bool res = this.ServiceClient.Post<bool>(new TestConnectionRequest { DataDBConnection = dbcon });
+            return res;
+        }
         //[HttpGet]
         //public IActionResult EditDataDB()
         //{

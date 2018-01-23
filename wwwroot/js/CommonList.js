@@ -7,16 +7,23 @@
     }
 
     this.setTable = function () {
-        //metadata = ["0 7", "1 Id", "2 Name", "3 Nick Name", "4 Sex", "5 Email", "6 Phone Number", "7 Status" ] for USER
+        //metadata => refer CommonList.cshtml
         var tblcols = [];
         var tbldata = [];
         tblcols.push({ data: null, title: "Serial No", className: "dataTableColumnStyle", width: '50px', searchable: false, orderable: false });
+        if (this.metadata.indexOf("_profPic") !== -1)
+            tblcols.push({ data: null, title: "", className: "dataTableColumnStyle text-center", width: '200px',render: this.tblProfPicRender, searchable: false, orderable: false });
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
             tblcols.push({ data: i, title: this.metadata[i], className: "dataTableColumnStyle", width: '200px' });
         tblcols.push({ data: null, title: "Edit/View", className: "dataTableColumnStyle", width: '50px', className: "text-center", render: this.tblEditColumnRender, searchable: false, orderable: false });
-        for (i = 0; i < this.itemList.length; i++)
-            tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: "ewerrg", 4: "errg", 5: this.itemList[i][this.metadata[5]], 6: "123332435", 7: "Active" });
+
+        if (this.metadata.indexOf("_user") !== -1)// Correct this code
+            for (i = 0; i < this.itemList.length; i++)
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: "ewerrg", 4: "errg", 5: this.itemList[i][this.metadata[5]], 6: "123332435", 7: "Active" });
+        else
+            for (i = 0; i < this.itemList.length; i++)
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]]});
         
         var tbl = "#tblCommonList";
         var table = $(tbl).DataTable({
@@ -40,12 +47,23 @@
 
     this.onClickEdit = function (e) {
         var id = $(e.target).attr("data-id");
-        //if user then
-        window.open("../Security/ManageUser?itemid=" + id, "_blank");
+        if (this.metadata.indexOf("_user") !== -1) {
+            window.open("../Security/ManageUser?itemid=" + id, "_blank");
+        }
+        else if (this.metadata.indexOf("_roles") !== -1) {
+            window.open("../Security/ManageRoles?itemid=" + id, "_blank");
+        }
+        else if (this.metadata.indexOf("_userGroup") !== -1) {
+            window.open("../Security/ManageUserGroups?itemid=" + id, "_blank");
+        } 
+
     }
 
     this.tblEditColumnRender = function (data, type, row, meta) {
         return `<i class="fa fa-pencil fa-2x" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]}></i>`;
+    }
+    this.tblProfPicRender = function (data, type, row, meta) {
+        return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' />`;
     }
 
 

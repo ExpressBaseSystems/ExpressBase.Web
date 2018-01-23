@@ -40,11 +40,22 @@ namespace ExpressBase.Web.Controllers
 				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
+			else if (type == "TestRoles")
+			{
+				var fr = this.ServiceClient.Get<GetRolesResponse1>(new GetRolesRequest1());
+				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
+			}
+			else if (type == "TestUserGroup")
+			{
+				var fr = this.ServiceClient.Get<GetUserGroupResponse1>(new GetUserGroupRequest1());
+				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
+			}
 			else if (type == "usergroup")
 			{
 				var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
 				ViewBag.dict = fr.Data;
 			}
+			
 			else if (type == "roles")
 			{
 				var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
@@ -52,7 +63,7 @@ namespace ExpressBase.Web.Controllers
 			}
 			else
 			{
-				var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
+				var fr = this.ServiceClient.Get<GetUsersResponse>(new GetUsersRequest());
 				ViewBag.dict = fr.Data;
 			}
 			if (ViewBag.isAjaxCall)

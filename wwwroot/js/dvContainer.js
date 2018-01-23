@@ -65,7 +65,7 @@ var DvContainerObj = function (settings) {
                 login = this.wc,
                 counter = counter,
                 data = this.MainData,
-                rowData = this.rowData,
+                //rowData = this.rowData,
                 filterValues= this.filterValues,
             );
         }
@@ -81,7 +81,7 @@ var DvContainerObj = function (settings) {
                 login = this.wc,
                 counter = counter,
                 data = this.MainData,
-                rowData = this.rowData,
+                //rowData = this.rowData,
                 filterValues = this.filterValues,
             );
         }
@@ -282,7 +282,7 @@ var DvContainerObj = function (settings) {
     }.bind(this);
 
     this.drawdvFromTable = function (row, filter) {
-        this.rowData = row;
+        //this.rowData = row;
         this.filterValues = filter;
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;

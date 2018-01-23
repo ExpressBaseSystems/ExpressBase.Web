@@ -68,8 +68,8 @@
                             <table class="table dbConnectionEdit">
                                 <thead>
                                     <tr style="border: 1px solid #adaaaa;">
-                                        <th>Database Type</th>
-                                        <th>Database Vendor</th>
+                                        <th class="td-width15">Database Type</th>
+                                        <th class="td-width15">Database Vendor</th>
                                         <th>Server Address</th>
                                         <th>Database Name</th>
                                         <th>Nick Name</th>
@@ -92,21 +92,21 @@
                             <table class="table filesDbConnectionEdit">
                                 <thead>
                                     <tr style="border: 1px solid #adaaaa;">
-                                        <th>Database Type</th>
-                                        <th>Database Vendor</th>
+                                        <th class="td-width15">Database Type</th>
+                                        <th class="td-width15">Database Vendor</th>
                                         <th>Files URL</th>
                                         <th>Nick Name</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="connection-row">
+                                    @*<tr class="connection-row">
                                         @*<td field="">Files</td>
                                             <td field="DatabaseVendor">MongoDB</td>
                                             <td field="FilesDB_url" style="width: 38%;"></td>
                                             <td field="NickName"></td>
-                                            <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>*@
-                                    </tr>
+                                            <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
+                                    </tr>*@
                                 </tbody>
                             </table>
                         </div>
@@ -122,13 +122,12 @@
                             <table class="table EmailConnectionEdit mr-b-0">
                                 <thead>
                                     <tr>
-                                        <th>Email Vendor</th>
-                                        <th>Email</th>                                       
-                                        <th>Password</th>
+                                        <th class="td-width15">Email Vendor</th>
+                                        <th>Email</th>                                                                               
                                         <th>SMTP Server</th>
                                         <th>Port</th>
                                         <th>Nick Name</th>
-                                        <th></th>
+                                        <th class="edit-row"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -150,32 +149,27 @@
                             <button class="btn btn-sm table-btn"><i class="fa fa-commenting-o" aria-hidden="true"></i></button>
                             SMS Accounts
                             <button class="btn btn-sm table-btn pull-right" data-toggle="collapse" data-target="#smsConnections"><i class="fa fa-chevron-down"></i></button>
-                            <button class="btn btn-sm table-btn pull-right"><i class="fa fa-plus"></i></button>
+                            <button whichmodal="SmsConnectionEdit" class="btn btn-sm table-btn pull-right addConnection"><i class="fa fa-plus"></i></button>
                         </div>
                         <div class="s-dash-bodyComm collapse in" id="smsConnections">
-                            <table class="table">
+                            <table class="table SmsConnectionEdit mr-b-0">
                                 <thead>
                                     <tr>
-                                        <th>Provider Name</th>
+                                        <th class="td-width15">Provider Name</th>
                                         <th>UserName</th>
-                                        <th>Password</th>
                                         <th>Sender Number</th>
-                                        <th></th>
+                                        <th>Nick Name</th>
+                                        <th class="edit-row"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <select class="form-control">
-                                                <option>Twilio</option>
-                                                <option>Others</option>
-                                            </select>
-                                        </td>
-                                        <td><input type="text" class="form-control table-input" /></td>
-                                        <td><input type="text" class="form-control table-input" /></td>
-                                        <td><input type="text" class="form-control table-input" /></td>
-                                        <td class="edit-row"><button class="btn btn-sm table-btn"><i class="fa fa-pencil"></i></button></td>
-                                    </tr>
+                                    @*<tr>
+                                        <td field="ProviderName">Google</td>
+                                        <td field="UserName">sdfds</td>
+                                        <td field="From">fdsfsd</td>
+                                        <td field="NickName">dsfdsf</td>
+                                        <td class="edit-row"><button whichmodal="SmsConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
+                                    </tr>*@
                                 </tbody>
                             </table>
                         </div>
@@ -277,6 +271,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save</button>
+                    <a whichform="dbConnectionSubmit" class="btn btn-primary testConnection">Test Connection</a>
                 </div>
             </form>
         </div>
@@ -384,18 +379,39 @@
 <div id="SmsConnectionEdit" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Sms Accounts</h4>
-            </div>
-            <div class="modal-body">
-                <p>Some text in the modal.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
+            <form id="smsConnectionSubmit" method="post" data-toggle="validator">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Sms Accounts</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Provider Name</label>
+                        <input name="ProviderName" class="form-control" type="text" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input name="UserName" class="form-control" type="text" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input name="Password" class="form-control" type="text" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Sender Number</label>
+                        <input name="From" class="form-control" type="text" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Nick Name</label>
+                        <input name="NickName" class="form-control" type="text" required/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" >Save</button>
+                </div>
+            </form>
         </div>
-
     </div>
 </div>
 <script>

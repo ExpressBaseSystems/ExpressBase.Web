@@ -1,12 +1,30 @@
 ﻿var SolutionDashBoard = function (connections) {
     this.Connections = connections; 
     this.whichModal = "";
-    this.editConnectionRow = function (event) {
-        
+    this.customElementLoader = $("<div>", {
+        id: "connecting",
+        css: {
+            "font-size": "15px"
+        },
+        text: "Testing Your Connection..."
+    });
+
+    this.editConnectionRow = function (event) {   
         this.whichModal = $(event.target).closest(".btn").attr("whichmodal");        
         $("#" + this.whichModal).modal("toggle");
         $("#" + this.whichModal + " [name='IsNew']").val(false);
         //$(event.target).closest("td").siblings().each(this.editconnection.bind(this));
+        this.preventSubOnEnter(this.whichModal);
+    };
+
+    this.preventSubOnEnter = function (modalid) {
+        $("#" + modalid +" form").on('keyup keypress', function (e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
     };
 
     this.editconnection = function (i,obj) {
@@ -151,8 +169,25 @@
     this.testConnection = function (e) {
         var form = this.objectifyForm($("#" + $(e.target).attr("whichform")).serializeArray());
         if ($(e.target).attr("whichform") === "dbConnectionSubmit"){
-
+            this.testAjaxCall(form, $(e.target).attr("whichform"));
         }
+    };
+
+    this.testAjaxCall = function (form,formid) {
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/DataDbTest",
+            data: form,
+            beforeSend: function () {
+                $("#" + formid).LoadingOverlay("show");
+            }.bind(this)
+        }).done(function (data) {
+            if (data) {                
+                $("#" + formid + " .saveConnection").show();
+                $("#" + formid + " .testConnection").hide();
+                $("#" + formid).LoadingOverlay("hide");
+            }                     
+        }.bind(this));
     };
 
     this.objectifyForm =  function(formArray) {//serialize data function

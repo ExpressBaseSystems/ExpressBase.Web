@@ -101,12 +101,12 @@
                                 </thead>
                                 <tbody>
                                     @*<tr class="connection-row">
-                                        @*<td field="">Files</td>
-                                            <td field="DatabaseVendor">MongoDB</td>
-                                            <td field="FilesDB_url" style="width: 38%;"></td>
-                                            <td field="NickName"></td>
-                                            <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
-                                    </tr>*@
+                                            @*<td field="">Files</td>
+                                                <td field="DatabaseVendor">MongoDB</td>
+                                                <td field="FilesDB_url" style="width: 38%;"></td>
+                                                <td field="NickName"></td>
+                                                <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
+                                        </tr>*@
                                 </tbody>
                             </table>
                         </div>
@@ -123,7 +123,7 @@
                                 <thead>
                                     <tr>
                                         <th class="td-width15">Email Vendor</th>
-                                        <th>Email</th>                                                                               
+                                        <th>Email</th>
                                         <th>SMTP Server</th>
                                         <th>Port</th>
                                         <th>Nick Name</th>
@@ -132,14 +132,14 @@
                                 </thead>
                                 <tbody>
                                     @*<tr>
-                                        <td field="EmailVendor">Google</td>
-                                        <td field="Email">sdfds</td>                                     
-                                        <td field="Password">sdfds</td>
-                                        <td field="SMTP">fdsfsd</td>
-                                        <td field="Port">fdsfsd</td>
-                                        <td field="NickName">dsfdsf</td>
-                                        <td class="edit-row"><button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
-                                    </tr>*@
+                                            <td field="EmailVendor">Google</td>
+                                            <td field="Email">sdfds</td>
+                                            <td field="Password">sdfds</td>
+                                            <td field="SMTP">fdsfsd</td>
+                                            <td field="Port">fdsfsd</td>
+                                            <td field="NickName">dsfdsf</td>
+                                            <td class="edit-row"><button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
+                                        </tr>*@
                                 </tbody>
                             </table>
                         </div>
@@ -164,12 +164,12 @@
                                 </thead>
                                 <tbody>
                                     @*<tr>
-                                        <td field="ProviderName">Google</td>
-                                        <td field="UserName">sdfds</td>
-                                        <td field="From">fdsfsd</td>
-                                        <td field="NickName">dsfdsf</td>
-                                        <td class="edit-row"><button whichmodal="SmsConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
-                                    </tr>*@
+                                            <td field="ProviderName">Google</td>
+                                            <td field="UserName">sdfds</td>
+                                            <td field="From">fdsfsd</td>
+                                            <td field="NickName">dsfdsf</td>
+                                            <td class="edit-row"><button whichmodal="SmsConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
+                                        </tr>*@
                                 </tbody>
                             </table>
                         </div>
@@ -231,18 +231,25 @@
                                             <td><input name="UserName" type="text" class="form-control" required /></td>
                                             <td><input name="Password" type="text" class="form-control" required /></td>
                                         </tr>
-                                        <tr>
+                                        <tr style="display:none">
                                             <td>Read-Write User</td>
                                             <td><input name="ReadWriteUserName" type="text" class="form-control" required /></td>
                                             <td><input name="ReadWritePassword" type="text" class="form-control" required /></td>
                                         </tr>
-                                        <tr>
+                                        <tr style="display:none">
                                             <td>ReadOnly User</td>
                                             <td><input name="ReadOnlyUserName" type="text" class="form-control" required /></td>
                                             <td><input name="ReadOnlyPassword" type="text" class="form-control" required /></td>
-                                        </tr>
+                                        </tr>                                      
                                     </tbody>
                                 </table>
+                                <div class="uname-advanced-sec form-inline">
+                                    <label style="margin-right:5px;">Advanced</label>
+                                     <label class="switch">
+                                        <input type="checkbox" id="UserNamesAdvanced">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -250,19 +257,19 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Server Address</label>
-                                <input name="Server" type="text" class="form-control" required />
+                                <input name="Server" type="text" pattern="^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" class="form-control" required />
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Port</label>
-                                <input name="Port" pattern="^[_0-9]{1,}$" type="text" class="form-control" required />
+                                <input name="Port" pattern="^[0-9]*$" type="text" class="form-control" required />
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>TimeOut</label>
-                                <input name="Timeout" type="text" class="form-control" required />
+                                <input name="Timeout" pattern="^[0-9]*$" type="text" class="form-control" required />
                             </div>
                         </div>
                         <input type="hidden" name="IsNew" />
@@ -270,7 +277,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary saveConnection" style="display:none">Save</button>
                     <a whichform="dbConnectionSubmit" class="btn btn-primary testConnection">Test Connection</a>
                 </div>
             </form>
@@ -387,28 +394,28 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Provider Name</label>
-                        <input name="ProviderName" class="form-control" type="text" required/>
+                        <input name="ProviderName" class="form-control" type="text" required />
                     </div>
                     <div class="form-group">
                         <label>Username</label>
-                        <input name="UserName" class="form-control" type="text" required/>
+                        <input name="UserName" class="form-control" type="text" required />
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input name="Password" class="form-control" type="text" required/>
+                        <input name="Password" class="form-control" type="text" required />
                     </div>
                     <div class="form-group">
                         <label>Sender Number</label>
-                        <input name="From" class="form-control" type="text" required/>
+                        <input name="From" class="form-control" type="text" required />
                     </div>
                     <div class="form-group">
                         <label>Nick Name</label>
-                        <input name="NickName" class="form-control" type="text" required/>
+                        <input name="NickName" class="form-control" type="text" required />
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" >Save</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>

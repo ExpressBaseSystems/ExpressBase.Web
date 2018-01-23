@@ -25,25 +25,6 @@ using ExpressBase.Web2;
 
 namespace ExpressBase.Web.Controllers
 {
-    //public partial class HeaderFooter : PdfPageEventHelper
-    //{
-    //    private ReportRenderController Controller { get; set; }
-    //    public override void OnStartPage(PdfWriter writer, Document document)
-    //    {
-    //    }
-    //    public override void OnEndPage(PdfWriter writer, Document d)
-    //    {
-    //        Controller.DrawPageHeader();
-    //        Controller.DrawPageFooter();
-    //        if (Controller.Report.IsLastpage == true) Controller.DrawReportFooter();
-    //        Controller.Report.DrawWaterMark(Controller.pdfReader, d, writer);
-    //    }
-
-    //    public HeaderFooter(ReportRenderController _c) : base()
-    //    {
-    //        this.Controller = _c;
-    //    }
-    //}
     public class ReportRenderController : EbBaseIntController
     {
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }

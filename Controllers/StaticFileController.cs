@@ -1,4 +1,5 @@
 ﻿    using ExpressBase.Common;
+using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;

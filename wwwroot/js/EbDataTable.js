@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, filterValues) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -122,7 +122,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = null;
+    this.rowData = (rowData !== undefined) ? rowData.split(","): null;
     this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues):[] ;
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
@@ -185,8 +185,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.isPipped = true;
             $("#Pipped").show();
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
+            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
-        if (this.login === "uc") {
+        else if(this.rowData !== null) {
             //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
             this.isContextual = true;
         }
@@ -530,7 +531,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return dq;
     };
 
-    this.getFilterValues = function () {
+    this.getFilterValues = function (from) {
         var fltr_collection = [];
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
         var paramstxt = $(FdCont+" #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
@@ -549,23 +550,30 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 });
             }
         }
-
-        if (this.rowData !== null) {
-            $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection));
+        if (this.isContextual) {
+            if (this.rowData !== null) {
+                $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection, from));
+            }
         }
 
         return fltr_collection;
     };
 
-    this.rowObj2filter = function (fltr_collection, i, data) {
-        var type = this.Api.settings().init().aoColumns[i+2].Type;
+    this.rowObj2filter = function (fltr_collection, from, i, data) {
+        if (from === "link") {
+            var type = this.Api.settings().init().aoColumns[i + 2].Type;
+            fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i + 2].name, data));
+        }
+        else {
+            var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
+            fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
+        }
         //if (type === "System.Int32" || type === "System.Int16")
         //    type = 12;
         //else if (type === "System.Decimal" || type === "System.Double" || type === "System.Int64")
         //    type = 7;
         //else if (type === "System.String")
         //    type = 16;
-        fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i+2].name, data));
     };
 
     this.receiveAjaxData = function (dd) {
@@ -1112,7 +1120,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'> <i class='fa fa-th' aria-hidden='true'></i></button>")
             //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
             if (this.login == "uc") {
-                if (!this.isContextual)
+                //if (!this.isContextual)
                     dvcontainerObj.appendRelatedDv(this.tableId);
                 dvcontainerObj.modifyNavigation();
             }
@@ -1447,12 +1455,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.link2NewTable = function (e) {
+        this.isContextual = true;
         this.cellData = $(e.target).text();
         var idx = this.Api.row($(e.target).parent().parent()).index();
         this.rowData = this.Api.row(idx).data();
-        this.filterValues = this.getFilterValues();
+        this.filterValues = this.getFilterValues("link");
         if (this.login === "uc")
-            dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues));
+            dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues));//, JSON.stringify(this.filterValues)
         else
             this.OpeninNewTab(idx);
     };

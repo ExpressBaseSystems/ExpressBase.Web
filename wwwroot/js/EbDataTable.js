@@ -138,6 +138,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.PcFlag = false;
     this.modifyDVFlag = false;
     this.initCompleteflag = false;
+    this.isTagged = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -187,10 +188,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
             this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
-        else if(this.rowData !== null) {
+        else if (this.rowData !== null) {
             //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
             this.isContextual = true;
         }
+        else
+            this.isTagged = true;
 
         this.PcFlag = "False";
         obj = this.EbObject;
@@ -459,7 +462,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.retrieve = true;
         o.keys = true;
         this.filterValues = this.getFilterValues();
-        var f = this.compareFilterValues();
+        var f = false;
+        if (!this.isTagged)
+            f = this.compareFilterValues();
         if (this.MainData !== null && this.login == "uc" && f && this.isPipped) {
             //o.serverSide = false;
             o.dom = "<'col-md-12 noPadding'B>rt";
@@ -491,13 +496,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
                 url: this.ssurl + '/ds/data/' + this.dsid,
                 type: 'POST',
-                timeout: 180000,
+                //timeout: 180000,
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + getToken());
                 },
-                crossDomain: true
+                //crossDomain: true,
+                timeout: 180000,
+                async: true,
+                error: function (req, status, xhr) {
+                }
             };
         }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
@@ -521,7 +530,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = JSON.stringify(serachItems);
         dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined) ? this.filterValues : this.getFilterValues());
-        dq.rowData = this.rowData;
+        //dq.rowData = this.rowData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (serachItems.length > 0) {

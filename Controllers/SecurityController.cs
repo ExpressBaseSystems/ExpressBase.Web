@@ -40,11 +40,22 @@ namespace ExpressBase.Web.Controllers
 				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
+			else if (type == "TestRoles")
+			{
+				var fr = this.ServiceClient.Get<GetRolesResponse1>(new GetRolesRequest1());
+				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
+			}
+			else if (type == "TestUserGroup")
+			{
+				var fr = this.ServiceClient.Get<GetUserGroupResponse1>(new GetUserGroupRequest1());
+				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
+			}
 			else if (type == "usergroup")
 			{
 				var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
 				ViewBag.dict = fr.Data;
 			}
+			
 			else if (type == "roles")
 			{
 				var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
@@ -52,7 +63,7 @@ namespace ExpressBase.Web.Controllers
 			}
 			else
 			{
-				var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
+				var fr = this.ServiceClient.Get<GetUsersResponse>(new GetUsersRequest());
 				ViewBag.dict = fr.Data;
 			}
 			if (ViewBag.isAjaxCall)
@@ -173,31 +184,37 @@ namespace ExpressBase.Web.Controllers
 		//[HttpPost]
 		public IActionResult ManageUserGroups(int itemid)
 		{
-			var req = this.HttpContext.Request.Form;
-			if (itemid > 0)
-			{
-				var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, TenantAccountId = ViewBag.cid });
-				List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[", "").Replace("]", "").Split(',').Select(int.Parse).ToList() : new List<int>();
-				ViewBag.UGName = fr.Data["name"];
-				ViewBag.UGDescription = fr.Data["description"];
-				ViewBag.itemid = itemid;
-				string html = "";
-				if (fr.Data.ContainsKey("userslist"))
-				{
-					foreach (var element in userlist)
-					{
-						html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[element.ToString()].ToString()).Replace("@userid", element.ToString());
-					}
+			//var req = this.HttpContext.Request.Form;
+			//if (itemid > 0)
+			//{
+			//	var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, TenantAccountId = ViewBag.cid });
+			//	List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[", "").Replace("]", "").Split(',').Select(int.Parse).ToList() : new List<int>();
+			//	ViewBag.UGName = fr.Data["name"];
+			//	ViewBag.UGDescription = fr.Data["description"];
+			//	ViewBag.itemid = itemid;
+			//	string html = "";
+			//	if (fr.Data.ContainsKey("userslist"))
+			//	{
+			//		foreach (var element in userlist)
+			//		{
+			//			html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[element.ToString()].ToString()).Replace("@userid", element.ToString());
+			//		}
 
-				}
-				ViewBag.UserList = html;
+			//	}
+			//	ViewBag.UserList = html;
 
-			}
-			else
-			{
-				int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
-				GetManageUserGroupResponse res = this.ServiceClient.Post<GetManageUserGroupResponse>(new GetManageUserGroupRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), id = groupid });
-			}
+			//}
+			//else
+			//{
+			//	//int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
+			//	Dictionary<string, object> Colval = new Dictionary<string, object>();
+			//	Colval.Add(itemid.ToString(),"");
+			//	GetManageUserGroupResponse res = this.ServiceClient.Post<GetManageUserGroupResponse>(new GetManageUserGroupRequest { Colvalues = Colval, id = itemid });
+			//}
+
+			var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, TenantAccountId = ViewBag.cid });
+			ViewBag.SelectedUserGroupInfo = JsonConvert.SerializeObject(fr.SelectedUserGroupInfo);
+			ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
 			return View();
 		}
 

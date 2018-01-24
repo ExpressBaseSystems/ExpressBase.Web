@@ -25,25 +25,6 @@ using ExpressBase.Web2;
 
 namespace ExpressBase.Web.Controllers
 {
-    //public partial class HeaderFooter : PdfPageEventHelper
-    //{
-    //    private ReportRenderController Controller { get; set; }
-    //    public override void OnStartPage(PdfWriter writer, Document document)
-    //    {
-    //    }
-    //    public override void OnEndPage(PdfWriter writer, Document d)
-    //    {
-    //        Controller.DrawPageHeader();
-    //        Controller.DrawPageFooter();
-    //        if (Controller.Report.IsLastpage == true) Controller.DrawReportFooter();
-    //        Controller.Report.DrawWaterMark(Controller.pdfReader, d, writer);
-    //    }
-
-    //    public HeaderFooter(ReportRenderController _c) : base()
-    //    {
-    //        this.Controller = _c;
-    //    }
-    //}
     public class ReportRenderController : EbBaseIntController
     {
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
@@ -52,16 +33,17 @@ namespace ExpressBase.Web.Controllers
         {
             var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
             pclient.BearerToken = this.ServiceClient.BearerToken;
+            pclient.Timeout = TimeSpan.FromMinutes(3);
             ReportRenderResponse resultlist1 = null;
             try
             {
                 resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid });
+                resultlist1.StreamWrapper.Memorystream.Position = 0;
             }
             catch (Exception e)
             {
 
             }
-            resultlist1.StreamWrapper.Memorystream.Position = 0;
             return new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");
         }
 

@@ -36,7 +36,7 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId)
         {
             var dvobj = EbSerializers.Json_Deserialize(dvobjt);
-            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACKEXTURL);
             if (dvobj != null)
             {
                 //if (!string.IsNullOrEmpty(dvRefId))

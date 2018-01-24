@@ -25,12 +25,22 @@
         editor = "ManageRoles";
         whichController = "Security";
     }
+    else if (ViewBag.ListType == "TestRoles")//test new cmnlist
+    {
+        editor = "ManageRoles";
+        whichController = "Security";
+    }
+    else if (ViewBag.ListType == "usergroup")
+    {
+        editor = "UserGroups";
+        whichController = "TenantUser";
+    }
     //else if (ViewBag.ListType == "usergroup")
     //{
-    //    editor = "UserGroups";
-    //    whichController = "TenantUser";
+    //    editor = "ManageUserGroups";
+    //    whichController = "Security";
     //}
-    else if (ViewBag.ListType == "usergroup")
+    else if (ViewBag.ListType == "TestUserGroup")//test
     {
         editor = "ManageUserGroups";
         whichController = "Security";
@@ -60,20 +70,50 @@
         font-size: 14px;
     }
 
+    /*table.display tbody tr:nth-child(even):hover td {
+        background-color: red !important;
+    }
+
+    table.display tbody tr:nth-child(odd):hover td {
+        background-color: blue !important;
+    }*/
+
+    /*tbody tr:nth-child(even):hover td {
+        background-color: rgb(255,255,255) !important;
+    }*/
+
+    .fa-pencil:hover {
+        color: blue;
+    }
+
+    tbody tr:hover td {
+        background-color: rgb(220,220,220) !important;
+    }
+
+    .dataTable td {
+        max-width: 250px;
+        min-width: 45px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+
+
 </style>
 
 
 
 <div class="center" style="padding-left:5%; padding-right:5%;padding-top:1%;">
     <section class="outer-section-createuser" style="height: 550px;">
-        @*<div class="row">*@
-            @*<div class="form-inline">
-                    @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
-                    {
-                        <button href="" class="btn btn-primary"><i class="fa fa-plus-circle"></i> New</button>
-                    }
-                </div>*@
-        @*</div>*@
+        <div class="row">
+            <div class="form-inline">
+                @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
+                {
+                    <button href="" class="" style="margin-left: 30px;margin-top: 10px;"><i class="fa fa-plus-circle"></i> New</button>
+                }
+            </div>
+        </div>
         <div id="divCommonList" style="padding:10px;">
             <table id="tblCommonList" class="table-striped"></table>
         </div>
@@ -114,8 +154,19 @@
  
 
     <script>
-    $(document).ready(function () {
-        var _metadata = ["7", "Id", "Name", "Nick Name", "Sex", "Email", "Phone Number", "Status" ];
-        var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
+        $(document).ready(function () {
+            if ("@ViewBag.ListType" === "TestUser") {
+                var _metadata = ["7", "Id", "Name", "Nick Name", "Sex", "Email", "Phone Number", "Status", "_user", "_profPic" ];
+                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
+            }
+            else if ("@ViewBag.ListType" === "TestUserGroup") {
+                var _metadata = ["3", "Id", "Name", "Description", "_userGroup"];
+                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
+
+            }
+            else if ("@ViewBag.ListType" === "TestRoles") {
+                var _metadata = ["4", "Id", "Name", "Description","Application_Name", "_roles"];
+                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
+            }
     });
     </script>

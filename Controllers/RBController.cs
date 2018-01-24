@@ -26,6 +26,8 @@ namespace ExpressBase.Web.Controllers
         {
             DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
             cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", refID));
+            if (cresp == null || cresp.Columns.Count == 0)
+                cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = refID, TenantAccountId = ViewBag.cid });
             foreach (var columnCollection in cresp.Columns)
             {
                 columnCollection.Sort(CompareEbDataColumn);

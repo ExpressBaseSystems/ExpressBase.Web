@@ -4,10 +4,11 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 
-    Dictionary<string, object> Dict = ViewBag.dict;
+    var _infoDict = Html.Raw(ViewBag.SelectedUserGroupInfo);
+    var _userList = Html.Raw(ViewBag.UsersList);
 }
 
-@using (Html.BeginForm(FormMethod.Post, new { itemid = 9 }))
+@*@using (Html.BeginForm(FormMethod.Post, new { itemid = 9 }))
 {
 
 
@@ -44,60 +45,125 @@
     <div class="form-group">
         <input type="submit" class="btn btn-primary" value="Create" />
     </div>
-}
+}*@
 
 
 <style>
-    table {
-        width: 100%;
+    .center {
+        margin: auto;
+        width: 90%;
+        padding: 10px;
+    }
+    .outer-section-createuser {
+        height: 100vh;
+        font-family: open sans;
+        font-weight: 300;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding-bottom: 15px;
+    }
+    .searchRsulsItemsDiv:hover {
+        background-color: #eee;
     }
 
-    .col-md-4 {
-        padding-left: 0 !important;
+    .mydiv1:hover {
+        background-color: #f5f5f5;
+        border: none;
     }
 
-    .col-md-8 {
-        padding-right: 0 !important;
+    .mydiv1 {
+        border: 2px solid #f5f5f5;
+        background-color: #fdfdfd;
+        border-radius: 6px;
+        align-items: center;
+        height: 75px;
+        overflow: hidden;
+        padding: 10px 13px;
+        margin-top: 15px;
     }
 
-    tr {
-        text-align: center;
+    .icondiv1 {
+        display: inline-block;
+        font-size: xx-large;
+        padding-right: 10px;
+        vertical-align: top;
     }
 
-    input[type=checkbox] {
-        margin-left: 5px;
+    .textdiv1 {
+        width: 70%;
+        display: inline-block;
+        vertical-align: top;
     }
 
-
-    .scrollable-menu {
-        border: 1px solid #eee;
-        overflow-x: hidden;
+    .closediv1 {
+        display: inline-block;
+        float: right;
+        cursor: pointer;
+        vertical-align: top;
     }
 
-    .stylish-input-group .input-group-addon {
-        background: white !important;
-    }
-
-    .stylish-input-group .form-control {
-        border-right: 0;
-        box-shadow: 0 0 0;
+    .tilediv1 {
+        border: 1px solid;
         border-color: #ccc;
+        padding: 10px;
+        height: 300px;
+        border-radius: 6px;
+        overflow: auto;
+        margin: 0px;
+    }
+    .nav-tabs > li.active {
+        border-top: 3px solid #339bb3;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
     }
 
-    .stylish-input-group button {
-        border: 0;
-        background: transparent;
-    }
 </style>
+
+<div class="center">
+    <section class="outer-section-createuser" style="height: 640px;">
+        <form id="formManageUserGroups" data-toggle="validator" method="POST" action="">
+            <div class="row" style="padding: 14px 16px 0px 16px;">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; display:inline-block">User Group Name</label>
+                        <input type="text" class="form-control" id="txtUserGroupName" title="User Group Name" required />
+                    </div>
+
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; display:inline-block">User Group Description</label>
+                        <input type="text" class="form-control" id="txtUserGroupDescription" title="User Group Description" required>
+                    </div>
+                </div>
+                <input type="submit" id="hiddenSubmitUserGroup" style="display:none;" />
+            </div>
+        </form>
+        <div style="padding: 0px 15px;">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#divusers">Users</a></li>
+            </ul>
+            <div class="tab-content" style="padding: 15px 0px;">
+                <div id="divusers" class="row tab-pane fade in active" style="padding: 0px 18px;"></div>
+            </div>
+        </div>
+        @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
+        <label id="lblMessage" style="color:red;padding-left: 36px;font-family: open sans; font-weight: 500;"> Sorry, Unable to Continue! </label>
+    </section>
+</div>
+
+
 <script>
     $('document').ready(function () {
 
-        var userid ="";
-        $.each($('#div2').children(), function (i, obj) {
-            userid += $(obj).attr("id")+ ",";
-        });
-       var Ids = userid.substring(0, userid.length - 1);
-       $('#userslist').val(Ids);
+        var obj = new UserGroupJs(@_infoDict, @_userList);
+       // var userid ="";
+       // $.each($('#div2').children(), function (i, obj) {
+       //     userid += $(obj).attr("id")+ ",";
+       // });
+       //var Ids = userid.substring(0, userid.length - 1);
+       //$('#userslist').val(Ids);
         //$.post("../TenantUser/GetRoles",
         //         {
 
@@ -118,6 +184,6 @@
         //            $("#roleSel").find("span:eq(0)").text("Select Role")
         //        f = false;
         //    });
-        });
+    });
 
 </script>

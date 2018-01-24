@@ -26,6 +26,8 @@ var DvContainerObj = function (settings) {
     this.slickApi = null;
     this.nextSlide = null;
     this.tableId = null;
+    this.PippedColl = {};
+    this.TaggedColl = {};
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -49,8 +51,12 @@ var DvContainerObj = function (settings) {
 
         prevfocusedId = focusedId;
         focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + this.tabnum + "_" + counter;
-        if (counter == 0)
+        if (counter == 0) {
             this.currentObj.Pippedfrom = "";
+        }
+
+        this.PippedColl[focusedId] = this.RelatedDvlist;
+        this.TaggedColl[focusedId] = this.TaggedDvlist;
         this.MainData = (this.currentObj.Pippedfrom !== null && this.currentObj.Pippedfrom !== "") ? this.previousObj.data : null;
 
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
@@ -307,8 +313,8 @@ var DvContainerObj = function (settings) {
     };
 
     this.removeDupliateDV = function () {
-        $.each(this.RelatedDvlist, function (i, obj) {
-            this.TaggedDvlist = $.grep(this.TaggedDvlist, function (TObj) { return TObj.RefId !== obj.RefId });
+        $.each(this.PippedColl[focusedId], function (i, obj) {
+            this.TaggedColl[focusedId] = $.grep(this.TaggedColl[focusedId], function (TObj) { return TObj.RefId !== obj.RefId });
             //$.each(this.TaggedDvlist, function (j, Tobj) {
             //    if (Tobj.RefId === obj.RefId)
             //        this.TaggedDvlist.splice(j,1);
@@ -339,7 +345,7 @@ var DvContainerObj = function (settings) {
         this.tableId = tid;
         $("#relatedPipableDiv .relatedBody").empty();
         $("#relatedStartDiv .relatedBody").empty();
-        $.each(this.RelatedDvlist, function (i, obj) {
+        $.each(this.PippedColl[focusedId], function (i, obj) {
             var $icon = "";
             if (obj.EbObjectType === EbObjectTypes.ChartVisualization)
                 $icon = "<i class='fa fa-line-chart custom'></i>";
@@ -358,7 +364,7 @@ var DvContainerObj = function (settings) {
 
         }.bind(this));
 
-        $.each(this.TaggedDvlist, function (i, obj) {
+        $.each(this.TaggedColl[focusedId], function (i, obj) {
             var $icon = "";
             if (obj.EbObjectType === EbObjectTypes.ChartVisualization)
                 $icon = "<i class='fa fa-line-chart custom'></i>";

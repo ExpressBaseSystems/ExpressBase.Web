@@ -50,8 +50,8 @@ namespace ExpressBase.Web.Controllers
                 MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
-                    UserName = res.email,
-                    Password = (req["Password"] + res.email).ToMD5Hash(),
+                    UserName = req["Email"],
+                    Password = (req["Password"] + req["Email"]).ToMD5Hash(),
                     Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", "expressbase" } },
                     //UseTokenCookie = true
                 });

@@ -32,6 +32,8 @@
     this.FB = null;
     this.fbId = null;
     this.fbName = null;
+    this.timer1 = null;
+    this.isInfoValid = false;
 
     this.rolesTile = null;
     this.userGroupTile = null;
@@ -39,7 +41,9 @@
    
     this.init = function () {
 
+        this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
+        this.txtAlternateEmail.on('change', function (e) { this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)}.bind(this))
         
         $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
         
@@ -261,33 +265,65 @@
 
 
     this.validateEmail = function (e) {
+        clearTimeout(this.timer1);
+        this.isInfoValid = false;
         var val = $(e.target).val();
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if (regex.test(val)) {
             $(e.target).css("border-color", "rgb(204, 204, 204)");
-            this.lblMessage.hide();
-            $.ajax({
-                type: "POST",
-                url: "../Security/isValidEmail",
-                data: { reqEmail: val },
-                success: function (result) {
-                    if (result) {
-                        $(e.target).css("border-color", "rgb(204, 0, 0)");
-                        this.lblMessage.text("Email ID Already Exists");
-                        this.lblMessage.show();
-                    }
-                }.bind(this)
-            });
+            $("#spanEmail").children().remove();
+            $("#spanEmail").append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
+            $("#spanEmail").attr("title", "Validating...");
+            this.timer1 = setTimeout(function () { this.validateEmailAjaxCall(val, e) }.bind(this), 3000);
         }
         else {
             $(e.target).css("border-color", "rgb(204, 0, 0)");
-            this.lblMessage.text("Invalid Email ID");
-            this.lblMessage.show();
+            $("#spanEmail").children().remove();
+            $("#spanEmail").append(`<i class="fa fa-times" aria-hidden="true" style="color:red;"></i>`);
+            $("#spanEmail").attr("title", "Invalid Email ID");
         }
     }
-    
+    this.validateEmailAjaxCall = function (val, e) {
+        $.ajax({
+            type: "POST",
+            url: "../Security/isValidEmail",
+            data: { reqEmail: val },
+            success: function (result) {
+                if (result) {
+                    $(e.target).css("border-color", "rgb(204, 0, 0)");
+                    $("#spanEmail").children().remove();
+                    $("#spanEmail").append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red;"></i>`);
+                    $("#spanEmail").attr("title", "Email ID Already Exists");
+                }
+                else {
+                    $("#spanEmail").children().remove();
+                    $("#spanEmail").append(`<i class="fa fa-check" aria-hidden="true" style="color:green;"></i>`);
+                    $("#spanEmail").attr("title", "Valid Email ID");
+                    this.isInfoValid = true;
+                }
+            }.bind(this)
+        });
+    }
+
+    this.validateInfo = function (target, regex) {
+        target.off('keyup').on('keyup', function (evt) { this.validateInfo(target, regex)}.bind(this));
+        var val = target.val();
+        if (regex.test(val)) {
+            target.css("border-color", "rgb(204, 204, 204)");
+            this.isInfoValid = true;
+        }
+        else {
+            target.css("border-color", "rgb(204, 0, 0)");
+            this.isInfoValid = false;
+        }
+    }
 
     this.clickbtnCreateUser = function () {
+        if (this.txtName.val() === "")
+            this.isInfoValid = false;
+        if (!this.isInfoValid)
+            return;
+
         $("#btnCreateUser").attr("disabled", "true");
 
         var oldstus = parseInt(this.userinfo["statusid"]);

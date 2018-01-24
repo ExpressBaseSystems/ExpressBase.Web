@@ -49,7 +49,7 @@ namespace ExpressBase.Web.Controllers
                 controller.ViewBag.wc = jwtToken.Payload["wc"];
                 controller.ViewBag.email = jwtToken.Payload["email"];
                 controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
-                controller.ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+                controller.ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACKEXTURL);
 
                 base.OnActionExecuting(context);
             }

@@ -33,16 +33,17 @@ namespace ExpressBase.Web.Controllers
         {
             var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
             pclient.BearerToken = this.ServiceClient.BearerToken;
+            pclient.Timeout = TimeSpan.FromMinutes(3);
             ReportRenderResponse resultlist1 = null;
             try
             {
                 resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid });
+                resultlist1.StreamWrapper.Memorystream.Position = 0;
             }
             catch (Exception e)
             {
 
             }
-            resultlist1.StreamWrapper.Memorystream.Position = 0;
             return new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");
         }
 

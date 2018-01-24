@@ -12,7 +12,9 @@ namespace ExpressBase.Web2
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-                .UseKestrel()
+                .UseKestrel(options=> {
+                    options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);
+                })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseUrls(urls: "http://*:5000/")
                 .UseStartup<Startup>()

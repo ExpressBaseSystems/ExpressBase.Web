@@ -30,16 +30,16 @@
         editor = "ManageRoles";
         whichController = "Security";
     }
-    //else if (ViewBag.ListType == "usergroup")
-    //{
-    //    editor = "UserGroups";
-    //    whichController = "TenantUser";
-    //}
     else if (ViewBag.ListType == "usergroup")
     {
-        editor = "ManageUserGroups";
-        whichController = "Security";
+        editor = "UserGroups";
+        whichController = "TenantUser";
     }
+    //else if (ViewBag.ListType == "usergroup")
+    //{
+    //    editor = "ManageUserGroups";
+    //    whichController = "Security";
+    //}
     else if (ViewBag.ListType == "TestUserGroup")//test
     {
         editor = "ManageUserGroups";
@@ -88,6 +88,14 @@
 
     tbody tr:hover td {
         background-color: rgb(220,220,220) !important;
+    }
+
+    .dataTable td {
+        max-width: 250px;
+        min-width: 45px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
 
@@ -157,7 +165,7 @@
 
             }
             else if ("@ViewBag.ListType" === "TestRoles") {
-                var _metadata = ["3", "Id", "Name", "Description", "_roles"];
+                var _metadata = ["4", "Id", "Name", "Description","Application_Name", "_roles"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
             }
     });

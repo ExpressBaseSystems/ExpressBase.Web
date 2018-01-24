@@ -598,7 +598,35 @@
         //this.txtDemoUserGroupSearch.on('keyup', this.KeyUptxtDemoUserGroupSearch.bind(this));
         //this.btnClearDemoUserGroupSearch.on('click', this.OnClickbtnClearDemoUserGroupSearch.bind(this));
 
+    this.init();
+}
 
+var UserGroupJs = function (infoDict, usersList) {
+    this.infoDict = infoDict;
+    this.usersList = usersList;
+    this.txtUserGroupName = $("#txtUserGroupName");
+    this.txtUserGroupDescription = $("#txtUserGroupDescription");
 
+    this.usersTile = null;
+
+    this.init = function () {
+
+        this.txtUserGroupName.val(this.infoDict['name']);
+        this.txtUserGroupDescription.val(this.infoDict['description']);
+
+        //------------------INIT USERS TILE------------------
+        var initUserList = null;
+        var metadata2 = ['id', 'name', 'email', 'ProfilePicture'];
+        if (parseInt(this.infoDict['id']) > 0) {
+            initUserList = [];
+            for (i = 0; i < this.usersList.length; i++) {
+                initUserList.push({ id: this.usersList[i].Id, name: this.usersList[i].Name, email: this.usersList[i].Email });
+            }
+        }
+        if (this.usersTile === null) {
+            this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, null, metadata2, "../Security/GetUserDetails", null, this);
+        }
+        //-----------------------------------------------
+    }
     this.init();
 }

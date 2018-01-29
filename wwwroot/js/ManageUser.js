@@ -48,6 +48,7 @@
         $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
         
         //$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //    //$($(e.target).attr("href")).focus();
         //    $("#btnCreateUser").focus();
         //});
 
@@ -606,10 +607,13 @@ var UserGroupJs = function (infoDict, usersList) {
     this.usersList = usersList;
     this.txtUserGroupName = $("#txtUserGroupName");
     this.txtUserGroupDescription = $("#txtUserGroupDescription");
+    this.btnSaveAll = $("#btnSaveAll");
 
     this.usersTile = null;
 
     this.init = function () {
+
+        this.btnSaveAll.on('click', this.clickbtnSaveAll.bind(this));
 
         this.txtUserGroupName.val(this.infoDict['name']);
         this.txtUserGroupDescription.val(this.infoDict['description']);
@@ -628,5 +632,26 @@ var UserGroupJs = function (infoDict, usersList) {
         }
         //-----------------------------------------------
     }
+    this.clickbtnSaveAll = function () {
+        var dict = new Object();
+        dict["name"] = this.txtUserGroupName.val();
+        dict["description"] = this.txtUserGroupDescription.val();
+        dict["users"] = this.usersTile.getItemIds();
+        this.btnSaveAll.attr("disabled","true");
+        $.ajax({
+            type: "POST",
+            url: "../Security/SaveUserGroup",
+            data: { _id: this.infoDict['id'], _userGroupInfo: JSON.stringify(dict) },
+            success: this.saveUserGroupSuccess.bind(this)
+        });
+    }
+    this.saveUserGroupSuccess = function (result) {
+        if (result > 0)
+            alert("Submitted Successfully");
+        else
+            alert("Error");
+        this.btnSaveAll.removeAttr("disabled");
+    }
+
     this.init();
 }

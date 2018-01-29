@@ -218,6 +218,24 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 
+		public int SaveUserGroup(int _id, string _userGroupInfo)
+		{
+			//var req = this.HttpContext.Request.Form;
+			Dictionary<string, string> Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(_userGroupInfo);
+			//Dictionary<string, object> Dict = new Dictionary<string, object>();
+			//Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
+			//Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
+
+			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+			SaveUserGroupResponse res = this.ServiceClient.Post<SaveUserGroupResponse>(new SaveUserGroupRequest
+			{
+				Id = _id,
+				Name = Dict["name"],
+				Description = Dict["description"],
+				Users = string.IsNullOrEmpty(Dict["users"]) ? string.Empty : Dict["users"]
+			});
+			return res.id;
+		}
 
 		//---------------MANAGE ROLES START----------------------------------
 		public IActionResult ManageRoles(int itemid)

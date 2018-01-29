@@ -156,6 +156,7 @@
     <script>
         $(document).ready(function () {
             if ("@ViewBag.ListType" === "TestUser") {
+                //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info 
                 var _metadata = ["7", "Id", "Name", "Nick Name", "Sex", "Email", "Phone Number", "Status", "_user", "_profPic" ];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
             }
@@ -165,7 +166,7 @@
 
             }
             else if ("@ViewBag.ListType" === "TestRoles") {
-                var _metadata = ["4", "Id", "Name", "Description","Application_Name", "_roles"];
+                var _metadata = ["7", "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
             }
     });

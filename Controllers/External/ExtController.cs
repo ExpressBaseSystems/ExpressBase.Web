@@ -42,7 +42,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult DevSignIn()
         {
             ViewBag.errMsg = TempData["ErrorMessage"] as string;
-            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
             return View();
         }
 
@@ -56,7 +56,7 @@ namespace ExpressBase.Web.Controllers
         // [AllowCrossSiteIFrame]  // for web forwarding with masking
         public IActionResult SignIn()
         {
-            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
             ViewBag.errMsg = TempData["ErrorMessage"] as string;
             return View();
         }
@@ -65,14 +65,14 @@ namespace ExpressBase.Web.Controllers
         public IActionResult UsrSignIn()
         {
             ViewBag.errMsg = TempData["ErrorMessage"] as string;
-            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
             return View();
         }
 
         // [AllowCrossSiteIFrame]
         public IActionResult SignUp()
         {
-            ViewBag.ServiceUrl = this.ServiceClient.BaseUri;
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
             return View();
         }
 

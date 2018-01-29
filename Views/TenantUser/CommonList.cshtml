@@ -20,16 +20,16 @@
     //    editor = "ManageRoles";
     //    whichController = "TenantUser";
     //}
-    else if (ViewBag.ListType == "roles")
-    {
-        editor = "ManageRoles";
-        whichController = "Security";
-    }
-    //else if (ViewBag.ListType == "usergroup")
+    //else if (ViewBag.ListType == "roles")
     //{
-    //    editor = "UserGroups";
-    //    whichController = "TenantUser";
+    //    editor = "ManageRoles";
+    //    whichController = "Security";
     //}
+    else if (ViewBag.ListType == "usergroup")
+    {
+        editor = "UserGroups";
+        whichController = "TenantUser";
+    }
     else if (ViewBag.ListType == "usergroup")
     {
         editor = "ManageUserGroups";

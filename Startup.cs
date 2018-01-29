@@ -1,4 +1,6 @@
-﻿using ExpressBase.Objects.ServiceStack_Artifacts;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Extensions;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +12,8 @@ using Microsoft.IdentityModel.Protocols;
 using ServiceStack;
 using ServiceStack.Redis;
 using Stripe;
+using System;
+using System.Text;
 
 namespace ExpressBase.Web2
 {
@@ -55,16 +59,19 @@ namespace ExpressBase.Web2
             // Added - Confirms that we have a home for our DemoSettings
             services.Configure<EbSetupConfig>(Configuration.GetSection("EbSetupConfig"));
 
-            var connectionString = Configuration["EbSetupConfig:ServiceStackUrl"];
+
+            //var connectionString = Configuration["EbSetupConfig:"+ EnvironmentConstants.SERVICESTACKEXTURL];
+            var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
             //services.AddScoped(typeof(IServiceClient), ServiceClientFactory);
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
             {
                 return new JsonServiceClient(connectionString);
             });
             StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
-            var redisServer = Configuration["EbSetupConfig:RedisServer"];
-            var redisPassword = Configuration["EbSetupConfig:RedisPassword"];
-            var redisPort = Configuration["EbSetupConfig:RedisPort"];
+            var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_SERVER);
+            var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_PASSWORD);
+            var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_PORT);
+
 
             //var redisConnectionString = string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort);
 
@@ -87,6 +94,7 @@ namespace ExpressBase.Web2
             {
                 return new RedisClient(string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort));
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

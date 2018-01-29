@@ -1,0 +1,15 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: 'POST',
+            url: "../Tenant/ContextSwitch",
+            data: {}           
+        }).done(function (data) {
+            console.log(data);
+        });
+    });
+
+</script>

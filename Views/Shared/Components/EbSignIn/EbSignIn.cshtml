@@ -1,6 +1,11 @@
-﻿<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+﻿<script>
+    function onSubmitLogin(token) {
+        document.getElementById("log_form").submit();
+    }
+</script>
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
-        <form class="loginmodal-container" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
+        <form class="loginmodal-container" id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
             <div class="login-sec-image">
                 <img src="~/images/EB_Logo-png.png" />
             </div>
@@ -27,7 +32,7 @@
                         <a href="#">Forgot password?</a>
                     </div>
                 </div>
-                <button type="submit" id="bot-signUP" class="btn signin-btn">
+                <button type="submit" id="bot-signUP" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmitLogin'>
                     Sign In
                 </button>
             </div>

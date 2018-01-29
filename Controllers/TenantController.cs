@@ -30,8 +30,7 @@ using ExpressBase.Common.Connections;
 namespace ExpressBase.Web.Controllers
 {
     public class TenantController : EbBaseIntController
-    {      
-
+    {       
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         // GET: /<controller>/
@@ -44,7 +43,7 @@ namespace ExpressBase.Web.Controllers
         public void ProfileSetup(int i)
         {
             var req = this.HttpContext.Request.Form;
-            var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
+            var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });           
             if (res.id >= 0)
             {
                 MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
@@ -62,13 +61,14 @@ namespace ExpressBase.Web.Controllers
                     Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
                     this.ServiceClient.BearerToken = authResponse.BearerToken;
                     this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-                }
+                }               
             }
         }
 
         [HttpGet]
         public IActionResult TenantDashboard()
         {
+
             var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
             ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);
             return View();
@@ -85,16 +85,61 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult PricingSelect()
-        {
+        public IActionResult ContextSwitch()
+        {                 
             return View();
         }
 
         [HttpPost]
-        public IActionResult PricingSelect(int i)
+        public IActionResult ContextSwitch(int i)
         {
+            var host = this.HttpContext.Request.Host;
+            string[] hostParts = host.Host.Split('.');
             var req = this.HttpContext.Request.Form;
-            return RedirectToAction("TenantAddAccount", new RouteValueDictionary(new { controller = "Tenant", action = "TenantAddAccount", tier = req["tier"], id = req["tenantid"] }));
+            //var result = this.ServiceClient.Get<GetUserInfoResponse>(new GetUserInfoRequest());
+            MyAuthenticateResponse authResponse = null;
+            try
+            {
+                string tenantid = ViewBag.cid;
+                var authClient = this.ServiceClient;
+                authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = "",
+                    Password = "",
+                    Meta = new Dictionary<string, string> { { "wc", "dc" }, { "cid", hostParts[0] } },
+                    //UseTokenCookie = true
+                });
+
+            }
+            catch (Exception wse)
+            {
+
+            }
+            if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+            {
+                TempData["ErrorMessage"] = "EbUnauthorized";
+
+            }
+            else if (authResponse.User.HasSystemRole())//AUTH SUCCESS
+            {
+                CookieOptions options = new CookieOptions();
+
+                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                return RedirectToAction("ApplicationDashBoard", "Tenant");
+            }
+            else
+            {
+
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ApplicationDashBoard()
+        {
+            return View();
         }
 
         [HttpGet]

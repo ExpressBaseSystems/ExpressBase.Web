@@ -232,8 +232,22 @@ namespace ExpressBase.Web.Controllers
                 ReadOnlyPassword = req["readOnlyPassword"],
                 Timeout = Convert.ToInt32(req["timeout"])
             };
-            bool res = this.ServiceClient.Post<bool>(new TestConnectionRequest { DataDBConnection = dbcon });
-            return res;
+            TestConnectionResponse res = this.ServiceClient.Post<TestConnectionResponse>(new TestConnectionRequest { DataDBConnection = dbcon });
+            return res.ConnectionStatus;
+        }
+
+        [HttpPost]
+        public bool FilesDbTest()
+        {
+            var req = this.HttpContext.Request.Form;
+            EbFilesDbConnection dbcon = new EbFilesDbConnection()
+            {
+                FilesDbVendor = Enum.Parse<FilesDbVendors>(req["DatabaseVendor"].ToString()),
+                FilesDB_url = req["ConnectionString"].ToString(),
+                NickName = req["NickName"].ToString()
+            };
+            TestFileDbconnectionResponse resp= this.ServiceClient.Post<TestFileDbconnectionResponse>(new TestFileDbconnectionRequest { FilesDBConnection = dbcon });
+            return resp.ConnectionStatus;
         }
         //[HttpGet]
         //public IActionResult EditDataDB()

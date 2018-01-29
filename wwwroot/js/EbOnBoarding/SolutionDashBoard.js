@@ -1,5 +1,5 @@
 ﻿var SolutionDashBoard = function (connections) {
-    this.Connections = connections; 
+    this.Connections = connections;
     this.whichModal = "";
     this.customElementLoader = $("<div>", {
         id: "connecting",
@@ -9,8 +9,8 @@
         text: "Testing Your Connection..."
     });
 
-    this.editConnectionRow = function (event) {   
-        this.whichModal = $(event.target).closest(".btn").attr("whichmodal");        
+    this.editConnectionRow = function (event) {
+        this.whichModal = $(event.target).closest(".btn").attr("whichmodal");
         $("#" + this.whichModal).modal("toggle");
         $("#" + this.whichModal + " [name='IsNew']").val(false);
         //$(event.target).closest("td").siblings().each(this.editconnection.bind(this));
@@ -18,7 +18,7 @@
     };
 
     this.preventSubOnEnter = function (modalid) {
-        $("#" + modalid +" form").on('keyup keypress', function (e) {
+        $("#" + modalid + " form").on('keyup keypress', function (e) {
             var keyCode = e.keyCode || e.which;
             if (keyCode === 13) {
                 e.preventDefault();
@@ -27,14 +27,14 @@
         });
     };
 
-    this.editconnection = function (i,obj) {
+    this.editconnection = function (i, obj) {
         var input = $(obj).attr("field");
         $("#" + this.whichModal + " [name='" + input + "']").val($(obj).text());
     }
 
     this.addConnectionRow = function (e) {
-        this.whichModal = $(e.target).closest(".btn").attr("whichmodal"); 
-        $("#" + this.whichModal).modal("toggle");       
+        this.whichModal = $(e.target).closest(".btn").attr("whichmodal");
+        $("#" + this.whichModal).modal("toggle");
         $.each($("#" + this.whichModal).children().find("input"), function (i, obj) {
             $(obj).val("");
         }).bind(this);
@@ -45,7 +45,7 @@
         var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
-            url: "../ConnectionManager/DataDb",           
+            url: "../ConnectionManager/DataDb",
             data: postData,
             beforeSend: function () {
 
@@ -53,8 +53,8 @@
         }).done(function (data) {
             $(".dbConnectionEdit tbody").empty();
             this.appenddbConnection(data);
-            $("#" + this.whichModal).modal("toggle");            
-        }.bind(this));      
+            $("#" + this.whichModal).modal("toggle");
+        }.bind(this));
     };
 
     this.FilesDbSubmit = function (e) {
@@ -70,8 +70,8 @@
         }).done(function (data) {
             $(".filesDbConnectionEdit tbody").empty();
             this.appendFilesDb(JSON.parse(data));
-            $("#" + this.whichModal).modal("toggle");                                       
-        }.bind(this));      
+            $("#" + this.whichModal).modal("toggle");
+        }.bind(this));
     };
 
     this.emailConnectionSubmit = function (e) {
@@ -89,7 +89,7 @@
             $(".EmailConnectionEdit .table-message").remove();
             this.appendEmailConnection(JSON.parse(data));
             $("#" + this.whichModal).modal("toggle");
-        }.bind(this));   
+        }.bind(this));
     }
 
     this.smsAccountSubmit = function (e) {
@@ -112,12 +112,12 @@
         }.bind(this));
     };
 
-    this.appendDataDb = function (object) { 
+    this.appendDataDb = function (object) {
         var Server = "";
         var DatabaseName = "";
-        if (object.IsDefault) {Server = "xxx.xxx.xxx.xxx"; DatabaseName = "xxxxxxxxxxxxx";}
-        else { Server = object.Server; DatabaseName = object.DatabaseName;}
-        
+        if (object.IsDefault) { Server = "xxx.xxx.xxx.xxx"; DatabaseName = "xxxxxxxxxxxxx"; }
+        else { Server = object.Server; DatabaseName = object.DatabaseName; }
+
         $(".dbConnectionEdit tbody").append(`<tr class="connection-row">
                                                 <td field="DatabaseType">Data</td>
                                                 <td field="DatabaseVendor">${object.DatabaseVendor}</td>
@@ -125,7 +125,7 @@
                                                 <td field="DatabaseName">${DatabaseName}</td>
                                                 <td field="NickName">${object.NickName}</td>                                                                                              
                                                 <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
-                                            </tr>`);     
+                                            </tr>`);
     };
 
     this.appendFilesDb = function (object) {
@@ -140,11 +140,11 @@
                                         <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="filesDbConnectEdit"><i class="fa fa-pencil"></i></button></td>
                                             </tr>`);
     };
-    this.appendEmailConnection = function (object) {  
+    this.appendEmailConnection = function (object) {
         if ($.isEmptyObject(object))
             $(".EmailConnectionEdit").parent().append(`<div class="table-message">No email Accounts added..</div>`);
         else
-        $(".EmailConnectionEdit tbody").append(`<tr>
+            $(".EmailConnectionEdit tbody").append(`<tr>
                                         <td field="EmailVendor">${object.ProviderName}</td>
                                         <td field="Email">${object.EmailAddress}</td>                                                                                
                                         <td field="SMTP">${object.Smtp}</td>
@@ -168,35 +168,43 @@
 
     this.testConnection = function (e) {
         var form = this.objectifyForm($("#" + $(e.target).attr("whichform")).serializeArray());
-        if ($(e.target).attr("whichform") === "dbConnectionSubmit"){
-            this.testAjaxCall(form, $(e.target).attr("whichform"));
-        }
+        var url = $(e.target).attr("url");
+        this.testAjaxCall(form, $(e.target).attr("whichform"), url);
     };
 
-    this.testAjaxCall = function (form,formid) {
+    this.testAjaxCall = function (form, formid, ControllerUrl) {
         $.ajax({
             type: 'POST',
-            url: "../ConnectionManager/DataDbTest",
+            url: "../ConnectionManager/" + ControllerUrl,
             data: form,
             beforeSend: function () {
                 $("#" + formid).LoadingOverlay("show");
             }.bind(this)
         }).done(function (data) {
-            if (data) {                
+            if (data) {
+                alert("Connection Ready");
                 $("#" + formid + " .saveConnection").show();
                 $("#" + formid + " .testConnection").hide();
-                $("#" + formid).LoadingOverlay("hide");
-            }                     
+            }
+            else
+                alert("Can't connect to this..");
+            $("#" + formid).LoadingOverlay("hide");
         }.bind(this));
     };
 
-    this.objectifyForm =  function(formArray) {//serialize data function
+    this.objectifyForm = function (formArray) {//serialize data function
         var returnArray = {};
         for (var i = 0; i < formArray.length; i++) {
             returnArray[formArray[i]['name']] = formArray[i]['value'];
         }
         return returnArray;
     }
+    this.showAdvanced = function (e) {
+        if ($(e.target).prop("checked"))
+            $(".advanced-tr").show();
+        else
+            $(".advanced-tr").hide();
+    };
 
     this.init = function () {
         this.appendDataDb(this.Connections.DataDbConnection);
@@ -210,6 +218,7 @@
         $("#EmailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
         $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
+        $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
     };
 
     this.init();

@@ -231,15 +231,15 @@
                                             <td><input name="UserName" type="text" class="form-control" required /></td>
                                             <td><input name="Password" type="text" class="form-control" required /></td>
                                         </tr>
-                                        <tr style="display:none">
+                                        <tr class="advanced-tr" style="display:none">
                                             <td>Read-Write User</td>
-                                            <td><input name="ReadWriteUserName" type="text" class="form-control" required /></td>
-                                            <td><input name="ReadWritePassword" type="text" class="form-control" required /></td>
+                                            <td><input name="ReadWriteUserName" type="text" class="form-control" /></td>
+                                            <td><input name="ReadWritePassword" type="text" class="form-control" /></td>
                                         </tr>
-                                        <tr style="display:none">
+                                        <tr class="advanced-tr" style="display:none">
                                             <td>ReadOnly User</td>
-                                            <td><input name="ReadOnlyUserName" type="text" class="form-control" required /></td>
-                                            <td><input name="ReadOnlyPassword" type="text" class="form-control" required /></td>
+                                            <td><input name="ReadOnlyUserName" type="text" class="form-control" /></td>
+                                            <td><input name="ReadOnlyPassword" type="text" class="form-control" /></td>
                                         </tr>                                      
                                     </tbody>
                                 </table>
@@ -278,7 +278,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary saveConnection" style="display:none">Save</button>
-                    <a whichform="dbConnectionSubmit" class="btn btn-primary testConnection">Test Connection</a>
+                    <a whichform="dbConnectionSubmit" url="DataDbTest" class="btn btn-primary testConnection">Test Connection</a>
                 </div>
             </form>
         </div>
@@ -310,7 +310,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary saveConnection" style="display:none;">Save</button>
+                    <a whichform="filesDbConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>
                 </div>
             </form>
         </div>

@@ -180,8 +180,8 @@ namespace ExpressBase.Web.Controllers
             {
                 string reqEmail = this.HttpContext.Request.Form[Email];
                 TempData[RequestEmail] = reqEmail;
-
-                if (!this.ServiceClient.Post<bool>(new UniqueRequest { email = reqEmail }))
+                    UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
+                if (result.isUniq)
                 {
                     var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = "expressbase" });
 

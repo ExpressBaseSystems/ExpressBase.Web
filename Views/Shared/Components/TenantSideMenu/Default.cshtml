@@ -1,6 +1,6 @@
 ﻿<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!--Import materialize.css-->  <!-- Compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css">
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css">*@
 
 
 <!--Import jQuery before materialize.js-->
@@ -19,7 +19,7 @@
             <div class="collapsible-body l1">
                 <ul class="collapsible">
                     <li class="coll">
-                        <div class="collapsible-header active"><i class="fa fa-television tdash-icon" aria-hidden="true"></i> Web</div>
+                        <div class="collapsible-header active"><i class="fa fa-globe tdash-icon" aria-hidden="true"></i> Web</div>
                         <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
                                 @{
@@ -123,11 +123,40 @@
 </script>
 
 <style>
+    html {
+        font-size: 15px;
+    }
     .side-menu-cont {
         /*border: solid 1px red;*/
         height: 100vh;
         width: calc(100% - 24px);
     }
+
+        .side-menu-cont ul:not(.browser-default) {
+            padding-left: 0;
+            list-style-type: none;
+        }
+
+        .side-menu-cont .collapsible-header {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            line-height: 1.5;
+            padding: 1rem;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+
+            .side-menu-cont .collapsible-header i {
+                width: 2rem;
+                font-size: 1.6rem;
+                display: inline-block;
+                text-align: center;
+                margin-right: 1rem;
+            }
 
     .collapsible {
         margin: 0;

@@ -216,12 +216,9 @@ namespace ExpressBase.Web.Controllers
                 this.ServiceClient.RefreshToken = authResponse.RefreshToken;
                 var tokenS = (new JwtSecurityTokenHandler()).ReadToken(authResponse.BearerToken) as JwtSecurityToken;
 
+                string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
 
-                ViewBag.cid = tokenS.Claims.First(claim => claim.Type == "cid").Value;
-                ViewBag.wc = tokenS.Claims.First(claim => claim.Type == "wc").Value;
-                ViewBag.email = tokenS.Claims.First(claim => claim.Type == "email").Value;
-
-                User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+                User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", cid, email, wc));
                 var Ids = String.Join(",", user.EbObjectIds);
                 GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
                 List<object> returnlist = new List<object>();

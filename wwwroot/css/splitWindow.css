@@ -225,6 +225,7 @@
 }
 .relatedli:hover {
     background-color: #e4e8f7;
+    cursor:unset;
 }
 .relatedlabel {
     font-size: 13px;
@@ -238,6 +239,16 @@
     color: white;
     background-image: var(--ebbgimage);
     padding: 7px;
+}
+
+.relatedIcon {
+    display: inline;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.relatedIcon:hover{
+    background-color:red;
 }
 
 #dotsDetail {

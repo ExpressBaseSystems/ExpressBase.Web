@@ -241,59 +241,20 @@ var DvContainerObj = function (settings) {
         this.dvRefid = $(e.target).closest("li").attr("data-refid");
         var dvtype = $(e.target).closest("li").attr("data-dvType");
         var alreadyOpen = false;
-        //if (this.dvRefid === this.dvcol[Object.keys(this.dvcol)[0]].Refid) {
-        //    //prevfocusedId = focusedId;
-        //    focusedId = Object.keys(this.dvcol)[0];
-        //    $("#" + focusedId).focus();
-        //    var dvobj = this.dvcol[focusedId].EbObject;
-        //    dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        //    dvcontainerObj.currentObj = dvobj;
-        //    if (dvcontainerObj.currentObj.Pippedfrom !== "")
-        //        $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
-        //    else
-        //        $("#Pipped").text("");
-        //    if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-        //        if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-        //            this.dvcol[focusedId].GenerateButtons();
-        //        }
-        //    }
-        //    else {
-        //        if ($("#" + focusedId).find("canvas").length > 0) {
-        //            this.dvcol[focusedId].GenerateButtons();
-        //        }
-        //    }
-        //    //this.modifyNavigation();
-        //    $('.splitdiv_parent').slick('slickGoTo', 0, false);
-        //}
-        //else {
-        $.each(this.dvcol, function (key, value) {
-            if (value.Refid === this.dvRefid) {
-                alreadyOpen = true;
-                focusedId = key;
-                $("#" + focusedId).focus();
-                var dvobj = this.dvcol[focusedId].EbObject;
-                dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-                dvcontainerObj.currentObj = dvobj;
-                if (dvcontainerObj.currentObj.Pippedfrom !== "")
-                    $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
-                else
-                    $("#Pipped").text("");
-                if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-                    if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                        this.dvcol[focusedId].GenerateButtons();
-                    }
+        var newmode = false;
+        if ($(e.target).parent().attr("data-op") !== undefined)
+            newmode = true;
+        if (!newmode) {
+            $.each(this.dvcol, function (key, value) {
+                if (value.Refid === this.dvRefid) {
+                    alreadyOpen = true;
+                    $('.splitdiv_parent').slick('slickGoTo', key.split("_")[5], false);
+                    return false;
                 }
-                else {
-                    if ($("#" + focusedId).find("canvas").length > 0) {
-                        this.dvcol[focusedId].GenerateButtons();
-                    }
-                }
-                $('.splitdiv_parent').slick('slickGoTo', key.split("_")[5], false);
-                return false;
-            }
+            }.bind(this));
+        }
 
-        }.bind(this));
-        if (!alreadyOpen) {
+        if (!alreadyOpen || newmode) {
             dvcontainerObj.previousObj = dvcontainerObj.currentObj;
             $.LoadingOverlay("show");
             $.ajax({
@@ -305,8 +266,10 @@ var DvContainerObj = function (settings) {
                     dvObj = JSON.parse(dvObj);
                     dvcontainerObj.currentObj = dvObj.DsObj;
                     this.TaggedDvlist = dvObj.DvTaggedList.$values;
-                    if (dvtype === "pipped")
+                    if (dvtype === "pipped") {
                         dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
+                        this.RelatedDvlist = this.PippedColl[focusedId];
+                    }
                     else
                         this.RelatedDvlist = dvObj.DvList.$values;
                     //this.removeDupliateDV();
@@ -392,7 +355,15 @@ var DvContainerObj = function (settings) {
                 //}
             }
             else {
-                $("#relatedPipableDiv .relatedBody").append("<li class='relatedli'  data-dvType='pipped' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon +"<label class='relatedlabel'>" + obj.Name + "</label></a></li>");
+                var $xx;
+                $.each(this.dvcol, function (key, value) {
+                    $xx = "";
+                    if (value.Refid === obj.RefId) {
+                        $xx = `<div class="relatedIcon"><i class="fa fa-pencil" aria-hidden="true"></i></div><div class="relatedIcon" data-op="new"><i class="fa fa-plus" aria-hidden="true"></i></div>`;
+                        return false;
+                    }
+                });
+                $("#relatedPipableDiv .relatedBody").append("<li class='relatedli'  data-dvType='pipped' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon + "<label class='relatedlabel'>" + obj.Name + "</label></a>" + $xx + "</li>");
             }
             //$("#relatedStartDiv").show();
         }.bind(this));

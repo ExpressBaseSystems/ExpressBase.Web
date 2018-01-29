@@ -68,6 +68,8 @@ namespace ExpressBase.Web2
                 return new JsonServiceClient(connectionString);
             });
             StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
+
+
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_PASSWORD);
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_PORT);
@@ -81,7 +83,7 @@ namespace ExpressBase.Web2
 
             //container.Resolve<IServerEvents>().Start();
 
-            
+
             //var client = new ServerEventsClient("redis://YK8GtsURARN+x9qITeLj5GikW/rK/i8Uekr1ECxscLA=@ExpressBaseRedisCache.redis.cache.windows.net:6380?ssl=true");
 
             //client.Handlers["FileUpload"] = (client1, msg) => {
@@ -92,7 +94,7 @@ namespace ExpressBase.Web2
 
             services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
             {
-                return new RedisClient(string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort));
+                return new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
             });
 
         }

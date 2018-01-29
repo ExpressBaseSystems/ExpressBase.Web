@@ -34,7 +34,7 @@ namespace ExpressBase.Web.Controllers
         {
             dynamic dsobj = null;
             Context2Js _c2js = new Context2Js();
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACKEXTURL);
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
             var type = (EbObjectType)(objtype);
             if (objid != "null")
             {

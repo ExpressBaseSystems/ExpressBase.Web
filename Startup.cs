@@ -61,16 +61,16 @@ namespace ExpressBase.Web2
 
 
             //var connectionString = Configuration["EbSetupConfig:"+ EnvironmentConstants.SERVICESTACKEXTURL];
-            var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACKEXTURL);
+            var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
             //services.AddScoped(typeof(IServiceClient), ServiceClientFactory);
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
             {
                 return new JsonServiceClient(connectionString);
             });
             StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
-            var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.REDISSERVER);
-            var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.REDISPASSWORD);
-            var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.REDISPORT);
+            var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_SERVER);
+            var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_PASSWORD);
+            var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_PORT);
 
 
             //var redisConnectionString = string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort);

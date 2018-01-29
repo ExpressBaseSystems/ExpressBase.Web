@@ -15,8 +15,8 @@
                     </div>`);
         }
     };
-    this.goToSolutionWindow = function (e) {
-        window.open("http://" + this.EbSolutionColl[0].IsolutionId + ".localhost:5000/dev");       
+    this.goToSolutionWindow = function (e) {        
+        window.open("http://" + this.EbSolutionColl[0].IsolutionId + ".localhost:5000/ContextSwitch");       
         $("#confTo-solution").modal("toggle");
     };
 

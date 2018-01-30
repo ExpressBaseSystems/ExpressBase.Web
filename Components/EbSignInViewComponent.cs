@@ -11,7 +11,7 @@ namespace ExpressBase.Web.Components
     {
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.errMsg = TempData["ErrorMessage"] as string;
             return View("EbSignIn");
         }

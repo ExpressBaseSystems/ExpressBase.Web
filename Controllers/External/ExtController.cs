@@ -34,7 +34,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.useremail = TempData.Peek(RequestEmail);
             ViewBag.message = TempData["Message"];
 

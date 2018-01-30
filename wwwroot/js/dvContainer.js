@@ -28,6 +28,7 @@ var DvContainerObj = function (settings) {
     this.tableId = null;
     this.PippedColl = {};
     this.TaggedColl = {};
+    this.clickDot = false;
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -72,7 +73,7 @@ var DvContainerObj = function (settings) {
                 counter = counter,
                 data = this.MainData,
                 rowData = this.rowData,
-                filterValues= this.filterValues,
+                filterValues = this.filterValues,
             );
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
@@ -117,6 +118,7 @@ var DvContainerObj = function (settings) {
         //        }
         //    }
         //    this.modifyNavigation();
+        this.clickDot = true;
     };
 
     this.gotoPrevious = function () {
@@ -142,6 +144,7 @@ var DvContainerObj = function (settings) {
         //    }
         //}
         //this.modifyNavigation();
+        this.clickDot = true;
     };
 
     this.gotoFirst = function () {
@@ -248,7 +251,7 @@ var DvContainerObj = function (settings) {
             $.each(this.dvcol, function (key, value) {
                 if (value.Refid === this.dvRefid) {
                     alreadyOpen = true;
-                    $('.splitdiv_parent').slick('slickGoTo', key.split("_")[5], false);
+                    $('.splitdiv_parent').slick('slickGoTo', $("#" + key).attr("data-slick-index"), false);
                     return false;
                 }
             }.bind(this));
@@ -374,7 +377,15 @@ var DvContainerObj = function (settings) {
                 $icon = "<i class='fa fa-line-chart custom'></i>";
             else
                 $icon = "<i class='fa fa-table custom'></i>";
-            $("#relatedTagedDiv .relatedBody").append("<li class='relatedli'  data-dvType='tagged' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon + "<label class='relatedlabel'>" + obj.Name + "</label></a></li>");
+            var $xx;
+            $.each(this.dvcol, function (key, value) {
+                $xx = "";
+                if (value.Refid === obj.RefId) {
+                    $xx = `<div class="relatedIcon"><i class="fa fa-pencil" aria-hidden="true"></i></div><div class="relatedIcon" data-op="new"><i class="fa fa-plus" aria-hidden="true"></i></div>`;
+                    return false;
+                }
+            });
+            $("#relatedTagedDiv .relatedBody").append("<li class='relatedli'  data-dvType='tagged' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon + "<label class='relatedlabel'>" + obj.Name + "</label></a>" + $xx + "</li>");
             //$("#relatedStartDiv").show();
         }.bind(this));             
 
@@ -404,15 +415,18 @@ var DvContainerObj = function (settings) {
     //};
 
     this.modifyNavigation = function () {
-        $("#Save_btn").show();
-        $("#Related_btn").show();
-       //if (counter >= 1) {
+        if (!this.clickDot) {
+            $("#Save_btn").show();
+            $("#Related_btn").show();
+            //if (counter >= 1) {
             $("#prev").show();
             $("#next").show();
             $("#divDots").show();
             $(".miniregion").remove();
             $(".minimap").remove();
-            if (this.slickApi === null) {
+            //this.slickApi = null;
+            //if (this.slickApi === null) {
+            if (!$('.splitdiv_parent').hasClass("slick-slider")) {
                 this.slickApi = $('.splitdiv_parent').slick({
                     slidesToShow: 1,
                     infinite: false,
@@ -428,15 +442,19 @@ var DvContainerObj = function (settings) {
                 });
                 //$('.splitdiv_parent').prepend(`<div id='divDots' class='dotsDiv'><div class='dotstable'></div></div>`);
                 $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
-                $('.splitdiv_parent').slick('slickGoTo', counter, true);
+                $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
             }
-            else {
-                if ($('.splitdiv_parent').children().find("#" + focusedId).length === 0) {
-                    $('.splitdiv_parent').slick('slickAdd', $("#" + focusedId));
-                    $('.splitdiv_parent').slick('slickGoTo', counter, true);
-                }
-            }
-            this.modifydivDots();
+            else
+                this.clickDot = true;
+            //}
+            //else {
+            //    if ($('.splitdiv_parent').children().find("#" + focusedId).length === 0) {
+            //        $('.splitdiv_parent').slick('slickAdd', $("#" + focusedId));
+            //        $('.splitdiv_parent').slick('slickGoTo', counter, true);
+            //    }
+            //}
+        }
+        this.modifydivDots();
         //}
         
         //if ($("#" + focusedId).prev().attr("id") == undefined) {
@@ -491,29 +509,45 @@ var DvContainerObj = function (settings) {
     };
 
     this.modifydivDots = function () {
-        $(".dotstable").empty();
+        //$(".dotstable").empty();
         var firstKey = Object.keys(this.dvcol)[0];
-        $.each(this.dvcol, function (key, obj) {
-            if (obj.EbObject.Pippedfrom !== "") {
-                if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                    $(".dotstable").append(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+        //$.each(this.dvcol, function (key, obj) {
+        if (!this.clickDot) {
+            if (this.dvcol[focusedId].EbObject.Pippedfrom !== "") {
+                if (this.dvcol[focusedId].EbObject.$type.indexOf("EbChartVisualization") !== -1 || this.dvcol[focusedId].EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+                    $("[data-mapid=" + prevfocusedId + "]").after(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 else {
-                    $(".dotstable").append(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    $("[data-mapid=" + prevfocusedId + "]").after(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
             }
             else {
-                if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
-                }
-                else {
-                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
-                }
+                //if (counter === 0) {
+                    if (this.dvcol[focusedId].EbObject.$type.indexOf("EbChartVisualization") !== -1 || this.dvcol[focusedId].EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+                        $(".dotstable").append(`<div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    }
+                    else {
+                        $(".dotstable").append(`<div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    }
+                //}
+                //else {
+                //    if (this.dvcol[focusedId].EbObject.$type.indexOf("EbChartVisualization") !== -1 || this.dvcol[focusedId].EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+                //        $("[data-mapid=" + prevfocusedId + "]").after(`<div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                //    }
+                //    else {
+                //        $("[data-mapid=" + prevfocusedId + "]").after(`<div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                //    }
+
+                    
+                //}
                 //if (obj.isContextual)
-                if (firstKey !== key)
-                    $(".dotstable .dot[data-mapid=" + key + "]").css("margin-left", "12px");
+                  if (firstKey !== focusedId)
+                      $(".dotstable .dot[data-mapid=" + focusedId + "]").css("margin-left", "12px");
             }
-        });
+        }
+        //});
+
+        this.clickDot = false;
         $(".dot").off("click").on("click", this.focus2ClickedDot);        
         $(".dot").popover({
             title:'Name',
@@ -528,6 +562,7 @@ var DvContainerObj = function (settings) {
         $(".dot").off("mouseenter").on("mouseenter", this.dotOnHover);
         $(".dot").off("mouseleave").on("mouseleave", this.dotOffHover);
         this.focusDot();
+
     }
 
     this.focusDot = function () {
@@ -549,11 +584,12 @@ var DvContainerObj = function (settings) {
             $("#next").attr("disabled", false);
     }
 
-    this.focus2ClickedDot = function () {
-        var id = $(this).attr("data-mapid");
+    this.focus2ClickedDot = function (e) {
+        this.clickDot = true;
+        var id = $(e.target).closest("div").attr("data-mapid");
         var lastChar = id.split("_");
-        $('.splitdiv_parent').slick('slickGoTo', lastChar[lastChar.length-1], false);
-    }
+        $('.splitdiv_parent').slick('slickGoTo', $("#" + id).attr("data-slick-index"), false);
+    }.bind(this);
 
     this.dotOnHover = function (e) {
         var curdiv = $(e.target).closest("div");

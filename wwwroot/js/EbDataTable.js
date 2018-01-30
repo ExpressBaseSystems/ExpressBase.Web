@@ -164,7 +164,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
                 //if ($('#' + id).is(':last-child'))
                 //if(this.login === "uc")
-                //    $(".splitdiv_parent").scrollTo($("#" + focusedId));
+                    //$(".splitdiv_parent").scrollTo($("#" + focusedId));
             }
         }
     }.bind(this);
@@ -242,7 +242,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.init();
     }
     else {
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
+        if(this.MainData !== null)
+            split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization", prevfocusedId);
+        else
+            split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
@@ -461,7 +464,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.select = true;
         o.retrieve = true;
         o.keys = true;
-        this.filterValues = this.getFilterValues();
+        //this.filterValues = this.getFilterValues();
         var f = false;
         if (!this.isTagged)
             f = this.compareFilterValues();
@@ -529,7 +532,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         dq.RefId = this.EbObject.DataSourceRefId;
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = JSON.stringify(serachItems);
-        dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined) ? this.filterValues : this.getFilterValues());
+        dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined && this.filterValues.length>0) ? this.filterValues : this.getFilterValues());
         //dq.rowData = this.rowData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
@@ -600,9 +603,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.compareFilterValues = function () {
         var f = null;
-        if (prevfocusedId !== undefined) {
-            $.each(this.filterValues, function (i, obj) {
-                if (obj.value !== dvcontainerObj.dvcol[prevfocusedId].filterValues[i].value) {
+        var filter = this.getFilterValues();
+        if (focusedId !== undefined) {
+            $.each(filter, function (i, obj) {
+                if (obj.value !== dvcontainerObj.dvcol[focusedId].filterValues[i].value) {
                     f = 0;
                     return false;
                 }
@@ -1130,7 +1134,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
             if (this.login == "uc") {
                 //if (!this.isContextual)
-                    dvcontainerObj.appendRelatedDv(this.tableId);
+                dvcontainerObj.appendRelatedDv(this.tableId);
                 dvcontainerObj.modifyNavigation();
             }
             this.addFilterEventListeners();

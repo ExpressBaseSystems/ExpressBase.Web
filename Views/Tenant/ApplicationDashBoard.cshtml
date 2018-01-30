@@ -52,18 +52,18 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
                     <div class="general-cont">
-                        <form class="form-horizontal" action="~/Boti/BotDashBoard" method="post">
+                        <form class="form-horizontal" action="~/Tenant/ProfileSetup" method="post">
 
                             <br />
                             <div class="col-md-12 pd-0">
                                 <div class="col-md-12 no-padd">
                                     <div class="inp-block">
                                         <label>Bot Name:</label>
-                                        <input type="text" name="_fullname" value="@ViewBag.fullname" class="inp-control" required id="botname" placeholder="Enter a name for your bot">
+                                        <input type="text" name="_fullname" value="" class="inp-control" required id="botname" placeholder="Enter a name for your bot">
                                     </div>
                                     <div class="inp-block">
                                         <label>Short Name:</label>
-                                        <input type="text" name="_name" value="@ViewBag.botname" class="inp-control" required id="shortname" placeholder="Enter a short name for your bot">
+                                        <input type="text" name="_name" value="" class="inp-control" required id="shortname" placeholder="Enter a short name for your bot">
                                     </div>
                                 </div>
                             </div>
@@ -71,53 +71,20 @@
                                 <div class="form-group">
                                     <div class="inp-block">
                                         <label>Website URL:</label>
-                                        <input type="url" name="_url" class="inp-control" value="@ViewBag.url" required id="websitename" placeholder="Enter your website Name">
+                                        <input type="url" name="_url" class="inp-control" value="" required id="websitename" placeholder="Enter your website Name">
                                     </div>
                                     <div class="inp-block">
                                         <label>Bot ID:</label>
-                                        <input readonly id="chatid" class="inp-control" value="@ViewBag.chatid">
-                                        <input type="hidden" value="@ViewBag.chatid" name="chatid" />
-                                        <input  id="botid" type="hidden" value="@ViewBag.botid" name="botid" />
+                                        <input readonly id="chatid" class="inp-control" value="">
+                                        <input type="hidden" value="" name="chatid" />
+                                        <input type="hidden" value="" name="botid" />
                                     </div>
                                     <div class="inp-block">
                                         <label>Welcome Message:</label>
                                         <textarea name="_wel_msg" class="inp-control" required rows="4" id="welcomemsg" placeholder="Enter a welcome Message">@ViewBag.welcomemsg</textarea>
                                     </div>
                                     <input type="hidden" id="sol_id" value="sampleSOLid" name="_sol_id" />
-                                    <button type="submit" id="submit" style="display:none" class="btn btn-default">Submit</button>
-                                    @if (ViewBag.chatid != null)
-                                    {
-                                        <div class="embededscript-cont">
-                                            <label style="color:white; font-weight:100;">Embedable script:</label>
-                                            @*<button type="submit" id="copy" class="btn btn-sm btn-primary pull-right"><i class="fa fa-clipboard" aria-hidden="true"></i></button><br>*@
-
-
-                                            <div class="input-group">
-                                                <div class="embededscript-box">
-                                                    @Html.Raw(@"&lt;script type = 'text/javascript'&gt;
-                                        window.EXPRESSbase_bot_id = '$botid';
-                                        (function() {
-                                            d = document;
-                                            s = d.createElement('script');
-                                            s.src = '/js/ebbot-ext.js';
-                                            s.async = 1;
-                                            d.getElementsByTagName('head')[0].appendChild(s);
-                                        })();&lt;/script&gt;".Replace("$botid", ViewBag.chatid));
-                                                </div>
-                                                <span class="input-group-addon" id="basic-addon2" style="background-color:#337ab7;color:white;border: none;"><i class="fa fa-clipboard" aria-hidden="true"></i></span>
-                                            </div>
-                                            <input type="text" tabindex="-1" id="embedtxt" value="@Html.Raw(@"&lt;script type = 'text/javascript'&gt;
-                                        window.EXPRESSbase_bot_id = '$botid';
-                                        (function() {
-                                            d = document;
-                                            s = d.createElement('script');
-                                            s.src = '/js/ebbot-ext.js';
-                                            s.async = 1;
-                                            d.getElementsByTagName('head')[0].appendChild(s);
-                                        })();&lt;/script&gt;".Replace("$botid", ViewBag.chatid));" name="_sol_id" />
-
-                                        </div>
-                                    }
+                                    <button type="submit" id="submit" style="display:none" class="btn btn-default">Submit</button>                                   
                                 </div>
                                 <div class="form-group savebtn">
                                     <button type="submit" id="save" value="Save" class="btn">Save Chatbot</button>
@@ -223,13 +190,15 @@
         }
 
     .inp-control {
-        border: none;
-        padding: 3px;
-        padding-top: 20px;
-        font-size: 14px;
-        width: 100%;
-        background-color: transparent;
-        outline: none;
+        border: none !important;
+        padding: 3px !important;
+        padding-top: 20px !important;
+        font-size: 14px !important;
+        width: 100% !important;
+        background-color: transparent !important;
+        border: none !important;
+        outline: none !important;
+        height: inherit !important;
     }
 
         .inp-control:focus {

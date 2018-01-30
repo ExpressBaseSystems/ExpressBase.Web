@@ -267,7 +267,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.isPipped = false;
     this.isContextual = false;
     this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues) : [];
-    this.rowData = (rowData !== undefined) ? rowData : null ;
+    this.rowData = (rowData !== undefined) ? rowData : null;
+    this.isTagged = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -294,7 +295,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 else
                     this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 //if ($('#' + id).is(':last-child'))
-                    $(".splitdiv_parent").scrollTo($("#" + focusedId));
+                    //$(".splitdiv_parent").scrollTo($("#" + focusedId));
             }
         }
     }.bind(this);
@@ -319,10 +320,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.isPipped = true;
             this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
-        if (this.rowData !== null && this.rowData !== "") {
+        else if (this.rowData !== null && this.rowData !== "") {
             this.isContextual = true;
             //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
+        else
+            this.isTagged = true;
         this.PcFlag = "False";
         obj = this.EbObject;
         $("#obj_icons").empty();
@@ -338,7 +341,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.EbObject = commonO.Current_obj;
         else
             this.EbObject = dvcontainerObj.currentObj;
-        if ($("#filterBox").children().length ==  0) {
+        if ($(sideDivId+" #filterBox").children().length ==  0) {
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
@@ -372,7 +375,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.start();
     }
     else {
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
+        if (this.MainData !== null)
+            split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization", prevfocusedId);
+        else
+            split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
         this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
         this.start();
@@ -425,7 +431,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
 
         this.filterValues = this.getFilterValues();
-        var f = this.compareFilterValues();
+        var f = false;
+        if (!this.isTagged)
+            f = this.compareFilterValues();
         if (this.MainData !== null && this.login === "uc" && f) {
             dvcontainerObj.currentObj.data = this.MainData;
             this.drawGraphHelper(this.MainData.data);
@@ -587,7 +595,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.EbObject !== null && this.EbObject.Type !== null)
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.EbObject.Type.trim() + "&nbsp;<span class = 'caret'></span>");
         if (this.login == "uc") {
-            if (!this.isContextual)
+            //if (!this.isContextual)
                 dvcontainerObj.appendRelatedDv(this.tableId);
             dvcontainerObj.modifyNavigation();
         }
@@ -706,8 +714,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var paramstxt = $("#all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
+        var paramstxt = $(FdCont+" #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         if (paramstxt.length > 0) {
             var params = paramstxt.split(',');
             $.each(params, function (i, id) {

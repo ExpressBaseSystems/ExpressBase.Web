@@ -31,6 +31,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult BotDashBoard(string _name, string _fullname, string _url, string _sol_id, string _wel_msg, string chatid, string botid)
         {
+            var req = this.HttpContext.Request.Form;           
             var bot = new CreateBotRequest();
             bot.BotName = _name;
             bot.FullName = _fullname;

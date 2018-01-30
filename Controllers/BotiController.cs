@@ -83,32 +83,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        public void updateBot(string _name, string _fullname, string _url, string _sol_id, string _wel_msg, string chatid, string botid)
-        {
-            var bot = new CreateBotRequest();
-            bot.BotName = _name;
-            bot.FullName = _fullname;
-            bot.WebURL = _url;
-            bot.SolutionId = _sol_id;
-            bot.WelcomeMsg = _wel_msg;
-            bot.BotId = botid;
-            bot.ChatId = chatid;
-
-            var res = ServiceClient.Post<CreateBotResponse>(bot);
-            ViewBag.botname = _name;
-            ViewBag.url = _url;
-            ViewBag.welcomemsg = _wel_msg;
-            ViewBag.botid = botid;
-            ViewBag.fullname = _fullname;
-            if (chatid != null)
-            {
-                ViewBag.chatid = chatid;
-            }
-            else
-                ViewBag.chatid = res.BotId;
-        }
-
         [HttpGet]
         public IActionResult BotList()
         {

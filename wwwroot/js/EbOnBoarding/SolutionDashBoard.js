@@ -52,7 +52,7 @@
             }
         }).done(function (data) {
             $(".dbConnectionEdit tbody").empty();
-            this.appenddbConnection(data);
+            this.appendDataDb(data);
             $("#" + this.whichModal).modal("toggle");
         }.bind(this));
     };

@@ -1,6 +1,4 @@
 ﻿using ExpressBase.Common;
-using ExpressBase.Common.Extensions;
-using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,12 +6,10 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols;
 using ServiceStack;
 using ServiceStack.Redis;
 using Stripe;
 using System;
-using System.Text;
 
 namespace ExpressBase.Web2
 {
@@ -61,7 +57,7 @@ namespace ExpressBase.Web2
 
 
             //var connectionString = Configuration["EbSetupConfig:"+ EnvironmentConstants.SERVICESTACKEXTURL];
-            var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
+            var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             //services.AddScoped(typeof(IServiceClient), ServiceClientFactory);
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
             {
@@ -70,9 +66,9 @@ namespace ExpressBase.Web2
             StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
 
 
-            var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_SERVER);
-            var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_PASSWORD);
-            var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.REDIS_PORT);
+            var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
+            var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
+            var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
 
 
             //var redisConnectionString = string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort);

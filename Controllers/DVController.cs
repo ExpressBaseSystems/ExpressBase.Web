@@ -38,7 +38,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult dv(string refid, string filterValues, int tabNum)
         {
             //string objid, EbObjectType objtype
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
 
             User _user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
             ViewBag.user = _user;

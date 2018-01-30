@@ -134,6 +134,8 @@ namespace ExpressBase.Web.Controllers
             dbcon.Server = req["server"];
             dbcon.Port = Int32.Parse(req["port"]);
             dbcon.UserName = req["username"];
+            dbcon.DatabaseName = req["databasename"];
+            dbcon.Timeout = 500;
             dbcon.Password = req["pwd"];
             if (!String.IsNullOrEmpty(req["Isdef"]))
                 dbcon.IsDefault = false;

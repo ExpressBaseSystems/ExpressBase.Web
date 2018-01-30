@@ -34,7 +34,10 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.SERVICESTACK_EXT_URL);
             ViewBag.useremail = TempData.Peek(RequestEmail);
+            ViewBag.message = TempData["Message"];
+
             return View();
         }
 
@@ -61,6 +64,38 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult ResetPassword()
+        {
+            
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            ViewBag.message = TempData["Message"];
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(int i)
+        {
+            string Email = this.HttpContext.Request.Form["Email"];            
+            UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = Email });
+            if (!result.isUniq)
+            {
+                this.ServiceClient.Post(new EmailServicesMqRequest() { refid = "expressbase-expressbase-15-26-26", TenantAccountId = "expressbase", newuserid = 0, To = Email, UserId = 0 });
+                TempData["Message"] = string.Format("we've sent a password reset link to {0}", Email);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["Message"] = string.Format("{0} invalid!", Email);
+                return RedirectToAction("ForgotPassword");
+            }
+                
+        }
 
         public IActionResult UsrSignIn()
         {
@@ -180,7 +215,7 @@ namespace ExpressBase.Web.Controllers
             {
                 string reqEmail = this.HttpContext.Request.Form[Email];
                 TempData[RequestEmail] = reqEmail;
-                    UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
+                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
                 if (result.isUniq)
                 {
                     var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = "expressbase" });

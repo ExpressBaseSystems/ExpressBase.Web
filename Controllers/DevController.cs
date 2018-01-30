@@ -66,12 +66,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public GetBotDetailsResponse GetBotDetails(int _appId)
-        //{
-        //    GetBotDetailsResponse Botdtls = ServiceClient.Get<GetBotDetailsResponse>(new BotDetailsRequest { AppId = _appId });
-        //    return Botdtls;
-        //}
+        [HttpPost]
+        public GetBotDetailsResponse GetBotDetails(int _appId)
+        {
+            GetBotDetailsResponse Botdtls = ServiceClient.Get<GetBotDetailsResponse>(new BotDetailsRequest { AppId = _appId });
+            return Botdtls;
+        }
 
 
         [HttpGet]

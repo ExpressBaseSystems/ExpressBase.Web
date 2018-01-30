@@ -10,9 +10,6 @@
     var chatHead = d.createElement("div");
     chatHead.className = "eb-chat-head";
 
-    //var inlineDiv = d.createElement("div");
-    //inlineDiv.className = "inline-block";
-
     var botHeadDiv = d.createElement("div");
     botHeadDiv.className = "bot-head";
     botHeadDiv.innerHTML = "&nbsp; " + d.ebbotName;
@@ -20,16 +17,11 @@
     var html = d.getElementsByTagName('html')[0];
     html.style.setProperty("--ebbotThemeColor", d.ebbotThemeColor);
 
-    //var poweredbyDiv = d.createElement("div");
-    //poweredbyDiv.className = "poweredby";
-    //poweredbyDiv.innerHTML = "&nbsp; &nbsp; Powered by EXPRESSbase";
-
     var botdp = d.createElement("div");
     botdp.className = "bot-icon";
 
     chatHead.appendChild(botdp);
-    //inlineDiv.appendChild(botHeadDiv);
-    //inlineDiv.appendChild(poweredbyDiv);
+
     chatHead.appendChild(botHeadDiv);
 
     var iframecont = d.createElement("div");
@@ -111,10 +103,18 @@
         dpicon.style.width = "40px";
         dpicon.style.height = "40px";
         botdp.appendChild(dpicon);
-
     }
-    else
+    else {
+        iframecont.style.position = "relative";
+        iframecont.style.width = "100%";
+        iframecont.style.height = "400px";
+        iframecont.style.right = "0";
+        iframecont.style.bottom = "0";
+        iframecont.style.minWidth = "inherit";
+        d.getElementsByClassName("bots-cont")[0].appendChild(iframecont);
+        d.getElementById("closediv").style.visibility = "hidden";
         chatbtn.click();
+    }
     //chatbtn.click();////////////////////////////////
 
 })();

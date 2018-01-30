@@ -17,7 +17,7 @@
         d.isebdemo = true;
     })();
 </script>
-<svg id="boticon" height="0"></svg>
+@*<svg id="boticon" height="0"></svg>*@
 
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
@@ -35,7 +35,7 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a class="hvr-underline-from-center" href="~/EBProducts/Demos">Demos</a></li> 
+                        <li><a class="hvr-underline-from-center" href="~/EBProducts/Demos">Demos</a></li>
                         <li><a href="#" class="hvr-underline-from-center" data-toggle="modal" data-target="#login-modal">Sign In</a></li>
                         <li class="btn-trial" id="trial-btn" style="display:none;"><a href="#">Try for FREE</a></li>
                     </ul>
@@ -44,57 +44,66 @@
         </nav>
     </div>
 </div>
-    <section class="slider">
-        <div class="container-fluid">
-            <div class="row eb-banner">
-                <div class="col-md-12 no-padd eb-banner-text-img-sec">
-                    <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner">
-                        <h2>Fast growing Small & Midsize Businesses <br />deserve rapidly evolving software.</h2>
-                        <p>
-                            The only RAD Platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
-                            Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
-                            Efficiently manage change in business processes with versioning & branching of objects - from a simple SQL statement to a complex Form.
-                        </p>
-                    </div>
-                    <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs banner-img pull-right">
-                        <img src=""/>
+<section class="slider">
+    <div class="container-fluid">
+        <div class="row eb-banner">
+            <div class="col-md-12 no-padd eb-banner-text-img-sec">
+                <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner">
+                    <h2>Fast growing Small & Midsize Businesses <br />deserve rapidly evolving software.</h2>
+                    <p>
+                        The only RAD Platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
+                        Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
+                        Efficiently manage change in business processes with versioning & branching of objects - from a simple SQL statement to a complex Form.
+                    </p>
+                </div>
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs banner-img pull-right">
+                    <div class="bots-cont">
+                        <select class="bot-DD">
+                            <option>rrrrrrrrrr</option>
+                            <option>dfddf</option>
+                            <option>noisssssssssssssssssssssssssssssssssssssssssjjhjkhj</option>
+                        </select>
+                        <div class="bot-wraper">
+
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-12 no-padd get-start-sec">
-                    <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-4">
-                        <div class="no-creditcared">No credit card required.</div>
+            </div>
+            <div class="col-md-12 no-padd get-start-sec">
+                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-4">
+                    <div class="no-creditcared">No credit card required.</div>
 
-                        <form id="signup_form" action="~/Ext/TenantExtSignup" method="post">
-                            <div class="input-group">
-                                <input type="email" name="email" class="form-control" placeholder="Enter your email">
-                                <span class="btn input-group-addon" id="btnGroupAddon">Get Started</span>
-                            </div>
-                        </form>
-                        <div class="form-group social-btn-sec">
-                            <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
-                            <div class="form-inline">
-                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
-                                    <i class="fa fa-facebook fa-lg"></i>
-                                </a>
-                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
-                                    <i class="fa fa-twitter fa-lg"></i>
-                                </a>
-                                <a class="btn socialbtns" href="#">
-                                    <i class="fa fa-linkedin fa-lg"></i>
-                                </a>
-                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
-                                    <i class="fa fa-google-plus fa-lg"></i>
-                                </a>
-                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
-                                    <i class="fa fa-github fa-lg"></i>
-                                </a>
-                            </div>
+                    <form id="signup_form" action="~/Ext/TenantExtSignup" method="post">
+                        <div class="input-group">
+                            <input type="email" name="email" class="form-control" placeholder="Enter your email">
+                            <span class="btn input-group-addon" id="btnGroupAddon">Get Started</span>
+                        </div>
+                    </form>
+                    <div class="form-group social-btn-sec">
+                        <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                        <div class="form-inline">
+                            <a class="btn socialbtns" href="/auth/facebook">
+                                <i class="fa fa-facebook fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="/auth/twitter">
+                                <i class="fa fa-twitter fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="#">
+                                <i class="fa fa-linkedin fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="/auth/googleoauth">
+                                <i class="fa fa-google-plus fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="/auth/github">
+                                <i class="fa fa-github fa-lg"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 <section class="bot-section2 bg-fafa">
     <div class="container-fluid">
         <div class="header-section text-center">
@@ -131,7 +140,7 @@
                             Take the data collection to the next level by making use of the powerful controls in your arsenal
                         </p>
                     </div>
-                </div>                        
+                </div>
             </div>
             <div class="col-md-12 nopadding">
                 <div class="col-md-4 tiles">
@@ -140,9 +149,9 @@
                         <h4 class="text-center">Automate Workflows</h4>
                         <p>
                             Design you own business workflows and automate them
-                        </p> 
+                        </p>
                     </div>
-                </div>              
+                </div>
                 <div class="col-md-4 tiles">
                     <div class="tile-body">
                         <i class="fa fa-expand chatBoticons" aria-hidden="true"></i>
@@ -184,13 +193,13 @@
             <div class="col-md-3">
                 <div class="price-tile">
                     <div class="price-tile-headsec">
-                       <div class="headsec-textarea">Free For Ever </div>
-                        <div class="headsec-amount">$0</div>                    
+                        <div class="headsec-textarea">Free For Ever </div>
+                        <div class="headsec-amount">$0</div>
                     </div>
                     <div class="price-tile-bdy">
                         <div class="pricing-items">Anonymous users</div>
                         <div class="pricing-items">Facebook Authentication</div>
-                        <div class="pricing-items">Single Bot</div>                     
+                        <div class="pricing-items">Single Bot</div>
                         <div class="pricing-items">1 Bot-form</div>
                         <div class="pricing-items mr-8">1000 Bot Form submissions</div>
                     </div>
@@ -198,52 +207,52 @@
             </div>
             <div class="col-md-3">
                 <div class="price-tile">
-                    <div class="price-tile-headsec">                      
+                    <div class="price-tile-headsec">
                         <div class="headsec-textarea">Standard</div>
                         <div class="headsec-amount">$33</div>
                     </div>
-                    <div class="price-tile-bdy">                      
+                    <div class="price-tile-bdy">
                         <div class="pricing-items">Anonymous users</div>
                         <div class="pricing-items">Facebook Authentication</div>
-                        <div class="pricing-items">3 Bots</div>  
+                        <div class="pricing-items">3 Bots</div>
                         <div class="pricing-items">5 Bot-forms/bot</div>
-                        <div class="pricing-items">25000 Bot-form submissions/month</div>                      
+                        <div class="pricing-items">25000 Bot-form submissions/month</div>
                     </div>
-                    <div class="price-tile-bdy2">                    
+                    <div class="price-tile-bdy2">
                         <div class="pricing-items">Customizable Look & Feel</div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="price-tile">
-                    <div class="price-tile-headsec">                 
+                    <div class="price-tile-headsec">
                         <div class="headsec-textarea">Pro</div>
                         <div class="headsec-amount">$99</div>
                     </div>
                     <div class="price-tile-bdy">
                         <div class="pricing-items">Anonymous users</div>
                         <div class="pricing-items">Facebook Authentication</div>
-                        <div class="pricing-items">10 Bots</div> 
+                        <div class="pricing-items">10 Bots</div>
                         <div class="pricing-items">10 Bot-forms/bot</div>
-                        <div class="pricing-items mr-8">Unlimited</div>                                          
+                        <div class="pricing-items mr-8">Unlimited</div>
                     </div>
                     <div class="price-tile-bdy2">
                         <div class="pricing-items">Customizable Look & Feel</div>
                         <div class="pricing-items">Customizable Dashboard</div>
-                        <div class="pricing-items">No 'powered by EXPRESSbase'</div>    
+                        <div class="pricing-items">No 'powered by EXPRESSbase'</div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="price-tile">
-                    <div class="price-tile-headsec">                        
+                    <div class="price-tile-headsec">
                         <div class="headsec-textarea">Enterprise</div>
                         <div class="headsec-amount">$--</div>
                     </div>
-                   <div class="price-tile-bdy Enterprise-price">
-                       <div class="pricing-items">Coming Soon</div>
-                      
-                   </div>
+                    <div class="price-tile-bdy Enterprise-price">
+                        <div class="pricing-items">Coming Soon</div>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -265,19 +274,19 @@
             <div class="form-group social-btn-sec">
                 <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
                 <div class="form-inline">
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                    <a class="btn socialbtns" href="/auth/facebook">
                         <i class="fa fa-facebook fa-lg"></i>
                     </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                    <a class="btn socialbtns" href="/auth/twitter">
                         <i class="fa fa-twitter fa-lg"></i>
                     </a>
                     <a class="btn socialbtns" href="#">
                         <i class="fa fa-linkedin fa-lg"></i>
                     </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                    <a class="btn socialbtns" href="/auth/googleoauth">
                         <i class="fa fa-google-plus fa-lg"></i>
                     </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                    <a class="btn socialbtns" href="/auth/github">
                         <i class="fa fa-github fa-lg"></i>
                     </a>
                 </div>
@@ -293,21 +302,23 @@
         <div class="col-md-6 col-lg-6 col-ms-6 col-xs-12">
             <div class="faqs">
                 <h4 class="ques">What can Eb-Bot do?</h4>
-                <div class="answer">It elegantly collect data and seamlessly automates workflows.
-                This is not your usual chat tool, Eb-Bots acts as a window to your software solution.</div>
+                <div class="answer">
+                    It elegantly collect data and seamlessly automates workflows.
+                    This is not your usual chat tool, Eb-Bots acts as a window to your software solution.
+                </div>
             </div>
             <div class="faqs">
                 <h4 class="ques">How can I create an Eb-Bot? Do I need to be a developer?</h4>
                 <div class="answer">
-                   Even though Expressbase is a low code solution, we provide a simple Drag n Drop Bot builder.
+                    Even though Expressbase is a low code solution, we provide a simple Drag n Drop Bot builder.
                     So if your requirments are basic, without any advance validations and stuff then you don't need any developer expertise.
                 </div>
             </div>
             <div class="faqs">
                 <h4 class="ques">What is a bot form?</h4>
                 <div class="answer">
-                    It is the most important component of our chat-bot, which handles the data collection. 
-                    You get to build and customize your bot-forms with our powerful Drag n Drop builder. 
+                    It is the most important component of our chat-bot, which handles the data collection.
+                    You get to build and customize your bot-forms with our powerful Drag n Drop builder.
                     If your data collection requirements are complex, you can even use JavaScript/SQL.
                 </div>
             </div>
@@ -316,23 +327,23 @@
             <div class="faqs">
                 <h4 class="ques">How Can I embed Eb-Bot to my site? Do I need to fix my site every time I change my bot?</h4>
                 <div class="answer">
-                    As soon as you create your bot, you will be provided with an HTML/JavaScript snippet to embed into your public website, intranet site or a web based business app. 
-                    After you embed the bot, you can keep customizing both look & feel and the bot-forms in our platform. 
+                    As soon as you create your bot, you will be provided with an HTML/JavaScript snippet to embed into your public website, intranet site or a web based business app.
+                    After you embed the bot, you can keep customizing both look & feel and the bot-forms in our platform.
                     Changes will be applied instantly to the bot without changing anything anywhere.
                 </div>
             </div>
             <div class="faqs">
                 <h4 class="ques">How are you different from intercom, crisp or chatfuel?</h4>
                 <div class="answer">
-                    Eb-Bot is not a Facebook Marketing tool. 
+                    Eb-Bot is not a Facebook Marketing tool.
                     It is a tool for both authenticated and non-authenticated data collection and storage into your database.
                 </div>
             </div>
             <div class="faqs">
                 <h4 class="ques">Why are the bots using Facebook?</h4>
                 <div class="answer">
-                    Eb-Bots are using Facebook only for authenticating users and mapping them to system user accounts. 
-                    User privacy is our paramount concern. 
+                    Eb-Bots are using Facebook only for authenticating users and mapping them to system user accounts.
+                    User privacy is our paramount concern.
                 </div>
             </div>
         </div>
@@ -342,7 +353,7 @@
     Html.RenderPartial("PageFooter");
 }
 <div class="bot-login-sec">
-    @await Component.InvokeAsync("EbProductPage")
+    @*@await Component.InvokeAsync("EbProductPage")*@
 </div>
 
 <script>
@@ -357,7 +368,23 @@
         }
 
         $('#btnGroupAddon').click(function () {
-              document.getElementById("signup_form").submit();
+            document.getElementById("signup_form").submit();
         })
     });
 </script>
+<style>
+    .bot-DD {
+        width: 100%;
+    }
+
+    .bots-cont {
+        height: 100%;
+        width: 100%;
+    }
+
+    .bot-wraper {
+        height: 100%;
+        width: 100%;
+        background-color: white;
+    }
+</style>

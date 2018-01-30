@@ -52,7 +52,7 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
                     <div class="general-cont">
-                        <form class="form-horizontal" action="~/Tenant/ProfileSetup" method="post">
+                        <form class="form-horizontal" action="~/Boti/BotDashBoard" method="post">
 
                             <br />
                             <div class="col-md-12 pd-0">
@@ -77,7 +77,7 @@
                                         <label>Bot ID:</label>
                                         <input readonly id="chatid" class="inp-control" value="@ViewBag.chatid">
                                         <input type="hidden" value="@ViewBag.chatid" name="chatid" />
-                                        <input type="hidden" value="@ViewBag.botid" name="botid" />
+                                        <input  id="botid" type="hidden" value="@ViewBag.botid" name="botid" />
                                     </div>
                                     <div class="inp-block">
                                         <label>Welcome Message:</label>
@@ -223,15 +223,13 @@
         }
 
     .inp-control {
-        border: none !important;
-        padding: 3px !important;
-        padding-top: 20px !important;
-        font-size: 14px !important;
-        width: 100% !important;
-        background-color: transparent !important;
-        border: none !important;
-        outline: none !important;
-        height: inherit !important;
+        border: none;
+        padding: 3px;
+        padding-top: 20px;
+        font-size: 14px;
+        width: 100%;
+        background-color: transparent;
+        outline: none;
     }
 
         .inp-control:focus {

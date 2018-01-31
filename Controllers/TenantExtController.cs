@@ -120,7 +120,7 @@
 //                CookieOptions options = new CookieOptions();
 
 //                Response.Cookies.Append("Token", authResponse.BearerToken, options);
-//                Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+//                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
 
 //                if (req.ContainsKey("remember"))
 //                {

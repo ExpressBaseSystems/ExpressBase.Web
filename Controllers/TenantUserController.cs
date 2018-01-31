@@ -83,9 +83,9 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.Fname = null;
             // IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
             var abc = this.ServiceClient.Post(new Authenticate { provider = "logout" });
-            HttpContext.Response.Cookies.Delete("bToken");
-            HttpContext.Response.Cookies.Delete("rToken");
-            return RedirectToAction("UsrSignIn", "Ext");
+            HttpContext.Response.Cookies.Delete(RoutingConstants.BEARER_TOKEN);
+            HttpContext.Response.Cookies.Delete(RoutingConstants.REFRESH_TOKEN);
+            return RedirectToAction("UsrSignIn", RoutingConstants.EXTCONTROLLER);
         }
 
 		//public IActionResult ManageRoles2()

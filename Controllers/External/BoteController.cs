@@ -17,6 +17,7 @@ using ExpressBase.Common;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
+using ExpressBase.Common.Constants;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -82,11 +83,11 @@ namespace ExpressBase.Web.Controllers
                 }
                 else // TENANT CONSOLE
                 {
-                    ViewBag.cid = "expressbase";
+                    ViewBag.cid = CoreConstants.EXPRESSBASE;
                     whichconsole = "tc";
                 }
             }
-            else if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
+            else if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM) || host.Host.EndsWith(RoutingConstants.EBTESTINFO))
             {
                 if (subdomain.Length == 3) // USER CONSOLE
                 {
@@ -104,11 +105,11 @@ namespace ExpressBase.Web.Controllers
                 }
                 else // TENANT CONSOLE
                 {
-                    ViewBag.cid = "expressbase";
+                    ViewBag.cid = CoreConstants.EXPRESSBASE;
                     whichconsole = "tc";
                 }
             }
-            else if (host.Host.EndsWith("localhost"))
+            else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
             {
                 if (subdomain.Length == 2) // USER CONSOLE
                 {
@@ -125,7 +126,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else // TENANT CONSOLE
                 {
-                    ViewBag.cid = "expressbase";
+                    ViewBag.cid = CoreConstants.EXPRESSBASE;
                     whichconsole = "tc";
                 }
             }
@@ -146,7 +147,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.cid = "expressbase";
+                    ViewBag.cid = CoreConstants.EXPRESSBASE;
                     whichconsole = "tc";
                 }
             }
@@ -185,7 +186,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo.FileName = filename;
 
                 Id = this.ServiceClient.Post<string>(uploadImageRequest);
-                if (ViewBag.cid == "expressbase" && ViewBag.wc == "tc")
+                if (ViewBag.cid == CoreConstants.EXPRESSBASE && ViewBag.wc == "tc")
                     url = string.Format("http://localhost:5000/static/{0}.{1}", Id, uploadImageRequest.ImageInfo.FileType);
                 else
                     url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadImageRequest.ImageInfo.FileType);

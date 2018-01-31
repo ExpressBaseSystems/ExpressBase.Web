@@ -392,9 +392,9 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Fname = null;
             IServiceClient client = this.ServiceClient;
             var abc = client.Post(new Authenticate { provider = "logout" });
-            HttpContext.Response.Cookies.Delete("bToken");
-            HttpContext.Response.Cookies.Delete("rToken");
-            return RedirectToAction("DevSignIn", "Ext");
+            HttpContext.Response.Cookies.Delete(RoutingConstants.BEARER_TOKEN);
+            HttpContext.Response.Cookies.Delete(RoutingConstants.REFRESH_TOKEN);
+            return RedirectToAction("DevSignIn", RoutingConstants.EXTCONTROLLER);
 
         }
        

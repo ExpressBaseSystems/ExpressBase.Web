@@ -35,6 +35,7 @@
 
     var iframecont = d.createElement("div");
     iframecont.id = "eb_iframecont" + AppId;
+    iframecont.setAttribute("appid", AppId);
     iframecont.className = "eb_iframecont";
 
     var iframe = d.createElement("iframe");
@@ -118,13 +119,10 @@
         botdp.appendChild(dpicon);
     }
     else {
-        iframecont.style.position = "relative";
         iframecont.style.width = "100%";
         iframecont.style.height = "400px";
-        iframecont.style.right = "0";
-        iframecont.style.bottom = "0";
         iframecont.style.minWidth = "inherit";
-        d.getElementsByClassName("bots-cont")[0].appendChild(iframecont);
+        d.getElementsByClassName("bot-wraper")[0].appendChild(iframecont);
         d.getElementById("closediv" + AppId).style.visibility = "hidden";
         chatbtn.click();
         d.appIdCount++

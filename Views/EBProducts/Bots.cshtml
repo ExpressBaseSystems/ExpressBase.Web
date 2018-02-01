@@ -3,20 +3,44 @@
 }
 
 <script type="text/javascript">
-    window.EXPRESSbase_SOLUTION_ID = "eb_roby_dev";
-    window.EXPRESSbase_BOT_ID = "123";
-    (function () {
+    window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
+    window.EXPRESSbase_APP_IDS = [13,95,94,93];
+
+    $(document).ready(function () {
         d = document;
-        s = d.createElement("script");
-        s.src = "/js/ChatBot/ebbot-ext.js";
-        //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
-        s.async = 1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-        d.ebbotName = "Live ChatBot";
-        d.ebbotThemeColor = "#31d031";
-        d.isebdemo = true;
-    })();
+        d.appIdColl = [96, 95, 94, 93];
+        d.ebbotThemeColorColl = ["#31d031", "#336699", "#336699", "#336699"];
+        d.appIdCount = 0;
+
+        for (var i = 0; i < d.appIdColl.length; i++) {
+            (function () {
+                d = document;
+                s = d.createElement("script");
+                s.src = "/js/ChatBot/ebbot-ext.js";
+                //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
+                s.async = 1;
+                d.getElementsByTagName("head")[0].appendChild(s);
+                d.ebbotName = "Live ChatBot";
+                d.ebbotThemeColor = "#31d031";
+                d.isebdemo = true;
+            })();
+        }
+    });
 </script>
+
+@*<script type="text/javascript">
+        (function () {
+            d = document;
+            s = d.createElement("script");
+            s.src = "/js/ChatBot/ebbot-ext.js";
+            //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
+            s.async = 1;
+            d.getElementsByTagName("head")[0].appendChild(s);
+            d.ebbotName = "Live ChatBot";
+            d.ebbotThemeColor = "#31d031";
+            d.isebdemo = true;
+        })();
+    </script>*@
 @*<svg id="boticon" height="0"></svg>*@
 
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
@@ -370,6 +394,10 @@
         $('#btnGroupAddon').click(function () {
             document.getElementById("signup_form").submit();
         })
+    });
+
+    $(".bot-DD").on("change", function () {
+        alert($(event.target).val());
     });
 </script>
 <style>

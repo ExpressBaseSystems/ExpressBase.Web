@@ -63,7 +63,7 @@
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
     };
-
+    
     this.contactSubmit = function (e) {
         $(e.target).closest('.msg-cont').remove();
         this.msgFromBot("Thank you.");
@@ -655,9 +655,11 @@
 
     this.authenticate = function () {
         this.showTypingAnim();
+        alert(this.EXPRESSbase_APP_ID);
         $.post("../bote/AuthAndGetformlist",
             {
                 "cid": this.EXPRESSbase_SOLUTION_ID,
+                "appid": this.EXPRESSbase_APP_ID,
                 "socialId": this.FBResponse.id,
                 "wc": "uc",
             }, function (result) {

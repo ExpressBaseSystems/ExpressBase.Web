@@ -139,6 +139,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.modifyDVFlag = false;
     this.initCompleteflag = false;
     this.isTagged = false;
+    //this.filterChanged = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -465,10 +466,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.retrieve = true;
         o.keys = true;
         //this.filterValues = this.getFilterValues();
-        var f = false;
+        filterChanged = false;
         if (!this.isTagged)
-            f = this.compareFilterValues();
-        if (this.MainData !== null && this.login == "uc" && f && this.isPipped) {
+            this.compareFilterValues();
+        if (this.MainData !== null && this.login == "uc" && !filterChanged && this.isPipped) {
             //o.serverSide = false;
             o.dom = "<'col-md-12 noPadding'B>rt";
             dvcontainerObj.currentObj.data = this.MainData;
@@ -532,7 +533,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         dq.RefId = this.EbObject.DataSourceRefId;
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = JSON.stringify(serachItems);
-        dq.Params = JSON.stringify((this.filterValues !== null && this.filterValues !== undefined && this.filterValues.length>0) ? this.filterValues : this.getFilterValues());
+        if (this.filterValues === null || this.filterValues === undefined || this.filterValues.length === 0 || filterChanged)
+            this.filterValues = this.getFilterValues();
+        dq.Params = JSON.stringify(this.filterValues);
         //dq.rowData = this.rowData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
@@ -602,23 +605,23 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.compareFilterValues = function () {
-        var f = null;
         var filter = this.getFilterValues();
         if (focusedId !== undefined) {
             $.each(filter, function (i, obj) {
                 if (obj.value !== dvcontainerObj.dvcol[focusedId].filterValues[i].value) {
-                    f = 0;
+                    filterChanged = true;
                     return false;
                 }
 
-            });
-            if (f == null)
-                return true;
-            else
-                return false;
+            }.bind(this));
+            //if (f == null)
+            //    return true;
+            //else
+            //    return false;
         }
         else
-            return false;
+            //return false;
+            filterChanged = true;
     }
 
     this.btnGoClick = function (e) {

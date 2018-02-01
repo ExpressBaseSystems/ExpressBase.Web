@@ -41,29 +41,32 @@ namespace ExpressBase.Web.Components
 
             foreach (var obj in resultlist.Data)
             {
-                sb.Append(@" 
+                if (obj.Key != 0)
+                {
+                    sb.Append(@" 
                     <li><a href = '#' class='list-group-item collapsed' data-toggle='collapse' data-target='#dropdown1_" + obj.Key + @"'>
                         <i class='fa fa-angle-right' aria-hidden='true'></i> " + resultlist.AppList[obj.Key].AppName + @"
                     </a>
                     <ul class='sub-menuObj collapse' id='dropdown1_" + obj.Key + @"'>");
 
-                foreach (var val in obj.Value.Types)
-                {
-                    ControlAction ctrlAction = new ControlAction();
-                    if(val.Key == Convert.ToInt32(EbObjectType.TableVisualization) || val.Key == Convert.ToInt32(EbObjectType.ChartVisualization))
+                    foreach (var val in obj.Value.Types)
                     {
-                        ctrlAction.Controller = "DV";
-                        ctrlAction.Action = "dv";
+                        ControlAction ctrlAction = new ControlAction();
+                        if (val.Key == Convert.ToInt32(EbObjectType.TableVisualization) || val.Key == Convert.ToInt32(EbObjectType.ChartVisualization))
+                        {
+                            ctrlAction.Controller = "DV";
+                            ctrlAction.Action = "dv";
+                        }
+                        else if (val.Key == Convert.ToInt32(EbObjectType.Report))
+                        {
+                            ctrlAction.Controller = "ReportRender";
+                            ctrlAction.Action = "Index";
+                        }
+                        var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
+                        sb.Append("<li><a class='list-group-item' href='#' data-key='" + val.Key + "' data-Appid='" + obj.Key + "' data-action = '" + ctrlaction + "'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
                     }
-                    else if (val.Key == Convert.ToInt32(EbObjectType.Report))
-                    {
-                        ctrlAction.Controller = "ReportRender";
-                        ctrlAction.Action = "Index";
-                    }
-                    var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
-                    sb.Append("<li><a class='list-group-item' href='#' data-key='"+ val.Key + "' data-Appid='"+ obj.Key + "' data-action = '" + ctrlaction + "'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
+                    sb.Append("</ul></li>");
                 }
-                sb.Append("</ul></li>");
             }
 
             ViewBag.Object = resultlist;

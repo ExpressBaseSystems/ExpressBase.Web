@@ -269,6 +269,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues) : [];
     this.rowData = (rowData !== undefined) ? rowData : null;
     this.isTagged = false;
+    //this.filterChanged = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -430,11 +431,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             //$("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
         }
 
-        this.filterValues = this.getFilterValues();
-        var f = false;
+        //this.filterValues = this.getFilterValues();
+        filterChanged = false;
         if (!this.isTagged)
             f = this.compareFilterValues();
-        if (this.MainData !== null && this.login === "uc" && f) {
+        if (this.MainData !== null && this.login === "uc" && !filterChanged) {
             dvcontainerObj.currentObj.data = this.MainData;
             this.drawGraphHelper(this.MainData.data);
         }
@@ -444,6 +445,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $("#Pipped").text("");
                 this.isPipped = false;
             }
+            this.filterValues = this.getFilterValues();
             $.LoadingOverlay("show");
             $.ajax({
                 type: 'POST',
@@ -738,22 +740,23 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.compareFilterValues = function () {
-        var f = null;
-        if (prevfocusedId !== undefined) {
-            $.each(this.filterValues, function (i, obj) {
-                if (obj.value !== dvcontainerObj.dvcol[prevfocusedId].filterValues[i].value) {
-                    f = 0;
+        var filter = this.getFilterValues();
+        if (focusedId !== undefined) {
+            $.each(filter, function (i, obj) {
+                if (obj.value !== dvcontainerObj.dvcol[focusedId].filterValues[i].value) {
+                    filterChanged = true;
                     return false;
                 }
 
-            });
-            if (f == null)
-                return true;
-            else
-                return false;
+            }.bind(this));
+            //if (f == null)
+            //    return true;
+            //else
+            //    return false;
         }
         else
-            return false;
+            filterChanged = true;
+            //return false;
     }
 
     this.getDataSuccess = function (result) {

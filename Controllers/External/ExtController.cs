@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Constants;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
@@ -85,9 +86,9 @@ namespace ExpressBase.Web.Controllers
             UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = Email });
             if (!result.isUniq)
             {
-                this.ServiceClient.Post(new EmailServicesMqRequest() { refid = "expressbase-expressbase-15-26-26", TenantAccountId = "expressbase", newuserid = 0, To = Email, UserId = 0 });
+                this.ServiceClient.Post(new EmailServicesMqRequest() { refid = "expressbase-expressbase-15-26-26", TenantAccountId = CoreConstants.EXPRESSBASE, newuserid = 0, To = Email, UserId = 0 });
                 TempData["Message"] = string.Format("we've sent a password reset link to {0}", Email);
-                return RedirectToAction("Index");
+                return RedirectToAction(RoutingConstants.INDEX);
             }
             else
             {
@@ -218,13 +219,13 @@ namespace ExpressBase.Web.Controllers
                 UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
                 if (result.isUniq)
                 {
-                    var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = "expressbase" });
+                    var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
                         return RedirectToAction("EbOnBoarding", new RouteValueDictionary(new { controller = "Tenant", action = "EbOnBoarding" })); // convert get to post
                 }
                 else
-                    return RedirectToAction("Index", new RouteValueDictionary(new { controller = "Ext", action = "Index" })); // convert get to post;
+                    return RedirectToAction(RoutingConstants.INDEX, new RouteValueDictionary(new { controller = RoutingConstants.EXTCONTROLLER, action = RoutingConstants.INDEX })); // convert get to post;
             }
             catch (WebServiceException e)
             {
@@ -274,7 +275,7 @@ namespace ExpressBase.Web.Controllers
             else
             {
                 bOK2AttemptLogin = false;
-                _controller = "Ext";
+                _controller = RoutingConstants.EXTCONTROLLER;
                 _action = "Error";
             }
 
@@ -286,7 +287,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (data.ErrorCodes.Count <= 0)
                     {
-                        return RedirectToAction("Error", "Ext");
+                        return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
                     }
                     var error = data.ErrorCodes[0].ToLower();
                     switch (error)
@@ -309,7 +310,7 @@ namespace ExpressBase.Web.Controllers
                             ViewBag.CaptchaMessage = "Error occured. Please try again";
                             break;
                     }
-                    return RedirectToAction("Error", "Ext");
+                    return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
                 }
                 else
                 {
@@ -370,14 +371,14 @@ namespace ExpressBase.Web.Controllers
             }
             else // TENANT CONSOLE
             {
-                ViewBag.cid = "expressbase";
+                ViewBag.cid = CoreConstants.EXPRESSBASE;
                 whichconsole = "tc";
             }
         }
 
         private void RouteToDashboard(bool hasSystemRole, string whichconsole, out string _controller, out string _action)
         {
-            if (ViewBag.cid == "expressbase")
+            if (ViewBag.cid == CoreConstants.EXPRESSBASE)
             {
                 _controller = "Tenant";
                 _action = "TenantDashboard";
@@ -396,7 +397,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else
                 {
-                    _controller = "Ext";
+                    _controller = RoutingConstants.EXTCONTROLLER;
                     _action = "Error";
                 }
             }
@@ -405,11 +406,11 @@ namespace ExpressBase.Web.Controllers
         public IActionResult errorredirect(string console)
         {
             if (console == "tc")
-                return RedirectToAction("SignIn", "Ext");
+                return RedirectToAction("SignIn", RoutingConstants.EXTCONTROLLER);
             else if (console == "dc")
-                return RedirectToAction("DevSignIn", "Ext");
+                return RedirectToAction("DevSignIn", RoutingConstants.EXTCONTROLLER);
             else
-                return RedirectToAction("UsrSignIn", "Ext");
+                return RedirectToAction("UsrSignIn", RoutingConstants.EXTCONTROLLER);
         }
 
 
@@ -426,7 +427,7 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = "NIL",
                     Password = "NIL",
-                    Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", "expressbase" }, { "socialId", socialId } },
+                    Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", CoreConstants.EXPRESSBASE }, { "socialId", socialId } },
                     // UseTokenCookie = true
                 });
 
@@ -444,12 +445,12 @@ namespace ExpressBase.Web.Controllers
                     //}
                 }
                 else
-                    return RedirectToAction("Error", "Ext");
+                    return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
             }
             catch (WebServiceException wse)
             {
                 ViewBag.errormsg = wse.Message;
-                return RedirectToAction("Error", "Ext");
+                return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
             }
 
 

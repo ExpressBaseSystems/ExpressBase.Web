@@ -22,6 +22,7 @@ using ServiceStack.Auth;
 using ExpressBase.Common.Extensions;
 using Newtonsoft.Json;
 using ExpressBase.Common.Connections;
+using ExpressBase.Common.Constants;
 
 
 
@@ -51,14 +52,14 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = req["Email"],
                     Password = (req["Password"] + req["Email"]).ToMD5Hash(),
-                    Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", "expressbase" } },
+                    Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", CoreConstants.EXPRESSBASE } },
                     //UseTokenCookie = true
                 });
                 if (authResponse != null)
                 {
                     CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append("bToken", authResponse.BearerToken, options);
-                    Response.Cookies.Append("rToken", authResponse.RefreshToken, options);
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
                     this.ServiceClient.BearerToken = authResponse.BearerToken;
                     this.ServiceClient.RefreshToken = authResponse.RefreshToken;
                 }               
@@ -204,9 +205,9 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Fname = null;
             IServiceClient client = this.ServiceClient;
             var abc = client.Post(new Authenticate { provider = "logout" });
-            HttpContext.Response.Cookies.Delete("bToken");
-            HttpContext.Response.Cookies.Delete("rToken");
-            return RedirectToAction("Index", "Ext");
+            HttpContext.Response.Cookies.Delete(RoutingConstants.BEARER_TOKEN);
+            HttpContext.Response.Cookies.Delete(RoutingConstants.REFRESH_TOKEN);
+            return RedirectToAction(RoutingConstants.INDEX, RoutingConstants.EXTCONTROLLER);
 
         }
 

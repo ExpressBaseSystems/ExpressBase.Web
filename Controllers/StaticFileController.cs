@@ -1,4 +1,5 @@
 ﻿    using ExpressBase.Common;
+using ExpressBase.Common.Constants;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
@@ -109,7 +110,7 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
 
                         Id = this.ServiceClient.Post<string>(uploadFileRequest);
-                        if (ViewBag.cid == "expressbase")
+                        if (ViewBag.cid == CoreConstants.EXPRESSBASE)
                             url = string.Format("http://localhost:5000/static/{0}.{1}", Id, uploadFileRequest.FileDetails.FileType);
                         else
                             url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadFileRequest.FileDetails.FileType);
@@ -167,7 +168,7 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         Id = this.ServiceClient.Post<string>(uploadImageRequest);
-                        if (ViewBag.cid == "expressbase" && ViewBag.wc == "tc")
+                        if (ViewBag.cid == CoreConstants.EXPRESSBASE && ViewBag.wc == "tc")
                             url = string.Format("http://localhost:5000/static/{0}.{1}",  Id, uploadImageRequest.ImageInfo.FileType);
                         else
                             url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadImageRequest.ImageInfo.FileType);
@@ -203,7 +204,7 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         Id = this.ServiceClient.Post<string>(uploadImageRequest);
-                        if(ViewBag.cid == "expressbase")
+                        if(ViewBag.cid == CoreConstants.EXPRESSBASE)
                             url = string.Format("http://localhost:5000/static/dp/dp_{0}.jpg", ViewBag.UId);
                         else
                         url = string.Format("http://{0}.localhost:5000/static/dp_{1}.{2}", ViewBag.cid, ViewBag.UId, uploadImageRequest.ImageInfo.FileType);              

@@ -655,7 +655,6 @@
 
     this.authenticate = function () {
         this.showTypingAnim();
-        alert(this.EXPRESSbase_APP_ID);
         $.post("../bote/AuthAndGetformlist",
             {
                 "cid": this.EXPRESSbase_SOLUTION_ID,

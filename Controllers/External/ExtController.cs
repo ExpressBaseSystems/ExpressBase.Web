@@ -247,8 +247,99 @@ namespace ExpressBase.Web.Controllers
             return d;
         }
 
+		[HttpPost]
+		public async Task<IActionResult> TenantSingleSignOn(int i)
+		{
+			var host = this.HttpContext.Request.Host;
+			string[] hostParts = host.Host.Split('.');
+			string whichconsole = "uc";
+			var req = this.HttpContext.Request.Form;
+			string[] tokparts = req["btoken"].ToString().Split('.');
 
-        [HttpPost]
+
+			string _controller = null;
+			string _action = null;
+
+			////CHECK WHETHER SOLUTION ID IS VALID
+
+			//bool bOK2AttemptLogin = true;
+
+			//if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+			//	this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 3), out whichconsole);
+
+			//else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
+			//	this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 3), out whichconsole);
+
+			//else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
+			//	this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 2), out whichconsole);
+
+			//else
+			//{
+			//	bOK2AttemptLogin = false;
+			//	_controller = "Ext";
+			//	_action = "Error";
+			//}
+
+			//if (bOK2AttemptLogin)
+			//{
+			MyAuthenticateResponse authResponse = null;
+			try
+			{
+				//var jwtToken = new JwtSecurityToken(this.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN]);
+				//JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+				//var user = handler.ValidateToken("eyJhbGciOi.....", validationParameters, out validatedToken);
+				//var cid = jwtToken.Payload["cid"];
+				//jwtToken;
+
+				//string tenantid = ViewBag.cid;
+				var authClient = this.ServiceClient;
+				authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+				{
+					provider = CredentialsAuthProvider.Name,
+					UserName = req["uname"],
+					Password = "NIL",
+					//Password = (req["pass"] + req["uname"]).ToMD5Hash(),
+					Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", hostParts[0] }, { "sso", "true" } },
+					//UseTokenCookie = true
+				});
+
+			}
+			catch (WebServiceException wse)
+			{
+				TempData["ErrorMessage"] = wse.Message;
+				return errorredirect(whichconsole);
+			}
+			catch (Exception wse)
+			{
+				TempData["ErrorMessage"] = wse.Message;
+				return errorredirect(whichconsole);
+			}
+			if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+			{
+				TempData["ErrorMessage"] = "EbUnauthorized";
+				return errorredirect(whichconsole);
+			}
+			else //AUTH SUCCESS
+			{
+				CookieOptions options = new CookieOptions();
+
+				Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+				Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+
+				if (req.ContainsKey("remember"))
+					Response.Cookies.Append("UserName", req["uname"], options);
+
+				this.RouteToDashboard(authResponse.User.HasSystemRole(), whichconsole, out _controller, out _action);
+			}
+
+			//}
+			return Json(new { result = "Redirect", url = Url.Action(_action, _controller) });
+			//return RedirectToAction(_action, _controller);
+		}
+
+
+
+		[HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
             var host = this.HttpContext.Request.Host;

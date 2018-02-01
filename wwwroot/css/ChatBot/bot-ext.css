@@ -1,4 +1,4 @@
-﻿#eb_iframecont {
+﻿.eb_iframecont {
     display: none;
     flex-direction: column;
     position: fixed;
@@ -13,7 +13,7 @@
     z-index: 16777270;
 }
 
-#loderdiv {
+.loderdiv {
     display: flex;
     background-color: blueviolet;
     background: url("https://expressbase.com/images/svg/botloder.svg") no-repeat center;
@@ -21,14 +21,14 @@
     flex: 1 1 auto;
 }
 
-#ebbot_iframe {
+.ebbot_iframe {
     visibility: hidden;
     width: 100%;
     flex: 1 1 auto;
     border-radius: 0px 0px 3.5px 3.5px;
 }
 
-#chatbtn {
+.chatbtn {
     position: fixed;
     right: 24px;
     bottom: 15px;

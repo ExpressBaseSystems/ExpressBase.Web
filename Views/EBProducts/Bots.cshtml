@@ -3,20 +3,44 @@
 }
 
 <script type="text/javascript">
-    window.EXPRESSbase_SOLUTION_ID = "eb_roby_dev";
-    window.EXPRESSbase_BOT_ID = "123";
-    (function () {
+    window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
+    window.EXPRESSbase_APP_IDS = [13,95,94,93];
+
+    $(document).ready(function () {
         d = document;
-        s = d.createElement("script");
-        s.src = "/js/ChatBot/ebbot-ext.js";
-        //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
-        s.async = 1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-        d.ebbotName = "Live ChatBot";
-        d.ebbotThemeColor = "#31d031";
-        d.isebdemo = true;
-    })();
+        d.appIdColl = window.EXPRESSbase_APP_IDS;
+        d.ebbotThemeColorColl = ["#31d031", "#336699", "#336699", "#336699"];
+        d.appIdCount = 0;
+
+        for (var i = 0; i < d.appIdColl.length; i++) {
+            (function () {
+                d = document;
+                s = d.createElement("script");
+                s.src = "/js/ChatBot/ebbot-ext.js";
+                //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
+                s.async = 1;
+                d.getElementsByTagName("head")[0].appendChild(s);
+                d.ebbotName = "Live ChatBot";
+                d.ebbotThemeColor = "#31d031";
+                d.isebdemo = true;
+            })();
+        }
+    });
 </script>
+
+@*<script type="text/javascript">
+        (function () {
+            d = document;
+            s = d.createElement("script");
+            s.src = "/js/ChatBot/ebbot-ext.js";
+            //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
+            s.async = 1;
+            d.getElementsByTagName("head")[0].appendChild(s);
+            d.ebbotName = "Live ChatBot";
+            d.ebbotThemeColor = "#31d031";
+            d.isebdemo = true;
+        })();
+    </script>*@
 @*<svg id="boticon" height="0"></svg>*@
 
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
@@ -59,9 +83,10 @@
                 <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs banner-img pull-right">
                     <div class="bots-cont">
                         <select class="bot-DD">
-                            <option>rrrrrrrrrr</option>
-                            <option>dfddf</option>
-                            <option>noisssssssssssssssssssssssssssssssssssssssssjjhjkhj</option>
+                            <option appid="13">rrrrrrrrrr</option>
+                            <option appid="93">dfddf</option>
+                            <option appid="94">noisssssssssssssssssssssssssssssssssssssssssjjhjkhj</option>
+                            <option appid="95">noisssssssssssssssssssssssssssssssssssssssssjjhjkhj</option>
                         </select>
                         <div class="bot-wraper">
 
@@ -371,6 +396,13 @@
             document.getElementById("signup_form").submit();
         })
     });
+
+    $(".bot-DD").on("change", function () {
+        console.log($(event.target).val());
+        var appid = $(event.target).find("option:selected").attr("appid");
+        $(".eb_iframecont").hide();
+        $(`.bots-cont [appid=${appid}]`).show(30);
+    });
 </script>
 <style>
     .bot-DD {
@@ -386,5 +418,10 @@
         height: 100%;
         width: 100%;
         background-color: white;
+    }
+    .eb_iframecont{
+        position:absolute!important;
+        top:30px;
+        right:0;
     }
 </style>

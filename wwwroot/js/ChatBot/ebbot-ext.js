@@ -1,5 +1,14 @@
 ﻿(function () {
     var d = document;
+    if (d.appIdColl) {
+        AppId = d.appIdColl[d.appIdCount];
+        var themeColor = d.ebbotThemeColorColl[d.appIdCount];
+    }
+    else {
+        AppId = window.EXPRESSbase_SOLUTION_ID
+        var themeColor = d.ebbotThemeColor;
+    }
+
     var ss = d.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";
@@ -15,7 +24,7 @@
     botHeadDiv.innerHTML = "&nbsp; " + d.ebbotName;
 
     var html = d.getElementsByTagName('html')[0];
-    html.style.setProperty("--ebbotThemeColor", d.ebbotThemeColor);
+    html.style.setProperty("--ebbotThemeColor", themeColor);
 
     var botdp = d.createElement("div");
     botdp.className = "bot-icon";
@@ -25,29 +34,34 @@
     chatHead.appendChild(botHeadDiv);
 
     var iframecont = d.createElement("div");
-    iframecont.id = "eb_iframecont";
+    iframecont.id = "eb_iframecont" + AppId;
+    iframecont.setAttribute("appid", AppId);
+    iframecont.className = "eb_iframecont";
 
     var iframe = d.createElement("iframe");
-    iframe.id = "ebbot_iframe";
+    iframe.id = "ebbot_iframe" + AppId;
+    iframe.className = "ebbot_iframe";
     iframe.frameBorder = "0";
     iframe.allowFullscreen = true;
     iframecont.appendChild(chatHead);
 
     var loaderDiv = d.createElement("div");
-    loaderDiv.id = "loderdiv";
+    loaderDiv.id = "loderdiv" + AppId;
+    loaderDiv.className = "loderdiv";
 
     loaderDiv.appendChild(iframe);
     iframecont.appendChild(loaderDiv);
     d.body.appendChild(iframecont);
 
     var chatbtn = d.createElement("div");
-    chatbtn.id = "chatbtn";
-    var chatIcon = d.getElementById('boticon');
+    chatbtn.id = "chatbtn" + AppId;
+    chatbtn.className = "chatbtn";
+    var chatIcon = d.getElementsByClassName('boticon')[0];
 
 
     var closeDiv = d.createElement("div");
     closeDiv.className = "chatclose"
-    closeDiv.id = "closediv";
+    closeDiv.id = "closediv" + AppId;
     closeDiv.innerHTML = '&#10006;';
 
     chatHead.appendChild(closeDiv);
@@ -57,17 +71,17 @@
     };
 
     closeDiv.onclick = function () {
-        document.getElementById("eb_iframecont").style.display = "none";
-        document.getElementById("chatbtn").style.display = "block";
+        document.getElementById("eb_iframecont" + AppId).style.display = "none";
+        document.getElementById("chatbtn" + AppId).style.display = "block";
     }
 
     chatbtn.onclick = function () {
-        var iframecont = document.getElementById("eb_iframecont");
-        var ebbot_iframe = document.getElementById("ebbot_iframe");
+        var iframecont = document.getElementById("eb_iframecont" + AppId);
+        var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
         if (!ebbot_iframe.getAttribute("src")) {
             //ebbot_iframe.setAttribute("src", "https://expressbase.azurewebsites.net//bote/bot?tid=" + window.EXPRESSbase_SOLUTION_ID);
-            ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:5000/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}`);
+            ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:5000/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}`);
         }
         if (iframecont.style.display !== "flex") {
             this.style.display = "none";
@@ -105,15 +119,13 @@
         botdp.appendChild(dpicon);
     }
     else {
-        iframecont.style.position = "relative";
         iframecont.style.width = "100%";
         iframecont.style.height = "400px";
-        iframecont.style.right = "0";
-        iframecont.style.bottom = "0";
         iframecont.style.minWidth = "inherit";
-        d.getElementsByClassName("bots-cont")[0].appendChild(iframecont);
-        d.getElementById("closediv").style.visibility = "hidden";
+        d.getElementsByClassName("bot-wraper")[0].appendChild(iframecont);
+        d.getElementById("closediv" + AppId).style.visibility = "hidden";
         chatbtn.click();
+        d.appIdCount++
     }
     //chatbtn.click();////////////////////////////////
 

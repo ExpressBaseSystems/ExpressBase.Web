@@ -17,6 +17,7 @@ using ExpressBase.Common;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
+using ExpressBase.Objects.ObjectContainers;
 using ExpressBase.Common.Constants;
 
 namespace ExpressBase.Web.Controllers
@@ -26,145 +27,146 @@ namespace ExpressBase.Web.Controllers
         public BoteController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         [HttpGet]
-        public IActionResult Bot(string tid)
+        public IActionResult Bot(string tid, string appid)
         {
             ViewBag.tid = tid;
+            ViewBag.appid = appid;
             return View();
         }
 
-        [HttpGet]
-        public string GetSamp(string refid, string socialId)
-            {
-                string result = "SocialId not in Database";
+        //[HttpGet]
+        //public string GetSamp(string refid, string socialId)
+        //    {
+        //        string result = "SocialId not in Database";
 
-                try
-                {
-                    string cid = refid.Split('-')[0].Trim();
-                    // string authResponse = AuthAndGetformlist(refid, socialId);
-                    if (AuthAndGetformlist(refid, socialId) != null)
-                    {
-                        var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-                        var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-                        dsobj.Status = resultlist.Data[0].Status;
-                        dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-                        result = dsobj.GetHtml();
-                    }
-                }
-                catch (Exception e)
-                {
-                    result = e.Message;
-                }
+        //        try
+        //        {
+        //            string cid = refid.Split('-')[0].Trim();
+        //            // string authResponse = AuthAndGetformlist(refid, socialId);
+        //            if (AuthAndGetformlist(refid, appid, socialId) != null)
+        //            {
+        //                var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+        //                var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+        //                dsobj.Status = resultlist.Data[0].Status;
+        //                dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
+        //                result = dsobj.GetHtml();
+        //            }
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            result = e.Message;
+        //        }
 
-                return result;
-        }
+        //        return result;
+        //}
 
-        [HttpGet]
-        public string GetObjHtml(string refid, string socialId)
-        {
-            var host = this.HttpContext.Request.Host;
-            string[] subdomain = host.Host.Split('.');
-            string whichconsole = null;
-            var req = this.HttpContext.Request.Form;
-            if (host.Host.EndsWith("azurewebsites.net"))
-            {
-                if (subdomain.Length == 4) // USER CONSOLE
-                {
-                    if (!string.IsNullOrEmpty(req["console"]))
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "dc";
-                    }
-                    else
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "uc";
-                    }
+        //[HttpGet]
+        //public string GetObjHtml(string refid, string appid, string socialId)
+        //{
+        //    var host = this.HttpContext.Request.Host;
+        //    string[] subdomain = host.Host.Split('.');
+        //    string whichconsole = null;
+        //    var req = this.HttpContext.Request.Form;
+        //    if (host.Host.EndsWith("azurewebsites.net"))
+        //    {
+        //        if (subdomain.Length == 4) // USER CONSOLE
+        //        {
+        //            if (!string.IsNullOrEmpty(req["console"]))
+        //            {
+        //                ViewBag.cid = subdomain[0];
+        //                whichconsole = "dc";
+        //            }
+        //            else
+        //            {
+        //                ViewBag.cid = subdomain[0];
+        //                whichconsole = "uc";
+        //            }
 
-                }
-                else // TENANT CONSOLE
-                {
-                    ViewBag.cid = CoreConstants.EXPRESSBASE;
-                    whichconsole = "tc";
-                }
-            }
-            else if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM) || host.Host.EndsWith(RoutingConstants.EBTESTINFO))
-            {
-                if (subdomain.Length == 3) // USER CONSOLE
-                {
-                    if (!string.IsNullOrEmpty(req["console"]))
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "dc";
-                    }
-                    else
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "uc";
-                    }
+        //        }
+        //        else // TENANT CONSOLE
+        //        {
+        //            ViewBag.cid = "expressbase";
+        //            whichconsole = "tc";
+        //        }
+        //    }
+        //    else if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
+        //    {
+        //        if (subdomain.Length == 3) // USER CONSOLE
+        //        {
+        //            if (!string.IsNullOrEmpty(req["console"]))
+        //            {
+        //                ViewBag.cid = subdomain[0];
+        //                whichconsole = "dc";
+        //            }
+        //            else
+        //            {
+        //                ViewBag.cid = subdomain[0];
+        //                whichconsole = "uc";
+        //            }
 
-                }
-                else // TENANT CONSOLE
-                {
-                    ViewBag.cid = CoreConstants.EXPRESSBASE;
-                    whichconsole = "tc";
-                }
-            }
-            else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
-            {
-                if (subdomain.Length == 2) // USER CONSOLE
-                {
-                    if (!string.IsNullOrEmpty(req["console"]))
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "dc";
-                    }
-                    else
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "uc";
-                    }
-                }
-                else // TENANT CONSOLE
-                {
-                    ViewBag.cid = CoreConstants.EXPRESSBASE;
-                    whichconsole = "tc";
-                }
-            }
-            else
-            {
-                if (subdomain.Length == 5) // USER CONSOLE
-                {
-                    if (!string.IsNullOrEmpty(req["console"]))
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "dc";
-                    }
-                    else
-                    {
-                        ViewBag.cid = subdomain[0];
-                        whichconsole = "uc";
-                    }
-                }
-                else
-                {
-                    ViewBag.cid = CoreConstants.EXPRESSBASE;
-                    whichconsole = "tc";
-                }
-            }
+        //        }
+        //        else // TENANT CONSOLE
+        //        {
+        //            ViewBag.cid = "expressbase";
+        //            whichconsole = "tc";
+        //        }
+        //    }
+        //    else if (host.Host.EndsWith("localhost"))
+        //    {
+        //        if (subdomain.Length == 2) // USER CONSOLE
+        //        {
+        //            if (!string.IsNullOrEmpty(req["console"]))
+        //            {
+        //                ViewBag.cid = subdomain[0];
+        //                whichconsole = "dc";
+        //            }
+        //            else
+        //            {
+        //                ViewBag.cid = subdomain[0];
+        //                whichconsole = "uc";
+        //            }
+        //        }
+        //        else // TENANT CONSOLE
+        //        {
+        //            ViewBag.cid = "expressbase";
+        //            whichconsole = "tc";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (subdomain.Length == 5) // USER CONSOLE
+        //        {
+        //            if (!string.IsNullOrEmpty(req["console"]))
+        //            {
+        //                ViewBag.cid = subdomain[0];
+        //                whichconsole = "dc";
+        //            }
+        //            else
+        //            {
+        //                ViewBag.cid = subdomain[0];
+        //                whichconsole = "uc";
+        //            }
+        //        }
+        //        else
+        //        {
+        //            ViewBag.cid = "expressbase";
+        //            whichconsole = "tc";
+        //        }
+        //    }
 
-            // string authResponse = ;
+        //    // string authResponse = ;
 
-            if (AuthAndGetformlist(refid, socialId, whichconsole) != null)
-            {
-                var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-                var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-                dsobj.Status = resultlist.Data[0].Status;
-                dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-                return dsobj.GetHtml();
-            }
+        //    if (AuthAndGetformlist(refid, appid, socialId, whichconsole) != null)
+        //    {
+        //        var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+        //        var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+        //        dsobj.Status = resultlist.Data[0].Status;
+        //        dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
+        //        return dsobj.GetHtml();
+        //    }
 
-            return "SocialId not in Database";
-        }
+        //    return "SocialId not in Database";
+        //}
 
         [HttpPost]
         public async Task<string> UploadImageOrginal(string base64, string filename, string refreshToken, string bearerToken)
@@ -201,7 +203,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public List<object> AuthAndGetformlist(string cid, string socialId, string wc = "tc")
+        public List<object> AuthAndGetformlist(string cid, string appid, string socialId, string wc = "tc")
         {
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
@@ -220,7 +222,7 @@ namespace ExpressBase.Web.Controllers
 
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", cid, email, wc));
                 var Ids = String.Join(",", user.EbObjectIds);
-                GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}" });
+                GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}", AppId = appid });
                 List<object> returnlist = new List<object>();
                 returnlist.Add(authResponse);
                 returnlist.Add(formlist.BotForms);

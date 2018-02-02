@@ -1,0 +1,47 @@
+﻿.survey_Outercontainer {
+    background-color: white;
+    height: 100vh;
+}
+.survey_Innercontainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.survey_left_sidebar {
+    height: 100vh;
+    background-color: lightsteelblue;
+    //box-shadow: 0 2px 20px 0 rgba(0,0,0,0.21);
+}
+
+.survey_left_sidebar textarea {
+    border: none;
+    resize: none;
+    height: 30px;
+    overflow: hidden;
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 1px dashed;
+}
+
+.survey_center_div {
+    height:100vh;
+}
+.survey_right_sidebar {
+    height: 100vh;
+    background-color: lightcyan;
+}
+
+.question-menubar {
+    height: 30px;
+    background-color: #efeaea;
+}
+
+.question-cont {
+    height: calc( 100vh - 30px );
+}
+
+.question-new{
+    height:100%;
+    cursor:pointer;
+}
+

@@ -394,14 +394,16 @@ var DvContainerObj = function (settings) {
                 $icon = "<i class='fa fa-line-chart custom'></i>";
             else
                 $icon = "<i class='fa fa-table custom'></i>";
-            var $xx;
+
+            var $xx = "", count = 0;
             $.each(this.dvcol, function (key, value) {
-                $xx = "";
                 if (value.Refid === obj.RefId) {
+                    count++;
                     $xx = `<div class="relatedIcon"><i class="fa fa-pencil" aria-hidden="true"></i></div><div class="relatedIcon" data-op="new"><i class="fa fa-plus" aria-hidden="true"></i></div>`;
-                    return false;
                 }
             });
+            if (count > 1)
+                $xx = `<div class="relatedIcon"><i class="fa fa-pencil" aria-hidden="true"></i>(${count})</div><div class="relatedIcon" data-op="new"><i class="fa fa-plus" aria-hidden="true"></i></div>`;
             $("#relatedTagedDiv .relatedBody").append("<li class='relatedli'  data-dvType='tagged' data-refid='" + obj.RefId + "' objtype='" + obj.EbObjectType + "'><a href='#' style='color:black;'>" + $icon + "<label class='relatedlabel'>" + obj.Name + "</label></a>" + $xx + "</li>");
             //$("#relatedStartDiv").show();
         }.bind(this));             

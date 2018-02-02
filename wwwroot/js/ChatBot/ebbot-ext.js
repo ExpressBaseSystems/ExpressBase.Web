@@ -119,10 +119,8 @@
         botdp.appendChild(dpicon);
     }
     else {
-        iframecont.style.width = "100%";
-        iframecont.style.height = "400px";
         iframecont.style.minWidth = "inherit";
-        d.getElementsByClassName("bot-wraper")[0].appendChild(iframecont);
+        d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);
         d.getElementById("closediv" + AppId).style.visibility = "hidden";
         chatbtn.click();
         d.appIdCount++

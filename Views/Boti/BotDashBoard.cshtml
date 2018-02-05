@@ -131,7 +131,7 @@
                     objectse....
                 </div>
                 <div class="tab-pane" id="Surveys" role="tabpanel">
-                    Surveys....
+                    Surveys....<div id="newSurvey"><i class="fa fa-plus"></i></div>
                 </div>
                 <div class="tab-pane" id="Appearance" role="tabpanel">
                     <div class="col-md-4 profimage">
@@ -171,6 +171,10 @@
                 label.show(150);
             else
                 label.hide(100);
+        });
+
+        $("#newSurvey").on("click", function () { 
+            location.href = "../Survey/CreateSurvey";
         });
     });
 
@@ -298,5 +302,14 @@
 
     .general-cont {
         padding: 0 30px;
+    }
+
+    #newSurvey{
+        width:22px;
+        border:1px solid;
+        cursor:pointer;
+    }
+    #newSurvey i {
+        padding-left: 4px;
     }
 </style>

@@ -19,7 +19,6 @@ using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using ExpressBase.Security;
 using ExpressBase.Security.Core;
-using ExpressBase.Objects.ObjectContainers;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 

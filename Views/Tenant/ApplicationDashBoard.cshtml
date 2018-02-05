@@ -2,17 +2,14 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
-
-
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 <script src="~/js/validator.js" type="text/javascript"></script>
 <script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
 <div class="row s-dash-container">
     <div class="col-md-2 col-lg-2 pd-0 tdasboard-sidebar">
         <div class="t-container">
-
             <div id="tenantsidemenu">
-                @await Component.InvokeAsync("TenantSideMenu", new { refid = "" })
+                @*await Component.InvokeAsync("TenantSideMenu", new { refid = "" })*@
             </div>
         </div>
     </div>
@@ -112,34 +109,34 @@
     </div>
 </div>
 <script>
-    $(document).ready(function () {
+    //$(document).ready(function () {
 
-        $(".inp-block label").each(function (i, e) {
-            $e = $(e);
-            $inp = $e.siblings(".inp-control");
-            if ($inp.val() !== "")
-                $(e).show();;
-        });
+    //    $(".inp-block label").each(function (i, e) {
+    //        $e = $(e);
+    //        $inp = $e.siblings(".inp-control");
+    //        if ($inp.val() !== "")
+    //            $(e).show();;
+    //    });
 
-        $("body").on("click", ".input-group-addon", function () {
-            $("#embedtxt").select();
-            document.execCommand('copy');
-            $("#embedtxt").blur()
-        });
+    //    $("body").on("click", ".input-group-addon", function () {
+    //        $("#embedtxt").select();
+    //        document.execCommand('copy');
+    //        $("#embedtxt").blur()
+    //    });
 
-        $("body").on("click", ".outer-row-profsetup [value=Save]", function () {
-            $("#submit").click();
-        });
+    //    $("body").on("click", ".outer-row-profsetup [value=Save]", function () {
+    //        $("#submit").click();
+    //    });
 
-        $(".inp-block").on("keyup load change", ".inp-control", function (e) {
-            var inp = $(e.target);
-            var label = inp.closest(".inp-block").find("label")
-            if ($(e.target).val() !== "")
-                label.show(150);
-            else
-                label.hide(100);
-        });
-    });
+    //    $(".inp-block").on("keyup load change", ".inp-control", function (e) {
+    //        var inp = $(e.target);
+    //        var label = inp.closest(".inp-block").find("label")
+    //        if ($(e.target).val() !== "")
+    //            label.show(150);
+    //        else
+    //            label.hide(100);
+    //    });
+    //});
 
 
 

@@ -69,7 +69,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult TenantDashboard()
         {
-
+            ViewBag.IsSSO = TempData.Peek("SSO").ToString();
+            ViewBag.Email = TempData.Peek("reqEmail");
             var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
             ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);
             return View();
@@ -84,59 +85,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.SolutionInfo = resp.Data;
             return View();
         }
-
-        [HttpGet]
-        public IActionResult ContextSwitch()
-        {                 
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult ContextSwitch(int i)
-        {
-            var host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split('.');
-            var req = this.HttpContext.Request.Form;
-            //var result = this.ServiceClient.Get<GetUserInfoResponse>(new GetUserInfoRequest());
-            MyAuthenticateResponse authResponse = null;
-            try
-            {
-                string tenantid = ViewBag.cid;
-                var authClient = this.ServiceClient;
-                authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
-                {
-                    provider = CredentialsAuthProvider.Name,
-                    UserName = "",
-                    Password = "",
-                    Meta = new Dictionary<string, string> { { "wc", "dc" }, { "cid", hostParts[0] } },
-                    //UseTokenCookie = true
-                });
-
-            }
-            catch (Exception wse)
-            {
-
-            }
-            if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
-            {
-                TempData["ErrorMessage"] = "EbUnauthorized";
-
-            }
-            else if (authResponse.User.HasSystemRole())//AUTH SUCCESS
-            {
-                CookieOptions options = new CookieOptions();
-
-                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                return RedirectToAction("ApplicationDashBoard", "Tenant");
-            }
-            else
-            {
-
-            }
-            return View();
-        }
-
+       
         [HttpGet]
         public IActionResult ApplicationDashBoard()
         {
@@ -175,11 +124,11 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult EbOnBoarding(int i)
         {
-            var req = this.HttpContext.Request.Form;           
-            IServiceClient client = this.ServiceClient;
-            var resultlist = client.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
+            var req = this.HttpContext.Request.Form; 
+            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
             if (resultlist.id > 0)
             {                
+                TempData["SSO"] = "true";
                 return RedirectToAction("TenantDashboard", "Tenant");
             }                            
             else

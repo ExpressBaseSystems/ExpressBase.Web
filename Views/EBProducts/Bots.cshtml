@@ -11,10 +11,10 @@
         d.appIdColl = window.EXPRESSbase_APP_IDS;
         d.ebbotThemeColorColl = ["#31d031", "#336699", "#336699", "#336699"];
         d.appIdCount = 0;
-
+        d.createBotFns = [];
         for (var i = 0; i < d.appIdColl.length; i++) {
-            (function () {
-                d = document;
+            d = document;
+            d.createBotFns.push(function () {
                 s = d.createElement("script");
                 s.src = "/js/ChatBot/ebbot-ext.js";
                 //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
@@ -23,7 +23,7 @@
                 d.ebbotName = "Live ChatBot";
                 d.ebbotThemeColor = "#31d031";
                 d.isebdemo = true;
-            })();
+            });
         }
     });
 </script>
@@ -121,7 +121,7 @@
 
 
 <section class="bot-section2 bg-fafa">
-    <div class="container-fluid">
+    <div class="container-fluid row">
         <div class="demo-cont">
             <div class="demo-col1">
                 <div class="usecase-icon-cont">
@@ -131,11 +131,13 @@
                                 <div class="icon-round" appid="13">
                                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJgSURBVFhH7ZM/axtBEMWFA27dJUXaFPkE7ozw3d5JGAxxcY0LNWpUBGMXKkQQwoULB2P3rlykCm7yAVye/iYEQowNAYGCSAgEETmJTYxhPe88EkFa7Z1P8UXCN/Bgd3Zm3m/3pMS/jLIQSYi3kxdl0zyCeBt9qF7oteM8qBjGq7JhdCumKSFvTTmccZkXd/bCrmU9rBrGIpm7ENbI8XGCYB6RTnqA3ppyfOzbf6tQ3bKcTD4hw9ZfAC3k+NgL+rRveudYc9qLQP1+r+t3S/ps2Z4B1pzuB5keUM8ChDWn+zGqP/Dr+t2Shq6Tcqx1TgeOUf1BXrcf1Kh9pcF4K8ScK4RZEeJFPZ0+qtl2B8IaOZyhhstHRmBf3IykfKWPjjNLuXnS80YqdVi37XbVsv68X1n58Smbvfyaz8vu1pYnrJHDGWpQix70YgZm8Vgv4EVS+ipDlkozrm0/pR97pp5K7TfS6VN6kct3y8vd00zmvL2xITubm/J8d1de7O1phRrUoge9mIFZmInZ8IAXPNl+OIj6sWsYz2pCvKSmRsWyLhpLSz+PV1fPPq+tye/Fovy9s6MECCPMwkzMhge84AlvMIAFTIxH/0D69h8cp9vM5a6+FQry1/a2cvBdCp7wBgNYwMR4N4Cqpv+pGHBcaQGx1ymqWsZTA8pmU6koaxkvBgxdy3hTCqhTVLWMNww4CYoBx5UWEHudoqplPDWg6p8GRVnLeDFg6FrGm1JAnQZrVYaQqlanwVrGGwa8jdCrgoPGnct4MWAoTR/gl3w+lPwAVT1BFANC9wtwEsV4kxyJxDVZqSoJAhsa7wAAAABJRU5ErkJggg==">
                                 </div>
+                                <div class="icon-label">Hotel</div>
                             </td>
                             <td>
                                 <div class="icon-round" appid="93">
                                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQxSURBVFhH7VdNS1RhFJ5aBEWLdrWrbetatBtmHB1NRQhSTBQqNLKwwEWBgiAZJWWLQEHpF0Q/oC9alDpj9m1YqGWffqGSM6Pj6MzpPKf31jvO/ZjRsYx64MHrec85zzP3vPedO65/Br1u954+v/8+8163x7Nbhf88Bg4f3hLMzW1kzr+vrV16f/JkLJCbG0EMayrtzyDg9XqCeXkfBsrKwt9aWmjh2jUhrgdKS8O8Ntrj87lV+u9D0O3eFcjLu9VXUBAZP3dOTIUuXaLBqip6U1lJocuXJTZ+/jwhJ+j33+z1eneq8vUDNTVtDvh8p3mEoeHq6sXIlSti5NPZs/S4oIBGTpygkZoauf505oysIQe5PPIQatFDtcsugj7f/oDfP/ji0KHQbHOziM80NRH/T69KS8mIgbhGDGvIMWKoRY+Ax7NPtV07HrjdO3r9/hs8pvnP9fWJhbY2Cre20tCxY/T44EH6Ul9PiBnmfpJjWEPO0PHjUoMYenCvSF9+fhd6K5nMQS7XJh5JJW/02bdHjy6IAAt/ZdF+iLJBI2bHMO9H5PYXFkqtxLgOPdEbGtBSsumh1+fby6Poe1pSEpo2RnThAr3ksT3nsRmxTIga1KIHehkxaPAdDUJTyVujv6hoG3+iq/zJIh/q6uLzPBJs8ndq43/kjY/YSvF0idqPdXXSCz3RGzFoQRPaPQcObFV2ktHj9Rbz0TE5WFERwZGBhjgmnhQX0xs+PoxYNohe6PmkqEg0jBi04QFelK0fCOTn3+W7F55qaJDkbxcv0usjR+hZSQlNqth6EL2hAS1oGjF4CbInZY/3XE6O3Gpw9NQpHK40WlvrOM5oezvF7tyh+MgIJWZmiGIxIa6Xh4dlDTlmtQZFk7VEk7UNH/Ck7P0wONXYKLf8dXm5fFWZNfvJ69dpqbubaHGRnJCIRiUXNaa9FKEJ7X7eUvCSYpBnP4W/ZsU6o11dFJ+YUPLpIz4+LrVmPXXCAz8w4kXZY4NebysfmtudDEIgMTenJJOBWp1mQK2TSdSKF/ak7P0CFs2KhDwiuzun11oZBHAn7caNWmUnFXYGZc/ZIF2DwNKjR0m9da7KYLSjw/GByMQg8YODnrqGXqvspMLKII4LJ2RkkBG7fTtJQ69VdlJhZRBnmhMyNbg8NJSkodcqO6mwMiiHsAJyrGjkm60ZNICeuoZeq+ykAotmRfr+s8pJh7pB9LTKUXZS8dca3PAjxoZ2gl6rG7FCVh+SDX/MyEHNh6sdMjGINxyr17BVGQTx9WSHTAwuPXyY1Fvnqg3KywJ/0VshXYPxsbH1eVkAf9frlrKTCiyaFemEgN2dtALuXLSz07SnzjUbFPKIsCex2Z0gr/zYczZj1Zkdg4ryo4mPC5xpienpXz+a+BoxrDn9aFrJrBpcD/43uFY6GtwIVHb+Brhc3wExJAPDlC8yCgAAAABJRU5ErkJggg==">
                                 </div>
+                                <div class="icon-label">Hospital</div>
                             </td>
                         </tr>
                         <tr>
@@ -143,11 +145,13 @@
                                 <div class="icon-round" appid="94">
                                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOVSURBVFhH7ZdJT1NRFMefw7fxC7hDQgGJhmHBwo0bluwNlkIjLRZoGYpEI9KJQQMyVLBUYxtMsEARQaMEEFugKBA6pIylTMd7Xi+kpe9JH22QaP/JP73vnHPP+fW2i/uY/0L21NRrIxkZMntmpgvNrkmMpv+OwqE+ZmVtzhYUBL1SKaBxjbFzh+WDCtTUQKC2NtIkdi6wQqD8cjnrk/GEwwqFmi8s3B/Pzl4je/xoXGMsobDxQA1nZmqG09JudOTnX0HjGmMJgx1JT3fEA0XbRCke2OGMDCdtwzCkScKg+CQUFpnoVgpIkxTqIBFQfOKBPQiHjQIMhyL/haZEQ/HpCBZnhsNGAopEq1gwJBKlgFR6mYbPXTgbGdgDEoncNBxK0GVIAJfuVTdeF6s0srJHrcOlar27uEYbKFI2AX7iM8Yl1bpyrKO7ooQ5rOHt0dAyhDO4enAfFAErUjXeKa0zuB4+eb5utNh2pn4swIrbBxtb23B4eAiBnSB4/euA8VeWoT0yZJvUL+I+3H/cQ61fqNZ0BYYmpg+cy15Y9KwTb8CCGz/XweVeA8eSF2yfZ3brm41bWH/cg0+kaLRO17X5ff4nHEJswrrZ+V9Qo+3cKFUb7FK1YVTf/W5rbsXHwsRqJ6k39FgQdITiRAuPH0/pLMJ95vf24NikY58LIFYjA8WJFibjFddQIeYEzJWYbudKzL6LAogseWLzLYrHMDkSs7ek3cUm4xXXUCFGBmTJk5g9FI9hssUmUJr9FwYQWZCJ4iUBBTkJyDVUiJOAXEOFOAnINVSIk4BcQ4U4Ccg1VIjPDHhALqTbgZ1Tb9pcQ8Ptcoeu/XyOCTC4uwdfphzQ3j8ISk03SGoNIFZpoaSuGcTVOpDWt0JVUxd0vrXB15k5tv5IR4Nc5L3DseQB28QMPOu0QEXjS9JHH+pBej1oaANdjxUGx6fZOqyPCdBoGYFSdQvIm/pB1vYJFN1zoDR52fyRq8gzxjFfruknwC3Qa7XD5naAPSH7NwconnZA+TMTyFrHQNHlJHs8J3p42Djm5aSu/PELGJ10/BnwPvlmMt0AVPatRDQ7zZV9y+w+PNkKAlamtUJl7xJnLZ+xXqazQpFKwz5HAOKNWtK+CIqe+aiNQoz7K7rj7EF+GWSJuFHj/T9H0u9F6rP6btWHLblxFdC45qqJ1QiXV/z6JsWLXynSgavkRUeZV/LGh8Y1xmj6XxbD/AbkU0NJsuP7SQAAAABJRU5ErkJggg==">
                                 </div>
+                                <div class="icon-label">School</div>
                             </td>
                             <td>
                                 <div class="icon-round" appid="95">
                                     <img src="data:image/png;base64,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">
                                 </div>
+                                <div class="icon-label">Service Center</div>
                             </td>
                         </tr>
                         <tr>
@@ -182,12 +186,30 @@
             </div>
             <div class="demo-col2">
                 <div class="usecase-content-cont">
-                    <b>Fast growing Small & Midsize Businesses <br />deserve rapidly evolving software.</b>
-                    <p>
-                        The only RAD Platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
-                        Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
-                        Efficiently manage change in business processes with versioning & branching of objects - from a simple SQL statement to a complex Form.
-                    </p>
+                    <div class="content">
+                        <h3>1111 growing Small & Midsize Businesses <br />deserve rapidly evolving software.</h3>
+                        <p>
+                            The only RAD Platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
+                            Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
+                            Efficiently manage change in business processes with versioning & branching of objects - from a simple SQL statement to a complex Form.
+                        </p>
+                    </div>
+                    <div class="content">
+                        <b>2222 growing Small & Midsize Businesses <br />deserve rapidly evolving software.</b>
+                        <p>
+                            2222222222222 2    22 222 2222222222222222222222         Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
+                            Efficiently manage chan            2222222222222222222 222
+                            cesses with versioning & branching of objects - from a simple SQL statement to a complex Form.
+                        </p>
+                    </div>
+                    <div class="content">
+                        <b>33333 growing Small & Midsize Businesses <br />deserve rapidly evolving software.</b>
+                        <p>
+                            333333333 333 333 333  33333333333333333333         Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
+                            Efficiently manage chan            2222222222222222222 222
+                            cesses with versioning & branching of objects - from a simple SQL statement to a complex Form.
+                        </p>
+                    </div>
                 </div>
             </div>
             <div class="demo-col3">
@@ -452,45 +474,59 @@
 <a href="https://icons8.com">Icon pack by Icons8</a>
 
 <script>
-    $(document).scroll(function () {
-        var y = $(this).scrollTop();
-        if (y > $('.slider').height()) {
-            $('#trial-btn').fadeIn();
-            $('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
-        } else {
-            $('#trial-btn').fadeOut();
-            $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
-        }
+                        $(document).scroll(function () {
+                            var y = $(this).scrollTop();
+                            if (y > $('.slider').height()) {
+                                $('#trial-btn').fadeIn();
+                                $('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
+                            } else {
+                                $('#trial-btn').fadeOut();
+                                $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
+                            }
 
-        $('#btnGroupAddon').click(function () {
-            document.getElementById("signup_form").submit();
-        })
-    });
+                            $('#btnGroupAddon').click(function () {
+                                document.getElementById("signup_form").submit();
+                            })
+                        });
 
-    $(".icon-round, .icon-round i").on("click", function () {
-        var round = $(event.target).closest(".icon-round");
-        var appid = round.attr("appid");
-        $(".eb_iframecont").hide();
-        $(`.usecase-bots-cont [appid=${appid}]`).show(30);
-        
-        $(".icon-round").css("box-shadow", "none");
-        round.css("box-shadow", "0px 0px 5px 5px #afafaf5c");
+                        $(".icon-round, .icon-round i").on("click", function () {
+                            var $round = $(event.target).closest(".icon-round");
+                            var appid = $round.attr("appid");
+                            $(".icon-round").css("filter", "none").css("border-width", "1px").css("border-bottom", "none").css("border-right", "none");
+                            $round.css("filter", "saturate(2)").css("border-width", "3px").css("border-bottom", "solid 1px white").css("border-right", "solid 1px white");
+                            if (appid === undefined)
+                                return;
+                            var roundIdx = $(".icon-round").toArray().indexOf($round[0]);
+                            if ($(`.usecase-bots-cont [appid=${appid}]`).length === 0)
+                                document.createBotFns[roundIdx]();
+                            $(".eb_iframecont").hide(300);
+                            $(`.usecase-bots-cont [appid=${appid}]`).show(300);
 
-        $(".icon-round").css("border-color", "#8bb7f0");
-        round.css("border-color", "#60dc60");
-    });
+                            $(".content").css("opacity", "0").hide(200);
+                            $(`.content:eq(${roundIdx})`).show(0, function () { $(this).animate({ opacity: '1' }, 400); });
+
+
+
+                            //$(".icon-round").css("border-color", "#8bb7f0");
+                            //$round.css("border-color", "#60dc60");
+                        });
 </script>
 <style>
+    .demo-cont {
+        --bc: #1488c5;
+    }
+
     .bot-DD {
         width: 100%;
     }
 
     .eb_iframecont {
-        position: relative !important;
-        top: 0!important;
-        height:100%!important;
-        width:100%!important;
-        right: 0!important;
+        position: absolute;
+        top: 5% !important;
+        height: 90% !important;
+        width: 90% !important;
+        right: 5% !important;
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.69) !important;
     }
 
     .demo-cont {
@@ -503,43 +539,54 @@
     }
 
     .usecase-icon-cont {
-        background-color: aliceblue;
+        background-color: var(--bc);
         padding-top: 2.5vh;
+
     }
 
-    .usecase-content-cont {
-        background-color: antiquewhite;
+    .usecase-content-cont, .usecase-bots-cont {
+        background-color: var(--bc);
+        padding: 30px 20px;
+    }
+
+    .usecase-bots-cont {
+        position: relative;
     }
 
     .demo-col1, .demo-col2, .demo-col3 {
         float: left;
     }
 
-    .usecase-bots-cont {
-        background-color: lightcoral;
-    }
-
     .demo-col1 {
-        width: 20%;
+        width: 15%;
     }
 
     .demo-col2 {
-        width: 52%;
+        width: 55%;
     }
 
     .demo-col3 {
-        width: 28%;
+        width: 30%;
     }
 
     .icon-round {
-        border: solid 3px #8bb7f0;
+        border-top: solid 1px #fff;
+        border-left: solid 1px #fff;
         border-radius: 100%;
-        height: 7vw;
-        width: 7vw;
-        display:inline-block;
+        height: 5vw;
+        width: 5vw;
+        display: inline-block;
         text-align: center;
     }
-
+        .icon-round:hover {
+            border-top: solid 1px #fff;
+            border-left: solid 1px #fff;
+            margin-top: -3px;
+            margin-left: -3px;
+            box-shadow: 3px 3px 0px 0px white;
+            transition-duration: 0.1s;
+            transition-timing-function: ease-out;
+        }
         .icon-round img {
             margin-top: calc(50% - 20px);
         }
@@ -548,7 +595,24 @@
         width: 100%;
         height: 97%;
     }
-    .icon-tbl td{
-        text-align:center;
+
+        .icon-tbl td {
+            text-align: center;
+        }
+
+    .content {
+        opacity: 0;
+        display: none;
+        width: 100%;
+        height: 100%;
+    }
+        .content p, .content h3, .content h2 {
+            color: white;
+        }
+    .icon-label {
+        color: white;
+        font-size: 11px;
+        margin-top: 4px;
+        font-family: tahoma;
     }
 </style>

@@ -1,0 +1,37 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="survey_Outercontainer">
+    <div class="col-md-3 survey_left_sidebar">
+        <textarea placeholder="Enter Survey Name"></textarea>
+    </div>
+    <div class="col-md-6 survey_center_div">
+        <div class="survey_Innercontainer row">
+            <div class="question-menubar">
+                <div class="question-new pull-left btn-primary"><div style="padding: 5px 14px 1px 6px;"><i class="fa fa-plus"></i>&nbsp;ADD NEW</div></div>
+            </div>
+            <div class="question-cont"></div>
+        </div>
+    </div>
+    <div class="col-md-3 survey_right_sidebar"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="questionModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New Question</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var survey = new SurveyObj("abc");
+</script>

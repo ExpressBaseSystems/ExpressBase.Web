@@ -303,7 +303,7 @@ namespace ExpressBase.Web.Controllers
 		{
 			var host = this.HttpContext.Request.Host;
 			string[] hostParts = host.Host.Split('.');
-			string whichconsole = "uc";
+			string whichconsole = "dc";
 			string[] tokparts = btoken.ToString().Split('.');
 
 			string _controller = null;
@@ -311,10 +311,10 @@ namespace ExpressBase.Web.Controllers
 
 			////CHECK WHETHER SOLUTION ID IS VALID
 
-			var tokenS = (new JwtSecurityTokenHandler()).ReadToken(btoken) as JwtSecurityToken;
-			string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
+			//var tokenS = (new JwtSecurityTokenHandler()).ReadToken(btoken) as JwtSecurityToken;
+			//string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
 			//expressbase-email-tc
-			User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", "eb_dbpjl5pgxleq20180130063835", email, "uc"));
+			//User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", "eb_dbpjl5pgxleq20180130063835", email, "uc"));
 
 
 
@@ -644,8 +644,7 @@ namespace ExpressBase.Web.Controllers
             SMSSentRequest sMSSentRequest = new SMSSentRequest();
             sMSSentRequest.To = req["to"];
             sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
-            this.ServiceClient.Post(sMSSentRequest);
+            this.ServiceClient.Post(sMSSentRequest);			
         }
     }
-
 }

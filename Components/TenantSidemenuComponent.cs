@@ -22,14 +22,14 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string refid)
         {
-            GetAppListResponse AppListResp = ServiceClient.Get<GetAppListResponse>(new AppListRequest());
+            //GetAppListResponse AppListResp = ServiceClient.Get<GetAppListResponse>(new AppListRequest());
 
-            ViewBag.botApps = AppListResp.AppList["Bot"];
-            ViewBag.webApps = AppListResp.AppList["Web"];
-            ViewBag.mobApps = AppListResp.AppList["Mobile"];
-            ViewBag.botlength = AppListResp.AppList["Bot"].Count;
-            ViewBag.weblength = AppListResp.AppList["Web"].Count;
-            ViewBag.moblength = AppListResp.AppList["Mobile"].Count;
+            //ViewBag.botApps = AppListResp.AppList["Bot"];
+            //ViewBag.webApps = AppListResp.AppList["Web"];
+            //ViewBag.mobApps = AppListResp.AppList["Mobile"];
+            //ViewBag.botlength = AppListResp.AppList["Bot"].Count;
+            //ViewBag.weblength = AppListResp.AppList["Web"].Count;
+            //ViewBag.moblength = AppListResp.AppList["Mobile"].Count;
             return View();
         }
     }

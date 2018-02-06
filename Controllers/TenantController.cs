@@ -111,16 +111,7 @@ namespace ExpressBase.Web.Controllers
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
                 Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)
-            });
-            //if (res.Solnid > 0)
-            //{
-            //    EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
-            //    {
-            //        dbName = DbName.ToLower()
-            //    });
-            //    if (response.resp)
-            //        this.ServiceClient.Post(new InitialSolutionConnectionsRequest { SolutionId = DbName.ToLower() });
-            //}
+            });            
         }
 
         [HttpPost]

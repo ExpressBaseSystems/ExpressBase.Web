@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using System.Text;
 using ExpressBase.Objects.ReportRelated;
 using ExpressBase.Objects.EmailRelated;
+using ExpressBase.Common.Structures;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -93,7 +94,7 @@ namespace ExpressBase.Web.Controllers
 
 
             }
-            if (type == EbObjectType.DataSource)
+            if (type.Equals(EbObjectTypes.DataSource))
             {
                 var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.DataSource, typeof(EbDatasourceMain));
@@ -105,7 +106,7 @@ namespace ExpressBase.Web.Controllers
                 }
                
             }
-            else if(type == EbObjectType.TableVisualization || type == EbObjectType.ChartVisualization)
+            else if(type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization))
             {
                 var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
@@ -115,12 +116,12 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
-            else if(type == EbObjectType.Report)
+            else if(type.Equals(EbObjectTypes.Report))
             {
                 var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
             }
-            else if (type == EbObjectType.EmailBuilder)
+            else if (type.Equals(EbObjectTypes.EmailBuilder))
             {
                 var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
@@ -249,15 +250,15 @@ namespace ExpressBase.Web.Controllers
         public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype, string _refid, string _ssurl)
         {
             string VCName = string.Empty;
-            if (Objtype == (int)EbObjectType.DataSource)
+            if (Objtype == (int)EbObjectTypes.DataSource)
                 VCName = "CodeEditor";
-            else if (Objtype == (int)EbObjectType.TableVisualization)
+            else if (Objtype == (int)EbObjectTypes.TableVisualization)
                 VCName = "DVTable";
-            else if (Objtype == (int)EbObjectType.WebForm)
+            else if (Objtype == (int)EbObjectTypes.WebForm)
                 VCName = "FormBuilder";
-            else if (Objtype == (int)EbObjectType.Report)
+            else if (Objtype == (int)EbObjectTypes.Report)
                 VCName = "ReportBuilder";
-            else if (Objtype == (int)EbObjectType.EmailBuilder)
+            else if (Objtype == (int)EbObjectTypes.EmailBuilder)
                 VCName = "Emailbuilder";
             return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl = _ssurl });
 

@@ -145,14 +145,14 @@ namespace ExpressBase.Web2.Controllers
 
             if (ObjectType == 16)
             {
-                foreach (var Op in Enum.GetValues(typeof(EbTableVisualization.Operations)))
+                foreach (var Op in EbTableVisualization.Operations.Enumerator)
                     header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
 
                 foreach (var obj in resultlist.Data.Keys)
                 {
                     tbody += "<tr>";
                     tbody += "<td>{0}</td>".Fmt(resultlist.Data[obj]);
-                    foreach (var Op in Enum.GetValues(typeof(EbTableVisualization.Operations)))
+                    foreach (var Op in EbTableVisualization.Operations.Enumerator)
                     {
                         var perm = string.Format("{0}_{1}", obj, (int)Op);
                         var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
@@ -164,14 +164,14 @@ namespace ExpressBase.Web2.Controllers
 
             else if (ObjectType == 17)
             {
-                foreach (var Op in Enum.GetValues(typeof(EbChartVisualization.Operations)))
+                foreach (var Op in EbChartVisualization.Operations.Enumerator)
                     header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
 
                 foreach (var obj in resultlist.Data.Keys)
                 {
                     tbody += "<tr>";
                     tbody += "<td>{0}</td>".Fmt(resultlist.Data[obj]);
-                    foreach (var Op in Enum.GetValues(typeof(EbChartVisualization.Operations)))
+                    foreach (var Op in EbChartVisualization.Operations.Enumerator)
                     {
                         var perm = string.Format("{0}_{1}", obj, (int)Op);
                         var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
@@ -183,14 +183,14 @@ namespace ExpressBase.Web2.Controllers
 
             else if (ObjectType == 18)
             {
-                foreach (var Op in Enum.GetValues(typeof(EbBotForm.Operations)))
+                foreach (var Op in EbBotForm.Operations.Enumerator)
                     header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
 
                 foreach (var obj in resultlist.Data.Keys)
                 {
                     tbody += "<tr>";
                     tbody += "<td>{0}</td>".Fmt(resultlist.Data[obj]);
-                    foreach (var Op in Enum.GetValues(typeof(EbBotForm.Operations)))
+                    foreach (var Op in EbBotForm.Operations.Enumerator)
                     {
                         var perm = string.Format("{0}_{1}", obj, (int)Op);
                         var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;
@@ -202,14 +202,14 @@ namespace ExpressBase.Web2.Controllers
 
             else if (ObjectType == 3)
             {
-                foreach (var Op in Enum.GetValues(typeof(EbReport.Operations)))
+                foreach (var Op in EbReport.Operations.Enumerator)
                     header += "<th> @Operation </th>".Replace("@Operation", Op.ToString());
 
                 foreach (var obj in resultlist.Data.Keys)
                 {
                     tbody += "<tr>";
                     tbody += "<td>{0}</td>".Fmt(resultlist.Data[obj]);
-                    foreach (var Op in Enum.GetValues(typeof(EbReport.Operations)))
+                    foreach (var Op in EbReport.Operations.Enumerator)
                     {
                         var perm = string.Format("{0}_{1}", obj, (int)Op);
                         var checked_string = _permissionsData.Contains(perm) ? "checked" : string.Empty;

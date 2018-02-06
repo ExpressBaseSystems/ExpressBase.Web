@@ -96,8 +96,10 @@ namespace ExpressBase.Web.Controllers
         public IActionResult EbOnBoarding()
         {
             ViewBag.useremail = TempData.Peek("reqEmail");
-            var result = this.ServiceClient.Get<AutoGenSolIdResponse>(new AutoGenSolIdRequest());
-            ViewBag.iSid = result.Sid;
+            var ebids = this.ServiceClient.Get<AutoGenEbIdResponse>(new AutoGenEbIdRequest() { WhichId = "signup" });
+            //for solution id WhichId = "sid",for appid WhichId = "appid"
+            ViewBag.iSid = ebids.Sid;
+            ViewBag.AppId = ebids.AppId;
             return View();
         }
         
@@ -110,15 +112,15 @@ namespace ExpressBase.Web.Controllers
             {
                 Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)
             });
-            if (res.Solnid > 0)
-            {
-                EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
-                {
-                    dbName = DbName.ToLower()
-                });
-                if (response.resp)                                
-                    this.ServiceClient.Post(new InitialSolutionConnectionsRequest {SolutionId = DbName.ToLower() });                
-            }
+            //if (res.Solnid > 0)
+            //{
+            //    EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
+            //    {
+            //        dbName = DbName.ToLower()
+            //    });
+            //    if (response.resp)
+            //        this.ServiceClient.Post(new InitialSolutionConnectionsRequest { SolutionId = DbName.ToLower() });
+            //}
         }
 
         [HttpPost]

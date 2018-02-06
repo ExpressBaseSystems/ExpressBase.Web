@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Controllers
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
         [HttpGet] [HttpPost]
-        public IActionResult dv(string refid, string filterValues, int tabNum)
+        public IActionResult dv(string refid,string rowData, string filterValues, int tabNum)
         {
             //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -57,6 +57,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.dvRefId = refid;
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;
+            ViewBag.rowData = rowData;
             ViewBag.DvList = JsonConvert.SerializeObject(resultlist.DvList);
             ViewBag.DvTaggedList = JsonConvert.SerializeObject(resultlist.DvTaggedList);
             return View();

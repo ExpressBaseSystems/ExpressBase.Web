@@ -9,7 +9,7 @@ var DvContainerObj = function (settings) {
     this.ver_num = settings.ver_num;
     this.cur_status = settings.cur_status;
     this.type = settings.type;
-    this.rowData = settings.rowData;
+    this.rowData = (settings.rowData !== "") ? settings.rowData : null;
     this.filterValues = settings.filterValues;
     this.tabnum = settings.tabnum;
     this.RelatedDvlist = settings.DvList;
@@ -55,6 +55,7 @@ var DvContainerObj = function (settings) {
         focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + this.tabnum + "_" + counter;
         if (counter == 0) {
             this.currentObj.Pippedfrom = "";
+            prevfocusedId = focusedId;
         }
 
         this.PippedColl[focusedId] = this.RelatedDvlist;

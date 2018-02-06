@@ -299,26 +299,20 @@ namespace ExpressBase.Web.Controllers
 
 
 		[HttpPost]
-		public async Task<IActionResult> TenantSingleSignOn(string uname, string btoken)
-		{
-			var host = this.HttpContext.Request.Host;
-			string[] hostParts = host.Host.Split('.');
+		public IActionResult TenantSingleSignOn()
+		{            
+            var host = this.HttpContext.Request.Host;
+            var req = this.HttpContext.Request.Form;
+            string[] hostParts = host.Host.Split('.');
 			string whichconsole = "dc";
-			string[] tokparts = btoken.ToString().Split('.');
-
-			string _controller = null;
-			string _action = null;
-
+            string btoken = req["Btoken"].ToString();
+            string[] tokparts = btoken.ToString().Split('.');
 			////CHECK WHETHER SOLUTION ID IS VALID
 
-			//var tokenS = (new JwtSecurityTokenHandler()).ReadToken(btoken) as JwtSecurityToken;
-			//string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
+			var tokenS = (new JwtSecurityTokenHandler()).ReadToken(btoken) as JwtSecurityToken;
+			string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
 			//expressbase-email-tc
-			//User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", "eb_dbpjl5pgxleq20180130063835", email, "uc"));
-
-
-
-
+			User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", "eb_dbpjl5pgxleq20180130063835", email, "uc"));
 
 			//bool bOK2AttemptLogin = true;
 
@@ -354,7 +348,7 @@ namespace ExpressBase.Web.Controllers
 				authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
 				{
 					provider = CredentialsAuthProvider.Name,
-					UserName = uname,
+					UserName = req["Email"],
 					Password = "NIL",
 					//Password = (req["pass"] + req["uname"]).ToMD5Hash(),
 					Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", hostParts[0] }, { "sso", "true" } },
@@ -384,18 +378,9 @@ namespace ExpressBase.Web.Controllers
 				Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
 				Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
 
-				//if (req.ContainsKey("remember"))
-				//	Response.Cookies.Append("UserName", req["uname"], options);
-
-				this.RouteToDashboard(authResponse.User.HasSystemRole(), whichconsole, out _controller, out _action);
-			}
-
-			//}
-			return Json(new { result = "Redirect", url = Url.Action(_action, _controller) });
-			//return RedirectToAction(_action, _controller);
+                return RedirectToAction("ApplicationDashBoard", "Tenant");
+            }
 		}
-
-
 
 		[HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
@@ -644,7 +629,8 @@ namespace ExpressBase.Web.Controllers
             SMSSentRequest sMSSentRequest = new SMSSentRequest();
             sMSSentRequest.To = req["to"];
             sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
-            this.ServiceClient.Post(sMSSentRequest);			
+            this.ServiceClient.Post(sMSSentRequest);
         }
     }
+
 }

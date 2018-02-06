@@ -44,4 +44,51 @@
     height:100%;
     cursor:pointer;
 }
+.question-text {
+    width: 78%;
+    border: none;
+    border-bottom: 1px solid;
+    background-color: #f8f9fc;
+    height: 53px;
+    padding: 10px;
+}
+.question-choice {
+    height: 40px;
+    border-radius: 3px;
+    border: 1px solid #dee1e8;
+    box-shadow: 0 1px 1px #dfe3ea inset;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.question-Choices {
+    width: inherit;
+    margin-top: 10px;
+}
+
+.choice {
+    width: 203px;
+    display: inline-block;
+}
+
+.question-type-label {
+    font-size: 11px;
+    position: absolute;
+    margin-left: 5px;
+    margin-top: -5px;
+}
+.question-choice-yesno {
+    resize: none;
+    padding: 8px 1em;
+    text-align: center;
+}
+
+.question-choice-text {
+    resize: none;
+    padding: 8px 1em;
+    width:100%;
+}
+
+
+
 

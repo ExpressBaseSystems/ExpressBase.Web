@@ -122,7 +122,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined) ? rowData.split(","): null;
+    this.rowData = (rowData !== undefined && rowData !== null) ? rowData.split(","): null;
     this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues):[] ;
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
@@ -207,7 +207,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
-        if (this.login === 'dc')
+        if (this.login === 'dc' && this.tabNum === 0)
             this.EbObject = commonO.Current_obj;
         else
             this.EbObject = dvcontainerObj.currentObj;
@@ -580,8 +580,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i + 2].name, data));
         }
         else {
-            var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
-            fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
+            if (this.login === "uc") {
+                var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
+                fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
+            }
         }
         //if (type === "System.Int32" || type === "System.Int16")
         //    type = 12;
@@ -772,9 +774,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
-        this.contextMenu();
         if (this.login == "uc") {
             this.initCompleteflag = true;
+            this.contextMenu();
             if (this.isSecondTime)
                 this.ModifyingDVs(dvcontainerObj.currentObj.Name,"initComplete");
         }
@@ -790,21 +792,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.OpeninNewTab = function (key, opt, event) {
+        this.isContextual = true;
         this.tabNum++;
-        var idx = this.Api.row(opt.$trigger.parent().parent()).index();
+        var idx;
+        if (opt !== undefined)
+            idx = this.Api.row(opt.$trigger.parent().parent()).index();
+        else
+            idx = key;
         this.rowData = this.Api.row(idx).data();
-        this.filterValues = this.getFilterValues();
-        var url = "http://eb_roby_dev.localhost:5000/DV/dv?refid=" + this.linkDV;
+        this.filterValues = this.getFilterValues("link");
+        var url = "http://eb_dbpjl5pgxleq20180130063835.localhost:5000/DV/dv?refid=" + this.linkDV;
 
         var _form = document.createElement("form");
         _form.setAttribute("method", "post");
         _form.setAttribute("action", url);
         _form.setAttribute("target", "_blank");
-        //var input = document.createElement('input');
-        //input.type = 'hidden';
-        //input.name = "rowData";
-        //input.value = this.rowData.toString();
-        //_form.appendChild(input);
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "rowData";
+        input.value = this.rowData.toString();
+        _form.appendChild(input);
         var input = document.createElement('input');
         input.type = 'hidden';
         input.name = "filterValues";

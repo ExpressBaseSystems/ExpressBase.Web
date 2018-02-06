@@ -115,7 +115,7 @@
 <div id="parent"><div class="row splitdiv_parent" id="parent-div@(ViewBag.tabNum)"></div></div>
 
 @section EbHead {
-    <script>
+<script>
         var counter = 0;
         @Html.Raw(ViewBag.EbObjectType)
         @Html.Raw(ViewBag.Meta)
@@ -129,6 +129,7 @@
             cur_status:'@ViewBag.Status',
             ss_url: '@ViewBag.ServiceUrl',
             wc: '@ViewBag.wc',
+            rowData: '@Html.Raw(ViewBag.rowData)',
             filterValues: '@Html.Raw(ViewBag.filterValues)',
             tabnum: @ViewBag.tabNum,
             DvList:@Html.Raw(ViewBag.DvList),
@@ -139,5 +140,5 @@
             @Html.Raw(head)
             $('[data-toggle="tooltip"]').tooltip();
         });
-    </script>
+</script>
 }

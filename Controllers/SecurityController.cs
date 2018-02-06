@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Objects;
+using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
@@ -263,19 +264,25 @@ namespace ExpressBase.Web.Controllers
 		{
 			Assembly assembly = Assembly.GetAssembly(typeof(EbWebForm)); //DO NOT CHANGE
 			List<Eb_ObjectTypeOperations> _listObj = new List<Eb_ObjectTypeOperations>();
-			foreach (var ObjectType in Enum.GetValues(typeof(EbObjectTypesUI)))
+
+			foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
 			{
-				string sObjectType = ObjectType.ToString();
-				int sIntObj=(int)ObjectType;
-				var eOperations = assembly.GetType(string.Format("ExpressBase.Objects.{0}+Operations", sObjectType));
-				if (eOperations != null)
+				if (objectType.IsUserFacing)
 				{
-					Eb_ObjectTypeOperations _obj = new Eb_ObjectTypeOperations() {Op_Id = sIntObj, Op_Name = sObjectType, Operations = new List<string>() };
-					foreach (var Op in Enum.GetValues(eOperations))
-						_obj.Operations.Add(Op.ToString());
-					_listObj.Add(_obj);
+					var eOperations = assembly.GetType(string.Format("ExpressBase.Objects.Eb{0}", objectType.Name))
+					.GetField("Operations").GetValue(null);
+
+					if (eOperations != null)
+					{
+						var _obj = new Eb_ObjectTypeOperations { Op_Id = objectType.IntCode, Op_Name = objectType.Name, Operations = new List<string>() };
+						foreach (var Op in (eOperations as EbOperations).Enumerator)
+							_obj.Operations.Add(Op.ToString());
+
+						_listObj.Add(_obj);
+					}
 				}
 			}
+
 			return EbSerializers.Json_Serialize(_listObj);
 		}
 

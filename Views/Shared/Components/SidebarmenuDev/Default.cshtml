@@ -1,5 +1,6 @@
 ﻿@using ExpressBase.Common.Objects;
 @using ExpressBase.Objects;
+@using ExpressBase.Common.Structures;
 @{
     @using Newtonsoft.Json;
     var obj = JsonConvert.SerializeObject(ViewBag.Object);
@@ -16,7 +17,7 @@
                 <i class="fa fa-object-group"></i>Objects<i class="fa fa-caret-down pull-right"></i>
             </a>
             <ul class="sub-menuObj collapse" id="dropdown2">
-                @{  foreach (var Op in Enum.GetValues(typeof(EbObjectType)))
+                @{  foreach (var Op in EbObjectTypes.Enumerator)
                     {
                         var intop = (int)Op;
                         <li><a class="list-group-item" data-key=@intop><i class="fa fa-caret-right"></i> @Op</a></li>

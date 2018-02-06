@@ -240,7 +240,7 @@
             var tblData = [];
 
             var shtml = `<div>   
-                            <a class="objactiveclass list-group-item list-group-item-action collapse in active123" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:84%; margin-top:20px; cursor: pointer;" id='a${value.Op_Name}'>${value.Op_Name.substring(2)}</a>
+                            <a class="objactiveclass list-group-item list-group-item-action collapse in active123" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:84%; margin-top:20px; cursor: pointer;" id='a${value.Op_Name}'>${value.Op_Name}</a>
                             <div class="form-group has-feedback" style="width:15%; display:inline-block;">
                                 <input type="text" class="form-control" id="txtSrch${value.Op_Name}" placeholder="Search" style="height: 32px; background-color: #EEE;" title="Search"/>
                                 <span id="spanSrch${value.Op_Name}" class="glyphicon glyphicon-search form-control-feedback" style="top:0px;"></span>
@@ -272,7 +272,7 @@
             var rowCount = tblData.length;
             var headtag = $("#a" + value.Op_Name);
             if (rowCount !== 0) {
-                $(headtag).text(value.Op_Name.substring(2) + " (" + rowCount + ")");
+                $(headtag).text(value.Op_Name + " (" + rowCount + ")");
                 _this.setTable(value.Op_Name, tblColumn, tblData);
             }
             else {

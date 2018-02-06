@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common.Objects;
+using ExpressBase.Common.Structures;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -52,12 +53,12 @@ namespace ExpressBase.Web.Components
                     foreach (var val in obj.Value.Types)
                     {
                         ControlAction ctrlAction = new ControlAction();
-                        if (val.Key == Convert.ToInt32(EbObjectType.TableVisualization) || val.Key == Convert.ToInt32(EbObjectType.ChartVisualization))
+                        if (val.Key == EbObjectTypes.TableVisualization || val.Key == EbObjectTypes.ChartVisualization)
                         {
                             ctrlAction.Controller = "DV";
                             ctrlAction.Action = "dv";
                         }
-                        else if (val.Key == Convert.ToInt32(EbObjectType.Report))
+                        else if (val.Key == EbObjectTypes.Report)
                         {
                             ctrlAction.Controller = "ReportRender";
                             ctrlAction.Action = "Index";

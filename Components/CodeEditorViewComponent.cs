@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common.Objects;
+using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace ExpressBase.Web.Components
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;
             ViewBag.Refid = refid;
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+            ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
             return View("codeEditor");
         }
         public List<string> Getsqlfns(int obj_type)

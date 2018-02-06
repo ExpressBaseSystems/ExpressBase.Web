@@ -1,16 +1,13 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
+<link rel="stylesheet" href="~/css/EbOnBoarding/AppDashBoard.css" />
 <script src="~/js/validator.js" type="text/javascript"></script>
-<script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
 <div class="row s-dash-container">
     <div class="col-md-2 col-lg-2 pd-0 tdasboard-sidebar">
         <div class="t-container">
-            <div id="tenantsidemenu">
-                @*await Component.InvokeAsync("TenantSideMenu", new { refid = "" })*@
-            </div>
+           
         </div>
     </div>
     <div class="col-md-10 col-lg-10 pull-right s-dash-workplace">
@@ -48,221 +45,18 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
-                    <div class="general-cont">
-                        <form class="form-horizontal" action="~/Tenant/ProfileSetup" method="post">
-
-                            <br />
-                            <div class="col-md-12 pd-0">
-                                <div class="col-md-12 no-padd">
-                                    <div class="inp-block">
-                                        <label>Bot Name:</label>
-                                        <input type="text" name="_fullname" value="" class="inp-control" required id="botname" placeholder="Enter a name for your bot">
-                                    </div>
-                                    <div class="inp-block">
-                                        <label>Short Name:</label>
-                                        <input type="text" name="_name" value="" class="inp-control" required id="shortname" placeholder="Enter a short name for your bot">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="inp-block">
-                                        <label>Website URL:</label>
-                                        <input type="url" name="_url" class="inp-control" value="" required id="websitename" placeholder="Enter your website Name">
-                                    </div>
-                                    <div class="inp-block">
-                                        <label>Bot ID:</label>
-                                        <input readonly id="chatid" class="inp-control" value="">
-                                        <input type="hidden" value="" name="chatid" />
-                                        <input type="hidden" value="" name="botid" />
-                                    </div>
-                                    <div class="inp-block">
-                                        <label>Welcome Message:</label>
-                                        <textarea name="_wel_msg" class="inp-control" required rows="4" id="welcomemsg" placeholder="Enter a welcome Message">@ViewBag.welcomemsg</textarea>
-                                    </div>
-                                    <input type="hidden" id="sol_id" value="sampleSOLid" name="_sol_id" />
-                                    <button type="submit" id="submit" style="display:none" class="btn btn-default">Submit</button>                                   
-                                </div>
-                                <div class="form-group savebtn">
-                                    <button type="submit" id="save" value="Save" class="btn">Save Chatbot</button>
-                                </div>
-                            </div>
-                        </form>
-                        <input type="hidden" id="imgsrc" name="imgsrc" />
-                    </div>
+                   
                 </div>
                 <div class="tab-pane" id="Objects" role="tabpanel">
-                    objectse....
+                  
                 </div>
                 <div class="tab-pane" id="Surveys" role="tabpanel">
-                    Surveys....
+                   
                 </div>
                 <div class="tab-pane" id="Appearance" role="tabpanel">
-                    <div class="col-md-4 profimage">
-                        <div class="dp-cont">
-                            <img src="~/images/svg/bot2.svg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" class="p-st-dp" />
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script>
-    //$(document).ready(function () {
-
-    //    $(".inp-block label").each(function (i, e) {
-    //        $e = $(e);
-    //        $inp = $e.siblings(".inp-control");
-    //        if ($inp.val() !== "")
-    //            $(e).show();;
-    //    });
-
-    //    $("body").on("click", ".input-group-addon", function () {
-    //        $("#embedtxt").select();
-    //        document.execCommand('copy');
-    //        $("#embedtxt").blur()
-    //    });
-
-    //    $("body").on("click", ".outer-row-profsetup [value=Save]", function () {
-    //        $("#submit").click();
-    //    });
-
-    //    $(".inp-block").on("keyup load change", ".inp-control", function (e) {
-    //        var inp = $(e.target);
-    //        var label = inp.closest(".inp-block").find("label")
-    //        if ($(e.target).val() !== "")
-    //            label.show(150);
-    //        else
-    //            label.hide(100);
-    //    });
-    //});
-
-
-
-</script>
-
-<style>
-    .no-padd {
-        padding: 0;
-    }
-
-    #embedtxt {
-        color: transparent;
-        background: transparent;
-        border: none;
-        width: 1px;
-        height: 1px;
-    }
-
-    .addbot-box {
-        display: inline-block;
-        width: 100%;
-        padding: 85px;
-    }
-
-    .addbot-cont {
-        background-color: transparent;
-    }
-
-    .bot-dp {
-        background: url(../images/robot2.png)center center no-repeat;
-    }
-
-    .embededscript-box {
-        border: solid 1px #b2c1bf;
-        padding: 5px;
-        background-color: whitesmoke;
-        font-family: monospace;
-        font-style: italic;
-    }
-
-    .dp-cont {
-        display: inline-block;
-        height: 100%;
-    }
-
-        .dp-cont:hover {
-            background: #cad8db;
-        }
-
-    .inp-control {
-        border: none !important;
-        padding: 3px !important;
-        padding-top: 20px !important;
-        font-size: 14px !important;
-        width: 100% !important;
-        background-color: transparent !important;
-        border: none !important;
-        outline: none !important;
-        height: inherit !important;
-    }
-
-        .inp-control:focus {
-            border: none !important;
-        }
-
-    .inp-block {
-        margin-bottom: 25px;
-        border-bottom: solid 1px #ccc;
-        font-family: 'Non-existant Sans', Arial, sans-serif;
-    }
-
-    .inp-control:focus {
-        background-color: #339bb310;
-        /*border: solid 1px #eee;*/
-    }
-
-    .inp-block label {
-        display: none;
-        position: absolute;
-        font-weight: 100;
-        color: #777;
-        margin-left: 3px;
-        font-size: 11px;
-    }
-
-    .inline-block {
-        display: inline-block;
-    }
-
-    .pp {
-        width: 24%;
-        background: red;
-        height: 155px;
-        margin-left: 30px;
-    }
-    /*//////////////////////*/
-    .general-cont .profSetupSec {
-        border: 1px solid #339bb3;
-        border-radius: 1px;
-    }
-
-    .general-cont .savebtn .btn {
-        border-radius: 0;
-        font-family: open sans;
-        font-weight: 300;
-        color: #fff;
-        background-color: #339bb3;
-    }
-
-    .general-cont .profimage {
-        padding: 0;
-        height: 130px;
-    }
-
-        .general-cont .profimage .p-st-dp {
-            height: 100%;
-        }
-
-    .general-cont .savebtn {
-        text-align: center;
-        margin-top: 30px;
-        margin-bottom: 0;
-        margin-bottom: 20px;
-    }
-
-    .general-cont {
-        padding: 0 30px;
-    }
-</style>

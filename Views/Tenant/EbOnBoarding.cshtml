@@ -289,7 +289,7 @@
                     <div class="col-md-12 pd-0 solutiondetails-app">
                         <div class="col-md-8 pd-0">
                             <h5 id="solutionName-app"></h5>
-                            <p class="SolUrl">@ViewBag.iSid .expressbase.com</p>
+                            <p class="SolUrl">@ViewBag.AppId</p>
                         </div>
                         <div class="col-md-4 pd-0">
                             <img class="img-responsive" src="~/images/your_company_logo.png" />
@@ -334,6 +334,7 @@
                             </div>
                         </div>                                              
                         <input type="hidden" id="Sid" name="Sid" value="@ViewBag.iSid" />
+                        <input type="hidden" id="AppId" name="AppId" value="@ViewBag.AppId" />
                         <input type="submit" id="app-form-sub" style="display:none;" />
                     </form>
                 </div>

@@ -122,7 +122,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined) ? rowData.split(","): null;
+    this.rowData = (rowData !== undefined && rowData !== null) ? rowData.split(","): null;
     this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues):[] ;
     this.FlagPresentId = false;
     this.flagAppendColumns = false;

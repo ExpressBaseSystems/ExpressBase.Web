@@ -2,11 +2,12 @@
     var d = document;
     if (d.appIdColl) {
         AppId = d.appIdColl[d.appIdCount];
-        var themeColor = d.ebbotThemeColorColl[d.appIdCount];
     }
     else {
         AppId = window.EXPRESSbase_SOLUTION_ID
         var themeColor = d.ebbotThemeColor;
+        var html = d.getElementsByTagName('html')[0];
+        html.style.setProperty("--ebbotThemeColor", themeColor);
     }
 
     var ss = d.createElement("link");
@@ -23,8 +24,8 @@
     botHeadDiv.className = "bot-head";
     botHeadDiv.innerHTML = "&nbsp; " + d.ebbotName;
 
-    var html = d.getElementsByTagName('html')[0];
-    html.style.setProperty("--ebbotThemeColor", themeColor);
+    //var html = d.getElementsByTagName('html')[0];
+    //html.style.setProperty("--ebbotThemeColor", themeColor);
 
     var botdp = d.createElement("div");
     botdp.className = "bot-icon";
@@ -81,7 +82,7 @@
 
         if (!ebbot_iframe.getAttribute("src")) {
             //ebbot_iframe.setAttribute("src", "https://expressbase.azurewebsites.net//bote/bot?tid=" + window.EXPRESSbase_SOLUTION_ID);
-            ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:5000/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}`);
+            ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:5000/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#','HEX')}`);
         }
         if (iframecont.style.display !== "flex") {
             this.style.display = "none";
@@ -123,7 +124,6 @@
         d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);
         d.getElementById("closediv" + AppId).style.visibility = "hidden";
         chatbtn.click();
-        d.appIdCount++
     }
     //chatbtn.click();////////////////////////////////
 

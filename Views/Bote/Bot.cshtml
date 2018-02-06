@@ -42,6 +42,10 @@
         var chatBotObj = new Eb_chatBot();
         chatBotObj.EXPRESSbase_SOLUTION_ID = "@ViewBag.tid";
         chatBotObj.EXPRESSbase_APP_ID = "@ViewBag.appid";
+        chatBotObj.ebbotThemeColor = "@ViewBag.themeColor";
+
+        var html = document.getElementsByTagName('html')[0];
+        html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
 
 
     // This is called with the results from from FB.getLoginStatus().

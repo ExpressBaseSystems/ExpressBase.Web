@@ -25,6 +25,7 @@ using ExpressBase.Common.Objects;
 using System.Reflection;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Security;
+using ExpressBase.Common.Structures;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -205,7 +206,7 @@ namespace ExpressBase.Web.Controllers
                 var rlist = resultlist.Data;
                 foreach (var element in rlist)
                 {
-                    if (element.EbObjectType == EbObjectType.TableVisualization || element.EbObjectType == EbObjectType.ChartVisualization)
+                    if (element.EbObjectType.Equals(EbObjectTypes.TableVisualization) || element.EbObjectType.Equals(EbObjectTypes.ChartVisualization))
                     {
                         DvList.Add(element);
                     }

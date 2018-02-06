@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Routing;
 using ExpressBase.Common.JsonConverters;
 using System.Reflection;
 using ExpressBase.Objects.EmailRelated;
+using ExpressBase.Common.Structures;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -268,7 +269,7 @@ namespace ExpressBase.Web.Controllers
 
             foreach (var element in rlist)
             {
-                if (element.EbObjectType == type)
+                if (element.EbObjectType.Equals(type))
                     ObjList[element.Id] = element;
             }
 
@@ -410,7 +411,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorHint = "CodeMirror.hint.sql";
             ViewBag.EditorMode = "text/x-sql";
             ViewBag.Icon = "fa fa-database";
-            ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
+            ViewBag.ObjType = EbObjectTypes.EmailBuilder.IntCode;
             ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";
 
@@ -446,7 +447,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Status = element.Status;
                 ViewBag.VersionNumber = element.VersionNumber;
                 ViewBag.Icon = "fa fa-database";
-                ViewBag.ObjType = (int)EbObjectType.EmailBuilder;
+                ViewBag.ObjType = EbObjectTypes.EmailBuilder.IntCode;
                 ViewBag.Refid = element.RefId;
                 ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
                 ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
@@ -485,7 +486,7 @@ namespace ExpressBase.Web.Controllers
             if (string.IsNullOrEmpty(_Refid))
             {
                 var ds = new EbObject_Create_New_ObjectRequest();
-                ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+                ds.EbObjectType = EbObjectTypes.EmailBuilder.IntCode;
                 ds.Name = emailobj.Name;
                 ds.Description = emailobj.Description;
 
@@ -507,7 +508,7 @@ namespace ExpressBase.Web.Controllers
             else
             {
                 var ds = new EbObject_CommitRequest();
-                ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+                ds.EbObjectType = EbObjectTypes.EmailBuilder.IntCode;
                 ds.Name = emailobj.Name;
                 ds.Description = emailobj.Description;
                 ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
@@ -537,7 +538,7 @@ namespace ExpressBase.Web.Controllers
             if (string.IsNullOrEmpty(_Refid))
             {
                 var ds = new EbObject_Create_New_ObjectRequest();
-                ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+                ds.EbObjectType = EbObjectTypes.EmailBuilder.IntCode;
                 ds.Name = emailobj.Name;
                 ds.Description = emailobj.Description;
                 ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
@@ -562,7 +563,7 @@ namespace ExpressBase.Web.Controllers
                 ds.RefId = _Refid;
                 ds.Name = emailobj.Name;
                 ds.Description = emailobj.Description;
-                ds.EbObjectType = (int)EbObjectType.EmailBuilder;
+                ds.EbObjectType = EbObjectTypes.EmailBuilder.IntCode;
                 ds.Json = EbSerializers.Json_Serialize(new EbEmailTemplate
                 {
                     Body = emailobj.Body,

@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
     @using ExpressBase.Common;
     @using ExpressBase.Common.Objects;
+    @using ExpressBase.Common.Structures;
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
 <style>
@@ -71,41 +72,41 @@
     <div class="tab-content tab-cont-common" id="versionTab">
         <div id="vernav0" class="tab-pane fade in active code_edit" data-id="new">
             @{
-                if (ViewBag.ObjType == (int)EbObjectType.DataSource)
+                if (ViewBag.ObjType == (int)EbObjectTypes.DataSource)
                 {
                     @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
 
                 }
-                else if (ViewBag.ObjType == (int)EbObjectType.TableVisualization)
+                else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization)
                 {
                     object o = null;
                     @await Component.InvokeAsync("DVTable", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, counter = 0, data = o })
 
                 }
-                else if (ViewBag.ObjType == (int)EbObjectType.ChartVisualization)
+                else if (ViewBag.ObjType == (int)EbObjectTypes.ChartVisualization)
                 {
                     object o = null;
                     @await Component.InvokeAsync("DVChart", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, counter = 0, data = o })
 
                 }
-                else if (ViewBag.ObjType == (int)EbObjectType.Report)
+                else if (ViewBag.ObjType == (int)EbObjectTypes.Report)
                 {
                     @await Component.InvokeAsync("ReportBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
-                else if (ViewBag.ObjType == (int)EbObjectType.WebForm)
+                else if (ViewBag.ObjType == (int)EbObjectTypes.WebForm)
                 {
                     @await Component.InvokeAsync("FormBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
-                else if (ViewBag.ObjType == (int)EbObjectType.EmailBuilder)
+                else if (ViewBag.ObjType == (int)EbObjectTypes.EmailBuilder)
                 {
                     @await Component.InvokeAsync("Emailbuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
 
-                else if (ViewBag.ObjType == (int)EbObjectType.BotForm)
+                else if (ViewBag.ObjType == (int)EbObjectTypes.BotForm)
                 {
                     @await Component.InvokeAsync("BotFormBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 

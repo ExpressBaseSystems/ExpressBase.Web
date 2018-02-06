@@ -18,6 +18,7 @@ using System.Text;
 using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using System.Reflection;
+using ExpressBase.Common.Structures;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -126,11 +127,11 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EditorHint = "CodeMirror.hint.sql";
             ViewBag.EditorMode = "text/x-pgsql";
             ViewBag.Icon = "fa fa-database";
-            ViewBag.ObjType = (int)EbObjectType.SqlFunction;
+            ViewBag.ObjType = (int)EbObjectTypes.SqlFunction;
             ViewBag.ObjectName = "*Untitled";
             ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
                                             //   ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+            ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
             return View();
         }
 
@@ -159,11 +160,11 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.EditorHint = "CodeMirror.hint.sql";
                 ViewBag.EditorMode = "text/x-sql";
                 ViewBag.Icon = "fa fa-database";
-                ViewBag.ObjType = (int)EbObjectType.SqlFunction;
+                ViewBag.ObjType = (int)EbObjectTypes.SqlFunction;
                 ViewBag.FilterDialogId = dsobj.FilterDialogId;
 
             }
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
+            ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
             return View();
         }
 

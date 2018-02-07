@@ -51,6 +51,17 @@ namespace ExpressBase.Web.Controllers
            // var x = resultlist;
             return View();
         }
+        public IActionResult AppDashWeb()
+        {
+           
+            return View();
+        }
+
+        public IActionResult AppDashBot()
+        {
+
+            return View();
+        }
 
         public IActionResult objects()
         {

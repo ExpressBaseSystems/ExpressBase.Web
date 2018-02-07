@@ -1,7 +1,8 @@
-﻿var TenantDashBoard = function (collection, IsSSO,email) {
+﻿var TenantDashBoard = function (collection, IsSSO,email,apptype) {
     this.EbSolutionColl = collection;
     this.IsSSO = IsSSO;
-    this.EmailForSSO = email;  
+    this.EmailForSSO = email;
+    this.apptype = apptype;
 
     this.drawSolutionTiles = function () {
         for (var item = 0; item < this.EbSolutionColl.length; item++) {
@@ -17,21 +18,20 @@
                     </div>`);
         }
     };
-    this.goToSolutionWindow = function (e) { 
-
+    this.goToSolutionWindow = function (e) {        
         var tk = getToken();
         var form = document.createElement("form");
         form.setAttribute("method", "post");
-        form.setAttribute("action", "http://" + this.EbSolutionColl[0].IsolutionId + ".localhost:5000/Ext/TenantSingleSignOn");
+        form.setAttribute("action", "http://" + this.EbSolutionColl[0].IsolutionId + ".localhost:5000/Ext/GoToApplication");
         form.setAttribute("target", "_blank");
         var token = document.createElement("input");
         token.setAttribute("name", "Btoken");
         token.setAttribute("value", tk);
         form.appendChild(token);
-        var Email = document.createElement("input");
-        Email.setAttribute("name", "Email");
-        Email.setAttribute("value", this.EmailForSSO);
-        form.appendChild(Email);
+        var AppType = document.createElement("input");
+        AppType.setAttribute("name", "AppType");
+        AppType.setAttribute("value", this.apptype);
+        form.appendChild(AppType);
         document.body.appendChild(form);          
         form.submit();            
         $("#confTo-solution").modal("toggle");

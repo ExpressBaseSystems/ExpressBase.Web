@@ -9,7 +9,7 @@ var DvContainerObj = function (settings) {
     this.ver_num = settings.ver_num;
     this.cur_status = settings.cur_status;
     this.type = settings.type;
-    this.rowData = (settings.rowData !== "") ? settings.rowData : null;
+    this.rowData = (settings.rowData !== "" && settings.rowData !== null) ? settings.rowData : null;
     this.filterValues = settings.filterValues;
     this.tabnum = settings.tabnum;
     this.RelatedDvlist = settings.DvList;

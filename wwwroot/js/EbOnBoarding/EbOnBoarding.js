@@ -149,7 +149,7 @@
         $.each(ob.parent().siblings(), function (i, obj) {
             $(obj).children(".apps-wrapper-fchiled").removeClass("appselected");
         }.bind(this))
-        $("[name='AppType']").val(ob.attr("type"));
+        $("[name='AppType']").val(parseInt(ob.attr("type")));
     };
     this.showLoaderOnAppSub = function (e) {
         $("#save-application i").show();

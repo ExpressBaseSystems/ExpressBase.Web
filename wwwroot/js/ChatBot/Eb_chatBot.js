@@ -13,7 +13,7 @@
     this.bearerToken = null;
     this.refreshToken = null;
     this.botdpURL = 'url(../images/svg/chatBot.svg)center center no-repeat';
-    this.ebbotThemeColor = '#31d031';
+    //this.ebbotThemeColor = '#31d031';
     this.initControls = new InitControls(this);
     this.typeDelay = 10;
     this.formsList = {};
@@ -46,7 +46,7 @@
 
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botdpURL", this.botdpURL);
-        html.style.setProperty("--botThemeColor", this.ebbotThemeColor);
+        //html.style.setProperty("--botThemeColor", this.ebbotThemeColor);
 
         var $botMsgBox = this.$botMsgBox.clone();
         $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone()).css("width", "82px");
@@ -105,6 +105,7 @@
 
     this.startFormInteraction = function (e) {
         var RefId = $(e.target).attr("refid");
+        this.curObjType = $(e.target).attr("obj-type");
         this.postmenuClick(e);
         this.getForm(RefId);///////////////////
     }.bind(this);
@@ -145,6 +146,15 @@
         else {
             this.hideTypingAnim();
             this.curForm = this.formsList[RefId];
+
+            var data = this.formsList[RefId];
+            if (data.objType === "BotForm")
+                this.curForm = data;
+            else if (data.objType === "TableVisualization")
+                this.curTblViz = data;
+            else if (data.objType === "ChartVisualization")
+                this.showChartViz();//////////////////////////////////////////////////////////////////////////////////
+
             this.setFormControls();
         }
     }
@@ -161,7 +171,7 @@
             data: this.curTblViz.BotData,
             initComplete: function () {
                 this.hideTypingAnim();
-                this.AskWhatU()
+                this.AskWhatU();
                 $tableCont.show(100);
             }.bind(this)
             //dom: "rt",
@@ -204,6 +214,7 @@
         this.$chatBox.append($('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>'));
         this.drawGeneralGraph();
         this.hideTypingAnim();
+        this.AskWhatU();
     };
 
     this.drawGeneralGraph = function () {

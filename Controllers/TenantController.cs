@@ -69,8 +69,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult TenantDashboard()
         {
+            ViewBag.AppType = TempData.Peek("apptype");
             ViewBag.IsSSO = TempData.Peek("SSO").ToString();
-            ViewBag.Email = TempData.Peek("reqEmail");
+            //ViewBag.Email = TempData.Peek("reqEmail");
             var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
             ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);
             return View();
@@ -84,20 +85,16 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Connections = JsonConvert.SerializeObject(solutionConnections.EBSolutionConnections);
             ViewBag.SolutionInfo = resp.Data;
             return View();
-        }
-       
-        [HttpGet]
-        public IActionResult ApplicationDashBoard()
-        {
-            return View();
-        }
+        }     
 
         [HttpGet]
         public IActionResult EbOnBoarding()
         {
             ViewBag.useremail = TempData.Peek("reqEmail");
-            var result = this.ServiceClient.Get<AutoGenSolIdResponse>(new AutoGenSolIdRequest());
-            ViewBag.iSid = result.Sid;
+            var ebids = this.ServiceClient.Get<AutoGenEbIdResponse>(new AutoGenEbIdRequest() { WhichId = "signup" });
+            //for solution id WhichId = "sid",for appid WhichId = "appid"
+            ViewBag.iSid = ebids.Sid;
+            ViewBag.AppId = ebids.AppId;
             return View();
         }
         
@@ -109,30 +106,22 @@ namespace ExpressBase.Web.Controllers
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
                 Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)
-            });
-            if (res.Solnid > 0)
-            {
-                EbDbCreateResponse response = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest
-                {
-                    dbName = DbName.ToLower()
-                });
-                if (response.resp)                                
-                    this.ServiceClient.Post(new InitialSolutionConnectionsRequest {SolutionId = DbName.ToLower() });                
-            }
+            });            
         }
 
         [HttpPost]
         public IActionResult EbOnBoarding(int i)
         {
-            var req = this.HttpContext.Request.Form; 
+            var req = this.HttpContext.Request.Form;
+            string apptype = req["AppType"];
             var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
             if (resultlist.id > 0)
-            {                
+            {
                 TempData["SSO"] = "true";
+                TempData["apptype"] = apptype;
                 return RedirectToAction("TenantDashboard", "Tenant");
-            }                            
-            else
-                return View();
+            }
+            return View();
         }
 
         [HttpGet]

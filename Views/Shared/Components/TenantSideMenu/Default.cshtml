@@ -1,11 +1,11 @@
-﻿<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+﻿@*<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!--Import materialize.css-->  <!-- Compiled and minified CSS -->
-@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css">*@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css">
 
 
 <!--Import jQuery before materialize.js-->
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script><!-- Compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>*@
 
 
 <div class="side-menu-cont">
@@ -22,7 +22,7 @@
                         <div class="collapsible-header active"><i class="fa fa-globe tdash-icon" aria-hidden="true"></i> Web</div>
                         <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
-                                @{
+                                @*@{
                                     try
                                     {
                                         for (var i = 0; i < @ViewBag.botlength; i += 2)
@@ -37,7 +37,7 @@
                                     {
                                         ;
                                     }
-                                }
+                                }*@
                             </ul>
                         </div>
                     </li>
@@ -45,7 +45,7 @@
                         <div class="collapsible-header"><i class="fa fa-mobile fa-lg tdash-icon" aria-hidden="true"></i> Mobile</div>
                         <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
-                                @{
+                                @*@{
                                     try
                                     {
                                         for (var i = 0; i < @ViewBag.moblength; i += 2)
@@ -60,7 +60,7 @@
                                     {
                                         ;
                                     }
-                                }
+                                }*@
                             </ul>
                         </div>
                     </li>
@@ -68,7 +68,7 @@
                         <div class="collapsible-header"><i class="fa fa-comment-o fa-lg tdash-icon" aria-hidden="true"></i> Bot</div>
                         <div class="collapsible-body l2">
                             <ul class="collapsible" data-collapsible="accordion">
-                                @{
+                                @*@{
                                     try
                                     {
                                         for (var i = 0; i < @ViewBag.botlength; i += 2)
@@ -85,7 +85,7 @@
                                     {
                                         ;
                                     }
-                                }
+                                }*@
                             </ul>
 
 
@@ -102,25 +102,25 @@
 <script>
     $(document).ready(function () {
         //$('.coll .collapsible').collapsible();
-        $(".l2 .collapsible-header").on("click", function () {
-            var appid = $(event.target).attr("appid");
-            $.ajax({
-                url: "../Dev/GetBotDetails",
-                type: "POST",
-                data: { _appId: appid },
-                success: function (bot) {
-                    console.log(bot);
-                    $("#botname").val(bot.fullName);
-                    $("#shortname").val(bot.name);
-                    $("#websitename").val(bot.url);
-                    $("#welcomemsg").val(bot.welcomeMsg);
-                    $("#chatid").val(bot.botId);
-                    $("#botid").val(bot.id);
-                    console.log(bot.botId);
-                    $(".inp-control").closest(".inp-block").find("label").show(150);
-                }
-            });
-        })
+        //$(".l2 .collapsible-header").on("click", function () {
+        //    var appid = $(event.target).attr("appid");
+        //    $.ajax({
+        //        url: "../Dev/GetBotDetails",
+        //        type: "POST",
+        //        data: { _appId: appid },
+        //        success: function (bot) {
+        //            console.log(bot);
+        //            $("#botname").val(bot.fullName);
+        //            $("#shortname").val(bot.name);
+        //            $("#websitename").val(bot.url);
+        //            $("#welcomemsg").val(bot.welcomeMsg);
+        //            $("#chatid").val(bot.botId);
+        //            $("#botid").val(bot.id);
+        //            console.log(bot.botId);
+        //            $(".inp-control").closest(".inp-block").find("label").show(150);
+        //        }
+        //    });
+        //})
     });
 </script>
 

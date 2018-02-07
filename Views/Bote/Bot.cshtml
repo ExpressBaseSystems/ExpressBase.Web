@@ -39,10 +39,12 @@
 </head>
 <body>
     <script>
-        var chatBotObj = new Eb_chatBot();
-        chatBotObj.EXPRESSbase_SOLUTION_ID = "@ViewBag.tid";
-        chatBotObj.EXPRESSbase_APP_ID = "@ViewBag.appid";
-        chatBotObj.ebbotThemeColor = "@ViewBag.themeColor";
+        var solid = "@ViewBag.tid";
+        var appid = "@ViewBag.appid";
+        var themeColor = "@ViewBag.themeColor";
+        var botdpURL = "@ViewBag.botdpURL";
+
+        var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL));
 
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);

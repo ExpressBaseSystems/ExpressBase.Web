@@ -26,10 +26,11 @@ namespace ExpressBase.Web.Controllers
         public BoteController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         [HttpGet]
-        public IActionResult Bot(string tid, string appid, string themeColor)
+        public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL)
         {
             ViewBag.tid = tid;
             ViewBag.appid = appid;
+            ViewBag.botdpURL = botdpURL;
             ViewBag.themeColor = themeColor.Replace("HEX","#");
             return View();
         }

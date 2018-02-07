@@ -316,7 +316,7 @@ namespace ExpressBase.Web.Controllers
 						provider = CredentialsAuthProvider.Name,
 						UserName = email,
 						Password = "NIL",
-						Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", hostParts[0] }, { "sso", "true" } },
+						Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", ViewBag.cid }, { "sso", "true" } },
 					});
 
 				}
@@ -475,7 +475,7 @@ namespace ExpressBase.Web.Controllers
 			}
 			else // TENANT CONSOLE
 			{
-				ViewBag.cid = CoreConstants.EXPRESSBASE;
+				cid = CoreConstants.EXPRESSBASE;
 				whichconsole = EbAuthContext.TenantContext;
 			}
 

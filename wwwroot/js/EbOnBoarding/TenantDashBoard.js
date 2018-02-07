@@ -22,7 +22,7 @@
         var tk = getToken();
         var form = document.createElement("form");
         form.setAttribute("method", "post");
-        form.setAttribute("action", "http://" + this.EbSolutionColl[0].IsolutionId + ".localhost:5000/Ext/GoToApplication");
+        form.setAttribute("action", "http://" + this.EbSolutionColl[0].IsolutionId + "-dev.localhost:5000/Ext/GoToApplication");
         form.setAttribute("target", "_blank");
         var token = document.createElement("input");
         token.setAttribute("name", "Btoken");

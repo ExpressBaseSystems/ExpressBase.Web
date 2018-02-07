@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Extensions;
+using ExpressBase.Common.Structures;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using ExpressBase.Web.BaseControllers;
@@ -413,23 +414,23 @@ namespace ExpressBase.Web.Controllers
 
             bool bOK2AttemptLogin = true;
 
-            if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
-                this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 3), out whichconsole);
+			if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+				this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
-                this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 3), out whichconsole);
+			else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
+				this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
-                this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 2), out whichconsole);
+			else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
+				this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
 
-            else
-            {
-                bOK2AttemptLogin = false;
-                _controller = RoutingConstants.EXTCONTROLLER;
-                _action = "Error";
-            }
+			else
+			{
+				bOK2AttemptLogin = false;
+				_controller = RoutingConstants.EXTCONTROLLER;
+				_action = "Error";
+			}
 
-            if (bOK2AttemptLogin)
+			if (bOK2AttemptLogin)
             {
                 string token = req["g-recaptcha-response"];
                 Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
@@ -512,19 +513,36 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction(_action, _controller);
         }
 
-        private void DecideConsole(string reqConsole, string cid, bool isNotTenantUser, out string whichconsole)
-        {
-            if (isNotTenantUser)
-            {
-                ViewBag.cid = cid;
-                whichconsole = (!string.IsNullOrEmpty(reqConsole)) ? "dc" : "uc";
-            }
-            else // TENANT CONSOLE
-            {
-                ViewBag.cid = CoreConstants.EXPRESSBASE;
-                whichconsole = "tc";
-            }
-        }
+		private void DecideConsole(string subDomain, bool isNotTenantUser, out string whichconsole)
+		{
+			string cid = null;
+			if (isNotTenantUser && !subDomain.Equals(CoreConstants.EXPRESSBASE))
+			{
+				if (subDomain.EndsWith("-bot") || subDomain.EndsWith("-mob") || subDomain.EndsWith("-dev"))
+				{
+					cid = subDomain.Substring(0, subDomain.LastIndexOf("-") - 1);
+
+					if (subDomain.EndsWith("-bot"))
+						whichconsole = EbAuthContext.BotUserContext;
+					else if (subDomain.EndsWith("-mob"))
+						whichconsole = EbAuthContext.MobileUserContext;
+					else //if (subDomain.EndsWith("-dev"))
+						whichconsole = EbAuthContext.DeveloperContext;
+				}
+				else
+				{
+					cid = subDomain;
+					whichconsole = EbAuthContext.WebUserContext;
+				}
+			}
+			else // TENANT CONSOLE
+			{
+				ViewBag.cid = CoreConstants.EXPRESSBASE;
+				whichconsole = EbAuthContext.TenantContext;
+			}
+
+			ViewBag.cid = cid;
+		}
 
         private void RouteToDashboard(bool hasSystemRole, string whichconsole, out string _controller, out string _action)
         {

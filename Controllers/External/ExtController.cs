@@ -251,50 +251,6 @@ namespace ExpressBase.Web.Controllers
             return d;
         }
 
-
-        //[HttpPost]//test social login
-        //public async Task<IActionResult> TenantSingleSignOn()
-        //{
-
-        //	var host = this.HttpContext.Request.Host;
-        //	string[] hostParts = host.Host.Split('.');
-        //	string wc = "tc";
-        //	string cid = hostParts[0];
-
-        //	MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
-        //	{
-        //		provider = CredentialsAuthProvider.Name,
-        //		UserName = "NIL",
-        //		Password = "NIL",
-        //		Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", "1258082321004736" } },
-        //	});
-        //	if (authResponse != null)
-        //	{
-        //		this.ServiceClient.BearerToken = authResponse.BearerToken;
-        //		this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-        //		var tokenS = (new JwtSecurityTokenHandler()).ReadToken(authResponse.BearerToken) as JwtSecurityToken;
-
-        //		string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
-
-        //		User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", cid, email, wc));
-        //		//var Ids = String.Join(",", user.EbObjectIds);
-        //		//GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}", AppId = appid });
-        //		//List<object> returnlist = new List<object>();
-        //		//returnlist.Add(authResponse);
-        //		//returnlist.Add(formlist.BotForms);
-        //		//return returnlist;
-        //	}
-        //	else
-        //	{
-        //		return null;
-        //	}
-        //	var _controller = "TenantUser";
-        //	var _action = "UserDashboard";
-        //	return Json(new { result = "Redirect", url = Url.Action(_action, _controller) });
-
-        //}
-
-
         public IActionResult GoToApplication()
         {
             var req = this.HttpContext.Request.Form;
@@ -311,6 +267,7 @@ namespace ExpressBase.Web.Controllers
                 else
                     return RedirectToAction("AppDashMob", "Dev");
             }
+
             return View();
         }
 
@@ -325,78 +282,59 @@ namespace ExpressBase.Web.Controllers
 
 			var tokenS = (new JwtSecurityTokenHandler()).ReadToken(btoken) as JwtSecurityToken;
 			string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
-			//expressbase-email-tc
-			User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", "eb_dbpjl5pgxleq20180130063835", email, "uc"));
+			
+			//CHECK WHETHER SOLUTION ID IS VALID
 
-			//bool bOK2AttemptLogin = true;
+			bool bOK2AttemptLogin = true;
 
-			//if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
-			//	this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 3), out whichconsole);
+			if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+				this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-			//else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
-			//	this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 3), out whichconsole);
+			else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
+				this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-			//else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
-			//	this.DecideConsole(req["console"], hostParts[0], (hostParts.Length == 2), out whichconsole);
+			else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
+				this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
 
-			//else
-			//{
-			//	bOK2AttemptLogin = false;
-			//	_controller = "Ext";
-			//	_action = "Error";
-			//}
+			else
+				bOK2AttemptLogin = false;
 
-			//if (bOK2AttemptLogin)
-			//{
-			MyAuthenticateResponse authResponse = null;
-			try
+			if (bOK2AttemptLogin)
 			{
-				//var jwtToken = new JwtSecurityToken(this.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN]);
-				//JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-				//var user = handler.ValidateToken("eyJhbGciOi.....", validationParameters, out validatedToken);
-				//var cid = jwtToken.Payload["cid"];
-				//jwtToken;
-
-				//string tenantid = ViewBag.cid;
-				var authClient = this.ServiceClient;
-				authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+				MyAuthenticateResponse authResponse = null;
+				try
 				{
-					provider = CredentialsAuthProvider.Name,
-					UserName = email,
-					Password = "NIL",
-					//Password = (req["pass"] + req["uname"]).ToMD5Hash(),
-					Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", hostParts[0] }, { "sso", "true" } },
-					//UseTokenCookie = true
-				});
+					//var jwtToken = new JwtSecurityToken(this.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN]);
+					//JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+					//var user = handler.ValidateToken("eyJhbGciOi.....", validationParameters, out validatedToken);
+					//var cid = jwtToken.Payload["cid"];
+					//jwtToken;
 
+					var authClient = this.ServiceClient;
+					authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+					{
+						provider = CredentialsAuthProvider.Name,
+						UserName = email,
+						Password = "NIL",
+						Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", hostParts[0] }, { "sso", "true" } },
+					});
+
+				}
+				catch (WebServiceException wse) { }
+				catch (Exception wse) { }
+				if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized") { }
+				else //AUTH SUCCESS
+				{
+					CookieOptions options = new CookieOptions();
+
+					Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+					Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+
+					return true;
+				}
 			}
-			catch (WebServiceException wse)
-			{
-                //TempData["ErrorMessage"] = wse.Message;
-                //return errorredirect(whichconsole);
-                return false;
-			}
-			catch (Exception wse)
-			{
-                //TempData["ErrorMessage"] = wse.Message;
-                //return errorredirect(whichconsole);
-                return false;
-            }
-			if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
-			{
-                //TempData["ErrorMessage"] = "EbUnauthorized";
-                //return errorredirect(whichconsole);
-                return false;
-            }
-			else //AUTH SUCCESS
-			{
-				CookieOptions options = new CookieOptions();
 
-				Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-				Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-
-                return true;
-            }
+			return false;
 		}
 
 		[HttpPost]
@@ -520,7 +458,7 @@ namespace ExpressBase.Web.Controllers
 			{
 				if (subDomain.EndsWith("-bot") || subDomain.EndsWith("-mob") || subDomain.EndsWith("-dev"))
 				{
-					cid = subDomain.Substring(0, subDomain.LastIndexOf("-") - 1);
+					cid = subDomain.Substring(0, subDomain.LastIndexOf("-"));
 
 					if (subDomain.EndsWith("-bot"))
 						whichconsole = EbAuthContext.BotUserContext;

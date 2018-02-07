@@ -9,4 +9,12 @@
 .appdash-obj-container img{
     width:100%;
 }
+.appdash-extra-style {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border: 1px solid rgb(204, 204, 204);
+}
+.pd-b-15{
+    margin-bottom: 10px
+}
 /*-------------------app dash web--------------*/

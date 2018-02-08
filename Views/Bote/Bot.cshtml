@@ -28,7 +28,9 @@
     <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>@*Dona*@
     <script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&callback=initMap"> </script>
 
     <style>
         body {
@@ -39,10 +41,12 @@
 </head>
 <body>
     <script>
-        var chatBotObj = new Eb_chatBot();
-        chatBotObj.EXPRESSbase_SOLUTION_ID = "@ViewBag.tid";
-        chatBotObj.EXPRESSbase_APP_ID = "@ViewBag.appid";
-        chatBotObj.ebbotThemeColor = "@ViewBag.themeColor";
+        var solid = "@ViewBag.tid";
+        var appid = "@ViewBag.appid";
+        var themeColor = "@ViewBag.themeColor";
+        var botdpURL = "@ViewBag.botdpURL";
+
+        var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL));
 
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);

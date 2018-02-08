@@ -19,7 +19,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="questionModal" role="dialog">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" style="width:80%">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -27,44 +27,93 @@
             </div>
             <div class="modal-body">
                 <div class="row qust-cont">
-                    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 qust-cont-col-3">
+                    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 qust-cont-l-col-3">
                         <div class="q-type-container">
-                            <div class="question-label">Question Type</div>
-                            <div class="qst-types-cont pd-5">
-                                <div class="qst-type"><input type="radio" checked disabled> Multiple choice(Single-Select)</div>
-                                <div class="qst-type"><input type="checkbox" checked disabled> Multiple choice(Multiple-Select)</div>
-                                <div class="qst-type"><i class="fa fa-star-o"></i>Rating</div>
-                                <div class="qst-type"><i class="fa fa-toggle-down"></i>Dropdown</div>
-                                <div class="qst-type"><i class="fa fa-calendar"></i>Date</div>
-                                <div class="qst-type"><i class="fa fa-clock-o"></i>Time</div>
-                                <div class="qst-type">Single Text</div>
-                                <div class="qst-type">Multiple Text</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12 qust-cont-col-9 pd-l-0">
-                        <div class="q-container">
-                            <div class="question-label">
-                                Question<div class="question-required-cont pd-5 pull-right">
-                                    <div class="question-required-input"><input type="checkbox" /></div>
-                                    <div class="question-required-text">Required</div>
+                            <div class="qst-type-label-cont">
+                                <div class="question-label">Question Type</div>
+                                <div class="qst-types-cont pd-5">
+                                    <div class="qst-type"><i class="fa fa-dot-circle-o"></i> Multiple choice(Single-Select)</div>
+                                    <div class="qst-type"><i class="fa fa-check-square-o"></i> Multiple choice(Multiple-Select)</div>
+                                    <div class="qst-type"><i class="fa fa-star-o"></i>Rating</div>
+                                    <div class="qst-type"><i class="fa fa-toggle-down"></i>User Input</div>
+                                    @*<div class="qst-type"><i class="fa fa-calendar"></i>Date</div>
+                                    <div class="qst-type"><i class="fa fa-clock-o"></i>Time</div>
+                                    <div class="qst-type">Single Text</div>
+                                    <div class="qst-type">Multiple Text</div>*@
                                 </div>
                             </div>
+                            <div class="qst-set-label-cont">
+                                <div class="question-label">Settings</div>
+                                <div class="qst-set-cont pd-5">
+                                    <div class="q-set-item">
+                                        <div class="q-set-input">
+                                            <input type="checkbox" />
+                                        </div>
+                                        <div class="q-set-text">
+                                            Required
+                                        </div>
+                                    </div>
+                                    <div class="q-set-item">
+                                        <div class="q-set-input">
+                                            <input type="checkbox" />
+                                        </div>
+                                        <div class="q-set-text">
+                                            Randomize
+                                        </div>
+                                    </div>
+                                    <div class="q-set-item">
+                                        <div class="q-set-input">
+                                            <input type="checkbox" checked />
+                                        </div>
+                                        <div class="q-set-text">
+                                            Score
+                                        </div>
+                                    </div>
+                                    <div class="q-set-item">
+                                        <div class="q-set-text">
+                                            Max Choice :
+                                        </div>
+                                        <div class="q-set-input">
+                                            <input type="number" style="width:50px;color: black;" value="4" min="0" id="maxchoice"/>
+                                        </div>
 
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                @*<input type="text" placeholder="Enter new question" id="new_question" class="question-text" />
-                    <label class="question-type-label">Question Type</label>
-                    <select class="selectpicker" id="question-type-select">
-                        <option>Multiple Choice</option>
-                        <option>Yes/No</option>
-                        <option>Rating</option>
-                        <option>Text</option>
-                    </select>
-                    <div id="question-type">
-
+                    <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12 qust-cont-col-6 pd-l-0">
+                        <div class="q-container">
+                            @*<div class="question-label">
+                                Question
+                                <div class="question-settings pd-5 pull-right">
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </div>
+                            </div>*@
+                            <div class="qst-text-opt-cont">
+                                <div class="qst-text-cont">
+                                    <textarea placeholder="Enter New Question" class="qst-text"></textarea>
+                                </div>
+                                <div class="qst-opt-cont"></div>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 qust-cont-r-col-3 pd-l-0">
+                        <div class="q-set-container">
+                            <div class="question-label">Settings</div>
+                            <div class="qst-set-cont pd-5">
+                                <div class="q-set-item">
+                                    <div class="q-set-input">
+                                        <input type="checkbox" />
+                                    </div>
+                                    <div class="q-set-text">
+                                        Required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>*@
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default">Save</button>

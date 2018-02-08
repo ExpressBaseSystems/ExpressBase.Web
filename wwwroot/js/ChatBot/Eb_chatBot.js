@@ -1,4 +1,8 @@
-﻿var Eb_chatBot = function () {
+﻿var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL) {
+    this.EXPRESSbase_SOLUTION_ID = _solid;
+    this.EXPRESSbase_APP_ID = _appid;
+    this.ebbotThemeColor = _themeColor;
+    this.botdpURL = 'url(' + _botdpURL + ')center center no-repeat';
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
@@ -12,10 +16,9 @@
     this.isAlreadylogined = true;
     this.bearerToken = null;
     this.refreshToken = null;
-    this.botdpURL = 'url(../images/svg/chatBot.svg)center center no-repeat';
-    //this.ebbotThemeColor = '#31d031';
     this.initControls = new InitControls(this);
     this.typeDelay = 10;
+    this.ChartCounter = 0;
     this.formsList = {};
     this.formsDict = {};
     this.formNames = [];
@@ -26,7 +29,6 @@
     this.lastCtrlIdx = 0;
     this.FB = null;
     this.FBResponse = {};
-    this.EXPRESSbase_SOLUTION_ID;
     this.init = function () {
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatBox);
@@ -63,7 +65,7 @@
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
     };
-    
+
     this.contactSubmit = function (e) {
         $(e.target).closest('.msg-cont').remove();
         this.msgFromBot("Thank you.");
@@ -104,10 +106,10 @@
     }.bind(this);
 
     this.startFormInteraction = function (e) {
-        var RefId = $(e.target).attr("refid");
+        this.curRefid = $(e.target).attr("refid");
         this.curObjType = $(e.target).attr("obj-type");
         this.postmenuClick(e);
-        this.getForm(RefId);///////////////////
+        this.getForm(this.curRefid);///////////////////
     }.bind(this);
 
     this.getForm = function (RefId) {
@@ -211,7 +213,9 @@
 
     this.getDataSuccess = function (result) {
         this.Gdata = result.data;
-        this.$chatBox.append($('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>'));
+        $canvasDiv = $('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>');
+        $canvasDiv.find("canvas").attr("id", $canvasDiv.find("canvas").attr("id") + ++this.ChartCounter);
+        this.$chatBox.append($canvasDiv);
         this.drawGeneralGraph();
         this.hideTypingAnim();
         this.AskWhatU();
@@ -326,7 +330,7 @@
     };
 
     this.drawGraph = function () {
-        var canvas = document.getElementById(this.curChartViz.EbSid);
+        var canvas = document.getElementById(this.curChartViz.EbSid + this.ChartCounter);
         this.chartApi = new Chart(canvas, {
             type: this.curChartViz.Type,
             data: this.gdata,
@@ -476,7 +480,10 @@
         if (this.curCtrl && this.curCtrl.objType === "Cards")
             var $CtrlCont = $(control);
         else
-            var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
+            if (this.curCtrl && this.curCtrl.objType === "Location")
+                var $CtrlCont = $(`<div class='location-box'>${control}</div>`);
+            else
+                var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
         var lablel = this.curCtrl.label + ' ?';
         if (this.curCtrl.helpText)
             lablel += ` (${this.curCtrl.helpText})`;
@@ -585,7 +592,7 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
-                    if (this.curCtrl && this.curCtrl.objType === "Cards") {
+                    if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Location")) {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
@@ -685,7 +692,7 @@
                 /////////////////////////////////////////////////
                 setTimeout(function () {
                     //$(".btn-box .btn:last").click();
-                    $(".btn-box").find("[idx=5]").click();
+                    $(".btn-box").find("[idx=3]").click();
                 }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);

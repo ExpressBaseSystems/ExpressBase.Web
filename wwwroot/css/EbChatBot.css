@@ -444,8 +444,9 @@
 
     .table-cont td {
         padding: 3px !important;
-        border-right: 1px solid #ddd!important;
+        border-right: 1px solid #ddd !important;
     }
+
     .table-cont th {
         border-right: 1px solid #ddd !important;
     }
@@ -453,4 +454,16 @@
 
 .dataTables_wrapper .dataTables_filter input {
     border: solid 1px #aaaaaa;
+}
+
+.map-cont {
+    height: 250px;
+    width: 100%;
+}
+.location-box {
+    position: relative;
+    padding: 5px 5px 0px 5px;
+    background-color: white;
+    border-radius: 3px;
+    width: 100%;
 }

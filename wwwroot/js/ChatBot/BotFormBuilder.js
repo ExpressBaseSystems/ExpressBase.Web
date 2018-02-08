@@ -28,6 +28,7 @@
         CheckBoxGroupCounter: 0,
         CardsCounter: 0,
         CardCounter: 0,
+        LocationCounter: 0,
         ImageUploaderCounter: 0,
     };
 

@@ -17,4 +17,22 @@
 .pd-b-15{
     margin-bottom: 10px
 }
+.obtype_img {
+    width: 30px;
+    margin-right: 10px;
+}
+.app-dash-clps-head {
+    border-radius: 4px;
+}
+.ob_count{
+    display:inline-block;
+}
+/*search box*/
+.obj_search_input {
+    display: none;
+    height: 24px;
+    margin-top: 3px;
+    border-radius: 20px;
+    font-size: 12px;
+}
 /*-------------------app dash web--------------*/

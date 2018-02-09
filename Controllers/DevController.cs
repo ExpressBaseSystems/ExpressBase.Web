@@ -53,13 +53,33 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult AppDashWeb()
         {
-           
+            Dictionary<string, int> _dict = new Dictionary<string, int>();
+            foreach(EbObjectType objectType in EbObjectTypes.Enumerator)
+            {
+                if (objectType.IsAvailableIn(EbApplicationTypes.Web))
+                {
+                    _dict.Add(objectType.Name, objectType.IntCode);
+                }
+            }
+            GetObjectResponse _objects = this.ServiceClient.Get(new GetObjectRequest());
+            ViewBag.Types = JsonConvert.SerializeObject(_dict);
+            ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
             return View();
         }
 
         public IActionResult AppDashBot()
         {
-
+            Dictionary<string, int> _dict = new Dictionary<string, int>();
+            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            {
+                if (objectType.IsAvailableIn(EbApplicationTypes.Bot))
+                {
+                    _dict.Add(objectType.Name, objectType.IntCode);
+                }
+            }
+            GetObjectResponse _objects = this.ServiceClient.Get(new GetObjectRequest());
+            ViewBag.Types = JsonConvert.SerializeObject(_dict);
+            ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
             return View();
         }
 

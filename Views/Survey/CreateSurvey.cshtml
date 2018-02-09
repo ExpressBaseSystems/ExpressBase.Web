@@ -69,12 +69,26 @@
                                             Score
                                         </div>
                                     </div>
-                                    <div class="q-set-item">
+                                    <div class="q-set-item" style="display:none;">
                                         <div class="q-set-text">
                                             Max Choice :
                                         </div>
                                         <div class="q-set-input">
-                                            <input type="number" style="width:50px;color: black;" value="4" min="0" id="maxchoice"/>
+                                            <input type="number" class="qst-set-number form-control" value="4" min="0" id="maxchoice"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="q-set-item" style="display:none;">
+                                        <div class="q-set-text">
+                                            Type :
+                                        </div>
+                                        <div class="q-set-input">
+                                            <select class="q-set-select form-control" id="userInputType">
+                                                <option>Text</option>
+                                                <option>Multi Text</option>
+                                                <option>Date</option>
+                                                <option>Time</option>
+                                            </select>
                                         </div>
 
                                     </div>
@@ -91,10 +105,10 @@
                                 </div>
                             </div>*@
                             <div class="qst-text-opt-cont">
-                                <div class="qst-text-cont">
-                                    <textarea placeholder="Enter New Question" class="qst-text"></textarea>
+                                <div class="qst-text-cont col-md-12">                                    
+                                    <textarea placeholder="Enter New Question" class="qst-text form-control"></textarea>
                                 </div>
-                                <div class="qst-opt-cont"></div>
+                                <div class="qst-opt-cont col-md-12"></div>
                             </div>
                         </div>
                     </div>

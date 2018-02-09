@@ -83,3 +83,25 @@ function RefreshControl(obj) {
     });
     $("#" + obj.EbSid).html($(NewHtml).html());
 };
+function getEbObjectTypes() {
+    Eb_ObjectTypes = {
+        WebForm: { Id: 0, ImgSrc: "form1.svg" },
+        DisplayBlock: { Id: 1, ImgSrc: "form1.svg" },
+        DataSource: { Id: 2, ImgSrc: "form1.svg" },
+        Report: { Id: 3, ImgSrc: "report1.svg" },
+        Table: { Id: 4, ImgSrc: "form1.svg" },
+        SqlFunction: { Id: 5, ImgSrc: "form1.svg" },
+        SqlValidator: { Id: 6, ImgSrc: "form1.svg" },
+        JavascriptFunction: { Id: 7, ImgSrc: "form1.svg" },
+        JavascriptValidator: { Id: 8, ImgSrc: "form1.svg" },
+        DataVisualization: { Id: 11, ImgSrc: "dv1.svg" },
+        FilterDialog: { Id: 12, ImgSrc: "form1.svg" },
+        MobileForm: { Id: 13, ImgSrc: "form1.svg" },
+        UserControl: { Id: 14, ImgSrc: "form1.svg" },
+        EmailBuilder: { Id: 15, ImgSrc: "form1.svg" },
+        TableVisualization: { Id: 16, ImgSrc: "form1.svg" },
+        ChartVisualization: { Id: 17, ImgSrc: "form1.svg" },
+        BotForm: { Id: 18, ImgSrc: "chat1.svg" },
+    } 
+    return Eb_ObjectTypes;
+}

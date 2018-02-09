@@ -77,8 +77,9 @@ namespace ExpressBase.Web.Controllers
                     _dict.Add(objectType.Name, objectType.IntCode);
                 }
             }
-            //SidebarDevResponse _objects = this.ServiceClient.Get(new SidebarDevRequest());
+            GetObjectResponse _objects = this.ServiceClient.Get(new GetObjectRequest());
             ViewBag.Types = JsonConvert.SerializeObject(_dict);
+            ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
             return View();
         }
 

@@ -292,7 +292,7 @@ namespace ExpressBase.Web.Controllers
 			return fr.UserList;
 		}
 
-		public string SaveRole(int _roleId,string _roleName,string _roleDesc,int _appId,string _permission, string _role2role, string _users)
+		public string SaveRole(int _roleId,string _roleName,string _roleDesc, bool _isAnonymous, int _appId,string _permission, string _role2role, string _users)
 		{
 			Dictionary<string, object> Dict = new Dictionary<string, object>();
 			string return_msg;
@@ -300,6 +300,7 @@ namespace ExpressBase.Web.Controllers
 			Dict["applicationid"] = _appId;
 			Dict["role_name"] = _roleName;
 			Dict["Description"] = _roleDesc;
+			Dict["IsAnonymous"] = _isAnonymous ? "true" : "false";
 			Dict["users"] = string.IsNullOrEmpty(_users) ? string.Empty : _users;
 			Dict["permission"] = string.IsNullOrEmpty(_permission) ? string.Empty : _permission;
 			Dict["dependants"] = string.IsNullOrEmpty(_role2role) ? string.Empty : _role2role;

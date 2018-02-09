@@ -25,6 +25,7 @@
     this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
     this.parentthis = parentThis;
     this.profilePicStatus = null;
+    this.readOnly = false;
     
     this.init = function () {
         this.createBody.bind(this)(this.parentDiv, this.title);
@@ -109,7 +110,6 @@
         $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
         $(this.divSelectedDisplay).on('click', ".dropDownRemoveClass", this.onClickRemoveFromSelected.bind(this));
 
-
         if (this.objectMetadata.indexOf('ProfilePicture') > -1)
             this.profilePicStatus = true;
 
@@ -123,10 +123,26 @@
         }
     }
 
-
+    //FUNCTIONS FOR EXTERNAL--------------------------------------
     this.setObjectList = function (obj) {
         this.objectList = obj;
     }
+
+    this.setReadOnly = function () {
+        this.btnAddModal.hide();
+        this.readOnly = true;
+    }
+
+    this.resetReadOnly = function () {
+        this.btnAddModal.show();
+        this.readOnly = false;
+    }
+
+    this.clearItems = function () {
+        this.divSelectedDisplay.children().remove();
+    }
+
+    //-------------------------------------------------------------------
 
     this.getItemIds = function () {
         var itemid= '';
@@ -321,7 +337,7 @@
             temp += `<img style = "width:52px" class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' />`;
         else
             temp += `<b>${obj.Name.substring(0, 1).toUpperCase()}</b>`;
-        temp+=`     </div>
+        temp += `     </div>
                     <div class="textdiv1">
                         <b>${obj.Name}</b>
                         <div style="font-size: smaller;">&nbsp${obj.Data1}</div>
@@ -329,17 +345,23 @@
                     <div class="closediv1">
                         <div class="dropdown">
                             <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
-                            <ul class="dropdown-menu" style="left:-140px; width:160px;">
-                                <li><a href="#" class='dropDownRemoveClass'>Remove</a></li>
-                            </ul>
+                            <ul class="dropdown-menu" style="left:-140px; width:160px;">`;
+        if (!this.readOnly)
+            temp +=             `<li><a href="#" class='dropDownRemoveClass'>Remove</a></li>`;
+        temp += `           </ul>
                         </div>
                     </div>
                 </div>
             </div>`
         $(divSelected).append(temp);
-        
+       
     }
+   
     this.onClickRemoveFromSelected = function (e) {
+        if (this.readOnly) {
+            alert("Not Available in ReadOnly Mode");
+            return;
+        }
         if (confirm("Click OK to Remove")) {
             var parent = $(e.target).parents("div.col-md-4");
             for (var i = 0; i < this.resultObject.length; i++) {

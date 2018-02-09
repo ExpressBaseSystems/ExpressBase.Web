@@ -15,6 +15,7 @@
     this.txtRoleDescription = $("#txtRoleDescription");
     this.btnSaveAll = $("#btnSaveAll");
     this.loader = $("#loader1");
+    this.chkboxAnonymous = $("#chkboxAnonymous");
 
     this.subRolesTile = null;
     this.usersTile = null;
@@ -24,11 +25,14 @@
         //this.loadObjectsAndOperations.bind(this)();
         $(this.btnSaveAll).on('click', this.onclickbtnSaveAll.bind(this));
         $(this.divObjList).on('click', '.objactiveclass', this.onClickObjActiveClass);
+
+        $(this.chkboxAnonymous).on('change', this.onChangeChkBoxAnonymous.bind(this));
         
         //INIT FORM
         if (this.roleId > 0) {
             $(this.txtRoleName).val(roleInfo["RoleName"]);
             $(this.txtRoleName).attr("disabled", "true");
+            
             var apIndex = 0;
             $.each(this.appCollection, function (i, obj) {
                 if (obj.Id == roleInfo["AppId"]) {
@@ -40,6 +44,15 @@
             $(this.selectApp).attr("disabled", "true");
             $(this.txtRoleDescription).text(roleInfo["RoleDescription"]);
 
+            //Anonymous Role Management
+            if (roleInfo["IsAnonymous"] === "true") {
+                this.chkboxAnonymous.bootstrapToggle('on');
+                $($("#ulTabOnMngRole").children()[1]).hide();
+                $('.nav-tabs a[href="#divObjList"]').tab('show');
+            }
+                    
+            this.chkboxAnonymous.bootstrapToggle('disable');       
+
             this.findDominantRoles(this.roleId);
         }
         else {
@@ -49,6 +62,25 @@
         }
         
         this.selectAppChangeAction();
+    }
+
+    this.onChangeChkBoxAnonymous = function (evt) {
+        var flag = false;
+        var sroles = (this.subRolesTile === null) ? "" : this.subRolesTile.getItemIds();
+        if (this.subRolesTile !== null) {
+            if ($(evt.target).is(":checked")) {
+                if (sroles !== "")
+                    flag = confirm("Continuing will remove the Selected SubRoles");
+                if (flag || sroles === "") {
+                    $($("#ulTabOnMngRole").children()[1]).hide();
+                    $('.nav-tabs a[href="#divObjList"]').tab('show');
+                }
+                else
+                    this.chkboxAnonymous.bootstrapToggle('off');
+            }
+            else
+                $($("#ulTabOnMngRole").children()[1]).show();
+        }
     }
 
     //SUBROLES-----START------------------------------------------------------------------------------------
@@ -192,6 +224,15 @@
         });
     }
 
+    //this.isAnonymousRoleExists = function (appid) {
+    //    for (var i = 0; i < this.roleList.length; i++) {
+    //        if (this.roleList[i].App_Id == appid && this.roleList[i].Is_Anonymous) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+
     this.onClickObjActiveClass = function () {
         if ($(this).hasClass("active123") || ! $(this).hasClass("collapsed")) {
             $(this).css("width", "100%");
@@ -233,6 +274,16 @@
     this.selectAppChangeAction = function (e) {  
         var appindex = $("#selectApp").find(":selected").attr("data-index");
         appCollection = this.appCollection;
+
+        //if (this.isAnonymousRoleExists(appCollection[appindex].Id)) {
+        //    this.chkboxAnonymous.bootstrapToggle('off');
+        //    this.chkboxAnonymous.bootstrapToggle('disable'); 
+        //}
+        //else {
+        //    this.chkboxAnonymous.bootstrapToggle('enable'); 
+        //    this.chkboxAnonymous.bootstrapToggle('off');
+        //}
+
         var _this = this;
         $('#divObjList').children().remove();
         $.each(this.opDict.$values, function (i, value) {
@@ -304,7 +355,7 @@
                 objAll.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Description: this.roleList[i].Description });
             }
         }
-        if (this.roleId > 0) {
+        if (this.roleId > 0 && this.roleInfo["IsAnonymous"] === "false") {
             this.findDependentRoles(this.roleId);
             subRoles = [];
             for (var j = 0; j < this.roleList.length; j++) 
@@ -316,6 +367,10 @@
             this.subRolesTile = new TileSetupJs($("#divroles"), "Add Roles", subRoles, objAll, metadata1, null, this.chkItemCustomFunc, this);
         else
             this.subRolesTile.setObjectList(objAll);
+
+        //if (this.roleInfo["IsAnonymous"] === "true") {
+        //    this.subRolesTile.setReadOnly();
+        //}
         //***********************************************
 
         //------------------INIT USERS TILE------------------
@@ -336,7 +391,8 @@
     this.onclickbtnSaveAll = function () {
         var rid = this.roleId;
         var permissionlist = "";
-        var role2rolelist = this.subRolesTile.getItemIds();
+        var isAnonymous = this.chkboxAnonymous.prop("checked");
+        var role2rolelist = isAnonymous ? "" : this.subRolesTile.getItemIds();
         var userslist = this.usersTile.getItemIds();
         var appId = $("#selectApp").find(":selected").attr("data-id");
         var roleDescription = $(this.txtRoleDescription).val().trim();
@@ -359,7 +415,7 @@
         $.ajax({
             type: "POST",
             url: "../Security/SaveRole",
-            data: { _roleId: rid, _roleName: roleName, _roleDesc: roleDescription, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist},
+            data: { _roleId: rid, _roleName: roleName, _roleDesc: roleDescription, _isAnonymous: isAnonymous, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist},
             success: this.saveRoleSuccess.bind(this)
         });
     }

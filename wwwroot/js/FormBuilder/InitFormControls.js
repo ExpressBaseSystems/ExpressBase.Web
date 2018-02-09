@@ -29,15 +29,17 @@
         //$('#' + ctrl.name).selectpicker();
     };
 
-    this.Location = function (ctrl) {
-        var uluru = { lat: ctrl.position.latitude, lng: ctrl.position.longitude };
-        var map = new google.maps.Map(document.getElementById(ctrl.ebSid), {
-            zoom: 15,
-            center: uluru
-        });
-        var marker = new google.maps.Marker({
-            position: uluru,
-            map: map
+    this.Locations = function (ctrls) {
+        $.each(ctrls.locationCollection, function (i, ctrl) {
+            var uluru = { lat: ctrl.position.latitude, lng: ctrl.position.longitude };
+            var map = new google.maps.Map(document.getElementById(ctrl.ebSid), {
+                zoom: 15,
+                center: uluru
+            });
+            var marker = new google.maps.Marker({
+                position: uluru,
+                map: map
+            });
         });
     }
 

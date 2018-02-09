@@ -67,78 +67,67 @@ var SurveyObj = function (abc) {
 
     this.init = function () {
         $(".question-new").off("click").on("click", this.openNewQuestion.bind(this));
-        this.maxChoice = $("#maxchoice").val();
     };
 
     this.openNewQuestion = function () {
         $("#questionModal").modal("show");
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
-        $("#maxchoice").off("change").on('change', this.clickMaxChoice.bind(this));
         $("#userInputType").off("change").on("change", this.getUserInputOption.bind(this));
+        $("#requiredCheck").off("change").on("change", this.requiredCheckboxChanged.bind(this));
+        $("#scoreCheck").off("change").on("change", this.scoreCheckboxChanged.bind(this));
+        this.scoreCheckbox = $("#scoreCheck").prop("checked");
     };
 
     this.changeQuestionType = function () {
         this.qstType = $(event.target).text().trim();
         $(".qst-opt-cont").empty();
         if (this.qstType === "Multiple choice(Single-Select)" || this.qstType === "Multiple choice(Multiple-Select)") {
-            $("#maxchoice").closest(".q-set-item").show();
+            $(".q-opt-control-cont").empty();
             this.appendChoice();
             $("#userInputType").closest(".q-set-item").hide();
+            $("#scoreCheck").closest(".q-set-item").show();
         }
         else if (this.qstType === "User Input") {
             $("#userInputType").closest(".q-set-item").show();
-            $("#maxchoice").closest(".q-set-item").hide();
             this.userinputoption = $("#userInputType option:selected").text().trim();
             this.appendUserInputOption();
+            $("#scoreCheck").closest(".q-set-item").hide();
         }
         else {
-            $("#maxchoice").closest(".q-set-item").hide();
+            $("#scoreCheck").closest(".q-set-item").hide();
             $("#userInputType").closest(".q-set-item").hide();
         }
         
     };
 
-    this.clickMaxChoice = function () {
-        this.maxChoice = $("#maxchoice").val();
-        if ($(".qst-choice-text").length < this.maxChoice) {
-            this.appendNext();
-        }
-        else if ($(".qst-choice-text").length > this.maxChoice)
-            alert("errorrr......manually delete choice");
-    };
-
-    this.appendNext = function (e) {
-        if (e === undefined) {
-            this.appendChoice();
-        }
-        else {
-            if ($(e.target).is($(".qst-choice-text").last())) {
-                if ($(".qst-choice-text").length < this.maxChoice) {
-                    this.appendChoice();
-                }
-                else
-                    $("#maxchoice").attr("disabled", false);
-            }
-        }
-    };
-
     this.appendChoice = function () {
-        $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-cont-inner">
+        $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-cont-inner"><div class="q-opt-control-cont"></div>
             <div class='input-group choice'>
                 <input type="text" placeholder="New choice" class="qst-choice-text form-control"/>
-                <input type="number" class="qst-choice-number form-control" value="0"/>
-                <span class="choice-action input-group-addon btn"><i class="fa fa-pencil"></i></span>
-                <span class="choice-action input-group-addon btn"><i class="fa fa-close" style="color:#c73434;"></i></span>
+                <input type="number" class="qst-choice-number form-control" min="0" placeholder="Score"/>
+                <span class="choice-action input-group-addon btn delete"><i class="fa fa-close" style="color:#c73434;"></i></span>
             </div>
-        </div>`);
+        </div>`);    
 
-        $(".qst-choice-text").off("keyup").on("keyup", this.appendNext.bind(this));
-        $(".qst-choice-text").off("focusin").on("focusin", this.textOnfocus.bind(this));
-        $(".qst-choice-text").off("focusout").on("focusout", this.textOnfocusout.bind(this));
-        $(".choice").off("mouseover").on("mouseover", this.textOnhover.bind(this));
+        this.appendRadioOrCheckbox();
 
+        //<span class="choice-action input-group-addon btn edit"><i class="fa fa-pencil"></i></span>
+        $(".choice-action").off("click").on("click", this.deleteChoiceClick.bind(this));
         $(".qst-choice-text").last().focus();
-        $("#maxchoice").attr("disabled", true);
+        this.addNewChoiceButton();
+
+        if (this.scoreCheckbox) {
+            $(".qst-choice-number").show();
+            $(".qst-choice-text").css("width", "80%");
+            $(".qst-choice-number").css("width", "20%");
+        }
+        else {
+            $(".qst-choice-number").hide();
+            $(".qst-choice-text").css("width", "100%");
+            $(".qst-choice-number").css("width", "0%");
+        }
+            
+        
     };
 
     this.appendUserInputOption = function () {
@@ -156,20 +145,57 @@ var SurveyObj = function (abc) {
         this.appendUserInputOption();
     };
 
-    this.textOnfocus = function () {
-        $(event.target).siblings(".choice-action:eq(0)").hide();
-        $(event.target).siblings(".choice-action:eq(1)").show();
+    
+    this.deleteChoiceClick = function () {
+        $(event.target).closest(".q-opt-cont-inner").hide(350, function () { $(this).remove() });
     };
 
-    this.textOnfocusout = function () {
-        $(event.target).attr("disabled", true);
-        $(event.target).siblings(".choice-action").show();
+    this.addNewChoiceButton = function () {
+        $(".q-opt-new-choice-btn").remove();
+        $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-new-choice-btn">
+            <div class="btn"> <i class="fa fa-plus"></i> ADD CHOICE</div>
+        </div>`);
+        $(".q-opt-new-choice-btn").off("click").on("click", this.appendChoice.bind(this));
+    };
+
+    this.requiredCheckboxChanged = function () {
+        if ($(event.target).prop("checked") === true)
+            $(".q-label-requird").show();
+        else
+            $(".q-label-requird").hide();
+
+    };
+
+    this.scoreCheckboxChanged = function () {
+        if ($(event.target).prop("checked") === true) {
+            this.scoreCheckbox = true;
+            $(".qst-choice-number").show();
+            $(".qst-choice-text").css("width", "80%");
+            $(".qst-choice-number").css("width", "20%");
+        }
+        else {
+            this.scoreCheckbox = false;
+            $(".qst-choice-number").hide();
+            $(".qst-choice-text").css("width", "100%");
+            $(".qst-choice-number").css("width", "0%");
+        }
+    };
+
+    this.appendRadioOrCheckbox = function () {
+        if (this.qstType === "Multiple choice(Single-Select)") {
+            $.each($(".q-opt-control-cont"), function (i, obj) { 
+                if ($(obj).children().length === 0)
+                    $(obj).append(`<div class="col-md-1 q-opt-input-cont"><input type="radio" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
+            });
+        }
+        else if (this.qstType === "Multiple choice(Multiple-Select)") {
+            $.each($(".q-opt-control-cont"), function (i, obj) {
+                if ($(obj).children().length === 0)
+                    $(obj).append(`<div class="col-md-1 q-opt-input-cont"><input type="checkbox" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
+            });
+        }
     }
-
-    this.textOnhover = function () {
-        //$(".choice-action").show();
-    };
-
+    
     this.init();
 
 };

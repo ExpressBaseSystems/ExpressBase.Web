@@ -168,14 +168,18 @@
             <div class="col-md-8">
                 <div class="form-group">
                     <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Description</label>
-                    <textarea class="form-control" id="txtRoleDescription" style="height:107px;width:100%;" title="Role Description" required></textarea>
+                    <textarea class="form-control" id="txtRoleDescription" style="height:58px;width:100%;" title="Role Description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label style="font-family: open sans; font-weight: 300; display:inline-block">Is Anonymous Role</label>
+                    <input id="chkboxAnonymous" type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No">
                 </div>
             </div>
             <input type="submit" id="hiddenSubmitRole" style="display:none;" />
         </div>
     </form>
     <div style="padding: 0px 15px;">
-        <ul class="nav nav-tabs">
+        <ul id="ulTabOnMngRole" class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#divObjList">Permissions</a></li>
             <li><a data-toggle="tab" href="#divroles">Sub Roles</a></li>
             <li><a data-toggle="tab" href="#divusers">Users</a></li>

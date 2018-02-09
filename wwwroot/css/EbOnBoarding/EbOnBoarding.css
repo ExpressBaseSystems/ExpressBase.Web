@@ -331,6 +331,7 @@
 
     .s-dash-workplace .tab-pane {
         padding: 10px;
+        float:left;
     }
 
 .s-dash-container .connectons-container {

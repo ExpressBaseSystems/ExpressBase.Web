@@ -238,7 +238,7 @@
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",
                 type: "POST",
-                data: { type: $selectedOpt.text() },
+                data: { type: $selectedOpt.attr("obj-type") },
                 success: this.biuldObjList
             });
         }

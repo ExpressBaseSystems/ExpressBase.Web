@@ -456,14 +456,39 @@
     border: solid 1px #aaaaaa;
 }
 
-.map-cont {
+.map-div {
     height: 250px;
     width: 100%;
 }
+
 .location-box {
     position: relative;
     padding: 5px 5px 0px 5px;
     background-color: white;
     border-radius: 3px;
     width: 100%;
+}
+
+.loc-opt-btn {
+    text-align: center;
+    display: inline-block;
+    padding: 3px;
+    font-size: 12px;
+    font-family: Open Sans,sans-serif;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 5px 5px 0px 0;
+    color: #868585;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+    .loc-opt-btn:focus {
+        border-bottom: solid 2px #31d031;
+        color: #333;
+        font-weight: bold;
+        outline:none;
+    }
+
+.loc-opt-cont {
+    padding: 3px 3px 0px 3px;
 }

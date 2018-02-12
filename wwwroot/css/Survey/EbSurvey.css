@@ -55,11 +55,11 @@
     box-shadow: 0 1px 1px #dfe3ea inset;
     padding: 5px;*/
     /*margin-top: 10px;*/
-    width: 80%!important;
+    width: 80%;
     padding: 2px 5px;
 }
 .qst-choice-number {
-    width: 20%!important;
+    width: 20%;
     padding: 2px 5px;
 }
 .choice {
@@ -168,9 +168,10 @@
 .qst-opt-cont {
     /*border: 1px solid;*/
     overflow: auto;
-    height: calc(100% - 100px);
+    height: calc(100% - 110px);
     /*margin-top: 10px;*/
     padding: 10px 15px;
+    margin-top: 10px;
 }
 .q-opt-cont-inner {
     padding-left:0px!important;
@@ -238,4 +239,25 @@
     border:none;
     width: 100%;
     height:100px!important;
+}
+
+.q-opt-new-choice-btn {
+    border: 1px dashed #c89cd0;
+    text-align: center;
+    cursor: pointer;
+    width: 43%;
+}
+.q-label{
+    border-right:1px solid #ccc!important;
+}
+.q-label-requird {
+    color: red;
+}
+.q-opt-input-cont{
+    margin-top:6px;
+    margin-right:-20px;
+}
+.q-opt-radio {
+    width: 20px;
+    height: 16px;
 }

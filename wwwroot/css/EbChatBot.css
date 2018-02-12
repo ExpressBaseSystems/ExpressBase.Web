@@ -462,6 +462,7 @@
 }
 
 .location-box {
+    display: none;
     position: relative;
     padding: 5px 5px 0px 5px;
     background-color: white;
@@ -472,9 +473,9 @@
 .loc-opt-btn {
     text-align: center;
     display: inline-block;
+    cursor: pointer;
     padding: 3px;
     font-size: 12px;
-    font-family: Open Sans,sans-serif;
     font-family: 'Roboto', sans-serif;
     border-radius: 5px 5px 0px 0;
     color: #868585;
@@ -483,12 +484,13 @@
     text-overflow: ellipsis;
 }
     .loc-opt-btn:focus {
-        border-bottom: solid 2px #31d031;
-        color: #333;
-        font-weight: bold;
         outline:none;
     }
 
 .loc-opt-cont {
     padding: 3px 3px 0px 3px;
+}
+.loc-opt-DD {
+    width: 100%;
+    max-width: inherit;
 }

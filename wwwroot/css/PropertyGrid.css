@@ -205,12 +205,6 @@
     box-shadow: none;
 }
 
-.property-grid-cont {
-    width: 20%;
-    height: 95vh;
-    visibility: hidden;
-}
-
 .pin {
     float: right;
     margin-top: 1px;

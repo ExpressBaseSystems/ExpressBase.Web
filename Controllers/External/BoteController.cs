@@ -223,7 +223,7 @@ namespace ExpressBase.Web.Controllers
 
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", cid, email, wc));
                 var Ids = String.Join(",", user.EbObjectIds);
-                GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + "}", AppId = appid });
+                GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
                 List<object> returnlist = new List<object>();
                 returnlist.Add(authResponse);
                 returnlist.Add(formlist.BotForms);

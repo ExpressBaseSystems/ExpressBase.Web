@@ -90,8 +90,14 @@
 
 .form-save-wraper {
     float: left;
-    width: 66%;
+    width: 64%;
     margin: 0px 4px;
+}
+
+.property-grid-cont {
+    width: 22%;
+    height: 95vh;
+    visibility: hidden;
 }
 
 .tool {

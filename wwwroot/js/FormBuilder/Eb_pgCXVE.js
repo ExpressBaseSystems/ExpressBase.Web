@@ -22,6 +22,8 @@
 
     this.pgCXEshowCallback = function () {
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
+        if (this.editor === 11)
+            window.editor.getDoc().setValue(this.PGobj.PropsObj[this.PGobj.CurProp]);
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -184,6 +186,9 @@
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
+        $(`${this.pgCXE_Cont_Slctr} .CodeMirror`).off("keyup").on("keyup", "textarea", function (e) {
+            this.PGobj.PropsObj[this.PGobj.CurProp] = $(".cm-variable").text();
+        }.bind(this));
     };
 
     this.initOSE = function () {

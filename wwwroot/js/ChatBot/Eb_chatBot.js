@@ -25,6 +25,8 @@
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
+    this.formFunctions = {};
+    this.formFunctions.visibleIfs = {};
     this.editingCtrlName = null;
     this.lastCtrlIdx = 0;
     this.FB = null;
@@ -407,7 +409,10 @@
 
     this.setFormControls = function () {
         this.formControls = [];
-        $.each(this.curForm.controls, function (i, control) { this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`)); }.bind(this));
+        $.each(this.curForm.controls, function (i, control) {
+            this.formFunctions.visibleIfs[control.ebSid] = new Function("form", control.visibleIf);
+            this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
+        }.bind(this));
         this.getControl(0);
     }.bind(this);
 

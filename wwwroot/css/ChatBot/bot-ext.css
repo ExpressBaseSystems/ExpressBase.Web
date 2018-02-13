@@ -47,14 +47,14 @@
 }
 
 @media screen and (max-width: 768px) {
-    #eb_iframecont {
+    .eb_iframecont {
         width: 100%;
         left: 0;
         bottom: 0;
         height: 100%;
     }
 
-    #ebbot_iframe {
+    .ebbot_iframe {
         border-radius: 0px;
     }
 }

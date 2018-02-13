@@ -1,31 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ExpressBase.Web.Filters;
-using Microsoft.Extensions.Options;
-using ExpressBase.Web2;
-using ServiceStack;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Objects;
-using ExpressBase.Common;
-using ServiceStack.Text;
-using System.Net;
-using ExpressBase.Data;
-using DiffPlex;
-using DiffPlex.DiffBuilder;
-using DiffPlex.DiffBuilder.Model;
-using System.Text;
-using ExpressBase.Objects.Objects;
-using Newtonsoft.Json;
-using ExpressBase.Common.Objects.Attributes;
-using ServiceStack.Redis;
+﻿using ExpressBase.Common;
 using ExpressBase.Common.Objects;
-using System.Reflection;
-using ExpressBase.Objects.Objects.DVRelated;
-using ExpressBase.Security;
 using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
+using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Security;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using ServiceStack;
+using ServiceStack.Redis;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -261,7 +246,7 @@ namespace ExpressBase.Web.Controllers
 
         public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(EbObjectType type)
         {
-            var resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = Convert.ToInt32(type) });
+            var resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = type });
             var ObjDVListAll = resultlist.Data;
 
             return ObjDVListAll;

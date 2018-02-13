@@ -29,7 +29,51 @@
         //$('#' + ctrl.name).selectpicker();
     };
 
-    this.Location = function (ctrl) {
+    this.Locations = function (ctrls) {
+        var name = ctrls.ebSid;
+        if (ctrls.showTabed) {
+            $(`#${name} .loc-opt-btn`).off("click").on("click", function (e) {
+                var $optBtn = $(e.target);
+                var loc = $optBtn.attr("for");
+                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.ebSid === loc; });
+                var ctrl = ctrlArr[0];
+                var $locDiv = $(`#${ctrl.name}`);
+                $(`#${name} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
+                $optBtn.css("border-bottom", "solid 2px #31d031").css("font-weight", "bold").css("color", "#333");
+                if ($locDiv.closest(".location-box").css("display") === "none") {
+                    $(`#${name} .location-box`).hide(10);
+                    $locDiv.closest(".location-box").show(10,
+                        function () {
+                            if ($locDiv.children().length === 0)
+                                this.initMap(ctrl);
+                        }.bind(this));
+                }
+
+            }.bind(this));
+            $(`#${name} .loc-opt-btn`)[0].click();
+        }
+        else {
+            $(`#${name} .loc-opt-DD`).off("change").on("change", function (e) {
+                var loc = $(e.target).children().filter(":selected").val();
+                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.ebSid === loc; });
+                var ctrl = ctrlArr[0];
+                var $locDiv = $(`#${ctrl.name}`);
+                if ($locDiv.closest(".location-box").css("display") === "none") {
+                    $(`#${name} .location-box`).hide(10);
+                    $locDiv.closest(".location-box").show(10,
+                        function () {
+                            if ($locDiv.children().length === 0)
+                                this.initMap(ctrl);
+                        }.bind(this));
+                }
+            }.bind(this));
+
+            $(`#${name} .location-box:eq(0)`).show();
+            this.initMap(ctrls.locationCollection[0]);
+        }
+    };
+
+    this.initMap = function (ctrl) {
         var uluru = { lat: ctrl.position.latitude, lng: ctrl.position.longitude };
         var map = new google.maps.Map(document.getElementById(ctrl.ebSid), {
             zoom: 15,

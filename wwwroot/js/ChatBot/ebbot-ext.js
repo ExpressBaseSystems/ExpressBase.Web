@@ -117,6 +117,7 @@
         iconCont.style.height = "30px";
         iconCont.appendChild(chatIcon);
         chatbtn.appendChild(iconCont);
+        chatbtn.click();////////////////////////////////
     }
     else {
         iframecont.style.minWidth = "inherit";
@@ -129,6 +130,5 @@
     dpicon.style.width = "40px";
     dpicon.style.height = "40px";
     botdp.appendChild(dpicon);
-    //chatbtn.click();////////////////////////////////
 
 })();

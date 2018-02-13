@@ -477,13 +477,10 @@
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx];
-        if (this.curCtrl && this.curCtrl.objType === "Cards")
+        if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations"))
             var $CtrlCont = $(control);
         else
-            if (this.curCtrl && this.curCtrl.objType === "Location")
-                var $CtrlCont = $(`<div class='location-box'>${control}</div>`);
-            else
-                var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
+            var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
         var lablel = this.curCtrl.label + ' ?';
         if (this.curCtrl.helpText)
             lablel += ` (${this.curCtrl.helpText})`;
@@ -592,7 +589,7 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
-                    if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Location")) {
+                    if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations")) {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
@@ -692,7 +689,7 @@
                 /////////////////////////////////////////////////
                 setTimeout(function () {
                     //$(".btn-box .btn:last").click();
-                    $(".btn-box").find("[idx=3]").click();
+                    $(".btn-box").find("[idx=4]").click();
                 }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);

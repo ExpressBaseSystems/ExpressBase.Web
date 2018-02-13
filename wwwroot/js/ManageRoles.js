@@ -48,6 +48,7 @@
             if (roleInfo["IsAnonymous"] === "true") {
                 this.chkboxAnonymous.bootstrapToggle('on');
                 $($("#ulTabOnMngRole").children()[1]).hide();
+                $($("#ulTabOnMngRole").children()[2]).hide();
                 $('.nav-tabs a[href="#divObjList"]').tab('show');
             }
                     
@@ -67,20 +68,25 @@
     this.onChangeChkBoxAnonymous = function (evt) {
         var flag = false;
         var sroles = (this.subRolesTile === null) ? "" : this.subRolesTile.getItemIds();
-        if (this.subRolesTile !== null) {
+        var usrs = (this.usersTile === null) ? "" : this.usersTile.getItemIds();
+        //if (this.subRolesTile !== null ) {
             if ($(evt.target).is(":checked")) {
-                if (sroles !== "")
-                    flag = confirm("Continuing will remove the Selected SubRoles");
-                if (flag || sroles === "") {
+                if (sroles !== "" || usrs !== "")
+                    flag = confirm("Continuing will remove the Selected SubRoles/Users");
+                if (flag || (sroles === "" && usrs === "")) {
                     $($("#ulTabOnMngRole").children()[1]).hide();
+                    $($("#ulTabOnMngRole").children()[2]).hide();
                     $('.nav-tabs a[href="#divObjList"]').tab('show');
                 }
                 else
                     this.chkboxAnonymous.bootstrapToggle('off');
             }
-            else
+            else {
                 $($("#ulTabOnMngRole").children()[1]).show();
-        }
+                $($("#ulTabOnMngRole").children()[2]).show();
+            }
+                
+        //}
     }
 
     //SUBROLES-----START------------------------------------------------------------------------------------
@@ -393,7 +399,7 @@
         var permissionlist = "";
         var isAnonymous = this.chkboxAnonymous.prop("checked");
         var role2rolelist = isAnonymous ? "" : this.subRolesTile.getItemIds();
-        var userslist = this.usersTile.getItemIds();
+        var userslist = isAnonymous ? "" : this.usersTile.getItemIds();
         var appId = $("#selectApp").find(":selected").attr("data-id");
         var roleDescription = $(this.txtRoleDescription).val().trim();
         var roleName = $(this.txtRoleName).val().trim();

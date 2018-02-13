@@ -313,7 +313,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.Init = function () {
         //this.MainData = null;
         $.event.props.push('dataTransfer');
-        this.updateRenderFunc();
+        //this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
@@ -451,6 +451,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
+        o.deferRender = true;
+        o.scroller = true;
         o.language = {
             processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>", info: "_START_ - _END_ / _TOTAL_",
             paginate: {
@@ -497,8 +499,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.isPipped = false;
             }
             o.ajax = {
-                //url: this.ssurl + ((this.dtsettings.login == "uc") ? '/dv/data/' + this.dvid : '/ds/data/' + this.dsid),
                 url: this.ssurl + '/ds/data/' + this.dsid,
+                //url:"../dv/getData",
                 type: 'POST',
                 //timeout: 180000,
                 data: this.ajaxData.bind(this),
@@ -784,8 +786,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.contextMenu();
         if (this.login == "uc") {
             this.initCompleteflag = true;
-            if (this.isSecondTime)
-                this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
+            if (this.isSecondTime) { }
+                //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
     }
 
@@ -869,7 +871,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addFilterEventListeners();
         this.Api.columns.adjust();
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
+            //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
     };
 

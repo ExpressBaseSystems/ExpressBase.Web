@@ -452,7 +452,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.serverSide = true;
         o.processing = true;
         o.deferRender = true;
-        o.scroller = true;
+        //o.scroller = true;
         o.language = {
             processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>", info: "_START_ - _END_ / _TOTAL_",
             paginate: {

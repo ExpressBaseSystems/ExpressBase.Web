@@ -4,6 +4,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using ExpressBase.Web2;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
@@ -224,6 +225,24 @@ namespace ExpressBase.Web.Controllers
         public IActionResult dvgoogle()
         {
             return ViewComponent("GoogleRelated");
+        }
+
+        public void getData(string RefId)
+        {
+            var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
+            pclient.BearerToken = this.ServiceClient.BearerToken;
+            pclient.Timeout = TimeSpan.FromMinutes(3);
+            DataSourceDataResponse resultlist1 = null;
+            try
+            {
+                resultlist1 = pclient.Get(new DataSourceDataRequest444 { RefId = RefId, Draw = 1, Start = 0, Length = 100 });
+                //var dd = DataSetCompressor.Decompress(resultlist1.StreamWrapper.Memorystream.ToBytes());
+            }
+            catch (Exception e)
+            {
+
+            }
+            //return View();
         }
 
         public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(int type)

@@ -4,6 +4,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using ExpressBase.Web2;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
@@ -244,7 +245,7 @@ namespace ExpressBase.Web.Controllers
             //return View();
         }
 
-        public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(EbObjectType type)
+        public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(int type)
         {
             var resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = type });
             var ObjDVListAll = resultlist.Data;

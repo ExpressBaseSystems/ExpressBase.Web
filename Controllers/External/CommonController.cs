@@ -43,6 +43,10 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+        public IActionResult EbFAQS()
+        {
+            return View();
+        }
 
     }
 }

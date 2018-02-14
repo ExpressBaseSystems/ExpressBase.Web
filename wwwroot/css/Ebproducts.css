@@ -1,6 +1,25 @@
 ﻿.pd-0{
     padding:0;
 }
+.eb-btn-tw {
+    box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+}
+.no-hover-tw {
+   color:white;
+}
+    .no-hover-tw:hover {
+        color: white;
+    }
+.eb-btn-tw:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+}
+.xsmall{
+    font-size:9px;
+}
+.eb-small-text{
+    font-size:13px;
+}
 /*bot*/
 .Eb-bot-header .navbar {
     height: auto;
@@ -19,7 +38,7 @@
     .Eb-bot-header .navbar-default .navbar-nav > li > a {
         color: #0f86cb;
         font-size: 14px;
-        font-weight: 300;
+        font-weight: 400;
         font-family: open sans;
     }
 .Eb-bot-header .btn-trial {
@@ -58,14 +77,16 @@ margin-bottom:15px;
     background: white;
     height: 450px;
     margin-top: -160px;
+    box-shadow: var(--eb-shadow);
+    border-radius: 4px;
 }
 .eb-bot-pdF-motion-frame {
     padding-bottom: 200px;
 }
 .btn_liveDemos {
     padding: 12px 25px 11px 25px;
-    background-color: #e88769;
-    color: #ffffff;
+    background-color: #ff930d;
+    color:white;
     width: 100%;
 }
 .live-scenarios-text {
@@ -222,6 +243,58 @@ margin-bottom:15px;
 .no-padd {
     padding: 0;
 }
+/*code section*/
+
+.eb-codeedit{
+    background:white;
+    padding:0;
+}
+.eb-codeedit-Container {
+    width: 100%;
+    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+}
+.eb-codeedit-pgno {
+    width: 6%;
+    background: #52c6cc;
+    color: white;
+    font-size:12px;
+    padding:10px 10px;
+}
+.eb-codeedit-code {
+    width: 94%;
+    padding: 10px;
+    font-family: monospace;
+    color: #736c6c;
+    font-size:12px;
+}
+pn {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    display: block;
+    line-height: 1.5;
+}
+.float-l {
+    float: left;
+}
+.pg-line{
+    line-height:1.5;
+}
+.jsCode{
+    color:red;
+}
+.htmlTags {
+    color:#5c5ce4;
+}
+.eb-text {
+    color: #a94343;
+}
+.eb-codeedit-intentation{
+    padding-left:30px;
+}
+.eb-codeedit-coment{
+    color:#CCC;
+}
 /*...................................bot end.................*/
 /****** LOGIN MODAL ******/
 .loginmodal-container {
@@ -279,14 +352,15 @@ margin-bottom:15px;
 
 /*end login*/
 
-.bot-section2{
-  padding-bottom:50px;
-  font-family:open sans;
-  font-weight:300;
+.bot-section2, .embed_scriptBot {
+    padding-bottom: 50px;
+    font-family: open sans;
+    font-weight: 400;
 }
     .bot-section2 .tiles {
         padding: 10px;
-        height:200px;
+        height: 215px;
+        color: #6b7c93;
     }
     .bot-section2 .tiles h4{
        color:#666;
@@ -326,15 +400,17 @@ margin-bottom:15px;
     
 }
 .bot-pricing-body .price-tile {
-    border: 1px solid #ccc;
     background: white;
     border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
 }
 .price-tile-headsec {
     height: 80px;
     width: 100%;
     background: #1e8db8;
     padding: 10px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
 }
 .headsec-textarea {
     display: inline-block;

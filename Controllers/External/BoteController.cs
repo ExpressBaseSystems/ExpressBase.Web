@@ -204,14 +204,23 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public List<object> AuthAndGetformlist(string cid, string appid, string socialId, string wc = "tc")
+        public List<object> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string wc = "tc")
         {
+            Dictionary<string, string> _Meta;
+            if (socialId.IsNullOrEmpty())
+            {
+                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "anonymous", "true" }, { "phone", anon_phno }, { "emailId", anon_email } };
+            }
+            else
+            {
+                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "anonymous", "true" } };
+            }
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,
                 UserName = "NIL",
                 Password = "NIL",
-                Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId } },
+                Meta = _Meta,
             });
             if (authResponse != null)
             {

@@ -100,6 +100,12 @@
         }
     }
 
+    this.findSubRoles = function (r) {
+        for (var i = 0; i < this.r2rList.length; i++) 
+            if (this.r2rList[i].Dominant == r && this.dependentList.indexOf(this.r2rList[i].Dependent) === -1)
+                this.dependentList.push(this.r2rList[i].Dependent);
+    }
+
     this.findDominantRoles = function (dependent) {
         for (var i = 0; i < this.r2rList.length; i++) {
             if (this.r2rList[i].Dependent == dependent && this.dominantList.indexOf(this.r2rList[i].Dominant) === -1) {
@@ -278,8 +284,8 @@
 
 
     this.selectAppChangeAction = function (e) {  
-        var appindex = $("#selectApp").find(":selected").attr("data-index");
-        appCollection = this.appCollection;
+        
+        //var appCollection = this.appCollection;
 
         //if (this.isAnonymousRoleExists(appCollection[appindex].Id)) {
         //    this.chkboxAnonymous.bootstrapToggle('off');
@@ -290,7 +296,7 @@
         //    this.chkboxAnonymous.bootstrapToggle('off');
         //}
 
-        var _this = this;
+        //var _this = this;
         $('#divObjList').children().remove();
         $.each(this.opDict.$values, function (i, value) {
             var tblColumn = [];
@@ -311,26 +317,28 @@
 
             tblColumn.push({ data: 'x0', title: "Objects     ", width: '200px', className: "dataTableColumnStyle"});
             $.each(value.Operations.$values, function (a, b) {
-                tblColumn.push({ data: 'x' + (a + 1), title: b, render: _this.tblColumnRender, width: '80px', orderable: false, className: "text-center"});
-            });
-            $.each(appCollection[appindex].ObjectTypes, function (j, a) {
+                tblColumn.push({ data: 'x' + (a + 1), title: b, render: this.tblColumnRender, width: '80px', orderable: false, className: "text-center"});
+            }.bind(this));
+            var appindex = $("#selectApp").find(":selected").attr("data-index");
+            $.each(this.appCollection[appindex].ObjectTypes, function (j, a) {
                 if (j == value.Op_Id) {
                     $.each(a, function (k, b) {
                         var obt= new Object();
-                        obt.x0= b.Obj_Name;
+                        obt.x0 = b.Obj_Name;
+                        var appindex = $("#selectApp").find(":selected").attr("data-index");
                         for (y = 0; y < value.Operations.$values.length; y++) {
-                            var permissionString = b.Obj_Id + '_' + y;
+                            var permissionString = this.appCollection[appindex].Id.toString().padStart(2, "0") + "-" + value.Op_Id.toString().padStart(2, "0") + "-" + b.Obj_Id.toString().padStart(5, "0") + "-" + y.toString().padStart(2, "0");
                             obt["x" + (y + 1)] = permissionString;
                         }
                         tblData.push(obt);
-                    });
+                    }.bind(this));
                 }
-            });
+            }.bind(this));
             var rowCount = tblData.length;
             var headtag = $("#a" + value.Op_Name);
             if (rowCount !== 0) {
                 $(headtag).text(value.Op_Name + " (" + rowCount + ")");
-                _this.setTable(value.Op_Name, tblColumn, tblData);
+                this.setTable(value.Op_Name, tblColumn, tblData);
             }
             else {
                 $(headtag).parent().remove();
@@ -344,7 +352,7 @@
             //    $(headtag).hide();
             //    $("#tbl" + value.Op_Name).hide();
             //}
-        });
+        }.bind(this));
         if ($('#divObjList').children().length === 0) 
             $('#divObjList').append(`<div style="text-align: center; margin-top: 12%; font-size: 28px; color: #bbb; "> Nothing to Display </div>`);
         
@@ -362,7 +370,7 @@
             }
         }
         if (this.roleId > 0 && this.roleInfo["IsAnonymous"] === "false") {
-            this.findDependentRoles(this.roleId);
+            this.findSubRoles(this.roleId);
             subRoles = [];
             for (var j = 0; j < this.roleList.length; j++) 
                 if (this.dependentList.indexOf(this.roleList[j].Id) !== -1) 

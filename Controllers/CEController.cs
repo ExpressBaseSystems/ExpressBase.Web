@@ -355,7 +355,7 @@ namespace ExpressBase.Web.Controllers
             var redis = this.Redis;
             var sscli = this.ServiceClient;
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
-            var paramsList = new List<Dictionary<string, string>>();
+            var paramsList = new List<Dictionary<string, object>>();
             if (parameter == null)
             {
                 paramsList = null;
@@ -365,7 +365,7 @@ namespace ExpressBase.Web.Controllers
                 Newtonsoft.Json.Linq.JArray ja = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(parameter);
                 foreach (Newtonsoft.Json.Linq.JToken jt in ja)
                 {
-                    var _dict = new Dictionary<string, string>();
+                    var _dict = new Dictionary<string, object>();
                     foreach (Newtonsoft.Json.Linq.JProperty jp in jt.Children())
                         _dict.Add(jp.Name, jp.Value.ToString());
                     paramsList.Add(_dict);

@@ -23,10 +23,12 @@
    
     this.init = function () {
         //this.loadObjectsAndOperations.bind(this)();
-        $(this.btnSaveAll).on('click', this.onclickbtnSaveAll.bind(this));
-        $(this.divObjList).on('click', '.objactiveclass', this.onClickObjActiveClass);
+        this.btnSaveAll.on('click', this.onclickbtnSaveAll.bind(this));
+        this.divObjList.on('click', '.objactiveclass', this.onClickObjActiveClass);
 
-        $(this.chkboxAnonymous).on('change', this.onChangeChkBoxAnonymous.bind(this));
+        this.txtRoleName.on('keyup', this.validateRoleName.bind(this));
+
+        this.chkboxAnonymous.on('change', this.onChangeChkBoxAnonymous.bind(this));
         
         //INIT FORM
         if (this.roleId > 0) {
@@ -87,6 +89,38 @@
             }
                 
         //}
+    }
+
+    this.validateRoleName = function (e) {
+        clearTimeout(this.timer1);
+        this.isInfoValid = false;
+        var val = $(e.target).val();
+        $(e.target).css("border-color", "rgb(204, 204, 204)");
+        $("#spanRoleName").children().remove();
+        $("#spanRoleName").append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
+        $("#spanRoleName").attr("title", "Validating...");
+        this.timer1 = setTimeout(function () { this.validateRoleNameAjaxCall(val, e) }.bind(this), 3000);
+    }
+    this.validateRoleNameAjaxCall = function (val, e) {
+        $.ajax({
+            type: "POST",
+            url: "../Security/isValidRoleName",
+            data: { reqRoleName: val },
+            success: function (result) {
+                if (result) {
+                    $(e.target).css("border-color", "rgb(204, 0, 0)");
+                    $("#spanRoleName").children().remove();
+                    $("#spanRoleName").append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red;"></i>`);
+                    $("#spanRoleName").attr("title", "Give Role Name Already Exists");
+                }
+                else {
+                    $("#spanRoleName").children().remove();
+                    $("#spanRoleName").append(`<i class="fa fa-check" aria-hidden="true" style="color:green;"></i>`);
+                    $("#spanRoleName").attr("title", "Valid Role Name");
+                    this.isInfoValid = true;
+                }
+            }.bind(this)
+        });
     }
 
     //SUBROLES-----START------------------------------------------------------------------------------------

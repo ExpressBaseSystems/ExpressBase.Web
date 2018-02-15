@@ -241,15 +241,16 @@ namespace ExpressBase.Web.Controllers
 		//---------------MANAGE ROLES START----------------------------------
 		public IActionResult ManageRoles(int itemid)
 		{
-			var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
-			ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);
-			ViewBag.SelectedRoleInfo = JsonConvert.SerializeObject(fr.SelectedRoleInfo);
-			ViewBag.PermissionList = JsonConvert.SerializeObject(fr.PermissionList);
-			ViewBag.RoleId = itemid;
-			TempData["_dict"] = GetPermissionOperationsAsJs();
-			ViewBag.RoleList = JsonConvert.SerializeObject(fr.RoleList);
-			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
-			ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
+			//var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
+			//ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);
+			//ViewBag.SelectedRoleInfo = JsonConvert.SerializeObject(fr.SelectedRoleInfo);
+			//ViewBag.PermissionList = JsonConvert.SerializeObject(fr.PermissionList);
+			//ViewBag.RoleId = itemid;
+			//TempData["_dict"] = GetPermissionOperationsAsJs();
+			//ViewBag.RoleList = JsonConvert.SerializeObject(fr.RoleList);
+			//ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
+			//ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
+			ViewBag.itemid = itemid;
 			return View();
 		}
 
@@ -318,7 +319,11 @@ namespace ExpressBase.Web.Controllers
 
 		}
 
-
+		public bool isValidRoleName(string reqRoleName)
+		{
+			var temp = this.ServiceClient.Post<bool>(new UniqueCheckRequest { roleName = reqRoleName });
+			return temp;
+		}
 
 	}
 }

@@ -403,9 +403,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.dropLoc = $(event.target);
         this.col = $(ui.draggable);
         this.Objtype = this.col.attr('eb-type');
-        var Title = "";
-        if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric')
-            Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();
+        var Title = "";      
+        if (this.Objtype === 'DataFieldText' || this.Objtype === 'DataFieldDateTime' || this.Objtype === 'DataFieldBoolean' || this.Objtype === 'DataFieldNumeric') 
+            Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();                
         else
             Title = this.col.text().trim();
         if (!this.col.hasClass('dropped')) {
@@ -415,12 +415,15 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             if (this.col.hasClass('coloums')) {
                 obj.Top = (this.posTop - this.dropLoc.offset().top) - PosOBjOFdrag['top'];
                 obj.Left = (this.posLeft - this.dropLoc.offset().left) - PosOBjOFdrag['left'];
+                obj.DbType = this.col.attr("DbType");
+                obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
+                obj.ColumnName = this.col.text().trim();
             }
             else {
                 obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
                 obj.Left = (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];
             }
-            obj.Title = Title;
+            obj.Title = Title;            
             this.objCollection[Objid] = obj;
             this.RefreshControl(obj);
         }

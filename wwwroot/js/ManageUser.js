@@ -180,14 +180,14 @@
         }
     }
 
-    this.findDominantRoles = function (dependent) {
-        for (var i = 0; i < this.r2rList.length; i++) {
-            if (this.r2rList[i].Dependent == dependent && this.dominantList.indexOf(this.r2rList[i].Dominant) === -1) {
-                this.dominantList.push(this.r2rList[i].Dominant);
-                this.findDominantRoles(this.r2rList[i].Dominant);
-            }
-        }
-    }
+    //this.findDominantRoles = function (dependent) {
+    //    for (var i = 0; i < this.r2rList.length; i++) {
+    //        if (this.r2rList[i].Dependent == dependent && this.dominantList.indexOf(this.r2rList[i].Dominant) === -1) {
+    //            this.dominantList.push(this.r2rList[i].Dominant);
+    //            this.findDominantRoles(this.r2rList[i].Dominant);
+    //        }
+    //    }
+    //}
 
     this.chkItemCustomFunc = function (_this, e) {
         _this.dependentList = [];

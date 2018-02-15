@@ -280,8 +280,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         }
         else {
-            $("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
+            //$("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
             $("#sub_window_" + this.tableId).css("padding-top", "15px");
+            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
         }
     }
 
@@ -718,7 +719,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         var fltr_collection = [];
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
         var paramstxt = $(FdCont+" #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
-        if (paramstxt.length > 0) {
+        if (paramstxt != undefined) {
             var params = paramstxt.split(',');
             $.each(params, function (i, id) {
                 var v = null;

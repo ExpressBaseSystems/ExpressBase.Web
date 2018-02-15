@@ -1,6 +1,12 @@
 ﻿.pd-0{
     padding:0;
 }
+.pd-r-15{
+    padding-right:15px;
+}
+.pd-l-15 {
+    padding-left: 15px;
+}
 .eb-btn-tw {
     box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
 }
@@ -107,26 +113,27 @@ margin-bottom:15px;
 .eb_iframecont {
     position: absolute;
     top: 6% !important;
-    height: 81% !important;
+    height: 100% !important;
     width: 90% !important;
     right: 5%;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.69) !important;
 }
 
 .demo-cont {
-    margin-top: 20px;
+    padding-left: 70px;
+    padding-right: 70px;
 }
 
 .usecase-content-cont, .usecase-bots-cont {
     width: 100%;
-    height: 80vh;
+    height: 360px;
 }
 
 .usecase-icon-cont {
     width: 100%;
     padding: 5px;
     background-color: var(--bc);
-    padding: 0 10em;
+   
     padding-top: 2.5vh;
 }
 .icon-box-demo {
@@ -160,29 +167,25 @@ margin-bottom:15px;
     }
 }
 .usecase-content-cont, .usecase-bots-cont {
-    background-color: var(--bc);
-    padding: 30px 20px;
+    width: 70%;
+    float: left;
+    padding: 0 40px 0 0;
 }
-
+.usecase-bots-cont {      
+    width: 30%;
+    float: left;
+}
 .usecase-bots-cont {
     position: relative;
     z-index: 1;
 }
-
-.demo-col1, .demo-col2, .demo-col3 {
-    float: left;
-}
-
 .demo-col1 {
     width: 100%;
 }
 
 .demo-col2 {
-    width: 70%;
-}
-
-.demo-col3 {
-    width: 30%;
+    width: 100%;
+    float:left;
 }
 
 .icon-round {
@@ -218,7 +221,6 @@ margin-bottom:15px;
 .content {
     opacity: 0;
     display: none;
-    padding: 1.5em 8em 0em 8em;
     width: 100%;
     height: 100%;
 }
@@ -297,6 +299,64 @@ pn {
 }
 .eb-codeedit-coment{
     color:#CCC;
+}
+.embedscript-text {
+    padding-left: 70px;
+    line-height: 2;
+    font-size: 15px;
+}
+/*live demos section*/
+.bot-prob-img-sec {
+    float: left;
+    width: 14%;  
+    height: 80px;
+}
+.bot-prob-text-sec {
+    float: left;
+    width: 86%;
+}
+.bot-prob, .bot-solution {
+    float: left;
+    width: 100%;
+    margin-top:5%;
+}
+.bot-prob-img-sec img {
+    width: 80px;
+    float: right;
+}
+.prob-container {
+    float: left;
+    width: 84%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    border-bottom-left-radius: 0;   
+    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+    font-weight:400;
+}
+.mr-t-10 {
+    margin-top:8.6%;
+}
+.prob-sol-container {
+    float: left;
+    width: 84%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    border-bottom-right-radius: 0;
+    height: 80px;
+    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+    font-weight: 400;
+}
+.prob-container-text {
+    float: left;
+    width: 95%;
+    height:100%;
+}
+.prob-container-symb {
+    float: left;
+    width: 5%;
+    height: 100%;
 }
 /*...................................bot end.................*/
 /****** LOGIN MODAL ******/

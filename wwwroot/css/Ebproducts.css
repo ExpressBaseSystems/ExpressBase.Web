@@ -20,6 +20,9 @@
 .eb-small-text{
     font-size:13px;
 }
+.strikethrough {
+    text-decoration: line-through;
+}
 /*bot*/
 .Eb-bot-header .navbar {
     height: auto;
@@ -431,12 +434,13 @@ pn {
 .price-tile-bdy {
     height: 230px;
 }
-    .pricing-items {
-        text-align: center;
-        padding: 10px;
-        font-size: 16px;       
-        font-weight:400;
-    }
+.pricing-items {
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #6b7c93;
+}
     .mr-8{
         margin-top:8px;
     }

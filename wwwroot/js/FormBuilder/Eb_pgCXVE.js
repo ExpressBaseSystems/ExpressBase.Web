@@ -23,7 +23,7 @@
     this.pgCXEshowCallback = function () {
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
         if (this.editor === 11)
-            window.editor.getDoc().setValue(this.PGobj.PropsObj[this.PGobj.CurProp]);
+            window.editor.setValue(atob(this.PGobj.PropsObj[this.PGobj.CurProp]));
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -187,7 +187,7 @@
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
         $(`${this.pgCXE_Cont_Slctr} .CodeMirror`).off("keyup").on("keyup", "textarea", function (e) {
-            this.PGobj.PropsObj[this.PGobj.CurProp] = $(".cm-variable").text();
+            this.PGobj.PropsObj[this.PGobj.CurProp] = btoa((window.editor.getValue()));
         }.bind(this));
     };
 

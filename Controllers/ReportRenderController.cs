@@ -31,6 +31,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SS_Report(string refid)
         {
+            Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);
             var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
             pclient.BearerToken = this.ServiceClient.BearerToken;
             pclient.Timeout = TimeSpan.FromMinutes(3);
@@ -42,6 +43,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine("--------------REPORT exception TS ---  " + DateTime.Now + "\n " + e.Message + "\n" + e.StackTrace);
 
             }
             return new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");

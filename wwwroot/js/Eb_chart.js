@@ -396,6 +396,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else
             dvcontainerObj.currentObj = obj;
         if (Pname == "Charttype") {
+            //this.prevObj = this.EbObject;
             if (obj.Charttype == 1) {
                 this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
                 this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
@@ -404,10 +405,25 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             }
+            //this.rearrangeObjects();
+            $("#diamension" + this.tableId).empty();
+            $("#measure" + this.tableId).empty();
+            $("#canvasDiv" + this.tableId).children("iframe").remove();
+            $("#myChart" + this.tableId).remove();
+            $("#map").empty();
+
+            this.EbObject.Xaxis.$values = [];
+            this.EbObject.Yaxis.$values = [];
+            this.columnInfo = this.EbObject;
+            
+            this.updateDragula();
+
         }
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
+                this.EbObject.Xaxis.$values = [];
+                this.EbObject.Yaxis.$values = [];
                 this.call2FD();
             }
         }
@@ -582,15 +598,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                         </div>
                     </div>
                 </div>
-                <div class="divHLType">
-                    <div class="chartHeader">Other</div>
-                    <div id="Other" class="chartBody">
-                        <div class="divLLType">
-                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/google.svg"></a></div>
-                            <div class="chartname">GoogleMap</div>
-                        </div>
-                    </div>
-                </div>
+                
             <div>
                 
             </ul>
@@ -599,6 +607,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             <button id='btnColumnCollapse${ this.tableId}' class='btn' style='display: inline-block;'>
             <i class='fa fa-cog' aria-hidden='true'></i>
             </button>`);
+        //<div class="divHLType">
+        //    <div class="chartHeader">Other</div>
+        //    <div id="Other" class="chartBody">
+        //        <div class="divLLType">
+        //            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/google.svg"></a></div>
+        //                <div class="chartname">GoogleMap</div>
+        //            </div>
+        //        </div>
+        //    </div>
         if (this.FD) {
             $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
         }
@@ -613,6 +630,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         this.bindEvents();
 
+        if (this.type !== "googlemap")
+            $("#graphDropdown_tab" + this.tableId).show();
+        else
+            $("#graphDropdown_tab" + this.tableId).hide();
     };
 
     this.bindEvents = function () {
@@ -981,7 +1002,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#myChart" + this.tableId).remove();
         //$("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
         $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
-
+        
         if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0)
             this.drawGraph();
 
@@ -1264,13 +1285,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.updateDragula = function () {
-        if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
+        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1) {
             if (this.drake)
                 this.drake.destroy();
             this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
                 accepts: this.acceptDrop.bind(this)
             });
             this.drake.on("drop", this.colDrop.bind(this));
+            if (this.type !== "")
+                this.type = "bar";
         }
         else {
             this.type = "googlemap";
@@ -1285,15 +1308,16 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.type !== "googlemap") {
             $("#X_col_name" + this.tableId).siblings("span").text("X-Axis");
             $("#Y_col_name" + this.tableId).siblings("span").text("Y-Axis");  
+            $("#graphDropdown_tab" + this.tableId).show();
         }
         else {
-
             $("#X_col_name" + this.tableId).siblings("span").text("Longitude");
-            $("#Y_col_name" + this.tableId).siblings("span").text("Lattitude");        
+            $("#Y_col_name" + this.tableId).siblings("span").text("Lattitude"); 
+            $("#graphDropdown_tab" + this.tableId).hide();
         }
 
         $("#X_col_name" + this.tableId).empty();
-        $("#Y_col_name" + this.tableId).empty();
+        $("#Y_col_name" + this.tableId).empty();        
 
         //this.appendColumns();
     };
@@ -1318,6 +1342,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         return false;
     };
+
+    this.rearrangeObjects = function () {
+        this.EbObject.DataSourceRefId = this.prevObj.DataSourceRefId;
+        this.EbObject.DSColumns = this.prevObj.DSColumns;
+        this.EbObject.Columns = this.prevObj.Columns;
+    }
 };
 
 function initMap() {

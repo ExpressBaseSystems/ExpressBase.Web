@@ -51,6 +51,11 @@ namespace ExpressBase.Web.Controllers
 				var fr = this.ServiceClient.Get<GetUserGroupResponse1>(new GetUserGroupRequest1());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
+			else if (type == "AnonymousUser")
+			{
+				var fr = this.ServiceClient.Get<GetAnonymousUserResponse>(new GetAnonymousUserRequest());
+				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
+			}
 			else if (type == "usergroup")
 			{
 				var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
@@ -72,9 +77,7 @@ namespace ExpressBase.Web.Controllers
 			else
 				return View();
 		}
-
-
-
+		
 
 		[HttpGet]
 		public IActionResult UserPreferences()
@@ -172,7 +175,15 @@ namespace ExpressBase.Web.Controllers
 			var temp = this.ServiceClient.Post<bool>(new UniqueCheckRequest { email = reqEmail });
 			return temp;
 		}
-		
+
+
+		//--------------MANAGE ANONYMOUS USER START------------------------------------
+		public IActionResult ManageAnonymousUser(int itemid)
+		{
+			
+			return View();
+		}
+
 
 
 		//----------------MANAGE USERGROUPS START----------------------------

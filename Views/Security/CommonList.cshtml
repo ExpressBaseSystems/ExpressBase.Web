@@ -20,6 +20,11 @@
         editor = "ManageUser";
         whichController = "Security";
     }
+    else if (ViewBag.ListType == "AnonymousUser")//anonymous user test version
+    {
+        editor = "ManageAnonymousUser";
+        whichController = "Security";
+    }
     else if (ViewBag.ListType == "roles")
     {
         editor = "ManageRoles";
@@ -82,7 +87,7 @@
         background-color: rgb(255,255,255) !important;
     }*/
 
-    .fa-pencil:hover {
+    .editviewclass:hover {
         color: blue;
     }
 
@@ -156,8 +161,12 @@
     <script>
         $(document).ready(function () {
             if ("@ViewBag.ListType" === "TestUser") {
-                //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info 
+                //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
                 var _metadata = ["7", "Id", "Name", "Nick Name", "Sex", "Email", "Phone Number", "Status", "_user", "_profPic" ];
+                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
+            }
+            else if ("@ViewBag.ListType" === "AnonymousUser") {
+                var _metadata = ["8", "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic" ];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
             }
             else if ("@ViewBag.ListType" === "TestUserGroup") {

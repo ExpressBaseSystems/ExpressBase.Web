@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+    .outer-section-createuser {
+        height: 100vh;
+        margin: 0% 5%;
+        font-family: open sans;
+        font-weight: 300;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding-bottom: 15px;
+    }
+</style>
+
+<div class="center">
+    <section class="outer-section-createuser" style="height: 640px;">
+        <div class="row">
+            <br />
+            <div class="col-md-8" style="margin-left:4%">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <div class="input-group" style="width: 91%;">
+                            <span class="input-group-addon" id=""><i class="fa fa-user" aria-hidden="true" style="display:inline-block"></i></span>
+                            <input id="txtFullName" style="display:inline-block; width:100%; margin-left: 0px;" class="form-control" type="email" name="Name" placeholder="Name" title="Name">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6" style="">
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-user-o" aria-hidden="true"></i></span>
+                            <input id="txtNickName" style="display:inline-block; width:100% " class="form-control" type="text" placeholder="Nick Name" title="Nick Name">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                            <input id="txtEmail" style="display:inline-block; width:100%" class="form-control" type="text" placeholder="Email ID" title="Email ID">
+                            <span class="input-group-addon" id="spanEmail" style="background-color: transparent;border: none;"><i class="fa fa-times" aria-hidden="true" style="color: transparent"></i></span>
+                        </div>
+                    </div>
+
+                    <div id="divPassword" class="form-group col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
+                            <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+        </div>
+        
+        <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
+        @*<button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;">Create</button>*@
+        <label id="lblMessage" style="color:red;padding-left: 36px;display:none;font-family: open sans; font-weight: 500;">  </label>
+    </section>
+    <div class="prof-setup-cropie">
+        <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="loginmodal-container cropie" id="cropsection">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

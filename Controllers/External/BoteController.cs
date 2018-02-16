@@ -35,140 +35,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        //[HttpGet]
-        //public string GetSamp(string refid, string socialId)
-        //    {
-        //        string result = "SocialId not in Database";
-
-        //        try
-        //        {
-        //            string cid = refid.Split('-')[0].Trim();
-        //            // string authResponse = AuthAndGetformlist(refid, socialId);
-        //            if (AuthAndGetformlist(refid, appid, socialId) != null)
-        //            {
-        //                var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-        //                var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-        //                dsobj.Status = resultlist.Data[0].Status;
-        //                dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-        //                result = dsobj.GetHtml();
-        //            }
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            result = e.Message;
-        //        }
-
-        //        return result;
-        //}
-
-        //[HttpGet]
-        //public string GetObjHtml(string refid, string appid, string socialId)
-        //{
-        //    var host = this.HttpContext.Request.Host;
-        //    string[] subdomain = host.Host.Split('.');
-        //    string whichconsole = null;
-        //    var req = this.HttpContext.Request.Form;
-        //    if (host.Host.EndsWith("azurewebsites.net"))
-        //    {
-        //        if (subdomain.Length == 4) // USER CONSOLE
-        //        {
-        //            if (!string.IsNullOrEmpty(req["console"]))
-        //            {
-        //                ViewBag.cid = subdomain[0];
-        //                whichconsole = "dc";
-        //            }
-        //            else
-        //            {
-        //                ViewBag.cid = subdomain[0];
-        //                whichconsole = "uc";
-        //            }
-
-        //        }
-        //        else // TENANT CONSOLE
-        //        {
-        //            ViewBag.cid = "expressbase";
-        //            whichconsole = "tc";
-        //        }
-        //    }
-        //    else if (host.Host.EndsWith("expressbase.com") || host.Host.EndsWith("expressbase.org"))
-        //    {
-        //        if (subdomain.Length == 3) // USER CONSOLE
-        //        {
-        //            if (!string.IsNullOrEmpty(req["console"]))
-        //            {
-        //                ViewBag.cid = subdomain[0];
-        //                whichconsole = "dc";
-        //            }
-        //            else
-        //            {
-        //                ViewBag.cid = subdomain[0];
-        //                whichconsole = "uc";
-        //            }
-
-        //        }
-        //        else // TENANT CONSOLE
-        //        {
-        //            ViewBag.cid = "expressbase";
-        //            whichconsole = "tc";
-        //        }
-        //    }
-        //    else if (host.Host.EndsWith("localhost"))
-        //    {
-        //        if (subdomain.Length == 2) // USER CONSOLE
-        //        {
-        //            if (!string.IsNullOrEmpty(req["console"]))
-        //            {
-        //                ViewBag.cid = subdomain[0];
-        //                whichconsole = "dc";
-        //            }
-        //            else
-        //            {
-        //                ViewBag.cid = subdomain[0];
-        //                whichconsole = "uc";
-        //            }
-        //        }
-        //        else // TENANT CONSOLE
-        //        {
-        //            ViewBag.cid = "expressbase";
-        //            whichconsole = "tc";
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (subdomain.Length == 5) // USER CONSOLE
-        //        {
-        //            if (!string.IsNullOrEmpty(req["console"]))
-        //            {
-        //                ViewBag.cid = subdomain[0];
-        //                whichconsole = "dc";
-        //            }
-        //            else
-        //            {
-        //                ViewBag.cid = subdomain[0];
-        //                whichconsole = "uc";
-        //            }
-        //        }
-        //        else
-        //        {
-        //            ViewBag.cid = "expressbase";
-        //            whichconsole = "tc";
-        //        }
-        //    }
-
-        //    // string authResponse = ;
-
-        //    if (AuthAndGetformlist(refid, appid, socialId, whichconsole) != null)
-        //    {
-        //        var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-        //        var dsobj = Common.EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-        //        dsobj.Status = resultlist.Data[0].Status;
-        //        dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-        //        return dsobj.GetHtml();
-        //    }
-
-        //    return "SocialId not in Database";
-        //}
-
         [HttpPost]
         public async Task<string> UploadImageOrginal(string base64, string filename, string refreshToken, string bearerToken)
         {
@@ -209,13 +75,13 @@ namespace ExpressBase.Web.Controllers
             Dictionary<string, string> _Meta;
             if (socialId.IsNullOrEmpty())
             {
-                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "anonymous", "true" }, { "phone", anon_phno }, { "emailId", anon_email } };
-//                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "anonymous", "true" }, { "phone", anon_phno }, { "emailId", anon_email }, { "appid", appid } };
+//                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "anonymous", "true" }, { "phone", anon_phno }, { "emailId", anon_email } };
+                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "anonymous", "true" }, { "phone", anon_phno }, { "emailId", anon_email }, { "appid", appid } };
             }
             else
             {
-                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "anonymous", "true" } };
-//                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "anonymous", "true" }, { "appid", appid } };
+//                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "anonymous", "true" } };
+                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "anonymous", "true" }, { "appid", appid } };
             }
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {

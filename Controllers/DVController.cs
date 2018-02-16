@@ -203,7 +203,7 @@ namespace ExpressBase.Web.Controllers
             return DvList;
         }
 
-        public string getdv(string refid, EbObjectType objtype, string dsrefid)
+        public string getdv(string refid, string objtype, string dsrefid)
         {
             DvObjectWithRelatedObjects Obj = new DvObjectWithRelatedObjects();
             if (refid != null)

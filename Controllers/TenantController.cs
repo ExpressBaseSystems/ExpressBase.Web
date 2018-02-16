@@ -70,7 +70,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult TenantDashboard()
         {
             ViewBag.AppType = TempData.Peek("apptype");
-            ViewBag.IsSSO = TempData.Peek("SSO").ToString();
+            ViewBag.IsSSO = TempData.Peek("SSO");
             //ViewBag.Email = TempData.Peek("reqEmail");
             var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
             ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);

@@ -280,8 +280,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         }
         else {
-            $("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
+            //$("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
             $("#sub_window_" + this.tableId).css("padding-top", "15px");
+            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
         }
     }
 
@@ -394,7 +395,16 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             commonO.Current_obj = obj;
         else
             dvcontainerObj.currentObj = obj;
-
+        if (Pname == "Charttype") {
+            if (obj.Charttype == 1) {
+                this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
+                this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+            }
+            else {
+                this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
+                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+            }
+        }
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
@@ -637,22 +647,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     $("#measure" + tid).append("<div class='colTile columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "</div>");
             }
         });
-        if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
-            if (this.drake)
-                this.drake.destroy();
-            this.drake = new dragula([document.getElementById("diamension" + tid), document.getElementById("measure" + tid), document.getElementById("X_col_name" + tid), document.getElementById("Y_col_name" + tid)], {
-                accepts: this.acceptDrop.bind(this)
-            });
-            this.drake.on("drop", this.colDrop.bind(this));
-        }
-        else {
-            if (this.drake)
-                this.drake.destroy();
-            this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
-                accepts: this.acceptDrop1.bind(this)
-            });
-            this.drake.on("drop", this.colDrop.bind(this));
-        }
+        this.updateDragula();
     };
 
     this.AddXcolumns = function (Xcol, i, obj) {
@@ -718,7 +713,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         var fltr_collection = [];
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
         var paramstxt = $(FdCont+" #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
-        if (paramstxt.length > 0) {
+        if (paramstxt != undefined) {
             var params = paramstxt.split(',');
             $.each(params, function (i, id) {
                 var v = null;
@@ -1269,6 +1264,24 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.updateDragula = function () {
+        if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
+            if (this.drake)
+                this.drake.destroy();
+            this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
+                accepts: this.acceptDrop.bind(this)
+            });
+            this.drake.on("drop", this.colDrop.bind(this));
+        }
+        else {
+            this.type = "googlemap";
+            if (this.drake)
+                this.drake.destroy();
+            this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
+                accepts: this.acceptDrop1.bind(this)
+            });
+            this.drake.on("drop", this.colDrop.bind(this));
+        }
+
         if (this.type !== "googlemap") {
             $("#X_col_name" + this.tableId).siblings("span").text("X-Axis");
             $("#Y_col_name" + this.tableId).siblings("span").text("Y-Axis");  
@@ -1282,7 +1295,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#X_col_name" + this.tableId).empty();
         $("#Y_col_name" + this.tableId).empty();
 
-        this.appendColumns();
+        //this.appendColumns();
     };
 
     this.acceptDrop1 = function (el, target, source, sibling) {

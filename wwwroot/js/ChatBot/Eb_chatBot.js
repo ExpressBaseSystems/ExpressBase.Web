@@ -69,9 +69,9 @@
     };
 
     this.contactSubmit = function (e) {
-        $(e.target).closest('.msg-cont').remove();
         this.msgFromBot("Thank you.");
-        this.authenticateAnon(email, phno);
+        this.authenticateAnon($("#anon_mail").val().trim(), $("#anon_phno").val().trim());
+        $(e.target).closest('.msg-cont').remove();
     }.bind(this);
 
 
@@ -124,7 +124,7 @@
 
     this.collectContacts = function () {
         this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
-        this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input type="email" class="plain-inp"><i class="fa fa-envelope-o" aria-hidden="true"></i></div><div class="contact-inp-wrap"><input type="tel" class="plain-inp"><i class="fa fa-phone" aria-hidden="true"></i></div><button name="contactSubmit" class="contactSubmit">submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
+        this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" class="plain-inp"><i class="fa fa-envelope-o" aria-hidden="true"></i></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" class="plain-inp"><i class="fa fa-phone" aria-hidden="true"></i></div><button name="contactSubmit" class="contactSubmit">submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
     };
 
     this.continueAsFBUser = function (e) {
@@ -410,9 +410,9 @@
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
 
             /////////////////////////////////////////////////
-            //setTimeout(function () {
-            //    $(".btn-box").find("[idx=0]").click();
-            //}.bind(this), this.typeDelay * 2 + 100);
+            setTimeout(function () {
+                $(".btn-box").find("[idx=0]").click();
+            }.bind(this), this.typeDelay * 2 + 100);
         }
         else {
             this.msgFromBot(`Hello ${this.FBResponse.name}, ${greeting}`);
@@ -440,7 +440,7 @@
     this.setFormControls = function () {
         this.formControls = [];
         $.each(this.curForm.controls, function (i, control) {
-            this.formFunctions.visibleIfs[control.ebSid] = new Function("form", control.visibleIf);
+            this.formFunctions.visibleIfs[control.ebSid] = new Function("form", atob(control.visibleIf));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
         }.bind(this));
         this.getControl(0);
@@ -471,19 +471,22 @@
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         var inpVal = this.getValue($input);
-        if (this.curCtrl.objType === "ImageUploader")
+        if (this.curCtrl.objType === "ImageUploader") {
             this.replyAsImage($msgDiv, $input[0], next_idx);
+            this.formValues[id] = this.lastval;
+        }
         else {
             if (this.curCtrl.objType === "Cards") {
                 this.lastval = $btn.closest(".card-cont").find(".card-label").text();
+                this.formValues[id] = this.lastval;
                 inpVal = this.lastval;
             }
             else
                 this.lastval = $('#' + id).val();
             this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.formValues[id] = this.lastval;
             this.callGetControl(this.lastCtrlIdx);
         }
-        this.formValues[id] = this.lastval;
         this.editingCtrlName = null;
         this.lastval = null;
     }.bind(this);
@@ -491,12 +494,15 @@
     this.callGetControl = function (idx) {
         if (idx !== this.formControls.length) {
             if (!this.formValues[this.editingCtrlName]) {
-                if (this.formFunctions.visibleIfs[this.curForm.controls[idx].ebSid]())
+                if (this.formFunctions.visibleIfs[this.curForm.controls[idx - 1].ebSid](this.formValues))//checks isVisible
                     this.getControl(idx);
+                else {
+                    this.lastCtrlIdx++;
+                    this.callGetControl(idx + 1);
+                }
             }
             else
-                this.enableCtrledit();
-
+                this.enableCtrledit(idx);
         }
         else {
             if ($("[name=formsubmit]").length === 0) {
@@ -504,7 +510,6 @@
                 this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
             }
             this.enableCtrledit();
-
         }
     };
 
@@ -553,7 +558,6 @@
         $msg.insertAfter($prevMsg);
         $('.eb-chatBox').scrollTop(99999999999);
     };
-
 
     this.uploadImage = function (url, ctrlname, idx) {
         console.log("uploadImage");

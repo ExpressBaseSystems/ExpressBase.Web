@@ -440,7 +440,8 @@
     this.setFormControls = function () {
         this.formControls = [];
         $.each(this.curForm.controls, function (i, control) {
-            this.formFunctions.visibleIfs[control.ebSid] = new Function("form", atob(control.visibleIf));
+            if (control.visibleIf.trim())//if visibleIf is Not empty
+                this.formFunctions.visibleIfs[control.ebSid] = new Function("form", atob(control.visibleIf));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
         }.bind(this));
         this.getControl(0);
@@ -456,6 +457,9 @@
             inpVal = $input.val().split("\\");
             inpVal = inpVal[inpVal.length - 1];
         }
+        else if ($input.attr("type") === "RadioGroup") {
+            inpVal = $(`input[name=${this.curCtrl.name}]:checked`).val()
+        }
         else
             var inpVal = $input.val();
         return inpVal.trim();
@@ -470,20 +474,24 @@
         this.lastCtrlIdx = (next_idx > this.lastCtrlIdx) ? next_idx : this.lastCtrlIdx;
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
-        var inpVal = this.getValue($input);
+        this.lastval = this.getValue($input);
         if (this.curCtrl.objType === "ImageUploader") {
             this.replyAsImage($msgDiv, $input[0], next_idx);
+            this.formValues[id] = this.lastval;// last value set from outer fn
+        }
+        else if (this.curCtrl.objType === "RadioGroup") {
+            this.sendCtrlAfter($msgDiv.hide(), $('#' + id).val() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.lastval;
+            this.callGetControl(this.lastCtrlIdx);
         }
         else {
             if (this.curCtrl.objType === "Cards") {
                 this.lastval = $btn.closest(".card-cont").find(".card-label").text();
-                this.formValues[id] = this.lastval;
-                inpVal = this.lastval;
             }
-            else
-                this.lastval = $('#' + id).val();
-            this.sendCtrlAfter($msgDiv.hide(), inpVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            else {
+                this.lastval = this.lastval || $('#' + id).val();
+            }
+            this.sendCtrlAfter($msgDiv.hide(), this.lastval + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.lastval;
             this.callGetControl(this.lastCtrlIdx);
         }
@@ -494,7 +502,7 @@
     this.callGetControl = function (idx) {
         if (idx !== this.formControls.length) {
             if (!this.formValues[this.editingCtrlName]) {
-                if (this.formFunctions.visibleIfs[this.curForm.controls[idx - 1].ebSid](this.formValues))//checks isVisible
+                if (!this.formFunctions.visibleIfs[this.curForm.controls[idx].ebSid] || this.formFunctions.visibleIfs[this.curForm.controls[idx].ebSid](this.formValues))//checks isVisible or no isVisible defined
                     this.getControl(idx);
                 else {
                     this.lastCtrlIdx++;
@@ -674,6 +682,7 @@
 
     this.showConfirm = function () {
         this.formValues = {};
+        this.formFunctions.visibleIfs = {};
         this.lastCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
         var msg = `Your ${this.curForm.name} application submitted successfully`;
@@ -729,10 +738,10 @@
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
 
-                /////////////////////////////////////////////////
+                /////////////////////////////////////////////////Form click
                 //setTimeout(function () {
                 //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=4]").click();
+                //    $(".btn-box").find("[idx=12]").click();
                 //}.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);

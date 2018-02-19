@@ -65,7 +65,8 @@
         $el.attr("eb-type", type);
         $el.attr("eb-type", type).attr("id", id);
     };
-    
+
+    //Edit mode
     if (this.EbObject){
         this.InitEditModeCtrls(this.EbObject);
     }

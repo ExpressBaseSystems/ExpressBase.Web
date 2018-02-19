@@ -102,58 +102,112 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-
-
-
 </style>
 
+<div id="ManageAnonymUserModal" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width:750px">
+        <div class="modal-content">
+            <div class="modal-header" style="">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Manage Anonymous User.</h4> </div>
+                </div>
+            </div>
+            <div class="modal-body" style="height:410px">
+                <input type="hidden" id="itemid"/>
+                <div id="loader" style=" margin-left:46%; margin-top:17%"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
+                <div id="modalBodyDiv">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Full Name</label>
+                                <input id="txtFullName" class="form-control" type="text" title="Full Name">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Email ID</label>
+                                <input id="txtEmailId" class="form-control" type="text" title="Email ID">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Phone Number</label>
+                                <input id="txtPhoneNumber" class="form-control" type="text" title="Phone Number">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Remarks</label>
+                                <textarea id="txtRemark" class="form-control" title="Remarks" style="height: 100px; resize:none;"></textArea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <a id="lnkGotoFbPage" target="_blank" href="#">
+                                    <img id="imgFbProfPic" class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' />
+                                    Click Here
+                                </a> to visit Facebook Page
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300; width:35%;">Application : </label>
+                                <label id="lblApplication" style="font-family: open sans; font-weight: 500;"></label>
+                            </div>
+                            <div class="form-group">  
+                                <label style="font-family: open sans; font-weight: 300;width:35%;">First Visit : </label>
+                                <label id="lblFirstVisit" style="font-family: open sans; font-weight: 500;"></label>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;width:100%;">Last Account Activity Details : </label>
+                                <label style="font-family: open sans; font-weight: 300;width:35%;padding-left: 20px;">Date and Time : </label>
+                                <label id="lblLastVisit" style="font-family: open sans; font-weight: 500;width:60%;"></label>
 
+                                <label style="font-family: open sans; font-weight: 300;width:35%;padding-left: 20px;">IP Address : </label>
+                                <label id="lblIpAdress" style="font-family: open sans; font-weight: 500;width:60%;"></label>
+
+                                <label style="font-family: open sans; font-weight: 300;width:35%;padding-left: 20px;">Browser : </label>
+                                <label id="lblBrowser" style="font-family: open sans; font-weight: 500;width:60%;"></label>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;width:35%;">Total Visits : </label>
+                                <label id="lblTotalVisits" style="font-family: open sans; font-weight: 500;">0</label>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;width:35%;">Last Upadated By : </label>
+                                <label id="lblLastUpdatedBy" style="font-family: open sans; font-weight: 500;"></label>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;width:35%;">Last Updated At : </label>
+                                <label id="lblLastUpdatedAt" style="font-family: open sans; font-weight: 500;"></label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="">
+                <button id="btnconvert" type="button" class="btn btn-default" style="float: left;">Convert</button>
+                <button id="btnupdate" type="button" class="btn btn-default" style="">Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="center" style="padding-left:5%; padding-right:5%;padding-top:1%;">
     <section class="outer-section-createuser" style="height: 550px;">
         <div class="row">
             <div class="form-inline">
-                @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
+                @if (editor == "ManageUser" || editor == "ManageRoles" || editor == "ManageUserGroups")
                 {
-                    <button href="" class="" style="margin-left: 30px;margin-top: 10px;"><i class="fa fa-plus-circle"></i> New</button>
+                    @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
+                    {
+                        <button href="" class="" style="margin-left: 30px;margin-top: 10px;"><i class="fa fa-plus-circle"></i> New</button>
+                    }
                 }
             </div>
         </div>
         <div id="divCommonList" style="padding:10px;">
             <table id="tblCommonList" class="table-striped"></table>
         </div>
-        @*@{
-                foreach (var element in Dict.Keys)
-                {
-                    <div class="row objitems" name="objBox">
-                        <div class="col-md-1">
-                            <input type="checkbox" aria-label="...">
-                        </div>
 
-                        <div class="col-md-8">
-                            <h4 name="head4" style="color:black;">@Dict[element]</h4>
-                            <p class="text-justify">dsgfds dgfrdhg dfhgdrewteberyrt reyhrtu6trujhfg reyer5y54</p>
-                            <h6>
-                                <i style="font-style:italic;">Created by Mr X on 12/09/2017 at 02:00 pm</i>
-                                <a style="margin-left:10px;">
-                                    <span name="Status" class="label label-primary">Status</span>
-                                    <span name="Version" class="label label-default">Version</span>
-                                    <span class="label label-success">Dependency</span>
-                                    <span name="Application" class="label label-danger">Application</span>
-                                    <span name="Module" class="label label-default">Module</span>
-                                </a>
-                            </h6>
-                        </div>
-                        @using (Html.BeginForm(editor, whichController, FormMethod.Post, new { target = "_blank" }))
-                    {
-                    <div class="col-md-2 pull-right">
-                        <input type="hidden" id="itemid" name="itemid" value="@element" />
-                        <input type="submit" class="btn btn-primary fa-input" value="Open &#xf054;" style="font-family: FontAwesome;">
-                    </div>
-                    }
-                    </div>
-                }
-            }*@
+
+
+
     </section>
 </div>
  

@@ -95,7 +95,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         EbByArrVCounter: 0,
         EbHlCounter: 0,
         EbVlCounter: 0,
-        EbSerialNumberCounter: 0
+        EbSerialNumberCounter: 0,
+        EbCalcFieldCounter:0
     };
     this.subSecIdCounter = {
         Countrpthead: 1,

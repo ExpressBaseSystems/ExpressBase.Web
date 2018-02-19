@@ -184,6 +184,23 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 
+		public string GetAnonymousUserInfo(int userid)
+		{
+			GetManageAnonymousUserResponse temp = this.ServiceClient.Post<GetManageAnonymousUserResponse>(new GetManageAnonymousUserRequest {Id = userid });
+			return JsonConvert.SerializeObject(temp.UserData);
+		}
+
+		public int UpdateAnonymousUserInfo(int itemid, string name, string email, string phone, string remarks)
+		{
+			UpdateAnonymousUserResponse temp = this.ServiceClient.Post<UpdateAnonymousUserResponse>(new UpdateAnonymousUserRequest { Id = itemid, FullName = name, EmailID = email, PhoneNumber = phone, Remarks = remarks });
+			return temp.RowAffected;
+		}
+
+		public int UpdateAnonymousUserToUser(int itemid, string name, string email, string phone, string remarks)
+		{
+			ConvertAnonymousUserResponse temp = this.ServiceClient.Post<ConvertAnonymousUserResponse>(new ConvertAnonymousUserRequest { Id = itemid, FullName = name, EmailID = email, PhoneNumber = phone, Remarks = remarks });
+			return temp.status;
+		}
 
 
 		//----------------MANAGE USERGROUPS START----------------------------

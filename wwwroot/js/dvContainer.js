@@ -78,7 +78,7 @@ var DvContainerObj = function (settings) {
                 filterValues = this.filterValues,
             );
         }
-        else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
+        else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
             this.dvcol[focusedId] = new eb_chart(
                 refid = this.dvRefid,
                 ver_num = this.ver_num,

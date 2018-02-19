@@ -2,8 +2,35 @@
     this.itemList = itemList;
     this.metadata = metadata;
 
+    //MODAL FIELDS-------------------
+    this.AnonymUserModal = $("#ManageAnonymUserModal");
+    this.itemid = $("#itemid");
+    this.loader = $("#loader");
+    this.modalBodyDiv = $("#modalBodyDiv");
+    this.userData = null;
+    this.txtFullName = $("#txtFullName");
+    this.txtEmailId = $("#txtEmailId");
+    this.txtPhoneNumber = $("#txtPhoneNumber");
+    this.txtRemark = $("#txtRemark");
+    this.imgFbProfPic = $("#imgFbProfPic");
+    this.lnkGotoFbPage = $("#lnkGotoFbPage");
+    this.lblApplication = $("#lblApplication");
+    this.lblFirstVisit = $("#lblFirstVisit");
+    this.lblLastVisit = $("#lblLastVisit");
+    this.lblTotalVisits = $("#lblTotalVisits");
+    this.lblLastUpdatedBy = $("#lblLastUpdatedBy");
+    this.lblLastUpdatedAt = $("#lblLastUpdatedAt");
+
+    this.btnUpdate = $("#btnupdate");
+    this.btnConvert = $("#btnconvert");
+
+
     this.init = function () {
         this.setTable();
+
+        this.AnonymUserModal.on('shown.bs.modal', this.initModal.bind(this));
+        this.btnUpdate.on('click', this.OnclickBtnUpdate.bind(this));
+        this.btnConvert.on('click', this.OnclickBtnConvert.bind(this));
     }
 
     this.setTable = function () {
@@ -73,7 +100,9 @@
             window.open("../Security/ManageUserGroups?itemid=" + id, "_blank");
         } 
         else if (this.metadata.indexOf("_anonymousUser") !== -1) {
-            window.open("../Security/ManageAnonymousUser?itemid=" + id, "_blank");
+            //window.open("../Security/ManageAnonymousUser?itemid=" + id, "_blank");
+            this.itemid = id;
+            this.AnonymUserModal.modal('show');
         } 
 
     }
@@ -92,9 +121,87 @@
         var id = data[9];
         if (id == "")
             id = '12345678';
-        return `<img class='img-thumbnail pull-right' src='http://graph.facebook.com/${id}/picture?type=square' />`;
+        return `<img class='img-thumbnail' src='http://graph.facebook.com/${id}/picture?type=square' />`;
     }
 
+    this.initModal = function () {
+        this.modalBodyDiv.hide();
+        this.loader.show();
+
+        $.ajax({
+            type: "POST",
+            url: "../Security/GetAnonymousUserInfo",
+            data: { userid : this.itemid },
+            success: this.getAnonymousUserInfoSuccess.bind(this)
+        });
+
+    }
+
+    this.getAnonymousUserInfoSuccess = function (data) {
+        this.loader.hide();
+        this.modalBodyDiv.show();
+        this.userData = JSON.parse(data)
+
+        this.txtFullName.val(this.userData.FullName);
+        this.txtEmailId.val(this.userData.Email);
+        this.txtPhoneNumber.val(this.userData.Phone);
+        this.txtRemark.val(this.userData.Remarks);
+
+        this.lnkGotoFbPage.attr("href", "http://www.facebook.com/" + this.userData.SocialId);
+        this.imgFbProfPic.attr("src", "http://graph.facebook.com/" + this.userData.SocialId + "/picture?type=square");
+        this.lblApplication.text(this.userData.ApplicationName);
+        this.lblFirstVisit.text(this.userData.FirstVisit);
+        this.lblLastVisit.text(this.userData.LastVisit);
+        this.lblTotalVisits.text(this.userData.TotalVisits);
+        this.lblLastUpdatedBy.text(this.userData.ModifiedBy);
+        this.lblLastUpdatedAt.text(this.userData.ModifiedAt);
+
+    }
+
+    this.OnclickBtnUpdate = function () {
+        this.btnUpdate.attr("disabled", "true");
+        $.ajax({
+            type: "POST",
+            url: "../Security/UpdateAnonymousUserInfo",
+            data: {
+                itemid: this.itemid,
+                name: this.txtFullName.val(),
+                email: this.txtEmailId.val(),
+                phone: this.txtPhoneNumber.val(),
+                remarks: this.txtRemark.val()
+            },
+            success: this.updateAnonymousUserInfoSuccess.bind(this)
+        });
+    }
+
+    this.updateAnonymousUserInfoSuccess = function (r) {
+        if (r > 0)
+            alert("Updated Successfully");
+        this.btnUpdate.attr("disabled", "false");
+    }
+
+    this.OnclickBtnConvert = function () {
+        if (confirm("Click OK to Continue")) {
+            this.btnConvert.attr("disabled", "true");
+            $.ajax({
+                type: "POST",
+                url: "../Security/ConvertAnonymousUserToUser",
+                data: {
+                    itemid: this.itemid,
+                    name: this.txtFullName.val(),
+                    email: this.txtEmailId.val(),
+                    phone: this.txtPhoneNumber.val(),
+                    remarks: this.txtRemark.val()
+                },
+                success: this.convertAnonymousUserToUserSuccess.bind(this)
+            });
+        }
+        
+    }
+
+    this.convertAnonymousUserToUserSuccess = function () {
+
+    }
 
     this.init();
 }

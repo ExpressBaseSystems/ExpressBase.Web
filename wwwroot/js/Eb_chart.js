@@ -382,7 +382,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
         this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
-        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
+            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        else
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         this.start();
         this.call2FD();
     }
@@ -1382,11 +1385,11 @@ function initMap() {
             });
         }
     }
-    directionsService.route(request, function (result, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-            directionsDisplay.setDirections(result);
-        }
-    });
+    //directionsService.route(request, function (result, status) {
+    //    if (status == google.maps.DirectionsStatus.OK) {
+    //        directionsDisplay.setDirections(result);
+    //    }
+    //});
     //}
 }
 

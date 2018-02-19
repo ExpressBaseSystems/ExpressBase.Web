@@ -51,6 +51,8 @@ var summaryFunc = {
 var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
     var containment = ".page";
     this.EbObject = dsobj;
+    this.EditObj = {};
+    this.isNew = ($.isEmptyObject(this.EbObject) === true) ? true : false;
     this.Rel_object;
     this.objCollection = {};
     this.splitarray = [];
@@ -149,6 +151,20 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         var point = (pixel * 72) / 96;
         return point;
     }
+    this.convertPointToPixel = function (val) {
+        var points = val;
+        var pixel = (pixel / 72) * 96;
+        return pixel;
+    }
+
+    this.replaceProp = function (source, destination) {
+        for (var objPropIndex in destination) {
+            if ((destination[objPropIndex].constructor === Array) !== true) {
+                source[objPropIndex] = destination[objPropIndex];
+            }
+        }
+    }
+
 
     this.getDataSourceColoums = function (refid) {
         if (refid !== "") {
@@ -260,25 +276,34 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.EbObject.Detail.push(obj);
     };
 
-    this.pageSplitters = function () {
+    this.pageSplitters = function () {                
         var j = 0;
         for (var sections in this.EbObjectSections) {
             $("#page").append(`<div class='${sections}s' eb-type='${sections}' id='${this.EbObjectSections[sections]}' 
             data_val='${j++}' style='width :100%;position: relative'> </div>`);
             this.sectionArray.push("#" + this.EbObjectSections[sections]);
-            //zero section adding by default.              
-            var SubSec_obj = new EbObjects["Eb" + sections](this.EbObjectSections[sections] + "0");
+            //zero section adding by default.  
+            if (this.isNew)
+                this.appendSubSection(sections, 1);
+            else
+                this.appendSubSection(sections, this.EditObj[this.repExtern.mapCollectionToSection(sections)].length); 
+        }
+        this.repExtern.headerSecSplitter(this.sectionArray);
+        this.headerBox1_Split();
+    };//add page sections
+
+    this.appendSubSection = function (sections, subSecCount) {
+        for (len = 0; len < subSecCount; len++) {
+            var SubSec_obj = new EbObjects["Eb" + sections](this.EbObjectSections[sections] + len);
             $("#" + this.EbObjectSections[sections]).append(SubSec_obj.$Control.outerHTML());
             SubSec_obj.SectionHeight = "100%";
             SubSec_obj.BackColor = "transparent";
             this.objCollection[this.EbObjectSections[sections] + "0"] = SubSec_obj;
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
-            this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.         
+            this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.
         }
-        this.repExtern.headerSecSplitter(this.sectionArray);
-        this.headerBox1_Split();
-    };//add page sections
+    };
 
     this.headerBox1_Split = function () {
         for (i = 0; i < 5; i++) {
@@ -894,24 +919,38 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.repExtern.minPgrid();
     }.bind(this);
 
-    this.init = function () {
-        if (this.EbObject === null) {
-            this.EbObject = new EbObjects["EbReport"]("Report1");
-            this.height = pages[this.type].height;
-            this.width = pages[this.type].width;
-            this.EbObject.PaperSize = this.type;
-            this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
-            this.pg.addToDD(this.EbObject);
-            $('#PageContainer,.ruler,.rulerleft').empty();
-            this.ruler();
-            this.createPage();
-            this.DragDrop_Items();
-            //this.minimap();
-        }
-        else {
+    this.newReport = function () {
+        this.EbObject = new EbObjects["EbReport"]("Report1");
         this.height = pages[this.type].height;
         this.width = pages[this.type].width;
-        }
+        this.EbObject.PaperSize = this.type;
+        this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
+        this.pg.addToDD(this.EbObject);
+        $('#PageContainer,.ruler,.rulerleft').empty();
+        this.ruler();
+        this.createPage();
+        this.DragDrop_Items();
+    };
+
+    this.editReport = function () {
+        this.EditObj = Object.assign({}, this.EbObject);
+        this.EbObject = new EbObjects["EbReport"](this.EditObj.Name);
+        this.type = pages[this.EditObj.PaperSize];
+        this.height = this.EditObj.Height + "pt";
+        this.width = this.EditObj.Width + "pt";
+        this.replaceProp(this.EbObject, this.EditObj);
+        this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
+        this.pg.addToDD(this.EbObject);
+        $('#PageContainer,.ruler,.rulerleft').empty();
+        this.ruler();
+        this.createPage();
+    };
+
+    this.init = function () {
+        if (this.EbObject === null)
+            this.newReport();
+        else
+            this.editReport();
 
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
         $("#reportLayer").on("click", function (e) {

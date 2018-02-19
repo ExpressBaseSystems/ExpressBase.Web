@@ -56,7 +56,7 @@
                             @using Newtonsoft.Json;
                             @{
                                 string[] wrkcpy = ViewBag.Workingcopy;
-                                if (wrkcpy == null)
+                                if (wrkcpy[0] == "")
                                 {
                                     <p>No working copies</p>
                                 }

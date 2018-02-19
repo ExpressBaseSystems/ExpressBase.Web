@@ -226,6 +226,21 @@
     this.setBackgroud = function (url) {
         $(".page").css("background", "url(http://eb_roby_dev.localhost:5000/static/" + url + ".jpg) no-repeat");
     };
+
+    this.mapCollectionToSection = function (sec) {
+        var collection = "";
+        if (sec === "ReportHeader")
+            collection = "ReportHeaders";
+        else if (sec === "PageHeader")
+            collection = "PageHeaders";
+        else if (sec === "ReportDetail")
+            collection = "Detail";
+        else if (sec === "PageFooter")
+            collection = "PageFooters";
+        else if (sec === "ReportFooter")
+            collection = "ReportFooters";
+        return collection;
+    };
    
     this.minMaxToolbar();
     this.keyClickDoc();

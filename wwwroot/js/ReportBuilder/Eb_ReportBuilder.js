@@ -93,7 +93,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         EbByArrVCounter: 0,
         EbHlCounter: 0,
         EbVlCounter: 0,
-        EbSerialNumberCounter: 0
+        EbSerialNumberCounter: 0,
+        EbCalcFieldCounter:0
     };
     this.subSecIdCounter = {
         Countrpthead: 1,
@@ -907,7 +908,11 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.DragDrop_Items();
             //this.minimap();
         }
-        else { }
+        else {
+        this.height = pages[this.type].height;
+        this.width = pages[this.type].width;
+        }
+
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
         $("#reportLayer").on("click", function (e) {
             $(e.target).closest("div").toggleClass("layeractive");

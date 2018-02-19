@@ -61,6 +61,7 @@
         }.bind(this));
         setTimeout(function () {
             Proc(editModeObj, this.rootContainerObj);
+            this.renderCtrls();
         }.bind(this), 1000);
     };
 
@@ -70,8 +71,14 @@
         var id = type + (this.controlCounters[type + "Counter"])++;
         $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
         $el.on("focus", this.controlOnFocus.bind(this));
-        $el.attr("eb-type", type);
         $el.attr("eb-type", type).attr("id", id);
+    };
+
+    this.renderCtrls = function () {
+        $.each(this.rootContainerObj.Controls.$values, function (i, ctrl) {
+            $(".eb-chatBox-dev").append(ctrl.BareControlHtml);
+            this.initCtrl(ctrl.BareControlHtml);
+        }.bind(this));
     };
 
     if (this.EbObject) {

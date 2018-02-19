@@ -29,6 +29,9 @@
 .strikethrough {
     text-decoration: line-through;
 }
+.float-l {
+    float: left;
+}
 /*bot*/
 .Eb-bot-header .navbar {
     height: auto;
@@ -78,7 +81,6 @@ margin-bottom:15px;
     text-align: center;
 }
 .bot_video_promo {
-    background-color: #fafafa;
     padding-bottom:50px;
 }
 .eb_bot_motion_frame {
@@ -114,8 +116,8 @@ margin-bottom:15px;
     position: absolute;
     top: 6% !important;
     height: 100% !important;
-    width: 90% !important;
-    right: 5%;
+    width: 100% !important;
+    right: 0;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.69) !important;
 }
 
@@ -136,18 +138,7 @@ margin-bottom:15px;
    
     padding-top: 2.5vh;
 }
-.icon-box-demo {
-    width:14.28%;
-    float:left;
-    text-align:center;
-}
 @media only screen and (max-width: 500px) {
-    .icon-box-demo {
-        width: 50%;
-        padding: 5px;
-        margin-bottom: 20px;
-        text-align: center;
-    }
     .usecase-content-cont{
         width:100%;
         padding:10px;
@@ -187,29 +178,6 @@ margin-bottom:15px;
     width: 100%;
     float:left;
 }
-
-.icon-round {
-    /*border-top: solid 1px #444;
-        border-left: solid 1px #444;*/
-    height: 5vw;
-    width: 5vw;
-    display: inline-block;
-    text-align: center;
-}
-    .icon-round:hover {
-        /*border-top: solid 1px #444;
-            border-left: solid 1px #444;*/
-        margin-top: -5px;
-        margin-bottom: 5px;
-        padding-bottom: 6px;
-        transition-duration: 0.1s;
-        box-shadow: 0px 8px 24px -18px #000;
-        transition-timing-function: ease-out;
-    }
-    .icon-round img {
-        margin-top: calc(50% - 20px);
-    }
-
 .icon-tbl {
     width: 100%;
 }
@@ -232,17 +200,6 @@ margin-bottom:15px;
     text-align: center;
     margin-top: 0;
     margin: 25px;
-}
-
-.icon-label {
-    color: #8A939E;
-    font-size: 14px;
-    margin-top: 4px;
-    font-family: "Raleway Semibold",sans-serif;
-    border-bottom: solid 1px #D6D6D6;
-    padding-bottom: 5px;
-    transition-duration: 0.1s;
-    transition-timing-function: ease-out;
 }
 
 .no-padd {
@@ -279,9 +236,7 @@ pn {
     display: block;
     line-height: 1.5;
 }
-.float-l {
-    float: left;
-}
+
 .pg-line{
     line-height:1.5;
 }
@@ -306,6 +261,14 @@ pn {
     font-size: 15px;
 }
 /*live demos section*/
+/*.icon-box-demo-no {
+width:30%;
+float:left;
+}
+.icon-box-demo-img {
+    width:70%;
+    float:left;
+}*/
 .bot-prob-img-sec {
     float: left;
     width: 14%;  
@@ -335,7 +298,7 @@ pn {
     font-weight:400;
 }
 .mr-t-10 {
-    margin-top:8.6%;
+    margin-top:2.6%;
 }
 .prob-sol-container {
     float: left;
@@ -350,14 +313,10 @@ pn {
 }
 .prob-container-text {
     float: left;
-    width: 95%;
+    width: 100%;
     height:100%;
 }
-.prob-container-symb {
-    float: left;
-    width: 5%;
-    height: 100%;
-}
+
 /*...................................bot end.................*/
 /****** LOGIN MODAL ******/
 .loginmodal-container {
@@ -492,7 +451,7 @@ pn {
     width:100%;
 }
 .price-tile-bdy {
-    height: 230px;
+    
 }
 .pricing-items {
     text-align: center;
@@ -500,15 +459,7 @@ pn {
     font-size: 16px;
     font-weight: 400;
     color: #6b7c93;
-}
-    .mr-8{
-        margin-top:8px;
-    }
-.Enterprise-price {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+}    
 .chatBoticons {
     font-size: 68px;
     color: #198bbe;
@@ -522,3 +473,65 @@ pn {
     .bot-faq .faqs {
         margin-top:20px;
     }
+    /*dfgfdhgfhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh*/
+.livDemo_icons {
+    width:100%;
+}
+.liveDemos_iconContainers{
+    width:14.28%;
+    padding:10px;   
+}
+.liveDemos_iconContainers_sub {
+    width: 100%;
+    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+    padding: 10px;
+    border-radius: 4px;
+    transition: all .2s ease-in-out;
+    color: #797878;
+   cursor:pointer;
+}
+    .liveDemos_iconContainers_sub:focus {
+        border-bottom: 4px solid green;
+        background: #e5f3f5;   
+        outline:none;
+    }
+    .liveDemos_iconContainers_sub:hover {
+        transform: scale(1.1);
+        background:#fafafa;
+    }
+.icon_noSec {
+    width: 20%;
+    height: 100%;
+    font-size: 50px;
+}
+.icon_noSec span{
+   align-self:flex-end;
+}
+.icon_imgSec {
+    width: 80%;
+    text-align: center;
+    padding-top: 5px;
+}
+.demo_nameFIC {
+    font-size: 11px;
+    margin-top: 5px;
+}
+.icon_imgSec img{
+    width: 40%;
+}
+.platform-desc{
+   
+}
+.descript_cont{
+    height:100%;
+    padding:2px;
+}
+.descript_cont_second {
+    padding: 35px;
+    line-height: 2;
+    font-size: 16px;
+    color: #696b6d;
+}
+.b {
+    border-right: 1px solid #ccc;
+}

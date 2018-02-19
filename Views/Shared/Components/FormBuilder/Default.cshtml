@@ -1,14 +1,14 @@
 ﻿@using ExpressBase.Common.Objects;
+@using ExpressBase.Common.Structures;
 @using ExpressBase.Objects;
 @using ExpressBase.Common.Objects.Attributes;
-
 
 @{
     //int typeInt = 0//(string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
     EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
     int typeInt = Convert.ToInt32(ViewBag.ObjType);
 
-    var _builderType = (BuilderType)BuilderType.FilterDialog;//(BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
+    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
     var _toolBox = new EbToolbox(_builderType);
 }
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
@@ -27,7 +27,7 @@
         </div>
 
         <div id="form-buider-form" eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form">
-          *@Html.Raw(ViewBag.Html);
+            *@Html.Raw(ViewBag.Html);
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
             @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
         </div>

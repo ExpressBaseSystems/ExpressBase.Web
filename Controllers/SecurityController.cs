@@ -106,8 +106,9 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		//--------------MANAGE USER START------------------------------------
-		public IActionResult ManageUser(int itemid)
+		public IActionResult ManageUser(int itemid, string AnonymousUserInfo)
 		{
+			Dictionary<string, string> dict = new Dictionary<string, string>();				
 			List<EbRole> Sysroles = new List<EbRole>();
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
 			{
@@ -124,7 +125,13 @@ namespace ExpressBase.Web.Controllers
 				UserStatus.Add(status.ToString());
 			}
 			ViewBag.UserStatusList = UserStatus;
-			if (itemid > 0)
+
+			if(itemid == 1)
+			{
+				dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(AnonymousUserInfo);
+				ViewBag.U_Info = dict;
+			}
+			else if (itemid > 1)
 			{
 				ViewBag.U_Info = fr.UserData;
 				ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
@@ -153,6 +160,7 @@ namespace ExpressBase.Web.Controllers
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],
 				EmailPrimary = Dict["email"],
+				Password = Dict["pwd"],
 				EmailSecondary = Dict["alternateemail"],
 				DateOfBirth = Dict["dob"],
 				Sex = Dict["sex"],
@@ -196,7 +204,7 @@ namespace ExpressBase.Web.Controllers
 			return temp.RowAffected;
 		}
 
-		public int UpdateAnonymousUserToUser(int itemid, string name, string email, string phone, string remarks)
+		public int ConvertAnonymousUserToUser(int itemid, string name, string email, string phone, string remarks)
 		{
 			ConvertAnonymousUserResponse temp = this.ServiceClient.Post<ConvertAnonymousUserResponse>(new ConvertAnonymousUserRequest { Id = itemid, FullName = name, EmailID = email, PhoneNumber = phone, Remarks = remarks });
 			return temp.status;

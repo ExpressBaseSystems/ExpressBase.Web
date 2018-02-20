@@ -38,7 +38,7 @@ namespace ExpressBase.Web.Controllers
 
             var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid=null });
             var dsobj = resultlist.Dsobj;
-            dsobj.AfterRedisGet(this.Redis);
+            dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
             ViewBag.dvObject = dsobj;
             ViewBag.dvRefId = refid;
             ViewBag.filterValues = filterValues;

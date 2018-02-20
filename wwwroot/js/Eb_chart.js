@@ -238,7 +238,11 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
         //    );
     };
 };
-var Xlabel, Ylabel;
+var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [];
+var informaion = function (nam, val) {
+    this.name = nam;
+    this.value = val;
+}
 var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
     this.columnInfo = null;
     this.data = null;
@@ -399,7 +403,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else
             dvcontainerObj.currentObj = obj;
         if (Pname == "Charttype") {
-            //this.prevObj = this.EbObject;
+            this.prevObj = this.EbObject;
             if (obj.Charttype == 1) {
                 this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
                 this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
@@ -408,18 +412,18 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             }
-            //this.rearrangeObjects();
-            $("#diamension" + this.tableId).empty();
-            $("#measure" + this.tableId).empty();
+            this.rearrangeObjects();
+            //$("#diamension" + this.tableId).empty();
+            //$("#measure" + this.tableId).empty();
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
-            $("#map").empty();
+            $("#map").remove();
 
-            this.EbObject.Xaxis.$values = [];
-            this.EbObject.Yaxis.$values = [];
+            //this.EbObject.Xaxis.$values = [];
+            //this.EbObject.Yaxis.$values = [];
             this.columnInfo = this.EbObject;
             
-            this.updateDragula();
+            this.updateDragula("Changed");
 
         }
         if (Pname == "DataSourceRefId") {
@@ -798,7 +802,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.dataset = [];
         this.XLabel = [];
         this.YLabel = [];
-        var xdx = [], ydx = [];
+        var xdx = [], ydx = [], ml = [], info = [];
         if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
 
             $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
@@ -826,6 +830,26 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     }
                 }
             }
+
+            $.each(this.columnInfo.MarkerLabel.$values, function (i, obj) {
+                if(i === 0)
+                    ml.push(obj.data);
+            });
+
+            if (ml.length > 0) {
+                $.each(this.data, function (i, value) {
+                    markLabel.push(value[ml[0]].charAt(0));
+                });
+            }
+            Inform = [];
+            $.each(this.columnInfo.InfoWindow.$values, function (i, obj) {
+                info = [];
+                $.each(this.data, function (k, value) {
+                    info.push(value[obj.data]);
+                });
+                Inform.push(new informaion(obj.name, info));
+            }.bind(this));
+            
         }
     };
     
@@ -845,9 +869,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $("#canvasDiv" + this.tableId).append("<div id='map' style='height:400px;width:100%;'></div>");
             Xlabel = this.XLabel;
             Ylabel = this.YLabel;
+            showRoute = this.EbObject.ShowRoute;
             if (!this.isMyScriptLoaded("https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js")) {
                 $("#parent-div0").prepend(`
-                <script src= "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js" ></script >
+                <script src= "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js" ></script>
                 <script async defer
                     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh12bqSKCYb6sJ9EVzNkEyXEDZ__UA-TE&callback=initMap">
                 </script>`);
@@ -954,6 +979,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         else {
             this.type = this.type.toLowerCase();
+            $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.type + "&nbsp;<span class = 'caret'></span>")
         }
         
         if (this.type == "area" || this.type == "line") {
@@ -1287,7 +1313,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             });
     };
 
-    this.updateDragula = function () {
+    this.updateDragula = function (status) {
         if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1) {
             if (this.drake)
                 this.drake.destroy();
@@ -1297,6 +1323,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.drake.on("drop", this.colDrop.bind(this));
             if (this.type !== "")
                 this.type = "bar";
+            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
         }
         else {
             this.type = "googlemap";
@@ -1306,6 +1333,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 accepts: this.acceptDrop1.bind(this)
             });
             this.drake.on("drop", this.colDrop.bind(this));
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         }
 
         if (this.type !== "googlemap") {
@@ -1319,8 +1347,19 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#graphDropdown_tab" + this.tableId).hide();
         }
 
-        $("#X_col_name" + this.tableId).empty();
-        $("#Y_col_name" + this.tableId).empty();        
+        if (status !== undefined) {
+            if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0) {
+                if (this.type !== "googlemap") {
+                    $.each(this.EbObject.Yaxis.$values, function (i, obj) {
+                        this.columnInfo.LegendColor.$values.push(new ChartColor(obj.name, getRandomColor()));
+                    }.bind(this));
+                }
+                this.drawGeneralGraph();
+            }
+               
+        }
+        //$("#X_col_name" + this.tableId).empty();
+        //$("#Y_col_name" + this.tableId).empty();        
 
         //this.appendColumns();
     };
@@ -1350,13 +1389,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.EbObject.DataSourceRefId = this.prevObj.DataSourceRefId;
         this.EbObject.DSColumns = this.prevObj.DSColumns;
         this.EbObject.Columns = this.prevObj.Columns;
+        this.EbObject.Xaxis = this.prevObj.Xaxis;
+        this.EbObject.Yaxis = this.prevObj.Yaxis;
     }
 };
 
 function initMap() {
-    var directionsDisplay;
+    var infowindow = new google.maps.InfoWindow();
     var directionsService = new google.maps.DirectionsService();
-    directionsDisplay = new google.maps.DirectionsRenderer();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
     var mid = Math.floor(Xlabel.length / 2);
     var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 14,
@@ -1370,11 +1411,13 @@ function initMap() {
     var marker, i;
     for (i = 0; i < Xlabel.length; i++) {
         var latlng = new google.maps.LatLng(Ylabel[i], Xlabel[i]);
+
         marker = new google.maps.Marker({
             position: latlng,
             map: map,
-            label: "A",
+            label: markLabel[i],
         });
+
         if (i == 0) request.origin = marker.getPosition();
         else if (i == Xlabel.length - 1) request.destination = marker.getPosition();
         else {
@@ -1383,13 +1426,30 @@ function initMap() {
                 location: marker.getPosition(),
                 stopover: true
             });
-        }
+        }        
+        
+        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+            return function () {
+                var content = "";
+                $.each(Inform, function (k, obj) {
+                    content += obj.name + ":" + obj.value[i]+"</br>";
+                });
+                if (content === "")
+                    content = "no details";
+                infowindow.setContent(content);
+                infowindow.setOptions({ maxWidth: 200 });
+                infowindow.open(map, marker);
+            }
+        })(marker, i));
+
     }
-    //directionsService.route(request, function (result, status) {
-    //    if (status == google.maps.DirectionsStatus.OK) {
-    //        directionsDisplay.setDirections(result);
-    //    }
-    //});
+    if (showRoute) {
+        directionsService.route(request, function (result, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(result);
+            }
+        });
+    }
     //}
 }
 

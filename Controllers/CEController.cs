@@ -116,24 +116,24 @@ namespace ExpressBase.Web.Controllers
         //}
 
         
-        [HttpGet]
-        public IActionResult SqlFunction_Editor()
-        {
-            ViewBag.Header = "New Sql Function";
-            ViewBag.VersionNumber = 1;
-            ViewBag.Obj_id = null;
-            ViewBag.Code = "CREATE OR REPLACE FUNCTION function_name(p1 type, p2 type) \nRETURNS type AS \n$BODY$ \nBEGIN \n\t-- logic \nEND \n$BODY$ \nLANGUAGE language_name";
-            ViewBag.IsNew = "true";
-            ViewBag.EditorHint = "CodeMirror.hint.sql";
-            ViewBag.EditorMode = "text/x-pgsql";
-            ViewBag.Icon = "fa fa-database";
-            ViewBag.ObjType = (int)EbObjectTypes.SqlFunction;
-            ViewBag.ObjectName = "*Untitled";
-            ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
-                                            //   ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult SqlFunction_Editor()
+        //{
+        //    ViewBag.Header = "New Sql Function";
+        //    ViewBag.VersionNumber = 1;
+        //    ViewBag.Obj_id = null;
+        //    ViewBag.Code = "CREATE OR REPLACE FUNCTION function_name(p1 type, p2 type) \nRETURNS type AS \n$BODY$ \nBEGIN \n\t-- logic \nEND \n$BODY$ \nLANGUAGE language_name";
+        //    ViewBag.IsNew = "true";
+        //    ViewBag.EditorHint = "CodeMirror.hint.sql";
+        //    ViewBag.EditorMode = "text/x-pgsql";
+        //    ViewBag.Icon = "fa fa-database";
+        //    ViewBag.ObjType = (int)EbObjectTypes.SqlFunction;
+        //    ViewBag.ObjectName = "*Untitled";
+        //    ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
+        //                                    //   ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+        //    ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
+        //    return View();
+        //}
 
         //[HttpPost]
         //public IActionResult SqlFunction_Editor(int i)

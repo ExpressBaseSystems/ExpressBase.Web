@@ -241,6 +241,26 @@
             collection = "ReportFooters";
         return collection;
     };
+
+    this.replaceProp = function (source, destination) {
+        for (var objPropIndex in source) {
+            if ((source[objPropIndex].constructor === Array) !== true) {
+                source[objPropIndex] = destination[objPropIndex];
+            }
+        }
+    }
+
+    this.convertTopoints = function (val) {
+        var pixel = val;
+        var point = (pixel * 72) / 96;
+        return point;
+    }
+    this.convertPointToPixel = function (val) {
+        var points = val;
+        var pixel = (pixel / 72) * 96;
+        return pixel;
+    }
+
    
     this.minMaxToolbar();
     this.keyClickDoc();

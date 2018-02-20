@@ -213,7 +213,7 @@
         this.loadFontStyle();
         this.loadFontFamily();
         this.loadFontSize();
-        $("#" + this.ToggleId).on("click", this.toggleModal.bind(this));
+        $("body").on("click", "#" + this.ToggleId, this.toggleModal.bind(this));
         $('#googleFont').on('change', this.loadFont.bind(this));
         $('#fontStyle').on('change', this.LoadFontStyle.bind(this));
         $('#fontSize').on('change', this.getFontSize.bind(this));

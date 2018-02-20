@@ -10,7 +10,7 @@
     this.PropsObj = {};
     this.CXVE = {};
     this.$hiddenProps = {};
-    this.imgSlctrs = {};
+    this.ImgSlctrs = {};
     this.IsSortByGroup = true;
     this.PropertyChanged = function (obj) { };
     this.DD_onChange = function (e) { };
@@ -91,10 +91,18 @@
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
-        else if (type === 17) {  //  If string editor
+        else if (type === 14) {  //  If FontSlctrs
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-            this.imgSlctrs[name] = new imageUploader({
+            this.FontSlctrs[name] = new FontEditor({
+                ContainerId: "fs_" + this.wraperId,
+                ToggleId: "pgCXbtn_" + elemId
+            });
+        }
+        else if (type === 17) {  //  If imageUploader
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+                + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+            this.ImgSlctrs[name] = new imageUploader({
                 Container: "mb_" + this.wraperId,
                 Controller: this.wc,
                 TenantId: this.cid,
@@ -105,7 +113,7 @@
         else if (type === 15) {  //  If expandable
             valueHTML = '<input type="text" for="' + name + '" readonly value="' + this.getExpandedValue(value) + '" style="width:100%; direction: rtl;" />';
             valueHTML += "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
-            var subRow_html = "";
+            subRow_html = "";
             var _meta = meta.submeta;
             var _obj = value;
             arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
@@ -250,7 +258,7 @@
     //Creates Table rows and group them by property Group name 
     this.buildRows = function () {
         var propArray = [];
-        for (var prop in this.PropsObj) { propArray.push(prop); }
+        for (var property in this.PropsObj) { propArray.push(property); }
         propArray.sort();
         var prop = null;
         for (var i in propArray) {
@@ -290,7 +298,7 @@
 
     //Add a control name to Control DD
     this.addToDD = function (obj) {
-      //  this.AllObjects[obj.EbSid] = obj;
+        //  this.AllObjects[obj.EbSid] = obj;
         var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
         var _name = (obj.Name || obj.name);
         if ($(".pgCXEditor-bg").css("display") !== "none") {
@@ -497,7 +505,7 @@
     this.toggleSubPropRows = function (e) {
         var t = 0;
         if (e.hasOwnProperty('originalEvent'))
-            var t = 200;
+            t = 200;
         var $parentPropRow = $(e.target).closest("tr");
         var isExpanded = $parentPropRow.attr("is-expanded") === 'true';
         var subtype = $parentPropRow.attr("name").slice(0, -2);
@@ -543,7 +551,8 @@
         this.Metas = metas;
         this.PropsObj = props;
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
-        this.imgSlctrs = {};
+        this.ImgSlctrs = {};
+        this.FontSlctrs = {};
         this.InitPG();
         $("#" + this.wraperId + " .propgrid-helpbox").show();
         //console.log("default test :" + JSON.stringify(props));

@@ -7,7 +7,7 @@
     this.U_Groups = ugroups;
     this.r2rList = r2rList;
     this.statusList = userstatusList;
-    this.itemId = $("#userid").val();
+    this.itemId = parseInt($("#userid").val());
     this.dependentList = [];
     this.dominantList = [];
 
@@ -15,7 +15,7 @@
     this.txtName = $("#txtFullName");
     this.txtNickName = $("#txtNickName");
     this.txtEmail = $("#txtEmail");
-    //this.pwdPassword = $("#pwdPassword");
+    this.pwdPassword = $("#pwdPassword");
     this.lblMessage = $("#lblMessage");
     this.txtDateOfBirth = $("#txtDateOfBirth");
     this.txtAlternateEmail = $("#txtAlternateEmail");
@@ -57,7 +57,7 @@
     }
 
     this.initForm = function () {
-        if (this.itemId > 0) {
+        if (this.itemId > 1) {
             $(divFormHeading).text("Edit User");
             $(btnCreateUser).text("Update");
             //this.txtName.attr("disabled", "true");
@@ -66,6 +66,16 @@
             this.divPassword.css("display", "none");
 
             this.initUserInfo();
+            this.initFbConnect();
+        }
+        else if (this.itemId === 1){
+            $(divFormHeading).text("Create User");
+            this.btnFbConnect.css("display", "none");
+            this.txtName.val(this.userinfo["FullName"]);
+            this.txtEmail.val(this.userinfo["EmailID"]);
+            this.txtPhPrimary.val(this.userinfo["PhoneNumber"]);
+            $("#lblFbId").attr("data-id", this.userinfo["SocialID"]);
+            $("#userFbLink").text(this.userinfo["FullName"]);
             this.initFbConnect();
         }
         else {
@@ -88,7 +98,7 @@
         var st = "#divGender input:radio[value='"+this.userinfo["sex"]+"']";
         $(st).attr("checked", "checked");
         $("#lblFbId").attr("data-id", this.userinfo["fbid"]);
-        $("#userFbLink").text(this.userinfo["fbname"]);
+        $("#userFbLink").text((this.userinfo["fbname"] == "") ? this.userinfo["fullname"] : this.userinfo["fbname"]);
         var stus = this.statusList[this.userinfo["statusid"]];
         if (stus === "Active")
             this.chkboxActive.prop("checked", "true");
@@ -327,7 +337,7 @@
 
         $("#btnCreateUser").attr("disabled", "true");
 
-        var oldstus = parseInt(this.userinfo["statusid"]);
+        var oldstus = (this.itemid > 1) ? parseInt(this.userinfo["statusid"]) : -1;
         var newstus = 0;
         if (!this.chkboxActive.prop("checked"))
             newstus = 1;
@@ -340,7 +350,7 @@
         dict["fullname"] = this.txtName.val();
         dict["nickname"] = this.txtNickName.val();
         dict["email"] = this.txtEmail.val();
-        //dict["Pwd"] = this.PwdPassword.val();
+        dict["pwd"] = this.pwdPassword.val();
         dict["dob"] = this.txtDateOfBirth.val();
         dict["sex"] = $("#divGender input:radio:checked").attr("value");
         dict["alternateemail"] = this.txtAlternateEmail.val();
@@ -357,7 +367,7 @@
 
         $.post("../Security/SaveUser",
             {
-                "userid": $('#userid').val(),
+                "userid": (this.itemId === 1) ? 0 : this.itemId ,
                 "usrinfo": JSON.stringify(dict)
             }, function (result) {
                 if (result > -1) {

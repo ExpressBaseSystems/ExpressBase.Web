@@ -11,10 +11,17 @@
 
     this.CXE_OKclicked = function () {
         if (this.editor === 17) {
-            var imgId = this.PGobj.imgSlctrs[this.PGobj.CurProp].getId();
+            var imgId = this.PGobj.ImgSlctrs[this.PGobj.CurProp].getId();
             this.PGobj.PropsObj[this.PGobj.CurProp] = imgId;
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(imgId);
         }
+        else
+            if (this.editor === 14) {
+                var FSObj = this.PGobj.FontSlctrs[this.PGobj.CurProp].fontEdSubmit();
+                this.PGobj.PropsObj[this.PGobj.CurProp] = FSObj;
+                $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(FSObj));
+            }
+
 
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
@@ -32,7 +39,7 @@
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurProplabel = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp;
-        if (this.editor !== 17)
+        if (!(this.editor === 17 || this.editor === 14 ))
             $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
@@ -419,7 +426,7 @@
             if (this.PGobj.CurProp === "Controls")///////////////////////
                 obj = this.PropsObj.Controls.GetByName(id);
             else
-                obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid == $e.attr("id"); })[0];
+                obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];
         }
         else if (this.editor === 9 || this.editor === 10) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
@@ -459,7 +466,7 @@
             + '</div>';
         $(this.PGobj.$wraper).append(CXVE_html);
 
-        $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div>');
+        $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="fs_' + this.PGobj.wraperId + '"> </div>');
     }
     this.Init();
 };

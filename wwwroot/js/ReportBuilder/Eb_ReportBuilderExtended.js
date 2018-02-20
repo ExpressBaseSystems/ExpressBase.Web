@@ -1,4 +1,5 @@
-﻿var ReportExtended = function () {
+﻿var ReportExtended = function (collection) {
+    this.objCollection = collection;
     this.sideBar = $("#side-toolbar");
     this.pageContainer = $("#page-outer-cont");
     this.pGcontainer = $("#PGgrid-report");
@@ -241,7 +242,33 @@
             collection = "ReportFooters";
         return collection;
     };
-   
+
+    this.replaceProp = function (source, destination) {
+        for (var objPropIndex in source) {
+            if (typeof source[objPropIndex] !== "object") {
+                source[objPropIndex] = destination[objPropIndex];
+            }
+        }
+    }
+
+    this.convertTopoints = function (val) {
+        var pixel = val;
+        var point = (pixel * 72) / 96;
+        return point;
+    }
+    this.convertPointToPixel = function (val) {
+        var points = val;
+        var pixel = (points / 72) * 96;
+        return pixel;
+    }
+
+    this.convertPixelToPercent = function (SubsecHArr) {
+        var tot = SubsecHArr.reduce((x, y) => x + y);
+        for (var i = 0 ; i < SubsecHArr.length; i++) {
+            SubsecHArr[i] = (SubsecHArr[i] / tot) * 100;
+        }
+        return SubsecHArr;
+    }
     this.minMaxToolbar();
     this.keyClickDoc();
 }

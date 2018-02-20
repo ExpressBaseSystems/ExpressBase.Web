@@ -116,57 +116,57 @@ namespace ExpressBase.Web.Controllers
         //}
 
         
-        [HttpGet]
-        public IActionResult SqlFunction_Editor()
-        {
-            ViewBag.Header = "New Sql Function";
-            ViewBag.VersionNumber = 1;
-            ViewBag.Obj_id = null;
-            ViewBag.Code = "CREATE OR REPLACE FUNCTION function_name(p1 type, p2 type) \nRETURNS type AS \n$BODY$ \nBEGIN \n\t-- logic \nEND \n$BODY$ \nLANGUAGE language_name";
-            ViewBag.IsNew = "true";
-            ViewBag.EditorHint = "CodeMirror.hint.sql";
-            ViewBag.EditorMode = "text/x-pgsql";
-            ViewBag.Icon = "fa fa-database";
-            ViewBag.ObjType = (int)EbObjectTypes.SqlFunction;
-            ViewBag.ObjectName = "*Untitled";
-            ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
-                                            //   ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult SqlFunction_Editor()
+        //{
+        //    ViewBag.Header = "New Sql Function";
+        //    ViewBag.VersionNumber = 1;
+        //    ViewBag.Obj_id = null;
+        //    ViewBag.Code = "CREATE OR REPLACE FUNCTION function_name(p1 type, p2 type) \nRETURNS type AS \n$BODY$ \nBEGIN \n\t-- logic \nEND \n$BODY$ \nLANGUAGE language_name";
+        //    ViewBag.IsNew = "true";
+        //    ViewBag.EditorHint = "CodeMirror.hint.sql";
+        //    ViewBag.EditorMode = "text/x-pgsql";
+        //    ViewBag.Icon = "fa fa-database";
+        //    ViewBag.ObjType = (int)EbObjectTypes.SqlFunction;
+        //    ViewBag.ObjectName = "*Untitled";
+        //    ViewBag.FilterDialogId = "null";//related to showing selected fd in select fd dropdown 
+        //                                    //   ViewBag.FilterDialogs = GetObjects((int)EbObjectType.FilterDialog);
+        //    ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
+        //    return View();
+        //}
 
-        [HttpPost]
-        public IActionResult SqlFunction_Editor(int i)
-        {
-            ViewBag.Header = "Edit Sql Function";
-            var req = this.HttpContext.Request.Form;
-            string obj_id = req["objid"].ToString();
+        //[HttpPost]
+        //public IActionResult SqlFunction_Editor(int i)
+        //{
+        //    ViewBag.Header = "Edit Sql Function";
+        //    var req = this.HttpContext.Request.Form;
+        //    string obj_id = req["objid"].ToString();
 
-            ViewBag.Obj_id = obj_id;
-            var resultlist = this.ServiceClient.Get<EbObjectNonCommitedVersionResponse>(new EbObjectNonCommitedVersionRequest { RefId = obj_id });
-            var rlist = resultlist.Data;
-            foreach (var element in rlist)
-            {
-                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-                ViewBag.LifeCycle = lifeCycle;
-                ViewBag.IsNew = "false";
-                var dsobj = EbSerializers.Json_Deserialize<EbSqlFunction>(element.Json);
-                ViewBag.ObjectName = element.Name;
-                ViewBag.ObjectDesc = element.Description;
-                ViewBag.Code = dsobj.Sql;
-                ViewBag.Status = element.Status;
-                ViewBag.VersionNumber = element.VersionNumber;
-                ViewBag.EditorHint = "CodeMirror.hint.sql";
-                ViewBag.EditorMode = "text/x-sql";
-                ViewBag.Icon = "fa fa-database";
-                ViewBag.ObjType = (int)EbObjectTypes.SqlFunction;
-                ViewBag.FilterDialogId = dsobj.FilterDialogId;
+        //    ViewBag.Obj_id = obj_id;
+        //    var resultlist = this.ServiceClient.Get<EbObjectNonCommitedVersionResponse>(new EbObjectNonCommitedVersionRequest { RefId = obj_id });
+        //    var rlist = resultlist.Data;
+        //    foreach (var element in rlist)
+        //    {
+        //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+        //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+        //        ViewBag.LifeCycle = lifeCycle;
+        //        ViewBag.IsNew = "false";
+        //        var dsobj = EbSerializers.Json_Deserialize<EbSqlFunction>(element.Json);
+        //        ViewBag.ObjectName = element.Name;
+        //        ViewBag.ObjectDesc = element.Description;
+        //        ViewBag.Code = dsobj.Sql;
+        //        ViewBag.Status = element.Status;
+        //        ViewBag.VersionNumber = element.VersionNumber;
+        //        ViewBag.EditorHint = "CodeMirror.hint.sql";
+        //        ViewBag.EditorMode = "text/x-sql";
+        //        ViewBag.Icon = "fa fa-database";
+        //        ViewBag.ObjType = (int)EbObjectTypes.SqlFunction;
+        //        ViewBag.FilterDialogId = dsobj.FilterDialogId;
 
-            }
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
-            return View();
-        }
+        //    }
+        //    ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
+        //    return View();
+        //}
 
         public Dictionary<string, EbObjectWrapper> GetObjects_refid_dict(int obj_type)
         {

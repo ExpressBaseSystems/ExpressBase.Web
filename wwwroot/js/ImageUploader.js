@@ -19,28 +19,28 @@
 
     this.CreateMOdalW = function () {
         var modalHTML = '<div class="fup" id="bg_' + this.ContainerId + '"><div class="imgup-bg">'
-                            + '<div class="imgup-Cont">'
+            + '<div class="imgup-Cont">'
 
-                                + '<div class="modal-header">'
+            + '<div class="modal-header">'
             + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + ' .imgup-bg\').hide(500);" >&times;</button>'
-                                    + '<h4 class="modal-title" style="display:inline;">Image Selector </h4>'
-                                    + '<p style="display:inline;float:right;margin-right: 20px;" id="' + this.ContainerId +'obj-id"></p>'
-                                + '</div>'
+            + '<h4 class="modal-title" style="display:inline;">Image Selector </h4>'
+            + '<p style="display:inline;float:right;margin-right: 20px;" id="' + this.ContainerId + 'obj-id"></p>'
+            + '</div>'
 
-                                + '<div class="modal-body">'                                   
-                                    + "<div id-'img-upload-body' style='margin-top:15px;'><input id='" + this.ContainerId + "input-id' type='file' data-preview-file-type='text' " + this.multiple + "></div>"
-                                    + "<h6>Tags</h6>"
-                                    + "<input type= 'text' data-role='tagsinput' id= '" + this.ContainerId + "tagval' value='' class='form-control' style='display:none;width:100%;'>"
-                                + '</div>'
+            + '<div class="modal-body">'
+            + "<div id-'img-upload-body' style='margin-top:15px;'><input id='" + this.ContainerId + "input-id' type='file' data-preview-file-type='text' " + this.multiple + "></div>"
+            + "<h6>Tags</h6>"
+            + "<input type= 'text' data-role='tagsinput' id= '" + this.ContainerId + "tagval' value='' class='form-control' style='display:none;width:100%;'>"
+            + '</div>'
 
-                                + '<div class="modal-footer">'
-                                     + '<div class="modal-footer-body">'                                             
-            + '<button type="button" name="CXE_OK" id="' + this.ContainerId + '_close" class="btn"  onclick="$(\'#' + this.ContainerId + ' .imgup-bg\').hide(500);">OK</button>'           
-                                     + '</div>'
-                                + '</div>'
-                            + '</div>'
-                        + '</div>'               
-                    + '</div>';
+            + '<div class="modal-footer">'
+            + '<div class="modal-footer-body">'
+            + '<button type="button" name="CXE_OK" id="' + this.ContainerId + '_close" class="btn"  onclick="$(\'#' + this.ContainerId + ' .imgup-bg\').hide(500);">OK</button>'
+            + '</div>'
+            + '</div>'
+            + '</div>'
+            + '</div>'
+            + '</div>';
 
         $("#" + this.ContainerId).append(modalHTML);
 
@@ -104,7 +104,7 @@
         return { "tags": tagnames };
     };
 
-    this.tagimageOnClick = function () {      
+    this.tagimageOnClick = function () {
         $("#" + this.ContainerId + "tagval").show().tagsinput('refresh');
     };//tag btn onclick
 
@@ -123,7 +123,7 @@
         });
     };
 
-    this.getId = function () {      
+    this.getId = function () {
         return this.FileId;
     };
 

@@ -14,10 +14,10 @@
     };
 
     this.createModal = function () {
-        var modalHTML = '<div class="fup" id="' + this.ContainerId + 'fontEditor" style="display:none;"><div class="fontW">'
-            + '<div class="FECont" style="z-index: 1000;">'
+        var modalHTML = '<div class="fup" id="' + this.ContainerId + 'fontEditor"><div class="imgup-bg">'
+            + '<div class="imgup-Cont">'
             + '<div class="modal-header">'
-            + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + 'fontEditor\').hide(500);" >&times;</button>'
+            + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + 'fontEditor .imgup-bg\').hide(500);" >&times;</button>'
             + '<h4 class="modal-title" style="display:inline;">Font Editor </h4>'
             + '</div>'
             + '<div class="modal-body">'
@@ -29,10 +29,10 @@
             + '<label>Preview Text:</label>'
             + '<div id="font-preview" class="form-control text-center" style="font-size: 18px; font-weight: normal;min-height: 50px;">Font preview</div>'
             + '</div>'
-            + '</div > '
+            + '</div> '
             + '<div class="modal-footer">'
             + '<div class="modal-footer-body">'
-            + '<button type="button" name="CXE_OK" id="' + this.ContainerId + '_close" class="btn"  onclick="$(\'#' + this.ContainerId + 'fontEditor\').hide(500);">OK</button>'
+            + '<button type="button" name="CXE_OK" id="' + this.ContainerId + '_close" class="btn"  onclick="$(\'#' + this.ContainerId + 'fontEditor .imgup-bg\').hide(500);">OK</button>'
             + '</div>'
             + '</div>'
             + '</div>'
@@ -164,7 +164,7 @@
     }
 
     this.toggleModal = function () {
-        $("#" + this.ContainerId + "fontEditor").toggle(350);
+        $("#" + this.ContainerId + "fontEditor .imgup-bg").toggle(350);
     };
 
     this.changeCaps = function (e) {
@@ -213,8 +213,8 @@
         this.loadFontStyle();
         this.loadFontFamily();
         this.loadFontSize();
-        $("#" + this.ToggleId).on("click", this.toggleModal.bind(this));
-        $('#googleFont').on('change', this.loadFont.bind(this));
+        $("body").off("click").on("click", "#" + this.ToggleId, this.toggleModal.bind(this));
+        $('#googleFont').on('change', this.loadFont.bind(this));////  id matt
         $('#fontStyle').on('change', this.LoadFontStyle.bind(this));
         $('#fontSize').on('change', this.getFontSize.bind(this));
         $('#fontSearch').on('keyup', this.searchFont.bind(this));

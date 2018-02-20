@@ -15,6 +15,13 @@ namespace ExpressBase.Web.Controllers
     {
         public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
+        [HttpGet]
+        public IActionResult RefreshConnections()
+        {
+            this.ServiceClient.Post<bool>(new RefreshSolutionConnectionsRequest());
+            return View();
+        }
+
         // GET: /<controller>/
         public IActionResult Index()
         {

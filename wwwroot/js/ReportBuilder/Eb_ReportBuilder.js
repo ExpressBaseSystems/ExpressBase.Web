@@ -145,27 +145,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         $("#" + obj.EbSid).attr("tabindex", "1");
         $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
-
-    this.convertTopoints = function (val) {
-        var pixel = val;
-        var point = (pixel * 72) / 96;
-        return point;
-    }
-    this.convertPointToPixel = function (val) {
-        var points = val;
-        var pixel = (pixel / 72) * 96;
-        return pixel;
-    }
-
-    this.replaceProp = function (source, destination) {
-        for (var objPropIndex in destination) {
-            if ((destination[objPropIndex].constructor === Array) !== true) {
-                source[objPropIndex] = destination[objPropIndex];
-            }
-        }
-    }
-
-
+    
     this.getDataSourceColoums = function (refid) {
         if (refid !== "") {
             $('#data-table-list').empty();
@@ -298,7 +278,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $("#" + this.EbObjectSections[sections]).append(SubSec_obj.$Control.outerHTML());
             SubSec_obj.SectionHeight = "100%";
             SubSec_obj.BackColor = "transparent";
-            this.objCollection[this.EbObjectSections[sections] + "0"] = SubSec_obj;
+            this.objCollection[this.EbObjectSections[sections] + len ] = SubSec_obj;
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
             this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.
@@ -758,8 +738,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.findReportLayObjects = function (k, object) {
         var ObjId = $(object).attr('id');
-        this.objCollection[ObjId].Left = this.convertTopoints(this.objCollection[ObjId].Left);
-        this.objCollection[ObjId].Top = this.convertTopoints(this.objCollection[ObjId].Top);
+        this.objCollection[ObjId].Left = this.repExtern.convertTopoints(this.objCollection[ObjId].Left);
+        this.objCollection[ObjId].Top = this.repExtern.convertTopoints(this.objCollection[ObjId].Top);
         this.EbObject.ReportObjects.push(this.objCollection[ObjId]);
     };
 
@@ -772,18 +752,18 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.subsec = $(subsec).attr("id");
         var eb_type = $(subsec).attr("eb-type");
         this.j = j;
-        this.objCollection[this.subsec].Width = this.convertTopoints($("#" + this.subsec).width());
-        this.objCollection[this.subsec].Height = this.convertTopoints($("#" + this.subsec).height());
+        this.objCollection[this.subsec].Width = this.repExtern.convertTopoints($("#" + this.subsec).width());
+        this.objCollection[this.subsec].Height = this.repExtern.convertTopoints($("#" + this.subsec).height());
         $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
     };//.........save/commit
 
     this.findPageElements = function (k, elements) {
         var elemId = $(elements).attr('id');
         var eb_typeCntl = $("#" + this.subsec).attr("eb-type");
-        this.objCollection[elemId].Width = this.convertTopoints(this.objCollection[elemId].Width);
-        this.objCollection[elemId].Height = this.convertTopoints(this.objCollection[elemId].Height);
-        this.objCollection[elemId].Left = this.convertTopoints(this.objCollection[elemId].Left);
-        this.objCollection[elemId].Top = this.convertTopoints(this.objCollection[elemId].Top);
+        this.objCollection[elemId].Width = this.repExtern.convertTopoints(this.objCollection[elemId].Width);
+        this.objCollection[elemId].Height = this.repExtern.convertTopoints(this.objCollection[elemId].Height);
+        this.objCollection[elemId].Left = this.repExtern.convertTopoints(this.objCollection[elemId].Left);
+        this.objCollection[elemId].Top = this.repExtern.convertTopoints(this.objCollection[elemId].Top);
 
         if (eb_typeCntl === 'ReportHeader') {
             this.EbObject.ReportHeaders[this.j].Fields.push(this.objCollection[elemId]);
@@ -938,7 +918,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.type = pages[this.EditObj.PaperSize];
         this.height = this.EditObj.Height + "pt";
         this.width = this.EditObj.Width + "pt";
-        this.replaceProp(this.EbObject, this.EditObj);
+        this.repExtern.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
         this.pg.addToDD(this.EbObject);
         $('#PageContainer,.ruler,.rulerleft').empty();

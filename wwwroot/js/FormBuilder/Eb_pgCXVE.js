@@ -17,9 +17,9 @@
         }
         else
             if (this.editor === 14) {
-                var FSId = this.PGobj.FontSlctrs[this.PGobj.CurProp].fontEdSubmit();
-                this.PGobj.PropsObj[this.PGobj.CurProp] = FSId;
-                $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(FSId));
+                var FSObj = this.PGobj.FontSlctrs[this.PGobj.CurProp].fontEdSubmit();
+                this.PGobj.PropsObj[this.PGobj.CurProp] = FSObj;
+                $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(FSObj));
             }
 
 

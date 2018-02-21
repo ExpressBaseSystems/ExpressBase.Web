@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Controllers
                 controller.ViewBag.email = jwtToken.Payload["email"];
                 controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
                 controller.ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-
+                controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
                 base.OnActionExecuting(context);
             }
             catch (System.ArgumentNullException ane)

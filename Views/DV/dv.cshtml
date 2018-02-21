@@ -134,6 +134,7 @@
             tabnum: @ViewBag.tabNum,
             DvList:@Html.Raw(ViewBag.DvList),
             DvTagList:@Html.Raw(ViewBag.DvTaggedList),
+            url:'@ViewBag.BrowserURLContext'
         });
 
         $(document).ready(function () {

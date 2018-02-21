@@ -878,7 +878,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.width = this.pages[this.type].width;
         this.EbObject.PaperSize = this.type;
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
-        this.pg.addToDD(this.EbObject);
         $('#PageContainer,.ruler,.rulerleft').empty();
         this.ruler();
         this.createPage();
@@ -893,7 +892,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.width = this.EditObj.Width + "pt";
         this.repExtern.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
-        //this.pg.addToDD(this.EbObject);
         $('#PageContainer,.ruler,.rulerleft').empty();
         this.ruler();
         this.createPage();

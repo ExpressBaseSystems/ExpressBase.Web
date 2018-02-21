@@ -1,17 +1,8 @@
-﻿var FontEditor = function (params) {
+﻿var FontEditor = function (params,setObject) {
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId
     this.fonts = EbFonts;
-    this.fontObject = {
-        Font: "",
-        Fontsize: 14,
-        Fontstyle: "normal",
-        FontWeight: 'normal',
-        Fontcolor: "black",
-        Caps: 'none',
-        Strikethrough: 'none',
-        Underline: 'none'
-    };
+    this.fontObject = setObject === null ? { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' } : setObject;
 
     this.createModal = function () {
         var modalHTML = '<div class="fup" id="' + this.ContainerId + 'fontEditor"><div class="imgup-bg">'

@@ -68,7 +68,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url) {
     //this.dtsettings = settings;
     //this.data = this.dtsettings.data;
     //this.dsid = this.dtsettings.ds_id;
@@ -86,7 +86,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.isPipped = false;
     this.isContextual = false;
     this.chartJs = null;
-
+    this.url = url;
     this.EbObject = dsobj;
     this.tabNum = tabNum;
     this.propGrid = null;
@@ -313,7 +313,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.Init = function () {
         //this.MainData = null;
         $.event.props.push('dataTransfer');
-        //this.updateRenderFunc();
+        this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
@@ -473,7 +473,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.compareFilterValues();
         if (this.MainData !== null && this.login == "uc" && !filterChanged && this.isPipped) {
             //o.serverSide = false;
-            o.dom = "<'col-md-12 noPadding'B>rt";
+            o.dom = "<'col-md-10 noPadding'B><'col-md-2 noPadding'f>rt";
             dvcontainerObj.currentObj.data = this.MainData;
             o.ajax = function (data, callback, settings) {
                 setTimeout(function () {
@@ -490,7 +490,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else {
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
             if (this.ebSettings.IsPaged == "false") {
-
                 o.dom = "<'col-md-12 noPadding'B>rt";
             }
             if (this.login === "uc") {
@@ -787,7 +786,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
-                //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
+                this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
     }
 
@@ -810,7 +809,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             idx = key;
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues("link");
-        var url = "http://eb_dbpjl5pgxleq20180130063835.localhost:5000/DV/dv?refid=" + this.linkDV;
+        var url = "http://"+this.url+"/DV/dv?refid=" + this.linkDV;
 
         var _form = document.createElement("form");
         _form.setAttribute("method", "post");

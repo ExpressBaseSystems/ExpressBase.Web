@@ -116,7 +116,7 @@
 
     this.FBlogin = function (e) {
         this.postmenuClick(e);
-        if (this.CurFormIdx == 0)
+        if (this.CurFormIdx === 0)
             this.login2FB();
         else
             this.collectContacts();
@@ -129,7 +129,7 @@
 
     this.continueAsFBUser = function (e) {
         this.postmenuClick(e, "");
-        if (this.CurFormIdx == 0)
+        if (this.CurFormIdx === 0)
             this.authenticate();
         else
             this.FB.logout(function (response) {
@@ -377,7 +377,7 @@
 
     this.send_btn = function () {
         window.onmessage = function (e) {
-            if (e.data == 'hello') {
+            if (e.data === 'hello') {
                 //alert('It works!8888888888888888888888');
             }
         };
@@ -461,7 +461,7 @@
             inpVal = $(`input[name=${this.curCtrl.name}]:checked`).val()
         }
         else
-            var inpVal = $input.val();
+            inpVal = $input.val();
         return inpVal.trim();
     }
 
@@ -524,13 +524,14 @@
     this.getControl = function (idx) {
         if (idx === this.formControls.length)
             return;
+        var $CtrlCont;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx];
         if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations"))
-            var $CtrlCont = $(control);
+            $CtrlCont = $(control);
         else
-            var $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
+            $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
         var lablel = this.curCtrl.label + ' ?';
         if (this.curCtrl.helpText)
             lablel += ` (${this.curCtrl.helpText})`;

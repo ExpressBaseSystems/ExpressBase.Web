@@ -54,7 +54,7 @@ var DvContainerObj = function (settings) {
 
         prevfocusedId = focusedId;
         focusedId = "sub_window_dv" + this.currentObj.EbSid + "_" + this.tabnum + "_" + counter;
-        if (counter == 0) {
+        if (counter === 0) {
             this.currentObj.Pippedfrom = "";
             prevfocusedId = focusedId;
         }

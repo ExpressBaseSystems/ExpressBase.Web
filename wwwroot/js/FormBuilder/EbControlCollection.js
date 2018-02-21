@@ -11,7 +11,7 @@
         var ele = this.GetByName(_name);
         console.log("parentId" + parentId);
         if (parentId === "form-buider-form")
-            return this.$values.pop(this.$values.indexOf(ele));
+            return this.$values.splice(this.$values.indexOf(ele), 1)[0];
 
         var parent = this.GetByName(parentId);
         return parent.Controls.$values.pop(parent.Controls.$values.indexOf(ele));
@@ -19,7 +19,7 @@
 
     this.Append = function (newObject) {
         //var parentId = $("#" + newObject.Name).closest(".controlTile").closest(".controlTile").attr("id");
-        var parentId = $("#" + newObject.Name).parent().attr("id");
+        var parentId = $("#" + newObject.EbSid).parent().attr("id");
         if (parentId === undefined)
             this.$values.push(newObject);
         else if (parentId !== "form-buider-form") {
@@ -35,7 +35,7 @@
     };
 
     this.InsertAt = function (index, newObject) {
-        var parentId = $("#" + newObject.Name).parent().attr("id");
+        var parentId = $("#" + newObject.EbSid).parent().attr("id");
         if (parentId === "form-buider-form") {
             this.$values.splice(index, 0, newObject);
             return this.$values.length;

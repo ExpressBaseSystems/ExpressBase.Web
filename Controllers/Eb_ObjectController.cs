@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
@@ -101,7 +100,7 @@ namespace ExpressBase.Web.Controllers
                 //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
                 if (dsobj != null)
                 {
-                    dsobj.AfterRedisGet(this.Redis);
+                    dsobj.AfterRedisGet(this.Redis,this.ServiceClient);
                     ViewBag.dsObj = dsobj;
                 }
                
@@ -112,7 +111,7 @@ namespace ExpressBase.Web.Controllers
                 _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
                 if (dsobj != null)
                 {
-                    dsobj.AfterRedisGet(this.Redis);
+                    dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
                     ViewBag.dsObj = dsobj;
                 }
             }

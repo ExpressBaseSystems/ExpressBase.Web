@@ -1,5 +1,5 @@
 ﻿//var tabNum = 0;
-var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNum) {
+var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
     this.Code;
     this.ObjectType = type;
     this.Versions;
@@ -10,6 +10,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Parameter_Count;
     this.Object_String_WithVal;
     this.FD = false;
+    this.Ssurl = ssurl;
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
@@ -19,7 +20,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //$('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         //$('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
-        $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste',(this.SetCode.bind(this)));
+        $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste', (this.SetCode.bind(this)));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
         $(".selectpicker").selectpicker();
 
@@ -63,20 +64,18 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $('#save').addClass('disabled');
             $('#commit_outer').addClass('disabled');
         }
-       // commonO.Current_obj = this.EbObject;
+        // commonO.Current_obj = this.EbObject;
     };
 
     this.propGrid.PropertyChanged = function (obj, pname) {
         this.EbObject = obj;
         //commonO.Current_obj = this.EbObject;
-        if (pname === "FilterDialogRefId")
-        {
-            if (obj[pname] !== null)
-            {
+        if (pname === "FilterDialogRefId") {
+            if (obj[pname] !== null) {
                 this.FD = true;
                 this.GetFD();
                 this.GenerateButtons();
-            }     
+            }
         }
         if (pname === "Name") {
             $("#objname").text(this.EbObject.Name);
@@ -102,10 +101,10 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $.LoadingOverlay("hide");
-        };
+    };
 
     this.CloseParamDiv = function () {
-        $('#paramdiv' + tabNum).hide();  
+        $('#paramdiv' + tabNum).hide();
         $('#codewindow' + tabNum).removeClass("col-md-8 col-md-offset-2").addClass("col-md-10");
     };
 
@@ -124,9 +123,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#versionNav').append(navitem);
         $('#versionTab').append(tabitem);
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));       
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
     }
-   
+
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");
         $(e.target).parent().parent().remove(); //remove li of tab
@@ -170,7 +169,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //    $.LoadingOverlay("show");
     //    alert("Test");
     //}
-    
+
 
     //this.Save = function (needRun) {
     //    $.LoadingOverlay("show");
@@ -192,7 +191,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $.LoadingOverlay("show");
         if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
             if (this.EbObject.VersionNumber.slice(-1) === "w") {
-               commonO.Save();
+                commonO.Save();
             }
             else {
                 this.SaveSuccess();
@@ -232,7 +231,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.CreateObjString();
         this.DrawTable();
     }
-   
+
     this.CreateObjString = function () {
         if (this.Parameter_Count !== 0) {
             var ObjString = "[";
@@ -294,7 +293,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 scrollY: "300px",
                 processing: true,
                 ajax: {
-                    url: "http://localhost:8000/ds/data/" + this.Refid,
+                    url: this.Ssurl + "/ds/data/" + this.Refid,
                     type: "POST",
                     data: this.Load_tble_Data.bind(this),
                     crossDomain: true,
@@ -318,7 +317,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         dq.Params = this.Object_String_WithVal;
         return dq;
     };
-   
+
     this.SetSqlFnName = function () {
         var result = this.EbObject.Sql.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
         if (result.length > 0) {

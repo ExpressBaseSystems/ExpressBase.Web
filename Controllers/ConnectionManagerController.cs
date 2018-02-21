@@ -15,6 +15,13 @@ namespace ExpressBase.Web.Controllers
     {
         public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
+        [HttpGet]
+        public IActionResult RefreshConnections()
+        {
+            this.ServiceClient.Post<bool>(new RefreshSolutionConnectionsRequest());
+            return View();
+        }
+
         // GET: /<controller>/
         public IActionResult Index()
         {
@@ -106,6 +113,22 @@ namespace ExpressBase.Web.Controllers
                 ReadOnlyPassword = req["readOnlyPassword"],
                 Timeout = Convert.ToInt32(req["timeout"])
             };
+
+            EbObjectsDbConnection objdbcon = new EbObjectsDbConnection()
+            {
+                DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
+                DatabaseName = req["databaseName"],
+                Server = req["server"],
+                Port = Convert.ToInt32(req["port"]),
+                UserName = req["userName"],
+                Password = req["password"],
+                ReadWriteUserName = req["readWriteUserName"],
+                ReadWritePassword = req["readWritePassword"],
+                ReadOnlyUserName = req["readOnlyUserName"],
+                ReadOnlyPassword = req["readOnlyPassword"],
+                Timeout = Convert.ToInt32(req["timeout"])
+            };
+
             if (solutionConnections.EBSolutionConnections.DataDbConnection != null)
             {
                 if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
@@ -114,13 +137,24 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (req["databaseVendor"].ToString() == "ORACLE")
                         this.ServiceClient.Post<bool>(new EbCreateOracleDBRequest { });
-
-
                 }
 
             }
             else
                 this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });
+            if (solutionConnections.EBSolutionConnections.ObjectsDbConnection != null)
+            {
+                if (String.IsNullOrEmpty(objdbcon.Password) && objdbcon.UserName == solutionConnections.EBSolutionConnections.ObjectsDbConnection.UserName && objdbcon.Server == solutionConnections.EBSolutionConnections.ObjectsDbConnection.Server)
+                    objdbcon.Password = solutionConnections.EBSolutionConnections.ObjectsDbConnection.Password;
+                if (!this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = false }))
+                {
+                    if (req["databaseVendor"].ToString() == "ORACLE")
+                        this.ServiceClient.Post<bool>(new EbCreateOracleDBRequest { });
+                }
+
+            }
+            else
+                this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = true });
             return JsonConvert.SerializeObject(dbcon);
         }
 

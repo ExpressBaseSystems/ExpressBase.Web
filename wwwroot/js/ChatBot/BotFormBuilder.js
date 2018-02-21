@@ -11,7 +11,7 @@
     commonO.Current_obj = this.EbObject;
     this.rootContainerObj = new EbObjects.EbBotForm(formid);
     this.PGobj = null;
-    
+
 
     // need to change
     this.controlCounters = {
@@ -51,85 +51,49 @@
         this.curControl.children('.ctrlHead').show();
         this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
-        //  this.PGobj.ReadOnly();
     };
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
-        $(".Eb-ctrlContainer").each(function (i, el) {
-            this.initCtrl(el);
-        }.bind(this));
         setTimeout(function () {
             Proc(editModeObj, this.rootContainerObj);
+            this.renderCtrls();
         }.bind(this), 1000);
     };
 
-    this.initCtrl = function (el) {
-        var $el = $(el);
+    this.initCtrl = function (ctrl) {
+        var $el = ctrl.$Control;
         var type = $el.attr("ctype").trim();
-        var id = type + (this.controlCounters[type + "Counter"])++;
         $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
         $el.on("focus", this.controlOnFocus.bind(this));
-        $el.attr("eb-type", type);
-        $el.attr("eb-type", type).attr("id", id);
+        $el.attr("eb-type", type).attr("id", ctrl.EbSid);
+        if (this.controlCounters[type + "Counter"] <= parseInt(ctrl.EbSid.match(/\d+$/)[0])) {
+            this.controlCounters[type + "Counter"] = parseInt(ctrl.EbSid.match(/\d+$/)[0]);
+            ++(this.controlCounters[type + "Counter"]);
+        }
     };
 
-    if (this.EbObject) {
-        this.InitEditModeCtrls(this.EbObject);
-    }
-    if (this.EbObject === null) {
-        this.rootContainerObj = new EbObjects.EbBotForm(formid);
-        commonO.Current_obj = this.rootContainerObj;
-        this.EbObject = this.rootContainerObj;
-    }
+    this.renderCtrls = function () {
+        $.each(this.rootContainerObj.Controls.$values, function (i, ctrl) {
+            $(".eb-chatBox-dev").append(ctrl.$Control);
+            this.initCtrl(ctrl);
+        }.bind(this));
+    };
 
+    {
+        if (this.EbObject) {
+            this.InitEditModeCtrls(this.EbObject);
+        }
+        if (this.EbObject === null) {
+            this.rootContainerObj = new EbObjects.EbBotForm(formid);
+            commonO.Current_obj = this.rootContainerObj;
+            this.EbObject = this.rootContainerObj;
+        }
+    }
 
     this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
     this.curControl = null;
     this.drake = null;
-
-    //this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
-
-
-    //this.save = function () {
-    //    if (this.rootContainerObj.Name.trim() === '') {
-    //        alert("Enter a Name");
-    //        return false;
-    //    }
-    //    if (this.PGobj)
-    //        this.saveObj();
-    //    $(".eb-loaderFixed").show();
-    //    $.post("../Eb_Object/CommitEbObject", {
-    //        "_refid": this._refid,
-    //        "_json": JSON.stringify(this.rootContainerObj),
-    //        "_rel_obj": "_rel_obj1",
-    //        "_tags": "tag1"
-    //    }, this.Save_Success.bind(this));
-    //};
-    //this.commit = function () {
-    //    if (this.rootContainerObj.Name.trim() === '') {
-    //        alert("Enter a Name");
-    //        return false;
-    //    }
-    //    if (this.PGobj)
-    //        this.saveObj();
-    //    $(".eb-loaderFixed").show();
-    //    $.post("../Eb_Object/SaveEbObject", {
-    //        "_refid": this._refid,
-    //        "_json": JSON.stringify(this.rootContainerObj),
-    //        "_rel_obj": "aaa",
-    //        "_tags": "aaaa"
-    //    }, this.Save_Success.bind(this));
-    //};
-    //this.Save_Success = function (result) {
-    //    alert("Saved");
-    //    $(".eb-loaderFixed").hide();
-    //    $('.alert').remove();
-    //    $('.help').append("<div class='alert alert-success alert-dismissable'>" +
-    //        "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-    //        "<strong>Success!</strong>" +
-    //        "</div>");
-    //};
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
@@ -153,15 +117,15 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") === "form-buider-toolBox") {
+        if (source.id === "form-buider-toolBox" && target.id === "form-buider-toolBox") {
             return false;
         }
         // allow copy except toolbox
-        if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") !== "form-buider-toolBox") {
+        if (source.id === "form-buider-toolBox" && target.id !== "form-buider-toolBox") {
             return true;
         }
         // sortable with in the container
-        if ($(source).attr("id") !== "form-buider-toolBox" && source === target) {
+        if (source.id !== "form-buider-toolBox" && source === target) {
             return true;
         }
         else {
@@ -184,9 +148,9 @@
 
     this.onDragFn = function (el, source) {
         //if drag start within the form
-        if ($(source).attr("id") !== "form-buider-toolBox") {
+        if (source.id !== "form-buider-toolBox") {
             console.log("el poped");
-            this.movingObj = this.rootContainerObj.Controls.PopByName($(el).attr("id"));
+            this.movingObj = this.rootContainerObj.Controls.PopByName(el.id);
         }
         else
             this.movingObj = null;
@@ -216,56 +180,28 @@
 
     };
 
-    //this.onDropFn = function (el, target, source, sibling) {
-
-    //    if (target) {
-    //        //drop from toolbox to form
-    //        if ($(source).attr("id") === "form-buider-toolBox") {
-    //            el.className = 'controlTile';
-    //            var ctrl = $(el);
-    //            var type = ctrl.attr("eb-type").trim();
-    //            var id = type + (this.controlCounters[type + "Counter"])++;
-    //            ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-    //            ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-    //            ctrl.attr("id", id);
-    //            this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
-    //            ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
-    //                + new EbObjects["Eb" + type](id).Html());
-
-    //            ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
-    //            ctrl.focus();
-    //        }
-    //        else
-    //            console.log("ondrop else : removed");
-    //        this.saveObj();
-    //    }
-    //};
-
-
     this.onDropFn = function (el, target, source, sibling) {
 
         if (target) {
             //drop from toolbox to form
-            if ($(source).attr("id") === "form-buider-toolBox") {
+            if (source.id === "form-buider-toolBox") {
                 var $el = $(el);
                 var type = $el.attr("eb-type").trim();
                 var id = type + (this.controlCounters[type + "Counter"])++;
                 var $ctrl = new EbObjects["Eb" + type](id).$Control;
                 $el.remove();
-
-                var t = $("<div class='controlTile'>" + $ctrl.outerHTML() + "</div>");
-
-                if (sibling)
-                    $ctrl.insertBefore($(sibling));
-                else
-                    $(target).append($ctrl);
-
                 $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
                 $ctrl.on("focus", this.controlOnFocus.bind(this));
                 $ctrl.attr("id", id);
                 $ctrl.attr("eb-type", type);
-                this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
-
+                if (sibling) {
+                    $ctrl.insertBefore($(sibling));
+                    this.rootContainerObj.Controls.InsertAt($(sibling).index() - 1, new EbObjects["Eb" + type](id));
+                }
+                else {
+                    $(target).append($ctrl);
+                    this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
+                }
                 $ctrl.focus();
             }
             else
@@ -366,8 +302,6 @@
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
-        //$("#save").on("click", this.save.bind(this));
-        //$("#commit").on("click", this.commit.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
         this.PGobj.Close = function () {
@@ -375,8 +309,6 @@
         }
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             RefreshControl(PropsObj);
-            console.log("PropsObj: " + JSON.stringify(PropsObj));
-            console.log("CurProp: " + CurProp);
         }.bind(this);
     };
     this.Init();

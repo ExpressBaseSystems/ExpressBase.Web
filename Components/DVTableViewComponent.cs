@@ -11,7 +11,7 @@ namespace ExpressBase.Web.Components
 {
     public class DVTableViewComponent: ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl, int counter)
+        public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl, int counter, string url)
         {
 
             ViewBag.dsObj = dsobj;
@@ -20,6 +20,7 @@ namespace ExpressBase.Web.Components
             ViewBag.Refid = refid;
             ViewBag.ServiceUrl = ssurl;
             ViewBag.counter = counter;
+            ViewBag.url = url;
             return View("dvTableComponent");
         }
     }

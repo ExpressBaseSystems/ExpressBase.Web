@@ -1,46 +1,4 @@
-﻿var pages = {
-    0: {
-        width: '612pt',
-        height: '792pt'
-    },//A2
-    1: {
-        width: '841.8898pt',
-        height: '1190.55pt'
-    },//A3
-    2: {
-        width: '595.276pt',
-        height: '841.8898pt'
-    },//A4      
-    3: {
-        width: '419.5276',
-        height: '595.276pt'
-    },//A5 
-    4: {
-        width: '612pt',
-        height: '792pt'
-    },//letter
-};
-var TextAlign = { 0: "left", 1: "center", 2: "right", 3: "justify" }
-var ruler = {
-    px: {
-        minor: "tickMinor",
-        major: "tickMajor",
-        label: "tickLabel",
-        len: 5
-    },
-    cm: {
-        minor: "tickMinor-cm",
-        major: "tickMajor-cm",
-        label: "tickLabel-cm",
-        len: 3.77
-    },
-    inch: {
-        minor: "tickMinor-inch",
-        major: "tickMajor-inch",
-        label: "tickLabel-inch",
-        len: 9.6
-    }
-}
+﻿
 var summaryFunc = {
     0: "Average",
     1: "Count",
@@ -65,62 +23,19 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.rulertype = "cm";
     this.copyStack = null;
     this.copyORcut = null;
+
     this.repExtern = new ReportExtended(this.objCollection);
+    this.RbCommon = new RbCommon(this);
     this.pg = new Eb_PropertyGrid("propGrid");
-    this.idCounter = {
-        EbDataFieldTextCounter: 0,
-        EbDataFieldDateTimeCounter: 0,
-        EbDataFieldBooleanCounter: 0,
-        EbDataFieldNumericCounter: 0,
-        EbDataFieldNumericSummaryCounter: 0,
-        EbDataFieldTextSummaryCounter: 0,
-        EbDataFieldBooleanSummaryCounter: 0,
-        EbDataFieldDateTimeSummaryCounter: 0,
-        EbTableCounter: 0,
-        EbImgCounter: 0,
-        EbDateTimeCounter: 0,
-        EbPageXYCounter: 0,
-        EbPageNoCounter: 0,
-        EbTextCounter: 0,
-        EbBarcodeCounter: 0,
-        EbQRcodeCounter: 0,
-        EbWaterMarkCounter: 0,
-        EbCircleCounter: 0,
-        EbRectCounter: 0,
-        EbArrRCounter: 0,
-        EbArrLCounter: 0,
-        EbArrUCounter: 0,
-        EbArrDCounter: 0,
-        EbByArrHCounter: 0,
-        EbByArrVCounter: 0,
-        EbHlCounter: 0,
-        EbVlCounter: 0,
-        EbSerialNumberCounter: 0,
-        EbCalcFieldCounter:0
-    };
-    this.subSecIdCounter = {
-        Countrpthead: 1,
-        Countpghead: 1,
-        Countdetail: 1,
-        Countpgfooter: 1,
-        Countrptfooter: 1
-    };
 
-    this.EbObjectSections = {
-        ReportHeader: 'rpthead',
-        PageHeader: 'pghead',
-        ReportDetail: 'detail',
-        PageFooter: 'pgfooter',
-        ReportFooter: 'rptfooter'
-    };
-
-    this.msBoxSubNotation = {
-        rpthead: 'Rh',
-        pghead: 'Ph',
-        detail: 'Dt',
-        pgfooter: 'Pf',
-        rptfooter: 'Rf'
-    };
+    this.idCounter = this.RbCommon.EbidCounter;
+    this.subSecIdCounter = this.RbCommon.subSecCounter;
+    this.EbObjectSections = this.RbCommon.EbObjectSections;
+    this.msBoxSubNotation = this.RbCommon.msBoxSubNotation;
+    this.pages = this.RbCommon.pages;
+    this.TextAlign = EbEnums.EbTextAlign;
+    this.rulerTypesObj = this.RbCommon.EbRuler;
+    
     this.RefreshControl = function (obj) {        
         var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
@@ -174,41 +89,41 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         else { width = this.width; }
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
-        for (var i = 0, step = 0; i < $ruler.innerWidth() / ruler[this.rulertype].len; i++ , step++) {
+        for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
             var $tick = $('<div>');
             if (step === 0) {
                 if (this.rulertype === "px") {
-                    $tick.addClass(ruler[this.rulertype].label).html(i * 5);
+                    $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(i * 5);
                 }
-                else { $tick.addClass(ruler[this.rulertype].label).html(j++); }
+                else { $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(j++); }
 
             } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass(ruler[this.rulertype].minor);
+                $tick.addClass(this.rulerTypesObj[this.rulertype].minor);
                 if (step === 9) {
                     step = -1;
                 }
             } else {
-                $tick.addClass(ruler[this.rulertype].major);
+                $tick.addClass(this.rulerTypesObj[this.rulertype].major);
             }
             $ruler.append($tick);
         }
 
         var $rulerleft = $('.rulerleft').css({ "height": this.height });
-        for (i = 0, step = 0; i < $rulerleft.innerHeight() / ruler[this.rulertype].len; i++ , step++) {
+        for (i = 0, step = 0; i < $rulerleft.innerHeight() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
             $tick = $('<div>');
             if (step === 0) {
                 if (this.rulertype === "px") {
-                    $tick.addClass(ruler[this.rulertype].label).html(i * 5);
+                    $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(i * 5);
                 }
-                else { $tick.addClass(ruler[this.rulertype].label).html(k++); }
+                else { $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(k++); }
 
             } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass(ruler[this.rulertype].minor);
+                $tick.addClass(this.rulerTypesObj[this.rulertype].minor);
                 if (step === 9) {
                     step = -1;
                 }
             } else {
-                $tick.addClass(ruler[this.rulertype].major);
+                $tick.addClass(this.rulerTypesObj[this.rulertype].major);
             }
             $rulerleft.append($tick);
         }
@@ -607,19 +522,19 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             alert('no permission');
     };
     this.contextMenuJustify = function (eType, selector, action, originalEvent) {
-        this.objCollection[$(selector.selector).attr("id")].TextAlign = TextAlign[3];
+        this.objCollection[$(selector.selector).attr("id")].TextAlign = this.TextAlign[3];
         this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
     };
     this.contextMenuRight = function (eType, selector, action, originalEvent) {
-        this.objCollection[$(selector.selector).attr("id")].TextAlign = TextAlign[2];
+        this.objCollection[$(selector.selector).attr("id")].TextAlign = this.TextAlign[2];
         this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
     };
     this.contextMenuCenter = function (eType, selector, action, originalEvent) {
-        this.objCollection[$(selector.selector).attr("id")].TextAlign = TextAlign[1];
+        this.objCollection[$(selector.selector).attr("id")].TextAlign = this.TextAlign[1];
         this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
     };
     this.contextMenuLeft = function (eType, selector, action, originalEvent) {
-        this.objCollection[$(selector.selector).attr("id")].TextAlign = TextAlign[0];
+        this.objCollection[$(selector.selector).attr("id")].TextAlign = this.TextAlign[0];
         this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
     };
     this.lockControl = function (eType, selector, action, originalEvent) {
@@ -708,13 +623,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.editElement = function (control) {
         this.control = control;
         this.control.on('keydown', this.keyBoardShortcuts.bind(this));
-
     };//control edit options
+
     this.keyBoardShortcuts = function (e) {
         e.preventDefault();
         var obj = this.repExtern.keyboardevents(e, this.control, this.objCollection[this.control.attr('id')]);
         this.pg.setObject(this.objCollection[this.control.attr('id')], AllMetas["Eb" + this.control.attr('eb-type')]);
     }
+
     this.removeElementFn = function (e) {
         if (!$(e.target).hasClass("pageHeaders"))
             this.control.remove();
@@ -744,14 +660,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.onDrag_Start = function (event, ui) {
         this.reDragLeft = event.pageX - $(event.target).offset().left;
         this.reDragTop = event.pageY - $(event.target).offset().top;
-        $(containment).prepend("<div class='vL' id='guid-v' style='z-index:3;border-left: 1px dashed #55f;height:100%;position:absolute;display:none'></div>"
-            + "<div class='hL' id='guid-h' style='z-index:3;border-top: 1px dashed #55f;width:100%;position:absolute;display:none'></div>"
-            + "<div class='vr' id='guid-vr' style='z-index:3;border-left: 1px dashed #55f;height:100%;position:absolute;display:none'></div>"
-            + "<div class='hb' id='guid-hb' style='z-index:3;border-top: 1px dashed #55f;width:100%;position:absolute;display:none'></div>");
+        $(containment).prepend(`<div class='guid-v' id='guid-v'></div>
+                                <div class='guid-h' id='guid-h'></div>
+                                <div class='guid-vr' id='guid-vr'></div>
+                                <div class='guid-hb' id='guid-hb'></div>`);
     };//drag stop fn of control
 
     this.BeforeSave = function () {
-        this.EbObject.Height = parseInt(this.height.slice(0, -2));
+        this.EbObject.Height = this.repExtern.convertTopoints($("#page").height());
         this.EbObject.Width = parseInt(this.width.slice(0, -2));
         this.EbObject.PaperSize = this.type;
         $.each($('.page-reportLayer').children(), this.findReportLayObjects.bind(this));
@@ -936,7 +852,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.RefreshControl(obj);
         }
         else if (pname === "TextAlign") {
-            obj.TextAlign = TextAlign[obj.TextAlign];
+            obj.TextAlign = this.TextAlign[obj.TextAlign];
             this.RefreshControl(obj);
         }
         else if (pname === "Function") {
@@ -958,8 +874,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.newReport = function () {
         this.EbObject = new EbObjects["EbReport"]("Report1");
-        this.height = pages[this.type].height;
-        this.width = pages[this.type].width;
+        this.height = this.pages[this.type].height;
+        this.width = this.pages[this.type].width;
         this.EbObject.PaperSize = this.type;
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
         this.pg.addToDD(this.EbObject);
@@ -972,12 +888,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.editReport = function () {
         this.EditObj = Object.assign({}, this.EbObject);
         this.EbObject = new EbObjects["EbReport"](this.EditObj.Name);
-        this.type = pages[this.EditObj.PaperSize];
+        this.type = this.EditObj.PaperSize;
         this.height = this.EditObj.Height + "pt";
         this.width = this.EditObj.Width + "pt";
         this.repExtern.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
-        this.pg.addToDD(this.EbObject);
+        //this.pg.addToDD(this.EbObject);
         $('#PageContainer,.ruler,.rulerleft').empty();
         this.ruler();
         this.createPage();
@@ -986,7 +902,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.init = function () {
-        if (this.EbObject === null)
+        if (this.EbObject === null || this.EbObject === "undefined")
             this.newReport();
         else
             this.editReport();

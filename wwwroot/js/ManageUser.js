@@ -8,6 +8,7 @@
     this.r2rList = r2rList;
     this.statusList = userstatusList;
     this.itemId = parseInt($("#userid").val());
+    this.anonymousUserId = null;
     this.dependentList = [];
     this.dominantList = [];
 
@@ -15,6 +16,7 @@
     this.txtName = $("#txtFullName");
     this.txtNickName = $("#txtNickName");
     this.txtEmail = $("#txtEmail");
+    this.spanEmail = $("#spanEmail");
     this.pwdPassword = $("#pwdPassword");
     this.lblMessage = $("#lblMessage");
     this.txtDateOfBirth = $("#txtDateOfBirth");
@@ -71,11 +73,13 @@
         else if (this.itemId === 1){
             $(divFormHeading).text("Create User");
             this.btnFbConnect.css("display", "none");
+            this.anonymousUserId = this.userinfo["AnonymousUserID"];
             this.txtName.val(this.userinfo["FullName"]);
             this.txtEmail.val(this.userinfo["EmailID"]);
             this.txtPhPrimary.val(this.userinfo["PhoneNumber"]);
             $("#lblFbId").attr("data-id", this.userinfo["SocialID"]);
             $("#userFbLink").text(this.userinfo["FullName"]);
+            this.validateEmail();
             this.initFbConnect();
         }
         else {
@@ -190,15 +194,6 @@
         }
     }
 
-    //this.findDominantRoles = function (dependent) {
-    //    for (var i = 0; i < this.r2rList.length; i++) {
-    //        if (this.r2rList[i].Dependent == dependent && this.dominantList.indexOf(this.r2rList[i].Dominant) === -1) {
-    //            this.dominantList.push(this.r2rList[i].Dominant);
-    //            this.findDominantRoles(this.r2rList[i].Dominant);
-    //        }
-    //    }
-    //}
-
     this.chkItemCustomFunc = function (_this, e) {
         _this.dependentList = [];
 
@@ -275,41 +270,41 @@
     }
 
 
-    this.validateEmail = function (e) {
+    this.validateEmail = function () {
         clearTimeout(this.timer1);
         this.isInfoValid = false;
-        var val = $(e.target).val();
+        var val = this.txtEmail.val();
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if (regex.test(val)) {
-            $(e.target).css("border-color", "rgb(204, 204, 204)");
-            $("#spanEmail").children().remove();
-            $("#spanEmail").append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
-            $("#spanEmail").attr("title", "Validating...");
-            this.timer1 = setTimeout(function () { this.validateEmailAjaxCall(val, e) }.bind(this), 3000);
+            this.txtEmail.css("border-color", "rgb(204, 204, 204)");
+            this.spanEmail.children().remove();
+            this.spanEmail.append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
+            this.spanEmail.attr("title", "Validating...");
+            this.timer1 = setTimeout(function () { this.validateEmailAjaxCall() }.bind(this), 3000);
         }
         else {
             $(e.target).css("border-color", "rgb(204, 0, 0)");
-            $("#spanEmail").children().remove();
-            $("#spanEmail").append(`<i class="fa fa-times" aria-hidden="true" style="color:red;"></i>`);
-            $("#spanEmail").attr("title", "Invalid Email ID");
+            this.spanEmail.children().remove();
+            this.spanEmail.append(`<i class="fa fa-times" aria-hidden="true" style="color:red;"></i>`);
+            this.spanEmail.attr("title", "Invalid Email ID");
         }
     }
-    this.validateEmailAjaxCall = function (val, e) {
+    this.validateEmailAjaxCall = function () {
         $.ajax({
             type: "POST",
             url: "../Security/isValidEmail",
-            data: { reqEmail: val },
+            data: { reqEmail: this.txtEmail.val() },
             success: function (result) {
                 if (result) {
-                    $(e.target).css("border-color", "rgb(204, 0, 0)");
-                    $("#spanEmail").children().remove();
-                    $("#spanEmail").append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red;"></i>`);
-                    $("#spanEmail").attr("title", "Email ID Already Exists");
+                    this.txtEmail.css("border-color", "rgb(204, 0, 0)");
+                    this.spanEmail.children().remove();
+                    this.spanEmail.append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red;"></i>`);
+                    this.spanEmail.attr("title", "Email ID Already Exists");
                 }
                 else {
-                    $("#spanEmail").children().remove();
-                    $("#spanEmail").append(`<i class="fa fa-check" aria-hidden="true" style="color:green;"></i>`);
-                    $("#spanEmail").attr("title", "Valid Email ID");
+                    this.spanEmail.children().remove();
+                    this.spanEmail.append(`<i class="fa fa-check" aria-hidden="true" style="color:green;"></i>`);
+                    this.spanEmail.attr("title", "Valid Email ID");
                     this.isInfoValid = true;
                 }
             }.bind(this)

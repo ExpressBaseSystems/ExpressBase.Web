@@ -831,24 +831,26 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 }
             }
 
-            $.each(this.columnInfo.MarkerLabel.$values, function (i, obj) {
-                if(i === 0)
-                    ml.push(obj.data);
-            });
+            if (this.type === "googlemap") {
+                $.each(this.columnInfo.MarkerLabel.$values, function (i, obj) {
+                    if (i === 0)
+                        ml.push(obj.data);
+                });
 
-            if (ml.length > 0) {
-                $.each(this.data, function (i, value) {
-                    markLabel.push(value[ml[0]].charAt(0));
-                });
+                if (ml.length > 0) {
+                    $.each(this.data, function (i, value) {
+                        markLabel.push(value[ml[0]].charAt(0));
+                    });
+                }
+                Inform = [];
+                $.each(this.columnInfo.InfoWindow.$values, function (i, obj) {
+                    info = [];
+                    $.each(this.data, function (k, value) {
+                        info.push(value[obj.data]);
+                    });
+                    Inform.push(new informaion(obj.name, info));
+                }.bind(this));
             }
-            Inform = [];
-            $.each(this.columnInfo.InfoWindow.$values, function (i, obj) {
-                info = [];
-                $.each(this.data, function (k, value) {
-                    info.push(value[obj.data]);
-                });
-                Inform.push(new informaion(obj.name, info));
-            }.bind(this));
             
         }
     };
@@ -1391,6 +1393,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.EbObject.Columns = this.prevObj.Columns;
         this.EbObject.Xaxis = this.prevObj.Xaxis;
         this.EbObject.Yaxis = this.prevObj.Yaxis;
+        this.EbObject.Pippedfrom = this.prevObj.Pippedfrom;
     }
 };
 

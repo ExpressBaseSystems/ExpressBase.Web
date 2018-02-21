@@ -1,4 +1,4 @@
-﻿var BotFormBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
+﻿var BotFormBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj, url) {
     this.wc = wc;
     this.cid = cid;
     this.Name = formid;
@@ -11,7 +11,7 @@
     commonO.Current_obj = this.EbObject;
     this.rootContainerObj = new EbObjects.EbBotForm(formid);
     this.PGobj = null;
-
+    this.ssurl = url;
 
     // need to change
     this.controlCounters = {
@@ -271,6 +271,23 @@
     };
 
     this.onChangeGridRowNo = function () {
+
+    };
+
+    this.AfterSave = function () {
+        $.ajax({
+            type: "POST",
+            url: this.ssurl,
+            data: this.ajaxdata.bind(this),
+            success:this.ajaxsuccess.bind(this),
+        });
+    };
+
+    this.ajaxdata = function (dq) {
+        dq.TableName = "table1";
+    };
+
+    this.ajaxsuccess = function () {
 
     };
 

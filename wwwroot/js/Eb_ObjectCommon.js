@@ -55,6 +55,9 @@
     };
 
     this.UpdateTab = function (data) {
+        if (this.ObjCollection[getNav].EbObject.$type.indexOf("BotForm") !== -1) {
+            this.ObjCollection[getNav].AfterSave();
+        }
         var target = $("#versionNav li.active a").attr("href");
         this.ver_Refid = data;
         var getNav = $("#versionNav li.active a").attr("href");
@@ -359,7 +362,7 @@
         $('#create').selectpicker('refresh');
 
         $('#create li').off('click').on("click", this.createVersion.bind(this));
-        if (this.Current_obj.Status != "Live") {
+        if (this.Current_obj.Status !== "Live") {
             $('#_patch').hide();
         }
     }

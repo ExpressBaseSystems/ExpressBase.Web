@@ -473,7 +473,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.compareFilterValues();
         if (this.MainData !== null && this.login == "uc" && !filterChanged && this.isPipped) {
             //o.serverSide = false;
-            o.dom = "<'col-md-12 noPadding'B>rt";
+            o.dom = "<'col-md-10 noPadding'B><'col-md-2 noPadding'f>rt";
             dvcontainerObj.currentObj.data = this.MainData;
             o.ajax = function (data, callback, settings) {
                 setTimeout(function () {
@@ -490,7 +490,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else {
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
             if (this.ebSettings.IsPaged == "false") {
-
                 o.dom = "<'col-md-12 noPadding'B>rt";
             }
             if (this.login === "uc") {

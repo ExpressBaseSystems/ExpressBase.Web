@@ -19,8 +19,6 @@ namespace ExpressBase.Web2
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
             if (env.IsDevelopment())
@@ -41,44 +39,28 @@ namespace ExpressBase.Web2
 
             services.AddDataProtection(opts =>
               {
-                opts.ApplicationDiscriminator = "expressbase.web";
-                            }); // for antiforgery checking 
+                  opts.ApplicationDiscriminator = "expressbase.web";
+              }); // for antiforgery checking 
 
             services.AddMvc();
-
 
             services.AddSingleton<AreaRouter>();
 
             // Added - uses IOptions<T> for your settings.
             services.AddOptions();
 
-            // Added - Confirms that we have a home for our DemoSettings
-            services.Configure<EbSetupConfig>(Configuration.GetSection("EbSetupConfig"));
-
-
-            //var connectionString = Configuration["EbSetupConfig:"+ EnvironmentConstants.SERVICESTACKEXTURL];
             var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            //services.AddScoped(typeof(IServiceClient), ServiceClientFactory);
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
             {
                 return new JsonServiceClient(connectionString);
             });
             StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
 
-
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
 
-
-            //var redisConnectionString = string.Format("redis://{0}@{1}:{2}?ssl=true", redisPassword, redisServer, redisPort);
-
-            //container.Register<IRedisClientsManager>(new RedisManagerPool(redisHost));
-
-            //container.Register<IServerEvents>(c => new RedisServerEvents(c.Resolve<IRedisClientsManager>()));
-
             //container.Resolve<IServerEvents>().Start();
-
 
             //var client = new ServerEventsClient("redis://YK8GtsURARN+x9qITeLj5GikW/rK/i8Uekr1ECxscLA=@ExpressBaseRedisCache.redis.cache.windows.net:6380?ssl=true");
 
@@ -87,12 +69,10 @@ namespace ExpressBase.Web2
             //    var Response = msg.Json.FromJson<UploadFileControllerResponse>();
             //};
 
-
             services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
             {
                 return new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
             });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,8 +118,6 @@ namespace ExpressBase.Web2
                 context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM http://expressbase.com");
                 await next();
             }); // for web forwarding with masking
-
-
         }
     }
 }

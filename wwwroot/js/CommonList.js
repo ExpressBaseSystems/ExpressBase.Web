@@ -106,11 +106,9 @@
             window.open("../Security/ManageUserGroups?itemid=" + id, "_blank");
         } 
         else if (this.metadata.indexOf("_anonymousUser") !== -1) {
-            //window.open("../Security/ManageAnonymousUser?itemid=" + id, "_blank");
             this.itemid = id;
             this.AnonymUserModal.modal('show');
         } 
-
     }
 
     this.onClickConvert = function (e) {
@@ -121,20 +119,18 @@
         var input = document.createElement('input');
         input.type = 'hidden';
         input.name = "itemid";
-        input.value = "1";
+        input.value = "1";//itemid is 1 for anonymous user
         _form.appendChild(input);
 
+        var rowdata = this.table.row(this.table.row($(e.target).parent().parent()).index()).data();
         var dict = new Object();
-        //dict["FullName"] = this.txtFullName.val();
-        //dict["EmailID"] = this.txtEmailId.val();
-        //dict["PhoneNumber"] = this.txtPhoneNumber.val();
-        //dict["SocialID"] = this.userData.SocialId;
 
-        dict["FullName"] = $(e.target).attr("data-name");
-        dict["EmailID"] = $(e.target).attr("data-email");
-        dict["PhoneNumber"] = $(e.target).attr("data-phone");
-        dict["SocialID"] = $(e.target).attr("data-fbid");
-
+        dict["AnonymousUserID"] = rowdata[1];
+        dict["FullName"] = rowdata[2];
+        dict["EmailID"] = rowdata[3];
+        dict["PhoneNumber"] = rowdata[4];
+        dict["SocialID"] = rowdata[9];
+        
         var input = document.createElement('input');
         input.type = 'hidden';
         input.name = "AnonymousUserInfo";
@@ -144,7 +140,6 @@
         document.body.appendChild(_form);
         _form.submit();
         document.body.removeChild(_form);
-
     }
 
 
@@ -153,7 +148,7 @@
     }
 
     this.tblConvertColumnRender = function (data, type, row, meta) {
-        return `<i class="fa fa-user-plus fa-2x convertuserclass" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]} data-name=${data[2]} data-email=${data[3]} data-phone=${data[4]} data-fbid=${data[9]}></i>`;
+        return `<i class="fa fa-user-plus fa-2x convertuserclass" aria-hidden="true" style="cursor:pointer;"></i>`;
     }
 
     this.tblEditColumnRender = function (data, type, row, meta) {
@@ -205,7 +200,6 @@
         this.lblTotalVisits.text(this.userData.TotalVisits);
         this.lblLastUpdatedBy.text(this.userData.ModifiedBy);
         this.lblLastUpdatedAt.text(this.userData.ModifiedAt);
-
     }
 
     this.OnclickBtnUpdate = function () {

@@ -639,6 +639,35 @@
     margin-left: auto;
     height: 10px;
 }
+
+.page .guid-v {
+    z-index: 3;
+    border-left: 1px dashed #55f;
+    height: 100%;
+    position: absolute;
+    display: none
+}
+.page .guid-h {
+    z-index: 3;
+    border-top: 1px dashed #55f;
+    width: 100%;
+    position: absolute;
+    display: none
+}
+.page .guid-vr {
+    z-index: 3;
+    border-left: 1px dashed #55f;
+    height: 100%;
+    position: absolute;
+    display: none
+}
+.page .guid-hb {
+    z-index: 3;
+    border-top: 1px dashed #55f;
+    width: 100%;
+    position: absolute;
+    display: none
+}
 /*.context-menu-item {    
     color: #ffffff;    
     background-color: transparent; 

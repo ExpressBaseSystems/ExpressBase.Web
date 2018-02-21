@@ -55,10 +55,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo.FileName = filename;
 
                 Id = this.ServiceClient.Post<string>(uploadImageRequest);
-                if (ViewBag.cid == CoreConstants.EXPRESSBASE && ViewBag.wc == "tc")
-                    url = string.Format("http://localhost:5000/static/{0}.{1}", Id, uploadImageRequest.ImageInfo.FileType);
-                else
-                    url = string.Format("http://{0}.localhost:5000/static/{1}.{2}", ViewBag.cid, Id, uploadImageRequest.ImageInfo.FileType);
+                url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
 
             }
             catch (Exception e)

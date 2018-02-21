@@ -14,6 +14,7 @@ var DvContainerObj = function (settings) {
     this.tabnum = settings.tabnum;
     this.RelatedDvlist = settings.DvList;
     this.TaggedDvlist = settings.DvTagList;
+    this.url = settings.url;
     this.dvcol = {};
     this.MainData = null;
     this.UniqueId = null;
@@ -76,6 +77,7 @@ var DvContainerObj = function (settings) {
                 data = this.MainData,
                 rowData = this.rowData,
                 filterValues = this.filterValues,
+                url = this.url
             );
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {

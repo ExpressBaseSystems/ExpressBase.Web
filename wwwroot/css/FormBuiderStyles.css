@@ -283,3 +283,73 @@
     border-radius: 1.3em 1.3em 0 0;
     width: 100%;
 }
+
+/*FontStyle Editor Styles*/
+
+.FEhead {
+    background: #abd7ec;
+    height: 30px;
+    text-align: center;
+    padding: 3px;
+    font-size: 15px;
+}
+.FEhead-font {
+    background: #abd7ec;
+    height: 30px;
+}
+.FEcol {
+    border: 1px solid #ccc;
+    margin-left: 20px;
+}
+.FEfont-family {
+
+} 
+.fup .FECont .modal-body:first-child {
+    margin-left: 0px;
+}
+.fup .FECont {
+    border-radius: 3px;
+    width: 60%;
+    height: 75VH;
+    position: fixed;
+    left: 10%;
+    top: 10vh;
+    background-color: white;
+    padding: 3px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+.fup .FECont .modal-body {
+        height: 53vh;
+}
+.pd-0{
+    padding:0!important;
+}
+
+.FEcol-bdy {
+    overflow-y:auto;
+    width:100%;
+}
+.fup .FE-section {
+    width: inherit;
+    height: 150px;
+}
+.FEhead-font .fontSearch {
+    float: right;
+    margin: 2px;
+    display: inline-block;
+}
+.FE-sectionMprop {
+    width: inherit;
+    height: 50px;
+    margin-left:20px;    
+}
+.FE-section select{
+    border-radius:0px;
+}
+.font-text {
+    display: inline-block;
+    height: 30px;
+    padding: 3px;
+    font-size: 15px;
+}
+/**/

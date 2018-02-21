@@ -246,7 +246,7 @@
     this.replaceProp = function (source, destination) {
         for (var objPropIndex in source) {
             if (typeof source[objPropIndex] !== "object") {
-                source[objPropIndex] = destination[objPropIndex];
+                source[objPropIndex] = ['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1  ? this.convertPointToPixel(destination[objPropIndex]) :destination[objPropIndex];
             }
         }
     }

@@ -1,7 +1,8 @@
-﻿var MultiLanguageObj = function () {
-
-    this.loader = $("#loader");
-    this.loader2 = $("#loader2");
+﻿var MultiLingualKeyEditor = function (settings) {
+    this.ContID = settings.ContainerId;
+    this.ToggleBtnId = settings.ToggleBtnId;
+    this.loader = $("#loader" + thic.ContID);
+    this.loader2 = $("#loader2" + thic.ContID);
     this.txtsearch = $("#txtsearch");
     this.txtaddkey = $("#txtaddkey");
     this.lstkeysuggestion = $("#lstkeysuggestion");
@@ -30,6 +31,7 @@
 
 
     this.init = function () {
+        this.AppendModal();
         $('#MLSettingsModal').on('shown.bs.modal', this.initmodal.bind(this));
         $('a[data-toggle="tab"]').on('shown.bs.tab', this.tabchanged.bind(this));
         this.txtsearch.on('keyup', this.keyupaction.bind(this));
@@ -41,6 +43,103 @@
         this.btnupdate.on('click', this.onclickbtnupdate.bind(this));
         this.btnadd.on('click', this.onclickbtnadd.bind(this));
         this.ulLiPagination.on('click', this.onclickUlLiPagination.bind(this));
+        $(`#${this.ToggleBtnId}`).off("click").on("click", this.ToggleModal.bind(this));
+    };
+
+    this.ToggleModal = function () {
+        $(`#${this.ContID}`).show(350);
+    }
+
+    this.AppendModal = function () {
+        $(`#${this.ContID}`).append(`<div id="MLSettingsModal" class="modal fade" role="dialog" >
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content">
+            <div class="modal-header" style="">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Multi Language Key Settings.</h4> </div>
+                </div>
+            </div>
+
+            <div class="modal-body" style="height:455px">
+                <ul id="ultabs" class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#menusearch">Search</a></li>
+                    <li><a data-toggle="tab" href="#menuadd">Add/Update</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="menusearch" class="tab-pane fade in active">
+                        <div class="row" style="margin-top:20px">
+                            <div class="col-md-5" style="">
+                                <div class="input-group ">
+                                    <input id="txtsearch" title="Type to Search" type="text" data-value="" data-id="" data-object="" class="form-control" placeholder="Search">
+                                    <span class="input-group-btn">
+                                        <button id="btnsearch" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                    </span>
+                                </div>
+                                <div id="divPageNumberDisplay" style="margin-top:15px">
+                                    <i>Key Suggestions</i>
+                                </div>
+                                <div id="lstkeysuggestion" class="list-group" style=" height:220px; overflow-y:auto; border:1px solid #ccc; margin-top:3px; margin-bottom:0px;">
+                                    <div id="loader${this.ContID}" style=" margin-left:165px; margin-top:80px ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
+                                </div>
+                                <div id="divMLPagination" style="margin-top:5px; float: right;">
+                                    <ul id="ulMLPagination" class="pagination" style="margin:0px;">
+                                        <li><a href="#" title="First">First</a></li>
+                                        <li><a href="#" title="Previous">Prev</a></li>
+                                        <li><a href="#" style="padding:0px;"> <input id="txtMLPageNumber" type="text" class="form-control" title="Type Page Number and Press Enter" style="width:60px;height: 28px; border: none; margin: 2px; display:inline; text-align:center;"></a> </li>
+                                        <li><a href="#" title="Next">Next</a></li>
+                                        <li><a href="#" title="Last">Last</a></li>
+                                    </ul>
+                                </div>
+                                <div id="lblsearchkeyresult" style="padding:15px; display:none; margin-top:50px;">
+                                    <b>Key Not Found! &nbsp;&nbsp; <a href="#" id="addnewkeylink"> Click Here</a>&nbsp;&nbsp; to add as new Key.</b>
+                                </div>
+                                <div id="lblsearchkeyresult2" style="padding:15px; display:none ; margin-top:50px;">
+                                    <b><a href="#" id="updatekeylink"> Click Here</a> &nbsp;&nbsp;to Update Key.</b>
+                                </div>
+                            </div>
+                            <div class="col-md-7" style="">
+                                <div style="padding-top:10px;padding-bottom:10px;"><b>Language &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Meaning</b></div>
+                                <div id="lstlangkeyval" class="list-group" style="height:280px; overflow-y:auto;border:1px solid #ccc">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="menuadd" class="tab-pane fade">
+                            <div class="input-group" style="margin-top:20px">
+                                <input id="txtaddkey" type="text" data-value="" data-id="" class="form-control" placeholder="Enter a Key">
+                                <span class="input-group-btn">
+                                    <button id="btnaddgo" title="Click to Load stored Key Values" class="btn btn-secondary" type="button"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
+                            <div id="lblloadkeyresult" align="right" style=" display:none; padding-right:10%;">
+                                <i >Key Not Found!</i>
+                            </div>
+                            <div id="loader2" style="margin-left:45%; margin-top:10%"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
+                            <div id="divtable"  style="margin-top:10px; height:280px; overflow:auto">                                                              
+                                <table class="table table-striped">
+                                    <thead >
+                                        <tr>
+                                            <th class="col-md-3">Language</th>
+                                            <th class="col-md-9">Key Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody1" style="height:230px; overflow:auto; position:absolute"></tbody>
+                                </table>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="">
+                <button id="btnadd" type="button" class="btn btn-default" style="">Add</button>
+                <button id="btnupdate" type="button" class="btn btn-default" style="">Update</button>
+                <button id="btnselect" type="button" class="btn btn-default" style="">Select</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>`);
     };
 
     this.initmodal = function () {

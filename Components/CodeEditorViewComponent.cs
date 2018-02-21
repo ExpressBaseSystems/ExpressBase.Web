@@ -32,6 +32,7 @@ namespace ExpressBase.Web.Components
             ViewBag.ObjType = type;
             ViewBag.Refid = refid;
             ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
+            ViewBag.ssurl = ssurl;
             return View("codeEditor");
         }
         public List<string> Getsqlfns(int obj_type)

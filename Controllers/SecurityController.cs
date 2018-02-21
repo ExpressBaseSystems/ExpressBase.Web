@@ -312,7 +312,7 @@ namespace ExpressBase.Web.Controllers
 			Dict["applicationid"] = _appId;
 			Dict["role_name"] = _roleName;
 			Dict["Description"] = _roleDesc;
-			Dict["IsAnonymous"] = _isAnonymous ? "true" : "false";
+			Dict["IsAnonymous"] = _isAnonymous ? "T" : "F";
 			Dict["users"] = string.IsNullOrEmpty(_users) ? string.Empty : _users;
 			Dict["permission"] = string.IsNullOrEmpty(_permission) ? string.Empty : _permission;
 			Dict["dependants"] = string.IsNullOrEmpty(_role2role) ? string.Empty : _role2role;

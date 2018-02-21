@@ -236,7 +236,7 @@ function deletebutton()
         }
     }
     document.getElementById('confirm').onclick = function () {
-        var DataCollection = { 'eb_del': 'true', 'DataId': dataid, "isUpdate": isupdate, "FId": fid, "TableId": tableid };
+        var DataCollection = { 'eb_del': 'T', 'DataId': dataid, "isUpdate": isupdate, "FId": fid, "TableId": tableid };
         $.post('http://localhost:53125/insert', { "TableId": tableid, "Colvalues": JSON.stringify(DataCollection) },
 
            function (result) {

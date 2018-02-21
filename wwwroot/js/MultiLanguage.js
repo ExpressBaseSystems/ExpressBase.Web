@@ -24,7 +24,7 @@
     this.currentPage = 1;
     this.dataWindow;
     this.currentWindow = 1;
-    this.pageSize = 10;//const
+    this.pageSize = 50;//const
     this.windowSize = 5;//const
     
 

@@ -2,7 +2,6 @@
 
     this.ContID = settings.ContainerId;
     this.ToggleBtnId = settings.ToggleBtnId;
-
     
     this.Offset = 0;
     this.resultCount = 0;
@@ -14,16 +13,33 @@
     
     this.init = function () {
         this.createModal();
+        this.initmodal();
         $('#' + this.ToggleBtnId).off('click').on('click', function () {
-            $('#ML_Modal_' + this.ContID + ' .imgup-bg').toggle(this.initmodal.bind(this),350);
+            $('#ML_Modal_' + this.ContID + ' .imgup-bg').toggle(350);
+            //this.initmodal();
         }.bind(this));
     };
+
+    this.get = function () {
+        return this.txtsearch.attr("data-value");
+        //this.txtsearch.attr("data-id");
+        //this.txtsearch.attr("data-object");
+    }
+
+    this.set = function (txt) {
+        this.txtsearch.val(txt);
+        this.getKeySuggestion(true);
+        var item = this.lstkeysuggestion.find("a[data-value='" + txt + "']");
+        if (item.length > 0)
+            this.drawLanguageAndValues(item[0]);
+        
+    }
 
     this.createModal = function () {
         var modalHTML = `
 <div class="fup" id="ML_Modal_${this.ContID}">
     <div class="imgup-bg">
-        <div class="imgup-Cont">
+        <div class="imgup-Cont" style="width:1000px">
             <div class="modal-header">
                 <button type="button" class="close" onclick="$('#ML_Modal_${this.ContID} .imgup-bg').hide(500);" >&times;</button>
                 <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Multi Language Key Settings.</h4> </div>
@@ -103,7 +119,7 @@
                     <button id="btnadd_${this.ContID}" type="button" class="btn btn-default" style="">Add</button>
                     <button id="btnupdate_${this.ContID}" type="button" class="btn btn-default" style="">Update</button>
                     <button id="btnselect_${this.ContID}" type="button" class="btn btn-default" style="">Select</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-default" onclick="$('#ML_Modal_${this.ContID} .imgup-bg').hide(500);">Cancel</button>
                 </div>
             </div>
         </div>
@@ -268,8 +284,8 @@
     this.drawLanguageAndValues = function (element) {
         var currentElement = element;
         this.lstkeysuggestion.children("a").removeClass("active");
-        this.currentElement.addClass("active");
-        this.currentElement.focus();
+        $(currentElement).addClass("active");
+        $(currentElement).focus();
         this.lstlangkeyval.children().remove();
         var objarray = JSON.parse($(currentElement).attr('data-object'));
         for (var i = 0; i < objarray.length; i++)
@@ -333,8 +349,8 @@
                     $($(obj).children()[1]).children().attr("data-value", k.KeyValue);
                 }
             });
-        });
-        $(`'.nav-tabs a[href="#menuadd_${this.ContID}"]'`).tab('show');
+        }.bind(this));
+        $('.nav-tabs a[href="#menuadd_' + this.ContID +'"]').tab('show');
     }
 
     this.loadlang = function () {
@@ -357,7 +373,7 @@
                                                 <td style='padding:12px; width:200px;'> <b> ${i} </b></td>
                                                 <td style='width:751px'>  <input type='text' data-value="" style="width:100%; padding:5px; border:1px solid #ddd"> </td>
                                               </tr>`);
-        });
+        }.bind(this));
         this.loader2.hide();
         this.divtable.show();
     };
@@ -404,7 +420,7 @@
                     $($(obj).children()[1]).children().attr("data-value", k.keyVal_Value);
                 }
             });
-        });
+        }.bind(this));
     };
 
     this.onclickbtnupdate = function (data) {
@@ -472,6 +488,9 @@
     this.addkeyvaluesuccess = function (data) {
         this.loader2.hide();
         this.divtable.show();
+        this.lblloadkeyresult.hide();
+        this.btnadd.hide();
+        this.btnupdate.show();
         alert("Key Added Successfully");
     }
     //-----------------------------------------------------------------------------------------

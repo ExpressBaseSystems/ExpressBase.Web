@@ -332,7 +332,7 @@
 
         $("#btnCreateUser").attr("disabled", "true");
 
-        var oldstus = (this.itemid > 1) ? parseInt(this.userinfo["statusid"]) : -1;
+        var oldstus = (this.itemId > 1) ? parseInt(this.userinfo["statusid"]) : -1;
         var newstus = 0;
         if (!this.chkboxActive.prop("checked"))
             newstus = 1;
@@ -342,6 +342,7 @@
             newstus = oldstus + 100;//Status not changed, so adding 100 to oldstus just to infirm that no change in stus
 
         var dict = new Object();
+        dict["anonymoususerid"] = (this.itemId == 1) ? this.anonymousUserId : 0;
         dict["fullname"] = this.txtName.val();
         dict["nickname"] = this.txtNickName.val();
         dict["email"] = this.txtEmail.val();
@@ -362,12 +363,12 @@
 
         $.post("../Security/SaveUser",
             {
-                "userid": (this.itemId === 1) ? 0 : this.itemId ,
+                "userid": this.itemId ,
                 "usrinfo": JSON.stringify(dict)
             }, function (result) {
                 if (result > -1) {
                     alert("Saved Successfully");
-                    //window.top.close();
+                    window.top.close();
                 }
                 $("#btnCreateUser").removeAttr("disabled");
             });

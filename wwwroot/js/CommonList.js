@@ -247,17 +247,17 @@
         
     }
 
-    this.convertAnonymousUserToUserSuccess = function (data) {
-        if (data > 1) {
-            alert("Convert Operation Completed Successfully");
-            this.AnonymUserModal.modal("hide");
-            window.open("../Security/ManageUser?itemid=" + data, "_blank");
-        }
+    //this.convertAnonymousUserToUserSuccess = function (data) {
+    //    if (data > 1) {
+    //        alert("Convert Operation Completed Successfully");
+    //        this.AnonymUserModal.modal("hide");
+    //        window.open("../Security/ManageUser?itemid=" + data, "_blank");
+    //    }
             
-        else
-            alert("Somthing went wrong!");
-        this.btnConvert.prop("disabled", "false");
-    }
+    //    else
+    //        alert("Somthing went wrong!");
+    //    this.btnConvert.prop("disabled", "false");
+    //}
 
     this.init();
 }

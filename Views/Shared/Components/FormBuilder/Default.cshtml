@@ -3,6 +3,7 @@
 @using ExpressBase.Objects;
 @using ExpressBase.Common.Objects.Attributes;
 
+<script src="~/js/Eb_FontEditor.js"></script>
 @{
     //int typeInt = 0//(string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
     EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
@@ -20,14 +21,8 @@
         </div>
     </div>
     <div class="form-save-wraper">
-
-        <div class="formB-box fb-cont">
-            <button id="save" type="submit" class="btn btn-default">Save</button>
-            <button id="commit" type="submit" class="btn btn-default">Commit</button>
-        </div>
-
         <div id="form-buider-form" eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form">
-            *@Html.Raw(ViewBag.Html);
+            @Html.Raw(ViewBag.Html)
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
             @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
         </div>
@@ -53,13 +48,4 @@
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
-    // if edit mode
-    @*if(objid){
-        @*var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.dsObj));
-        //$.each(editModeFormObj, funcion(i, obj) {  });
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
-        formBuilderObj.InitEditModeCtrls(JSON.parse(editModeObj));*@
-    @*}
-    else
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");*@
 </script>

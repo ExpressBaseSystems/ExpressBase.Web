@@ -251,6 +251,14 @@
         }
     }
 
+    this.replaceWOPtConvProp = function (source, destination) {
+        for (var objPropIndex in source) {
+            if (typeof source[objPropIndex] !== "object") {
+                source[objPropIndex] = destination[objPropIndex];
+            }
+        }
+    }
+
     this.convertTopoints = function (val) {
         var pixel = val;
         var point = (pixel * 72) / 96;
@@ -268,6 +276,20 @@
             SubsecHArr[i] = (SubsecHArr[i] / tot) * 100;
         }
         return SubsecHArr;
+    }
+
+    this.emptyControlCollection = function (rptObj) {
+        for (var objPropIndex in rptObj) {
+            if (typeof rptObj[objPropIndex] === "object" && objPropIndex !== "ReportObjects" && objPropIndex !== "$Control" ) 
+                this.emptyCConESec(rptObj[objPropIndex]);
+            else if (objPropIndex === "ReportObjects")
+                rptObj[objPropIndex].$values.length = 0
+        }
+    };
+    this.emptyCConESec = function (rptObjsubsec) {
+        for (var i = 0; i < rptObjsubsec.$values.length; i++) {
+            rptObjsubsec.$values[i].Fields.$values.length = 0;
+        }
     }
     this.minMaxToolbar();
     this.keyClickDoc();

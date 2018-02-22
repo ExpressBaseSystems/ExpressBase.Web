@@ -1,85 +1,69 @@
-﻿var FontEditor = function (params,setObject) {
+﻿var FontEditor = function (params) {
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId
     this.fonts = EbFonts;
-    this.fontObject = setObject === null ? { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' } : setObject;
+    this.currObj = { Font: "Ewert", Fontsize: 14, Fontstyle: "italic", FontWeight: 'normal', Fontcolor: "#ccc", Caps: 'uppercase', Strikethrough: 'none', Underline: 'none' };
+    this.fontObject = { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
 
     this.createModal = function () {
-        var modalHTML = '<div class="fup" id="' + this.ContainerId + 'fontEditor"><div class="imgup-bg">'
-            + '<div class="imgup-Cont">'
-            + '<div class="modal-header">'
-            + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + 'fontEditor .imgup-bg\').hide(500);" >&times;</button>'
-            + '<h4 class="modal-title" style="display:inline;">Font Editor </h4>'
-            + '</div>'
-            + '<div class="modal-body">'
-            + '<div class="FE-section" id="' + this.ContainerId + 'FE-section">'
-            + '</div>'
-            + '<div class="FE-sectionMprop" id="' + this.ContainerId + 'FE-sectionMprop">'
-            + '</div>'
-            + '<div class="FE-preview form-group" style="margin-left: 20px">'
-            + '<label>Preview Text:</label>'
-            + '<div id="font-preview" class="form-control text-center" style="font-size: 18px; font-weight: normal;min-height: 50px;">Font preview</div>'
-            + '</div>'
-            + '</div> '
-            + '<div class="modal-footer">'
-            + '<div class="modal-footer-body">'
-            + '<button type="button" name="CXE_OK" id="' + this.ContainerId + '_close" class="btn"  onclick="$(\'#' + this.ContainerId + 'fontEditor .imgup-bg\').hide(500);">OK</button>'
-            + '</div>'
-            + '</div>'
-            + '</div>'
-            + '</div>'
-            + '</div>';
+        var modalHTML = `<div class="fup" id="${this.ContainerId}fontEditor"><div class="imgup-bg">
+            <div class="imgup-Cont font-editor-contaner"><div class="modal-header">
+            <button type="button" class="close" onclick="$('\#${this.ContainerId}fontEditor .imgup-bg\').hide(500);" >&times;</button>
+            <h4 class="modal-title" style="display:inline;">Font Editor </h4></div>
+           <div class="modal-body">
+            <div class="FE-section" id="${this.ContainerId}FE-section"></div>
+            <div class="FE-sectionMprop" id="${this.ContainerId}FE-sectionMprop"></div>
+            <div class="FE-preview form-group" style="margin-left: 20px">
+            <label>Preview Text</label>
+            <div id="font-preview" class="form-control text-center" style="font-size: 18px; font-weight: normal;min-height: 50px;">Font preview</div>
+            </div> </div> <div class="modal-footer">
+            <div class="modal-footer-body">
+            <button type="button" name="CXE_OK" id="${this.ContainerId}_close" class="btn"  onclick="$('\#${this.ContainerId}fontEditor .imgup-bg\').hide(500);">OK</button>
+            </div></div></div></div></div>`;
 
         $("#" + this.ContainerId).append(modalHTML);
         this.appendFontPropsSec();
     };
 
     this.appendFontPropsSec = function () {
-        var Prophtml = (
-            '<div class="col-md-7 pd-0 FEcol FEfont-family">'
-            + '<div class="FEhead-font" style="text-align:left">'
-            + '<div class="font-text">Font</div><input type="text" id="fontSearch" class="fontSearch" placeholder="search font">'
-            + '</div > '
-            + '<div class="FEcol-bdy" id="' + this.ContainerId + 'FEfamily-bdy">'
-            + '<select name="googleFont" id="googleFont" class="form-control" size="5"></select>'
-            + '</div > '
-            + '</div>'
-            + '<div class="col-md-2 pd-0 FEcol FEcol FEfont-style"><div class="FEhead">Font Style</div>'
-            + '<div class="FEcol-bdy" id="' + this.ContainerId + 'FEStyle-bdy">'
-            + '<select name="fontStyle" size="5" id="fontStyle" class="form-control">'
-            + '</select>'
-            + '</div>'
-            + '</div>'
-            + '<div class="col-md-2 pd-0 FEcol FEfont-size"><div class="FEhead">Size</div>'
-            + '<div class="FEcol-bdy" id="' + this.ContainerId + 'FEsize-bdy">'
-            + '<select name="fontSize" size="5" id="fontSize" class="form-control"></select>'
-            + '</div>'
-            + '</div>');
+        var Prophtml = (`<div class="col-md-7 pd-0 FEcol FEfont-family">
+            <div class="FEhead-font" style="text-align:left">
+            <div class="font-text">Font</div><input type="text" id="fontSearch" class="fontSearch" placeholder="search font"></div>
+            <div class="FEcol-bdy" id="${this.ContainerId }FEfamily-bdy">
+            <select name="googleFont" id="googleFont" class="form-control font_ed_focus" size="5"></select></div></div>
+            <div class="col-md-2 pd-0 FEcol FEcol FEfont-style"><div class="FEhead">Font Style</div>
+            <div class="FEcol-bdy" id="${this.ContainerId}FEStyle-bdy">
+            <select name="fontStyle" size="5" id="fontStyle" class="form-control font_ed_focus"></select></div></div>
+            <div class="col-md-2 pd-0 FEcol FEfont-size"><div class="FEhead">Size</div>
+            <div class="FEcol-bdy" id="${this.ContainerId}FEsize-bdy">
+            <select name="fontSize" size="5" id="fontSize" class="form-control font_ed_focus"></select>
+            </div></div>`);
+           
         $("#" + this.ContainerId + "FE-section").append(Prophtml);
         this.appendMpropSec();
     };
 
     this.appendMpropSec = function () {
-        var MpropHtml = ('<div class="col-md-4 pd-0"><label>Font Color:</label>'
-            + '<input type="color" class="form-control" id="fontColor" style="height:30px;display:inline;">'
-            + '</div>'
-            + '<div class="col-md-2 pd-0"><label>Caps:</label>'
-            + '<input type="checkbox" name="caps" id="FE-caps" class="btn btn-info" style="display:inline;height: 17px; width: 17px;">'
-            + '</div>'
-            + '<div class="col-md-3 pd-0"><label>Strikethrough:</label>'
-            + '<input type="checkbox" name="strikethrough" id="FE-strikethrough" class="btn btn-info" style="display:inline;height: 17px; width: 17px;">'
-            + '</div>'
-            + '<div class="col-md-3 pd-0"><label>Underline:</label>'
-            + '<input type="checkbox" name="underline" id="FE-Underline" class="btn btn-info" style="display:inline;height: 17px; width: 17px;">'
-            + '</div>');
+        var MpropHtml = (`<div class="col-md-4 pd-0"><label style="width:40%">Font Color</label>
+            <input type="color" class="form-control" id="fontColor" style="height:17px;display:inline-block;width:50%;">
+            </div>
+            <div class="col-md-2 pd-0"><label style="width:40%">Caps</label>
+            <input type="checkbox" name="caps" id="FE-caps" class="btn btn-info" style="display:inline-block;margin:0;height: 17px; width: 17px;">
+            </div>
+            <div class="col-md-3 pd-0"><label style="width:60%">Strikethrough</label>
+            <input type="checkbox" name="strikethrough" id="FE-strikethrough" class="btn btn-info" style="display:inline-block;margin:0;height: 17px; width: 17px;">
+            </div>
+            <div class="col-md-3 pd-0"><label style="width:44%">Underline</label>
+            <input type="checkbox" name="underline" id="FE-Underline" class="btn btn-info" style="display:inline-block;margin:0;height: 17px; width: 17px;">
+            </div>`);
         $("#" + this.ContainerId + "FE-sectionMprop").append(MpropHtml);
     }
 
     this.loadFontStyle = function () {
-        $('#fontStyle').append($("<option value='regular'>Regular</option>"
-            + "<option value= 'italic' > Italic</option >"
-            + "<option value= 'bold' > Bold</option >"
-            + "<option value= 'bold italic' > Bold Italic</option >"));
+        $('#fontStyle').append($(`<option tabindex='1' value='regular'>Regular</option>
+            <option tabindex='1' value= 'italic'> Italic</option >
+            <option tabindex='1' value= 'bold'> Bold</option >
+            <option tabindex='1' value= 'bold italic'> Bold Italic</option>`));
     };
 
     this.loadFontFamily = function () {
@@ -87,7 +71,7 @@
         $.each(this.fonts.items, function (idx, font) {
             $('#googleFont')
                 .append(
-                $("<option value='" + font.family + "'>" + font.family + "</option>"));
+                $("<option tabindex='1' value='" + font.family + "'>" + font.family + "</option>"));
         });
     }
 
@@ -95,7 +79,7 @@
         for (var i = 0; i <= 50; i++) {
             $('#fontSize')
                 .append(
-                $("<option value='" + i + "'>" + i + "px</option>"));
+                $("<option tabindex='1' value='" + i + "'>" + i + "px</option>"));
         }
     };
 
@@ -140,12 +124,15 @@
     };
 
     this.searchFont = function (e) {
-        var srchWord = $(e.target).val().toLowerCase();
-
-        $('#googleFont').children('option').each(function () {            
-            if ($(this).val().toLowerCase().match(srchWord)) {
-                $(this).show();
+        var $srchBody = $('#googleFont');
+        var srch = $(e.target).val().toLowerCase();
+        $.each($srchBody.children(), function (i, obj) {
+            var cmpstr = $(obj).text().toLowerCase();
+            if (cmpstr.indexOf(srch) !== -1) {
+                $(obj).show();
             }
+            else
+                $(obj).hide();
         });
     };
 
@@ -155,7 +142,11 @@
     }
 
     this.toggleModal = function () {
-        $("#" + this.ContainerId + "fontEditor .imgup-bg").toggle(350);
+        var $modal = $("#" + this.ContainerId + "fontEditor .imgup-bg");
+        $modal.toggle(350);
+        if ($modal.css("display") === "block"){
+            this.setDefault();
+        }
     };
 
     this.changeCaps = function (e) {
@@ -199,11 +190,29 @@
         return this.fontObject;
     };
 
+    this.setDefault = function () {
+        if (!$.isEmptyObject(this.currObj)) {
+            $('#googleFont').children("option[value='" + this.currObj.Font + "']").change().focus();
+            $('#fontStyle').children("option[value='" + this.currObj.Fontstyle + "']").change().focus();
+            $('#fontSize').children("option[value='" + this.currObj.Fontsize + "']").change().focus();
+            $('#fontColor').val(this.currObj.Fontcolor).change();
+            if (this.currObj.Caps === "uppercase")
+                $('#FE-caps').prop("checked", true).change();
+            else if (this.currObj.Strikethrough === "line-through")
+                $('#FE-strikethrough').prop("checked", true).change();
+            else if (this.currObj.Underline === "underline")
+                $('#FE-Underline').prop("checked", true).change();
+            //else {
+            //    $('#FE-caps, #FE-strikethrough, #FE-strikethrough').prop("checked", false).change();
+            //}
+        }
+    };
+
     this.init = function () {
         this.createModal();
         this.loadFontStyle();
         this.loadFontFamily();
-        this.loadFontSize();
+        this.loadFontSize();       
         $("body").off("click").on("click", "#" + this.ToggleId, this.toggleModal.bind(this));
         $('#googleFont').on('change', this.loadFont.bind(this));////  id matt
         $('#fontStyle').on('change', this.LoadFontStyle.bind(this));

@@ -341,7 +341,7 @@
             _rel_obj: this.ObjCollection[getNav].relatedObjects,
             _tags: tagvalues,
             _apps: apps
-        }, this.UpdateTab.bind(this));
+        }, this.UpdateTab.bind(this, getNav));
     };
 
     this.UpdateCreateVersionDD = function () {

@@ -54,10 +54,7 @@
         $('#close_popup').trigger('click');
     };
 
-    this.UpdateTab = function (getNav, data) {
-        if (this.ObjCollection[getNav].EbObject.$type.indexOf("BotForm") !== -1) {
-            this.ObjCollection[getNav].AfterSave();
-        }
+    this.UpdateTab = function (data) {
         var target = $("#versionNav li.active a").attr("href");
         this.ver_Refid = data;
         var getNav = $("#versionNav li.active a").attr("href");
@@ -324,7 +321,7 @@
             _rel_obj: this.ObjCollection[getNav].relatedObjects,
             _tags: tagvalues,
             _apps: apps
-        }, this.UpdateTab.bind(this, getNav));
+        }, this.UpdateTab.bind(this));
     };
 
     this.Commit = function () {

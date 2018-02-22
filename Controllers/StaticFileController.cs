@@ -118,6 +118,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine("Exception:" + e.ToString());
                 resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
             }
             return resp;
@@ -173,6 +174,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine("Exception:" + e.ToString());
                 resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
             }
 
@@ -202,6 +204,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine("Exception:"+e.ToString());
                 return "upload failed";
             }
 

@@ -667,6 +667,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//drag stop fn of control
 
     this.BeforeSave = function () {
+        this.repExtern.emptyControlCollection(this.EbObject);
         this.EbObject.Height = this.repExtern.convertTopoints($("#page").height());
         this.EbObject.Width = parseInt(this.width.slice(0, -2));
         this.EbObject.PaperSize = this.type;

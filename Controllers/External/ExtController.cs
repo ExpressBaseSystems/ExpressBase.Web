@@ -233,6 +233,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (WebServiceException e)
             {
+                Console.WriteLine("Exception:" + e.ToString());
             }
             // }
 
@@ -320,8 +321,8 @@ namespace ExpressBase.Web.Controllers
 					});
 
 				}
-				catch (WebServiceException wse) { }
-				catch (Exception wse) { }
+				catch (WebServiceException wse) { Console.WriteLine("Exception:" + wse.ToString()); }
+				catch (Exception wse) { Console.WriteLine("Exception:" + wse.ToString()); }
 				if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized") { }
 				else //AUTH SUCCESS
 				{
@@ -420,11 +421,13 @@ namespace ExpressBase.Web.Controllers
                     }
                     catch (WebServiceException wse)
                     {
+                        Console.WriteLine("Exception:" + wse.ToString());
                         TempData["ErrorMessage"] = wse.Message;
                         return errorredirect(whichconsole);
                     }
                     catch (Exception wse)
                     {
+                        Console.WriteLine("Exception:" + wse.ToString());
                         TempData["ErrorMessage"] = wse.Message;
                         return errorredirect(whichconsole);
                     }
@@ -555,6 +558,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (WebServiceException wse)
             {
+                Console.WriteLine("Exception:" + wse.ToString());
                 ViewBag.errormsg = wse.Message;
                 return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
             }

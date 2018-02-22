@@ -667,8 +667,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//drag stop fn of control
 
     this.BeforeSave = function () {
-        this.EbObject.Height = this.repExtern.convertTopoints($("#page").height());
-        this.EbObject.Width = parseInt(this.width.slice(0, -2));
+        this.repExtern.emptyControlCollection(this.EbObject);
+        this.EbObject.DesignPageHeight = this.repExtern.convertTopoints($("#page").height());
+        this.EbObject.Height = parseFloat(this.pages[this.type].height.slice(0,-2));
+        this.EbObject.Width = parseFloat(this.width.slice(0, -2));
         this.EbObject.PaperSize = this.type;
         $.each($('.page-reportLayer').children(), this.findReportLayObjects.bind(this));
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
@@ -888,7 +890,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.EditObj = Object.assign({}, this.EbObject);
         this.EbObject = new EbObjects["EbReport"](this.EditObj.Name);
         this.type = this.EditObj.PaperSize;
-        this.height = this.EditObj.Height + "pt";
+        this.height = this.EditObj.DesignPageHeight + "pt";
         this.width = this.EditObj.Width + "pt";
         this.repExtern.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);

@@ -269,6 +269,20 @@
         }
         return SubsecHArr;
     }
+
+    this.emptyControlCollection = function (rptObj) {
+        for (var objPropIndex in rptObj) {
+            if (typeof rptObj[objPropIndex] === "object" && objPropIndex !== "ReportObjects" && objPropIndex !== "$Control" ) 
+                this.emptyCConESec(rptObj[objPropIndex]);
+            else if (objPropIndex === "ReportObjects")
+                rptObj[objPropIndex].$values.length = 0
+        }
+    };
+    this.emptyCConESec = function (rptObjsubsec) {
+        for (var i = 0; i < rptObjsubsec.$values.length; i++) {
+            rptObjsubsec.$values[i].Fields.$values.length = 0;
+        }
+    }
     this.minMaxToolbar();
     this.keyClickDoc();
 }

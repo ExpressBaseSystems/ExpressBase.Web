@@ -1,8 +1,9 @@
-﻿var FontEditor = function (params,setObject) {
+﻿var FontEditor = function (params) {
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId
     this.fonts = EbFonts;
-    this.fontObject = setObject === null ? { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' } : setObject;
+    this.currObj = { Font: "Ewert", Fontsize: 14, Fontstyle: "italic", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
+    this.fontObject = { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
 
     this.createModal = function () {
         var modalHTML = '<div class="fup" id="' + this.ContainerId + 'fontEditor"><div class="imgup-bg">'
@@ -41,18 +42,18 @@
             + '<div class="font-text">Font</div><input type="text" id="fontSearch" class="fontSearch" placeholder="search font">'
             + '</div > '
             + '<div class="FEcol-bdy" id="' + this.ContainerId + 'FEfamily-bdy">'
-            + '<select name="googleFont" id="googleFont" class="form-control" size="5"></select>'
+            + '<select name="googleFont" id="googleFont" class="form-control font_ed_focus" size="5"></select>'
             + '</div > '
             + '</div>'
             + '<div class="col-md-2 pd-0 FEcol FEcol FEfont-style"><div class="FEhead">Font Style</div>'
             + '<div class="FEcol-bdy" id="' + this.ContainerId + 'FEStyle-bdy">'
-            + '<select name="fontStyle" size="5" id="fontStyle" class="form-control">'
+            + '<select name="fontStyle" size="5" id="fontStyle" class="form-control font_ed_focus">'
             + '</select>'
             + '</div>'
             + '</div>'
             + '<div class="col-md-2 pd-0 FEcol FEfont-size"><div class="FEhead">Size</div>'
             + '<div class="FEcol-bdy" id="' + this.ContainerId + 'FEsize-bdy">'
-            + '<select name="fontSize" size="5" id="fontSize" class="form-control"></select>'
+            + '<select name="fontSize" size="5" id="fontSize" class="form-control font_ed_focus"></select>'
             + '</div>'
             + '</div>');
         $("#" + this.ContainerId + "FE-section").append(Prophtml);
@@ -76,10 +77,10 @@
     }
 
     this.loadFontStyle = function () {
-        $('#fontStyle').append($("<option value='regular'>Regular</option>"
-            + "<option value= 'italic' > Italic</option >"
-            + "<option value= 'bold' > Bold</option >"
-            + "<option value= 'bold italic' > Bold Italic</option >"));
+        $('#fontStyle').append($("<option tabindex='1' value='regular'>Regular</option>"
+            + "<option tabindex='1' value= 'italic' > Italic</option >"
+            + "<option tabindex='1' value= 'bold' > Bold</option >"
+            + "<option tabindex='1' value= 'bold italic' > Bold Italic</option >"));
     };
 
     this.loadFontFamily = function () {
@@ -87,7 +88,7 @@
         $.each(this.fonts.items, function (idx, font) {
             $('#googleFont')
                 .append(
-                $("<option value='" + font.family + "'>" + font.family + "</option>"));
+                $("<option tabindex='1' value='" + font.family + "'>" + font.family + "</option>"));
         });
     }
 
@@ -95,7 +96,7 @@
         for (var i = 0; i <= 50; i++) {
             $('#fontSize')
                 .append(
-                $("<option value='" + i + "'>" + i + "px</option>"));
+                $("<option tabindex='1' value='" + i + "'>" + i + "px</option>"));
         }
     };
 
@@ -155,7 +156,11 @@
     }
 
     this.toggleModal = function () {
-        $("#" + this.ContainerId + "fontEditor .imgup-bg").toggle(350);
+        var $modal = $("#" + this.ContainerId + "fontEditor .imgup-bg");
+        $modal.toggle(350);
+        if ($modal.css("display") === "block"){
+            this.setDefault();
+        }
     };
 
     this.changeCaps = function (e) {
@@ -199,11 +204,25 @@
         return this.fontObject;
     };
 
+    this.setDefault = function () {
+        if (!$.isEmptyObject(this.currObj)) {
+            $('#googleFont').children("option[value='" + this.currObj.Font + "']").focus().change();
+            $('#fontStyle').children("option[value='" + this.currObj.Fontstyle + "']").focus().change();
+            $('#fontSize').children("option[value='" + this.currObj.Fontsize + "']").focus().change();
+            $('#fontColor').val(this.currObj.Fontcolor).change();
+            if (this.currObj.Caps === "uppercase")
+                $('#FE-caps').prop("checked", true);
+            else
+                $('#FE-caps').prop("checked", false);
+
+        }
+    };
+
     this.init = function () {
         this.createModal();
         this.loadFontStyle();
         this.loadFontFamily();
-        this.loadFontSize();
+        this.loadFontSize();       
         $("body").off("click").on("click", "#" + this.ToggleId, this.toggleModal.bind(this));
         $('#googleFont').on('change', this.loadFont.bind(this));////  id matt
         $('#fontStyle').on('change', this.LoadFontStyle.bind(this));

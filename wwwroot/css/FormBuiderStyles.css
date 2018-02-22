@@ -345,11 +345,24 @@
 }
 .FE-section select{
     border-radius:0px;
+    padding:0;
 }
+    .FE-section select option {
+        padding: 0 5px;
+    }
 .font-text {
     display: inline-block;
     height: 30px;
     padding: 3px;
     font-size: 15px;
+}
+.font-editor-contaner {
+    width: 60% !important;
+    left: 20% !important;
+}
+
+.font_ed_focus option:focus {
+    background: blue;
+    color:white;
 }
 /**/

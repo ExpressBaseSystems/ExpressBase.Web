@@ -97,7 +97,12 @@
             len: 9.6
         }
     }
-
+    this.TextAlign = {
+        0: "left",
+        2: "right",
+        1: "center",
+        3:"justify"
+    }
 
     this.start = function () {
 

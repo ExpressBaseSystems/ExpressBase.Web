@@ -14,6 +14,7 @@ namespace ExpressBase.Web.Components
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;
             ViewBag.Refid = refid;
+            ViewBag.ssurl = ssurl;
             return View();
         }
     }

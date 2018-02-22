@@ -1,4 +1,4 @@
-﻿var BotFormBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
+﻿var BotFormBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj, url) {
     this.wc = wc;
     this.cid = cid;
     this.Name = formid;
@@ -11,7 +11,7 @@
     commonO.Current_obj = this.EbObject;
     this.rootContainerObj = new EbObjects.EbBotForm(formid);
     this.PGobj = null;
-
+    this.ssurl = url;
 
     // need to change
     this.controlCounters = {
@@ -274,6 +274,56 @@
 
     };
 
+    this.AfterSave = function () {
+
+        var TblName = "r_rr"////
+        if (this.validateTableName(TblName)) {
+            $.ajax({
+                type: "POST",
+                url: this.ssurl,
+                data: this.ajaxdata.bind(this),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+                },
+                success: this.ajaxsuccess.bind(this),
+            });
+        }
+        else {
+            this.Ebalert.alert({
+                head: "Enter a name containing only lowercase letters or digits and starting with a lowercase letter.",
+                body: "Enter a name containing only lowercase letters or digits and starting with a lowercase letter..",
+                type: "danger",
+                delay: 5000
+            });
+        }
+    };
+
+    this.ajaxdata = function (dq) {
+        dq.TableName = "table1";//////
+    };
+
+    this.validateTableName = function (name) {
+        if (/^[a-z]/.test(name)) {// start with small letter
+            if ((!/ |-/.test(name))) { //no Space or Hyphen 
+                if ((/^[a-z0-9_]*$/.test(name))) { //only lowercase or number
+                    return true
+                }
+                else
+                    alert("Enter a name containing only lowercase letters or numerics as 'TableName'");
+            }
+            else
+                alert("Should include no Space or Hyphen in the 'TableName'");
+        }
+        else
+            alert("Make first letter lowercase letter");
+
+        return false;
+    };
+
+    this.ajaxsuccess = function () {
+
+    };
+
     //this.initCtrl = function (el) {
     //    var $EbCtrl = $(el);
     //    var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
@@ -310,6 +360,13 @@
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             RefreshControl(PropsObj);
         }.bind(this);
+
+
+        this.Ebalert = new EbAlert({
+            id: this.wraperId + "BFBalertCont",
+            top: 24,
+            right: 24,
+        });
     };
     this.Init();
 };

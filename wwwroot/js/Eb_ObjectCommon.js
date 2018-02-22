@@ -54,7 +54,10 @@
         $('#close_popup').trigger('click');
     };
 
-    this.UpdateTab = function (data) {
+    this.UpdateTab = function (getNav, data) {
+        if (this.ObjCollection[getNav].EbObject.$type.indexOf("BotForm") !== -1) {
+            this.ObjCollection[getNav].AfterSave();
+        }
         var target = $("#versionNav li.active a").attr("href");
         this.ver_Refid = data;
         var getNav = $("#versionNav li.active a").attr("href");
@@ -321,7 +324,7 @@
             _rel_obj: this.ObjCollection[getNav].relatedObjects,
             _tags: tagvalues,
             _apps: apps
-        }, this.UpdateTab.bind(this));
+        }, this.UpdateTab.bind(this, getNav));
     };
 
     this.Commit = function () {
@@ -359,7 +362,7 @@
         $('#create').selectpicker('refresh');
 
         $('#create li').off('click').on("click", this.createVersion.bind(this));
-        if (this.Current_obj.Status != "Live") {
+        if (this.Current_obj.Status !== "Live") {
             $('#_patch').hide();
         }
     }

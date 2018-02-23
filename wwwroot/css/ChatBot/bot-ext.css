@@ -3,10 +3,10 @@
     flex-direction: column;
     position: fixed;
     right: 24px;
-    bottom: 70px;
+    bottom: 10px;
     width: 28%;
-    height: 75%;
-    border-radius: 3.5px;
+    height: 90%;
+    border-radius: 10px;
     background-color: white;
     min-width: 300px;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
@@ -21,13 +21,18 @@
     flex: 1 1 auto;
 }
 
-.ebbot_iframe {
+/*.ebbot_iframe {
     visibility: hidden;
     width: 100%;
     flex: 1 1 auto;
     border-radius: 0px 0px 3.5px 3.5px;
+}*/
+.ebbot_iframe {
+    visibility: hidden;
+    width: 100%;
+    flex: 1 1 auto;
+   border-radius:10px;
 }
-
 .chatbtn {
     position: fixed;
     right: 24px;
@@ -76,13 +81,19 @@
     text-align: center;
 }
 
-.eb-chat-head {
+/*.eb-chat-head {
     background-color: var( --ebbotThemeColor );
     border-radius: 3px 3px 0px 0px;
     color: white;
     padding: 5px 15px;
+}*/
+.eb-chat-head {
+    background-color: #2590b0;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    color: white;
+    padding: 5px 15px;
 }
-
 .poweredby {
     font-size: 10px;
     font-family: arial;

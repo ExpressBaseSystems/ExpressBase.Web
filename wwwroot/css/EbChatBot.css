@@ -1,4 +1,6 @@
-﻿.eb-chat-cont {
+﻿
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600");
+.eb-chat-cont {
     display: block;
     position: fixed;
     height: 100%;
@@ -6,15 +8,22 @@
     border-radius: 3px;
 }
 
-.eb-chatBox, .eb-chatBox-dev {
+/*.eb-chatBox, .eb-chatBox-dev {
     overflow-y: auto;
     height: 100%;
     padding: 0px 5px;
     padding-bottom: 60px;
     background-color: #e8e8e8;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23bdbdbd' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+}*/
+.eb-chatBox, .eb-chatBox-dev {
+    overflow-y: auto;
+    height: 100%;
+    padding: 0px 5px;
+    padding-bottom: 60px;
+    background-color: white;
+    
 }
-
 .chat-icon {
     position: fixed;
     right: 30px;
@@ -28,12 +37,15 @@
     box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.39);
 }
 
+/*.msg-cont-bot, .msg-cont-user {
+    width: calc(100% - 26px);
+    display: inline-block;
+}*/
 .msg-cont-bot, .msg-cont-user {
     width: calc(100% - 26px);
     display: inline-block;
 }
-
-.msg-wraper-user, .msg-wraper-bot {
+/*.msg-wraper-user, .msg-wraper-bot {
     font-family: Open Sans,sans-serif;
     position: relative;
     display: inline-block;
@@ -42,8 +54,16 @@
     padding: 4px 10px;
     font-size: 100%;
     border: .107em solid #00000021;
+}*/
+.msg-wraper-user, .msg-wraper-bot {
+    font-family: Open Sans;
+    position: relative;
+    display: inline-block;
+    text-align: left;
+    color: #555;
+    padding: 4px 10px;
+    font-size: 100%;    
 }
-
 .msg-wraper-user {
     border-radius: 13px 13px 0px 13px;
     margin: 6px 5px 5px 50px;
@@ -51,13 +71,19 @@
     padding-right: 41px;
 }
 
-.msg-wraper-bot {
+/*.msg-wraper-bot {
     border-radius: 13px 13px 13px 0px;
     margin: 6px 5px 6px 5px;
     background-color: #fff;
     padding-right: 41px;
+}*/
+.msg-wraper-bot {
+    padding:10px;
+    border-radius: 13px 13px 13px 0px;
+    margin: 6px 5px 6px 5px;
+    background-color: #f1f1f1;
+    padding-right: 41px;
 }
-
 .msg-cont {
     /*display: inline-block;
     min-width: 87%;*/
@@ -165,11 +191,15 @@
     display: inline-block;
 }
 
-.btn-box {
+/*.btn-box {
     margin-left: 16px;
     width: 98%;
+}*/
+.btn-box {
+    margin-left: 16px;
+    width: 100%;
+    text-align:center;
 }
-
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {
     width: 100%;
     min-height: 28px;
@@ -183,19 +213,19 @@
 }
 
 
-.btn-box .btn {
+/*.btn-box .btn {
     color: #555;
     background: var(--botThemeColor);
     color: white;
     font-size: 12px;
     border: solid 1px #e0e0e0;
-}
-
+}*/
 .btn-box .btn {
     margin: 1px 1px;
-    width: 100%;
-    min-width: 222px;
+    width: 40%;
     margin-bottom: 2px;
+    display: inline-block;
+    margin-right: 15px;
 }
 
 .msg-cont .btn:focus {
@@ -204,13 +234,22 @@
     box-shadow: none;
 }
 
-.eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
+/*.eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
     border-radius: 15px;
     color: white;
     background: var(--botThemeColor);
     border: none;
     outline: none;
     padding: 4px;
+}*/
+.eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
+    border-radius: 15px;
+    color: white;
+    background: #427ac5;
+    border: none;
+    outline: none;
+    padding: 5px;
+    font-size: 15px;
 }
 
 .chat-ctrl-cont [name=ctrlsend] {
@@ -251,23 +290,36 @@
     margin-left: -5px
 }
 
-.poweredby-cont {
+/*.poweredby-cont {
     position: fixed;
     bottom: 0;
     background-color: var(--botThemeColor);
-    /*text-shadow: 1px 1px 1px rgba(0,0,0,0.51);*/
+   
     WIDTH: 100%;
     padding: 1px;
     text-align: center;
     z-index: 2;
+}*/
+.poweredby-cont {
+    position: fixed;
+    bottom: 0;
+    background-color: #f1f1f1;
+    /*text-shadow: 1px 1px 1px rgba(0,0,0,0.51);*/
+    WIDTH: 100%;
+    padding: 5px;
+    text-align: center;
+    z-index: 2;
 }
-
 .poweredby {
     font-family: arial;
     font-size: 12px;
-    color: white;
+    color: #555555;
 }
-
+/*.poweredby {
+    font-family: arial;
+    font-size: 12px;
+    color: white;
+}*/
 .botlink {
     color: white;
     font-style: italic;

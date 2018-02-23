@@ -21,7 +21,7 @@
         d.botdpURL = 'http://localhost:5000/images/svg/bot2.svg';
     })();
 </script>
-<svg id="boticon" class="boticon" height="0"></svg>
+@*<svg id="boticon" class="boticon" height="0"></svg>*@
 
 <section class="message-box-indexpage">
    @ViewBag.message
@@ -305,35 +305,29 @@
 }
 <script>
     $('document').ready(function () {
-        //$(".getstarted").prop("disabled", true);
         $(document).scroll(function () {
             var y = $(this).scrollTop();
             if (y > $('.slider').height()) {
                 $('#trial-btn').fadeIn();
-                $('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
+                //$('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
             } else {
                 $('#trial-btn').fadeOut();
-                $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
+               /* $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" })*/;
             }
         });                   
     });
 
     function validate(form) {
         var email = form.email.value.trim();
-        if (ValidateEmail(email)) {
-
+        if (ValidateEmail(email)) 
             return true;
-        }
-        else {
+        else 
             return false;
-
-        }
     }
     function ValidateEmail(mail) {
-        if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
-            return (true)
-        }
-        return (false)
+        if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+            return (true);
+        return (false);
     }     
 </script>
 @if (ViewBag.useremail != null)

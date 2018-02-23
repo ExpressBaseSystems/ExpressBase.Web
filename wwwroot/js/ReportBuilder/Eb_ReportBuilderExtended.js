@@ -251,6 +251,14 @@
         }
     }
 
+    this.replaceWOPtConvProp = function (source, destination) {
+        for (var objPropIndex in source) {
+            if (typeof source[objPropIndex] !== "object") {
+                source[objPropIndex] = destination[objPropIndex];
+            }
+        }
+    }
+
     this.convertTopoints = function (val) {
         var pixel = val;
         var point = (pixel * 72) / 96;

@@ -157,6 +157,7 @@ namespace ExpressBase.Web.Controllers
 			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
 				Id = userid,
+				AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],
 				EmailPrimary = Dict["email"],

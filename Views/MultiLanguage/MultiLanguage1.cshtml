@@ -11,6 +11,8 @@
     <input id="txtfinalvalue" type="text" class="form-control" style="width:150px" value="">
     <br />
     <button id="btn_click" class="btn btn-info btn-lg">Click Me</button>
+    <button id="btn_10" class="btn btn-info btn-lg" onclick="getclick()">get</button>
+    <button id="btn_20" class="btn btn-info btn-lg" onclick="setclick()">set</button>
     
 </div>
 <div id="Mod_cont"></div>
@@ -107,5 +109,15 @@
 <script>
     var obj = new MultiLanguageObj({
         ContainerId: "Mod_cont",
-        ToggleBtnId: "btn_click"});
+        ToggleBtnId: "btn_click"
+    });
+    function getclick() {
+        alert(obj.get());
+
+    }
+    function setclick() {
+        obj.set($(txtfinalvalue).val());
+
+    }
+
 </script>

@@ -280,8 +280,10 @@
         if (this.validateTableName(TblName)) {
             $.ajax({
                 type: "POST",
-                url: this.ssurl,
-                data: this.ajaxdata.bind(this),
+                url: this.ssurl+"/bots",
+                data: {
+                    TableName: this.rootContainerObj.TableName, Fields: this.getCtlName_Type()
+                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + getToken());
                 },
@@ -298,8 +300,17 @@
         }
     };
 
+    this.getCtlName_Type = function () {
+        var FieldsDTLS = new Object;
+        $.each(this.rootContainerObj.Controls.$values, function (i, obj) {
+            FieldsDTLS[obj.Name] = obj.Name + "_type";
+        });
+        return JSON.stringify(FieldsDTLS);
+    };
+
     this.ajaxdata = function (dq) {
         dq.TableName = "table1";//////
+        return dq;
     };
 
     this.validateTableName = function (name) {

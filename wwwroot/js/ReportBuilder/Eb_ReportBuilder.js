@@ -33,7 +33,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.EbObjectSections = this.RbCommon.EbObjectSections;
     this.msBoxSubNotation = this.RbCommon.msBoxSubNotation;
     this.pages = this.RbCommon.pages;
-    this.TextAlign = EbEnums.EbTextAlign;
+    this.TextAlign = this.RbCommon.TextAlign;
     this.rulerTypesObj = this.RbCommon.EbRuler;
     
     this.RefreshControl = function (obj) {        
@@ -476,11 +476,11 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.contextMenucopy = function (eType, selector, action, originalEvent) {
         if (!$(selector.selector).hasClass("pageHeaders")) {
-            this.copyStack = this.objCollection[$(selector.selector).attr('id')];
+            this.copyStack = Object.assign({}, this.objCollection[$(selector.selector).attr('id')]);
             this.copyORcut = 'copy';
         }
         else
-            alert("section cannot copy!")
+            alert("section cannot copy!");
     };
     this.contextMenucut = function (eType, selector, action, originalEvent) {
         if (!$(selector.selector).hasClass("pageHeaders")) {
@@ -489,27 +489,30 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $(selector.selector).remove();
         }
         else
-            alert("section cannot cut!")
+            alert("section cannot cut!");
     };
     this.contextMenupaste = function (eType, selector, action, originalEvent) {
         if (this.copyStack === null) { alert('no item copied'); }
         else {
-            var copy = this.copyStack;
+            var $obj = {};
             var Objid = null;
-            var Objtype = $("#" + copy.EbSid).attr('eb-type');
+            var Objtype = $("#" + this.copyStack.EbSid).attr('eb-type');
             if (this.copyORcut === 'copy') {
                 Objid = Objtype + (this.idCounter["Eb" + Objtype + "Counter"])++;
-                copy.EbSid = Objid;
-                copy.Name = Objid;
+                $obj = new EbObjects["Eb" + Objtype](Objid);                
+                this.repExtern.replaceWOPtConvProp($obj, this.copyStack);
+                $obj.EbSid = Objid;
+                $obj.Name = Objid;
             }
             else if (this.copyORcut === 'cut') {
-                Objid = copy.EbSid;
+                $obj = this.copyStack;
+                Objid = this.copyStack.EbSid;
             }
-            copy.Top = action.originalEvent.pageY - $(selector.selector).offset().top;
-            copy.Left = action.originalEvent.pageX - $(selector.selector).offset().left;
-            $(selector.selector).append(copy.Html());
-            this.objCollection[Objid] = copy;
-            this.RefreshControl(copy);
+            $obj.Top = action.originalEvent.pageY - $(selector.selector).offset().top;
+            $obj.Left = action.originalEvent.pageX - $(selector.selector).offset().left;
+            $(selector.selector).append($obj.$Control.outerHTML());
+            this.objCollection[Objid] = $obj;
+            this.RefreshControl($obj);
             this.copyStack = null;
             this.copyORcut = null;
         }
@@ -726,8 +729,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.setpageSize = function (obj) {
         this.type = obj.PaperSize;
         if (obj.PaperSize !== 5) {
-            this.height = pages[this.type].height;
-            this.width = pages[this.type].width;
+            this.height = this.pages[this.type].height;
+            this.width = this.pages[this.type].width;
             $('.ruler,.rulerleft').empty();
             this.ruler();
             $(".headersections,.multiSplit").css({ "height": this.height });
@@ -747,13 +750,13 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.setpageMode = function (obj) {
         if (obj.IsLandscape === true) {
-            this.height = pages[this.type].width;
-            this.width = pages[this.type].height;
+            this.height = this.pages[this.type].width;
+            this.width = this.pages[this.type].height;
             //this.repExtern.splitterOndragFn();
         }
         else if (obj.IsLandscape === false) {
-            this.height = pages[this.type].height;
-            this.width = pages[this.type].width;
+            this.height = this.pages[this.type].height;
+            this.width = this.pages[this.type].width;
             //this.repExtern.splitterOndragFn();
         }
         $('.ruler,.rulerleft').empty();

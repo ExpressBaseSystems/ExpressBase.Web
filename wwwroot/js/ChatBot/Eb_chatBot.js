@@ -1,4 +1,4 @@
-﻿var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL) {
+﻿var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl) {
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
     this.ebbotThemeColor = _themeColor;
@@ -25,12 +25,14 @@
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
+    this.formValuesWithType = {}
     this.formFunctions = {};
     this.formFunctions.visibleIfs = {};
     this.editingCtrlName = null;
     this.lastCtrlIdx = 0;
     this.FB = null;
     this.FBResponse = {};
+    this.ssurl = ssurl;
     this.init = function () {
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatBox);
@@ -107,7 +109,7 @@
         var $e = $(e.target);
         if (reply === undefined)
             reply = $e.text().trim();
-        var idx = $e.attr("idx");
+        var idx = parseInt( $e.attr("idx"));
         $e.closest('.msg-cont').remove();
         this.sendMsg(reply);
         $('.eb-chat-inp-cont').hide();
@@ -478,10 +480,12 @@
         if (this.curCtrl.objType === "ImageUploader") {
             this.replyAsImage($msgDiv, $input[0], next_idx);
             this.formValues[id] = this.lastval;// last value set from outer fn
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
         else if (this.curCtrl.objType === "RadioGroup") {
             this.sendCtrlAfter($msgDiv.hide(), $('#' + id).val() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.lastval;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.lastCtrlIdx);
         }
         else {
@@ -493,6 +497,7 @@
             }
             this.sendCtrlAfter($msgDiv.hide(), this.lastval + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.lastval;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.lastCtrlIdx);
         }
         this.editingCtrlName = null;
@@ -527,7 +532,7 @@
         var $CtrlCont;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
-        this.curCtrl = this.curForm.controls[idx];
+        this.curCtrl = this.curForm.controls[idx||0];
         if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations"))
             $CtrlCont = $(control);
         else
@@ -682,14 +687,33 @@
     }.bind(this);
 
     this.showConfirm = function () {
-        this.formValues = {};
         this.formFunctions.visibleIfs = {};
         this.lastCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
         var msg = `Your ${this.curForm.name} application submitted successfully`;
         this.msgFromBot(msg);
+        this.DataCollection();
         this.AskWhatU();
     }.bind(this);
+
+    this.DataCollection = function () {
+        $.ajax({
+            type: "POST",
+            url: this.ssurl + "/bots",
+            data: {
+                TableName: this.curForm.name, Fields: JSON.stringify(this.formValuesWithType)
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+            },
+            success: this.ajaxsuccess.bind(this),
+        });
+        this.formValues = {};
+    };
+
+    this.ajaxsuccess = function () {
+
+    };
 
     this.AskWhatU = function () {
         this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
@@ -740,10 +764,10 @@
                 this.AskWhatU();
 
                 /////////////////////////////////////////////////Form click
-                //setTimeout(function () {
-                //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=12]").click();
-                //}.bind(this), this.typeDelay * 2 + 100);
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    $(".btn-box").find("[idx=15]").click();
+                }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 
@@ -780,3 +804,8 @@ var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
     this.borderColor = borderColor;
     this.fill = fill;
 };
+
+function getToken() {
+    var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
+    return b ? b.pop() : '';
+}

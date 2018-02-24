@@ -2,6 +2,8 @@
     this.Bot = bot;
 
     this.Date = function (ctrl) {
+        if (typeof ctrl === typeof "")
+            ctrl = { name: ctrl, ebDateType:5}
         var settings = { timepicker: false };
 
         if (ctrl.ebDateType === 5) {

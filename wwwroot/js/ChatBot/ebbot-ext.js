@@ -13,8 +13,8 @@
     var ss = d.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";
-    ss.href = "../css/ChatBot/bot-ext.css";
-    //ss.href = "http://expressbase.com/css/ChatBot/bot-ext.css";
+    //ss.href = "../css/ChatBot/bot-ext.css";
+    ss.href = "http://expressbase.com/css/ChatBot/bot-ext.css";
     d.getElementsByTagName("head")[0].appendChild(ss);
 
     var chatHead = d.createElement("div");
@@ -85,8 +85,8 @@
         var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
         if (!ebbot_iframe.getAttribute("src")) {
-            //ebbot_iframe.setAttribute("src", "https://expressbase.azurewebsites.net//bote/bot?tid=" + window.EXPRESSbase_SOLUTION_ID);
-            ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:5000/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
+            ebbot_iframe.setAttribute("src", "https://expressbase.com/bote/bot?tid=" + `${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
+            //ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:5000/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
         }
         if (iframecont.style.display !== "flex") {
             this.style.display = "none";
@@ -126,9 +126,9 @@
         chatbtn.click();
     }
 
-    var dpicon = chatIcon.cloneNode(true);
-    dpicon.style.width = "40px";
-    dpicon.style.height = "40px";
-    botdp.appendChild(dpicon);
+    //var dpicon = chatIcon.cloneNode(true);
+    //dpicon.style.width = "40px";
+    //dpicon.style.height = "40px";
+    //botdp.appendChild(dpicon);
 
 })();

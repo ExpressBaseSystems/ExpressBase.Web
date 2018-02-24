@@ -25,6 +25,7 @@
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
+    this.airformValues = {};
     this.formValuesWithType = {}
     this.formFunctions = {};
     this.formFunctions.visibleIfs = {};
@@ -70,57 +71,201 @@
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
+
         $("body").on("click", ".btn-box [for=bookaflight]", this.bookaflight);
         $("body").on("click", ".btn-box [for=rufrom]", this.rufrom);
+        $("body").on("click", ".btn-box [for=near5]", this.near5);
+
         $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
 
-        $("body").on("keyup", "#portsearch", this.portSearch);
+        $("body").on("keyup", "._country_search_input", this.portSearch);
         $("body").on("click", ".locDDitem", this.locDDClick);
-        
+        $("body").on("click", ".airCtrlSend", this.airCtrlSend);
+        this.radioHTML = `<div class="airctrl-wraper">
+        <div id="Duration" name="Duration" type="RadioGroup">
+            <div>
+                <input type="radio" id="Halfday" value="hd" name="Duration" checked="checked" > <span id="HalfdayLbl"> One way </span><br>
+            </div>
+            <div>
+                <input type="radio" id="Fullday" value="fd" name="Duration"> <span id="FulldayLbl"> Round trip  </span><br>
+            </div>
+            <div>
+                <input type="radio" id="Multipledays" value="md" name="Duration"> <span id="MultipledaysLbl"> Multi-city  </span><br>
+            </div>
+        </div>
+    </div>`;
+        this.placeHTML = `
+<div class="airctrl-wraper"> 
+<div class="_search_country_cont"> 
+                <div class="_search_box">
+                    <input type="text" name="airctrl"  placeholder="enter text." class="form-control _country_search_input"/>
+                    <span class="_icon_search"><i class="glyphicon glyphicon-search"></i></span>
+                </div>
+                <div class="_search_box_res">
+                </div>
+                </div>
+            </div>`;
+        this.dateHTML = `
+<div class="airctrl-wraper"> 
+<div class="ctrl-wraper"> 
+        <div class="input-group" style="width:100%;">
+            <input id="DepartDT" name="airctrl" data-ebtype="6" data-toggle="tooltip" title="" class="date" type="text" name="airctrl" autocomplete="on" tabindex="0" style="width:100%; background-color:#ffffff;color:#333333;display:inline-block; @fontStyle@ " required="" placeholder="" maxlength="10">
+            <span class="input-group-addon" onclick="$('#DepartDT').focus().focus()"> <i id="DepartDTTglBtn" class="fa  fa-calendar" aria-hidden="true"></i> </span>
+        </div></div></div>
+`;
+        this.psngrtypeHTML = `
+<div class="airctrl-wraper">
+    <div class="pgr-block">
+        <pgrlabel>Adults</pgrlabel><br>
+        <select class="adults">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+    </div>
+    <div class="pgr-block">
+        <pgrlabel>Children</pgrlabel><br>
+        <select class="children">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+    </div>
+    <div class="pgr-block">
+        <pgrlabel>Infants</pgrlabel><br>
+        <select class="infants">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+    </div>
+</div>`
 
-        
+
+
+
 
         this.showDate();
     };
 
+    this.airCtrlSend = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        var $inp = $btn.closest(".msg-wraper-bot").find("[name=airctrl]");
+        var inpfor = $inp.attr("for");
+
+        var val = $inp.val();
+        if (_for === "psngrtype") {
+            this.sendDeparton();
+            inpfor = "passengertype";
+            val = $(".adults").find(":selected").text();
+            val = val + ", " + $(".children").find(":selected").text();
+            val = val + ", " + $(".infants").find(":selected").text();
+        }
+
+        this.AirPostmenuClick(e, val);
+        var _for = $btn.attr("for");
+        if (_for === "placefrom") {
+            this.sendPlaceto();
+            inpfor = "placefrom";
+        }
+        else if (_for === "placeto") {
+            this.sendDeparton();
+            inpfor = "placeto";
+        }
+        else if (_for === "psngrtype") {
+            this.sendDeparton();
+        }
+        else if (_for === "journytype") {
+            this.journytype(e);
+        }
+        else if (_for === "departon")
+            this.sendPsngrtype();
+        this.airformValues[inpfor] = val;
+
+    }.bind(this);
+
+
+    this.sendPsngrtype = function () {
+        this.msgFromBot("Number of passengers ?");
+        this.sendAirCtrl(this.psngrtypeHTML, "psngrtype");
+        alert(JSON.stringify(this.airformValues));
+    };
+
+    this.sendPlaceFrom = function () {
+        this.msgFromBot("Place From?");
+        this.sendAirCtrl(this.placeHTML, "placefrom");
+    };
+
+    this.sendPlaceto = function () {
+        this.msgFromBot("Place to?");
+        this.sendAirCtrl(this.placeHTML, "placeto");
+    };
+
+    this.sendDeparton = function () {
+        this.msgFromBot("Depart on ?");
+        this.sendAirCtrl(this.dateHTML, "departon");
+        this.initControls.Date("DepartDT");
+    };
+
     this.bookaflight = function (e) {
         this.postmenuClick(e);
-        if (this.CurFormIdx === 0)
-            this.Query(`Are you travelling from ${this.AirpotObj.nearestAirport} ?`, ["yes", "No, Show me nearest 5 Airports", "Let me choose"], "rufrom");
+        if (this.CurFormIdx === 0) {
+            this.msgFromBot("Journy type ?");
+            this.sendAirCtrl(this.radioHTML, "journytype");
+            this.airformValues["journytype"] = "oneway"
+        }
     }.bind(this);
 
     this.rufrom = function (e) {
-        this.postmenuClick(e);
-        if (this.CurFormIdx === 0)
+        var $btn = $(e.target).closest(".btn");
+        this.AirPostmenuClick(e);
+        var idx = $btn.index()
+        if (idx === 0)
             this.airYes();
-        else if (this.CurFormIdx === 1)
+        else if (idx === 1)
             this.airNo5();
-        else if (this.CurFormIdx === 2)
+        else if (idx === 2)
             this.airLetMe();
     }.bind(this);
 
     this.airYes = function () {
-        //alert(JSON.stringify( this.AirpotObj.CurLoc));
-        //alert(this.AirpotObj.nearestAirport + "  nereset");
-        //alert(this.AirpotObj.nearest5Airports + "   5 pors");
+        this.sendPlaceto();
     }.bind(this);
 
     this.airNo5 = function () {
         this.QueryBtnOnly(this.AirpotObj.nearest5Airports, "near5");
     }.bind(this);
 
-    this.airLetMe = function () {
-        this.sendAirCtrl(`
-<div class="_search_country_cont"> 
-                <div class="_search_box">
-                    <input type="text" id="portsearch" placeholder="enter text." class="form-control _country_search_input"/>
-                    <span class="_icon_search"><i class="glyphicon glyphicon-search"></i></span>
-                </div>
-                <div class="_search_box_res">
+    this.near5 = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        this.AirPostmenuClick(e);
+        this.sendPlaceto();
+    }.bind(this);
 
-                </div>
-            </div>`);
+    this.journytype = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        this.AirPostmenuClick(e);
+        this.sendMsg("One way");
+        this.Query(`Are you travelling from ${this.AirpotObj.nearestAirport} ?`, ["yes", "No, Show me nearest 5 Airports", "No, Let me choose"], "rufrom");
+    }.bind(this);
+
+    this.airLetMe = function () {
+        this.sendPlaceFrom();
     }.bind(this);
 
     this.contactSubmit = function (e) {
@@ -159,6 +304,14 @@
             //    }.bind(this));
         }
         this.StartAirTicketFlow()
+    }.bind(this);
+
+    this.AirPostmenuClick = function (e, reply) {
+        var $e = $(e.target);
+        if (reply === undefined)
+            reply = $e.text().trim();
+        $e.closest('.msg-cont').remove();
+        this.sendMsg(reply);
     }.bind(this);
 
     this.postmenuClick = function (e, reply) {
@@ -669,11 +822,14 @@
         this.$chatBox.append($msg);
         $('.eb-chatBox').scrollTop(99999999999);
     };
-    this.sendAirCtrl = function (msg) {
+    this.sendAirCtrl = function (msg, _for) {
+        var $ctrl = $(msg);
+        $ctrl.find("[name=airctrl]").attr("for", _for);
         var $msg = this.$botMsgBox.clone();
-        $msg.find('.msg-wraper-bot').append(msg);
+        $msg.find('.msg-wraper-bot').append(msg).append('<button class="btn airCtrlSend" for="' + _for + '"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>');
         this.$chatBox.append($msg);
-        $msg.find(".msg-wraper-bot").css("padding-right", "10px");
+
+        $msg.find(".msg-wraper-bot").css("padding-right", "10px").css("width","85%");
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
@@ -877,8 +1033,8 @@
     };
 
     this.locDDClick = function (e) {
-        $("#portsearch").val(e.target.innerText);
-        e.target.style.backgroundColor="#3333aa"
+        $("._country_search_input").val(e.target.innerText);
+        e.target.style.backgroundColor = "#3333aa"
         $("._search_box_res").hide(100);
     };
 

@@ -28,6 +28,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL)
         {
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.tid = tid;
             ViewBag.appid = appid;
             ViewBag.botdpURL = botdpURL;

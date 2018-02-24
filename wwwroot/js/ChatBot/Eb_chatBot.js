@@ -157,7 +157,7 @@
 </div>`
 
 
-        $("body").on("click", "i", this.clearPortText);
+        $("body").on("click", ".portclose", this.clearPortText);
 
 
 

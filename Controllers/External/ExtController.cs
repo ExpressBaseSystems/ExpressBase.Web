@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using ExpressBase.Objects.Helpers;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -124,8 +125,16 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+		public IActionResult TestFeb()
+		{
+			EbXmlSerializer s = new EbXmlSerializer();
+			SamClass obj = new SamClass {id = 1, name = "asdfg" };
+			ViewBag.str = s.Serialize<SamClass>(obj);
+			return View();
+		}
 
-        [HttpPost]
+
+		[HttpPost]
         public IActionResult StripeResponse()
         {
             var json = new StreamReader(HttpContext.Request.Body).ReadToEnd();

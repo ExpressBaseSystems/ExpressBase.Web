@@ -27,10 +27,10 @@
     //var html = d.getElementsByTagName('html')[0];
     //html.style.setProperty("--ebbotThemeColor", themeColor);
 
-    var botdp = d.createElement("div");
-    botdp.className = "bot-icon";
+    //var botdp = d.createElement("div");
+    //botdp.className = "bot-icon";
 
-    chatHead.appendChild(botdp);
+    //chatHead.appendChild(botdp);
 
     chatHead.appendChild(botHeadDiv);
 

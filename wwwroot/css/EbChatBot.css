@@ -602,3 +602,12 @@
     top: 8px;
     right: 10px;
 }
+
+.xx {
+    background-color: #666;
+    color: white;
+}
+
+.portclose:hover {
+    cursor: pointer;
+}

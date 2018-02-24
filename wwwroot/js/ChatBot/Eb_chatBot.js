@@ -157,6 +157,8 @@
 </div>`
 
 
+        $("body").on("click", "i", this.clearPortText);
+
 
 
 
@@ -1036,23 +1038,64 @@
         $("._country_search_input").val(e.target.innerText);
         e.target.style.backgroundColor = "#3333aa"
         $("._search_box_res").hide(100);
+        $("._country_search_input").siblings("span").children("i").removeClass("glyphicon glyphicon-search");
+        $("._country_search_input").siblings("span").children("i").addClass("fa fa-close portclose");
     };
 
     this.portSearch = function func(e) {
         $targetval = $(e.target).val();
-        $('._search_box_res').empty().show(100);
-        if ($targetval !== "" && $targetval.length > 1) {
-            for (index = 0; index < PortList.length; index++) {
-                if (PortList[index].name !== null) {
-                    var airname = PortList[index].name.toLowerCase();
-                    var aircode = PortList[index].iatacode.toLowerCase();
-                    if (airname.startsWith($targetval.toLowerCase()) || aircode.startsWith($targetval.toLowerCase())) {
-                        $('._search_box_res').append('<div tabindex="0" class="locDDitem">' + PortList[index].name + "-" + PortList[index].iatacode + "</div>");
+        if (e.keyCode === 38 || e.keyCode === 40)
+            this.modifyPort(e.keyCode);
+        else if (e.keyCode === 13) {
+            var actElement = $('._search_box_res').children(".xx");
+            $("._country_search_input").val(actElement.text());
+            $("._search_box_res").hide(100);
+            $("._country_search_input").siblings("span").children("i").removeClass("glyphicon glyphicon-search");
+            $("._country_search_input").siblings("span").children("i").addClass("fa fa-close portclose");
+        }
+        else{
+            $('._search_box_res').empty().show(100);
+            if ($targetval !== "" && $targetval.length > 1) {
+                for (index = 0; index < PortList.length; index++) {
+                    if (PortList[index].name !== null) {
+                        var airname = PortList[index].name.toLowerCase();
+                        var aircode = PortList[index].iatacode.toLowerCase();
+                        if (airname.startsWith($targetval.toLowerCase()) || aircode.startsWith($targetval.toLowerCase())) {
+                            $('._search_box_res').append('<div tabindex="0" class="locDDitem">' + PortList[index].name + "-" + PortList[index].iatacode + "</div>");
+                        }
                     }
                 }
+                $('._search_box_res div:eq(0)').addClass("xx");
+                if (!$("._country_search_input").siblings("span").children("i").hasClass("glyphicon")) {
+                    $("._country_search_input").siblings("span").children("i").removeClass("fa fa-close portclose");
+                    $("._country_search_input").siblings("span").children("i").addClass("glyphicon glyphicon-search");
+                }
+
             }
+
         }
-    }
+    }.bind(this);
+
+    this.modifyPort = function (keyCode, val) {
+        var actElement = $('._search_box_res').children(".xx");
+        if (keyCode === 38 && actElement.prev('div').length > 0) {
+            actElement.removeClass("xx");
+            currentElement = actElement.prev('div').addClass("xx");
+        }
+        else if (keyCode === 40 && actElement.next('div').length > 0) {
+            actElement.removeClass("xx");
+            currentElement = actElement.next('div').addClass("xx");
+        }
+    };
+
+    this.clearPortText = function () {
+        $("._country_search_input").val("");
+        if (!$("._country_search_input").siblings("span").children("i").hasClass("glyphicon")) {
+            $("._country_search_input").siblings("span").children("i").removeClass("fa fa-close portclose");
+            $("._country_search_input").siblings("span").children("i").addClass("glyphicon glyphicon-search");
+        }
+    };
+
     this.init();
 };
 

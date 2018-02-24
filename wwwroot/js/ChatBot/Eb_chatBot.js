@@ -704,7 +704,7 @@
                 TableName: this.curForm.name, Fields: JSON.stringify(this.formValuesWithType)
             },
             beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+                xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
             },
             success: this.ajaxsuccess.bind(this),
         });

@@ -1,103 +1,105 @@
-﻿@page
-@{
-}
+﻿
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Excel To HTML using codebeautify.org</title>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/Eb.css" />    <!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css" />
+<link rel="stylesheet" type="text/css" href="~/css/EbChatBot.css" />@*jith*@
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css">
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" />@*amal*@
+<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+@*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />*@
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css" />
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/Eb.css" />    <!-- Add the slick-theme.css if you want default styling -->
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/EbChatBot.css" />@*jith*@
-    <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css">
-    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" />@*amal*@
-    <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-    @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />*@
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
+<script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/ChatBot/PortList.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/ChatBot/Airport.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>@*Dona*@
+<script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&callback=initMap"></script>
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
-    <script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js"></script>@*jith*@
-    <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js"></script>@*jith*@
-    <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>@*Dona*@
-    <script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
-    </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&callback=initMap"> </script>
+<script>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0px;
-        }
-    </style>
-</head>
-<body>
-    <script>
-        var solid = "@ViewBag.tid";
-        var appid = "@ViewBag.appid";
-        var themeColor = "@ViewBag.themeColor";
-        var botdpURL = "@ViewBag.botdpURL";
+</script>
 
-        var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl');
+<style>
+    body {
+        margin: 0;
+        padding: 0px;
+    }
+</style>
+<script>
 
-        var html = document.getElementsByTagName('html')[0];
-        html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
 
+    var solid = "@ViewBag.tid";
+    var appid = "@ViewBag.appid";
+    var themeColor = "@ViewBag.themeColor";
+    var botdpURL = "@ViewBag.botdpURL";
+
+    var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl');
+    chatBotObj.AirpotObj.airports = PortList;
+
+    var html = document.getElementsByTagName('html')[0];
+    html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
+
+    function getip(data) {
+        chatBotObj.AirpotObj.SetCurLoc(data);
+    };
 
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {
-        console.log('statusChangeCallback');
-        console.log(response);
-        chatBotObj.FB = FB;
-        if (response.status === 'connected') {
-            chatBotObj.FBLogined();
-        } else {
-            chatBotObj.FBNotLogined();
-        }
+    console.log('statusChangeCallback');
+    console.log(response);
+    chatBotObj.FB = FB;
+    if (response.status === 'connected') {
+    chatBotObj.FBLogined();
+    } else {
+    chatBotObj.FBNotLogined();
+    }
     }
 
     // This function is called when someone finishes with the Login
     function checkLoginState() {
-        FB.getLoginStatus(function (response) {
-            statusChangeCallback(response);
-        });
+    FB.getLoginStatus(function (response) {
+    statusChangeCallback(response);
+    });
     }
 
     window.fbAsyncInit = function () {
-        FB.init({
-            appId: '141908109794829',//,'1525758114176201',//
-            cookie: true,  // enable cookies to allow the server to access
-            // the session
-            xfbml: true,  // parse social plugins on this page
-            version: 'v2.11'//'v2.8' // use graph api version 2.8
-        });
-        FB.getLoginStatus(function (response) {
-            statusChangeCallback(response);
-        });
+    FB.init({
+    appId: '141908109794829',//,'1525758114176201',//
+    cookie: true,  // enable cookies to allow the server to access
+    // the session
+    xfbml: true,  // parse social plugins on this page
+    version: 'v2.11'//'v2.8' // use graph api version 2.8
+    });
+    FB.getLoginStatus(function (response) {
+    statusChangeCallback(response);
+    });
 
     };
 
 
     // Load the SDK asynchronously
     (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
-        fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
 
 
-    </script>
+</script>
+<script src="http://freegeoip.net/json/?callback=getip" type="text/javascript"></script>
 
-</body>
-</html>
+

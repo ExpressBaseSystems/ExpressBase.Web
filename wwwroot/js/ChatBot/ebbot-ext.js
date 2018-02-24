@@ -126,9 +126,9 @@
         chatbtn.click();
     }
 
-    var dpicon = chatIcon.cloneNode(true);
-    dpicon.style.width = "40px";
-    dpicon.style.height = "40px";
-    botdp.appendChild(dpicon);
+    //var dpicon = chatIcon.cloneNode(true);
+    //dpicon.style.width = "40px";
+    //dpicon.style.height = "40px";
+    //botdp.appendChild(dpicon);
 
 })();

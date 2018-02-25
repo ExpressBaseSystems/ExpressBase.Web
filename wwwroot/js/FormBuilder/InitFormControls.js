@@ -2,6 +2,8 @@
     this.Bot = bot;
 
     this.Date = function (ctrl) {
+        if (typeof ctrl === typeof "")
+            ctrl = { name: ctrl, ebDateType:5}
         var settings = { timepicker: false };
 
         if (ctrl.ebDateType === 5) {
@@ -18,7 +20,7 @@
             settings.format = "Y/m/d H:i";
         }
 
-        //settings.minDate = ctrl.min;
+        settings.minDate = "2018/02/25";
         //settings.maxDate = ctrl.max;
 
         $('#' + ctrl.name).datetimepicker(settings);

@@ -25,6 +25,7 @@
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
+    this.airformValues = {};
     this.formValuesWithType = {}
     this.formFunctions = {};
     this.formFunctions.visibleIfs = {};
@@ -70,14 +71,97 @@
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
+
         $("body").on("click", ".btn-box [for=bookaflight]", this.bookaflight);
         $("body").on("click", ".btn-box [for=rufrom]", this.rufrom);
+        $("body").on("click", ".btn-box [for=near5]", this.near5);
+        $("body").on("click", ".btn_book", this.btn_book);
+
         $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
 
         $("body").on("keyup", "._country_search_input", this.portSearch);
         $("body").on("click", ".locDDitem", this.locDDClick);
-        $("body").on("click", "i", this.clearPortText);
+        $("body").on("click", ".airCtrlSend", this.airCtrlSend);
+        this.radioHTML = `<div class="airctrl-wraper">
+        <div id="Duration" name="Duration" type="RadioGroup">
+            <div>
+                <input type="radio" id="Halfday" value="hd" name="Duration" checked="checked" > <span id="HalfdayLbl"> One way </span><br>
+            </div>
+            <div>
+                <input type="radio" id="Fullday" value="fd" name="Duration"> <span id="FulldayLbl"> Round trip  </span><br>
+            </div>
+            <div>
+                <input type="radio" id="Multipledays" value="md" name="Duration"> <span id="MultipledaysLbl"> Multi-city  </span><br>
+            </div>
+        </div>
+    </div>`;
+        this.placeHTML = `
+<div class="airctrl-wraper"> 
+<div class="_search_country_cont"> 
+                <div class="_search_box">
+                    <input type="text" name="airctrl"  placeholder="enter text." class="form-control _country_search_input"/>
+                    <span class="_icon_search"><i class="glyphicon glyphicon-search"></i></span>
+                </div>
+                <div class="_search_box_res">
+                </div>
+                </div>
+            </div>`;
+        this.dateHTML = `
+<div class="airctrl-wraper"> 
+<div class="ctrl-wraper"> 
+        <div class="input-group" style="width:100%;">
+            <input id="DepartDT" for="departon" name="airctrl" data-ebtype="6" data-toggle="tooltip" title="" class="date" type="text" name="airctrl" autocomplete="on" tabindex="0" style="width:100%; background-color:#ffffff;color:#333333;display:inline-block; @fontStyle@ " required="" placeholder="" maxlength="10">
+            <span class="input-group-addon" onclick="$('#DepartDT').focus().focus()"> <i id="DepartDTTglBtn" class="fa  fa-calendar" aria-hidden="true"></i> </span>
+        </div></div></div>
+`;
+        this.psngrtypeHTML = `
+<div class="airctrl-wraper">
+    <div class="pgr-block">
+        <pgrlabel>Adults</pgrlabel><br>
+        <select class="adults">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+    </div>
+    <div class="pgr-block">
+        <pgrlabel>Children</pgrlabel><br>
+        <select class="children">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+    </div>
+    <div class="pgr-block">
+        <pgrlabel>Infants</pgrlabel><br>
+        <select class="infants">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+    </div>
+</div>`
+
+
+        $("body").on("click", ".portclose", this.clearPortText);
 
 
 
@@ -85,43 +169,115 @@
         this.showDate();
     };
 
+    this.btn_book = function (e) {
+        var $btn = $(e.target).closest(".btn");
+    };
+
+    this.airCtrlSend = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        var $inp = $btn.closest(".msg-wraper-bot").find("[name=airctrl]");
+        var inpfor = $inp.attr("for");
+
+        var val = $inp.val();
+
+        var _for = $btn.attr("for");
+        if (_for === "psngrtype") {
+            inpfor = "passengertype";
+            val = $(".adults").find(":selected").text();
+            val = val + ", " + $(".children").find(":selected").text();
+            val = val + ", " + $(".infants").find(":selected").text();
+        }
+        this.AirPostmenuClick(e, val);
+        if (_for === "placefrom") {
+            this.sendPlaceto();
+            inpfor = "placefrom";
+        }
+        else if (_for === "placeto") {
+            this.sendDeparton();
+            inpfor = "placeto";
+        }
+        else if (_for === "psngrtype") {
+            this.getFlightDtls();
+        }
+        else if (_for === "journytype") {
+            this.journytype(e);
+        }
+        else if (_for === "departon") {
+            this.sendPsngrtype();
+            inpfor = "departon";
+        }
+        this.airformValues[inpfor] = val;
+
+    }.bind(this);
+
+
+    this.sendPsngrtype = function () {
+        this.msgFromBot("Number of passengers ?");
+        this.sendAirCtrl(this.psngrtypeHTML, "psngrtype");
+    };
+
+    this.sendPlaceFrom = function () {
+        this.msgFromBot("Place From?");
+        this.sendAirCtrl(this.placeHTML, "placefrom");
+    };
+
+    this.sendPlaceto = function () {
+        this.msgFromBot("Place to?");
+        this.sendAirCtrl(this.placeHTML, "placeto");
+    };
+
+    this.sendDeparton = function () {
+        this.msgFromBot("Depart on ?");
+        this.sendAirCtrl(this.dateHTML, "departon");
+        this.initControls.Date("DepartDT");
+    };
+
     this.bookaflight = function (e) {
         this.postmenuClick(e);
-        if (this.CurFormIdx === 0)
-            this.Query(`Are you travelling from ${this.AirpotObj.nearestAirport} ?`, ["yes", "No, Show me nearest 5 Airports", "Let me choose"], "rufrom");
+        if (this.CurFormIdx === 0) {
+            this.msgFromBot("Journy type ?");
+            this.sendAirCtrl(this.radioHTML, "journytype");
+            this.airformValues["journytype"] = "oneway"
+        }
     }.bind(this);
 
     this.rufrom = function (e) {
-        this.postmenuClick(e);
-        if (this.CurFormIdx === 0)
+        var $btn = $(e.target).closest(".btn");
+        this.AirPostmenuClick(e);
+        var idx = $btn.index()
+        if (idx === 0)
             this.airYes();
-        else if (this.CurFormIdx === 1)
+        else if (idx === 1)
             this.airNo5();
-        else if (this.CurFormIdx === 2)
+        else if (idx === 2)
             this.airLetMe();
     }.bind(this);
 
     this.airYes = function () {
-        //alert(JSON.stringify( this.AirpotObj.CurLoc));
-        //alert(this.AirpotObj.nearestAirport + "  nereset");
-        //alert(this.AirpotObj.nearest5Airports + "   5 pors");
+        this.sendPlaceto();
+        this.airformValues["placefrom"] = "Cochin-COK";
     }.bind(this);
 
     this.airNo5 = function () {
         this.QueryBtnOnly(this.AirpotObj.nearest5Airports, "near5");
     }.bind(this);
 
-    this.airLetMe = function () {
-        this.sendAirCtrl(`
-<div class="_search_country_cont"> 
-                <div class="_search_box">
-                    <input type="text" id="portsearch" placeholder="enter text." class="form-control _country_search_input"/>
-                    <span class="_icon_search"><i class="glyphicon glyphicon-search"></i></span>
-                </div>
-                <div class="_search_box_res">
+    this.near5 = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        this.airformValues["placefrom"] = $btn.text();
+        this.AirPostmenuClick(e);
+        this.sendPlaceto();
+    }.bind(this);
 
-                </div>
-            </div>`);
+    this.journytype = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        this.AirPostmenuClick(e);
+        this.sendMsg("One way");
+        this.Query(`Are you travelling from ${this.AirpotObj.nearestAirport} ?`, ["yes", "No, Show me nearest 5 Airports", "No, Let me choose"], "rufrom");
+    }.bind(this);
+
+    this.airLetMe = function () {
+        this.sendPlaceFrom();
     }.bind(this);
 
     this.contactSubmit = function (e) {
@@ -160,6 +316,14 @@
             //    }.bind(this));
         }
         this.StartAirTicketFlow()
+    }.bind(this);
+
+    this.AirPostmenuClick = function (e, reply) {
+        var $e = $(e.target);
+        if (reply === undefined)
+            reply = $e.text().trim();
+        $e.closest('.msg-cont').remove();
+        this.sendMsg(reply);
     }.bind(this);
 
     this.postmenuClick = function (e, reply) {
@@ -670,11 +834,14 @@
         this.$chatBox.append($msg);
         $('.eb-chatBox').scrollTop(99999999999);
     };
-    this.sendAirCtrl = function (msg) {
+    this.sendAirCtrl = function (msg, _for) {
+        var $ctrl = $(msg);
+        $ctrl.find("[name=airctrl]").attr("for", _for);
         var $msg = this.$botMsgBox.clone();
-        $msg.find('.msg-wraper-bot').append(msg);
+        $msg.find('.msg-wraper-bot').append(msg).append('<button class="btn airCtrlSend" for="' + _for + '"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>');
         this.$chatBox.append($msg);
-        $msg.find(".msg-wraper-bot").css("padding-right", "10px");
+
+        $msg.find(".msg-wraper-bot").css("padding-right", "10px").css("width", "85%");
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
@@ -896,7 +1063,7 @@
             $("._country_search_input").siblings("span").children("i").removeClass("glyphicon glyphicon-search");
             $("._country_search_input").siblings("span").children("i").addClass("fa fa-close portclose");
         }
-        else{
+        else {
             $('._search_box_res').empty().show(100);
             if ($targetval !== "") {
                 for (index = 0; index < PortList.length; index++) {
@@ -939,6 +1106,20 @@
         }
     };
 
+    this.getFlightDtls = function () {
+        $.ajax({
+            type: "POST",
+            url: "../NDC/AirShoppingSearchAsync",
+            data: {from: (this.airformValues["placefrom"]).split("-")[1], to : (this.airformValues['placeto']).split("-")[1], date: (this.airformValues['departon']).replace("/", "-").replace("/", "-")},
+            success: this.getFlightDtlsSuccess.bind(this)
+        });
+    }
+
+    this.getFlightDtlsSuccess = function (data) {
+        this.$chatBox.append("<div id='draw'></div>");
+        DrawInit(JSON.parse(data[0]), JSON.parse( data[1]), "draw");
+    }
+
     this.init();
 };
 
@@ -958,4 +1139,81 @@ var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
 function getToken() {
     var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
     return b ? b.pop() : '';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function DrawInit(jsonobj, jsonobj2, divid) {
+    var newobj = [];
+    this.ownerdata = [];
+    this.ownerdata.push({ code: "XQ", Name: "Sun Express", Logo: "https://worldairlinenews.files.wordpress.com/2013/11/sunexpress-logo-1.jpg" });
+    this.ownerdata.push({ code: "JW", Name: "Vanilla Air", Logo: "https://www.seatlink.com/images/logos/no-text/sm/vanilla-air.png" });
+
+    var owner = jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:Owner"];
+    var price = Array.isArray(jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"]) ? jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"][0]["ns2:PricedOffer"]["ns2:OfferPrice"]["ns2:RequestedDate"]["ns2:PriceDetail"]["ns2:BaseAmount"]["#text"] : jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"]["ns2:PricedOffer"]["ns2:OfferPrice"]["ns2:RequestedDate"]["ns2:PriceDetail"]["ns2:BaseAmount"]["#text"];
+    var arrtime = Array.isArray(jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:Arrival"]["ns2:Time"] : jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:Arrival"]["ns2:Time"];
+    var deptime = Array.isArray(jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:Departure"]["ns2:Time"] : jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:Departure"]["ns2:Time"];
+    var duration = Array.isArray(jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:FlightDetail"]["ns2:FlightDuration"]["ns2:Value"] : jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:FlightDetail"]["ns2:FlightDuration"]["ns2:Value"];
+
+
+    var owner2 = jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:Owner"];
+    var price2 = Array.isArray(jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"]) ? jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"][0]["ns2:PricedOffer"]["ns2:OfferPrice"]["ns2:RequestedDate"]["ns2:PriceDetail"]["ns2:BaseAmount"]["#text"] : jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"]["ns2:PricedOffer"]["ns2:OfferPrice"]["ns2:RequestedDate"]["ns2:PriceDetail"]["ns2:BaseAmount"]["#text"];
+    var arrtime2 = Array.isArray(jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:Arrival"]["ns2:Time"] : jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:Arrival"]["ns2:Time"];
+    var deptime2 = Array.isArray(jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:Departure"]["ns2:Time"] : jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:Departure"]["ns2:Time"];
+    var duration2 = Array.isArray(jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:FlightDetail"]["ns2:FlightDuration"]["ns2:Value"] : jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:FlightDetail"]["ns2:FlightDuration"]["ns2:Value"];
+
+
+    newobj.push({ Depart: deptime, Arrive: arrtime, Duration: duration, Price: price, Airline: getName(owner), Logo: getLogo(owner) });
+    newobj.push({ Depart: deptime2, Arrive: arrtime2, Duration: duration2, Price: price2, Airline: getName(owner2), Logo: getLogo(owner2) });
+
+    getAirlines(newobj, $("#" + divid));
+}
+
+function getName(ownerid) {
+    for (i = 0; i < this.ownerdata.length; i++)
+        if (ownerid === this.ownerdata[i].code)
+            return this.ownerdata[i].Name
+}
+
+function getLogo(ownerid) {
+    for (i = 0; i < this.ownerdata.length; i++)
+        if (ownerid === this.ownerdata[i].code)
+            return this.ownerdata[i].Logo
+}
+
+
+function getAirlines(obj, $container) {
+    if (!$.isEmptyObject(obj))
+        this.drawAirlinesList(obj, $container);
+};
+
+function drawAirlinesList(obj, $container) {
+    for (var i = 0; i < obj.length; i++) {
+        $container.append(`<div class="airlne_container">
+                    <div class="airline_head">
+                    <span class="_logo_air"><img class="img-circle" src="${obj[i].Logo}" /></span>
+                    ${obj[i].Airline}
+                    <span class="_price_val pull-right">${obj[i].Price}</span>
+                </div>
+                <div class="airline_body">
+                    <div class="Depart_time"><div class="_head_inner">Depart</div><div class="_head_body_inner">${obj[i].Depart}</div></div>
+                    <div class="Arrive_time"><div class="_head_inner">Arrive</div><div class="_head_body_inner">${obj[i].Arrive}</div></div>
+                    <div class="Duration_time"><div class="_head_inner">Duration</div><div class="_head_body_inner">${obj[i].Duration}</div></div>
+                    <div class="_Price"><button class="btn btn_book">Book</button></div>
+                </div>
+            </div>`);
+    };
 }

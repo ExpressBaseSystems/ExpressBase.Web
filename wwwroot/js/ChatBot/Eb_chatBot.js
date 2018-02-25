@@ -1065,7 +1065,7 @@
         }
         else {
             $('._search_box_res').empty().show(100);
-            if ($targetval !== "" && $targetval.length > 1) {
+            if ($targetval !== "") {
                 for (index = 0; index < PortList.length; index++) {
                     if (PortList[index].name !== null) {
                         var airname = PortList[index].name.toLowerCase();

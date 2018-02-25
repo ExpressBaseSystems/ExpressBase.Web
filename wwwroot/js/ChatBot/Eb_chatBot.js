@@ -17,7 +17,7 @@
     this.bearerToken = null;
     this.refreshToken = null;
     this.initControls = new InitControls(this);
-    this.typeDelay = 10;
+    this.typeDelay =300;
     this.ChartCounter = 0;
     this.formsList = {};
     this.formsDict = {};
@@ -255,7 +255,7 @@
 
     this.airYes = function () {
         this.sendPlaceto();
-        this.airformValues["placefrom"] = "Cochin-COK";
+        this.airformValues["placefrom"] = "Zurich-ZRH";
     }.bind(this);
 
     this.airNo5 = function () {
@@ -1107,6 +1107,7 @@
     };
 
     this.getFlightDtls = function () {
+        this.showTypingAnim();
         $.ajax({
             type: "POST",
             url: "../NDC/AirShoppingSearchAsync",
@@ -1116,6 +1117,7 @@
     }
 
     this.getFlightDtlsSuccess = function (data) {
+        this.hideTypingAnim();
         this.$chatBox.append("<div id='draw'></div>");
         DrawInit(JSON.parse(data[0]), JSON.parse( data[1]), "draw");
     }

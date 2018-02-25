@@ -164,9 +164,6 @@ namespace ExpressBase.Web.Controllers
             return rawXml;
         }
 
-<<<<<<< HEAD
-		//[HttpGet("/flightsearch/{from}/{to}/{date}")]
-=======
         [HttpGet]
         public async Task<string> SeatAvailabilitySearchAsync()
         {
@@ -203,9 +200,6 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeXmlNode(doc);
              
         }
-
-        [HttpGet("/flightsearch/{from}/{to}/{date}")]
->>>>>>> 48b8e2b94d7c8473e2b63faa4332112676aa973d
 		public async Task<List<string>> AirShoppingSearchAsync(string from, string to, string date)
 		{
 			AirShoppingReq[] Arr = new AirShoppingReq[2];

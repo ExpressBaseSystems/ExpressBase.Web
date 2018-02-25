@@ -23,9 +23,9 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-		private string getRequestXml(AirShoppingReq temp)
-		{
-			string rawXml = @"<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:edis='http://www.iata.org/IATA/EDIST'>
+        private string getAirShoppingRequestXml(AirShoppingReq temp)
+        {
+            string rawXml = @"<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:edis='http://www.iata.org/IATA/EDIST'>
    <soapenv:Header/>
    <soapenv:Body>
       <AirShoppingRQ xsi:schemaLocation='https://iflyrestest.ibsgen.com:6012/iRes_NdcRes_WS/services/NdcResServiceSOAPPort?xsd=../../xsd/ndcres/AirShoppingRQ.xsd' Version='' xmlns='http://www.iata.org/IATA/EDIST' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
@@ -83,10 +83,129 @@ namespace ExpressBase.Web.Controllers
       </AirShoppingRQ>
    </soapenv:Body>
 </soapenv:Envelope>".Replace("@from", temp.From).Replace("@to", temp.To).Replace("@date", temp.Date).Replace("@countrycode", temp.CountryCode).Replace("@airlineid", temp.AirlineID).Replace("@username", temp.UserName);
-			return rawXml;
-		}
+            return rawXml;
+        }
 
+        private string getSeatAvailabilityRequestXml()
+        {
+            string rawXml = @"<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:edis='http://www.iata.org/IATA/EDIST'>
+   <soapenv:Header/>
+   <soapenv:Body>
+      <edis:SeatAvailabilityRQ EchoToken='6546' TimeStamp='2016-11-21T23:38:00' Target='Production' Version='33' TransactionIdentifier='3' SequenceNmbr='33' TransactionStatusCode='Start' RetransmissionIndicator='true' CorrelationID='3' AsynchronousAllowedInd='true'>
+         <edis:PointOfSale>
+            <edis:Location>
+               <edis:CountryCode>DE</edis:CountryCode>
+               <edis:CityCode>FRA</edis:CityCode>
+            </edis:Location>
+         </edis:PointOfSale>
+         <edis:Document>
+            <edis:Metadata/>
+            <edis:Name>NDC</edis:Name>
+            <edis:ReferenceVersion>15.1.2</edis:ReferenceVersion>
+         </edis:Document>
+         <edis:Party>
+            <edis:Sender>
+               <edis:AgentUserSender>
+                  <edis:AgentUserID>@agentuserid</edis:AgentUserID>
+               </edis:AgentUserSender>
+            </edis:Sender>
+            <edis:Recipient>
+               <edis:ORA_Recipient>
+                  <edis:AirlineID>@airlineid</edis:AirlineID>
+                  <edis:Name>SunExpress</edis:Name>
+               </edis:ORA_Recipient>
+            </edis:Recipient>
+         </edis:Party>
+         <edis:ShoppingResponseIDs>
+            <edis:Owner>XQ</edis:Owner>
+            <edis:ResponseID>1F126AF1-7FCF-414F-8A3D-E4FFA408F747</edis:ResponseID>
+         </edis:ShoppingResponseIDs>
+         <edis:Query>
+            <edis:OriginDestination>
+               <edis:OriginDestinationReferences>XQ_OD_1</edis:OriginDestinationReferences>
+            </edis:OriginDestination>
+         </edis:Query>
+         <edis:DataList>
+            <edis:FlightSegmentList>
+               <edis:FlightSegment SegmentKey='@segmentid'>
+                  <edis:Departure>
+                     <edis:AirportCode>@depcode</edis:AirportCode>
+                     <edis:Date>@depdate</edis:Date>
+                     <edis:Time>@deptime</edis:Time>
+                  </edis:Departure>
+                  <edis:Arrival>
+                     <edis:AirportCode>@arrcode</edis:AirportCode>
+                     <edis:Date>@arrdate</edis:Date>
+                     <edis:Time>@arrtime</edis:Time>
+                     <edis:ChangeOfDay>0</edis:ChangeOfDay>
+                  </edis:Arrival>
+                  <edis:MarketingCarrier>
+                     <edis:AirlineID>@airlineid</edis:AirlineID>
+                     <edis:FlightNumber>@flightno</edis:FlightNumber>
+                  </edis:MarketingCarrier>
+                  <edis:Equipment>
+                     <edis:AircraftCode>@aircraftcode</edis:AircraftCode>
+                  </edis:Equipment>
+            </edis:FlightSegment>
+            </edis:FlightSegmentList>
+            <edis:OriginDestinationList>
+               <edis:OriginDestination refs='@segmentid' OriginDestinationKey='XQ_OD_1'>
+                  <edis:DepartureCode>@depcode</edis:DepartureCode>
+                  <edis:ArrivalCode>@arrcode</edis:ArrivalCode>
+                  <edis:FlightReferences>@segmentid</edis:FlightReferences>
+               </edis:OriginDestination>
+            </edis:OriginDestinationList>
+         </edis:DataList>
+         <edis:Metadata/>
+      </edis:SeatAvailabilityRQ>
+   </soapenv:Body>
+</soapenv:Envelope>".Replace("@agentuserid", "HKTHONUSR").Replace("@airlineid", "XQ").Replace("@segmentid", "XQ_SEG_1519310046482").Replace("@depcode", "FRA").Replace("@depdate", "2018-03-25Z").Replace("@deptime", "10:30").Replace("@arrcode", "ADB").Replace("@arrdate", "2018-03-25Z").Replace("@arrtime", "14:35").Replace("@flightno", "911").Replace("@aircraftcode", "738");
+
+            return rawXml;
+        }
+
+<<<<<<< HEAD
 		//[HttpGet("/flightsearch/{from}/{to}/{date}")]
+=======
+        [HttpGet]
+        public async Task<string> SeatAvailabilitySearchAsync()
+        {
+            SeatAvailabality ReqPar = new SeatAvailabality();
+            List<string> ReturnList = new List<string>();
+            string rawXml = getSeatAvailabilityRequestXml();
+
+            var rClient = new RestClient("https://iflyrestest.ibsgen.com:6013/");
+            rClient.AddDefaultHeader("username", "HKTHONUSR");
+            rClient.AddDefaultHeader("password", "12345");
+            object response = null;
+            try
+            {
+                RestRequest req = new RestRequest("iRes_NdcRes_WS/services/NdcResServiceSOAPPort?wsdl", Method.POST);
+                req.AddHeader("username", "HKTHONUSR");
+                req.AddHeader("password", "12345");
+                req.AddParameter("application/xml", rawXml, ParameterType.RequestBody);
+
+                EventWaitHandle handle = new AutoResetEvent(false);
+                rClient.ExecuteAsync(req, r =>
+                {
+                    response = r;
+                    handle.Set();
+                });
+                handle.WaitOne();
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+            }
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml((response as IRestResponse).Content);
+
+            return JsonConvert.SerializeXmlNode(doc);
+             
+        }
+
+        [HttpGet("/flightsearch/{from}/{to}/{date}")]
+>>>>>>> 48b8e2b94d7c8473e2b63faa4332112676aa973d
 		public async Task<List<string>> AirShoppingSearchAsync(string from, string to, string date)
 		{
 			AirShoppingReq[] Arr = new AirShoppingReq[2];
@@ -95,7 +214,7 @@ namespace ExpressBase.Web.Controllers
 			Arr[1] = new AirShoppingReq { From = from, To = to, Date = date, CountryCode = "KR", AirlineID = "JW" , UserName = "Guest EN", Url = "https://iflyresdemo.ibsplc.aero:6080/" };
 			for (int i = 0; i < Arr.Length; i++)
 			{
-				string rawXml = getRequestXml(Arr[i]);
+				string rawXml = getAirShoppingRequestXml(Arr[i]);
 
 				var rClient = new RestClient(Arr[i].Url);
 				rClient.AddDefaultHeader("username", "HKTHONUSR");
@@ -140,4 +259,28 @@ namespace ExpressBase.Web.Controllers
 		public string UserName;
 		public string Url;
 	}
+
+    public class Airport
+    {
+        public string sAirCode;
+        public string sDate;
+        public string sTime;
+    }
+    public class MarketingCarrier
+    {
+        public string sAirlineId;
+        public string sFlightNumber;
+
+    }
+    public class SeatAvailabality
+    {
+        public string sAirlineId;
+        public string sOrgDestRef;
+        public string sFlightSeg;
+        public string sFrom;
+        public string sTo;
+        public Airport aDep;
+        public Airport aArr;
+        public string sAircraftCode;
+    }
 }

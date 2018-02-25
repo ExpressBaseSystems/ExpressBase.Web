@@ -252,7 +252,7 @@
 
     this.btn_book = function (e) {
         var $e = $(e.target);
-        var $btn = $(e.target).closest(".btn");
+        var $btn = $(e.target).closest(".msgt");
         $e.closest('.msg-cont').remove();
         this.$chatBox.append(`<div class="seat_book_card msgt"> 
                 <div class="seat_book_list">

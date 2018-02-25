@@ -110,7 +110,7 @@
 <div class="airctrl-wraper"> 
 <div class="ctrl-wraper"> 
         <div class="input-group" style="width:100%;">
-            <input id="DepartDT" name="airctrl" data-ebtype="6" data-toggle="tooltip" title="" class="date" type="text" name="airctrl" autocomplete="on" tabindex="0" style="width:100%; background-color:#ffffff;color:#333333;display:inline-block; @fontStyle@ " required="" placeholder="" maxlength="10">
+            <input id="DepartDT" for="departon" name="airctrl" data-ebtype="6" data-toggle="tooltip" title="" class="date" type="text" name="airctrl" autocomplete="on" tabindex="0" style="width:100%; background-color:#ffffff;color:#333333;display:inline-block; @fontStyle@ " required="" placeholder="" maxlength="10">
             <span class="input-group-addon" onclick="$('#DepartDT').focus().focus()"> <i id="DepartDTTglBtn" class="fa  fa-calendar" aria-hidden="true"></i> </span>
         </div></div></div>
 `;
@@ -119,6 +119,7 @@
     <div class="pgr-block">
         <pgrlabel>Adults</pgrlabel><br>
         <select class="adults">
+          <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -133,6 +134,7 @@
     <div class="pgr-block">
         <pgrlabel>Children</pgrlabel><br>
         <select class="children">
+          <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -147,6 +149,7 @@
     <div class="pgr-block">
         <pgrlabel>Infants</pgrlabel><br>
         <select class="infants">
+          <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -171,16 +174,15 @@
         var inpfor = $inp.attr("for");
 
         var val = $inp.val();
+
+        var _for = $btn.attr("for");
         if (_for === "psngrtype") {
-            this.sendDeparton();
             inpfor = "passengertype";
             val = $(".adults").find(":selected").text();
             val = val + ", " + $(".children").find(":selected").text();
             val = val + ", " + $(".infants").find(":selected").text();
         }
-
         this.AirPostmenuClick(e, val);
-        var _for = $btn.attr("for");
         if (_for === "placefrom") {
             this.sendPlaceto();
             inpfor = "placefrom";
@@ -190,13 +192,16 @@
             inpfor = "placeto";
         }
         else if (_for === "psngrtype") {
-            this.sendDeparton();
+            alert(JSON.stringify(this.airformValues));
+            alert(100);
         }
         else if (_for === "journytype") {
             this.journytype(e);
         }
-        else if (_for === "departon")
+        else if (_for === "departon") {
             this.sendPsngrtype();
+            inpfor = "departon";
+        }
         this.airformValues[inpfor] = val;
 
     }.bind(this);
@@ -205,7 +210,6 @@
     this.sendPsngrtype = function () {
         this.msgFromBot("Number of passengers ?");
         this.sendAirCtrl(this.psngrtypeHTML, "psngrtype");
-        alert(JSON.stringify(this.airformValues));
     };
 
     this.sendPlaceFrom = function () {
@@ -247,6 +251,7 @@
 
     this.airYes = function () {
         this.sendPlaceto();
+        this.airformValues["placefrom"] = "Cochin-COK";
     }.bind(this);
 
     this.airNo5 = function () {
@@ -255,6 +260,7 @@
 
     this.near5 = function (e) {
         var $btn = $(e.target).closest(".btn");
+        this.airformValues["placefrom"] = $btn.text();
         this.AirPostmenuClick(e);
         this.sendPlaceto();
     }.bind(this);
@@ -831,7 +837,7 @@
         $msg.find('.msg-wraper-bot').append(msg).append('<button class="btn airCtrlSend" for="' + _for + '"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>');
         this.$chatBox.append($msg);
 
-        $msg.find(".msg-wraper-bot").css("padding-right", "10px").css("width","85%");
+        $msg.find(".msg-wraper-bot").css("padding-right", "10px").css("width", "85%");
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
@@ -1053,7 +1059,7 @@
             $("._country_search_input").siblings("span").children("i").removeClass("glyphicon glyphicon-search");
             $("._country_search_input").siblings("span").children("i").addClass("fa fa-close portclose");
         }
-        else{
+        else {
             $('._search_box_res').empty().show(100);
             if ($targetval !== "" && $targetval.length > 1) {
                 for (index = 0; index < PortList.length; index++) {
@@ -1095,6 +1101,19 @@
             $("._country_search_input").siblings("span").children("i").addClass("glyphicon glyphicon-search");
         }
     };
+
+    this.getFlightDtls = function () {
+        $.ajax({
+            type: "GET",
+            url: "../NDC/flightsearch/{from}/{to}/{date}",
+            data: { },
+            success: this.getFlightDtlsSuccess.bind(this)
+        });
+    }
+
+    this.getFlightDtlsSuccess = function () {
+
+    }
 
     this.init();
 };

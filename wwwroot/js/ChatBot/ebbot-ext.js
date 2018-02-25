@@ -14,7 +14,7 @@
     ss.type = "text/css";
     ss.rel = "stylesheet";
     //ss.href = "../css/ChatBot/bot-ext.css";
-    ss.href = "http://expressbase.com/css/ChatBot/bot-ext.css";
+    ss.href = "https://expressbase.com/css/ChatBot/bot-ext.css";
     d.getElementsByTagName("head")[0].appendChild(ss);
 
     var chatHead = d.createElement("div");

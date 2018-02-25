@@ -75,6 +75,7 @@
         $("body").on("click", ".btn-box [for=bookaflight]", this.bookaflight);
         $("body").on("click", ".btn-box [for=rufrom]", this.rufrom);
         $("body").on("click", ".btn-box [for=near5]", this.near5);
+        $("body").on("click", ".btn_book", this.btn_book);
 
         $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
@@ -168,6 +169,10 @@
         this.showDate();
     };
 
+    this.btn_book = function (e) {
+        var $btn = $(e.target).closest(".btn");
+    };
+
     this.airCtrlSend = function (e) {
         var $btn = $(e.target).closest(".btn");
         var $inp = $btn.closest(".msg-wraper-bot").find("[name=airctrl]");
@@ -192,8 +197,7 @@
             inpfor = "placeto";
         }
         else if (_for === "psngrtype") {
-            alert(JSON.stringify(this.airformValues));
-            alert(100);
+            this.getFlightDtls();
         }
         else if (_for === "journytype") {
             this.journytype(e);
@@ -1104,15 +1108,16 @@
 
     this.getFlightDtls = function () {
         $.ajax({
-            type: "GET",
-            url: "../NDC/flightsearch/{from}/{to}/{date}",
-            data: { },
+            type: "POST",
+            url: "../NDC/AirShoppingSearchAsync",
+            data: {from: (this.airformValues["placefrom"]).split("-")[1], to : (this.airformValues['placeto']).split("-")[1], date: (this.airformValues['departon']).replace("/", "-").replace("/", "-")},
             success: this.getFlightDtlsSuccess.bind(this)
         });
     }
 
-    this.getFlightDtlsSuccess = function () {
-
+    this.getFlightDtlsSuccess = function (data) {
+        this.$chatBox.append("<div id='draw'></div>");
+        DrawInit(JSON.parse(data[0]), JSON.parse( data[1]), "draw");
     }
 
     this.init();
@@ -1134,4 +1139,81 @@ var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
 function getToken() {
     var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
     return b ? b.pop() : '';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function DrawInit(jsonobj, jsonobj2, divid) {
+    var newobj = [];
+    this.ownerdata = [];
+    this.ownerdata.push({ code: "XQ", Name: "Sun Express", Logo: "https://worldairlinenews.files.wordpress.com/2013/11/sunexpress-logo-1.jpg" });
+    this.ownerdata.push({ code: "JW", Name: "Vanilla Air", Logo: "https://www.seatlink.com/images/logos/no-text/sm/vanilla-air.png" });
+
+    var owner = jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:Owner"];
+    var price = Array.isArray(jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"]) ? jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"][0]["ns2:PricedOffer"]["ns2:OfferPrice"]["ns2:RequestedDate"]["ns2:PriceDetail"]["ns2:BaseAmount"]["#text"] : jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"]["ns2:PricedOffer"]["ns2:OfferPrice"]["ns2:RequestedDate"]["ns2:PriceDetail"]["ns2:BaseAmount"]["#text"];
+    var arrtime = Array.isArray(jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:Arrival"]["ns2:Time"] : jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:Arrival"]["ns2:Time"];
+    var deptime = Array.isArray(jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:Departure"]["ns2:Time"] : jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:Departure"]["ns2:Time"];
+    var duration = Array.isArray(jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:FlightDetail"]["ns2:FlightDuration"]["ns2:Value"] : jsonobj["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:FlightDetail"]["ns2:FlightDuration"]["ns2:Value"];
+
+
+    var owner2 = jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:Owner"];
+    var price2 = Array.isArray(jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"]) ? jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"][0]["ns2:PricedOffer"]["ns2:OfferPrice"]["ns2:RequestedDate"]["ns2:PriceDetail"]["ns2:BaseAmount"]["#text"] : jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:OffersGroup"]["ns2:AirlineOffers"]["ns2:AirlineOffer"]["ns2:PricedOffer"]["ns2:OfferPrice"]["ns2:RequestedDate"]["ns2:PriceDetail"]["ns2:BaseAmount"]["#text"];
+    var arrtime2 = Array.isArray(jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:Arrival"]["ns2:Time"] : jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:Arrival"]["ns2:Time"];
+    var deptime2 = Array.isArray(jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:Departure"]["ns2:Time"] : jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:Departure"]["ns2:Time"];
+    var duration2 = Array.isArray(jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]) ? jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"][0]["ns2:FlightDetail"]["ns2:FlightDuration"]["ns2:Value"] : jsonobj2["soap:Envelope"]["soap:Body"]["ns2:AirShoppingRS"]["ns2:DataLists"]["ns2:FlightSegmentList"]["ns2:FlightSegment"]["ns2:FlightDetail"]["ns2:FlightDuration"]["ns2:Value"];
+
+
+    newobj.push({ Depart: deptime, Arrive: arrtime, Duration: duration, Price: price, Airline: getName(owner), Logo: getLogo(owner) });
+    newobj.push({ Depart: deptime2, Arrive: arrtime2, Duration: duration2, Price: price2, Airline: getName(owner2), Logo: getLogo(owner2) });
+
+    getAirlines(newobj, $("#" + divid));
+}
+
+function getName(ownerid) {
+    for (i = 0; i < this.ownerdata.length; i++)
+        if (ownerid === this.ownerdata[i].code)
+            return this.ownerdata[i].Name
+}
+
+function getLogo(ownerid) {
+    for (i = 0; i < this.ownerdata.length; i++)
+        if (ownerid === this.ownerdata[i].code)
+            return this.ownerdata[i].Logo
+}
+
+
+function getAirlines(obj, $container) {
+    if (!$.isEmptyObject(obj))
+        this.drawAirlinesList(obj, $container);
+};
+
+function drawAirlinesList(obj, $container) {
+    for (var i = 0; i < obj.length; i++) {
+        $container.append(`<div class="airlne_container">
+                    <div class="airline_head">
+                    <span class="_logo_air"><img class="img-circle" src="${obj[i].Logo}" /></span>
+                    ${obj[i].Airline}
+                    <span class="_price_val pull-right">${obj[i].Price}</span>
+                </div>
+                <div class="airline_body">
+                    <div class="Depart_time"><div class="_head_inner">Depart</div><div class="_head_body_inner">${obj[i].Depart}</div></div>
+                    <div class="Arrive_time"><div class="_head_inner">Arrive</div><div class="_head_body_inner">${obj[i].Arrive}</div></div>
+                    <div class="Duration_time"><div class="_head_inner">Duration</div><div class="_head_body_inner">${obj[i].Duration}</div></div>
+                    <div class="_Price"><button class="btn btn_book">Book</button></div>
+                </div>
+            </div>`);
+    };
 }

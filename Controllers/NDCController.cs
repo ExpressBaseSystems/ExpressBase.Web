@@ -86,13 +86,13 @@ namespace ExpressBase.Web.Controllers
 			return rawXml;
 		}
 
-		[HttpGet("/flightsearch/{from}/{to}/{date}")]
+		//[HttpGet("/flightsearch/{from}/{to}/{date}")]
 		public async Task<List<string>> AirShoppingSearchAsync(string from, string to, string date)
 		{
 			AirShoppingReq[] Arr = new AirShoppingReq[2];
             List<string> ReturnList = new List<string>(); 
 			Arr[0] = new AirShoppingReq { From = from, To = to, Date = date, CountryCode = "DE",AirlineID = "XQ" , UserName = "HKTHONUSR", Url = "https://iflyrestest.ibsgen.com:6013/" };
-			Arr[1] = new AirShoppingReq { From = "OKA", To = "NRT", Date = date, CountryCode = "KR", AirlineID = "JW" , UserName = "Guest EN", Url = "https://iflyresdemo.ibsplc.aero:6080/" };
+			Arr[1] = new AirShoppingReq { From = from, To = to, Date = date, CountryCode = "KR", AirlineID = "JW" , UserName = "Guest EN", Url = "https://iflyresdemo.ibsplc.aero:6080/" };
 			for (int i = 0; i < Arr.Length; i++)
 			{
 				string rawXml = getRequestXml(Arr[i]);

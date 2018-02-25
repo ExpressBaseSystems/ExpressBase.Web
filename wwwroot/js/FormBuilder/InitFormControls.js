@@ -20,7 +20,7 @@
             settings.format = "Y/m/d H:i";
         }
 
-        //settings.minDate = ctrl.min;
+        settings.minDate = "2018/02/25";
         //settings.maxDate = ctrl.max;
 
         $('#' + ctrl.name).datetimepicker(settings);

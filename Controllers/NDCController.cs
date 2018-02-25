@@ -229,6 +229,7 @@ namespace ExpressBase.Web.Controllers
 					req.AddHeader("password", "12345");
 					req.AddParameter("application/xml", rawXml, ParameterType.RequestBody);
 
+                    Console.WriteLine("Before Execution");
 					EventWaitHandle handle = new AutoResetEvent(false);
 					rClient.ExecuteAsync(req, r =>
 					{
@@ -239,7 +240,7 @@ namespace ExpressBase.Web.Controllers
 				}
 				catch (Exception ee)
 				{
-
+                    Console.WriteLine(ee.Message);
 				}
 
 				XmlDocument doc = new XmlDocument();

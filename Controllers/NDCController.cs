@@ -200,6 +200,14 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeXmlNode(doc);
              
         }
+        [HttpPost]
+        public string XmlToJson(string xml)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xml);
+            return JsonConvert.SerializeXmlNode(doc);
+        }
+
 		public async Task<List<string>> AirShoppingSearchAsync(string from, string to, string date)
 		{
 			AirShoppingReq[] Arr = new AirShoppingReq[2];

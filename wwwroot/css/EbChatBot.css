@@ -267,7 +267,7 @@
 }
 .airCtrlSend {
     position: absolute;
-    right: -22px;
+    right: -40px;
     border-radius: 15px;
     color: white;
     background: #427ac5;
@@ -275,6 +275,7 @@
     outline: none;
     padding: 6px 11px;
     font-size: 14px;
+    top: 5%;
 }
 
 .chat-ctrl-cont [name=ctrlsend] {
@@ -609,7 +610,7 @@
 ._search_box_res {
     display:none;
     width: 100%;
-    height: 300px;
+    height: 100px;
     float: left;
     overflow-y:auto;
     margin-top: 10px;
@@ -703,3 +704,177 @@
         border-radius: 50%;
         width: 25px;
     }
+.airoffers {
+    float: left;
+    padding: 15px;
+    width: 100%;
+}
+
+
+
+
+
+
+
+.seat_book_container {
+    width: 60%;
+    float: left;
+    padding: 5px;
+    height: 256px;
+}
+
+._row_seats {
+    width: 90%;
+    float: left;
+}
+
+._row_no {
+    width: 10%;
+    float: left;
+    font-size: 10px;
+    padding-top: 1px;
+}
+
+.seat_book_list {
+    width: 60%;
+    float: left;
+}
+
+.seat_book_card {
+    position: relative;
+    width: 91%;
+    float: left;
+    padding: 20px;
+    background: #fafafa;
+    border-radius: 10px;
+    margin-left: 4%;
+    margin-top: 10px;
+    padding-top: 30px;
+}
+
+._notations {
+    width: 40%;
+    float: left;
+    padding: 3%;
+}
+
+.not-seat-booked {
+    width: 10px;
+    height: 10px;
+    background: #6e948d;
+    float: left;
+    border: 1px solid #a2a0a0;
+    margin-top: 5%;
+    margin-right: 10px;
+}
+
+.not-seat-avail {
+    width: 10px;
+    height: 10px;
+    background: white;
+    float: left;
+    border: 1px solid;
+    margin-top: 5%;
+    margin-right: 10px;
+}
+
+.not-seat-restricted {
+    width: 10px;
+    height: 10px;
+    background: #e83333;
+    float: left;
+    border: 1px solid;
+    margin-top: 5%;
+    margin-right: 10px;
+}
+
+.no_portion {
+    width: 5%;
+    float: left;
+    padding-top: 4px;
+    height: 256px;
+}
+
+.class_info {
+    width: 35%;
+    float: left;
+    padding-top: 5px;
+    height: 256px;
+}
+
+.seat_noborder {
+    border: none !important;
+    margin-bottom: 3px !important;
+}
+
+.seat_book_container_row {
+    width: 100%;
+    float: left;
+}
+
+.seat {
+    cursor: pointer;
+    height: 14px;
+    float: left;
+    border: 1px solid #a2a0a0;
+    margin: 1%;
+    text-align: center;
+    position: relative;
+    border-radius: 3px;
+}
+
+.Occupied {
+    background: #c5c7c5;
+}
+
+.Available {
+}
+
+.Restricted {
+    background: #e83333;
+}
+
+.Booked {
+    background: green;
+}
+
+.seat_cat {
+    top: -20px;
+    position: absolute;
+    left: 1%;
+}
+
+.seatsubmit, .dtlsok {
+    position: absolute;
+    background: #356fda;
+    color: white;
+    border-radius: 20px;
+    position: absolute;
+    display: block;
+    right: 12px;
+    bottom: 20px;
+    width: 36%;
+}
+.dtlsok{
+    position:relative!important;
+    margin:auto;
+    width:50%;
+}
+.payment_head {
+    font-size: 18px;
+    padding-bottom: 8px;
+}
+
+.payment_body {
+    float: left;
+    width: 100%;
+}
+.box1a {
+    width: 91%;
+    float: left;
+    background: #fafafa;
+    border-radius: 10px;
+    margin-left: 4%;
+    padding: 20px;
+    margin-top: 25px;
+}

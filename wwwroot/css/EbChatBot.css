@@ -69,6 +69,7 @@
     margin: 6px 5px 5px 50px;
     background-color: #fff;
     padding-right: 41px;
+    box-shadow: -1px 1px 6px rgba(0, 0, 0, 0.0784313725490196);
 }
 
 /*.msg-wraper-bot {
@@ -246,7 +247,7 @@
 .eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
     border-radius: 15px;
     color: white;
-    background: #427ac5;
+    background: var(--botThemeColor);
     border: none;
     outline: none;
     padding: 5px;

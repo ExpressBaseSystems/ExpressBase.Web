@@ -33,10 +33,7 @@
     this.FB = null;
     this.FBResponse = {};
     this.ssurl = ssurl;
-
-	
-	
-	
+    this.userLoc = {};
 	
     this.init = function () {
         $("body").append(this.$chatCont);
@@ -74,54 +71,9 @@
 		
         $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
-
-		
-		
-		
-		
-		
-		
+        
         this.showDate();
     };
-
-    
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
     this.contactSubmit = function (e) {
         this.msgFromBot("Thank you.");
@@ -483,14 +435,7 @@
     this.Query = function (msg, OptArr, For, ids) {
         this.msgFromBot(msg);
         var Options = this.getButtons(OptArr, For, ids);
-        this.msgFromBot($('<div class="btn-box" >' + Options + '</div>'));
-
-    
-	
-	
-	
-	
-	
+        this.msgFromBot($('<div class="btn-box" >' + Options + '</div>'));	
     };
 
 
@@ -667,13 +612,6 @@
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').text(msg).append(this.getTime());
         this.$chatBox.append($msg);
-		
-		
-		
-		
-		
-		
-		
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
@@ -839,10 +777,7 @@
                         //$(".btn-box .btn:last").click();
                         $(".btn-box").find("[idx=15]").click();
                     }.bind(this), this.typeDelay * 2 + 100);
-                }.bind(this));
-			
-
-			
+                }.bind(this));			
     }.bind(this);
 
     this.FBLogined = function () {

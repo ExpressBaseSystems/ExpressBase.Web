@@ -5,7 +5,7 @@
         return "DateTime";
     else if (num == 3)
         return "Boolean";
-    else if (num == 8 || num == 7 || num == 11)
+    else if (num == 8 || num == 7 || num == 11 || num ==12)
         return "Numeric";
 }
 
@@ -22,6 +22,8 @@ function gettypefromString(str) {
         return "7";
     else if (str == "Double")
         return "8";
+    else if (str == "Numeric")
+        return "12";
 }
 
 if (!String.prototype.splice) {
@@ -1212,7 +1214,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
             }
             else {
-                if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")))
+                if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric")))
                     _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                 else if (col.Type == parseInt(gettypefromString("String"))) {
                     //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)

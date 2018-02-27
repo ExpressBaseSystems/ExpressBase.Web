@@ -23,8 +23,6 @@
     this.table = null;
 
     this.btnUpdate = $("#btnupdate");
-    this.btnConvert = $("#btnconvert");
-
 
     this.init = function () {
         this.setTable();
@@ -32,7 +30,6 @@
         this.AnonymUserModal.on('shown.bs.modal', this.initModal.bind(this));
         this.AnonymUserModal.on('hidden.bs.modal', this.finalizeModal.bind(this));
         this.btnUpdate.on('click', this.OnclickBtnUpdate.bind(this));
-        this.btnConvert.on('click', this.OnclickBtnConvert.bind(this));
     }
 
     this.setTable = function () {
@@ -58,7 +55,7 @@
         
         if (this.metadata.indexOf("_user") !== -1)// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: "ewerrg", 4: "errg", 5: this.itemList[i][this.metadata[5]], 6: "123332435", 7: "Active" });
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
         else if (this.metadata.indexOf("_userGroup") !== -1)
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]] });
@@ -194,6 +191,7 @@
 
         this.lnkGotoFbPage.attr("href", "http://www.facebook.com/" + this.userData.SocialId);
         this.imgFbProfPic.attr("src", "http://graph.facebook.com/" + this.userData.SocialId + "/picture?type=square");
+
         this.lblApplication.text(this.userData.ApplicationName);
         this.lblFirstVisit.text(this.userData.FirstVisit);
         this.lblLastVisit.text(this.userData.LastVisit);
@@ -226,38 +224,6 @@
         this.AnonymUserModal.modal("hide");
         this.btnUpdate.prop("disabled", "false");
     }
-
-    this.OnclickBtnConvert = function () {
-        //if (confirm("Click OK to Continue")) {
-        //    this.btnConvert.attr("disabled", "true");
-        //    $.ajax({
-        //        type: "POST",
-        //        url: "../Security/ConvertAnonymousUserToUser",
-        //        data: {
-        //            itemid: this.itemid,
-        //            name: this.txtFullName.val(),
-        //            email: this.txtEmailId.val(),
-        //            phone: this.txtPhoneNumber.val(),
-        //            remarks: this.txtRemark.val()
-        //        },
-        //        success: this.convertAnonymousUserToUserSuccess.bind(this)
-        //    });
-        //}
-
-        
-    }
-
-    //this.convertAnonymousUserToUserSuccess = function (data) {
-    //    if (data > 1) {
-    //        alert("Convert Operation Completed Successfully");
-    //        this.AnonymUserModal.modal("hide");
-    //        window.open("../Security/ManageUser?itemid=" + data, "_blank");
-    //    }
-            
-    //    else
-    //        alert("Somthing went wrong!");
-    //    this.btnConvert.prop("disabled", "false");
-    //}
-
+    
     this.init();
 }

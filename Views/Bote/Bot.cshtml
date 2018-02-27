@@ -18,18 +18,14 @@
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
 <script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js"></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js"></script>@*jith*@
-
-
+<script type="text/javascript" src="~/js/ChatBot/PortList.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/ChatBot/Airport.js"></script>@*jith*@
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>@*Dona*@
 <script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&callback=initMap">
-
-
-
-</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&callback=initMap"></script>
 
 <style>
     body {
@@ -37,7 +33,9 @@
         padding: 0px;
     }
 </style>
-<script>
+
+
+    <script>
 
 
     var solid = "@ViewBag.tid";
@@ -46,14 +44,14 @@
     var botdpURL = "@ViewBag.botdpURL";
 
     var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl');
-	
+    chatBotObj.AirpotObj.airports = PortList;
 
     var html = document.getElementsByTagName('html')[0];
     html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
 
-    
-	
-	
+    function getip(data) {
+        chatBotObj.AirpotObj.SetCurLoc(data);
+    };
 
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {
@@ -76,7 +74,7 @@
 
     window.fbAsyncInit = function () {
     FB.init({
-    appId: '141908109794829',//,'1525758114176201',//
+        appId: '1525758114176201',//'141908109794829',//,
     cookie: true,  // enable cookies to allow the server to access
     // the session
     xfbml: true,  // parse social plugins on this page
@@ -99,4 +97,7 @@
     }(document, 'script', 'facebook-jssdk'));
 
 
-</script>
+    </script>
+    <script src="https://freegeoip.net/json/?callback=getip" type="text/javascript"></script>
+
+

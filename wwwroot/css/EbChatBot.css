@@ -79,7 +79,7 @@
     padding-right: 41px;
 }*/
 .msg-wraper-bot {
-    padding:10px;
+    padding: 10px;
     border-radius: 13px 13px 13px 0px;
     margin: 6px 5px 6px 5px;
     background-color: #f1f1f1;
@@ -251,6 +251,17 @@
     border: none;
     outline: none;
     padding: 5px;
+    font-size: 14px;
+}
+.airCtrlSend {
+    position: absolute;
+    right: -22px;
+    border-radius: 15px;
+    color: white;
+    background: #427ac5;
+    border: none;
+    outline: none;
+    padding: 6px 11px;
     font-size: 14px;
 }
 
@@ -569,4 +580,46 @@
 .loc-opt-DD {
     width: 100%;
     max-width: inherit;
+}
+._search_country_cont {
+    width: 100%;
+    float: left;
+    background: #fafafa;
+    border-radius: 10px;
+    width: 265px;
+}
+._search_box {
+    float: left;
+    height: 30px;
+    width: 100%;
+    position: relative;
+}
+._search_box_res {
+    display:none;
+    width: 100%;
+    height: 300px;
+    float: left;
+    overflow-y:auto;
+    margin-top: 10px;
+    transition-duration:0.3S;
+    background: white;
+}
+._country_search_input{
+    float:left;
+    width:100%;
+    border-radius:20px;
+}
+._icon_search {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+}
+
+.xx {
+    background-color: #666;
+    color: white;
+}
+
+.portclose:hover {
+    cursor: pointer;
 }

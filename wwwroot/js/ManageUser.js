@@ -31,6 +31,7 @@
     
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
+    this.btnCreateUser = $("#btnCreateUser");
     this.FB = null;
     this.fbId = null;
     this.fbName = null;
@@ -47,7 +48,7 @@
         this.txtEmail.on('change', this.validateEmail.bind(this));
         this.txtAlternateEmail.on('change', function (e) { this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)}.bind(this))
         
-        $('#btnCreateUser').on('click', this.clickbtnCreateUser.bind(this));
+        this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
         
         //$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         //    //$($(e.target).attr("href")).focus();
@@ -61,12 +62,12 @@
     this.initForm = function () {
         if (this.itemId > 1) {
             $(divFormHeading).text("Edit User");
-            $(btnCreateUser).text("Update");
+            this.btnCreateUser.text("Update");
             //this.txtName.attr("disabled", "true");
             //this.txtNickName.attr("disabled", "true");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
-
+            this.isInfoValid = true;
             this.initUserInfo();
             this.initFbConnect();
         }
@@ -77,8 +78,10 @@
             this.txtName.val(this.userinfo["FullName"]);
             this.txtEmail.val(this.userinfo["EmailID"]);
             this.txtPhPrimary.val(this.userinfo["PhoneNumber"]);
-            $("#lblFbId").attr("data-id", this.userinfo["SocialID"]);
-            $("#userFbLink").text(this.userinfo["FullName"]);
+            if (this.userinfo["SocialID"].trim() === "") {
+                $("#lblFbId").attr("data-id", this.userinfo["SocialID"]);
+                $("#userFbLink").text((this.userinfo["FullName"].trim().length > 0) ? this.userinfo["FullName"].trim() : "facebook");
+            }
             this.validateEmail();
             this.initFbConnect();
         }
@@ -283,7 +286,7 @@
             this.timer1 = setTimeout(function () { this.validateEmailAjaxCall() }.bind(this), 3000);
         }
         else {
-            $(e.target).css("border-color", "rgb(204, 0, 0)");
+            this.txtEmail.css("border-color", "rgb(204, 0, 0)");
             this.spanEmail.children().remove();
             this.spanEmail.append(`<i class="fa fa-times" aria-hidden="true" style="color:red;"></i>`);
             this.spanEmail.attr("title", "Invalid Email ID");
@@ -325,12 +328,12 @@
     }
 
     this.clickbtnCreateUser = function () {
-        if (this.txtName.val() === "")
+        if (this.txtName.val() === "" || this.txtEmail.val() === "")
             this.isInfoValid = false;
         if (!this.isInfoValid)
             return;
 
-        $("#btnCreateUser").attr("disabled", "true");
+        this.btnCreateUser.attr("disabled", "true");
 
         var oldstus = (this.itemId > 1) ? parseInt(this.userinfo["statusid"]) : -1;
         var newstus = 0;

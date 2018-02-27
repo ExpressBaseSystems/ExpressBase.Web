@@ -184,7 +184,6 @@
                 </div>
             </div>
             <div class="modal-footer" style="">
-                <button id="btnconvert" type="button" class="btn btn-default" style="float: left;">Convert</button>
                 <button id="btnupdate" type="button" class="btn btn-default" style="">Update</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
@@ -220,7 +219,7 @@
         $(document).ready(function () {
             if ("@ViewBag.ListType" === "TestUser") {
                 //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
-                var _metadata = ["7", "Id", "Name", "Nick Name", "Sex", "Email", "Phone Number", "Status", "_user", "_profPic" ];
+                var _metadata = ["7", "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Status", "_user", "_profPic" ];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
             }
             else if ("@ViewBag.ListType" === "AnonymousUser") {

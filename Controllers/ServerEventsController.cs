@@ -12,5 +12,10 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult Notificaions()
+        {
+            return View();
+        }
     }
 }

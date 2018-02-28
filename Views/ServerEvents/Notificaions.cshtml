@@ -43,7 +43,7 @@
                 onLeave: refreshUsers,
                 onUpdate: refreshUsers,
                 notify: function (m, e) {
-                    alert();
+                    alert((JSON.stringify(m)));
                 },
                 stopListening: function () { $.ss.eventSource.close(); }
             }

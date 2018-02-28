@@ -33,8 +33,7 @@
     this.FB = null;
     this.FBResponse = {};
     this.ssurl = ssurl;
-    this.userLoc = {};
-	
+
     this.init = function () {
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatBox);
@@ -67,50 +66,44 @@
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
-        
-		
         $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
-        
         this.showDate();
     };
-	
+
     this.contactSubmit = function (e) {
         this.msgFromBot("Thank you.");
         this.authenticateAnon($("#anon_mail").val().trim(), $("#anon_phno").val().trim());
         $(e.target).closest('.msg-cont').remove();
     }.bind(this);
 
-
     this.authenticateAnon = function (email, phno) {
         this.showTypingAnim();
-		
-            $.post("../bote/AuthAndGetformlist",
-                {
-                    "cid": this.EXPRESSbase_SOLUTION_ID,
-                    "appid": this.EXPRESSbase_APP_ID,
-                    "socialId": null,
-                    "wc": "bc",
-                    "anon_email": email,
-                    "anon_phno": phno
-                }, function (result) {
-                    this.hideTypingAnim();
-                    if (result === null)
-                        this.authFailed();
-                    this.formsDict = result[1];
-                    this.bearerToken = result[0].bearerToken;
-                    this.refreshToken = result[0].refreshToken;
-                    this.formNames = Object.values(this.formsDict);
-                    this.AskWhatU();
 
-                    /////////////////////////////////////////////////
-                    //setTimeout(function () {
-                    //    //$(".btn-box .btn:last").click();
-                    //    $(".btn-box").find("[idx=4]").click();
-                    //}.bind(this), this.typeDelay * 2 + 100);
-                }.bind(this));
-			
-			
+        $.post("../bote/AuthAndGetformlist",
+            {
+                "cid": this.EXPRESSbase_SOLUTION_ID,
+                "appid": this.EXPRESSbase_APP_ID,
+                "socialId": null,
+                "wc": "bc",
+                "anon_email": email,
+                "anon_phno": phno
+            }, function (result) {
+                this.hideTypingAnim();
+                if (result === null)
+                    this.authFailed();
+                this.formsDict = result[1];
+                this.bearerToken = result[0].bearerToken;
+                this.refreshToken = result[0].refreshToken;
+                this.formNames = Object.values(this.formsDict);
+                this.AskWhatU();
+
+                /////////////////////////////////////////////////
+                //setTimeout(function () {
+                //    //$(".btn-box .btn:last").click();
+                //    $(".btn-box").find("[idx=4]").click();
+                //}.bind(this), this.typeDelay * 2 + 100);
+            }.bind(this));
     }.bind(this);
 
     this.postmenuClick = function (e, reply) {
@@ -435,7 +428,7 @@
     this.Query = function (msg, OptArr, For, ids) {
         this.msgFromBot(msg);
         var Options = this.getButtons(OptArr, For, ids);
-        this.msgFromBot($('<div class="btn-box" >' + Options + '</div>'));	
+        this.msgFromBot($('<div class="btn-box" >' + Options + '</div>'));
     };
 
 
@@ -611,7 +604,6 @@
             return;
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').text(msg).append(this.getTime());
-        this.$chatBox.append($msg);
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
@@ -753,31 +745,34 @@
 
     this.authenticate = function () {
         this.showTypingAnim();
-		
-            $.post("../bote/AuthAndGetformlist",
-                {
-                    "cid": this.EXPRESSbase_SOLUTION_ID,
-                    "appid": this.EXPRESSbase_APP_ID,
-                    "socialId": this.FBResponse.id,
-                    "wc": "bc",
-                    "anon_email": null,
-                    "anon_phno": null
-                }, function (result) {
-                    this.hideTypingAnim();
-                    if (result === null)
-                        this.authFailed();
-                    this.formsDict = result[1];
-                    this.bearerToken = result[0].bearerToken;
-                    this.refreshToken = result[0].refreshToken;
-                    this.formNames = Object.values(this.formsDict);
-                    this.AskWhatU();
 
-                    /////////////////////////////////////////////////Form click
-                    setTimeout(function () {
-                        //$(".btn-box .btn:last").click();
-                        $(".btn-box").find("[idx=15]").click();
-                    }.bind(this), this.typeDelay * 2 + 100);
-                }.bind(this));			
+        $.post("../bote/AuthAndGetformlist",
+            {
+                "cid": this.EXPRESSbase_SOLUTION_ID,
+                "appid": this.EXPRESSbase_APP_ID,
+                "socialId": this.FBResponse.id,
+                "wc": "bc",
+                "anon_email": null,
+                "anon_phno": null
+            }, function (result) {
+                this.hideTypingAnim();
+                if (result === null)
+                    this.authFailed();
+                this.formsDict = result[1];
+                this.bearerToken = result[0].bearerToken;
+                this.refreshToken = result[0].refreshToken;
+                this.formNames = Object.values(this.formsDict);
+                this.AskWhatU();
+
+                /////////////////////////////////////////////////Form click
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    $(".btn-box").find("[idx=15]").click();
+                }.bind(this), this.typeDelay * 2 + 100);
+            }.bind(this));
+
+
+
     }.bind(this);
 
     this.FBLogined = function () {
@@ -802,97 +797,8 @@
             }
         }.bind(this), { scope: 'email' });
     }
-
-    this.StartAirTicketFlow = function () {
-        setTimeout(function () {
-            this.hideTypingAnim();
-            //this.AskWhatU();
-            this.QueryBtnOnly(["Book a flight ticket"], "bookaflight");
-        }.bind(this), this.typeDelay);
-    };
-
-    this.locDDClick = function (e) {
-        $("._country_search_input").val(e.target.innerText);
-        e.target.style.backgroundColor = "#3333aa"
-        $("._search_box_res").hide(100);
-        $("._country_search_input").siblings("span").children("i").removeClass("glyphicon glyphicon-search");
-        $("._country_search_input").siblings("span").children("i").addClass("fa fa-close portclose");
-    };
-
-    this.portSearch = function func(e) {
-        $targetval = $(e.target).val();
-        if (e.keyCode === 38 || e.keyCode === 40)
-            this.modifyPort(e.keyCode);
-        else if (e.keyCode === 13) {
-            var actElement = $('._search_box_res').children(".xx");
-            $("._country_search_input").val(actElement.text());
-            $("._search_box_res").hide(100);
-            $("._country_search_input").siblings("span").children("i").removeClass("glyphicon glyphicon-search");
-            $("._country_search_input").siblings("span").children("i").addClass("fa fa-close portclose");
-        }
-        else {
-            $('._search_box_res').empty().show(100);
-            if ($targetval !== "" && $targetval.length > 1) {
-                for (index = 0; index < PortList.length; index++) {
-                    if (PortList[index].name !== null) {
-                        var airname = PortList[index].name.toLowerCase();
-                        var aircode = PortList[index].iatacode.toLowerCase();
-                        if (airname.startsWith($targetval.toLowerCase()) || aircode.startsWith($targetval.toLowerCase())) {
-                            $('._search_box_res').append('<div tabindex="0" class="locDDitem">' + PortList[index].name + "-" + PortList[index].iatacode + "</div>");
-                        }
-                    }
-                }
-                $('._search_box_res div:eq(0)').addClass("xx");
-                if (!$("._country_search_input").siblings("span").children("i").hasClass("glyphicon")) {
-                    $("._country_search_input").siblings("span").children("i").removeClass("fa fa-close portclose");
-                    $("._country_search_input").siblings("span").children("i").addClass("glyphicon glyphicon-search");
-                }
-
-            }
-
-        }
-    }.bind(this);
-
-    this.modifyPort = function (keyCode, val) {
-        var actElement = $('._search_box_res').children(".xx");
-        if (keyCode === 38 && actElement.prev('div').length > 0) {
-            actElement.removeClass("xx");
-            currentElement = actElement.prev('div').addClass("xx");
-        }
-        else if (keyCode === 40 && actElement.next('div').length > 0) {
-            actElement.removeClass("xx");
-            currentElement = actElement.next('div').addClass("xx");
-        }
-    };
-
-    this.clearPortText = function () {
-        $("._country_search_input").val("");
-        if (!$("._country_search_input").siblings("span").children("i").hasClass("glyphicon")) {
-            $("._country_search_input").siblings("span").children("i").removeClass("fa fa-close portclose");
-            $("._country_search_input").siblings("span").children("i").addClass("glyphicon glyphicon-search");
-        }
-    };
-
-    this.getFlightDtls = function () {
-        $.ajax({
-            type: "GET",
-            url: "../NDC/flightsearch/{from}/{to}/{date}",
-            data: { },
-            success: this.getFlightDtlsSuccess.bind(this)
-        });
-    }
-
-    this.getFlightDtlsSuccess = function () {
-
-    }
-
     this.init();
 };
-
-
-
-
-
 
 var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
     this.label = label;

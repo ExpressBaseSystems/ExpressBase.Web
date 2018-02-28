@@ -1,0 +1,55 @@
+﻿@{
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ServiceStack Chat</title>
+    <link href="~/images/favicon.ico" rel="icon">
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/ss-utils.js"></script>
+</head>
+<body>
+    <h1>Test</h1>
+
+    <script>
+        var channels = "notifications";
+        var source = new EventSource('http://localhost:8000/event-stream?channels=notifications&t=' + new Date().getTime()); //disable cache
+        source.addEventListener('error', function (e) {
+            console.log(e);
+            addEntry({ msg: "ERROR!", cls: "error" });
+        }, false);
+        function refreshUsers() {
+            $.getJSON("http://localhost:8000/event-subscribers?channels=notifications", function (users) {
+                usersMap = {};
+                $.map(users, function (user) { usersMap[user.userId] = user; });
+                $.ss.handlers["changeChannel"](selectedChannel());
+            });
+        }
+        $.ss.eventReceivers = { "document": document };
+
+        $(source).handleServerEvents({
+            handlers: {
+                onConnect: function (u) {
+                    addEntry({ msg: "CONNECTED!", cls: "open" });
+                    $.getJSON("http://localhost:8000/chathistory?channels=notifications", function (r) {
+                        $.map(r.results, $.ss.handlers["chat"]);
+                    });
+                    refreshUsers();
+                },
+                onHeartbeat: function (msg, e) { if (console) console.log("onHeartbeat", msg, e); },
+                onJoin: refreshUsers,
+                onLeave: refreshUsers,
+                onUpdate: refreshUsers,
+                notify: function (m, e) {
+                    alert();
+                },
+                stopListening: function () { $.ss.eventSource.close(); }
+            }
+        });
+
+
+    </script>
+</body>
+</html>

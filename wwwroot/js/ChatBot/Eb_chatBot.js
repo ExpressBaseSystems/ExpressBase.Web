@@ -33,6 +33,7 @@
     this.FB = null;
     this.FBResponse = {};
     this.ssurl = ssurl;
+    this.userLoc = {};
 
     this.init = function () {
         $("body").append(this.$chatCont);
@@ -770,9 +771,6 @@
                     $(".btn-box").find("[idx=15]").click();
                 }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
-
-
-
     }.bind(this);
 
     this.FBLogined = function () {

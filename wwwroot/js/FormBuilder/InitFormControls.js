@@ -3,7 +3,7 @@
 
     this.Date = function (ctrl) {
         if (typeof ctrl === typeof "")
-            ctrl = { name: ctrl, ebDateType:5}
+            ctrl = { name: ctrl, ebDateType: 5 }
         var settings = { timepicker: false };
 
         if (ctrl.ebDateType === 5) {
@@ -29,6 +29,41 @@
 
     this.SimpleSelect = function (ctrl) {
         //$('#' + ctrl.name).selectpicker();
+    };
+
+    this.InputGeoLocation = function (ctrl) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            this.Bot.userLoc.lat = position.coords.latitude;
+            this.Bot.userLoc.long = position.coords.longitude;
+            this.InitMap4inpG(ctrl);
+        }.bind(this));
+    };
+
+    this.InitMap4inpG = function (ctrl) {
+        //var uluru = { lat: this.Bot.userLoc.lat, lng: this.Bot.userLoc.long };
+        //var map = new google.maps.Map(document.getElementById(ctrl.ebSid), {
+        //    zoom: 18,
+        //    center: uluru
+        //});
+        //var marker = new google.maps.Marker({
+        //    position: uluru,
+        //    map: map
+        //});
+        var name = ctrl.ebSid
+        $('#' + name).locationpicker({
+            location: {
+                latitude: this.Bot.userLoc.lat,
+                longitude: this.Bot.userLoc.long
+            },
+            radius: 5,
+            zoom: 18,
+            inputBinding: {
+                latitudeInput: $('#' + name + 'lat'),
+                longitudeInput: $('#' + name + 'long'),
+                locationNameInput: $('#' + name + 'address')
+            },
+        });
+
     };
 
     this.Locations = function (ctrls) {

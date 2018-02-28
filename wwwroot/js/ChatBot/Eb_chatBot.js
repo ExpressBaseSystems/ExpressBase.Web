@@ -444,7 +444,7 @@
     this.setFormControls = function () {
         this.formControls = [];
         $.each(this.curForm.controls, function (i, control) {
-            if (control.visibleIf.trim())//if visibleIf is Not empty
+            if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
                 this.formFunctions.visibleIfs[control.ebSid] = new Function("form", atob(control.visibleIf));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
         }.bind(this));
@@ -535,7 +535,7 @@
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx || 0];
-        if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations"))
+        if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation"))
             $CtrlCont = $(control);
         else
             $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));

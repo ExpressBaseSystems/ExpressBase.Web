@@ -469,10 +469,15 @@
         return inpVal.trim();
     }
 
+    this.chooseClick = function (e) {
+        $(e.target).attr("idx", this.lastCtrlIdx);
+        this.ctrlSend(e);
+    }.bind(this)
+
     this.ctrlSend = function (e) {
         console.log("ctrlSend()");
         var id = this.editingCtrlName || this.curCtrl.name;
-        var $btn = $(e.target).closest(".btn");
+        var $btn = $(e.target).closest("button");
         var $msgDiv = $btn.closest('.msg-cont');
         var next_idx = parseInt($btn.attr('idx')) + 1;
         this.lastCtrlIdx = (next_idx > this.lastCtrlIdx) ? next_idx : this.lastCtrlIdx;
@@ -493,6 +498,9 @@
         else {
             if (this.curCtrl.objType === "Cards") {
                 this.lastval = $btn.closest(".card-cont").find(".card-label").text();
+            }
+            else if (this.curCtrl.objType === "InputGeoLocation") {
+                this.lastval = $("#" + id + "lat").val() + ", " + $("#" + id + "long").val();
             }
             else {
                 this.lastval = this.lastval || $('#' + id).val();
@@ -536,7 +544,7 @@
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx || 0];
         if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation"))
-            $CtrlCont = $(control);
+            $CtrlCont = $(control).find('.ctrl-wraper').css('width',"calc(100% - 5px)");
         else
             $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
         var lablel = this.curCtrl.label + ' ?';
@@ -605,6 +613,7 @@
             return;
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').text(msg).append(this.getTime());
+        this.$chatBox.append($msg);
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
@@ -766,10 +775,10 @@
                 this.AskWhatU();
 
                 /////////////////////////////////////////////////Form click
-                setTimeout(function () {
-                    //$(".btn-box .btn:last").click();
-                    $(".btn-box").find("[idx=15]").click();
-                }.bind(this), this.typeDelay * 2 + 100);
+                //setTimeout(function () {
+                //    //$(".btn-box .btn:last").click();
+                //    $(".btn-box").find("[idx=15]").click();
+                //}.bind(this), this.typeDelay * 2 + 100);ctr
             }.bind(this));
     }.bind(this);
 

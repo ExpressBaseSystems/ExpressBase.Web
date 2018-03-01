@@ -268,7 +268,9 @@
 .card-label, .loc-label {
     font-size: 12pt;
     line-height: 15pt;
+    float: left;
     font-weight: bold;
+    width: calc(100% - 67px);
 }
 
 .card-content, .loc-content {

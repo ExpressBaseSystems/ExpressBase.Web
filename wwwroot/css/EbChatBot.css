@@ -271,6 +271,34 @@
     position: absolute;
 }
 
+.choose-btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    color: white;
+    padding: 4px 6px;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    background-color: #1d1dee;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 20px;
+}
+
+    .choose-btn :hover, .choose-btn :focus {
+        color: #1d1dee;
+        background-color:#ddd;
+        border-radius: 20px;
+    }
+
 .btn-box [for=fblogin]:first-child {
     /*padding-right: 45px !important;*/
     border: none !important;
@@ -550,6 +578,9 @@
     border-radius: 3px;
     width: 100%;
 }
+.picker-box {
+    padding:5px !important;
+}
 
 .loc-opt-btn {
     text-align: center;
@@ -577,6 +608,7 @@
     width: 100%;
     max-width: inherit;
 }
+
 .locinp {
     height: 1.2em !important;
     margin-left: 5px;
@@ -587,7 +619,8 @@
     width: calc(100% - 6em);
     outline: none !important;
 }
+
     .locinp :focus {
         outline: none !important;
-        border-bottom: solid 1px #6bac6b!important;
+        border-bottom: solid 1px #6bac6b !important;
     }

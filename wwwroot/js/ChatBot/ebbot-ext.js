@@ -13,8 +13,8 @@
     var ss = d.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";
-    //ss.href = "../css/ChatBot/bot-ext.css";
-    ss.href = "https://expressbase.com/css/ChatBot/bot-ext.css";
+    ss.href = "../css/ChatBot/bot-ext.css";
+    //ss.href = "https://expressbase.com/css/ChatBot/bot-ext.css";
     d.getElementsByTagName("head")[0].appendChild(ss);
 
     var chatHead = d.createElement("div");
@@ -44,6 +44,7 @@
     iframe.className = "ebbot_iframe";
     iframe.frameBorder = "0";
     iframe.allowFullscreen = true;
+    iframe.setAttribute("allow", "geolocation");
     iframecont.appendChild(chatHead);
 
     var loaderDiv = d.createElement("div");
@@ -85,8 +86,8 @@
         var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
         if (!ebbot_iframe.getAttribute("src")) {
-            ebbot_iframe.setAttribute("src", "https://expressbase.com/bote/bot?tid=" + `${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
-//            ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:5000/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
+            //            ebbot_iframe.setAttribute("src", "https://expressbase.com/bote/bot?tid=" + `${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
+            ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:5000/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
         }
         if (iframecont.style.display !== "flex") {
             this.style.display = "none";
@@ -117,13 +118,13 @@
         iconCont.style.height = "30px";
         iconCont.appendChild(chatIcon);
         chatbtn.appendChild(iconCont);
-        //chatbtn.click();////////////////////////////////
+        chatbtn.click();////////////////////////////////
     }
     else {
         iframecont.style.minWidth = "inherit";
         d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);
         d.getElementById("closediv" + AppId).style.visibility = "hidden";
-        //chatbtn.click();
+        chatbtn.click();
     }
 
     //var dpicon = chatIcon.cloneNode(true);

@@ -11,22 +11,8 @@
     commonO.Current_obj = this.EbObject;
 
 
-    // need to change
-    this.controlCounters = {
-        ComboBoxCounter: 0,
-        NumericCounter: 0,
-        DateCounter: 0,
-        ButtonCounter: 0,
-        TableLayoutCounter: 0,
-        TextBoxCounter: 0,
-        TableTdCounter: 0,
-        RadioButtonCounter: 0,
-        RadioGroupCounter: 0,
-        SimpleSelectCounter: 0,
-        LocationsCounter: 0,
-        LocationCounter: 0,
-        CheckBoxGroupCounter: 0
-    };
+   
+    this.controlCounters = CtrlCounters;//Global
     this.currentProperty = null;
     this.CurRowCount = 2;
     this.CurColCount = 2;

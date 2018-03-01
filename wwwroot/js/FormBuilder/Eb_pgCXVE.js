@@ -103,11 +103,11 @@
             $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp));
 
-            if (this.PGobj.CurProp === "Controls") {
+            if (this.PGobj.CurProp === "Controls") {/////////////////////////need CE test and correction
                 this.CElist = this.PGobj.PropsObj.Controls.$values;
             }
             else {
-                this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp];
+                this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             }
 
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
@@ -423,10 +423,10 @@
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
         $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
         if (this.editor === 7) {
-            if (this.PGobj.CurProp === "Controls")///////////////////////
+            if (this.PGobj.CurProp === "Controls")///////////////////////need CE test and correction
                 obj = this.PropsObj.Controls.GetByName(id);
             else
-                obj = this.PGobj.PropsObj[this.PGobj.CurProp].filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];
+                obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];
         }
         else if (this.editor === 9 || this.editor === 10) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
@@ -438,10 +438,10 @@
         var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
         var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
         var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (lastItemCount + 1);
-        if (this.PGobj.CurProp === "Controls")
+        if (this.PGobj.CurProp === "Controls")////////////// need CE test and correction
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         else
-            this.PGobj.PropsObj[this.PGobj.CurProp].push(new EbObjects[SelType](EbSid));
+            this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(new EbObjects[SelType](EbSid));
         this.setColTiles();
         $("#" + EbSid).click();
     };

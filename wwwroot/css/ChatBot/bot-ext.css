@@ -21,18 +21,19 @@
     flex: 1 1 auto;
 }
 
-/*.ebbot_iframe {
-    visibility: hidden;
-    width: 100%;
-    flex: 1 1 auto;
-    border-radius: 0px 0px 3.5px 3.5px;
-}*/
 .ebbot_iframe {
     visibility: hidden;
     width: 100%;
     flex: 1 1 auto;
-   border-radius:10px;
+    border-radius: 0px 0px 3.5px 3.5px;
 }
+/*amal*/
+/*.ebbot_iframe {
+    visibility: hidden;
+    width: 100%;
+    flex: 1 1 auto;
+   border-radius:10px;
+}*/
 .chatbtn {
     position: fixed;
     right: 24px;
@@ -81,19 +82,21 @@
     text-align: center;
 }
 
-/*.eb-chat-head {
+.eb-chat-head {
     background-color: var( --ebbotThemeColor );
     border-radius: 3px 3px 0px 0px;
     color: white;
     padding: 5px 15px;
-}*/
-.eb-chat-head {
-    background-color: #2590b0;
+}
+
+/*amal*/
+/*.eb-chat-head {
+    background-color: var( --ebbotThemeColor );
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
     color: white;
     padding: 5px 15px;
-}
+}*/
 .poweredby {
     font-size: 10px;
     font-family: arial;

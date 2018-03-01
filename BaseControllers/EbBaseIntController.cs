@@ -45,6 +45,9 @@ namespace ExpressBase.Web.Controllers
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
                 controller.ViewBag.UId = Convert.ToInt32(jwtToken.Payload["uid"]);
+
+                controller.ViewBag.UId = context.HttpContext.Request.Cookies["UserAuthId"];
+
                 controller.ViewBag.cid = jwtToken.Payload["cid"];
                 controller.ViewBag.wc = jwtToken.Payload["wc"];
                 controller.ViewBag.email = jwtToken.Payload["email"];

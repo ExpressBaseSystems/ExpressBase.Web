@@ -161,7 +161,6 @@ namespace ExpressBase.Web.Controllers
 			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
 				Id = userid,
-				AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],
 				EmailPrimary = Dict["email"],
@@ -178,15 +177,16 @@ namespace ExpressBase.Web.Controllers
 				Roles = string.IsNullOrEmpty(Dict["roles"]) ? string.Empty : Dict["roles"],
 				UserGroups = string.IsNullOrEmpty(Dict["usergroups"]) ? string.Empty : Dict["usergroups"],
 				StatusId = Dict["statusid"],
-				Hide = Dict["hide"]
+				Hide = Dict["hide"],
+                AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"])
 			});
 			return res.id;
 		}
 
 		public bool isValidEmail(string reqEmail)
 		{
-			var temp = this.ServiceClient.Post<bool>(new UniqueCheckRequest { email = reqEmail });
-			return temp;
+            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail });
+            return temp.unrespose;
 		}
 
 
@@ -329,7 +329,7 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		public object GetUserDetails(string srchTxt)
-		{
+	{
 			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText=srchTxt, TenantAccountId = ViewBag.cid });
 			return fr.UserList;
 		}

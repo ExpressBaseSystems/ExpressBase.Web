@@ -577,3 +577,17 @@
     width: 100%;
     max-width: inherit;
 }
+.locinp {
+    height: 1.2em !important;
+    margin-left: 5px;
+    border-bottom: solid 1px #e4e4e4 !important;
+    font-size: calc(1em - 1px);
+    float: right;
+    font-style: italic;
+    width: calc(100% - 6em);
+    outline: none !important;
+}
+    .locinp :focus {
+        outline: none !important;
+        border-bottom: solid 1px #6bac6b!important;
+    }

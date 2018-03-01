@@ -399,7 +399,7 @@
         var subRoles = null;
         var metadata1 = ['Id', 'Name', 'Description'];
         for (var i = 0; i < this.roleList.length; i++) {
-            if (this.roleList[i].App_Id == app_id) {
+            if (this.roleList[i].App_Id == app_id || this.roleList[i].App_Id == -1) { // by default App_Id of Sys Role set to -1
                 objAll.push({ Id: this.roleList[i].Id, Name: this.roleList[i].Name, Description: this.roleList[i].Description });
             }
         }

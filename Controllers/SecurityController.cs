@@ -116,6 +116,10 @@ namespace ExpressBase.Web.Controllers
 			}
 			ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
 			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, TenantAccountId = ViewBag.cid });
+			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
+			{
+				fr.Roles.Add(new EbRole() { Name = role.ToString(), Description = "SYSTEM ROLE", Id = (int)role });
+			}
 			ViewBag.Roles = JsonConvert.SerializeObject(fr.Roles);
 			ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
 			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);

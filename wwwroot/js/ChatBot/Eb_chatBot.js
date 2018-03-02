@@ -544,7 +544,7 @@
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx || 0];
         if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation"))
-            $CtrlCont = $(control).find('.ctrl-wraper').css('width',"calc(100% - 5px)");
+            $CtrlCont = $(control);
         else
             $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
         var lablel = this.curCtrl.label + ' ?';

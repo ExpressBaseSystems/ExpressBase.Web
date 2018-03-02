@@ -34,7 +34,7 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
-        $(this.pgCXE_Cont_Slctr).css("left", (24 + $(".pgCXEditor-Cont").length) + "%");//
+        $(this.pgCXE_Cont_Slctr).css("right", ((window.screen.availWidth/4) + $(".pgCXEditor-Cont").length * 10) + "px");//
         $(this.pgCXE_Cont_Slctr).css("top", (14 + $(".pgCXEditor-Cont").length) + "vh");//
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
@@ -448,7 +448,7 @@
 
     this.Init = function () {
         var CXVE_html = '<div class="pgCXEditor-bg">'
-            + '<div class="pgCXEditor-Cont">'
+            + `<div class="pgCXEditor-Cont" style="width:${window.screen.availWidth / 2}px;right:${window.screen.availWidth / 4}px;">`
 
             + '<div class="modal-header">'
             + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'

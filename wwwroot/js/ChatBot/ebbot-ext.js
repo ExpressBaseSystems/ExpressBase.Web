@@ -118,7 +118,7 @@
         iconCont.style.height = "30px";
         iconCont.appendChild(chatIcon);
         chatbtn.appendChild(iconCont);
-        chatbtn.click();////////////////////////////////
+        //chatbtn.click();////////////////////////////////
     }
     else {
         iframecont.style.minWidth = "inherit";

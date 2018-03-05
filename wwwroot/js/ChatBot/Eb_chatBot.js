@@ -462,7 +462,7 @@
             inpVal = inpVal[inpVal.length - 1];
         }
         else if ($input.attr("type") === "RadioGroup") {
-            inpVal = $(`input[name=${this.curCtrl.name}]:checked`).val()
+            inpVal = $(`input[name=${$input.attr("name")}]:checked`).val()
         }
         else
             inpVal = $input.val();
@@ -489,7 +489,7 @@
             this.formValues[id] = this.lastval;// last value set from outer fn
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
-        else if (this.curCtrl.objType === "RadioGroup") {
+        else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup") {
             this.sendCtrlAfter($msgDiv.hide(), $('#' + id).val() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.lastval;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
@@ -544,7 +544,7 @@
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx || 0];
         if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation"))
-            $CtrlCont = $(control).find('.ctrl-wraper').css('width',"calc(100% - 5px)");
+            $CtrlCont = $(control);
         else
             $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
         var lablel = this.curCtrl.label + ' ?';
@@ -773,12 +773,11 @@
                 this.refreshToken = result[0].refreshToken;
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
-
                 /////////////////////////////////////////////////Form click
                 //setTimeout(function () {
                 //    //$(".btn-box .btn:last").click();
                 //    $(".btn-box").find("[idx=15]").click();
-                //}.bind(this), this.typeDelay * 2 + 100);ctr
+                //}.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

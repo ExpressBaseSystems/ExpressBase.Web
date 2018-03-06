@@ -320,13 +320,13 @@
     background-image: url(http://icons.iconarchive.com/icons/danleech/simple/512/facebook-icon.png) !important;
     margin-bottom: 10px;
 }
-.sum-box {
 
+.form-wraper {
+    padding-left:15px;
 }
 
 .form-wraper .ctrl-wraper {
     width: 100%;
-    padding-left: 15px;
 }
 
 .form-wraper .btn-box {

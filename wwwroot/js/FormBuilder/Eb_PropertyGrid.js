@@ -92,7 +92,8 @@
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 14) {  //  If FontSlctrs
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+            var _val = (value === "") ? "" : JSON.stringify(value).replace(/"/g, "'");
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (_val || "") + '" title="' + _val.replace(/{|}|'/g, "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 17) {  //  If imageUploader

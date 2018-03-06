@@ -441,16 +441,23 @@
         return Html;
     };
 
+    this.initFormCtrls_fm = function () {
+        $.each(this.curForm.controls, function (i, control) {
+            if (this.initControls[control.objType] !== undefined)
+                this.initControls[control.objType](control);
+        }.bind(this));
+    }.bind(this);
+
     this.RenderForm = function () {
         var Html = `<div class='form-wraper'>`;
         $.each(this.curForm.controls, function (i, control) {
             Html += `<label>${control.label}</label><div class='ctrl-wraper'>${control.bareControlHtml}</div><br/><br/>`;
         });
-        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn">Submit</button><button class="btn">Cancel</button></div></div>'));
+        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn">Submit</button><button class="btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
 
     this.setFormControls = function () {
-        if (this.curForm.renderAsForm)
+        if (!this.curForm.renderAsForm)
             this.RenderForm();
         else {
             this.formControls = [];
@@ -655,7 +662,7 @@
         this.$TypeAnimMsg.remove();
     }.bind(this);
 
-    this.msgFromBot = function (msg) {
+    this.msgFromBot = function (msg, callbackFn) {
         var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
         this.startTypingAnim($msg);
@@ -680,6 +687,8 @@
                 else
                     $msg.find('.msg-wraper-bot').text(msg).append(this.getTime());
                 this.ready = true;
+                if (callbackFn)
+                    callbackFn();
             }.bind(this), this.typeDelay);
             this.ready = false;
         }
@@ -704,6 +713,7 @@
         var $btn = $(e.target).closest(".btn");
         var html = "<div class='sum-box'>";
         $.each(this.curForm.controls, function (i, control) {
+            this.curCtrl = control;
             var curval = this.getValue($('#' + control.name));
             var name = control.name;
             this.formValuesWithType[name] = [curval, control.ebDbType];

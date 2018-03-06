@@ -106,6 +106,7 @@
             $(`#${name} .location-box:eq(0)`).show();
             this.initMap(ctrls.locationCollection[0]);
         }
+        this.Bot.callGetControl(this.Bot.lastCtrlIdx+1);
     };
 
     this.initMap = function (ctrl) {

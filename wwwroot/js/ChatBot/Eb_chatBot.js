@@ -463,6 +463,11 @@
         }
     }.bind(this);
 
+    this.chooseClick = function (e) {
+        $(e.target).attr("idx", this.lastCtrlIdx);
+        this.ctrlSend(e);
+    }.bind(this);
+
     this.getValue = function ($input) {
         var inpVal;
         if ($input[0].tagName === "SELECT")
@@ -476,10 +481,13 @@
         else if ($input.attr("type") === "RadioGroup") {
             inpVal = $(`input[name=${$input.attr("name")}]:checked`).val()
         }
+        else if (this.curCtrl.objType === "InputGeoLocation") {
+            inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();
+        }
         else
             inpVal = $input.val();
         return inpVal.trim();
-    };
+    }
 
     this.ctrlSend = function (e) {
         console.log("ctrlSend()");
@@ -505,9 +513,6 @@
         else {
             if (this.curCtrl.objType === "Cards") {
                 this.lastval = $btn.closest(".card-cont").find(".card-label").text();
-            }
-            else if (this.curCtrl.objType === "InputGeoLocation") {
-                this.lastval = $("#" + id + "lat").val() + ", " + $("#" + id + "long").val();
             }
             else {
                 this.lastval = this.lastval || $('#' + id).val();
@@ -704,7 +709,7 @@
             this.formValuesWithType[name] = [curval, control.ebDbType];
             html += `<label>${control.label}</label>: ${curval}<br/>`;
         }.bind(this));
-        this.sendCtrl($(html +"</div>"));
+        this.sendCtrl($(html + "</div>"));
         this.sendMsg($btn.text());
         this.showConfirm();
     }.bind(this);

@@ -285,18 +285,19 @@
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
-    background-color: #1d1dee;
+    background-color: rgba(0, 0, 255, 0.66);
     -ms-user-select: none;
     user-select: none;
     background-image: none;
     border: 1px solid transparent;
     border-radius: 20px;
+    outline:none;
 }
 
     .choose-btn :hover, .choose-btn :focus {
         color: #1d1dee;
         background-color: #ddd;
-        border-radius: 20px;
+        outline: none;
     }
 
 .btn-box [for=fblogin]:first-child {
@@ -619,12 +620,17 @@
     }
 
 .loc-opt-cont {
-    padding: 3px 3px 0px 3px;
+    padding: 0px 0px 3px 0px;
 }
 
 .loc-opt-DD {
     width: 100%;
+    padding: 3px 10px;
+    color: rgba(0, 0, 0, 0.7);
     max-width: inherit;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
 }
 
 .locinp {

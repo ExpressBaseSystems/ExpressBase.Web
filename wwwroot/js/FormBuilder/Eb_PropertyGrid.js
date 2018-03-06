@@ -94,12 +94,12 @@
         else if (type === 14) {  //  If FontSlctrs
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-            if ($("[id=fs_" + this.wraperId + 'fontEditor]').length === 0) {
-                this.FontSlctrs[name] = new FontEditor({
-                    ContainerId: "fs_" + this.wraperId,
-                    ToggleId: "pgCXbtn_" + elemId
-                });
-            }
+            //if ($("[id=fs_" + this.wraperId + 'fontEditor]').length === 0) {
+            //    this.FontSlctrs[name] = new FontEditor({
+            //        ContainerId: "fs_" + this.wraperId,
+            //        ToggleId: "pgCXbtn_" + elemId
+            //    });
+            //}
         }
         else if (type === 17) {  //  If imageUploader
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'

@@ -211,8 +211,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).append(text);
         if (this.login === 'dc' && this.tabNum === 0)
             this.EbObject = commonO.Current_obj;
-        else
-            this.EbObject = dvcontainerObj.currentObj;
+        else {
+            if (this.login === 'dc')
+                this.EbObject = commonO.Current_obj;
+            else
+                this.EbObject = dvcontainerObj.currentObj;
+        }
         if ($(sideDivId + " #filterBox").children().length == 0) {
             this.FD = false;
             $(sideDivId).css("display", "none");
@@ -405,7 +409,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.FlagPresentId = true;
                 return false;
             }
-        });
+        }.bind(this));
         //if (col.name === "id") {
         //    //this.FlagPresentId = true;
         //    this.ebSettings.Columns.$values[i].bVisible = false;
@@ -1455,7 +1459,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
         }
         else
-            return "<input type='checkbox'";
+            return "<input type='checkbox' class='" + this.tableId + "_select'/>";
     };
 
     this.updateAlSlct = function (e) {

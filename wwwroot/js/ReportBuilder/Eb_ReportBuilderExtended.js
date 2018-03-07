@@ -292,6 +292,11 @@
             rptObjsubsec.$values[i].Fields.$values.length = 0;
         }
     }
+
+    this.setFontProp = function (fobj) {
+
+    };
+
     this.minMaxToolbar();
     this.keyClickDoc();
 }

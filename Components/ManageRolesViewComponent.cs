@@ -37,7 +37,14 @@ namespace ExpressBase.Web.Components
 			TempData["_dict"] = GetPermissionOperationsAsJs();
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
 			{
-				fr.RoleList.Add(new Eb_RoleObject() { Name = role.ToString(), Description = "SYSTEM ROLE", Id = (int)role, App_Id = -1, Is_Anonymous = false });
+				fr.RoleList.Add(new Eb_RoleObject() {
+					Name = role.ToString(),
+					Description = "SYSTEM ROLE",
+					Id = (int)role,
+					App_Id = -1,
+					Is_Anonymous = false,
+					Is_System = true
+				});
 			}
 			ViewBag.RoleList = JsonConvert.SerializeObject(fr.RoleList);
 			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);

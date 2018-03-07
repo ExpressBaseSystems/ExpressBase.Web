@@ -116,6 +116,7 @@
     @using Newtonsoft.Json;
     var RoleObj = Html.Raw(ViewBag.Roles);
     var SystemRoles = Html.Raw(ViewBag.SystemRoles);
+    var Culture = Html.Raw(ViewBag.Culture);
     var UserGroupObj = Html.Raw(ViewBag.EBUserGroups);
     var Role2RoleList = Html.Raw(ViewBag.Role2RoleList);
     var StatusList = Html.Raw(JsonConvert.SerializeObject(ViewBag.UserStatusList));
@@ -190,9 +191,9 @@
                             <div class="form-group" id="divGender">
                                 <label style="font-family: open sans; font-weight: 300;">Gender</label>
                                 <br />
-                                <label class="radio-inline"><input type="radio" value="Male">Male</label>
-                                <label class="radio-inline"><input type="radio" value="Female">Female</label>
-                                <label class="radio-inline"><input type="radio" value="Other">Other</label>
+                                <label class="radio-inline"><input type="radio" name="gender" value="Male">Male</label>
+                                <label class="radio-inline"><input type="radio" name="gender" value="Female">Female</label>
+                                <label class="radio-inline"><input type="radio" name="gender" value="Other">Other</label>
                             </div>
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Alternate Email ID</label>
@@ -292,174 +293,139 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Select Locale:</label>
-                                <select class="form-control" id="locale" name="locale">
-                                    @*if(@ViewBag.locale != null)
-                                    {
-                                    <option selected="selected">@ViewBag.locale</option>
-                                    }
-                                    else
-                                    {*@
-                                    <option selected>en_US</option>
-                                    @*}*@
-                                    <option>en-BZ</option>
-                                    <option>en-CA</option>
-                                    <option>en-GB</option>
-                                    <option>en-IE</option>
-                                    <option>en-IN</option>
-                                    <option>en-NZ</option>
-                                    <option>fr_FR</option>
-                                    <option>fr_CA</option>
-                                    <option>ja_JP</option>
-                                    <option>ar-ae</option>
-                                    <option>ar-sa</option>
-                                </select>
+                                <select class="form-control" id="sellocale" name="locale"></select>
                             </div>
-
 
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Select Date Format:</label>
-                                <select class="form-control" id="dateformat" name="dateformat">
-                                    @*if(@ViewBag.dateformat != null)
-                                    {
-                                    <option selected="selected">@ViewBag.dateformat</option>
-                                    }
-                                    else
-                                    {*@
-                                    <option selected>dd/mm/yyyy</option>
-                                    @*}*@
-                                    <option>mm/dd/yyyy</option>
-                                    <option>yyyy/mm/dd</option>
-                                    <option>dd-mm-yyyy</option>
-                                    <option>mm-dd-yyyy</option>
-                                    <option>yyyy-mm-dd</option>
-                                    <option>dd.mm.yyyy</option>
-                                    <option>mm.dd.yyyy</option>
-                                    <option>yyyy.mm.dd</option>
-                                </select>
+                                <select class="form-control" id="seldateformat" name="dateformat"></select>
                             </div>
-
 
                             <div class="form-group">
-                                <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
-                                <select id="timezone" name="timezone" class="form-control">
-                                    @*if(@ViewBag.timezone != null)
-                                    {
-                                    <option selected value="@ViewBag.timezonefull" data-utc="@ViewBag.timezone">(@ViewBag.timezone) @ViewBag.timezonefull</option>
-                                    }
-                                    else
-                                    {*@
-                                    <option selected value="Dateline Standard Time" data-utc="UTC-12:00">(UTC-12:00) International Date Line West</option>
-                                    @*}*@
-                                    <option value="UTC-11" data-utc="UTC-11:00">(UTC-11:00) Coordinated Universal Time-11</option>
-                                    <option value="Hawaiian Standard Time" data-utc="UTC-10:00">(UTC-10:00) Hawaii</option>
-                                    <option value="Alaskan Standard Time" data-utc="UTC-09:00">(UTC-09:00) Alaska</option>
-                                    <option value="Pacific Standard Time (Mexico)" data-utc="UTC-08:00">(UTC-08:00) Baja California</option>
-                                    <option value="Pacific Standard Time" data-utc="UTC-08:00">(UTC-08:00) Pacific Time (US & Canada)</option>
-                                    <option value="US Mountain Standard Time" data-utc="UTC-07:00">(UTC-07:00) Arizona</option>
-                                    <option value="Mountain Standard Time (Mexico)" data-utc="UTC-07:00">(UTC-07:00) Chihuahua, La Paz, Mazatlan</option>
-                                    <option value="Mountain Standard Time" data-utc="UTC-07:00">(UTC-07:00) Mountain Time (US & Canada)</option>
-                                    <option value="Central America Standard Time" data-utc="UTC-06:00">(UTC-06:00) Central America</option>
-                                    <option value="Central Standard Time" data-utc="UTC-06:00">(UTC-06:00) Central Time (US & Canada)</option>
-                                    <option value="Central Standard Time (Mexico)" data-utc="UTC-06:00">(UTC-06:00) Guadalajara, Mexico City, Monterrey</option>
-                                    <option value="Canada Central Standard Time" data-utc="UTC-06:00">(UTC-06:00) Saskatchewan</option>
-                                    <option value="SA Pacific Standard Time" data-utc="UTC-05:00">(UTC-05:00) Bogota, Lima, Quito, Rio Branco</option>
-                                    <option value="Eastern Standard Time" data-utc="UTC-05:00">(UTC-05:00) Eastern Time (US & Canada)</option>
-                                    <option value="US Eastern Standard Time" data-utc="UTC-05:00">(UTC-05:00) Indiana (East)</option>
-                                    <option value="Venezuela Standard Time" data-utc="UTC-04:30">(UTC-04:30) Caracas</option>
-                                    <option value="Paraguay Standard Time" data-utc="UTC-04:00">(UTC-04:00) Asuncion</option>
-                                    <option value="Atlantic Standard Time" data-utc="UTC-04:00">(UTC-04:00) Atlantic Time (Canada)</option>
-                                    <option value="Central Brazilian Standard Time" data-utc="UTC-04:00">(UTC-04:00) Cuiaba</option>
-                                    <option value="SA Western Standard Time" data-utc="UTC-04:00">(UTC-04:00) Georgetown, La Paz, Manaus, San Juan</option>
-                                    <option value="Pacific SA Standard Time" data-utc="UTC-04:00">(UTC-04:00) Santiago</option>
-                                    <option value="Newfoundland Standard Time" data-utc="UTC-03:30">(UTC-03:30) Newfoundland</option>
-                                    <option value="E. South America Standard Time" data-utc="UTC-03:00">(UTC-03:00) Brasilia</option>
-                                    <option value="Argentina Standard Time" data-utc="UTC-03:00">(UTC-03:00) Buenos Aires</option>
-                                    <option value="SA Eastern Standard Time" data-utc="UTC-03:00">(UTC-03:00) Cayenne, Fortaleza</option>
-                                    <option value="Greenland Standard Time" data-utc="UTC-03:00">(UTC-03:00) Greenland</option>
-                                    <option value="Montevideo Standard Time" data-utc="UTC-03:00">(UTC-03:00) Montevideo</option>
-                                    <option value="Bahia Standard Time" data-utc="UTC-03:00">(UTC-03:00) Salvador</option>
-                                    <option value="UTC-02" data-utc="UTC-02:00">(UTC-02:00) Coordinated Universal Time-02</option>
-                                    <option value="Mid-Atlantic Standard Time" data-utc="UTC-02:00">(UTC-02:00) Mid-Atlantic - Old</option>
-                                    <option value="Azores Standard Time" data-utc="UTC-01:00">(UTC-01:00) Azores</option>
-                                    <option value="Cape Verde Standard Time" data-utc="UTC-01:00">(UTC-01:00) Cape Verde Is.</option>
-                                    <option value="Morocco Standard Time" data-utc="UTC">(UTC) Casablanca</option>
-                                    <option value="UTC" data-utc="UTC">(UTC) Coordinated Universal Time</option>
-                                    <option value="GMT Standard Time" data-utc="UTC">(UTC) Dublin, Edinburgh, Lisbon, London</option>
-                                    <option value="Greenwich Standard Time" data-utc="UTC">(UTC) Monrovia, Reykjavik</option>
-                                    <option value="W. Europe Standard Time" data-utc="UTC+01:00">(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
-                                    <option value="Central Europe Standard Time" data-utc="UTC+01:00">(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
-                                    <option value="Romance Standard Time" data-utc="UTC+01:00">(UTC+01:00) Brussels, Copenhagen, Madrid, Paris</option>
-                                    <option value="Central European Standard Time" data-utc="UTC+01:00">(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
-                                    <option value="W. Central Africa Standard Time" data-utc="UTC+01:00">(UTC+01:00) West Central Africa</option>
-                                    <option value="Namibia Standard Time" data-utc="UTC+01:00">(UTC+01:00) Windhoek</option>
-                                    <option value="Jordan Standard Time" data-utc="UTC+02:00">(UTC+02:00) Amman</option>
-                                    <option value="GTB Standard Time" data-utc="UTC+02:00">(UTC+02:00) Athens, Bucharest</option>
-                                    <option value="Middle East Standard Time" data-utc="UTC+02:00">(UTC+02:00) Beirut</option>
-                                    <option value="Egypt Standard Time" data-utc="UTC+02:00">(UTC+02:00) Cairo</option>
-                                    <option value="Syria Standard Time" data-utc="UTC+02:00">(UTC+02:00) Damascus</option>
-                                    <option value="E. Europe Standard Time" data-utc="UTC+02:00">(UTC+02:00) E. Europe</option>
-                                    <option value="South Africa Standard Time" data-utc="UTC+02:00">(UTC+02:00) Harare, Pretoria</option>
-                                    <option value="FLE Standard Time" data-utc="UTC+02:00">(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
-                                    <option value="Turkey Standard Time" data-utc="UTC+02:00">(UTC+02:00) Istanbul</option>
-                                    <option value="Israel Standard Time" data-utc="UTC+02:00">(UTC+02:00) Jerusalem</option>
-                                    <option value="Libya Standard Time" data-utc="UTC+02:00">(UTC+02:00) Tripoli</option>
-                                    <option value="Arabic Standard Time" data-utc="UTC+03:00">(UTC+03:00) Baghdad</option>
-                                    <option value="Kaliningrad Standard Time" data-utc="UTC+03:00">(UTC+03:00) Kaliningrad, Minsk</option>
-                                    <option value="Arab Standard Time" data-utc="UTC+03:00">(UTC+03:00) Kuwait, Riyadh</option>
-                                    <option value="E. Africa Standard Time" data-utc="UTC+03:00">(UTC+03:00) Nairobi</option>
-                                    <option value="Iran Standard Time" data-utc="UTC+03:30">(UTC+03:30) Tehran</option>
-                                    <option value="Arabian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Abu Dhabi, Muscat</option>
-                                    <option value="Azerbaijan Standard Time" data-utc="UTC+04:00">(UTC+04:00) Baku</option>
-                                    <option value="Russian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Moscow, St. Petersburg, Volgograd</option>
-                                    <option value="Mauritius Standard Time" data-utc="UTC+04:00">(UTC+04:00) Port Louis</option>
-                                    <option value="Georgian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Tbilisi</option>
-                                    <option value="Caucasus Standard Time" data-utc="UTC+04:00">(UTC+04:00) Yerevan</option>
-                                    <option value="Afghanistan Standard Time" data-utc="UTC+04:30">(UTC+04:30) Kabul</option>
-                                    <option value="West Asia Standard Time" data-utc="UTC+05:00">(UTC+05:00) Ashgabat, Tashkent</option>
-                                    <option value="Pakistan Standard Time" data-utc="UTC+05:00">(UTC+05:00) Islamabad, Karachi</option>
-                                    <option value="India Standard Time" data-utc="UTC+05:30">(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
-                                    <option value="Sri Lanka Standard Time" data-utc="UTC+05:30">(UTC+05:30) Sri Jayawardenepura</option>
-                                    <option value="Nepal Standard Time" data-utc="UTC+05:45">(UTC+05:45) Kathmandu</option>
-                                    <option value="Central Asia Standard Time" data-utc="UTC+06:00">(UTC+06:00) Astana</option>
-                                    <option value="Bangladesh Standard Time" data-utc="UTC+06:00">(UTC+06:00) Dhaka</option>
-                                    <option value="Ekaterinburg Standard Time" data-utc="UTC+06:00">(UTC+06:00) Ekaterinburg</option>
-                                    <option value="Myanmar Standard Time" data-utc="UTC+06:30">(UTC+06:30) Yangon (Rangoon)</option>
-                                    <option value="SE Asia Standard Time" data-utc="UTC+07:00">(UTC+07:00) Bangkok, Hanoi, Jakarta</option>
-                                    <option value="N. Central Asia Standard Time" data-utc="UTC+07:00">(UTC+07:00) Novosibirsk</option>
-                                    <option value="China Standard Time" data-utc="UTC+08:00">(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
-                                    <option value="North Asia Standard Time" data-utc="UTC+08:00">(UTC+08:00) Krasnoyarsk</option>
-                                    <option value="Singapore Standard Time" data-utc="UTC+08:00">(UTC+08:00) Kuala Lumpur, Singapore</option>
-                                    <option value="W. Australia Standard Time" data-utc="UTC+08:00">(UTC+08:00) Perth</option>
-                                    <option value="Taipei Standard Time" data-utc="UTC+08:00">(UTC+08:00) Taipei</option>
-                                    <option value="Ulaanbaatar Standard Time" data-utc="UTC+08:00">(UTC+08:00) Ulaanbaatar</option>
-                                    <option value="North Asia East Standard Time" data-utc="UTC+09:00">(UTC+09:00) Irkutsk</option>
-                                    <option value="Tokyo Standard Time" data-utc="UTC+09:00">(UTC+09:00) Osaka, Sapporo, Tokyo</option>
-                                    <option value="Korea Standard Time" data-utc="UTC+09:00">(UTC+09:00) Seoul</option>
-                                    <option value="Cen. Australia Standard Time" data-utc="UTC+09:30">(UTC+09:30) Adelaide</option>
-                                    <option value="AUS Central Standard Time" data-utc="UTC+09:30">(UTC+09:30) Darwin</option>
-                                    <option value="E. Australia Standard Time" data-utc="UTC+10:00">(UTC+10:00) Brisbane</option>
-                                    <option value="AUS Eastern Standard Time" data-utc="UTC+10:00">(UTC+10:00) Canberra, Melbourne, Sydney</option>
-                                    <option value="West Pacific Standard Time" data-utc="UTC+10:00">(UTC+10:00) Guam, Port Moresby</option>
-                                    <option value="Tasmania Standard Time" data-utc="UTC+10:00">(UTC+10:00) Hobart</option>
-                                    <option value="Yakutsk Standard Time" data-utc="UTC+10:00">(UTC+10:00) Yakutsk</option>
-                                    <option value="Central Pacific Standard Time" data-utc="UTC+11:00">(UTC+11:00) Solomon Is., New Caledonia</option>
-                                    <option value="Vladivostok Standard Time" data-utc="UTC+11:00">(UTC+11:00) Vladivostok</option>
-                                    <option value="New Zealand Standard Time" data-utc="UTC+12:00">(UTC+12:00) Auckland, Wellington</option>
-                                    <option value="UTC+12" data-utc="UTC+12:00">(UTC+12:00) Coordinated Universal Time+12</option>
-                                    <option value="Fiji Standard Time" data-utc="UTC+12:00">(UTC+12:00) Fiji</option>
-                                    <option value="Magadan Standard Time" data-utc="UTC+12:00">(UTC+12:00) Magadan</option>
-                                    <option value="Kamchatka Standard Time" data-utc="UTC+12:00">(UTC+12:00) Petropavlovsk-Kamchatsky - Old</option>
-                                    <option value="Tonga Standard Time" data-utc="UTC+13:00">(UTC+13:00) Nuku'alofa</option>
-                                    <option value="Samoa Standard Time" data-utc="UTC+13:00">(UTC+13:00) Samoa</option>
-                                    <option value="Line Islands Standard Time" data-utc="UTC+14:00">(UTC+14:00) Kiritimati Island</option>
-                                </select>
+                                <label style="font-family: open sans; font-weight: 300;">Select Number Format:</label>
+                                <select class="form-control" id="selnumberformat" name="dateformat"></select>
                             </div>
 
-
-
+                        </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
+                                    <select id="timezone" name="timezone" class="form-control">
+                                        @*if(@ViewBag.timezone != null)
+                    {
+                    <option selected value="@ViewBag.timezonefull" data-utc="@ViewBag.timezone">(@ViewBag.timezone) @ViewBag.timezonefull</option>
+                    }
+                    else
+                    {*@
+                                        <option selected value="Dateline Standard Time" data-utc="UTC-12:00">(UTC-12:00) International Date Line West</option>
+                                        @*}*@
+                                        <option value="UTC-11" data-utc="UTC-11:00">(UTC-11:00) Coordinated Universal Time-11</option>
+                                        <option value="Hawaiian Standard Time" data-utc="UTC-10:00">(UTC-10:00) Hawaii</option>
+                                        <option value="Alaskan Standard Time" data-utc="UTC-09:00">(UTC-09:00) Alaska</option>
+                                        <option value="Pacific Standard Time (Mexico)" data-utc="UTC-08:00">(UTC-08:00) Baja California</option>
+                                        <option value="Pacific Standard Time" data-utc="UTC-08:00">(UTC-08:00) Pacific Time (US & Canada)</option>
+                                        <option value="US Mountain Standard Time" data-utc="UTC-07:00">(UTC-07:00) Arizona</option>
+                                        <option value="Mountain Standard Time (Mexico)" data-utc="UTC-07:00">(UTC-07:00) Chihuahua, La Paz, Mazatlan</option>
+                                        <option value="Mountain Standard Time" data-utc="UTC-07:00">(UTC-07:00) Mountain Time (US & Canada)</option>
+                                        <option value="Central America Standard Time" data-utc="UTC-06:00">(UTC-06:00) Central America</option>
+                                        <option value="Central Standard Time" data-utc="UTC-06:00">(UTC-06:00) Central Time (US & Canada)</option>
+                                        <option value="Central Standard Time (Mexico)" data-utc="UTC-06:00">(UTC-06:00) Guadalajara, Mexico City, Monterrey</option>
+                                        <option value="Canada Central Standard Time" data-utc="UTC-06:00">(UTC-06:00) Saskatchewan</option>
+                                        <option value="SA Pacific Standard Time" data-utc="UTC-05:00">(UTC-05:00) Bogota, Lima, Quito, Rio Branco</option>
+                                        <option value="Eastern Standard Time" data-utc="UTC-05:00">(UTC-05:00) Eastern Time (US & Canada)</option>
+                                        <option value="US Eastern Standard Time" data-utc="UTC-05:00">(UTC-05:00) Indiana (East)</option>
+                                        <option value="Venezuela Standard Time" data-utc="UTC-04:30">(UTC-04:30) Caracas</option>
+                                        <option value="Paraguay Standard Time" data-utc="UTC-04:00">(UTC-04:00) Asuncion</option>
+                                        <option value="Atlantic Standard Time" data-utc="UTC-04:00">(UTC-04:00) Atlantic Time (Canada)</option>
+                                        <option value="Central Brazilian Standard Time" data-utc="UTC-04:00">(UTC-04:00) Cuiaba</option>
+                                        <option value="SA Western Standard Time" data-utc="UTC-04:00">(UTC-04:00) Georgetown, La Paz, Manaus, San Juan</option>
+                                        <option value="Pacific SA Standard Time" data-utc="UTC-04:00">(UTC-04:00) Santiago</option>
+                                        <option value="Newfoundland Standard Time" data-utc="UTC-03:30">(UTC-03:30) Newfoundland</option>
+                                        <option value="E. South America Standard Time" data-utc="UTC-03:00">(UTC-03:00) Brasilia</option>
+                                        <option value="Argentina Standard Time" data-utc="UTC-03:00">(UTC-03:00) Buenos Aires</option>
+                                        <option value="SA Eastern Standard Time" data-utc="UTC-03:00">(UTC-03:00) Cayenne, Fortaleza</option>
+                                        <option value="Greenland Standard Time" data-utc="UTC-03:00">(UTC-03:00) Greenland</option>
+                                        <option value="Montevideo Standard Time" data-utc="UTC-03:00">(UTC-03:00) Montevideo</option>
+                                        <option value="Bahia Standard Time" data-utc="UTC-03:00">(UTC-03:00) Salvador</option>
+                                        <option value="UTC-02" data-utc="UTC-02:00">(UTC-02:00) Coordinated Universal Time-02</option>
+                                        <option value="Mid-Atlantic Standard Time" data-utc="UTC-02:00">(UTC-02:00) Mid-Atlantic - Old</option>
+                                        <option value="Azores Standard Time" data-utc="UTC-01:00">(UTC-01:00) Azores</option>
+                                        <option value="Cape Verde Standard Time" data-utc="UTC-01:00">(UTC-01:00) Cape Verde Is.</option>
+                                        <option value="Morocco Standard Time" data-utc="UTC">(UTC) Casablanca</option>
+                                        <option value="UTC" data-utc="UTC">(UTC) Coordinated Universal Time</option>
+                                        <option value="GMT Standard Time" data-utc="UTC">(UTC) Dublin, Edinburgh, Lisbon, London</option>
+                                        <option value="Greenwich Standard Time" data-utc="UTC">(UTC) Monrovia, Reykjavik</option>
+                                        <option value="W. Europe Standard Time" data-utc="UTC+01:00">(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
+                                        <option value="Central Europe Standard Time" data-utc="UTC+01:00">(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
+                                        <option value="Romance Standard Time" data-utc="UTC+01:00">(UTC+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+                                        <option value="Central European Standard Time" data-utc="UTC+01:00">(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
+                                        <option value="W. Central Africa Standard Time" data-utc="UTC+01:00">(UTC+01:00) West Central Africa</option>
+                                        <option value="Namibia Standard Time" data-utc="UTC+01:00">(UTC+01:00) Windhoek</option>
+                                        <option value="Jordan Standard Time" data-utc="UTC+02:00">(UTC+02:00) Amman</option>
+                                        <option value="GTB Standard Time" data-utc="UTC+02:00">(UTC+02:00) Athens, Bucharest</option>
+                                        <option value="Middle East Standard Time" data-utc="UTC+02:00">(UTC+02:00) Beirut</option>
+                                        <option value="Egypt Standard Time" data-utc="UTC+02:00">(UTC+02:00) Cairo</option>
+                                        <option value="Syria Standard Time" data-utc="UTC+02:00">(UTC+02:00) Damascus</option>
+                                        <option value="E. Europe Standard Time" data-utc="UTC+02:00">(UTC+02:00) E. Europe</option>
+                                        <option value="South Africa Standard Time" data-utc="UTC+02:00">(UTC+02:00) Harare, Pretoria</option>
+                                        <option value="FLE Standard Time" data-utc="UTC+02:00">(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
+                                        <option value="Turkey Standard Time" data-utc="UTC+02:00">(UTC+02:00) Istanbul</option>
+                                        <option value="Israel Standard Time" data-utc="UTC+02:00">(UTC+02:00) Jerusalem</option>
+                                        <option value="Libya Standard Time" data-utc="UTC+02:00">(UTC+02:00) Tripoli</option>
+                                        <option value="Arabic Standard Time" data-utc="UTC+03:00">(UTC+03:00) Baghdad</option>
+                                        <option value="Kaliningrad Standard Time" data-utc="UTC+03:00">(UTC+03:00) Kaliningrad, Minsk</option>
+                                        <option value="Arab Standard Time" data-utc="UTC+03:00">(UTC+03:00) Kuwait, Riyadh</option>
+                                        <option value="E. Africa Standard Time" data-utc="UTC+03:00">(UTC+03:00) Nairobi</option>
+                                        <option value="Iran Standard Time" data-utc="UTC+03:30">(UTC+03:30) Tehran</option>
+                                        <option value="Arabian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Abu Dhabi, Muscat</option>
+                                        <option value="Azerbaijan Standard Time" data-utc="UTC+04:00">(UTC+04:00) Baku</option>
+                                        <option value="Russian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Moscow, St. Petersburg, Volgograd</option>
+                                        <option value="Mauritius Standard Time" data-utc="UTC+04:00">(UTC+04:00) Port Louis</option>
+                                        <option value="Georgian Standard Time" data-utc="UTC+04:00">(UTC+04:00) Tbilisi</option>
+                                        <option value="Caucasus Standard Time" data-utc="UTC+04:00">(UTC+04:00) Yerevan</option>
+                                        <option value="Afghanistan Standard Time" data-utc="UTC+04:30">(UTC+04:30) Kabul</option>
+                                        <option value="West Asia Standard Time" data-utc="UTC+05:00">(UTC+05:00) Ashgabat, Tashkent</option>
+                                        <option value="Pakistan Standard Time" data-utc="UTC+05:00">(UTC+05:00) Islamabad, Karachi</option>
+                                        <option value="India Standard Time" data-utc="UTC+05:30">(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+                                        <option value="Sri Lanka Standard Time" data-utc="UTC+05:30">(UTC+05:30) Sri Jayawardenepura</option>
+                                        <option value="Nepal Standard Time" data-utc="UTC+05:45">(UTC+05:45) Kathmandu</option>
+                                        <option value="Central Asia Standard Time" data-utc="UTC+06:00">(UTC+06:00) Astana</option>
+                                        <option value="Bangladesh Standard Time" data-utc="UTC+06:00">(UTC+06:00) Dhaka</option>
+                                        <option value="Ekaterinburg Standard Time" data-utc="UTC+06:00">(UTC+06:00) Ekaterinburg</option>
+                                        <option value="Myanmar Standard Time" data-utc="UTC+06:30">(UTC+06:30) Yangon (Rangoon)</option>
+                                        <option value="SE Asia Standard Time" data-utc="UTC+07:00">(UTC+07:00) Bangkok, Hanoi, Jakarta</option>
+                                        <option value="N. Central Asia Standard Time" data-utc="UTC+07:00">(UTC+07:00) Novosibirsk</option>
+                                        <option value="China Standard Time" data-utc="UTC+08:00">(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
+                                        <option value="North Asia Standard Time" data-utc="UTC+08:00">(UTC+08:00) Krasnoyarsk</option>
+                                        <option value="Singapore Standard Time" data-utc="UTC+08:00">(UTC+08:00) Kuala Lumpur, Singapore</option>
+                                        <option value="W. Australia Standard Time" data-utc="UTC+08:00">(UTC+08:00) Perth</option>
+                                        <option value="Taipei Standard Time" data-utc="UTC+08:00">(UTC+08:00) Taipei</option>
+                                        <option value="Ulaanbaatar Standard Time" data-utc="UTC+08:00">(UTC+08:00) Ulaanbaatar</option>
+                                        <option value="North Asia East Standard Time" data-utc="UTC+09:00">(UTC+09:00) Irkutsk</option>
+                                        <option value="Tokyo Standard Time" data-utc="UTC+09:00">(UTC+09:00) Osaka, Sapporo, Tokyo</option>
+                                        <option value="Korea Standard Time" data-utc="UTC+09:00">(UTC+09:00) Seoul</option>
+                                        <option value="Cen. Australia Standard Time" data-utc="UTC+09:30">(UTC+09:30) Adelaide</option>
+                                        <option value="AUS Central Standard Time" data-utc="UTC+09:30">(UTC+09:30) Darwin</option>
+                                        <option value="E. Australia Standard Time" data-utc="UTC+10:00">(UTC+10:00) Brisbane</option>
+                                        <option value="AUS Eastern Standard Time" data-utc="UTC+10:00">(UTC+10:00) Canberra, Melbourne, Sydney</option>
+                                        <option value="West Pacific Standard Time" data-utc="UTC+10:00">(UTC+10:00) Guam, Port Moresby</option>
+                                        <option value="Tasmania Standard Time" data-utc="UTC+10:00">(UTC+10:00) Hobart</option>
+                                        <option value="Yakutsk Standard Time" data-utc="UTC+10:00">(UTC+10:00) Yakutsk</option>
+                                        <option value="Central Pacific Standard Time" data-utc="UTC+11:00">(UTC+11:00) Solomon Is., New Caledonia</option>
+                                        <option value="Vladivostok Standard Time" data-utc="UTC+11:00">(UTC+11:00) Vladivostok</option>
+                                        <option value="New Zealand Standard Time" data-utc="UTC+12:00">(UTC+12:00) Auckland, Wellington</option>
+                                        <option value="UTC+12" data-utc="UTC+12:00">(UTC+12:00) Coordinated Universal Time+12</option>
+                                        <option value="Fiji Standard Time" data-utc="UTC+12:00">(UTC+12:00) Fiji</option>
+                                        <option value="Magadan Standard Time" data-utc="UTC+12:00">(UTC+12:00) Magadan</option>
+                                        <option value="Kamchatka Standard Time" data-utc="UTC+12:00">(UTC+12:00) Petropavlovsk-Kamchatsky - Old</option>
+                                        <option value="Tonga Standard Time" data-utc="UTC+13:00">(UTC+13:00) Nuku'alofa</option>
+                                        <option value="Samoa Standard Time" data-utc="UTC+13:00">(UTC+13:00) Samoa</option>
+                                        <option value="Line Islands Standard Time" data-utc="UTC+14:00">(UTC+14:00) Kiritimati Island</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
 
         </div>
@@ -562,7 +528,7 @@
     </style>*@
 <script>
 
-    var userobj = new UserJs(@UInfo, @RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList);
+    var userobj = new UserJs(@UInfo, @RoleObj, @SystemRoles, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture);
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();

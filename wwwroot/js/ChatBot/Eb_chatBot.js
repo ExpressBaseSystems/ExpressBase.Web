@@ -441,12 +441,19 @@
         return Html;
     };
 
+    this.initFormCtrls_fm = function () {
+        $.each(this.curForm.controls, function (i, control) {
+            if (this.initControls[control.objType] !== undefined)
+                this.initControls[control.objType](control);
+        }.bind(this));
+    }.bind(this);
+
     this.RenderForm = function () {
         var Html = `<div class='form-wraper'>`;
         $.each(this.curForm.controls, function (i, control) {
             Html += `<label>${control.label}</label><div class='ctrl-wraper'>${control.bareControlHtml}</div><br/><br/>`;
         });
-        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn">Submit</button><button class="btn">Cancel</button></div></div>'));
+        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn">Submit</button><button class="btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
 
     this.setFormControls = function () {
@@ -463,6 +470,11 @@
         }
     }.bind(this);
 
+    this.chooseClick = function (e) {
+        $(e.target).attr("idx", this.lastCtrlIdx);
+        this.ctrlSend(e);
+    }.bind(this);
+
     this.getValue = function ($input) {
         var inpVal;
         if ($input[0].tagName === "SELECT")
@@ -476,10 +488,13 @@
         else if ($input.attr("type") === "RadioGroup") {
             inpVal = $(`input[name=${$input.attr("name")}]:checked`).val()
         }
+        else if (this.curCtrl.objType === "InputGeoLocation") {
+            inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();
+        }
         else
             inpVal = $input.val();
         return inpVal.trim();
-    };
+    }
 
     this.ctrlSend = function (e) {
         console.log("ctrlSend()");
@@ -505,9 +520,6 @@
         else {
             if (this.curCtrl.objType === "Cards") {
                 this.lastval = $btn.closest(".card-cont").find(".card-label").text();
-            }
-            else if (this.curCtrl.objType === "InputGeoLocation") {
-                this.lastval = $("#" + id + "lat").val() + ", " + $("#" + id + "long").val();
             }
             else {
                 this.lastval = this.lastval || $('#' + id).val();
@@ -650,7 +662,7 @@
         this.$TypeAnimMsg.remove();
     }.bind(this);
 
-    this.msgFromBot = function (msg) {
+    this.msgFromBot = function (msg, callbackFn) {
         var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
         this.startTypingAnim($msg);
@@ -666,8 +678,11 @@
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
 
-                    if (this.curCtrl && $('#' + this.curCtrl.name).length === 1 && ($msg.find(".ctrl-wraper").length === 1)) {
-                        this.loadcontrol();
+                    if (this.curCtrl && ($msg.find(".ctrl-wraper").length === 1)) {
+                        if ($('#' + this.curCtrl.name).length === 1)
+                            this.loadcontrol();
+                        else
+                            console.error("loadcontrol() called before rendering 'id = " + this.curCtrl.name + "' element");
                     }
                     if (this.curForm)
                         $msg.attr("form", this.curForm.name);
@@ -675,6 +690,8 @@
                 else
                     $msg.find('.msg-wraper-bot').text(msg).append(this.getTime());
                 this.ready = true;
+                if (callbackFn)
+                    callbackFn();
             }.bind(this), this.typeDelay);
             this.ready = false;
         }
@@ -699,12 +716,13 @@
         var $btn = $(e.target).closest(".btn");
         var html = "<div class='sum-box'>";
         $.each(this.curForm.controls, function (i, control) {
+            this.curCtrl = control;
             var curval = this.getValue($('#' + control.name));
             var name = control.name;
             this.formValuesWithType[name] = [curval, control.ebDbType];
             html += `<label>${control.label}</label>: ${curval}<br/>`;
         }.bind(this));
-        this.sendCtrl($(html +"</div>"));
+        this.sendCtrl($(html + "</div>"));
         this.sendMsg($btn.text());
         this.showConfirm();
     }.bind(this);
@@ -795,10 +813,10 @@
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 /////////////////////////////////////////////////Form click
-                //setTimeout(function () {
-                //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=15]").click();
-                //}.bind(this), this.typeDelay * 2 + 100);
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    $(".btn-box").find("[idx=13]").click();
+                }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

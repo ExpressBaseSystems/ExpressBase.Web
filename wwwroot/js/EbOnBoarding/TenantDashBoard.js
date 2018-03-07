@@ -20,6 +20,7 @@
     };
     this.goToSolutionWindow = function (e) {        
         var tk = getToken();
+        var rtk = getrToken();
         var form = document.createElement("form");
         form.setAttribute("method", "post");
         form.setAttribute("action", "http://" + this.EbSolutionColl[0].IsolutionId + "-dev.localhost:5000/Ext/GoToApplication");
@@ -28,6 +29,10 @@
         token.setAttribute("name", "Btoken");
         token.setAttribute("value", tk);
         form.appendChild(token);
+        var rtoken = document.createElement("input");
+        rtoken.setAttribute("name", "Rtoken");
+        rtoken.setAttribute("value", rtk);
+        form.appendChild(rtoken);
         var AppType = document.createElement("input");
         AppType.setAttribute("name", "AppType");
         AppType.setAttribute("value", this.apptype);

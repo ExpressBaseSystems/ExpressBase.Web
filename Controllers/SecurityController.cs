@@ -10,6 +10,8 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -106,8 +108,44 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		//--------------MANAGE USER START------------------------------------
+		public class Culture
+		{
+			public string Cult { get; set; }
+			public string NumFormat { get; set; }
+			public string DateFormat { get; set; }
+		}
+
 		public IActionResult ManageUser(int itemid, string AnonymousUserInfo)
 		{
+			var cults = CultureInfo.GetCultures(CultureTypes.AllCultures);
+			List<Culture> culture = new List<Culture>();
+			foreach (var cult in cults)
+			{
+				if (cult.Name.Length > 4)
+				{
+					culture.Add(new Culture
+					{
+						Cult = cult.Name,
+						NumFormat = "1" + cult.NumberFormat.CurrencyGroupSeparator + "234" + cult.NumberFormat.CurrencyDecimalSeparator + "56",
+						DateFormat = cult.DateTimeFormat.ShortDatePattern
+					});
+				}
+			}
+			ViewBag.Culture = JsonConvert.SerializeObject(culture);
+
+			ReadOnlyCollection<TimeZoneInfo> tz = TimeZoneInfo.GetSystemTimeZones();
+
+
+			DateTime myDate =  DateTime.Now;
+			string us = myDate.ToString(new CultureInfo("en-US"));
+			Console.WriteLine(us);
+
+
+			double fromDb = 123345123.56;
+			string display = fromDb.ToString("C", new CultureInfo("de-DE"));
+			Console.WriteLine(display);
+
+
 			Dictionary<string, string> dict = new Dictionary<string, string>();				
 			List<EbRole> Sysroles = new List<EbRole>();
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))

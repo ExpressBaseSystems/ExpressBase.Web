@@ -1,7 +1,8 @@
-﻿var UserJs = function (userinfo, cusroles, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList) {
+﻿var UserJs = function (userinfo, cusroles, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture) {
     this.userinfo = userinfo;
     this.customRoles = cusroles;
     this.systemRoles = sysroles;
+    this.culture = culture;
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
@@ -42,6 +43,9 @@
     this.rolesTile = null;
     this.userGroupTile = null;
 
+    this.selectLocale = $("#sellocale");
+    this.selectDateFormat = $("#seldateformat");
+    this.selectNumberFormat = $("#selnumberformat");
    
     this.init = function () {
 
@@ -55,7 +59,9 @@
         //    //$($(e.target).attr("href")).focus();
         //    $("#btnCreateUser").focus();
         //});
+        this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
 
+        this.initUserPreference();
         this.initForm();
         this.initTiles();
     }
@@ -93,6 +99,25 @@
         }
     }
 
+    this.initUserPreference = function () {
+        this.selectLocale.children().remove();
+        this.selectDateFormat.children().remove();
+        this.selectNumberFormat.children().remove();
+
+        $.each(this.culture, function (k, cultOb) {
+            this.selectLocale.append(`<option data-id="" data-index="">${cultOb.Cult}</option>`);
+            this.selectDateFormat.append(`<option data-id="" data-index="">${cultOb.DateFormat}</option>`);
+            this.selectNumberFormat.append(`<option data-id="" data-index="">${cultOb.NumFormat}</option>`);
+        }.bind(this));
+    }
+
+    this.selectLocaleChangeAction = function (e) {
+        var indx = this.selectLocale.prop('selectedIndex');
+        $(this.selectNumberFormat.selector + " option:eq(" + indx + ")").prop("selected", true);
+        $(this.selectDateFormat.selector + " option:eq(" + indx + ")").prop("selected", true)
+
+    }
+
     this.initUserInfo = function () {
         this.txtName.val(this.userinfo["fullname"]);
         this.txtNickName.val(this.userinfo["nickname"]);
@@ -124,7 +149,7 @@
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
             FB.init({
-                appId: '149537802493867',
+                appId: '141908109794829',
                 version: 'v2.11'
             });
             FB.getLoginStatus(updateStatusCallback);

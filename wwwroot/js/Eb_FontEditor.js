@@ -1,9 +1,8 @@
-﻿var FontEditor = function (params) {
+﻿var FontEditor = function (params,fontEditobj) {
     this.ContainerId = params.ContainerId;
-    this.ToggleId = params.ToggleId
+    this.ToggleId = params.ToggleId;
     this.fonts = EbFonts;
-    this.currObj = { Font: "Ewert", Fontsize: 14, Fontstyle: "italic", FontWeight: 'normal', Fontcolor: "#ccc", Caps: 'uppercase', Strikethrough: 'none', Underline: 'none' };
-    this.fontObject = { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
+    this.fontObject = fontEditobj || { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
 
     this.createModal = function () {
         var modalHTML = `<div class="fup" id="${this.ContainerId}fontEditor"><div class="imgup-bg">
@@ -191,16 +190,16 @@
     };
 
     this.setDefault = function () {
-        if (!$.isEmptyObject(this.currObj)) {
-            $('#googleFont').children("option[value='" + this.currObj.Font + "']").change().focus();
-            $('#fontStyle').children("option[value='" + this.currObj.Fontstyle + "']").change().focus();
-            $('#fontSize').children("option[value='" + this.currObj.Fontsize + "']").change().focus();
-            $('#fontColor').val(this.currObj.Fontcolor).change();
-            if (this.currObj.Caps === "uppercase")
+        if (!$.isEmptyObject(this.fontObject)) {
+            $('#googleFont').children("option[value='" + this.fontObject.Font + "']").change().focus();
+            $('#fontStyle').children("option[value='" + this.fontObject.Fontstyle + "']").change().focus();
+            $('#fontSize').children("option[value='" + this.fontObject.Fontsize + "']").change().focus();
+            $('#fontColor').val(this.fontObject.Fontcolor).change();
+            if (this.fontObject.Caps === "uppercase")
                 $('#FE-caps').prop("checked", true).change();
-            else if (this.currObj.Strikethrough === "line-through")
+            else if (this.fontObject.Strikethrough === "line-through")
                 $('#FE-strikethrough').prop("checked", true).change();
-            else if (this.currObj.Underline === "underline")
+            else if (this.fontObject.Underline === "underline")
                 $('#FE-Underline').prop("checked", true).change();
             //else {
             //    $('#FE-caps, #FE-strikethrough, #FE-strikethrough').prop("checked", false).change();

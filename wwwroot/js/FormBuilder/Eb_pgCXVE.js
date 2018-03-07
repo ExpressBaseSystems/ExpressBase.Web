@@ -17,7 +17,7 @@
         }
         else
             if (this.editor === 14) {
-                var FSObj = this.PGobj.FontSlctrs[this.PGobj.CurProp].fontEdSubmit();
+                var FSObj = this.FontSelObj.fontEdSubmit();
                 this.PGobj.PropsObj[this.PGobj.CurProp] = FSObj;
                 $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(FSObj));
             }
@@ -49,6 +49,8 @@
             this.initJE();
         else if (this.editor === 13)
             this.initOSE();
+        else if (this.editor === 14)
+            this.initFE(e);
         else if (this.editor === 16)
             this.initStrE();
 
@@ -62,6 +64,15 @@
             this.PGobj.ReadOnly();
         else
             this.PGobj.ReadWrite();
+    };
+
+    this.initFE = function (e) {
+        var contId = "fs_" + this.PGobj.wraperId;
+        $(`#${contId}fontEditor`).remove();
+        this.FontSelObj = new FontEditor({
+            ContainerId: contId,
+            ToggleId: e.target.getAttribute("name")
+        }, this.PGobj.PropsObj[this.PGobj.CurProp]);
     };
 
     this.initStrE = function () {

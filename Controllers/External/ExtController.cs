@@ -265,6 +265,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string btoken = req["Btoken"].ToString();
+            string rtocken = req["Rtoken"].ToString();
             int apptype = Convert.ToInt32(req["AppType"]);
             string Email = req["Email"].ToString();
 

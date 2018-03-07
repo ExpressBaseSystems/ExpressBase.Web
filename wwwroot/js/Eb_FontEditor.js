@@ -1,6 +1,6 @@
 ﻿var FontEditor = function (params,fontEditobj) {
     this.ContainerId = params.ContainerId;
-    this.ToggleId = params.ToggleId
+    this.ToggleId = params.ToggleId;
     this.fonts = EbFonts;
     this.fontObject = fontEditobj || { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
 

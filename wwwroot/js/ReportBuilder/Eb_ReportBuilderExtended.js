@@ -294,7 +294,14 @@
     }
 
     this.setFontProp = function (fobj) {
-
+        var _json = JSON.parse(fobj.Font);
+        fobj.FontAppearence = _json.Strikethrough || _json.Underline;
+        fobj.FontFamily = _json.Font;
+        fobj.FontSize = _json.Fontsize;
+        fobj.FontStyle = _json.Fontstyle;
+        fobj.FontWeight = _json.FontWeight;
+        fobj.ForeColor = _json.Fontcolor;
+        fobj.Caps = _json.Caps;
     };
 
     this.minMaxToolbar();

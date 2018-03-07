@@ -21,6 +21,17 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ExpressBase.Objects.Helpers;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Threading;
+using JWT;
+using JWT.Serializers;
+using JWT.Algorithms;
+using System.Security.Cryptography;
+using System.Text;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -265,11 +276,16 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string btoken = req["Btoken"].ToString();
+<<<<<<< HEAD
             string rtocken = req["Rtoken"].ToString();
             int apptype = Convert.ToInt32(req["AppType"]);
+=======
+			string rtoken = req["Rtoken"].ToString();
+			int apptype = Convert.ToInt32(req["AppType"]);
+>>>>>>> d3df01d2139e97ba242db1373f8ca805c696d6c6
             string Email = req["Email"].ToString();
 
-            if (TenantSingleSignOn(btoken))
+            if (TenantSingleSignOn(btoken, rtoken))
             {
                 if (apptype == 1)
                     return RedirectToAction("AppDashWeb", "Dev");
@@ -282,18 +298,18 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-		public bool TenantSingleSignOn(string btoken)
+		public bool TenantSingleSignOn(string btoken, string rtoken)
 		{            
             var host = this.HttpContext.Request.Host;           
             string[] hostParts = host.Host.Split('.');
-			string whichconsole = "dc";            
-            string[] tokparts = btoken.ToString().Split('.');
-            
+			string whichconsole = "dc";
+
 			////CHECK WHETHER SOLUTION ID IS VALID
 
-			var tokenS = (new JwtSecurityTokenHandler()).ReadToken(btoken) as JwtSecurityToken;
-			string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
-			
+			string email = ValidateTokensAndGetUserName(btoken, rtoken);
+			if (string.IsNullOrEmpty(email))
+				return false;
+
 			//CHECK WHETHER SOLUTION ID IS VALID
 
 			bool bOK2AttemptLogin = true;
@@ -315,12 +331,6 @@ namespace ExpressBase.Web.Controllers
 				MyAuthenticateResponse authResponse = null;
 				try
 				{
-					//var jwtToken = new JwtSecurityToken(this.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN]);
-					//JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-					//var user = handler.ValidateToken("eyJhbGciOi.....", validationParameters, out validatedToken);
-					//var cid = jwtToken.Payload["cid"];
-					//jwtToken;
-
 					var authClient = this.ServiceClient;
 					authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
 					{
@@ -347,6 +357,8 @@ namespace ExpressBase.Web.Controllers
 
 			return false;
 		}
+
+		
 
 		[HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
@@ -618,6 +630,105 @@ namespace ExpressBase.Web.Controllers
             sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
             this.ServiceClient.Post(sMSSentRequest);
         }
-    }
+		
+
+		public byte[] FromBase64Url(string base64Url)
+		{
+			string padded = base64Url.Length % 4 == 0
+				? base64Url : base64Url + "====".Substring(base64Url.Length % 4);
+			string base64 = padded.Replace("_", "/")
+								  .Replace("-", "+");
+			return Convert.FromBase64String(base64);
+		}
+
+		public bool VerifySignature(string token)
+		{
+			string PublicKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_JWT_PUBLIC_KEY_XML);
+			int pos1 = PublicKey.IndexOf("<Modulus>");
+			int pos2 = PublicKey.IndexOf("</Modulus>");
+			int pos3 = PublicKey.IndexOf("<Exponent>");
+			int pos4 = PublicKey.IndexOf("</Exponent>");
+			string modkeypub = PublicKey.Substring(pos1 + 9, pos2 - pos1 - 9);
+			string expkeypub = PublicKey.Substring(pos3 + 10, pos4 - pos3 - 10);
+
+			try
+			{
+				string[] tokenParts = token.Split('.');
+				RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+				rsa.ImportParameters(
+				  new RSAParameters()
+				  {
+					  Modulus = FromBase64Url(modkeypub),
+					  Exponent = FromBase64Url(expkeypub)
+				  });
+
+				SHA256 sha256 = SHA256.Create();
+				byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(tokenParts[0] + '.' + tokenParts[1]));
+
+				RSAPKCS1SignatureDeformatter rsaDeformatter = new RSAPKCS1SignatureDeformatter(rsa);
+				rsaDeformatter.SetHashAlgorithm("SHA256");
+				if (rsaDeformatter.VerifySignature(hash, FromBase64Url(tokenParts[2])))
+				{
+					Console.WriteLine("Signature is verified");
+					return true;
+				}
+			}
+			catch (Exception e) { Console.WriteLine("Exception from VerifySignature:" + e.ToString()); }
+			return false;
+		}
+
+		public string ValidateTokensAndGetUserName(string btoken, string rtoken, string _wc="tc", string _cid="expressbase")
+		{
+			if (VerifySignature(btoken) && VerifySignature(rtoken))
+			{
+				try
+				{
+					var jwtToken = new JwtSecurityToken(btoken);
+					var cid = jwtToken.Payload["cid"];
+					var uid = jwtToken.Payload["uid"];
+					var email = jwtToken.Payload["email"];
+					var wc = jwtToken.Payload["wc"];
+					var sub = jwtToken.Payload["sub"];
+					long iat = Convert.ToInt64(jwtToken.Payload["iat"]);
+					long exp = Convert.ToInt64(jwtToken.Payload["exp"]);
+					DateTime startDate = new DateTime(1970, 1, 1);
+					DateTime iat_time = startDate.AddSeconds(iat);
+					DateTime exp_time = startDate.AddSeconds(exp);
+
+					if(!(wc.ToString().Equals(_wc) && cid.ToString().Equals(_cid)))
+					{
+						Console.WriteLine("wc/cid mismatch");
+						return string.Empty;
+					}
+					if (iat_time < DateTime.Now && exp_time > DateTime.Now)
+					{
+						Console.WriteLine("Valid btoken");
+						return email.ToString();
+					}
+					else
+					{
+						Console.WriteLine("btoken expired");
+						var jwtrToken = new JwtSecurityToken(rtoken);
+						var rsub = jwtrToken.Payload["sub"];
+						long riat = Convert.ToInt64(jwtrToken.Payload["iat"]);
+						long rexp = Convert.ToInt64(jwtrToken.Payload["exp"]);
+						DateTime riat_time = startDate.AddSeconds(riat);
+						DateTime rexp_time = startDate.AddSeconds(rexp);
+						if (riat_time < DateTime.Now && rexp_time > DateTime.Now && rsub.Equals(sub))
+						{
+							Console.WriteLine("Valid rtoken");
+							return email.ToString();
+						}
+						else
+							Console.WriteLine("rtoken expired or invalid");
+					}
+				}
+				catch (Exception e) { Console.WriteLine("Exception:" + e.ToString()); }
+			}
+			return string.Empty;
+		}
+		
+
+	}
 
 }

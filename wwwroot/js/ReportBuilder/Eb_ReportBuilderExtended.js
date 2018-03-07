@@ -5,11 +5,12 @@
     this.pGcontainer = $("#PGgrid-report");
     this.GroupSelect = [];
 
-    this.headerSecSplitter = function (array) {
+    this.headerSecSplitter = function (array, Harr) {
+        var HR = Harr.length > 0 ? Harr : [20, 20, 20, 20, 20];        
         Split(array, {
             direction: 'vertical',
             cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
+            sizes: HR,
             minSize: 33,
             snapOffset: 20,
             gutterSize: 5,
@@ -266,7 +267,7 @@
     }
     this.convertPointToPixel = function (val) {
         var points = val;
-        var pixel = (points / 72) * 96;
+        var pixel = (points * 96) / 72;
         return pixel;
     }
 

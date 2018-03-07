@@ -2,7 +2,7 @@
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId;
     this.fonts = EbFonts;
-    this.fontObject = fontEditobj || { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
+    this.fontObject = fontEditobj.length> 0 ? JSON.parse(fontEditobj) : { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
 
     this.createModal = function () {
         var modalHTML = `<div class="fup" id="${this.ContainerId}fontEditor"><div class="imgup-bg">
@@ -186,7 +186,7 @@
     };
 
     this.fontEdSubmit = function () {
-        return this.fontObject;
+        return JSON.stringify(this.fontObject);
     };
 
     this.setDefault = function () {

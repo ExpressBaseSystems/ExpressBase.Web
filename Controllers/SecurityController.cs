@@ -116,6 +116,14 @@ namespace ExpressBase.Web.Controllers
 			}
 			ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
 			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, TenantAccountId = ViewBag.cid });
+			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
+			{
+				fr.Roles.Add(new EbRole() {
+					Name = role.ToString(),
+					Description = "SYSTEM ROLE",
+					Id = (int)role
+				});
+			}
 			ViewBag.Roles = JsonConvert.SerializeObject(fr.Roles);
 			ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
 			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
@@ -157,7 +165,6 @@ namespace ExpressBase.Web.Controllers
 			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
 				Id = userid,
-				AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],
 				EmailPrimary = Dict["email"],
@@ -174,15 +181,16 @@ namespace ExpressBase.Web.Controllers
 				Roles = string.IsNullOrEmpty(Dict["roles"]) ? string.Empty : Dict["roles"],
 				UserGroups = string.IsNullOrEmpty(Dict["usergroups"]) ? string.Empty : Dict["usergroups"],
 				StatusId = Dict["statusid"],
-				Hide = Dict["hide"]
+				Hide = Dict["hide"],
+                AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"])
 			});
 			return res.id;
 		}
 
 		public bool isValidEmail(string reqEmail)
 		{
-			var temp = this.ServiceClient.Post<bool>(new UniqueCheckRequest { email = reqEmail });
-			return temp;
+            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail });
+            return temp.unrespose;
 		}
 
 
@@ -325,7 +333,7 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		public object GetUserDetails(string srchTxt)
-		{
+	{
 			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText=srchTxt, TenantAccountId = ViewBag.cid });
 			return fr.UserList;
 		}

@@ -40,15 +40,7 @@
     };
 
     this.InitMap4inpG = function (ctrl) {
-        //var uluru = { lat: this.Bot.userLoc.lat, lng: this.Bot.userLoc.long };
-        //var map = new google.maps.Map(document.getElementById(ctrl.ebSid), {
-        //    zoom: 18,
-        //    center: uluru
-        //});
-        //var marker = new google.maps.Marker({
-        //    position: uluru,
-        //    map: map
-        //});
+
         var name = ctrl.ebSid
         $('#' + name).locationpicker({
             location: {
@@ -62,7 +54,13 @@
                 longitudeInput: $('#' + name + 'long'),
                 locationNameInput: $('#' + name + 'address')
             },
+            enableAutocomplete: true,
+            autocompleteOptions: {
+                types: ['(cities)'],
+                componentRestrictions: { country: 'fr' }
+            }
         });
+        $(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
     };
 

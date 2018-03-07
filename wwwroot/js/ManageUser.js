@@ -36,7 +36,8 @@
     this.fbId = null;
     this.fbName = null;
     this.timer1 = null;
-    this.isInfoValid = false;
+    this.isInfoValidEmail = false;
+    this.isInfoValidEmail2 = true;
 
     this.rolesTile = null;
     this.userGroupTile = null;
@@ -67,7 +68,7 @@
             //this.txtNickName.attr("disabled", "true");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
-            this.isInfoValid = true;
+            this.isInfoValidEmail = true;
             this.initUserInfo();
             this.initFbConnect();
         }
@@ -275,7 +276,7 @@
 
     this.validateEmail = function () {
         clearTimeout(this.timer1);
-        this.isInfoValid = false;
+        this.isInfoValidEmail = false;
         var val = this.txtEmail.val();
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if (regex.test(val)) {
@@ -308,7 +309,7 @@
                     this.spanEmail.children().remove();
                     this.spanEmail.append(`<i class="fa fa-check" aria-hidden="true" style="color:green;"></i>`);
                     this.spanEmail.attr("title", "Valid Email ID");
-                    this.isInfoValid = true;
+                    this.isInfoValidEmail = true;
                 }
             }.bind(this)
         });
@@ -319,19 +320,22 @@
         var val = target.val();
         if (regex.test(val)) {
             target.css("border-color", "rgb(204, 204, 204)");
-            this.isInfoValid = true;
+            this.isInfoValidEmail2 = true;
         }
         else {
             target.css("border-color", "rgb(204, 0, 0)");
-            this.isInfoValid = false;
+            this.isInfoValidEmail2 = false;
         }
     }
 
     this.clickbtnCreateUser = function () {
         if (this.txtName.val() === "" || this.txtEmail.val() === "")
-            this.isInfoValid = false;
-        if (!this.isInfoValid)
+            this.isInfoValidEmail = false;
+        if (!this.isInfoValidEmail || !this.isInfoValidEmail2) {
+            alert("Validation Failed. Check all Fields");
             return;
+        }
+            
 
         this.btnCreateUser.attr("disabled", "true");
 

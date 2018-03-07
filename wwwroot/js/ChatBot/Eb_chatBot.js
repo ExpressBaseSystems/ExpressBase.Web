@@ -63,6 +63,7 @@
         $("body").on("click", ".msg-cont [name=ctrlsend]", this.ctrlSend);
         $("body").on("click", ".msg-cont [name=ctrledit]", this.ctrlEdit);
         $("body").on("click", ".eb-chatBox [name=formsubmit]", this.formSubmit);
+        $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
@@ -432,7 +433,6 @@
         this.msgFromBot($('<div class="btn-box" >' + Options + '</div>'));
     };
 
-
     this.getButtons = function (OptArr, For, ids) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
@@ -441,14 +441,26 @@
         return Html;
     };
 
-    this.setFormControls = function () {
-        this.formControls = [];
+    this.RenderForm = function () {
+        var Html = `<div class='form-wraper'>`;
         $.each(this.curForm.controls, function (i, control) {
-            if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
-                this.formFunctions.visibleIfs[control.ebSid] = new Function("form", atob(control.visibleIf));
-            this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
-        }.bind(this));
-        this.getControl(0);
+            Html += `<label>${control.label}</label><div class='ctrl-wraper'>${control.bareControlHtml}</div><br/><br/>`;
+        });
+        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn">Submit</button><button class="btn">Cancel</button></div></div>'));
+    };
+
+    this.setFormControls = function () {
+        if (this.curForm.renderAsForm)
+            this.RenderForm();
+        else {
+            this.formControls = [];
+            $.each(this.curForm.controls, function (i, control) {
+                if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
+                    this.formFunctions.visibleIfs[control.ebSid] = new Function("form", atob(control.visibleIf));
+                this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
+            }.bind(this));
+            this.getControl(0);
+        }
     }.bind(this);
 
     this.getValue = function ($input) {
@@ -462,17 +474,17 @@
             inpVal = inpVal[inpVal.length - 1];
         }
         else if ($input.attr("type") === "RadioGroup") {
-            inpVal = $(`input[name=${this.curCtrl.name}]:checked`).val()
+            inpVal = $(`input[name=${$input.attr("name")}]:checked`).val()
         }
         else
             inpVal = $input.val();
         return inpVal.trim();
-    }
+    };
 
     this.ctrlSend = function (e) {
         console.log("ctrlSend()");
         var id = this.editingCtrlName || this.curCtrl.name;
-        var $btn = $(e.target).closest(".btn");
+        var $btn = $(e.target).closest("button");
         var $msgDiv = $btn.closest('.msg-cont');
         var next_idx = parseInt($btn.attr('idx')) + 1;
         this.lastCtrlIdx = (next_idx > this.lastCtrlIdx) ? next_idx : this.lastCtrlIdx;
@@ -484,7 +496,7 @@
             this.formValues[id] = this.lastval;// last value set from outer fn
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
-        else if (this.curCtrl.objType === "RadioGroup") {
+        else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup") {
             this.sendCtrlAfter($msgDiv.hide(), $('#' + id).val() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.lastval;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
@@ -493,6 +505,9 @@
         else {
             if (this.curCtrl.objType === "Cards") {
                 this.lastval = $btn.closest(".card-cont").find(".card-label").text();
+            }
+            else if (this.curCtrl.objType === "InputGeoLocation") {
+                this.lastval = $("#" + id + "lat").val() + ", " + $("#" + id + "long").val();
             }
             else {
                 this.lastval = this.lastval || $('#' + id).val();
@@ -605,6 +620,7 @@
             return;
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').text(msg).append(this.getTime());
+        this.$chatBox.append($msg);
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
@@ -645,7 +661,7 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
-                    if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations")) {
+                    if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation")) {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
@@ -677,6 +693,20 @@
             return;
         if (this.initControls[this.curCtrl.objType] !== undefined)
             this.initControls[this.curCtrl.objType](this.curCtrl);
+    }.bind(this);
+
+    this.formSubmit_fm = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        var html = "<div class='sum-box'>";
+        $.each(this.curForm.controls, function (i, control) {
+            var curval = this.getValue($('#' + control.name));
+            var name = control.name;
+            this.formValuesWithType[name] = [curval, control.ebDbType];
+            html += `<label>${control.label}</label>: ${curval}<br/>`;
+        }.bind(this));
+        this.sendCtrl($(html +"</div>"));
+        this.sendMsg($btn.text());
+        this.showConfirm();
     }.bind(this);
 
     this.formSubmit = function (e) {
@@ -764,12 +794,11 @@
                 this.refreshToken = result[0].refreshToken;
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
-
                 /////////////////////////////////////////////////Form click
-                setTimeout(function () {
-                    //$(".btn-box .btn:last").click();
-                    $(".btn-box").find("[idx=15]").click();
-                }.bind(this), this.typeDelay * 2 + 100);
+                //setTimeout(function () {
+                //    //$(".btn-box .btn:last").click();
+                //    $(".btn-box").find("[idx=15]").click();
+                //}.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

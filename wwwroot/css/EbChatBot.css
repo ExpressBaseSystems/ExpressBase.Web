@@ -271,6 +271,34 @@
     position: absolute;
 }
 
+.choose-btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    color: white;
+    padding: 4px 6px;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    background-color: #1d1dee;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 20px;
+}
+
+    .choose-btn :hover, .choose-btn :focus {
+        color: #1d1dee;
+        background-color: #ddd;
+        border-radius: 20px;
+    }
+
 .btn-box [for=fblogin]:first-child {
     /*padding-right: 45px !important;*/
     border: none !important;
@@ -291,7 +319,18 @@
     background-image: url(http://icons.iconarchive.com/icons/danleech/simple/512/facebook-icon.png) !important;
     margin-bottom: 10px;
 }
+.sum-box {
 
+}
+
+.form-wraper .ctrl-wraper {
+    width: 100%;
+    padding-left: 15px;
+}
+
+.form-wraper .btn-box {
+    margin-left: 10px;
+}
 
 .ctrl-wraper {
     display: inline-block;
@@ -551,6 +590,16 @@
     width: 100%;
 }
 
+.picker-box {
+    padding: 5px 0 !important;
+}
+
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
 .loc-opt-btn {
     text-align: center;
     display: inline-block;
@@ -577,6 +626,7 @@
     width: 100%;
     max-width: inherit;
 }
+
 .locinp {
     height: 1.2em !important;
     margin-left: 5px;
@@ -587,7 +637,8 @@
     width: calc(100% - 6em);
     outline: none !important;
 }
+
     .locinp :focus {
         outline: none !important;
-        border-bottom: solid 1px #6bac6b!important;
+        border-bottom: solid 1px #6bac6b !important;
     }

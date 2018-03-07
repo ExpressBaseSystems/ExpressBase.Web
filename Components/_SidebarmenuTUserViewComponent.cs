@@ -34,7 +34,9 @@ namespace ExpressBase.Web.Components
             {
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
                 var Ids = String.Join(",", user.EbObjectIds);
-                resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids =  Ids });
+
+                resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids =  Ids, SysRole = user.Roles });
+
                 this.Redis.Set<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console), resultlist);
             }
 

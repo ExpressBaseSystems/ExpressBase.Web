@@ -5,11 +5,12 @@
     this.pGcontainer = $("#PGgrid-report");
     this.GroupSelect = [];
 
-    this.headerSecSplitter = function (array) {
+    this.headerSecSplitter = function (array, Harr) {
+        var HR = Harr.length > 0 ? Harr : [20, 20, 20, 20, 20];        
         Split(array, {
             direction: 'vertical',
             cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
+            sizes: HR,
             minSize: 33,
             snapOffset: 20,
             gutterSize: 5,
@@ -266,7 +267,7 @@
     }
     this.convertPointToPixel = function (val) {
         var points = val;
-        var pixel = (points / 72) * 96;
+        var pixel = (points * 96) / 72;
         return pixel;
     }
 
@@ -291,6 +292,18 @@
             rptObjsubsec.$values[i].Fields.$values.length = 0;
         }
     }
+
+    this.setFontProp = function (fobj) {
+        var _json = JSON.parse(fobj.Font);
+        fobj.FontAppearence = _json.Strikethrough || _json.Underline;
+        fobj.FontFamily = _json.Font;
+        fobj.FontSize = _json.Fontsize;
+        fobj.FontStyle = _json.Fontstyle;
+        fobj.FontWeight = _json.FontWeight;
+        fobj.ForeColor = _json.Fontcolor;
+        fobj.Caps = _json.Caps;
+    };
+
     this.minMaxToolbar();
     this.keyClickDoc();
 }

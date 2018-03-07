@@ -457,7 +457,7 @@
     };
 
     this.setFormControls = function () {
-        if (!this.curForm.renderAsForm)
+        if (this.curForm.renderAsForm)
             this.RenderForm();
         else {
             this.formControls = [];
@@ -678,8 +678,11 @@
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
 
-                    if (this.curCtrl && $('#' + this.curCtrl.name).length === 1 && ($msg.find(".ctrl-wraper").length === 1)) {
-                        this.loadcontrol();
+                    if (this.curCtrl && ($msg.find(".ctrl-wraper").length === 1)) {
+                        if ($('#' + this.curCtrl.name).length === 1)
+                            this.loadcontrol();
+                        else
+                            console.error("loadcontrol() called before rendering 'id = " + this.curCtrl.name + "' element");
                     }
                     if (this.curForm)
                         $msg.attr("form", this.curForm.name);
@@ -810,10 +813,10 @@
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 /////////////////////////////////////////////////Form click
-                //setTimeout(function () {
-                //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=15]").click();
-                //}.bind(this), this.typeDelay * 2 + 100);
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    $(".btn-box").find("[idx=13]").click();
+                }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

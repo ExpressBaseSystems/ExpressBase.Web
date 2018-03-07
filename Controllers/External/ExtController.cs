@@ -276,13 +276,8 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string btoken = req["Btoken"].ToString();
-<<<<<<< HEAD
-            string rtocken = req["Rtoken"].ToString();
-            int apptype = Convert.ToInt32(req["AppType"]);
-=======
 			string rtoken = req["Rtoken"].ToString();
 			int apptype = Convert.ToInt32(req["AppType"]);
->>>>>>> d3df01d2139e97ba242db1373f8ca805c696d6c6
             string Email = req["Email"].ToString();
 
             if (TenantSingleSignOn(btoken, rtoken))

@@ -294,14 +294,27 @@
     }
 
     this.setFontProp = function (fobj) {
-        var _json = JSON.parse(fobj.Font);
-        fobj.FontAppearence = _json.Strikethrough || _json.Underline;
-        fobj.FontFamily = _json.Font;
-        fobj.FontSize = _json.Fontsize;
-        fobj.FontStyle = _json.Fontstyle;
-        fobj.FontWeight = _json.FontWeight;
-        fobj.ForeColor = _json.Fontcolor;
-        fobj.Caps = _json.Caps;
+        var _font = fobj.Font;
+        //fobj.FontAppearence = _json.Strikethrough || _json.Underline;
+        //fobj.FontFamily = _json.Font;
+        //fobj.FontSize = _json.Fontsize;
+        //fobj.FontStyle = _json.Fontstyle;
+        //fobj.FontWeight = _json.FontWeight;
+        //fobj.ForeColor = _json.Fontcolor;
+        //fobj.Caps = _json.Caps;
+        $("#" + obj.EbSid).css({
+            "font-family": _font.Font,
+            "font-size": _font.Fontsize + "px",
+            "text-decoration": _font.Strikethrough || _font.Underline,
+            "font-style": _font.Fontstyle,
+            "font-weight": _font.FontWeight,
+            "text-transform": _font.Caps,
+            "color": _font.Fontcolor
+        });
+    };
+
+    this.RefreshFontControl = function (_object) {
+
     };
 
     this.minMaxToolbar();

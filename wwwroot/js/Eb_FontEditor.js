@@ -186,7 +186,7 @@
     };
 
     this.fontEdSubmit = function () {
-        return JSON.stringify(this.fontObject);
+        return this.fontObject;
     };
 
     this.setDefault = function () {

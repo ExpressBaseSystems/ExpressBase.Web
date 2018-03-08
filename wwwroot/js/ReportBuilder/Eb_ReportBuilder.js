@@ -46,6 +46,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
+        if ('Font' in obj)
+            this.repExtern.setFontProp(obj);
 
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
@@ -859,11 +861,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.repExtern.setBackgroud(obj.BackgroundImage);
         else if (obj.constructor.name === "EbReport" && pname === "BackColor")
             $(".page-reportLayer").css("background-color", obj.BackColor);
-
-        else if (pname === "Font") {
-            this.repExtern.setFontProp(obj);
-            this.RefreshControl(obj);
-        }
         else {
             this.RefreshControl(obj);
         }

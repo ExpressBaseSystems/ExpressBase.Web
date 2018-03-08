@@ -1,8 +1,8 @@
-﻿var UserJs = function (userinfo, cusroles, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture) {
+﻿var UserJs = function (userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
     this.userinfo = userinfo;
     this.customRoles = cusroles;
-    this.systemRoles = sysroles;
     this.culture = culture;
+    this.timeZone = timeZone;
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
@@ -44,8 +44,10 @@
     this.userGroupTile = null;
 
     this.selectLocale = $("#sellocale");
-    this.selectDateFormat = $("#seldateformat");
-    this.selectNumberFormat = $("#selnumberformat");
+    this.divLocaleInfo = $("#divLocaleInfo");
+    this.selectTimeZone = $("#seltimezone");
+    //this.selectDateFormat = $("#seldateformat");
+    //this.selectNumberFormat = $("#selnumberformat");
    
     this.init = function () {
 
@@ -101,21 +103,28 @@
 
     this.initUserPreference = function () {
         this.selectLocale.children().remove();
-        this.selectDateFormat.children().remove();
-        this.selectNumberFormat.children().remove();
+        this.selectTimeZone.children().remove();
 
         $.each(this.culture, function (k, cultOb) {
-            this.selectLocale.append(`<option data-id="" data-index="">${cultOb.Cult}</option>`);
-            this.selectDateFormat.append(`<option data-id="" data-index="">${cultOb.DateFormat}</option>`);
-            this.selectNumberFormat.append(`<option data-id="" data-index="">${cultOb.NumFormat}</option>`);
+            this.selectLocale.append(`<option>${cultOb.Name}</option>`);
         }.bind(this));
+
+        $.each(this.timeZone, function (k, tzOb) {
+            this.selectTimeZone.append(`<option>${tzOb.Name}</option>`);
+        }.bind(this));
+
+        this.selectLocale.val("en-US");
+        this.selectLocaleChangeAction();
+        this.selectTimeZone.val("(UTC) Coordinated Universal Time");
     }
 
     this.selectLocaleChangeAction = function (e) {
         var indx = this.selectLocale.prop('selectedIndex');
-        $(this.selectNumberFormat.selector + " option:eq(" + indx + ")").prop("selected", true);
-        $(this.selectDateFormat.selector + " option:eq(" + indx + ")").prop("selected", true)
-
+        this.divLocaleInfo.children().remove();
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Native Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].NativeName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>English Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].EnglishName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Currency Format: </b>${this.culture[indx].NumberFormat}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Date Format: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].DateFormat}</label>`);
     }
 
     this.initUserInfo = function () {
@@ -392,6 +401,7 @@
         dict["usergroups"] = this.userGroupTile.getItemIds();
         dict["statusid"] = newstus;
         dict["hide"] = this.chkboxHide.prop("checked") ? "yes" : "no";
+        dict["preference"] = JSON.stringify({Locale : this.selectLocale.val(), TimeZone : this.selectTimeZone.val()});
 
         $.post("../Security/SaveUser",
             {

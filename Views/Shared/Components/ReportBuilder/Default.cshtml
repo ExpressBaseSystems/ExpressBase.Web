@@ -118,8 +118,7 @@
                         <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-qrcode" aria-hidden="true"></i> QR Code </div>
                         <div class="draggable draggable-to-page tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Image </div>                       
                         <div class="draggable-to-page tool-box-div" eb-type="WaterMark"><i class="fa fa-map-marker" aria-hidden="true"></i> Water Mark </div>
-                        <div class="draggable tool-box-div" eb-type="SerialNumber"><i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Serial Number </div>                        
-                        <button class="btn" id="font"><i> test </i></button>
+                        <div class="draggable tool-box-div" eb-type="SerialNumber"><i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Serial Number </div>
                     </div>
                     <div class="tab-pane" id="data" role="tabpanel">
                         <ul id="data-table-list" class="tool-box-items"></ul>
@@ -178,7 +177,6 @@
             </div>
         </div>
     </div>
-    <div id="fontModal"></div>
     <div class="modal fade" id="summarry-editor-modal-container" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
             <div class="summarry-editor-container">
@@ -216,11 +214,6 @@
         $('#calculated-fields').treed();
         $('#special-fields').treed();
         $('#other-fields').treed();
-
-        var f = new FontEditor({
-            ContainerId: "fontModal",
-            ToggleId: "font",
-        });
 
         DrawColTree = function (result) {
             var type = "";

@@ -246,7 +246,7 @@
 
     this.replaceProp = function (source, destination) {
         for (var objPropIndex in source) {
-            if (typeof source[objPropIndex] !== "object") {
+            if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
                 source[objPropIndex] = ['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1  ? this.convertPointToPixel(destination[objPropIndex]) :destination[objPropIndex];
             }
         }
@@ -294,14 +294,47 @@
     }
 
     this.setFontProp = function (fobj) {
-        var _json = JSON.parse(fobj.Font);
-        fobj.FontAppearence = _json.Strikethrough || _json.Underline;
-        fobj.FontFamily = _json.Font;
-        fobj.FontSize = _json.Fontsize;
-        fobj.FontStyle = _json.Fontstyle;
-        fobj.FontWeight = _json.FontWeight;
-        fobj.ForeColor = _json.Fontcolor;
-        fobj.Caps = _json.Caps;
+        var _font = fobj.Font;
+        var caps = (_font.Caps) ? "uppercase" : "lowercase";
+        var decor = "";
+        var style = "";
+        var weight = "";
+        if (_font.Strikethrough)
+            decor = "line-through";
+        else if (_font.Underline)
+            decor = "underline";
+        else
+            decor = "none";
+
+        if (_font.Style === 0) {
+            style = "normal";
+            weight = "normal";
+        }
+        else if (_font.Style === 1) {
+            style = "italic";
+            weight = "normal";
+        }
+        else if (_font.Style === 2) {
+            style = "normal";
+            weight = "bold";
+        }
+        else {
+            style = "italic";
+            weight = "bold";
+        }
+        $("#" + fobj.EbSid).css({
+            "font-family": _font.Font,
+            "font-size": _font.Size + "px",
+            "text-decoration": decor,
+            "font-style": style,
+            "font-weight": weight,
+            "text-transform": caps,
+            "color": _font.color
+        });
+    };
+
+    this.RefreshFontControl = function (_object) {
+
     };
 
     this.minMaxToolbar();

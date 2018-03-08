@@ -8,8 +8,10 @@ using ServiceStack.Auth;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ServerEventsController : Controller
+    public class ServerEventsController : EbBaseIntController
     {
+        public ServerEventsController(IServiceClient _client) : base(_client) { }
+
         public IActionResult Index()
         {
             return View();

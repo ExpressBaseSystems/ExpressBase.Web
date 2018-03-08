@@ -813,10 +813,10 @@
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 /////////////////////////////////////////////////Form click
-                setTimeout(function () {
-                    //$(".btn-box .btn:last").click();
-                    $(".btn-box").find("[idx=13]").click();
-                }.bind(this), this.typeDelay * 2 + 100);
+                //setTimeout(function () {
+                //    //$(".btn-box .btn:last").click();
+                //    $(".btn-box").find("[idx=13]").click();
+                //}.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

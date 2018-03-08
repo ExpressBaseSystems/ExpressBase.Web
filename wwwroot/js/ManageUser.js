@@ -1,7 +1,8 @@
-﻿var UserJs = function (userinfo, cusroles, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList) {
+﻿var UserJs = function (userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
     this.userinfo = userinfo;
     this.customRoles = cusroles;
-    this.systemRoles = sysroles;
+    this.culture = culture;
+    this.timeZone = timeZone;
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
@@ -42,6 +43,11 @@
     this.rolesTile = null;
     this.userGroupTile = null;
 
+    this.selectLocale = $("#sellocale");
+    this.divLocaleInfo = $("#divLocaleInfo");
+    this.selectTimeZone = $("#seltimezone");
+    //this.selectDateFormat = $("#seldateformat");
+    //this.selectNumberFormat = $("#selnumberformat");
    
     this.init = function () {
 
@@ -55,7 +61,9 @@
         //    //$($(e.target).attr("href")).focus();
         //    $("#btnCreateUser").focus();
         //});
+        this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
 
+        this.initUserPreference();
         this.initForm();
         this.initTiles();
     }
@@ -93,6 +101,32 @@
         }
     }
 
+    this.initUserPreference = function () {
+        this.selectLocale.children().remove();
+        this.selectTimeZone.children().remove();
+
+        $.each(this.culture, function (k, cultOb) {
+            this.selectLocale.append(`<option>${cultOb.Name}</option>`);
+        }.bind(this));
+
+        $.each(this.timeZone, function (k, tzOb) {
+            this.selectTimeZone.append(`<option>${tzOb.Name}</option>`);
+        }.bind(this));
+
+        this.selectLocale.val("en-US");
+        this.selectLocaleChangeAction();
+        this.selectTimeZone.val("(UTC) Coordinated Universal Time");
+    }
+
+    this.selectLocaleChangeAction = function (e) {
+        var indx = this.selectLocale.prop('selectedIndex');
+        this.divLocaleInfo.children().remove();
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Native Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].NativeName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>English Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].EnglishName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Currency Format: </b>${this.culture[indx].NumberFormat}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Date Format: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].DateFormat}</label>`);
+    }
+
     this.initUserInfo = function () {
         this.txtName.val(this.userinfo["fullname"]);
         this.txtNickName.val(this.userinfo["nickname"]);
@@ -124,7 +158,7 @@
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
             FB.init({
-                appId: '149537802493867',
+                appId: '141908109794829',
                 version: 'v2.11'
             });
             FB.getLoginStatus(updateStatusCallback);
@@ -367,6 +401,7 @@
         dict["usergroups"] = this.userGroupTile.getItemIds();
         dict["statusid"] = newstus;
         dict["hide"] = this.chkboxHide.prop("checked") ? "yes" : "no";
+        dict["preference"] = JSON.stringify({Locale : this.selectLocale.val(), TimeZone : this.selectTimeZone.val()});
 
         $.post("../Security/SaveUser",
             {

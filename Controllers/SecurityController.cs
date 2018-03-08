@@ -10,6 +10,8 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -106,15 +108,54 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		//--------------MANAGE USER START------------------------------------
+		public class Culture
+		{
+			public string Name { get; set; }
+			public string NativeName { get; set; }
+			public string EnglishName { get; set; }
+			public string NumberFormat { get; set; }
+			public string DateFormat { get; set; }
+		}
+		public class TimeZone
+		{
+			public string Name { get; set; }
+		}
+
 		public IActionResult ManageUser(int itemid, string AnonymousUserInfo)
 		{
-			Dictionary<string, string> dict = new Dictionary<string, string>();				
-			List<EbRole> Sysroles = new List<EbRole>();
-			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
+			var cults = CultureInfo.GetCultures(CultureTypes.AllCultures);
+			List<Culture> culture = new List<Culture>();
+			DateTime myDate = DateTime.Now;
+			double myNum = 437164912.56;
+
+			for (var i = 1; i < cults.Length; i++)
 			{
-				Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
+				culture.Add(new Culture
+				{
+					Name = cults[i].Name,
+					NativeName = cults[i].NativeName,
+					EnglishName = cults[i].EnglishName,
+					NumberFormat= myNum.ToString("C", cults[i]),
+					DateFormat = myDate.ToString(cults[i])
+				});
 			}
-			ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
+			ViewBag.Culture = JsonConvert.SerializeObject(culture);
+
+			ReadOnlyCollection<TimeZoneInfo> timezone = TimeZoneInfo.GetSystemTimeZones();
+			List<TimeZone> TimeZone = new List<TimeZone>();
+			foreach (var tz in timezone)
+			{
+				TimeZone.Add(new TimeZone {Name = tz.DisplayName });
+			}
+			ViewBag.TimeZone = JsonConvert.SerializeObject(TimeZone);
+
+			Dictionary<string, string> dict = new Dictionary<string, string>();				
+			//List<EbRole> Sysroles = new List<EbRole>();
+			//foreach (var role in Enum.GetValues(typeof(SystemRoles)))
+			//{
+			//	Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
+			//}
+			//ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
 			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, TenantAccountId = ViewBag.cid });
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
 			{
@@ -163,6 +204,9 @@ namespace ExpressBase.Web.Controllers
 			//Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
 
 			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+
+			//var base64stng = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(Dict["preference"]));
+			 
 			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
 				Id = userid,
 				FullName = Dict["fullname"],
@@ -182,7 +226,8 @@ namespace ExpressBase.Web.Controllers
 				UserGroups = string.IsNullOrEmpty(Dict["usergroups"]) ? string.Empty : Dict["usergroups"],
 				StatusId = Dict["statusid"],
 				Hide = Dict["hide"],
-                AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"])
+                AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
+				Preference = Dict["preference"]
 			});
 			return res.id;
 		}

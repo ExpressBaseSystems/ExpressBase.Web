@@ -1,5 +1,5 @@
 ﻿@{
-
+    Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
 <!DOCTYPE html>
@@ -9,47 +9,74 @@
     <link href="~/images/favicon.ico" rel="icon">
     <script src="~/js/jquery.min.js"></script>
     <script src="~/js/ss-utils.js"></script>
+    <script src="~/js/eventsource.min.js"></script>
 </head>
 <body>
     <h1>Test</h1>
 
     <script>
+        $.ajaxSetup({
+            headers: {
+                'Authorization': 'Bearer ' + getToken()
+            }
+        });
+
+        //document.cookie = "ss-tok=" + getToken();
         var channels = "notifications";
-        var source = new EventSource('http://localhost:8000/event-stream?channels=notifications&t=' + new Date().getTime()); //disable cache
+        var source = new EventSourcePolyfill('http://localhost:7000/event-stream?channels=notifications&t=' + new Date().getTime(), {
+            headers: {
+                'Authorization': 'Bearer ' + getToken(),
+            }
+        }); //disable cache
+        //var source = new EventSource('http://localhost:7000/event-stream?channels=notifications&t=' + new Date().getTime());
         source.addEventListener('error', function (e) {
-            console.log(e);
+            console.log(JSON.stringify(e));
             addEntry({ msg: "ERROR!", cls: "error" });
         }, false);
-        function refreshUsers() {
-            $.getJSON("http://localhost:8000/event-subscribers?channels=notifications", function (users) {
-                usersMap = {};
-                $.map(users, function (user) { usersMap[user.userId] = user; });
-                $.ss.handlers["changeChannel"](selectedChannel());
-            });
-        }
+
+        var $txtMsg = $("#txtMsg").focus(), usersMap = {}, activeSub = null;
         $.ss.eventReceivers = { "document": document };
 
         $(source).handleServerEvents({
             handlers: {
                 onConnect: function (u) {
                     addEntry({ msg: "CONNECTED!", cls: "open" });
-                    $.getJSON("http://localhost:8000/chathistory?channels=notifications", function (r) {
-                        $.map(r.results, $.ss.handlers["chat"]);
-                    });
-                    refreshUsers();
                 },
                 onHeartbeat: function (msg, e) { if (console) console.log("onHeartbeat", msg, e); },
-                onJoin: refreshUsers,
-                onLeave: refreshUsers,
-                onUpdate: refreshUsers,
                 notify: function (m, e) {
                     alert((JSON.stringify(m)));
                 },
                 stopListening: function () { $.ss.eventSource.close(); }
             }
         });
+        $(document).bindHandlers({
+            announce: function (msg) {
+                $("#announce").html(msg).fadeIn('fast');
+                setTimeout(function () { $("#announce").fadeOut('slow'); }, 2000);
+            },
+            toggle: function () {
+                $(this).toggle();
+            },
+            removeReceiver: function (name) {
+                delete $.ss.eventReceivers[name];
+            },
+            addReceiver: function (name) {
+                $.ss.eventReceivers[name] = window[name];
+            },
+            startListening: function () {$.ss.reconnectServerEventsAuth(); }
+        }).on('customEvent', function (e, msg, msgEvent) {
+            addEntry({ msg: "[event " + e.type + " message: " + msg + "]", cls: "event", channel: msgEvent.channel });
+        });
 
+        function addEntry(o) {
+            console.log("addEntry", o);
+        }
 
+        function createUser(user) {
+            return "";
+        }
+
+        var msgHistory = [], historyIndex = -1;
     </script>
 </body>
 </html>

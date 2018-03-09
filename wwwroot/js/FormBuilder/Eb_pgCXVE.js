@@ -29,7 +29,7 @@
 
     this.pgCXEshowCallback = function () {
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
-        if (this.editor === 11)
+        if (this.editor === 11 || this.editor === 18)
             window.editor.setValue(atob(this.PGobj.PropsObj[this.PGobj.CurProp]));
     };
 
@@ -53,6 +53,8 @@
             this.initFE(e);
         else if (this.editor === 16)
             this.initStrE();
+        else if (this.editor === 18)
+            this.initCSE();
 
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
@@ -189,6 +191,25 @@
                 this.allCols.push(this.movingObj);
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn);
+    };
+
+    this.initCSE = function () {
+        this.curEditorLabel = "C# Script Editor";
+        var JEbody = '<textarea id="CSE_txtEdtr' + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
+        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.anyword); };
+        window.editor = CodeMirror.fromTextArea(document.getElementById('CSE_txtEdtr' + this.PGobj.wraperId), {
+            mode: "text/x-csharp",
+            lineNumbers: true,
+            lineWrapping: true,
+            matchBrackets: true, 
+            extraKeys: { "Ctrl-Space": "autocomplete" },
+            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+        $(`${this.pgCXE_Cont_Slctr} .CodeMirror`).off("keyup").on("keyup", "textarea", function (e) {
+            this.PGobj.PropsObj[this.PGobj.CurProp] = btoa((window.editor.getValue()));
+        }.bind(this));
     };
 
     this.initJE = function () {

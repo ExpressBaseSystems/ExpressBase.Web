@@ -46,6 +46,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
+        if ('Font' in obj)
+            this.repExtern.setFontProp(obj);
 
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
@@ -80,13 +82,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//ajax for ds coloums
 
     this.ruler = function () {
-        var width = null;
+        var width = this.width.slice(0, -2) > 794 ? ($('#PageContainer').width() - 79) + 'px' : this.width ;
         var k = 0;
         var j = 0;
-        var pxlabel = 1;
-        if (this.rulertype == "px") { pxlabel = 5; }
-        if (this.width.substring(0, this.width.length - 2) > 595.276) { width = ($('#PageContainer').width() - 79) + 'px'; }
-        else { width = this.width; }
+        var pxlabel = this.rulertype == "px" ? 5 : 1 ;
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {

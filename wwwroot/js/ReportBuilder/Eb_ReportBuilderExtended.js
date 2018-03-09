@@ -246,7 +246,7 @@
 
     this.replaceProp = function (source, destination) {
         for (var objPropIndex in source) {
-            if (typeof source[objPropIndex] !== "object") {
+            if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
                 source[objPropIndex] = ['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1  ? this.convertPointToPixel(destination[objPropIndex]) :destination[objPropIndex];
             }
         }
@@ -292,6 +292,54 @@
             rptObjsubsec.$values[i].Fields.$values.length = 0;
         }
     }
+
+    this.setFontProp = function (fobj) {
+        var _font = fobj.Font;
+        var caps = (_font.Caps) ? "uppercase" : "lowercase";
+        var decor = "";
+        var style = "";
+        var weight = "";
+        var font = _font.Font === null ? "Times-Roman" : _font.Font;
+        var size = _font.Size === 0 ? "14px" : _font.Size + "px";
+
+        if (_font.Strikethrough)
+            decor = "line-through";
+        else if (_font.Underline)
+            decor = "underline";
+        else
+            decor = "none";
+
+        if (_font.Style === 0) {
+            style = "normal";
+            weight = "normal";
+        }
+        else if (_font.Style === 2) {
+            style = "italic";
+            weight = "normal";
+        }
+        else if (_font.Style === 1) {
+            style = "normal";
+            weight = "bold";
+        }
+        else {
+            style = "italic";
+            weight = "bold";
+        }
+        $("#" + fobj.EbSid).css({
+            "font-family": font,
+            "font-size": size,
+            "text-decoration": decor,
+            "font-style": style,
+            "font-weight": weight,
+            "text-transform": caps,
+            "color": _font.color
+        });
+    };
+
+    this.RefreshFontControl = function (_object) {
+
+    };
+
     this.minMaxToolbar();
     this.keyClickDoc();
 }

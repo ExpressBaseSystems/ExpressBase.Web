@@ -1,8 +1,15 @@
 ﻿var FontEditor = function (params,fontEditobj) {
     this.ContainerId = params.ContainerId;
-    this.ToggleId = params.ToggleId
+    this.ToggleId = params.ToggleId;
     this.fonts = EbFonts;
-    this.fontObject = fontEditobj || { Font: "", Fontsize: 14, Fontstyle: "normal", FontWeight: 'normal', Fontcolor: "black", Caps: 'none', Strikethrough: 'none', Underline: 'none' };
+    this.fontObject = $.isEmptyObject(fontEditobj) ? { Font: "Times-Roman", Size: 14, Style: 0 , color: "#333333", Caps: false, Strikethrough: false, Underline: false } : fontEditobj ;
+
+    this.fontStyle = {
+        0: "normal",
+        2: "italic",
+        1: "bold",
+        3: "bold italic"
+    };
 
     this.createModal = function () {
         var modalHTML = `<div class="fup" id="${this.ContainerId}fontEditor"><div class="imgup-bg">
@@ -59,7 +66,7 @@
     }
 
     this.loadFontStyle = function () {
-        $('#fontStyle').append($(`<option tabindex='1' value='regular'>Regular</option>
+        $('#fontStyle').append($(`<option tabindex='1' value='normal'>Normal</option>
             <option tabindex='1' value= 'italic'> Italic</option >
             <option tabindex='1' value= 'bold'> Bold</option >
             <option tabindex='1' value= 'bold italic'> Bold Italic</option>`));
@@ -95,31 +102,27 @@
     }
 
     this.LoadFontStyle = function (e) {
-        if ($(e.target).val() === "regular") {
+        if ($(e.target).val() === "normal") {
             $('#font-preview').css({ 'font-style': 'normal', 'font-weight': 'normal' });
-            this.fontObject.Fontstyle = 'normal';
-            this.fontObject.FontWeight = 'normal';
+            this.fontObject.Style = 0 ;
         }
         else if ($(e.target).val() === "italic") {
             $('#font-preview').css({ 'font-style': 'italic', 'font-weight': 'normal' });
-            this.fontObject.Fontstyle = 'italic';
-            this.fontObject.FontWeight = 'normal';
+            this.fontObject.Style = 2 ;
         }
         else if ($(e.target).val() === "bold") {
             $('#font-preview').css({ 'font-weight': 'bold', 'font-style': 'normal' });
-            this.fontObject.Fontstyle = 'normal';
-            this.fontObject.FontWeight = 'bold';
+            this.fontObject.Style = 1 ;
         }
         else if ($(e.target).val() === "bold italic") {
             $('#font-preview').css({ 'font-style': 'italic', 'font-weight': 'bold' });
-            this.fontObject.Fontstyle = 'italic';
-            this.fontObject.FontWeight = 'bold';
+            this.fontObject.Style = 3 ;
         }
     };
 
     this.getFontSize = function (e) {
         $('#font-preview').css('font-size', $(e.target).val() + 'px');
-        this.fontObject.Fontsize = $(e.target).val();
+        this.fontObject.Size = parseInt($(e.target).val());
     };
 
     this.searchFont = function (e) {
@@ -137,7 +140,7 @@
 
     this.getFontColor = function (e) {
         $('#font-preview').css('color', $(e.target).val());
-        this.fontObject.Fontcolor = $(e.target).val();
+        this.fontObject.color = $(e.target).val();
     }
 
     this.toggleModal = function () {
@@ -151,37 +154,37 @@
     this.changeCaps = function (e) {
         if ($(e.target).prop('checked') === true) {
             $('#font-preview').css('text-transform', 'uppercase');
-            this.fontObject.Caps = 'uppercase';
+            this.fontObject.Caps = true;
         }
         else {
             $('#font-preview').css('text-transform', 'lowercase');
-            this.fontObject.Caps = 'lowercase';
+            this.fontObject.Caps = false;
         }
     };
 
     this.strikeThrough = function (e) {
         if ($(e.target).prop('checked') === true) {
             $('#font-preview').css('text-decoration', 'line-through');
-            this.fontObject.Strikethrough = 'line-through';
+            this.fontObject.Strikethrough = true;
             $('#FE-Underline').prop('checked', false);
-            this.fontObject.Underline = 'none';
+            this.fontObject.Underline = false;
         }
         else {
             $('#font-preview').css('text-decoration', 'none');
-            this.fontObject.Strikethrough = 'none';
+            this.fontObject.Strikethrough = false;
         }
     };
 
     this.Underline = function (e) {        
         if ($(e.target).prop('checked') === true) {
             $('#font-preview').css('text-decoration', 'underline');
-            this.fontObject.Underline = 'underline';
+            this.fontObject.Underline = true;
             $('#FE-strikethrough').prop('checked', false);
-            this.fontObject.Strikethrough = 'none';
+            this.fontObject.Strikethrough = false;
         }
         else {
             $('#font-preview').css('text-decoration', 'none');
-            this.fontObject.Underline = 'none';
+            this.fontObject.Underline = false;
         }
     };
 
@@ -192,14 +195,15 @@
     this.setDefault = function () {
         if (!$.isEmptyObject(this.fontObject)) {
             $('#googleFont').children("option[value='" + this.fontObject.Font + "']").change().focus();
-            $('#fontStyle').children("option[value='" + this.fontObject.Fontstyle + "']").change().focus();
-            $('#fontSize').children("option[value='" + this.fontObject.Fontsize + "']").change().focus();
-            $('#fontColor').val(this.fontObject.Fontcolor).change();
-            if (this.fontObject.Caps === "uppercase")
+            $('#fontStyle').children("option[value='" + this.fontStyle[this.fontObject.Style] + "']").change().focus();
+            $('#fontSize').children("option[value='" + this.fontObject.Size + "']").change().focus();
+            $('#fontColor').val(this.fontObject.color).change();
+            if (this.fontObject.Caps)
                 $('#FE-caps').prop("checked", true).change();
-            else if (this.fontObject.Strikethrough === "line-through")
+
+            if (this.fontObject.Strikethrough)
                 $('#FE-strikethrough').prop("checked", true).change();
-            else if (this.fontObject.Underline === "underline")
+            else if (this.fontObject.Underline)
                 $('#FE-Underline').prop("checked", true).change();
             //else {
             //    $('#FE-caps, #FE-strikethrough, #FE-strikethrough').prop("checked", false).change();

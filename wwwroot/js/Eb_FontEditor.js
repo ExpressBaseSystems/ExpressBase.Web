@@ -5,9 +5,9 @@
     this.fontObject = $.isEmptyObject(fontEditobj) ? { Font: "Times-Roman", Size: 14, Style: 0 , color: "#333333", Caps: false, Strikethrough: false, Underline: false } : fontEditobj ;
 
     this.fontStyle = {
-        0: "regular",
-        1: "italic",
-        2: "bold",
+        0: "normal",
+        2: "italic",
+        1: "bold",
         3: "bold italic"
     };
 
@@ -66,7 +66,7 @@
     }
 
     this.loadFontStyle = function () {
-        $('#fontStyle').append($(`<option tabindex='1' value='regular'>Regular</option>
+        $('#fontStyle').append($(`<option tabindex='1' value='normal'>Normal</option>
             <option tabindex='1' value= 'italic'> Italic</option >
             <option tabindex='1' value= 'bold'> Bold</option >
             <option tabindex='1' value= 'bold italic'> Bold Italic</option>`));
@@ -102,27 +102,27 @@
     }
 
     this.LoadFontStyle = function (e) {
-        if ($(e.target).val() === "regular") {
+        if ($(e.target).val() === "normal") {
             $('#font-preview').css({ 'font-style': 'normal', 'font-weight': 'normal' });
             this.fontObject.Style = 0 ;
         }
         else if ($(e.target).val() === "italic") {
             $('#font-preview').css({ 'font-style': 'italic', 'font-weight': 'normal' });
-            this.fontObject.Style = 1 ;
+            this.fontObject.Style = 2 ;
         }
         else if ($(e.target).val() === "bold") {
             $('#font-preview').css({ 'font-weight': 'bold', 'font-style': 'normal' });
-            this.fontObject.Style = 2 ;
+            this.fontObject.Style = 1 ;
         }
         else if ($(e.target).val() === "bold italic") {
             $('#font-preview').css({ 'font-style': 'italic', 'font-weight': 'bold' });
-            this.fontObject.Style = 4 ;
+            this.fontObject.Style = 3 ;
         }
     };
 
     this.getFontSize = function (e) {
         $('#font-preview').css('font-size', $(e.target).val() + 'px');
-        this.fontObject.Size = $(e.target).val();
+        this.fontObject.Size = parseInt($(e.target).val());
     };
 
     this.searchFont = function (e) {
@@ -200,7 +200,8 @@
             $('#fontColor').val(this.fontObject.color).change();
             if (this.fontObject.Caps)
                 $('#FE-caps').prop("checked", true).change();
-            else if (this.fontObject.Strikethrough)
+
+            if (this.fontObject.Strikethrough)
                 $('#FE-strikethrough').prop("checked", true).change();
             else if (this.fontObject.Underline)
                 $('#FE-Underline').prop("checked", true).change();

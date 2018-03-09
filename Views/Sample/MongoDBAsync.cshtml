@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -22,6 +26,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.3/js/fileinput.min.js"></script>
     <!-- optionally if you need a theme like font awesome theme you can include it as mentioned below -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.3/js/locales/fa.js"></script>
+    <script src="~/js/ss-utils.js"></script>
+    <script src="~/js/eventsource.min.js"></script>
     <script>
         $(document).on('ready', function () {
 
@@ -44,6 +50,69 @@
             });
 
         });
+
+        $.ajaxSetup({
+            headers: {
+                'Authorization': 'Bearer ' + getToken()
+            }
+        });
+
+        //document.cookie = "ss-tok=" + getToken();
+        var channels = "file-upload";
+        var source = new EventSourcePolyfill('http://localhost:7000/event-stream?channels=file-upload&t=' + new Date().getTime(), {
+            headers: {
+                'Authorization': 'Bearer ' + getToken(),
+            }
+        }); //disable cache
+        //var source = new EventSource('http://localhost:7000/event-stream?channels=file-upload&t=' + new Date().getTime());
+        source.addEventListener('error', function (e) {
+            console.log(JSON.stringify(e));
+            addEntry({ msg: "ERROR!", cls: "error" });
+        }, false);
+
+        var $txtMsg = $("#txtMsg").focus(), usersMap = {}, activeSub = null;
+        $.ss.eventReceivers = { "document": document };
+
+        $(source).handleServerEvents({
+            handlers: {
+                onConnect: function (u) {
+                    addEntry({ msg: "CONNECTED!", cls: "open" });
+                },
+                onHeartbeat: function (msg, e) { if (console) console.log("onHeartbeat", msg, e); },
+                onUploadSuccess: function (m, e) {
+                    alert((JSON.stringify(m)));
+                },
+                stopListening: function () { $.ss.eventSource.close(); }
+            }
+        });
+        $(document).bindHandlers({
+            announce: function (msg) {
+                $("#announce").html(msg).fadeIn('fast');
+                setTimeout(function () { $("#announce").fadeOut('slow'); }, 2000);
+            },
+            toggle: function () {
+                $(this).toggle();
+            },
+            removeReceiver: function (name) {
+                delete $.ss.eventReceivers[name];
+            },
+            addReceiver: function (name) {
+                $.ss.eventReceivers[name] = window[name];
+            },
+            startListening: function () { $.ss.reconnectServerEventsAuth(); }
+        }).on('customEvent', function (e, msg, msgEvent) {
+            addEntry({ msg: "[event " + e.type + " message: " + msg + "]", cls: "event", channel: msgEvent.channel });
+        });
+
+        function addEntry(o) {
+            console.log("addEntry", o);
+        }
+
+        function createUser(user) {
+            return "";
+        }
+
+        var msgHistory = [], historyIndex = -1;
     </script>
 </head>
 

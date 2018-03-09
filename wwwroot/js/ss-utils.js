@@ -476,8 +476,6 @@
         var es = new EventSourcePolyfill(opt.url || $.ss.eventSourceUrl || hold.url, {
             headers: {
                 'Authorization': 'Bearer ' + getToken(),
-                //'Pragma': 'no-cache',
-                //'Cache-Control': 'no-cache'    
             }
         });
         es.onerror = opt.onerror || hold.onerror;

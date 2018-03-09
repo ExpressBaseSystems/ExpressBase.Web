@@ -53,21 +53,13 @@
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
         this.txtAlternateEmail.on('change', function (e) { this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)}.bind(this))
-        
         this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
-        
-        //$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        //    //$($(e.target).attr("href")).focus();
-        //    $("#btnCreateUser").focus();
-        //});
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
-
         for (var i = 0; i < this.statusList.length; i++) {
             $("#divStatus input:radio[value='" + i + "']").parent().contents().last().replaceWith(this.statusList[i]);
         }
         $("#divStatus input:radio[name='status']").on("change", this.statusChangeAction.bind(this));
         this.statusChangeAction();
-
         this.initUserPreference();
         this.initForm();
         this.initTiles();
@@ -131,7 +123,32 @@
         }
     }
 
+    this.setReadOnly = function () {
+        this.txtName.attr("disabled", "true");
+        this.txtNickName.attr("disabled", "true");
+        this.txtEmail.attr("disabled", "true");
+        this.pwdPassword.attr("disabled", "true");
+        this.txtDateOfBirth.attr("disabled", "true");
+        this.txtAlternateEmail.attr("disabled", "true");
+        this.txtPhPrimary.attr("disabled", "true");
+        this.txtPhSecondary.attr("disabled", "true");
+        this.txtLandPhone.attr("disabled", "true");
+        this.txtExtension.attr("disabled", "true");
+        this.chkboxHide.bootstrapToggle('disable');
+        $("#divStatus input:radio[name='status']").prop("disabled", "true");
+        $("#divGender input:radio[name='gender']").prop("disabled", "true");
+        this.btnFbConnect.attr("disabled", "true");
+        this.btnCreateUser.attr("disabled", "true");
+        this.selectLocale.attr("disabled", "true");
+        this.selectTimeZone.attr("disabled", "true");
+        if (this.rolesTile !== null)
+            this.rolesTile.setReadOnly();
+        if (this.userGroupTile !== null)
+            this.userGroupTile.setReadOnly();
+    }
+
     this.statusChangeAction = function () {
+        
         if ($("#divStatus input:radio[value='2']").prop("checked")) {
             this.chkboxHide.bootstrapToggle('off');
             this.chkboxHide.bootstrapToggle('enable');

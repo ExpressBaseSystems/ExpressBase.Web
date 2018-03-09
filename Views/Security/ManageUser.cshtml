@@ -190,7 +190,7 @@
                                 <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
                                 <div class="input-group" style="width:150px">
                                     <input class="form-control" type="text" id="txtDateOfBirth" title="Date of Birth">
-                                    <span class="input-group-addon" id="" onclick="$('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                    <span class="input-group-addon" id="" onclick="if(!($('#txtDateOfBirth').attr('disabled'))) $('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                 </div>
                             </div>
                             <div class="form-group" id="divGender">

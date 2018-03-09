@@ -26,8 +26,9 @@
     this.txtPhSecondary = $("#txtPhSecondary");
     this.txtLandPhone = $("#txtLandPhone");
     this.txtExtension = $("#txtExtension");
-    this.chkboxActive = $("#chkboxActive");
-    this.chkboxTerminate = $("#chkboxTerminate");
+
+    //this.chkboxActive = $("#chkboxActive");
+    //this.chkboxTerminate = $("#chkboxTerminate");
     this.chkboxHide = $("#chkboxHide");
     
     this.divPassword = $("#divPassword");
@@ -46,8 +47,6 @@
     this.selectLocale = $("#sellocale");
     this.divLocaleInfo = $("#divLocaleInfo");
     this.selectTimeZone = $("#seltimezone");
-    //this.selectDateFormat = $("#seldateformat");
-    //this.selectNumberFormat = $("#selnumberformat");
    
     this.init = function () {
 
@@ -63,6 +62,12 @@
         //});
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
 
+        for (var i = 0; i < this.statusList.length; i++) {
+            $("#divStatus input:radio[value='" + i + "']").parent().contents().last().replaceWith(this.statusList[i]);
+        }
+        $("#divStatus input:radio[name='status']").on("change", this.statusChangeAction.bind(this));
+        this.statusChangeAction();
+
         this.initUserPreference();
         this.initForm();
         this.initTiles();
@@ -70,7 +75,7 @@
 
     this.initForm = function () {
         if (this.itemId > 1) {
-            $(divFormHeading).text("Edit User");
+            $(this.divFormHeading).text("Edit User");
             this.btnCreateUser.text("Update");
             //this.txtName.attr("disabled", "true");
             //this.txtNickName.attr("disabled", "true");
@@ -81,7 +86,7 @@
             this.initFbConnect();
         }
         else if (this.itemId === 1){
-            $(divFormHeading).text("Create User");
+            $(this.divFormHeading).text("Create User");
             this.btnFbConnect.css("display", "none");
             this.anonymousUserId = this.userinfo["AnonymousUserID"];
             this.txtName.val(this.userinfo["FullName"]);
@@ -95,7 +100,7 @@
             this.initFbConnect();
         }
         else {
-            $(divFormHeading).text("Create User");
+            $(this.divFormHeading).text("Create User");
             this.btnFbConnect.css("display", "none");
             $("#btnFbInvite").show();
         }
@@ -113,9 +118,28 @@
             this.selectTimeZone.append(`<option>${tzOb.Name}</option>`);
         }.bind(this));
 
-        this.selectLocale.val("en-US");
-        this.selectLocaleChangeAction();
-        this.selectTimeZone.val("(UTC) Coordinated Universal Time");
+        if (this.itemId > 1 && this.userinfo["preference"].trim() !== "") {
+            var pobj = JSON.parse(this.userinfo["preference"]);
+            this.selectLocale.val(pobj.Locale);
+            this.selectLocaleChangeAction();
+            this.selectTimeZone.val(pobj.TimeZone);
+        }
+        else {
+            this.selectLocale.val("en-US");
+            this.selectLocaleChangeAction();
+            this.selectTimeZone.val("(UTC) Coordinated Universal Time");
+        }
+    }
+
+    this.statusChangeAction = function () {
+        if ($("#divStatus input:radio[value='2']").prop("checked")) {
+            this.chkboxHide.bootstrapToggle('off');
+            this.chkboxHide.bootstrapToggle('enable');
+        }
+        else {
+            this.chkboxHide.bootstrapToggle('off');
+            this.chkboxHide.bootstrapToggle('disable');
+        }
     }
 
     this.selectLocaleChangeAction = function (e) {
@@ -141,17 +165,23 @@
         $(st).attr("checked", "checked");
         $("#lblFbId").attr("data-id", this.userinfo["fbid"]);
         $("#userFbLink").text((this.userinfo["fbname"] == "") ? this.userinfo["fullname"] : this.userinfo["fbname"]);
-        var stus = this.statusList[this.userinfo["statusid"]];
-        if (stus === "Active")
-            this.chkboxActive.prop("checked", "true");
-        else if (stus === "Deactivated")
-            this.chkboxActive.removeAttr("checked");
-        else if (stus === "Terminated") {
-            this.chkboxTerminate.prop("checked", "true");
-            this.chkboxActive.removeAttr("checked");
-        }
-        if (this.userinfo["hide"] === "yes")
-            this.chkboxHide.prop("checked", "true");
+
+        $("#divStatus input:radio[value='" + this.userinfo["statusid"] + "']").attr("checked", "checked");
+
+        if (this.userinfo["hide"] === "yes" && $("#divStatus input:radio[value='2']").prop("checked"))
+            this.chkboxHide.bootstrapToggle('on');
+
+        //var stus = this.statusList[this.userinfo["statusid"]];
+        //if (stus === "Active")
+        //    this.chkboxActive.prop("checked", "true");
+        //else if (stus === "Deactivated")
+        //    this.chkboxActive.removeAttr("checked");
+        //else if (stus === "Terminated") {
+        //    this.chkboxTerminate.prop("checked", "true");
+        //    this.chkboxActive.removeAttr("checked");
+        //}
+        //if (this.userinfo["hide"] === "yes")
+        //    this.chkboxHide.prop("checked", "true");
     }
 
     this.initFbConnect = function () {

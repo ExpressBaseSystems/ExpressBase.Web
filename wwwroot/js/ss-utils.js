@@ -449,7 +449,7 @@
                     cb(r);
             },
             error: function (e) {
-                $.ss.reconnectServerEvents({ errorArgs: arguments });
+                $.ss.reconnectServerEventsAuth({ errorArgs: arguments });
                 if (cbError != null)
                     cbError(e);
             }
@@ -468,6 +468,27 @@
         hold.close();
         return $.ss.eventSource = es;
     };
+
+    $.ss.reconnectServerEventsAuth = function (opt) {
+        if ($.ss.eventSourceStop) return;
+        opt = opt || {};
+        var hold = $.ss.eventSource;
+        var es = new EventSourcePolyfill(opt.url || $.ss.eventSourceUrl || hold.url, {
+            headers: {
+                'Authorization': 'Bearer ' + getToken(),
+                //'Pragma': 'no-cache',
+                //'Cache-Control': 'no-cache'    
+            }
+        });
+        es.onerror = opt.onerror || hold.onerror;
+        es.onmessage = opt.onmessage || hold.onmessage;
+        var fn = $.ss.handlers["onReconnect"];
+        if (fn != null)
+            fn.apply(es, opt.errorArgs);
+        hold.close();
+        return $.ss.eventSource = es;
+    };
+
     $.ss.invokeReceiver = function (r, cmd, el, msg, e, name) {
         if (r) {
             if (typeof (r[cmd]) == "function") {
@@ -523,7 +544,7 @@
                                 var stopFn = $.ss.handlers["onStop"];
                                 if (stopFn != null)
                                     stopFn.apply($.ss.eventSource);
-                                $.ss.reconnectServerEvents({ errorArgs: { error:'CLOSED' } });
+                                $.ss.reconnectServerEventsAuth({ errorArgs: { error:'CLOSED' } });
                                 return;
                             }
                             $.ajax({
@@ -533,7 +554,7 @@
                                 dataType: "text",
                                 success: function (r) { },
                                 error: function () {
-                                    $.ss.reconnectServerEvents({ errorArgs: arguments });
+                                    $.ss.reconnectServerEventsAuth({ errorArgs: arguments });
                                 }
                             });
                         }, parseInt(opt.heartbeatIntervalMs) || 10000);
@@ -574,7 +595,7 @@
         $.ss.eventSource.onerror = function () {
             var args = arguments;
             window.setTimeout(function () {
-                $.ss.reconnectServerEvents({ errorArgs: args });
+                $.ss.reconnectServerEventsAuth({ errorArgs: args });
                 if (hold)
                     hold.apply(args);
             }, 10000);

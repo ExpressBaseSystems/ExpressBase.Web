@@ -238,12 +238,12 @@ var Eb_dygraph = function (type, data, columnInfo, ssurl) {
         //    );
     };
 };
-var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [];
+var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [], TableId;
 var informaion = function (nam, val) {
     this.name = nam;
     this.value = val;
 }
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues) {
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData) {
     this.columnInfo = null;
     this.data = null;
     this.ssurl = ssurl;
@@ -274,6 +274,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.rowData = (rowData !== undefined) ? rowData : null;
     this.isTagged = false;
     //this.filterChanged = false;
+    this.bot = false;
+    this.cellData = cellData;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -449,50 +451,53 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $.event.props.push('dataTransfer');
         this.createChartDivs();
         this.appendColumns();
-        this.appendXandYAxis();
-        if (this.login === "uc") {
-            this.collapseGraph();
-        }
-
-        $("#ppgrid_" + this.tableId).css("display", "none");
-        $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
-        if (this.FD) {
-            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-            //$("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
-        }
-        else {
-            //$("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-        }
-
-        //this.filterValues = this.getFilterValues();
-        filterChanged = false;
-        if (!this.isTagged)
-            f = this.compareFilterValues();
-        if (this.MainData !== null && this.login === "uc" && !filterChanged) {
-            dvcontainerObj.currentObj.data = this.MainData;
-            this.drawGraphHelper(this.MainData.data);
-        }
-        else {
+        if (!this.bot) {
+            this.appendXandYAxis();
             if (this.login === "uc") {
-                dvcontainerObj.currentObj.Pippedfrom = "";
-                $("#Pipped").text("");
-                this.isPipped = false;
+                this.collapseGraph();
             }
-            this.filterValues = this.getFilterValues();
-            $.LoadingOverlay("show");
-            $.ajax({
-                type: 'POST',
-                url: this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId,
-                data: { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: JSON.stringify(this.getFilterValues()) },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                },
-                success: this.getDataSuccess.bind(this),
-                error: function () { }
-            });
-            //$.post(this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId, { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(getFilterValues()) }, this.getDataSuccess.bind(this));
+
+            $("#ppgrid_" + this.tableId).css("display", "none");
+            $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
+            if (this.FD) {
+                $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
+                //$("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
+            }
+            else {
+                //$("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            }
+
+            //this.filterValues = this.getFilterValues();
+            filterChanged = false;
+            if (!this.isTagged)
+                f = this.compareFilterValues();
+            if (this.MainData !== null && this.login === "uc" && !filterChanged) {
+                dvcontainerObj.currentObj.data = this.MainData;
+                this.drawGraphHelper(this.MainData.data);
+            }
+            else {
+                if (this.login === "uc") {
+                    dvcontainerObj.currentObj.Pippedfrom = "";
+                    $("#Pipped").text("");
+                    this.isPipped = false;
+                }
+                this.filterValues = this.getFilterValues();
+                $.LoadingOverlay("show");
+                $.ajax({
+                    type: 'POST',
+                    url: this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId,
+                    data: { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: JSON.stringify(this.getFilterValues()) },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+                    },
+                    success: this.getDataSuccess.bind(this),
+                    error: function () { }
+                });
+                //$.post(this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId, { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(getFilterValues()) }, this.getDataSuccess.bind(this));
+            }
         }
-        this.GenerateButtons();
+            this.GenerateButtons();
+        
     };
 
     this.createChartDivs = function () {
@@ -641,6 +646,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#graphDropdown_tab" + this.tableId).show();
         else
             $("#graphDropdown_tab" + this.tableId).hide();
+        if (this.bot) {
+            $("#columnsDisplay" + this.tableId).hide();
+            $("#xy" + this.tableId).hide();
+            $(".toolicons").hide();
+            $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+        }
     };
 
     this.bindEvents = function () {
@@ -654,28 +665,42 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.appendColumns = function () {
         var colsAll_XY = [], Xcol = [], Ycol = [], colsAll_X = [];
         var tid = this.tableId;
-        if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
-            $.each(this.columnInfo.Xaxis.$values, this.AddXcolumns.bind(this, Xcol));
-            $.each(this.columnInfo.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
-            $.each(this.columnInfo.Yaxis.$values, this.AddYcolumns.bind(this, Ycol));
-            $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
-            $("#diamension" + tid).empty();
-            $("#measure" + tid).empty();
-        }
-        else {
-            colsAll_XY = this.columnInfo.Columns.$values;
-            $("#diamension" + tid).empty();
-            $("#measure" + tid).empty();
-        }
-        $.each(colsAll_XY, function (i, obj) {
-            if (obj.data != undefined) {
-                if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime")
-                    $("#diamension" + tid).append("<div class='colTile columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "</div>");
-                else if (gettypefromNumber(obj.Type) === "Numeric")
-                    $("#measure" + tid).append("<div class='colTile columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "</div>");
+        $.each(this.columnInfo.Columns.$values, function (i, obj) {
+            if (obj.RenderAs.toString() === EbEnums.StringRenderType.Marker) {
+                this.type = "googlemap";
+                this.bot = true;
+                //this.columnInfo.Xaxis.$values.push(obj);
+                this.XLabel.push(this.cellData.split(",")[1]);
+                this.YLabel.push(this.cellData.split(",")[0]);
+                this.drawGeneralGraph();
+                return false;
             }
-        });
-        this.updateDragula();
+        }.bind(this));
+        if (!this.bot) {
+            if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
+                $.each(this.columnInfo.Xaxis.$values, this.AddXcolumns.bind(this, Xcol));
+                $.each(this.columnInfo.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
+                $.each(this.columnInfo.Yaxis.$values, this.AddYcolumns.bind(this, Ycol));
+                $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
+                $("#diamension" + tid).empty();
+                $("#measure" + tid).empty();
+            }
+            else {
+                colsAll_XY = this.columnInfo.Columns.$values;
+                $("#diamension" + tid).empty();
+                $("#measure" + tid).empty();
+            }
+            $.each(colsAll_XY, function (i, obj) {
+                if (obj.data != undefined) {
+                    if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime")
+                        $("#diamension" + tid).append("<div class='colTile columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "</div>");
+                    else if (gettypefromNumber(obj.Type) === "Numeric")
+                        $("#measure" + tid).append("<div class='colTile columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "</div>");
+                }
+            });
+
+            this.updateDragula();
+        }
     };
 
     this.AddXcolumns = function (Xcol, i, obj) {
@@ -861,26 +886,29 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
     
     this.drawGeneralGraph = function () {
-        $.LoadingOverlay("show");
-        this.getBarData();
+        if (!this.bot) {
+            $.LoadingOverlay("show");
+            this.getBarData();
+        }
         if (this.type === "googlemap") {
             //this.getData4GoogleMap();
+            TableId = this.tableId;
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
-            if($("#map").children().length === 0)
-                $("#canvasDiv" + this.tableId).append("<div id='map' style='height:400px;width:100%;'></div>");
+            if ($("#map" + this.tableId).children().length === 0)
+                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId+"' style='height:400px;width:100%;'></div>");
             Xlabel = this.XLabel;
             Ylabel = this.YLabel;
             showRoute = this.EbObject.ShowRoute;
             if (!this.isMyScriptLoaded("https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js")) {
-                $("#parent-div0").prepend(`
+                $("#layout_div").prepend(`
                 <script src= "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js" ></script>
                 <script async defer
                     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh12bqSKCYb6sJ9EVzNkEyXEDZ__UA-TE&callback=initMap">
                 </script>`);
             }
             else {
-                $("#map").empty();
+                $("#map" + this.tableId).empty();
                 initMap();
             }
                
@@ -1402,7 +1430,7 @@ function initMap() {
     var directionsService = new google.maps.DirectionsService();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     var mid = Math.floor(Xlabel.length / 2);
-    var map = new google.maps.Map(document.getElementById('map'), {
+    var map = new google.maps.Map(document.getElementById('map' + TableId), {
         zoom: 14,
         center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
         // mapTypeId: google.maps.MapTypeId.ROADMAP

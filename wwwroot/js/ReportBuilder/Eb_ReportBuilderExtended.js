@@ -299,6 +299,9 @@
         var decor = "";
         var style = "";
         var weight = "";
+        var font = _font.Font === null ? "Times-Roman" : _font.Font;
+        var size = _font.Size === 0 ? "14px" : _font.Size + "px";
+
         if (_font.Strikethrough)
             decor = "line-through";
         else if (_font.Underline)
@@ -310,11 +313,11 @@
             style = "normal";
             weight = "normal";
         }
-        else if (_font.Style === 1) {
+        else if (_font.Style === 2) {
             style = "italic";
             weight = "normal";
         }
-        else if (_font.Style === 2) {
+        else if (_font.Style === 1) {
             style = "normal";
             weight = "bold";
         }
@@ -323,8 +326,8 @@
             weight = "bold";
         }
         $("#" + fobj.EbSid).css({
-            "font-family": _font.Font,
-            "font-size": _font.Size + "px",
+            "font-family": font,
+            "font-size": size,
             "text-decoration": decor,
             "font-style": style,
             "font-weight": weight,

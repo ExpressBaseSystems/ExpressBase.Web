@@ -71,6 +71,9 @@
         $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
+        $('body').confirmation({
+            selector: '.eb-chatBox'
+        });
     };
 
     this.contactSubmit = function (e) {
@@ -568,6 +571,7 @@
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
         this.curCtrl = this.curForm.controls[idx];
+        var name = this.curCtrl.name;
         if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation"))
             $CtrlCont = $(control);
         else
@@ -576,7 +580,7 @@
         if (this.curCtrl.helpText)
             lablel += ` (${this.curCtrl.helpText})`;
         this.msgFromBot(lablel);
-        this.msgFromBot($CtrlCont, null, this.curCtrl.name);
+        this.msgFromBot($CtrlCont, function () { $(`#${name}`).select(); }, name);
     }.bind(this);
 
     this.wrapIn_chat_ctrl_cont = function (idx, control) {
@@ -626,25 +630,67 @@
     this.ctrlEdit = function (e) {
         var $btn = $(e.target).closest("span");
         var idx = parseInt($btn.attr('idx'));
-        $('.msg-cont-bot [idx=' + idx + ']').closest('.msg-cont').show(200);
-        $btn.closest('.msg-cont').remove();
         this.curCtrl = this.curForm.controls[idx];
-        $("#" + this.curCtrl.name).click().select();
-        this.disableCtrledit();
-
-        var NxtDpndgCtrlName = this.getNxtDpndgCtrlName(this.curCtrl.name);
+        var NxtDpndgCtrlName = this.getNxtRndrdDpndgCtrlName(this.curCtrl.name);
         if (NxtDpndgCtrlName) {
-            this.IsDpndgCtrEdt = true;
-            this.nxtCtrlIdx = idx + 1;
-            this.curCtrl = this.curForm.controls[idx];
-            delKeyAndAfter(this.formValues, NxtDpndgCtrlName);
-            delKeyAndAfter(this.formValuesWithType, NxtDpndgCtrlName);
-            $('.eb-chatBox [for=' + NxtDpndgCtrlName + ']').prev().prev().nextAll().remove();
+            this.__idx = idx;
+            this.__NxtDpndgCtrlName = NxtDpndgCtrlName;
+            this.__$btn = $btn;
+            this.initEDCP(idx, NxtDpndgCtrlName, $btn);
         }
+        else
+            this.ctrlEHelper(idx, $btn);
+    }.bind(this);
+
+    this.ctrlEHelper = function (idx, $btn) {
+        this.disableCtrledit();
         this.IsEdtMode = true;
+        $('.msg-cont-bot [idx=' + idx + ']').closest('.msg-cont').show(200);
+        $("#" + this.curCtrl.name).click().select();
+        $btn.closest('.msg-cont').remove();
+    };
+
+    this.initEDCP = function (idx, NxtDpndgCtrlName, $btn) {
+        $(`.ctrledit,[idx=${idx}]`).confirmation({
+            placement: 'left',
+            onConfirm: this.editDpndCtrl,
+            onCancel: function () { this.IsDpndgCtrEdt = false; alert("cancel") }
+        });
+        $(".popover").removeClass("fade");
+    }
+
+    this.editDpndCtrl = function () {
+
+
+        var  idx = this.__idx;
+        var NxtDpndgCtrlName = this.__NxtDpndgCtrlName;
+        var $btn = this.__$btn;
+
+
+        alert("ok");
+        this.nxtCtrlIdx = this.curForm.controls.indexOf(getObjByval(this.curForm.controls, "name", this.getNxtDpndgCtrlName(this.curCtrl.name)));
+        this.curCtrl = this.curForm.controls[idx];
+        delKeyAndAfter(this.formValues, NxtDpndgCtrlName);
+        delKeyAndAfter(this.formValuesWithType, NxtDpndgCtrlName);
+        $('.eb-chatBox [for=' + NxtDpndgCtrlName + ']').prev().prev().nextAll().remove();
+
+
+        this.ctrlEHelper(idx, $btn);
     }.bind(this);
 
     this.getNxtDpndgCtrlName = function (name) {
+        var res = null;
+        $.each(this.formFunctions.visibleIfs, function (key, Fn) {
+            Sfn = Fn.toString().replace(/ /g, '');
+            if (RegExp("(form." + name + "\\b)|(form\\[" + name + "\\]\\b)").test(Sfn)) {
+                res = key;
+                return false;
+            }
+        }.bind(this));
+        return res;
+    }.bind(this);
+
+    this.getNxtRndrdDpndgCtrlName = function (name) {
         var res = null;
         $.each(this.formFunctions.visibleIfs, function (key, Fn) {
             Sfn = Fn.toString().replace(/ /g, '');

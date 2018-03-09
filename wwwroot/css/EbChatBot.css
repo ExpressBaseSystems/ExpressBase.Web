@@ -57,6 +57,7 @@
     border: .107em solid #00000021;
 }*/
 .msg-wraper-user, .msg-wraper-bot {
+    word-break: break-word;
     font-family: Open Sans;
     position: relative;
     display: inline-block;

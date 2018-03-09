@@ -29,7 +29,8 @@
     this.formFunctions = {};
     this.formFunctions.visibleIfs = {};
     this.editingCtrlName = null;
-    this.lastCtrlIdx = 0;
+    this.nxtCtrlIdx = 0;
+    this.IsDpndgCtrEdt = false;
     this.FB = null;
     this.FBResponse = {};
     this.ssurl = ssurl;
@@ -471,7 +472,7 @@
     }.bind(this);
 
     this.chooseClick = function (e) {
-        $(e.target).attr("idx", this.lastCtrlIdx);
+        $(e.target).attr("idx", this.nxtCtrlIdx);
         this.ctrlSend(e);
     }.bind(this);
 
@@ -497,11 +498,13 @@
     }
 
     this.ctrlSend = function (e) {
-        var id = this.editingCtrlName || this.curCtrl.name;
         var $btn = $(e.target).closest("button");
         var $msgDiv = $btn.closest('.msg-cont');
-        var next_idx = parseInt($btn.attr('idx')) + 1;
-        this.lastCtrlIdx = (next_idx > this.lastCtrlIdx) ? next_idx : this.lastCtrlIdx;
+        this.sendBtnIdx = parseInt($btn.attr('idx'));
+        this.curCtrl = this.curForm.controls[this.sendBtnIdx];
+        var id = this.editingCtrlName || this.curCtrl.name;
+        var next_idx = this.sendBtnIdx + 1;
+        this.nxtCtrlIdx = (next_idx > this.nxtCtrlIdx) ? next_idx : this.nxtCtrlIdx;
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         this.lastval = this.getValue($input);
@@ -514,7 +517,7 @@
             this.sendCtrlAfter($msgDiv.hide(), $('#' + id).val() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.lastval;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
-            this.callGetControl(this.lastCtrlIdx);
+            this.callGetControl(this.nxtCtrlIdx);
         }
         else {
             if (this.curCtrl.objType === "Cards") {
@@ -526,48 +529,44 @@
             this.sendCtrlAfter($msgDiv.hide(), this.lastval + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.lastval;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
-            this.callGetControl(this.lastCtrlIdx);
+            this.callGetControl(this.nxtCtrlIdx);
         }
         this.editingCtrlName = null;
+        this.IsDpndgCtrEdt = false;
         this.lastval = null;
     }.bind(this);
 
-    this.callGetControl = function (idx) {
-
-        if (this.editingCtrlName === this.curCtrl.name) { // for visIfedit
-            this.editingCtrlName = null;
-            //update idx to next control idx
-        }
-
-        if (idx !== this.formControls.length) { // if last not control
-            if (!this.editingCtrlName) {   // if not edit mode 
-                if (!this.formFunctions.visibleIfs[this.curForm.controls[idx].name] || this.formFunctions.visibleIfs[this.curForm.controls[idx].name](this.formValues))//checks isVisible or no isVisible defined
-                    this.getControl(idx);
+    this.callGetControl = function () {
+        if (this.nxtCtrlIdx !== this.formControls.length) { // if not last control
+            if (!this.formValues[this.editingCtrlName] || this.IsDpndgCtrEdt) {   // (if not edit mode or IsDpndgCtr edit mode) if not skip calling getControl()
+                if (!this.formFunctions.visibleIfs[this.curForm.controls[this.nxtCtrlIdx].name] || this.formFunctions.visibleIfs[this.curForm.controls[this.nxtCtrlIdx].name](this.formValues)) {//checks isVisible or no isVisible defined
+                    this.getControl(this.nxtCtrlIdx);
+                }
                 else {
-                    this.lastCtrlIdx++;
-                    this.callGetControl(idx + 1);
+                    this.nxtCtrlIdx++;
+                    this.callGetControl();
                 }
             }
-            //else   // if edit mode 
-            //    this.enableCtrledit();
         }
         else {  //if last control
-            if ($("[name=formsubmit]").length === 0) {
-                this.msgFromBot('Are you sure? Can I submit?');
-                this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
-            }
-            //this.enableCtrledit();
+            this.showSubmit();
         }
         this.enableCtrledit();
+    };
+
+    this.showSubmit = function () {
+        if ($("[name=formsubmit]").length === 0) {
+            this.msgFromBot('Are you sure? Can I submit?');
+            this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
+        }
     };
 
     this.getControl = function (idx) {
         if (idx === this.formControls.length)
             return;
-        var $CtrlCont;
         var $ctrlCont = $(this.formControls[idx][0].outerHTML);
         var control = this.formControls[idx][0].outerHTML;
-        this.curCtrl = this.curForm.controls[idx || 0];
+        this.curCtrl = this.curForm.controls[idx];
         if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation"))
             $CtrlCont = $(control);
         else
@@ -632,23 +631,30 @@
         this.editingCtrlName = this.editingCtrl.name;
         $("#" + this.editingCtrlName).click().select();
         this.disableCtrledit();
-
-        var NxtVisIfName = this.getVisIfName(idx);
-        this.lastCtrlIdx = idx + 1;
         this.curCtrl = this.curForm.controls[idx];
-        delKeyAndAfter(this.formValues, NxtVisIfName);
-        delKeyAndAfter(this.formValuesWithType, NxtVisIfName);
 
-        $('.eb-chatBox [for=' + NxtVisIfName + ']').prev().prev().nextAll().remove();
+        var NxtDpndgCtrlName = this.getNxtDpndgCtrlName(this.editingCtrlName);
+        if (NxtDpndgCtrlName) {
+            this.IsDpndgCtrEdt = true;
+            this.nxtCtrlIdx = idx + 1;
+            this.curCtrl = this.curForm.controls[idx];
+            delKeyAndAfter(this.formValues, NxtDpndgCtrlName);
+            delKeyAndAfter(this.formValuesWithType, NxtDpndgCtrlName);
+            $('.eb-chatBox [for=' + NxtDpndgCtrlName + ']').prev().prev().nextAll().remove();
+        }
 
     }.bind(this);
 
-    this.getVisIfName = function (idx) {
-        var curCtrlName = this.curForm.controls[idx].name;
-        if (this.formFunctions.visibleIfs[curCtrlName] && $('.eb-chatBox [for=' + curCtrlName + ']').length > 0)
-            return curCtrlName;
-        else
-            return this.getVisIfName(++idx);
+    this.getNxtDpndgCtrlName = function (name) {
+        var res = null;
+        $.each(this.formFunctions.visibleIfs, function (key, Fn) {
+            Sfn = Fn.toString().replace(/ /g, '');
+            if (RegExp("(form." + name + "\\b)|(form\\[" + name + "\\]\\b)").test(Sfn) && $('.eb-chatBox [for=' + key + ']').length > 0) {
+                res = key;
+                return false;
+            }
+        }.bind(this));
+        return res;
     }.bind(this);
 
     this.sendMsg = function (msg) {
@@ -763,7 +769,7 @@
 
     this.showConfirm = function () {
         this.formFunctions.visibleIfs = {};
-        this.lastCtrlIdx = 0;
+        this.nxtCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
         var msg = `Your ${this.curForm.name} application submitted successfully`;
         this.msgFromBot(msg);
@@ -841,7 +847,7 @@
                 /////////////////////////////////////////////////Form click
                 //setTimeout(function () {
                 //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=13]").click();
+                //    $(".btn-box").find("[idx=4]").click();
                 //}.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);

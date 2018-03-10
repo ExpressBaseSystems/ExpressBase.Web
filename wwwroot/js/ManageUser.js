@@ -1,4 +1,6 @@
-﻿var UserJs = function (userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
+﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
+    this.whichMode = mode;
+    //CreateEdit = 1, View = 2, MyProfileView = 3
     this.userinfo = userinfo;
     this.customRoles = cusroles;
     this.culture = culture;
@@ -27,10 +29,16 @@
     this.txtLandPhone = $("#txtLandPhone");
     this.txtExtension = $("#txtExtension");
 
-    //this.chkboxActive = $("#chkboxActive");
-    //this.chkboxTerminate = $("#chkboxTerminate");
     this.chkboxHide = $("#chkboxHide");
-    
+    this.divChangePassword = $("#divChangePassword");
+    this.btnChangePassword = $("#btnChangePassword");
+    this.ChangePwdModal = $("#MU_ChangePwdModal");
+    this.pwdOld = $("#pwdOld");
+    this.pwdNew = $("#pwdNew");
+    this.pwdNewConfirm = $("#pwdNewConfirm");
+    this.lblPwdChngMsg = $("#lblPwdChngMsg");
+    this.btnUpdatePwd = $("#btnUpdatePwd");
+
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
     this.btnCreateUser = $("#btnCreateUser");
@@ -52,9 +60,16 @@
 
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
-        this.txtAlternateEmail.on('change', function (e) { this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)}.bind(this))
+        this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)}.bind(this))
         this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
+        this.btnChangePassword.on("click", function () { this.ChangePwdModal.modal('show'); }.bind(this));
+        this.btnUpdatePwd.on('click', this.updatePassword.bind(this));
+
+        this.pwdOld.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdOld));
+        this.pwdNew.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNew));
+        this.pwdNewConfirm.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNewConfirm));
+
         for (var i = 0; i < this.statusList.length; i++) {
             $("#divStatus input:radio[value='" + i + "']").parent().contents().last().replaceWith(this.statusList[i]);
         }
@@ -65,14 +80,25 @@
         this.initTiles();
     }
 
+    this.onKeyUpPwdInModal = function (pwdThis) {
+        if (this.validateInfo(pwdThis, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/)) {
+            if (this.pwdNewConfirm.val() === this.pwdNew.val() || pwdThis === this.pwdOld)
+                this.lblPwdChngMsg.text("");
+            else
+                this.lblPwdChngMsg.text("Password Mismatch");
+        }
+        else
+            this.lblPwdChngMsg.text("Minimum Length Should be 8");
+    }
+
     this.initForm = function () {
         if (this.itemId > 1) {
             $(this.divFormHeading).text("Edit User");
             this.btnCreateUser.text("Update");
-            //this.txtName.attr("disabled", "true");
-            //this.txtNickName.attr("disabled", "true");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
+            if(this.whichMode === 3)
+                this.divChangePassword.css("display", "block");
             this.isInfoValidEmail = true;
             this.initUserInfo();
             this.initFbConnect();
@@ -354,7 +380,6 @@
         this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
     }
 
-
     this.validateEmail = function () {
         clearTimeout(this.timer1);
         this.isInfoValidEmail = false;
@@ -374,6 +399,7 @@
             this.spanEmail.attr("title", "Invalid Email ID");
         }
     }
+
     this.validateEmailAjaxCall = function () {
         $.ajax({
             type: "POST",
@@ -397,16 +423,20 @@
     }
 
     this.validateInfo = function (target, regex) {
-        target.off('keyup').on('keyup', function (evt) { this.validateInfo(target, regex)}.bind(this));
+        //target.off('keyup').on('keyup', function (evt) { this.validateInfo(target, regex)}.bind(this));
         var val = target.val();
         if (regex.test(val)) {
             target.css("border-color", "rgb(204, 204, 204)");
-            this.isInfoValidEmail2 = true;
+            return true;
         }
         else {
             target.css("border-color", "rgb(204, 0, 0)");
-            this.isInfoValidEmail2 = false;
+            return false;
         }
+    }
+
+    this.updatePassword = function () {
+        alert("Not Available");
     }
 
     this.clickbtnCreateUser = function () {

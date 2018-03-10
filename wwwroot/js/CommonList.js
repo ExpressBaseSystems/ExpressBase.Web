@@ -94,7 +94,26 @@
     this.onClickEdit = function (e) {
         var id = $(e.target).attr("data-id");
         if (this.metadata.indexOf("_user") !== -1) {
-            window.open("../Security/ManageUser?itemid=" + id, "_blank");
+            //window.open("../Security/ManageUser?itemid=" + id, "_blank");
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", "../Security/ManageUser");
+            _form.setAttribute("target", "_blank");
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "itemid";
+            input.value = id;
+            _form.appendChild(input);
+
+            var mode = document.createElement('input');
+            mode.type = 'hidden';
+            mode.name = "Mode";
+            mode.value = '1';
+            _form.appendChild(mode);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
         }
         else if (this.metadata.indexOf("_roles") !== -1) {
             window.open("../Security/ManageRoles?itemid=" + id, "_blank");
@@ -157,8 +176,8 @@
     }
     this.tblFbProfPicRender = function (data, type, row, meta) {
         var id = data[9];
-        if (id == "")
-            id = '12345678';
+        if (id == "")//if fbid is not available then
+            id = '12345678';//assinging a sample value to get a default user profpic from graph.fb
         return `<img class='img-thumbnail' src='http://graph.facebook.com/${id}/picture?type=square' />`;
     }
 

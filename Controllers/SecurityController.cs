@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Objects;
+using ExpressBase.Common.Singletons;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -108,46 +109,13 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		//--------------MANAGE USER START------------------------------------
-		public class Culture
-		{
-			public string Name { get; set; }
-			public string NativeName { get; set; }
-			public string EnglishName { get; set; }
-			public string NumberFormat { get; set; }
-			public string DateFormat { get; set; }
-		}
-		public class TimeZone
-		{
-			public string Name { get; set; }
-		}
 
-		public IActionResult ManageUser(int itemid, string AnonymousUserInfo)
+		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
-			var cults = CultureInfo.GetCultures(CultureTypes.AllCultures);
-			List<Culture> culture = new List<Culture>();
-			DateTime myDate = DateTime.Now;
-			double myNum = 437164912.56;
-
-			for (var i = 1; i < cults.Length; i++)
-			{
-				culture.Add(new Culture
-				{
-					Name = cults[i].Name,
-					NativeName = cults[i].NativeName,
-					EnglishName = cults[i].EnglishName,
-					NumberFormat= myNum.ToString("C", cults[i]),
-					DateFormat = myDate.ToString(cults[i])
-				});
-			}
-			ViewBag.Culture = JsonConvert.SerializeObject(culture);
-
-			ReadOnlyCollection<TimeZoneInfo> timezone = TimeZoneInfo.GetSystemTimeZones();
-			List<TimeZone> TimeZone = new List<TimeZone>();
-			foreach (var tz in timezone)
-			{
-				TimeZone.Add(new TimeZone {Name = tz.DisplayName });
-			}
-			ViewBag.TimeZone = JsonConvert.SerializeObject(TimeZone);
+			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3
+			ViewBag.Culture = CultureHelper.CulturesAsJson;
+			ViewBag.TimeZone = CultureHelper.TimezonesAsJson;
+			ViewBag.MU_Mode = Mode;
 
 			Dictionary<string, string> dict = new Dictionary<string, string>();				
 			//List<EbRole> Sysroles = new List<EbRole>();

@@ -21,18 +21,15 @@
     };
 
     this.get = function () {
-        return this.txtsearch.attr("data-value");
-        //this.txtsearch.attr("data-id");
-        //this.txtsearch.attr("data-object");
+        if (this.txtsearch.val().trim() === this.txtsearch.attr("data-value")) {
+            return this.txtsearch.attr("data-object");
+        }
+        return null;
     }
 
     this.set = function (txt) {
         this.txtsearch.val(txt);
         this.getKeySuggestion(true);
-        var item = this.lstkeysuggestion.find("a[data-value='" + txt + "']");
-        if (item.length > 0)
-            this.drawLanguageAndValues(item[0]);
-        
     }
 
     this.createModal = function () {
@@ -250,6 +247,12 @@
         this.dataWindow = parsedData.D_member;
         var currentWinPage = (this.currentPage - 1) % this.windowSize + 1;
         this.drawSearchResult(currentWinPage);
+
+        var item = this.lstkeysuggestion.find("a[data-value='" + this.searchtext + "']");
+        if (item.length > 0) {
+            this.drawLanguageAndValues(item[0]);
+            this.txtsearch.focus();
+        }
     };
 
     this.drawSearchResult = function (wPage) {

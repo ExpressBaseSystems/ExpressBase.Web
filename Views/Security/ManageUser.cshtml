@@ -158,12 +158,16 @@
                             <span class="input-group-addon" id="spanEmail" style="background-color: transparent;border: none;"><i class="fa fa-times" aria-hidden="true" style="color: transparent"></i></span>
                         </div>
                     </div>
-
-                    <div id="divPassword" class="form-group col-md-6">
-                        <label style="font-family: open sans; font-weight: 300;">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
-                            <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password">
+                    <div class="form-group col-md-6">
+                        <div id="divPassword">
+                            <label style="font-family: open sans; font-weight: 300;">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
+                                <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password">
+                            </div>
+                        </div>
+                        <div id="divChangePassword" style="padding-top: 28px; display:none;">
+                            <button id="btnChangePassword" class="" title="Change Password">Change Password</button>
                         </div>
                     </div>
                 </div>
@@ -256,26 +260,6 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            @*<label id="" style="font-family: open sans; font-weight: 500; margin-bottom:20px;">Status</label>
-                            <br />
-                            <div class="form-group row">
-                                <div class="col-md-6" style="padding-top: 8px;">
-                                    <label id="" style="font-family: open sans; font-weight: 300;">Active:</label>
-                                </div>
-                                <div class="col-md-6">
-                                    <input id="chkboxActive" type="checkbox" checked data-toggle="toggle">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-6" style="padding-top: 8px;">
-                                    <label id="" style="font-family: open sans; font-weight: 300;">Terminate:</label>
-                                </div>
-                                <div class="col-md-6">
-                                    <input id="chkboxTerminate" type="checkbox" data-toggle="toggle">
-                                </div>
-                            </div>
-                            *@
-
                             <div class="form-group" id="divStatus">
                                 <label style="font-family: open sans; font-weight: 300;">User Status</label>
                                 <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="0" checked>Active</label>
@@ -331,166 +315,52 @@
 </div>
 
 
-
-
-@*<ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#roles">Roles</a></li>
-        <li><a onclick="Getusergroups()" data-toggle="tab" href="#usergroup">User Groups</a></li>
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane fade in active" id="roles">
-            <div id="userroles" class="scrollable-menu">
-                <div class="form-inline" id="searchbar" style="width:100%">
-                    <div class="input-group pull-right">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false">Search<span class="caret"></span></button>
-                        </div>
-                        <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
-                    </div>
+<div id="MU_ChangePwdModal" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width:445px">
+        <div class="modal-content">
+            <div class="modal-header" style="">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Change Password</h4> </div>
                 </div>
             </div>
-        </div>
-
-        <div id="usergroup" class="tab-pane fade">
-            <div id="usergrouplist" class="scrollable-menu">
-                <div class="form-inline" id="searchbar" style="width:100%">
-                    <div class="input-group pull-right">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false">Search<span class="caret"></span></button>
-                        </div>
-                        <input type="text" class="form-control" id="searchobj" aria-label="..."><span class="input-group-addon"><i class="fa fa-search"></i></span>
+            <div class="modal-body" style="height:185px">
+                <input type="hidden" id="itemid" />
+                <div id="modalBodyDiv">
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">Old Password :</label>
+                        <input id="pwdOld" class="form-control" type="password" title="Enter Old Password" style="width:60%; display: inline-block;">
                     </div>
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">New Password :</label>
+                        <input id="pwdNew" class="form-control" type="password" title="Enter New Password" style="width:60%; display: inline-block;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
+                        <input id="pwdNewConfirm" class="form-control" type="password" title="ReEnter New Password" style="width:60%; display: inline-block;">
+                    </div>
+                    <label id="lblPwdChngMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);"></label>
                 </div>
+            </div>
+            <div class="modal-footer" style="">
+                <button id="btnUpdatePwd" type="button" class="btn btn-default" style="">Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
-    <div class="form-group">
-        <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
-        <input type="submit" class="btn btn-primary" id="save" value="Create" />
-    </div>*@
-@*}*@
+</div>
 
-
-@*<style>
-        table {
-            width: 100%;
-        }
-
-        .col-md-4 {
-            padding-left: 0 !important;
-        }
-
-        .col-md-8 {
-            padding-right: 0 !important;
-        }
-
-        tr {
-            text-align: center;
-        }
-
-        input[type=checkbox] {
-            margin-left: 5px;
-        }
-
-
-        .scrollable-menu {
-            border: 1px solid #eee;
-            overflow-x: hidden;
-        }
-
-        .stylish-input-group .input-group-addon {
-            background: white !important;
-        }
-
-        .stylish-input-group .form-control {
-            border-right: 0;
-            box-shadow: 0 0 0;
-            border-color: #ccc;
-        }
-
-        .stylish-input-group button {
-            border: 0;
-            background: transparent;
-        }
-    </style>*@
 <script>
 
-    var userobj = new UserJs(@UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone);
+    var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone);
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();
     }
     $('document').ready(function () {
+
         $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "d-m-Y" });
         
-        //    $.post("../TenantUser/GetRoles",
-        //        {
-        //            "userid": $('#userid').val()
-        //             }, function (result) {
-        //                 if (result) {
-        //                     document.getElementById("userroles").innerHTML = result;
-        //                 }
-        //        });
-
-
-        //        $('#sendmail').change(function () {
-        //            if (!this.checked)
-        //                $('#pw').fadeIn();
-        //            else
-        //                $('#pw').fadeOut();
-        //        });
-        //        var f = true;
-        //        $('.selectpicker').on('rendered.bs.select', function (e) {
-        //            if (f)
-        //                $("#roleSel").find("span:eq(0)").text("Select Role")
-        //            f = false;
-        //        });
-
-        //        $('#save').click(function () {
-        //            var selectedroles = "";
-        //            $('#userroles input:checked').each(function () {
-        //                selectedroles += $(this).attr('value') + ",";
-
-        //            });
-
-        //            var selectedusergroups = "";
-        //            $('#usergrouplist input:checked').each(function () {
-        //                selectedusergroups += $(this).attr('value') + ",";
-
-        //            });
-        //            $.post("../TenantUser/SaveUser",
-        //                {
-
-        //                    "userid": $('#userid').val(),
-        //                    "roles": selectedroles.substring(0, selectedroles.length - 1),
-        //                    "usergroups": selectedusergroups.substring(0, selectedusergroups.length - 1),
-        //                    "firstname": $('#firstname').val(),
-        //                    "email": $('#email').val(),
-        //                    "Pwd":$('#pw').val()
-
-        //                }, function (result) {
-        //                    if (result) {
-        //                        document.getElementById("usergrouplist").innerHTML = result;
-        //                    }
-        //                });
-
-        //        });
-
-
-        //});
-
-        //function Getusergroups() {
-
-        //    $.post("../TenantUser/GetUserGroups",
-        //        {
-        //            "userid": $('#userid').val(),
-
-        //        }, function (result) {
-        //            if (result) {
-        //                document.getElementById("usergrouplist").innerHTML = result;
-        //            }
-        //        });
-
         var upload = new EbImageCropper({
             preview: 'profimage',
             cropperContainer: 'cropsection'

@@ -496,7 +496,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 //$.post(this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId, { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(getFilterValues()) }, this.getDataSuccess.bind(this));
             }
         }
-            this.GenerateButtons();
+        this.GenerateButtons();
         
     };
 
@@ -650,7 +650,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#columnsDisplay" + this.tableId).hide();
             $("#xy" + this.tableId).hide();
             $(".toolicons").hide();
-            $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
+            $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-9");
+            $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");            
+            $("#sub_windows_sidediv_" + this.tableId).removeClass("filterCont").addClass("col-md-3").addClass("botdata_cont").show();
         }
     };
 
@@ -913,6 +915,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
                
             $.LoadingOverlay("hide");
+            if (this.bot) {
+                $("#map" + this.tableId).css("height", "inherit");
+                $("#map" + this.tableId).css("margin-top", "10px");
+            }
             return false;
         }
         else

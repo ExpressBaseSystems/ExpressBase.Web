@@ -658,10 +658,10 @@ var DvContainerObj = function (settings) {
                     useCORS: true,
                     onrendered: function (canvas) {
                         theCanvas = canvas;
-                        document.body.appendChild(canvas);
+                        //document.body.appendChild(canvas);
                         //Canvas2Image.saveAsPNG(canvas);
                         $("#copydiv_" + temp).append(canvas);
-                        $("#copydiv_" + temp).children().css("width","inherit");
+                        $("#copydiv_" + temp).children().css("width", "inherit");
                         //document.body.removeChild(canvas);
                     }
                 });

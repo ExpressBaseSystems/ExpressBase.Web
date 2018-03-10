@@ -17,7 +17,7 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     this.required = true;//required;
     this.servicestack_url = servicestack_url;
     this.vmValues = (vmValues !== null) ? vmValues : [];
-    this.dropdownHeight = dropdownHeight;
+    this.dropdownHeight = (ctrl.DropdownHeight === 0) ? "400" : dropdownHeight;
 
     //local variables
     this.container = this.name + "Container";
@@ -85,21 +85,19 @@ var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit,
     // init datatable
     this.InitDT = function () {
         this.IsDatatableInit = true;
-        this.datatable = new EbDataTable({
-            ds_id: this.dsid,
-            tid: this.name + 'tbl',
-            ss_url: "https://expressbaseservicestack.azurewebsites.net",
-            directLoad: true,
-            settings: {
-                hideCheckbox: (this.multiSelect === false) ? true : false,
-                scrollY: "200px",//this.dropdownHeight,
-            },
-            filterParams: { colName: "id", FilterValue: "ac" }, //{ id : "ac", }
-            initComplete: this.initDTpost.bind(this),
-            fnDblclickCallbackFunc: this.dblClickOnOptDDEventHand.bind(this),
-            //fnKeyUpCallback:
-            //fnClickCallbackFunc:
-        });
+        this.EbObject = new EbObjects["EbTableVisualization"]("Container");
+        this.EbObject.DataSourceRefId = this.dsid;
+        this.datatable = new EbDataTable(null, null, null, this.EbObject, null, 0, "https://expressbaseservicestack.azurewebsites.net");
+        //settings: {
+        //    hideCheckbox: (this.multiSelect === false) ? true : false,
+        //    scrollY: "200px",//this.dropdownHeight,
+        //},
+        //filterParams: { colName: "id", FilterValue: "ac" }, //{ id : "ac", }
+        //initComplete: this.initDTpost.bind(this),
+        //fnDblclickCallbackFunc: this.dblClickOnOptDDEventHand.bind(this),
+        //fnKeyUpCallback:
+        //fnClickCallbackFunc:
+        //});
     };
 
     this.initDTpost = function (data) {

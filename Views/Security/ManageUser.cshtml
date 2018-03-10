@@ -126,21 +126,23 @@
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
 }
 <div class="center">
-    <section class="outer-section-createuser" style="height: 640px;">
+    <section class="outer-section-createuser" style="height: 660px;">
         <div class="set-form-head">
             <div id="divFormHeading" class="">Create User</div>
         </div>
         <div class="row">
             <br />
-            <div class="col-md-8" style="margin-left:4%">
+            <div class="col-md-9" style="padding-left:4%">
                 <div class="row">
                     <div class="form-group col-md-6">
+                        <label style="font-family: open sans; font-weight: 300;">Full Name</label>
                         <div class="input-group" style="width: 91%;">
                             <span class="input-group-addon" id=""><i class="fa fa-user" aria-hidden="true" style="display:inline-block"></i></span>
                             <input id="txtFullName" style="display:inline-block; width:100%; margin-left: 0px;" class="form-control" type="email" name="Name" placeholder="Name" title="Name">
                         </div>
                     </div>
                     <div class="form-group col-md-6" style="">
+                        <label style="font-family: open sans; font-weight: 300;">Nick Name</label>
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-user-o" aria-hidden="true"></i></span>
                             <input id="txtNickName" style="display:inline-block; width:100% " class="form-control" type="text" placeholder="Nick Name" title="Nick Name">
@@ -149,7 +151,8 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <div class="input-group" >
+                        <label style="font-family: open sans; font-weight: 300;">Email ID</label>
+                        <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-envelope" aria-hidden="true"></i></span>
                             <input id="txtEmail" style="display:inline-block; width:100%" class="form-control" type="text" placeholder="Email ID" title="Email ID">
                             <span class="input-group-addon" id="spanEmail" style="background-color: transparent;border: none;"><i class="fa fa-times" aria-hidden="true" style="color: transparent"></i></span>
@@ -157,6 +160,7 @@
                     </div>
 
                     <div id="divPassword" class="form-group col-md-6">
+                        <label style="font-family: open sans; font-weight: 300;">Password</label>
                         <div class="input-group">
                             <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
                             <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password">
@@ -186,7 +190,7 @@
                                 <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
                                 <div class="input-group" style="width:150px">
                                     <input class="form-control" type="text" id="txtDateOfBirth" title="Date of Birth">
-                                    <span class="input-group-addon" id="" onclick="$('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                    <span class="input-group-addon" id="" onclick="if(!($('#txtDateOfBirth').attr('disabled'))) $('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                 </div>
                             </div>
                             <div class="form-group" id="divGender">
@@ -252,7 +256,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <label id="" style="font-family: open sans; font-weight: 500; margin-bottom:20px;">Status</label>
+                            @*<label id="" style="font-family: open sans; font-weight: 500; margin-bottom:20px;">Status</label>
                             <br />
                             <div class="form-group row">
                                 <div class="col-md-6" style="padding-top: 8px;">
@@ -270,14 +274,15 @@
                                     <input id="chkboxTerminate" type="checkbox" data-toggle="toggle">
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-6" style="padding-top: 8px;">
-                                    <label id="" style="font-family: open sans; font-weight: 300;">Hide:</label>
-                                </div>
-                                <div class="col-md-6">
-                                    <input id="chkboxHide" type="checkbox" data-toggle="toggle">
-                                </div>
+                            *@
+
+                            <div class="form-group" id="divStatus">
+                                <label style="font-family: open sans; font-weight: 300;">User Status</label>
+                                <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="0" checked>Active</label>
+                                <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="1">Suspend</label>
+                                <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="2">Terminate</label>
                             </div>
+                            <input id="chkboxHide" type="checkbox" data-toggle="toggle" data-on="Hidden" data-off="Exposed">
                         </div>
                     </div>
                 </div>

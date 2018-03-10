@@ -162,8 +162,7 @@
 
 
     }
-
-
+    
     this.initmodal = function () {
         this.lblsearchkeyresult.hide();
         this.lblsearchkeyresult2.hide();

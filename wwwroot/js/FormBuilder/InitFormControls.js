@@ -106,7 +106,8 @@
             $(`#${name} .location-box:eq(0)`).show();
             this.initMap(ctrls.locationCollection[0]);
         }
-        this.Bot.callGetControl(this.Bot.lastCtrlIdx+1);
+        this.Bot.lastCtrlIdx++;
+        this.Bot.callGetControl();
     };
 
     this.initMap = function (ctrl) {
@@ -127,7 +128,7 @@
         Vue.config.devtools = true;
 
         $(`#${ctrl.name}_loading-image`).hide();
-        var EbCombo = new EbSelect(ctrl.name, ctrl.DataSourceId, (ctrl.DropdownHeight === 0) ? "400" : ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000]);
+        var EbCombo = new EbSelect(ctrl.name, ctrl.DataSourceId, ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000]);
     };
 
     this.Cards = function (ctrl) {

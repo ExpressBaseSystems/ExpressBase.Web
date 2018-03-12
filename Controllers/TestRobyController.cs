@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Common;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
+using ServiceStack;
+using ServiceStack.Redis;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class TestRobyController : Controller
+    public class TestRobyController : EbBaseIntController
     {
+        public TestRobyController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
         // GET: /<controller>/
         public IActionResult Index()
         {
@@ -27,6 +32,19 @@ namespace ExpressBase.Web.Controllers
         public IActionResult chart()
         {
             return View();
+        }
+
+        public IActionResult Anoy()
+        {
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            return View();
+        }
+
+        public void test(string name, int appid)
+        {
+            Dictionary<string, object> xx = new Dictionary<string, object>();
+            xx["AppName"] = name;
+            var ds = this.ServiceClient.Get(new CreateApplicationRequest { Colvalues = xx , appid = appid});
         }
     }
 }

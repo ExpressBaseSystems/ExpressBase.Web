@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.ServiceClients;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -55,6 +56,12 @@ namespace ExpressBase.Web2
             {
                 return new JsonServiceClient(connectionString);
             });
+
+            services.AddScoped<IEbMqClient, EbMqClient>(serviceProvider =>
+            {
+                return new EbMqClient();
+            });
+
             StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
 
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);

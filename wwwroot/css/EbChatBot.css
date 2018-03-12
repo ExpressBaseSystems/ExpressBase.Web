@@ -604,6 +604,11 @@
     color: rgba(0, 0, 0, 0.5);
 }
 
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+}
 .loc-opt-btn {
     text-align: center;
     display: inline-block;

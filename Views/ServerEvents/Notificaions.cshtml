@@ -17,18 +17,17 @@
     <script>
         $.ajaxSetup({
             headers: {
-                'Authorization': 'Bearer ' + getToken()
+                'Authorization': 'Bearer ' + getrToken()
             }
         });
 
         //document.cookie = "ss-tok=" + getToken();
         var channels = "notifications";
-        var source = new EventSourcePolyfill('http://localhost:7000/event-stream?channels=notifications&t=' + new Date().getTime(), {
+        var source = new EventSourcePolyfill('@ViewBag.ServerEventUrl/event-stream?channels=notifications&t=' + new Date().getTime(), {
             headers: {
-                'Authorization': 'Bearer ' + getToken(),
+                'Authorization': 'Bearer ' + getrToken(),
             }
         }); //disable cache
-        //var source = new EventSource('http://localhost:7000/event-stream?channels=notifications&t=' + new Date().getTime());
         source.addEventListener('error', function (e) {
             console.log(JSON.stringify(e));
             addEntry({ msg: "ERROR!", cls: "error" });

@@ -1,7 +1,6 @@
-﻿    using ExpressBase.Common;
-using ExpressBase.Common.Constants;
+﻿using ExpressBase.Common;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
-using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Common.ServiceClients;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using ServiceStack;
@@ -16,7 +15,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class StaticFileController : EbBaseIntController
     {
-        public StaticFileController(IServiceClient _ssclient) : base(_ssclient) { }
+        public StaticFileController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc) { }
 
         // GET: /<controller>/
 
@@ -77,7 +76,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var req = this.HttpContext.Request.Form;
-                UploadFileRequest uploadFileRequest = new UploadFileRequest();
+                UploadFileMqRequest uploadFileRequest = new UploadFileMqRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
 
                 if (!String.IsNullOrEmpty(tags))
@@ -87,7 +86,6 @@ namespace ExpressBase.Web.Controllers
                     uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
                     uploadFileRequest.FileDetails.MetaDataDictionary.Add("Tags", Tags);
                 }
-                uploadFileRequest.IsAsync = false;
 
                 foreach (var formFile in req.Files)
                 {
@@ -112,14 +110,14 @@ namespace ExpressBase.Web.Controllers
                         Id = this.ServiceClient.Post<string>(uploadFileRequest);
                         url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadFileRequest.FileDetails.FileType);
                         
-                        resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });
+                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK", initialPreview = url, objId = Id });
                     }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception:" + e.ToString());
-                resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
+                resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" });
             }
             return resp;
         }
@@ -135,7 +133,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var req = this.HttpContext.Request.Form;
-                UploadImageRequest uploadImageRequest = new UploadImageRequest();
+                UploadImageMqRequest uploadImageRequest = new UploadImageMqRequest();
                 uploadImageRequest.ImageInfo = new FileMeta();
                 if (!String.IsNullOrEmpty(tags))
                 {
@@ -143,8 +141,6 @@ namespace ExpressBase.Web.Controllers
                     uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                     uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", Tags);
                 }
-                uploadImageRequest.IsAsync = false;
-
                 foreach (var formFile in req.Files)
                 {
                     if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split('.')[1].ToLower()))
@@ -165,17 +161,17 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split('.')[1];
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
-                        Id = this.ServiceClient.Post<string>(uploadImageRequest);
+                        Id = this.MqClient.Post<string>(uploadImageRequest);
                         url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
 
-                        resp = new JsonResult(new UploadFileControllerResponse { Uploaded = "OK", initialPreview = url, objId = Id });
+                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK", initialPreview = url, objId = Id });
                     }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception:" + e.ToString());
-                resp = new JsonResult(new UploadFileControllerError { Uploaded = "ERROR" });
+                resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" });
             }
 
             return resp;
@@ -189,9 +185,8 @@ namespace ExpressBase.Web.Controllers
             byte[] myFileContent;
             try
             {               
-                UploadImageRequest uploadImageRequest = new UploadImageRequest();
+                UploadImageMqRequest uploadImageRequest = new UploadImageMqRequest();
                 uploadImageRequest.ImageInfo = new FileMeta();               
-                uploadImageRequest.IsAsync = false;
                 string base64Norm = base64.Replace("data:image/png;base64,", "");
                 myFileContent = System.Convert.FromBase64String(base64Norm);
                 uploadImageRequest.ImageByte = myFileContent;                           

@@ -71,9 +71,9 @@
         $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
-        $('body').confirmation({
-            selector: '.eb-chatBox'
-        });
+        //$('body').confirmation({
+        //    selector: '.eb-chatBox'
+        //});
     };
 
     this.contactSubmit = function (e) {
@@ -642,20 +642,18 @@
 
     this.initEDCP = function () {
         this.$DPEBtn = $(`[name=ctrledit]`).filter(`[idx=${this.__idx}]`).closest(".msg-wraper-user");
-        //this.$DPEBtn.confirmation('destroy')
         this.$DPEBtn.confirmation({
             placement: 'bottom',
             title: "Edit this field and restart from related point !",
             btnOkLabel: " Edit ",
             btnOkClass: "btn btn-sm btn-warning",
-            //btnCancelClass: "btn-xs btn-primary",
             btnOkIcon: "glyphicon glyphicon-pencil",
             btnCancelIcon:"glyphicon glyphicon-remove-circle",
             onConfirm: this.editDpndCtrl,
-            onCancel: function () {
-                alert("cancel");
-                //this.$DPEBtn.confirmation('destroy');
-            }.bind(this)
+            //onCancel: function () {
+            //    alert("cancel");
+            //    //this.$DPEBtn.confirmation('destroy');
+            //}.bind(this)
         }).confirmation('show');
     }.bind(this);
 

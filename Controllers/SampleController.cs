@@ -1,10 +1,8 @@
-﻿using ExpressBase.Common.Connections;
-using ExpressBase.Objects.ServiceStack_Artifacts;
+﻿using ExpressBase.Common.ServiceClients;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
-using System;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,7 +12,7 @@ namespace ExpressBase.Web2.Controllers
 
     public class SampleController : EbBaseIntController
     {
-        public SampleController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
+        public SampleController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc) : base(_ssclient, _redis, _mqc) { }
 
         // GET: /<controller>/
         public IActionResult Index()

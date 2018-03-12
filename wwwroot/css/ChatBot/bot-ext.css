@@ -3,9 +3,10 @@
     flex-direction: column;
     position: fixed;
     right: 24px;
-    bottom: 10px;
+    bottom: 8px;
     width: 28%;
     height: 90%;
+    overflow:hidden;
     border-radius: 10px;
     background-color: white;
     min-width: 300px;
@@ -25,7 +26,7 @@
     visibility: hidden;
     width: 100%;
     flex: 1 1 auto;
-    border-radius: 0px 0px 3.5px 3.5px;
+    /*border-radius: 0px 0px 3.5px 3.5px;*/
 }
 /*amal*/
 /*.ebbot_iframe {
@@ -84,7 +85,7 @@
 
 .eb-chat-head {
     background-color: var( --ebbotThemeColor );
-    border-radius: 3px 3px 0px 0px;
+    /*border-radius: 3px 3px 0px 0px;*/
     color: white;
     padding: 5px 15px;
 }

@@ -94,6 +94,7 @@ var DvContainerObj = function (settings) {
                 data = this.MainData,
                 rowData = this.rowData,
                 filterValues = this.filterValues,
+                cellData = this.cellData,
             );
         }
         console.log("xxxxx", this.dvcol[focusedId]);
@@ -295,29 +296,40 @@ var DvContainerObj = function (settings) {
         
     }.bind(this);
 
-    this.drawdvFromTable = function (row, filter) {
+    this.drawdvFromTable = function (row, filter, celldata) {
         this.rowData = row;
         this.filterValues = filter;
+        this.cellData = celldata;
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        $.LoadingOverlay("show");
-        $.ajax({
-            type: "POST",
-            url: "../DV/getdv",
-            data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2], dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
-            success: function (dvObj) {
-                counter++;
-                dvObj = JSON.parse(dvObj);
-                dvcontainerObj.currentObj = dvObj.DsObj;
-                this.TaggedDvlist = dvObj.DvTaggedList.$values;
-                if (dvObj.DvList.$values.length > 0) {
-                    this.RelatedDvlist = dvObj.DvList.$values;
-                }
-                //this.removeDupliateDV();
-                $.LoadingOverlay("hide");
-                dvcontainerObj.btnGoClick();
-            }.bind(this),
-        });
+        if (this.dvRefid !== null) {
+            $.LoadingOverlay("show");
+            $.ajax({
+                type: "POST",
+                url: "../DV/getdv",
+                data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2], dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
+                success: function (dvObj) {
+                    counter++;
+                    dvObj = JSON.parse(dvObj);
+                    dvcontainerObj.currentObj = dvObj.DsObj;
+                    this.TaggedDvlist = dvObj.DvTaggedList.$values;
+                    if (dvObj.DvList.$values.length > 0) {
+                        this.RelatedDvlist = dvObj.DvList.$values;
+                    }
+                    //this.removeDupliateDV();
+                    $.LoadingOverlay("hide");
+                    dvcontainerObj.btnGoClick();
+                }.bind(this),
+            });
+        }
+        else {
+            counter++;
+            dvcontainerObj.currentObj = new EbObjects["EbGoogleMap"]("Container_" + Date.now());
+            dvcontainerObj.currentObj.Columns = dvcontainerObj.previousObj.Columns;
+            dvcontainerObj.currentObj.DSColumns = dvcontainerObj.previousObj.DSColumns;
+            dvcontainerObj.currentObj.DataSourceRefId = dvcontainerObj.previousObj.DataSourceRefId;
+            dvcontainerObj.btnGoClick();
+        }
     };
 
     this.removeDupliateDV = function () {
@@ -523,7 +535,7 @@ var DvContainerObj = function (settings) {
                 }
             }
             else {
-                if ($("#" + focusedId).find("canvas").length > 0) {
+                if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {
                     this.dvcol[focusedId].GenerateButtons();
                 }
             }           
@@ -639,18 +651,35 @@ var DvContainerObj = function (settings) {
             $("#copydiv_"+temp).append(`<img src="../images/table.png" style='width:inherit;'>`);
         }
         else {
-            var canvas = document.getElementById('myChart' + temp);
-            var image = new Image();
-            image.id = "pic"
-            image.src = canvas.toDataURL();
-            image.style.width = "inherit";
-            curdiv.next().children().find(".dotsnapshot").empty();
-            //curdiv.next().children().find(".dotsnapshot").append(`<canvas id="copyCanvas_${temp}" style="width:200px;"></canvas>`);
-            //var dest = document.getElementById('copyCanvas_'+temp),
-            //destcontext = dest.getContext('2d');
-            //destcontext.drawImage(image, 10, 10, 200, 200);
-            curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
-            $("#copydiv_" + temp).append(image);
+            if (dvObj.EbObject.$type.indexOf("EbGoogleMap") !== -1){
+                curdiv.next().children().find(".dotsnapshot").empty();
+                curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
+                html2canvas($("#map" + temp), {
+                    useCORS: true,
+                    onrendered: function (canvas) {
+                        theCanvas = canvas;
+                        //document.body.appendChild(canvas);
+                        //Canvas2Image.saveAsPNG(canvas);
+                        $("#copydiv_" + temp).append(canvas);
+                        $("#copydiv_" + temp).children().css("width", "inherit");
+                        //document.body.removeChild(canvas);
+                    }
+                });
+            }
+            else {
+                var canvas = document.getElementById('myChart' + temp);
+                var image = new Image();
+                image.id = "pic"
+                image.src = canvas.toDataURL();
+                image.style.width = "inherit";
+                curdiv.next().children().find(".dotsnapshot").empty();
+                //curdiv.next().children().find(".dotsnapshot").append(`<canvas id="copyCanvas_${temp}" style="width:200px;"></canvas>`);
+                //var dest = document.getElementById('copyCanvas_'+temp),
+                //destcontext = dest.getContext('2d');
+                //destcontext.drawImage(image, 10, 10, 200, 200);
+                curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
+                $("#copydiv_" + temp).append(image);
+            }
         }
         curdiv.next().css("left", e.pageX - curdiv.next().width() / 2);
     }.bind(this);

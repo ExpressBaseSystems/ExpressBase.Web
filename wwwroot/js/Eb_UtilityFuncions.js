@@ -50,6 +50,7 @@ jQuery.fn.outerHTML = function (s) {
         ? this.before(s).remove()
         : jQuery("<p>").append(this.eq(0).clone()).html();
 };
+
 function getKeyByVal(Obj, val) {
     var Key = null;
     $.each(Obj, function (_key, _val) {
@@ -59,4 +60,15 @@ function getKeyByVal(Obj, val) {
         }
     });
     return Key;
+};
+
+function delKeyAndAfter(Obj, key) {
+    var isReachKey = false;
+    $.each(Obj, function (_key, _val) {
+        if (key === _key) {
+            isReachKey = true;
+        }
+        if (isReachKey)
+            delete Obj[_key];
+    });
 };

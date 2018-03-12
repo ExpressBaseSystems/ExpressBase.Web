@@ -17,7 +17,7 @@
         }
         else
             if (this.editor === 14) {
-                var FSObj = this.PGobj.FontSlctrs[this.PGobj.CurProp].fontEdSubmit();
+                var FSObj = this.FontSelObj.fontEdSubmit();
                 this.PGobj.PropsObj[this.PGobj.CurProp] = FSObj;
                 $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(FSObj));
             }
@@ -29,12 +29,12 @@
 
     this.pgCXEshowCallback = function () {
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
-        if (this.editor === 11)
+        if (this.editor === 11 || this.editor === 18)
             window.editor.setValue(atob(this.PGobj.PropsObj[this.PGobj.CurProp]));
     };
 
     this.pgCXE_BtnClicked = function (e) {
-        $(this.pgCXE_Cont_Slctr).css("right", ((window.screen.availWidth/4) + $(".pgCXEditor-Cont").length * 10) + "px");//
+        $(this.pgCXE_Cont_Slctr).css("right", ((window.screen.availWidth / 4) + $(".pgCXEditor-Cont").length * 10) + "px");//     
         $(this.pgCXE_Cont_Slctr).css("top", (14 + $(".pgCXEditor-Cont").length) + "vh");//
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
@@ -49,8 +49,12 @@
             this.initJE();
         else if (this.editor === 13)
             this.initOSE();
+        else if (this.editor === 14)
+            this.initFE(e);
         else if (this.editor === 16)
             this.initStrE();
+        else if (this.editor === 18)
+            this.initCSE();
 
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
@@ -62,6 +66,15 @@
             this.PGobj.ReadOnly();
         else
             this.PGobj.ReadWrite();
+    };
+
+    this.initFE = function (e) {
+        var contId = "fs_" + this.PGobj.wraperId;
+        $(`#${contId}fontEditor`).remove();
+        this.FontSelObj = new FontEditor({
+            ContainerId: contId,
+            ToggleId: e.target.getAttribute("name")
+        }, this.PGobj.PropsObj[this.PGobj.CurProp]);
     };
 
     this.initStrE = function () {
@@ -178,6 +191,25 @@
                 this.allCols.push(this.movingObj);
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn);
+    };
+
+    this.initCSE = function () {
+        this.curEditorLabel = "C# Script Editor";
+        var JEbody = '<textarea id="CSE_txtEdtr' + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
+        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.anyword); };
+        window.editor = CodeMirror.fromTextArea(document.getElementById('CSE_txtEdtr' + this.PGobj.wraperId), {
+            mode: "text/x-csharp",
+            lineNumbers: true,
+            lineWrapping: true,
+            matchBrackets: true, 
+            extraKeys: { "Ctrl-Space": "autocomplete" },
+            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+        $(`${this.pgCXE_Cont_Slctr} .CodeMirror`).off("keyup").on("keyup", "textarea", function (e) {
+            this.PGobj.PropsObj[this.PGobj.CurProp] = btoa((window.editor.getValue()));
+        }.bind(this));
     };
 
     this.initJE = function () {

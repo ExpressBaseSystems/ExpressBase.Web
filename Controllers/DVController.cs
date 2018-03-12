@@ -178,7 +178,7 @@ namespace ExpressBase.Web.Controllers
             var dvObject = EbSerializers.Json_Deserialize(dvobj);
             dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
 
-            if (!string.IsNullOrEmpty(dvobj) && !string.IsNullOrEmpty(dvRefId) && !flag)
+            if (!string.IsNullOrEmpty(dvobj) && !string.IsNullOrEmpty(dvRefId) && !flag && dvObject.EbDataSource.FilterDialogRefId != null)
                 return ViewComponent("ParameterDiv", new { paramDiv = dvObject.EbDataSource.FilterDialog });
             else
                 return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId });

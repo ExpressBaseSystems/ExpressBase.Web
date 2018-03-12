@@ -57,24 +57,24 @@
 
     this.pages = {
         0: {
-            width: '612pt',
-            height: '792pt'
+            width: 612,
+            height: 792
         },//A2
         1: {
-            width: '841.8898pt',
-            height: '1190.55pt'
+            width: 841.8898,
+            height: 1190.55
         },//A3
         2: {
-            width: '595.276pt',
-            height: '841.8898pt'
+            width: 595.276,
+            height: 841.8898
         },//A4      
         3: {
-            width: '419.5276',
-            height: '595.276pt'
+            width: 419.5276,
+            height:595.276
         },//A5 
         4: {
-            width: '612pt',
-            height: '792pt'
+            width: 612,
+            height: 792
         },//letter
     };    
     this.EbRuler = {

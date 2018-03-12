@@ -46,6 +46,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
+        if ('Font' in obj)
+            this.repExtern.setFontProp(obj);
 
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
@@ -80,13 +82,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//ajax for ds coloums
 
     this.ruler = function () {
-        var width = null;
+        var width = this.width.slice(0, -2) > 794 ? ($('#PageContainer').width() - 79) + 'px' : this.width ;
         var k = 0;
         var j = 0;
-        var pxlabel = 1;
-        if (this.rulertype == "px") { pxlabel = 5; }
-        if (this.width.substring(0, this.width.length - 2) > 595.276) { width = ($('#PageContainer').width() - 79) + 'px'; }
-        else { width = this.width; }
+        var pxlabel = this.rulertype == "px" ? 5 : 1 ;
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
@@ -173,17 +172,17 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.pageSplitters = function () {                
         var j = 0;
+        this.HH = [];
         for (var sections in this.EbObjectSections) {
             $("#page").append(`<div class='${sections}s' eb-type='${sections}' id='${this.EbObjectSections[sections]}' 
             data_val='${j++}' style='width :100%;position: relative'> </div>`);
             this.sectionArray.push("#" + this.EbObjectSections[sections]);
-            //zero section adding by default.  
             if (this.isNew)
                 this.appendSubSection(sections, [1]);
             else
                 this.appendSubSection(sections, this.EditObj[this.repExtern.mapCollectionToSection(sections)].$values); 
         }
-        this.repExtern.headerSecSplitter(this.sectionArray);
+        this.repExtern.headerSecSplitter(this.sectionArray, this.HH);
         this.headerBox1_Split();
     };//add page sections
 
@@ -198,15 +197,17 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             if (!this.isNew) {                
                 this.repExtern.replaceProp(SubSec_obj, subSecArray[len]); 
                 idArr.push("#" + SubSec_obj.EbSid);
-                hArr.push(this.repExtern.convertPointToPixel(SubSec_obj.Height));
+                hArr.push(this.repExtern.convertPointToPixel(SubSec_obj.Height));               
             }
             this.objCollection[this.EbObjectSections[sections] + len ] = SubSec_obj;
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
-            this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.
+            this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.            
         }
-        if (!this.isNew)
-            this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr));            
+        if (!this.isNew) {
+            //this.HH.push((hArr.reduce((x, y) => x + y) / parseFloat(this.height.slice(0, -2)) )*100);
+            this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr));    
+        }        
     };
 
     this.headerBox1_Split = function () {
@@ -672,8 +673,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.BeforeSave = function () {
         this.repExtern.emptyControlCollection(this.EbObject);
         this.EbObject.DesignPageHeight = this.repExtern.convertTopoints($("#page").height());
-        this.EbObject.Height = parseFloat(this.pages[this.type].height.slice(0,-2));
-        this.EbObject.Width = parseFloat(this.width.slice(0, -2));
+        this.EbObject.Height = this.repExtern.convertTopoints(this.height.slice(0, -2));
+        this.EbObject.Width = this.repExtern.convertTopoints(this.width.slice(0, -2));
         this.EbObject.PaperSize = this.type;
         $.each($('.page-reportLayer').children(), this.findReportLayObjects.bind(this));
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
@@ -749,16 +750,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//page size change fn
 
     this.setpageMode = function (obj) {
-        if (obj.IsLandscape === true) {
-            this.height = this.pages[this.type].width;
-            this.width = this.pages[this.type].height;
-            //this.repExtern.splitterOndragFn();
-        }
-        else if (obj.IsLandscape === false) {
-            this.height = this.pages[this.type].height;
-            this.width = this.pages[this.type].width;
-            //this.repExtern.splitterOndragFn();
-        }
+        [this.height, this.width] = [this.width, this.height];
+        this.repExtern.splitterOndragFn();
         $('.ruler,.rulerleft').empty();
         this.ruler();
         $(".headersections,.multiSplit").css({ "height": this.height });
@@ -879,8 +872,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.newReport = function () {
         this.EbObject = new EbObjects["EbReport"]("Report1");
-        this.height = this.pages[this.type].height;
-        this.width = this.pages[this.type].width;
+        this.height = this.repExtern.convertPointToPixel(this.pages[this.type].height) + "px";
+        this.width = this.repExtern.convertPointToPixel(this.pages[this.type].width) + "px";
         this.EbObject.PaperSize = this.type;
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
         $('#PageContainer,.ruler,.rulerleft').empty();
@@ -893,8 +886,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.EditObj = Object.assign({}, this.EbObject);
         this.EbObject = new EbObjects["EbReport"](this.EditObj.Name);
         this.type = this.EditObj.PaperSize;
-        this.height = this.EditObj.DesignPageHeight + "pt";
-        this.width = this.EditObj.Width + "pt";
+        this.height = this.repExtern.convertPointToPixel(this.EditObj.DesignPageHeight) + "px";
+        this.width = this.repExtern.convertPointToPixel(this.EditObj.Width)+"px";
         this.repExtern.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
         $('#PageContainer,.ruler,.rulerleft').empty();

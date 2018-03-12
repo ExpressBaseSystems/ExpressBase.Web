@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Objects;
+using ExpressBase.Common.Singletons;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -10,6 +11,8 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -106,19 +109,29 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		//--------------MANAGE USER START------------------------------------
-		public IActionResult ManageUser(int itemid, string AnonymousUserInfo)
+
+		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
+			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3
+			ViewBag.Culture = CultureHelper.CulturesAsJson;
+			ViewBag.TimeZone = CultureHelper.TimezonesAsJson;
+			ViewBag.MU_Mode = Mode;
+
 			Dictionary<string, string> dict = new Dictionary<string, string>();				
-			List<EbRole> Sysroles = new List<EbRole>();
-			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
-			{
-				Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
-			}
-			ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
+			//List<EbRole> Sysroles = new List<EbRole>();
+			//foreach (var role in Enum.GetValues(typeof(SystemRoles)))
+			//{
+			//	Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
+			//}
+			//ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
 			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, TenantAccountId = ViewBag.cid });
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
 			{
-				fr.Roles.Add(new EbRole() { Name = role.ToString(), Description = "SYSTEM ROLE", Id = (int)role });
+				fr.Roles.Add(new EbRole() {
+					Name = role.ToString(),
+					Description = "SYSTEM ROLE",
+					Id = (int)role
+				});
 			}
 			ViewBag.Roles = JsonConvert.SerializeObject(fr.Roles);
 			ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
@@ -159,6 +172,9 @@ namespace ExpressBase.Web.Controllers
 			//Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
 
 			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
+
+			//var base64stng = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(Dict["preference"]));
+			 
 			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
 				Id = userid,
 				FullName = Dict["fullname"],
@@ -178,7 +194,8 @@ namespace ExpressBase.Web.Controllers
 				UserGroups = string.IsNullOrEmpty(Dict["usergroups"]) ? string.Empty : Dict["usergroups"],
 				StatusId = Dict["statusid"],
 				Hide = Dict["hide"],
-                AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"])
+                AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
+				Preference = Dict["preference"]
 			});
 			return res.id;
 		}

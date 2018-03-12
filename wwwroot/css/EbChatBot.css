@@ -43,6 +43,7 @@
     display: inline-block;
 }*/
 .msg-cont-bot, .msg-cont-user {
+    position: relative;
     width: calc(100% - 26px);
     display: inline-block;
 }
@@ -57,6 +58,8 @@
     border: .107em solid #00000021;
 }*/
 .msg-wraper-user, .msg-wraper-bot {
+    position: relative;
+    word-break: break-word;
     font-family: Open Sans;
     position: relative;
     display: inline-block;
@@ -285,18 +288,19 @@
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
-    background-color: #1d1dee;
+    background-color: rgba(0, 0, 255, 0.66);
     -ms-user-select: none;
     user-select: none;
     background-image: none;
     border: 1px solid transparent;
     border-radius: 20px;
+    outline: none;
 }
 
     .choose-btn :hover, .choose-btn :focus {
         color: #1d1dee;
-        background-color:#ddd;
-        border-radius: 20px;
+        background-color: #ddd;
+        outline: none;
     }
 
 .btn-box [for=fblogin]:first-child {
@@ -320,6 +324,17 @@
     margin-bottom: 10px;
 }
 
+.form-wraper {
+    padding-left: 15px;
+}
+
+    .form-wraper .ctrl-wraper {
+        width: 100%;
+    }
+
+    .form-wraper .btn-box {
+        margin-left: 10px;
+    }
 
 .ctrl-wraper {
     display: inline-block;
@@ -573,13 +588,20 @@
 .location-box {
     display: none;
     position: relative;
-    padding: 5px 5px 0px 5px;
+    /*padding: 5px 5px 0px 5px;*/
     background-color: white;
     border-radius: 3px;
     width: 100%;
 }
+
 .picker-box {
     padding: 5px 0 !important;
+}
+
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .locinp-cont {
@@ -606,12 +628,17 @@
     }
 
 .loc-opt-cont {
-    padding: 3px 3px 0px 3px;
+    padding: 0px 0px 3px 0px;
 }
 
 .loc-opt-DD {
     width: 100%;
+    padding: 3px 10px;
+    color: rgba(0, 0, 0, 0.7);
     max-width: inherit;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
 }
 
 .locinp {
@@ -628,4 +655,9 @@
     .locinp :focus {
         outline: none !important;
         border-bottom: solid 1px #6bac6b !important;
+    }
+
+
+    .radio-wrap:hover, .radio-wrap:focus {
+        background-color: #eee;
     }

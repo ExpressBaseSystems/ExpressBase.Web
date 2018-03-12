@@ -47,7 +47,13 @@ namespace ExpressBase.Web.Components
                 //    ViewBag.data = dvObject;
                 //}
                 //else
+                if (dvobj.Columns.Count == 0)
                     ViewBag.data = getDVObject(dvobj);
+                else
+                {
+                    dvobj.AfterRedisGet(this.Redis);
+                    ViewBag.data = dvobj;
+                }
             }
             //ViewBag.Meta = Meta.Replace("\\r\\n", string.Empty);
             ViewBag.dvRefId = dvRefId;

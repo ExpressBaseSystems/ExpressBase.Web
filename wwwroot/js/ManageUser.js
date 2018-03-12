@@ -1,7 +1,10 @@
-﻿var UserJs = function (userinfo, cusroles, sysroles, usergroup, uroles, ugroups, r2rList, userstatusList) {
+﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
+    this.whichMode = mode;
+    //CreateEdit = 1, View = 2, MyProfileView = 3
     this.userinfo = userinfo;
     this.customRoles = cusroles;
-    this.systemRoles = sysroles;
+    this.culture = culture;
+    this.timeZone = timeZone;
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
@@ -25,10 +28,17 @@
     this.txtPhSecondary = $("#txtPhSecondary");
     this.txtLandPhone = $("#txtLandPhone");
     this.txtExtension = $("#txtExtension");
-    this.chkboxActive = $("#chkboxActive");
-    this.chkboxTerminate = $("#chkboxTerminate");
+
     this.chkboxHide = $("#chkboxHide");
-    
+    this.divChangePassword = $("#divChangePassword");
+    this.btnChangePassword = $("#btnChangePassword");
+    this.ChangePwdModal = $("#MU_ChangePwdModal");
+    this.pwdOld = $("#pwdOld");
+    this.pwdNew = $("#pwdNew");
+    this.pwdNewConfirm = $("#pwdNewConfirm");
+    this.lblPwdChngMsg = $("#lblPwdChngMsg");
+    this.btnUpdatePwd = $("#btnUpdatePwd");
+
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
     this.btnCreateUser = $("#btnCreateUser");
@@ -42,38 +52,59 @@
     this.rolesTile = null;
     this.userGroupTile = null;
 
+    this.selectLocale = $("#sellocale");
+    this.divLocaleInfo = $("#divLocaleInfo");
+    this.selectTimeZone = $("#seltimezone");
    
     this.init = function () {
 
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
-        this.txtAlternateEmail.on('change', function (e) { this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)}.bind(this))
-        
+        this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)}.bind(this))
         this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
-        
-        //$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        //    //$($(e.target).attr("href")).focus();
-        //    $("#btnCreateUser").focus();
-        //});
+        this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
+        this.btnChangePassword.on("click", function () { this.ChangePwdModal.modal('show'); }.bind(this));
+        this.btnUpdatePwd.on('click', this.updatePassword.bind(this));
 
+        this.pwdOld.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdOld));
+        this.pwdNew.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNew));
+        this.pwdNewConfirm.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNewConfirm));
+
+        for (var i = 0; i < this.statusList.length; i++) {
+            $("#divStatus input:radio[value='" + i + "']").parent().contents().last().replaceWith(this.statusList[i]);
+        }
+        $("#divStatus input:radio[name='status']").on("change", this.statusChangeAction.bind(this));
+        this.statusChangeAction();
+        this.initUserPreference();
         this.initForm();
         this.initTiles();
     }
 
+    this.onKeyUpPwdInModal = function (pwdThis) {
+        if (this.validateInfo(pwdThis, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/)) {
+            if (this.pwdNewConfirm.val() === this.pwdNew.val() || pwdThis === this.pwdOld)
+                this.lblPwdChngMsg.text("");
+            else
+                this.lblPwdChngMsg.text("Password Mismatch");
+        }
+        else
+            this.lblPwdChngMsg.text("Minimum Length Should be 8");
+    }
+
     this.initForm = function () {
         if (this.itemId > 1) {
-            $(divFormHeading).text("Edit User");
+            $(this.divFormHeading).text("Edit User");
             this.btnCreateUser.text("Update");
-            //this.txtName.attr("disabled", "true");
-            //this.txtNickName.attr("disabled", "true");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
+            if(this.whichMode === 3)
+                this.divChangePassword.css("display", "block");
             this.isInfoValidEmail = true;
             this.initUserInfo();
             this.initFbConnect();
         }
         else if (this.itemId === 1){
-            $(divFormHeading).text("Create User");
+            $(this.divFormHeading).text("Create User");
             this.btnFbConnect.css("display", "none");
             this.anonymousUserId = this.userinfo["AnonymousUserID"];
             this.txtName.val(this.userinfo["FullName"]);
@@ -87,10 +118,80 @@
             this.initFbConnect();
         }
         else {
-            $(divFormHeading).text("Create User");
+            $(this.divFormHeading).text("Create User");
             this.btnFbConnect.css("display", "none");
             $("#btnFbInvite").show();
         }
+    }
+
+    this.initUserPreference = function () {
+        this.selectLocale.children().remove();
+        this.selectTimeZone.children().remove();
+
+        $.each(this.culture, function (k, cultOb) {
+            this.selectLocale.append(`<option>${cultOb.Name}</option>`);
+        }.bind(this));
+
+        $.each(this.timeZone, function (k, tzOb) {
+            this.selectTimeZone.append(`<option>${tzOb.Name}</option>`);
+        }.bind(this));
+
+        if (this.itemId > 1 && this.userinfo["preference"].trim() !== "") {
+            var pobj = JSON.parse(this.userinfo["preference"]);
+            this.selectLocale.val(pobj.Locale);
+            this.selectLocaleChangeAction();
+            this.selectTimeZone.val(pobj.TimeZone);
+        }
+        else {
+            this.selectLocale.val("en-US");
+            this.selectLocaleChangeAction();
+            this.selectTimeZone.val("(UTC) Coordinated Universal Time");
+        }
+    }
+
+    this.setReadOnly = function () {
+        this.txtName.attr("disabled", "true");
+        this.txtNickName.attr("disabled", "true");
+        this.txtEmail.attr("disabled", "true");
+        this.pwdPassword.attr("disabled", "true");
+        this.txtDateOfBirth.attr("disabled", "true");
+        this.txtAlternateEmail.attr("disabled", "true");
+        this.txtPhPrimary.attr("disabled", "true");
+        this.txtPhSecondary.attr("disabled", "true");
+        this.txtLandPhone.attr("disabled", "true");
+        this.txtExtension.attr("disabled", "true");
+        this.chkboxHide.bootstrapToggle('disable');
+        $("#divStatus input:radio[name='status']").prop("disabled", "true");
+        $("#divGender input:radio[name='gender']").prop("disabled", "true");
+        this.btnFbConnect.attr("disabled", "true");
+        this.btnCreateUser.attr("disabled", "true");
+        this.selectLocale.attr("disabled", "true");
+        this.selectTimeZone.attr("disabled", "true");
+        if (this.rolesTile !== null)
+            this.rolesTile.setReadOnly();
+        if (this.userGroupTile !== null)
+            this.userGroupTile.setReadOnly();
+    }
+
+    this.statusChangeAction = function () {
+        
+        if ($("#divStatus input:radio[value='2']").prop("checked")) {
+            this.chkboxHide.bootstrapToggle('off');
+            this.chkboxHide.bootstrapToggle('enable');
+        }
+        else {
+            this.chkboxHide.bootstrapToggle('off');
+            this.chkboxHide.bootstrapToggle('disable');
+        }
+    }
+
+    this.selectLocaleChangeAction = function (e) {
+        var indx = this.selectLocale.prop('selectedIndex');
+        this.divLocaleInfo.children().remove();
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Native Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].NativeName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>English Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].EnglishName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Currency Format: </b>${this.culture[indx].NumberFormat}</label>`);
+        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Date Format: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].DateFormat}</label>`);
     }
 
     this.initUserInfo = function () {
@@ -107,24 +208,30 @@
         $(st).attr("checked", "checked");
         $("#lblFbId").attr("data-id", this.userinfo["fbid"]);
         $("#userFbLink").text((this.userinfo["fbname"] == "") ? this.userinfo["fullname"] : this.userinfo["fbname"]);
-        var stus = this.statusList[this.userinfo["statusid"]];
-        if (stus === "Active")
-            this.chkboxActive.prop("checked", "true");
-        else if (stus === "Deactivated")
-            this.chkboxActive.removeAttr("checked");
-        else if (stus === "Terminated") {
-            this.chkboxTerminate.prop("checked", "true");
-            this.chkboxActive.removeAttr("checked");
-        }
-        if (this.userinfo["hide"] === "yes")
-            this.chkboxHide.prop("checked", "true");
+
+        $("#divStatus input:radio[value='" + this.userinfo["statusid"] + "']").attr("checked", "checked");
+
+        if (this.userinfo["hide"] === "yes" && $("#divStatus input:radio[value='2']").prop("checked"))
+            this.chkboxHide.bootstrapToggle('on');
+
+        //var stus = this.statusList[this.userinfo["statusid"]];
+        //if (stus === "Active")
+        //    this.chkboxActive.prop("checked", "true");
+        //else if (stus === "Deactivated")
+        //    this.chkboxActive.removeAttr("checked");
+        //else if (stus === "Terminated") {
+        //    this.chkboxTerminate.prop("checked", "true");
+        //    this.chkboxActive.removeAttr("checked");
+        //}
+        //if (this.userinfo["hide"] === "yes")
+        //    this.chkboxHide.prop("checked", "true");
     }
 
     this.initFbConnect = function () {
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
             FB.init({
-                appId: '149537802493867',
+                appId: '141908109794829',
                 version: 'v2.11'
             });
             FB.getLoginStatus(updateStatusCallback);
@@ -273,7 +380,6 @@
         this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
     }
 
-
     this.validateEmail = function () {
         clearTimeout(this.timer1);
         this.isInfoValidEmail = false;
@@ -293,6 +399,7 @@
             this.spanEmail.attr("title", "Invalid Email ID");
         }
     }
+
     this.validateEmailAjaxCall = function () {
         $.ajax({
             type: "POST",
@@ -316,16 +423,20 @@
     }
 
     this.validateInfo = function (target, regex) {
-        target.off('keyup').on('keyup', function (evt) { this.validateInfo(target, regex)}.bind(this));
+        //target.off('keyup').on('keyup', function (evt) { this.validateInfo(target, regex)}.bind(this));
         var val = target.val();
         if (regex.test(val)) {
             target.css("border-color", "rgb(204, 204, 204)");
-            this.isInfoValidEmail2 = true;
+            return true;
         }
         else {
             target.css("border-color", "rgb(204, 0, 0)");
-            this.isInfoValidEmail2 = false;
+            return false;
         }
+    }
+
+    this.updatePassword = function () {
+        alert("Not Available");
     }
 
     this.clickbtnCreateUser = function () {
@@ -367,6 +478,7 @@
         dict["usergroups"] = this.userGroupTile.getItemIds();
         dict["statusid"] = newstus;
         dict["hide"] = this.chkboxHide.prop("checked") ? "yes" : "no";
+        dict["preference"] = JSON.stringify({Locale : this.selectLocale.val(), TimeZone : this.selectTimeZone.val()});
 
         $.post("../Security/SaveUser",
             {

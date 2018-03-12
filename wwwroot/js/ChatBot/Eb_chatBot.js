@@ -625,21 +625,38 @@
             this.callGetControl(idx);
             this.curVal = result;
         }.bind(this))
-    };
+    }.bind(this);
 
     this.ctrlEdit = function (e) {
         var $btn = $(e.target).closest("span");
         var idx = parseInt($btn.attr('idx'));
         this.curCtrl = this.curForm.controls[idx];
-        var NxtDpndgCtrlName = this.getNxtRndrdDpndgCtrlName(this.curCtrl.name);
-        if (NxtDpndgCtrlName) {
-            this.__idx = idx;
-            this.__NxtDpndgCtrlName = NxtDpndgCtrlName;
-            this.__$btn = $btn;
-            this.initEDCP(idx, NxtDpndgCtrlName, $btn);
+        var NxtRDpndgCtrlName = this.getNxtRndrdDpndgCtrlName(this.curCtrl.name);
+        if (NxtRDpndgCtrlName) {
+            this.__idx = idx; this.__NxtRDpndgCtrlName = NxtRDpndgCtrlName; this.__$btn = $btn;
+            this.initEDCP();
         }
         else
             this.ctrlEHelper(idx, $btn);
+    }.bind(this);
+
+    this.initEDCP = function () {
+        this.$DPEBtn = $(`[name=ctrledit]`).filter(`[idx=${this.__idx}]`).closest(".msg-wraper-user");
+        //this.$DPEBtn.confirmation('destroy')
+        this.$DPEBtn.confirmation({
+            placement: 'bottom',
+            title: "Edit this field and restart from related point !",
+            btnOkLabel: " Edit ",
+            btnOkClass: "btn btn-sm btn-warning",
+            //btnCancelClass: "btn-xs btn-primary",
+            btnOkIcon: "glyphicon glyphicon-pencil",
+            btnCancelIcon:"glyphicon glyphicon-remove-circle",
+            onConfirm: this.editDpndCtrl,
+            onCancel: function () {
+                alert("cancel");
+                //this.$DPEBtn.confirmation('destroy');
+            }.bind(this)
+        }).confirmation('show');
     }.bind(this);
 
     this.ctrlEHelper = function (idx, $btn) {
@@ -650,32 +667,15 @@
         $btn.closest('.msg-cont').remove();
     };
 
-    this.initEDCP = function (idx, NxtDpndgCtrlName, $btn) {
-        $(`.ctrledit,[idx=${idx}]`).confirmation({
-            placement: 'left',
-            onConfirm: this.editDpndCtrl,
-            onCancel: function () { this.IsDpndgCtrEdt = false; alert("cancel") }
-        });
-        $(".popover").removeClass("fade");
-    }
-
     this.editDpndCtrl = function () {
-
-
-        var  idx = this.__idx;
-        var NxtDpndgCtrlName = this.__NxtDpndgCtrlName;
-        var $btn = this.__$btn;
-
-
-        alert("ok");
+        //this.$DPEBtn.confirmation('destroy');
+        this.IsDpndgCtrEdt = true;
         this.nxtCtrlIdx = this.curForm.controls.indexOf(getObjByval(this.curForm.controls, "name", this.getNxtDpndgCtrlName(this.curCtrl.name)));
-        this.curCtrl = this.curForm.controls[idx];
-        delKeyAndAfter(this.formValues, NxtDpndgCtrlName);
-        delKeyAndAfter(this.formValuesWithType, NxtDpndgCtrlName);
-        $('.eb-chatBox [for=' + NxtDpndgCtrlName + ']').prev().prev().nextAll().remove();
-
-
-        this.ctrlEHelper(idx, $btn);
+        this.curCtrl = this.curForm.controls[this.__idx];
+        delKeyAndAfter(this.formValues, this.__NxtRDpndgCtrlName);
+        delKeyAndAfter(this.formValuesWithType, this.__NxtRDpndgCtrlName);
+        $('.eb-chatBox [for=' + this.__NxtRDpndgCtrlName + ']').prev().prev().nextAll().remove();
+        this.ctrlEHelper(this.__idx, this.__$btn);
     }.bind(this);
 
     this.getNxtDpndgCtrlName = function (name) {

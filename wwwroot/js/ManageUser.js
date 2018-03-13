@@ -60,12 +60,13 @@
 
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
-        this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)}.bind(this))
+        this.pwdPassword.on('keyup', this.validateInfo(pwdThis, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/));
+        this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/) }.bind(this))
         this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
         this.btnChangePassword.on("click", function () { this.ChangePwdModal.modal('show'); }.bind(this));
         this.btnUpdatePwd.on('click', this.updatePassword.bind(this));
-
+        
         this.pwdOld.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdOld));
         this.pwdNew.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNew));
         this.pwdNewConfirm.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNewConfirm));
@@ -78,20 +79,23 @@
         this.initUserPreference();
         this.initForm();
         this.initTiles();
+        if (this.whichMode === 2)
+            this.setReadOnly();
     }
 
     this.onKeyUpPwdInModal = function (pwdThis) {
         if (this.validateInfo(pwdThis, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/)) {
-            if (this.pwdNewConfirm.val() === this.pwdNew.val() || pwdThis === this.pwdOld)
+            if (this.pwdNewConfirm.val() === this.pwdNew.val() || pwdThis === this.pwdOld) 
                 this.lblPwdChngMsg.text("");
-            else
+            else 
                 this.lblPwdChngMsg.text("Password Mismatch");
         }
-        else
+        else 
             this.lblPwdChngMsg.text("Minimum Length Should be 8");
     }
 
     this.initForm = function () {
+        this.chkboxHide.parent().hide();
         if (this.itemId > 1) {
             $(this.divFormHeading).text("Edit User");
             this.btnCreateUser.text("Update");
@@ -99,6 +103,11 @@
             this.divPassword.css("display", "none");
             if(this.whichMode === 3)
                 this.divChangePassword.css("display", "block");
+            if (this.whichMode === 1) {
+                this.chkboxHide.parent().show();
+                $("#divStatus").show();
+            }
+                
             this.isInfoValidEmail = true;
             this.initUserInfo();
             this.initFbConnect();
@@ -378,6 +387,11 @@
                 if (this.U_Groups.indexOf(this.userGroup[i].Id) !== -1)
                     initgroups.push(this.userGroup[i]);
         this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
+
+        if (this.whichMode === 3) {
+            this.rolesTile.setReadOnly();
+            this.userGroupTile.setReadOnly();
+        }
     }
 
     this.validateEmail = function () {
@@ -436,7 +450,26 @@
     }
 
     this.updatePassword = function () {
-        alert("Not Available");
+        if (this.pwdOld.val().length < 8 || this.pwdNew.val().length < 8 || this.pwdNewConfirm.val().length < 8 || this.pwdNew.val() !== this.pwdNewConfirm.val())
+            return;
+        $(this.btnUpdatePwd.children()[0]).show();
+        $.ajax({
+            type: "POST",
+            url: "../Security/ChangeUserPassword",
+            data: { OldPwd: this.pwdOld.val(), NewPwd: this.pwdNew.val() },
+            success: function (status) {
+                if (status > 0) {
+                    alert("Password Updated Successfully");
+                    this.pwdOld.val("");
+                    this.pwdNew.val("");
+                    this.pwdNewConfirm.val("");
+                    this.ChangePwdModal.modal('hide');
+                }
+                else
+                    alert("Something went wrong");
+                $(this.btnUpdatePwd.children()[0]).hide();
+            }.bind(this)
+        });
     }
 
     this.clickbtnCreateUser = function () {
@@ -446,7 +479,10 @@
             alert("Validation Failed. Check all Fields");
             return;
         }
-            
+        if (this.pwdPassword.val().length < 8) {
+            alert("Password Too Short");
+            return;
+        }            
 
         this.btnCreateUser.attr("disabled", "true");
 
@@ -480,249 +516,21 @@
         dict["hide"] = this.chkboxHide.prop("checked") ? "yes" : "no";
         dict["preference"] = JSON.stringify({Locale : this.selectLocale.val(), TimeZone : this.selectTimeZone.val()});
 
-        $.post("../Security/SaveUser",
-            {
-                "userid": this.itemId ,
-                "usrinfo": JSON.stringify(dict)
-            }, function (result) {
+        $.ajax({
+            type: "POST",
+            url: "../Security/SaveUser",
+            data: { userid: this.itemid, usrinfo: JSON.stringify(dict) },
+            success: function (result) {
                 if (result > -1) {
                     alert("Saved Successfully");
                     window.top.close();
                 }
+                else
+                    alert("Something went wrong");
                 $("#btnCreateUser").removeAttr("disabled");
-            });
+            }
+        });
     }
-
-    //this.initModal1 = function () {
-    //    this.txtSearchRole.focus();
-    //    this.KeyUptxtSearchRole();
-    //}
-    //this.initModal2 = function () {
-    //    this.txtSearchUserGroup.focus();
-    //    this.KeyUptxtSearchUserGroup();
-    //}
-
-    //this.KeyUptxtSearchRole = function () {
-    //    this.drawSearchResults(1);
-    //}
-    //this.clickbtnModalOkAction = function () {
-    //    this.drawSelectedDisplay(1);
-    //    $('#addRolesModal').modal('toggle');
-    //    this.SortDiv(1);
-    //}
-
-    //this.KeyUptxtSearchUserGroup = function () {
-    //    this.drawSearchResults(2);
-    //}
-    //this.clickbtnUserGroupModalOkAction = function () {
-    //    this.drawSelectedDisplay(2);
-    //    $('#addUserGroupModal').modal('toggle');
-    //    this.SortDiv(2);
-    //}
-
-    //this.drawSearchResults = function (flag) {
-    //    var st = null;
-    //    var txt = null;
-    //    var divSelectedDisplay;
-    //    var divSearchResults;
-    //    if (flag === 1) {
-    //        obj = this.customRoles;
-    //        $("#divRoleSearchResults").children().remove();
-    //        txt = $("#txtSearchRole").val().trim();
-    //        divSelectedDisplay = $("#divSelectedRoleDisplay");
-    //        divSearchResults = $("#divRoleSearchResults");
-    //    }
-    //    else if (flag === 2) {
-    //        obj = this.userGroup;
-    //        $("#divUserGroupSearchResults").children().remove();
-    //        txt = $("#txtSearchUserGroup").val().trim();
-    //        divSelectedDisplay = $("#divSelectedUserGroupDisplay");
-    //        divSearchResults = $("#divUserGroupSearchResults");
-    //    }
-    //    else
-    //        return;
-
-    //    for (var i = 0; i < obj.length; i++) {
-    //        if (obj[i].Name.substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
-    //            if ($(divSelectedDisplay).find(`[data-id='${obj[i].Id}']`).length > 0)
-    //                st = "checked disabled";
-    //            else
-    //                st = null;
-    //            this.appendToSearchResult(divSearchResults, st, obj[i]);
-    //        }
-    //    }
-    //}
-
-    //this.appendToSearchResult = function (divSearchResults, st, obj) {
-    //    $(divSearchResults).append(`<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id=${obj.Id}>
-    //                                    <div class='col-md-1' style="padding:10px">
-    //                                        <input type ='checkbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d = '${obj.Description}' aria-label='...'>
-    //                                    </div>
-    //                                    <div class='col-md-10'>
-    //                                        <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
-    //                                        ${obj.Description}
-    //                                    </div>
-    //                                </div>`);
-    //}
-
-    //this.drawSelectedDisplay = function (flag) {
-    //    var addModal;
-    //    var divSearchResultsChecked;
-    //    var divSelectedDisplay;
-    //    if (flag === 1) {
-    //        divSearchResultsChecked = $('#divRoleSearchResults input:checked');
-    //        divSelectedDisplay = $('#divSelectedRoleDisplay');
-    //        addModal = $('#addRolesModal');
-    //    }
-    //    else if (flag === 2) {
-    //        divSearchResultsChecked = $('#divUserGroupSearchResults input:checked');
-    //        divSelectedDisplay = $('#divSelectedUserGroupDisplay');
-    //        addModal = $('#addUserGroupModal');
-    //    }
-    //    else
-    //        return;
-    //    $(divSearchResultsChecked).each(function () {
-    //        if (($(divSelectedDisplay).find(`[data-id='${$(this).attr('data-id')}']`).length) === 0) {
-    //            $(divSelectedDisplay).append(`<div class="col-md-4 container-md-4" data-id=${$(this).attr('data-id')} data-name=${$(this).attr('data-name')}>
-    //                                                <div class="mydiv1" style="overflow:visible;">
-    //                                                    <div class="icondiv1">
-    //                                                         <b>${$(this).attr('data-name').substring(0, 1).toUpperCase()}</b>
-    //                                                    </div>
-    //                                                    <div class="textdiv1">
-    //                                                        <b>${$(this).attr('data-name')}</b>
-    //                                                        <div style="font-size: smaller;">&nbsp${$(this).attr('data-d')}</div>
-    //                                                    </div>
-    //                                                    <div class="closediv1">
-    //                                                        <div class="dropdown">
-    //                                                            <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
-    //                                                            <ul class="dropdown-menu" style="left:-140px;">
-    //                                                                <li><a href="#" onclick="OnClickRemove(this);">Remove</a></li>
-    //                                                            </ul>
-    //                                                        </div>
-    //                                                    </div>
-    //                                                </div>
-    //                                                </div>`);
-    //        }
-    //    });
-
-    //}
-
-    //this.SortDiv = function (flag) {
-    //    var mylist;
-    //    if (flag === 1) 
-    //        mylist = $('#divSelectedRoleDisplay');
-    //    else if (flag === 2)
-    //        mylist = $('#divSelectedUserGroupDisplay');
-    //    else
-    //        return;
-    //    var listitems = mylist.children('div').get();
-    //    listitems.sort(function (a, b) {
-    //        return $(a).attr("data-name").toUpperCase().localeCompare($(b).attr("data-name").toUpperCase());
-    //    });
-    //    $.each(listitems, function (index, item) {
-    //        mylist.append(item);
-    //    });
-    //}
-
-    //this.KeyUptxtDemoRoleSearch = function () {
-    //    this.keyUpTxtDemoSearch(1);
-    //}
-    //this.KeyUptxtDemoUserGroupSearch = function () {
-    //    this.keyUpTxtDemoSearch(2);
-    //}
-
-    //this.keyUpTxtDemoSearch = function (flag) {
-    //    var f = 1;
-    //    var txt;
-    //    var divSelectedDisplay;
-    //    if (flag === 1) {
-    //        txt = $("#txtDemoRoleSearch").val().trim();
-    //        divSelectedDisplay = $("#divSelectedRoleDisplay");
-    //    }
-    //    else if (flag === 2) {
-    //        txt = $("#txtDemoUserGroupSearch").val().trim();
-    //        divSelectedDisplay = $("#divSelectedUserGroupDisplay");
-    //    }
-    //    else
-    //        return;
-    //    $($(divSelectedDisplay).children("div.col-md-4")).each(function () {
-    //        $(this).children().css('box-shadow', '1px 1px 2px 1px #fff');
-    //        if ($(this).attr('data-name').toLowerCase().substring(0, txt.length) === txt.toLowerCase() && txt !== "") {
-    //            $(this).children().css('box-shadow', '1px 1px 2px 1px red');
-    //            //scroll to search result
-    //            if (f) {
-    //                var elem = $(this);
-    //                if (elem) {
-    //                    var main = $(divSelectedDisplay);
-    //                    var t = main.offset().top;
-    //                    main.scrollTop(elem.offset().top - t);
-    //                }
-    //                f = 0;
-    //            }
-    //        }
-    //    });
-    //}
-
-    //this.OnClickbtnClearDemoRoleSearch = function () {
-    //    $("#txtDemoRoleSearch").val("");
-    //    this.KeyUptxtDemoRoleSearch();
-    //}
-    //this.OnClickbtnClearDemoUserGroupSearch = function () {
-    //    $("#txtDemoUserGroupSearch").val("");
-    //    this.KeyUptxtDemoUserGroupSearch();
-    //}
-
-
-
-    //this.loadUserRoles = function () {
-    //    obj = this.customRoles;
-    //    obj2 = this.userGroup;
-    //    uroles = this.U_Roles;
-    //    ugroups = this.U_Groups;
-    //    $("#divRoleSearchResults").children().remove();
-    //    $("#divUserGroupSearchResults").children().remove();
-    //    var i, st;
-    //    for (i = 0; i < obj.length; i++) {
-    //        st = null;
-    //        if ($.grep(uroles, function (e) { return e === obj[i].Id; }).length > 0)
-    //            st = "checked disabled";
-    //        this.appendToSearchResult($("#divRoleSearchResults"), st, obj[i]);
-    //    }
-    //    this.drawSelectedDisplay(1);
-    //    for (i = 0; i < obj2.length; i++) {
-    //        st = null;
-    //        if ($.grep(ugroups, function (e) { return e === obj2[i].Id; }).length > 0)
-    //            st = "checked disabled";
-    //        this.appendToSearchResult($("#divUserGroupSearchResults"), st, obj2[i]);
-    //    }
-    //    this.drawSelectedDisplay(2);
-    //}
-
-     //this.txtSearchRole = $("#txtSearchRole");
-    //this.btnModalOk = $("#btnModalOk");
-    //this.divRoleSearchResults = $("#divRoleSearchResults");
-    //this.divSelectedRoleDisplay = $("#divSelectedRoleDisplay");
-    //this.txtDemoRoleSearch = $("#txtDemoRoleSearch");
-    //this.btnClearDemoRoleSearch = $("#btnClearDemoRoleSearch");
-
-    //this.txtSearchUserGroup = $("#txtSearchUserGroup");
-    //this.btnUserGroupModalOk = $("#btnUserGroupModalOk");
-    //this.divUserGroupSearchResults = $("#divUserGroupSearchResults");
-    //this.divSelectedUserGroupDisplay = $("#divSelectedUserGroupDisplay");
-    //this.txtDemoUserGroupSearch = $("#txtDemoUserGroupSearch");
-    //this.btnClearDemoUserGroupSearch = $("#btnClearDemoUserGroupSearch");
-
-    //this.txtSearchRole.on('keyup', this.KeyUptxtSearchRole.bind(this));
-        //this.btnModalOk.on('click', this.clickbtnModalOkAction.bind(this));
-        //$('#addRolesModal').on('shown.bs.modal', this.initModal1.bind(this));
-        //this.txtDemoRoleSearch.on('keyup', this.KeyUptxtDemoRoleSearch.bind(this));
-        //this.btnClearDemoRoleSearch.on('click', this.OnClickbtnClearDemoRoleSearch.bind(this));
-
-        //this.txtSearchUserGroup.on('keyup', this.KeyUptxtSearchUserGroup.bind(this));
-        //this.btnUserGroupModalOk.on('click', this.clickbtnUserGroupModalOkAction.bind(this));
-        //$('#addUserGroupModal').on('shown.bs.modal', this.initModal2.bind(this));
-        //this.txtDemoUserGroupSearch.on('keyup', this.KeyUptxtDemoUserGroupSearch.bind(this));
-        //this.btnClearDemoUserGroupSearch.on('click', this.OnClickbtnClearDemoUserGroupSearch.bind(this));
 
     this.init();
 }
@@ -774,7 +582,7 @@ var UserGroupJs = function (infoDict, usersList) {
         if (result > 0)
             alert("Submitted Successfully");
         else
-            alert("Error");
+            alert("Something went wrong");
         this.btnSaveAll.removeAttr("disabled");
     }
 

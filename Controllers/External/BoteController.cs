@@ -68,19 +68,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public List<object> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string wc = "tc")
+        public List<object> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = "tc")
         {
             Dictionary<string, string> _Meta;
-            if (socialId.IsNullOrEmpty())
-            {
-//                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "anonymous", "true" }, { "phone", anon_phno }, { "emailId", anon_email } };
-                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "anonymous", "true" }, { "phone", anon_phno }, { "emailId", anon_email }, { "appid", appid } };
-            }
-            else
-            {
-//                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "anonymous", "true" } };
-                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "anonymous", "true" }, { "appid", appid } };
-            }
+                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "phone", anon_phno }, { "emailId", anon_email }, { "anonymous", "true" }, { "appid", appid }, { "user_ip", user_ip }, { "user_browser", user_browser }, { "user_name", user_name } };
+                //_Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "phone", anon_phno }, { "emailId", anon_email }, { "anonymous", "true" }, { "appid", appid } };
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,

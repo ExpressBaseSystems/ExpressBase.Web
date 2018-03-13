@@ -126,8 +126,10 @@
         this.postmenuClick(e);
         if (this.CurFormIdx === 0)
             this.login2FB();
-        else
+        else {
             this.collectContacts();
+
+        }
     }.bind(this);
 
     this.collectContacts = function () {
@@ -418,9 +420,9 @@
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
 
             /////////////////////////////////////////////////
-            setTimeout(function () {
-                $(".btn-box").find("[idx=0]").click();
-            }.bind(this), this.typeDelay * 2 + 100);
+            //setTimeout(function () {
+            //    $(".btn-box").find("[idx=0]").click();
+            //}.bind(this), this.typeDelay * 2 + 100);
         }
         else {
             this.msgFromBot(`Hello ${this.FBResponse.name}, ${greeting}`);
@@ -888,10 +890,10 @@
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 /////////////////////////////////////////////////Form click
-                //setTimeout(function () {
-                //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=4]").click();
-                //}.bind(this), this.typeDelay * 2 + 100);
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    $(".btn-box").find("[idx=4]").click();
+                }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

@@ -47,7 +47,7 @@ namespace ExpressBase.Web.Components
                 //    ViewBag.data = dvObject;
                 //}
                 //else
-                if (dvobj.Columns.Count == 0)
+                if (dvobj.Columns == null  || dvobj.Columns.Count == 0)
                     ViewBag.data = getDVObject(dvobj);
                 else
                 {

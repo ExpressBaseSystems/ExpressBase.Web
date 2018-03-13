@@ -3,6 +3,7 @@
     this.sideBar = $("#side-toolbar");
     this.pageContainer = $("#page-outer-cont");
     this.pGcontainer = $("#PGgrid-report");
+    this.dpiX = $(".get_ScreenDpi_div").height();
     this.GroupSelect = [];
 
     this.headerSecSplitter = function (array, Harr) {
@@ -247,7 +248,10 @@
     this.replaceProp = function (source, destination) {
         for (var objPropIndex in source) {
             if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
-                source[objPropIndex] = ['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1  ? this.convertPointToPixel(destination[objPropIndex]) :destination[objPropIndex];
+                if (['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1) 
+                    source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
+                else
+                    source[objPropIndex] = destination[objPropIndex];
             }
         }
     }
@@ -262,12 +266,12 @@
 
     this.convertTopoints = function (val) {
         var pixel = val;
-        var point = (pixel * 72) / 96;
+        var point = (pixel * 72) / this.dpiX;
         return point;
     }
     this.convertPointToPixel = function (val) {
         var points = val;
-        var pixel = (points * 96) / 72;
+        var pixel = (points * this.dpiX) / 72;
         return pixel;
     }
 
@@ -342,6 +346,7 @@
     this.RefreshFontControl = function (_object) {
 
     };
+
 
     this.minMaxToolbar();
     this.keyClickDoc();

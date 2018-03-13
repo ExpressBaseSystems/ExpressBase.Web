@@ -3,6 +3,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,7 +90,12 @@ namespace ExpressBase.Web2
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseApplicationInsightsRequestTelemetry();
+			app.UseForwardedHeaders(new ForwardedHeadersOptions
+			{
+				ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+			});
+
+			app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())
             {
@@ -105,7 +111,7 @@ namespace ExpressBase.Web2
 
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
+			app.UseMvc(routes =>
             {
                 routes.DefaultHandler = areaRouter;
                 routes.MapRoute(

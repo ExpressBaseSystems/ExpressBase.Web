@@ -21,7 +21,7 @@
     overflow-y: auto;
     height: 100%;
     padding: 0px 5px;
-    padding-bottom: 60px;
+    padding-bottom: 230px;
     background-color: white;
 }
 
@@ -43,6 +43,7 @@
     display: inline-block;
 }*/
 .msg-cont-bot, .msg-cont-user {
+    position: relative;
     width: calc(100% - 26px);
     display: inline-block;
 }
@@ -69,6 +70,7 @@
 }
 
 .msg-wraper-user {
+    padding: 9px 10px;
     border-radius: 13px 13px 0px 13px;
     margin: 6px 5px 5px 50px;
     background-color: #fff;
@@ -603,6 +605,11 @@
     color: rgba(0, 0, 0, 0.5);
 }
 
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+}
 .loc-opt-btn {
     text-align: center;
     display: inline-block;

@@ -475,7 +475,7 @@
         var hold = $.ss.eventSource;
         var es = new EventSourcePolyfill(opt.url || $.ss.eventSourceUrl || hold.url, {
             headers: {
-                'Authorization': 'Bearer ' + getToken(),
+                'Authorization': 'Bearer ' + getrToken(),
             }
         });
         es.onerror = opt.onerror || hold.onerror;

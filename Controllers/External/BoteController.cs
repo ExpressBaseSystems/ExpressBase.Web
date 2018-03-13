@@ -18,6 +18,7 @@ using ExpressBase.Web.BaseControllers;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Constants;
+using System.Net.Http;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -68,11 +69,32 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public List<object> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = "tc")
+        public async Task<List<object>> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = "tc")
         {
-            Dictionary<string, string> _Meta;
-                _Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "phone", anon_phno }, { "emailId", anon_email }, { "anonymous", "true" }, { "appid", appid }, { "user_ip", user_ip }, { "user_browser", user_browser }, { "user_name", user_name } };
-                //_Meta = new Dictionary<string, string> { { "wc", wc }, { "cid", cid }, { "socialId", socialId }, { "phone", anon_phno }, { "emailId", anon_email }, { "anonymous", "true" }, { "appid", appid } };
+			HttpClient client = new HttpClient();
+			string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
+			IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
+
+			Dictionary<string, string> _Meta;
+                _Meta = new Dictionary<string, string> {
+					{ "wc", wc },
+					{ "cid", cid },
+					{ "socialId", socialId },
+					{ "phone", anon_phno },
+					{ "emailId", anon_email },
+					{ "anonymous", "true" },
+					{ "appid", appid },
+					{ "user_ip", user_ip },
+					{ "user_browser", user_browser },
+					{ "user_name", user_name },
+					{ "city", IpApi.City},
+					{ "region", IpApi.Region},
+					{ "country", IpApi.Country},
+					{ "latitude", IpApi.Lat},
+					{ "longitude", IpApi.Lon},
+					{ "timezone", IpApi.Timezone},
+					{ "iplocationjson", result}
+				};
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,
@@ -104,7 +126,25 @@ namespace ExpressBase.Web.Controllers
 
         }
 
-        public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
+		public class IpApiResponse
+		{
+			public string As { get; set; }
+			public string City { get; set; }
+			public string Country { get; set; }
+			public string CountryCode { get; set; }
+			public string Isp { get; set; }
+			public string Lat { get; set; }
+			public string Lon { get; set; }
+			public string Org { get; set; }
+			public string Query { get; set; }
+			public string Region { get; set; }
+			public string RegionName { get; set; }
+			public string Status { get; set; }
+			public string Timezone { get; set; }
+			public string Zip { get; set; }
+		}
+
+		public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
         {
             this.ServiceClient.BearerToken = bearerToken;
             this.ServiceClient.RefreshToken = refreshToken;

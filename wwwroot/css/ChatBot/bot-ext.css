@@ -7,7 +7,7 @@
     width: 28%;
     height: 90%;
     overflow:hidden;
-    border-radius: 10px;
+    border-radius: 7px;
     background-color: white;
     min-width: 300px;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
@@ -61,7 +61,7 @@
         height: 100%;
     }
 
-    .ebbot_iframe {
+    .eb_iframecont {
         border-radius: 0px;
     }
 }

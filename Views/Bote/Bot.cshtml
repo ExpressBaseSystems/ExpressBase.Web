@@ -32,7 +32,6 @@
 @*<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&callback=initMap&libraries=places"></script>*@
 @*<script type="text/javascript" src='http://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&sensor=false&libraries=places'></script>*@
 <script type="text/javascript" src='http://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
-
 <style>
     body {
         margin: 0;
@@ -46,6 +45,12 @@
     var themeColor = "@ViewBag.themeColor";
     var botdpURL = "@ViewBag.botdpURL";
     var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl');
+    
+    $.get("http://ipinfo.io", function (response) {
+        chatBotObj.userLocDtls = response;
+        alert(JSON.stringify( response));
+    }, "jsonp");
+
     var html = document.getElementsByTagName('html')[0];
     html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
     // This is called with the results from from FB.getLoginStatus().

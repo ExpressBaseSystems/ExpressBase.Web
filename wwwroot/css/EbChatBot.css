@@ -70,6 +70,7 @@
 }
 
 .msg-wraper-user {
+    padding: 9px 10px;
     border-radius: 13px 13px 0px 13px;
     margin: 6px 5px 5px 50px;
     background-color: #fff;

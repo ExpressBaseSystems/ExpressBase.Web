@@ -3,6 +3,7 @@
     this.sideBar = $("#side-toolbar");
     this.pageContainer = $("#page-outer-cont");
     this.pGcontainer = $("#PGgrid-report");
+    this.dpiX = $(".get_ScreenDpi_div").height();
     this.GroupSelect = [];
 
     this.headerSecSplitter = function (array, Harr) {
@@ -247,7 +248,10 @@
     this.replaceProp = function (source, destination) {
         for (var objPropIndex in source) {
             if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
-                source[objPropIndex] = ['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1  ? this.convertPointToPixel(destination[objPropIndex]) :destination[objPropIndex];
+                if (['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1) 
+                    source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
+                else
+                    source[objPropIndex] = destination[objPropIndex];
             }
         }
     }
@@ -262,12 +266,12 @@
 
     this.convertTopoints = function (val) {
         var pixel = val;
-        var point = (pixel * 72) / 96;
+        var point = (pixel * 72) / this.dpiX;
         return point;
     }
     this.convertPointToPixel = function (val) {
         var points = val;
-        var pixel = (points * 96) / 72;
+        var pixel = (points * this.dpiX) / 72;
         return pixel;
     }
 
@@ -295,50 +299,54 @@
 
     this.setFontProp = function (fobj) {
         var _font = fobj.Font;
-        var caps = (_font.Caps) ? "uppercase" : "lowercase";
-        var decor = "";
-        var style = "";
-        var weight = "";
-        var font = _font.Font === null ? "Times-Roman" : _font.Font;
-        var size = _font.Size === 0 ? "14px" : _font.Size + "px";
 
-        if (_font.Strikethrough)
-            decor = "line-through";
-        else if (_font.Underline)
-            decor = "underline";
-        else
-            decor = "none";
+        if (_font !== null) {
+            var caps = (_font.Caps) ? "uppercase" : "lowercase";
+            var decor = "";
+            var style = "";
+            var weight = "";
+            var font = _font.Font === null ? "Times-Roman" : _font.Font;
+            var size = _font.Size === 0 ? "14px" : _font.Size + "px";
 
-        if (_font.Style === 0) {
-            style = "normal";
-            weight = "normal";
+            if (_font.Strikethrough)
+                decor = "line-through";
+            else if (_font.Underline)
+                decor = "underline";
+            else
+                decor = "none";
+
+            if (_font.Style === 0) {
+                style = "normal";
+                weight = "normal";
+            }
+            else if (_font.Style === 2) {
+                style = "italic";
+                weight = "normal";
+            }
+            else if (_font.Style === 1) {
+                style = "normal";
+                weight = "bold";
+            }
+            else {
+                style = "italic";
+                weight = "bold";
+            }
+            $("#" + fobj.EbSid).css({
+                "font-family": font,
+                "font-size": size,
+                "text-decoration": decor,
+                "font-style": style,
+                "font-weight": weight,
+                "text-transform": caps,
+                "color": _font.color
+            });
         }
-        else if (_font.Style === 2) {
-            style = "italic";
-            weight = "normal";
-        }
-        else if (_font.Style === 1) {
-            style = "normal";
-            weight = "bold";
-        }
-        else {
-            style = "italic";
-            weight = "bold";
-        }
-        $("#" + fobj.EbSid).css({
-            "font-family": font,
-            "font-size": size,
-            "text-decoration": decor,
-            "font-style": style,
-            "font-weight": weight,
-            "text-transform": caps,
-            "color": _font.color
-        });
     };
 
     this.RefreshFontControl = function (_object) {
 
     };
+
 
     this.minMaxToolbar();
     this.keyClickDoc();

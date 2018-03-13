@@ -1,4 +1,9 @@
-﻿/*side menuBar*/
+﻿.get_ScreenDpi_div {
+    height: 1in;
+    width: 1in;
+    display:none;
+}
+/*side menuBar*/
 .tool-box-items {
     margin-left: 0px !important;
     margin-top: 2px !important;

@@ -412,6 +412,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.each(this.ebSettings.Columns.$values, function (i, col) {
             if (col.name === "id") {
                 this.FlagPresentId = true;
+                col.bVisible = false;
                 return false;
             }
         }.bind(this));
@@ -455,7 +456,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //rowGroup: {
         //    dataSrc: 'submitter'
         //}
-        //o.paging = false;
+        //o.paging = true;
         //o.rowReorder = true;
         //o.order = [[8, "asc"]];
         //o.bAutoWidth = false;
@@ -613,10 +614,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.receiveAjaxData = function (dd) {
-        //if (!dd.IsPaged) {
-        //    this.Api.paging = dd.IsPaged;
-        //    this.Api.lengthChange = false;
-        //}
+        if (!dd.ispaged) {
+            this.Api.paging = dd.ispaged;
+            this.Api.lengthChange = false;
+            //this.Api.dom = "<'col-md-12 noPadding'B>rt";
+        }
         if (this.login == "uc") {
             dvcontainerObj.currentObj.data = dd;
             this.MainData = dd;
@@ -1635,6 +1637,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Marker) {
                 this.ebSettings.Columns.$values[i].render = this.renderMarker.bind(this);
             }
+            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
+                this.ebSettings.Columns.$values[i].render = this.renderFBImage.bind(this);
+            }
         }
         //if (col.fontfamily !== 0) {
         //    var style = document.createElement('style');
@@ -1775,6 +1780,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.renderMarker = function (data) {
         return `<a href='#' class ='columnMarker_${this.tableId}' data-latlong='${data}'><i class='fa fa-map-marker fa-2x' style='color:red;'></i></a>`;
+    };
+
+    this.renderFBImage = function (data) {
+        if(typeof(data) === "string")
+            return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' />`;
+        else
+            return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' />`;
     };
 
     this.start();

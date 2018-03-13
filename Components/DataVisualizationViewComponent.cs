@@ -73,6 +73,7 @@ namespace ExpressBase.Web.Components
             int _pos = __columns.Count+100;
 
             dvobj.Columns = new DVColumnCollection();
+            //dvobj.IsPaged = columnresp.IsPaged;
             // Add Serial & Checkbox
             //dvobj.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
             //dvobj.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
@@ -82,8 +83,10 @@ namespace ExpressBase.Web.Components
             {
                 DVBaseColumn _col = null;
 
-                if (column.Type == DbType.String)
-                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos , ClassName = "tdheight" };
+                if (column.Type == DbType.String && column.ColumnName == "socialid")
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos , ClassName = "tdheight", RenderAs = StringRenderType.Image };
+                else if (column.Type == DbType.String)
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
                 else if (column.Type == DbType.Int16 || column.Type == DbType.Int32 || column.Type == DbType.Int64 || column.Type == DbType.Double || column.Type == DbType.Decimal || column.Type == DbType.VarNumeric)
                     _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight dt-body-right" };
                 else if (column.Type == DbType.Boolean)

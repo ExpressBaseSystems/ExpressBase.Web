@@ -7,11 +7,9 @@ var summaryFunc = {
     4: "Sum"
 }
 var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
-    var containment = ".page";
+    const containment = ".page";
     this.EbObject = dsobj;
-    this.EditObj = {};
-    this.isNew = ($.isEmptyObject(this.EbObject) === true) ? true : false;
-    this.Rel_object;
+    this.isNew = $.isEmptyObject(this.EbObject) ? true : false;
     this.objCollection = {};
     this.splitarray = [];
     this.btn_indx = null;
@@ -83,27 +81,26 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.ruler = function () {
         var width = this.width.slice(0, -2) > 794 ? ($('#PageContainer').width() - 79) + 'px' : this.width ;
-        var k = 0;
-        var j = 0;
+        var k = 0,j = 0;
         var pxlabel = this.rulertype == "px" ? 5 : 1 ;
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
             var $tick = $('<div>');
             if (step === 0) {
-                if (this.rulertype === "px") {
+                if (this.rulertype === "px")
                     $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(i * 5);
-                }
-                else { $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(j++); }
-
-            } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+                else
+                    $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(j++);
+            }
+            else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
                 $tick.addClass(this.rulerTypesObj[this.rulertype].minor);
                 if (step === 9) {
                     step = -1;
                 }
-            } else {
-                $tick.addClass(this.rulerTypesObj[this.rulertype].major);
             }
+            else 
+                $tick.addClass(this.rulerTypesObj[this.rulertype].major);
             $ruler.append($tick);
         }
 
@@ -111,19 +108,19 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         for (i = 0, step = 0; i < $rulerleft.innerHeight() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
             $tick = $('<div>');
             if (step === 0) {
-                if (this.rulertype === "px") {
+                if (this.rulertype === "px")
                     $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(i * 5);
-                }
-                else { $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(k++); }
-
-            } else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+                else
+                    $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(k++);
+            }
+            else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
                 $tick.addClass(this.rulerTypesObj[this.rulertype].minor);
                 if (step === 9) {
                     step = -1;
                 }
-            } else {
-                $tick.addClass(this.rulerTypesObj[this.rulertype].major);
             }
+            else
+                $tick.addClass(this.rulerTypesObj[this.rulertype].major);
             $rulerleft.append($tick);
         }
     };
@@ -187,8 +184,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//add page sections
 
     this.appendSubSection = function (sections, subSecArray) {
-        var idArr = [];
-        var hArr = [];
+        var idArr = [], hArr = [];
         for (len = 0; len < subSecArray.length; len++) {
             var SubSec_obj = new EbObjects["Eb" + sections](this.EbObjectSections[sections] + len);
             $("#" + this.EbObjectSections[sections]).append(SubSec_obj.$Control.outerHTML());
@@ -204,10 +200,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.pg.addToDD(SubSec_obj);
             this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.            
         }
-        if (!this.isNew) {
-            //this.HH.push((hArr.reduce((x, y) => x + y) / parseFloat(this.height.slice(0, -2)) )*100);
-            this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr));    
-        }        
+        if (!this.isNew) 
+            idArr.length > 1 ? this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr)) : null ;
     };
 
     this.headerBox1_Split = function () {
@@ -220,7 +214,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.headerScaling = function () {
-        var _this = this;
         this.repExtern.multisplit();
         this.repExtern.box();
         this.appendMultisplitBox();        
@@ -231,8 +224,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.appMultisplBoxEXE = function (i, obj) {
-        var idArr = [];
-        var hArr = [];
+        var idArr = [], hArr = [];
         var $cont = $("#multiSplit").children().not(".gutter").eq(i);
         for (len = 0; len < $(obj).children().not(".gutter").length; len++) {
             var id = this.sectionArray[i].slice(1) + "subBox" + len;
@@ -250,7 +242,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.splitButton = function () {
         $('.headersections').children().not(".gutter").each(this.addButton.bind(this));
     };
-
 
     this.addButton = function (i, obj) {
         $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");

@@ -45,7 +45,7 @@
     var themeColor = "@ViewBag.themeColor";
     var botdpURL = "@ViewBag.botdpURL";
     var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl');
-    
+
     $.get("http://ipinfo.io", function (response) {
         chatBotObj.userLocDtls = response;
         alert(JSON.stringify( response));
@@ -67,9 +67,9 @@
 
     // This function is called when someone finishes with the Login
     function checkLoginState() {
-    FB.getLoginStatus(function (response) {
-    statusChangeCallback(response);
-    });
+        FB.getLoginStatus(function (response) {
+            statusChangeCallback(response);
+        });
     }
 
     window.fbAsyncInit = function () {

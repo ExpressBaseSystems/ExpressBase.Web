@@ -47,22 +47,22 @@
     var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl');
 
     $.get("http://ipinfo.io", function (response) {
-        chatBotObj.userLocDtls = response;
-        alert(JSON.stringify( response));
+        chatBotObj.userDtls.ip = response.ip;
+        chatBotObj.userDtls.browser = getBrowserName();
     }, "jsonp");
 
     var html = document.getElementsByTagName('html')[0];
     html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {
-    console.log('statusChangeCallback');
-    console.log(response);
-    chatBotObj.FB = FB;
-    if (response.status === 'connected') {
-    chatBotObj.FBLogined();
-    } else {
-    chatBotObj.FBNotLogined();
-    }
+        console.log('statusChangeCallback');
+        console.log(response);
+        chatBotObj.FB = FB;
+        if (response.status === 'connected') {
+            chatBotObj.FBLogined();
+        } else {
+            chatBotObj.FBNotLogined();
+        }
     }
 
     // This function is called when someone finishes with the Login
@@ -70,7 +70,7 @@
         FB.getLoginStatus(function (response) {
             statusChangeCallback(response);
         });
-    }
+    };
 
     window.fbAsyncInit = function () {
     FB.init({

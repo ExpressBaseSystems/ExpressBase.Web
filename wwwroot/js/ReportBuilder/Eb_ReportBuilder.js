@@ -685,8 +685,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.findReportLayObjects = function (k, object) {
         var ObjId = $(object).attr('id');
-        this.objCollection[ObjId].Left = $(object).position().left;
-        this.objCollection[ObjId].Top = $(object).position().top;
+        this.objCollection[ObjId].WidthPt = this.repExtern.convertTopoints($(object).outerWidth());
+        this.objCollection[ObjId].HeightPt = this.repExtern.convertTopoints($(object).outerHeight());
         this.objCollection[ObjId].LeftPt = this.repExtern.convertTopoints(this.objCollection[ObjId].Left);
         this.objCollection[ObjId].TopPt = this.repExtern.convertTopoints(this.objCollection[ObjId].Top);
         this.EbObject.ReportObjects.$values.push(this.objCollection[ObjId]);

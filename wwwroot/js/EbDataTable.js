@@ -456,7 +456,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //rowGroup: {
         //    dataSrc: 'submitter'
         //}
-        //o.paging = true;
+        //o.paging = false;
         //o.rowReorder = true;
         //o.order = [[8, "asc"]];
         //o.bAutoWidth = false;
@@ -500,15 +500,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.data = this.receiveAjaxData(this.MainData);
         }
         else {
-            o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
-            if (this.ebSettings.IsPaged == "false") {
+            o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";   
+            o.paging = true;
+            o.lengthChange = true;
+            if (this.ebSettings.IsPaged == "False") {
                 o.dom = "<'col-md-12 noPadding'B>rt";
+                o.paging = false;
+                o.lengthChange = false;
             }
             if (this.login === "uc") {
                 dvcontainerObj.currentObj.Pippedfrom = "";
                 $("#Pipped").text("");
                 this.isPipped = false;
             }
+            //o.dom = "<'col-md-12 noPadding'B>rt";
             o.ajax = {
                 url: this.ssurl + '/ds/data/' + this.dsid,
                 //url:"../dv/getData",
@@ -614,11 +619,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.receiveAjaxData = function (dd) {
-        if (!dd.ispaged) {
-            this.Api.paging = dd.ispaged;
-            this.Api.lengthChange = false;
-            //this.Api.dom = "<'col-md-12 noPadding'B>rt";
-        }
+        //if (!dd.ispaged) {
+        //    this.Api.paging = dd.ispaged;
+        //    this.Api.lengthChange = false;
+        //    //this.Api.dom = "<'col-md-12 noPadding'B>rt";
+        //}
         if (this.login == "uc") {
             dvcontainerObj.currentObj.data = dd;
             this.MainData = dd;
@@ -1779,7 +1784,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderMarker = function (data) {
-        return `<a href='#' class ='columnMarker_${this.tableId}' data-latlong='${data}'><i class='fa fa-map-marker fa-2x' style='color:red;'></i></a>`;
+        if (data !== ",")
+            return `<a href='#' class ='columnMarker_${this.tableId}' data-latlong='${data}'><i class='fa fa-map-marker fa-2x' style='color:red;'></i></a>`;
+        else
+            return null;
     };
 
     this.renderFBImage = function (data) {

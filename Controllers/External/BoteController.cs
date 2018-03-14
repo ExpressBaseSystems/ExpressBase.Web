@@ -88,7 +88,7 @@ namespace ExpressBase.Web.Controllers
 					{ "user_browser", user_browser },
 					{ "user_name", user_name },
 					{ "city", IpApi.City},
-					{ "region", IpApi.Region},
+					{ "region", IpApi.RegionName},
 					{ "country", IpApi.Country},
 					{ "latitude", IpApi.Lat},
 					{ "longitude", IpApi.Lon},

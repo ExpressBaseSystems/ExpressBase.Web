@@ -17,6 +17,8 @@
     this.lblApplication = $("#lblApplication");
     this.lblFirstVisit = $("#lblFirstVisit");
     this.lblLastVisit = $("#lblLastVisit");
+    this.lblBrowser = $("#lblBrowser");
+    this.lblIpAddress = $("#lblIpAdress");
     this.lblTotalVisits = $("#lblTotalVisits");
     this.lblLastUpdatedBy = $("#lblLastUpdatedBy");
     this.lblLastUpdatedAt = $("#lblLastUpdatedAt");
@@ -214,6 +216,8 @@
         this.lblApplication.text(this.userData.ApplicationName);
         this.lblFirstVisit.text(this.userData.FirstVisit);
         this.lblLastVisit.text(this.userData.LastVisit);
+        this.lblIpAddress.text(this.userData.IpAddress);
+        this.lblBrowser.text(this.userData.Browser);
         this.lblTotalVisits.text(this.userData.TotalVisits);
         this.lblLastUpdatedBy.text(this.userData.ModifiedBy);
         this.lblLastUpdatedAt.text(this.userData.ModifiedAt);

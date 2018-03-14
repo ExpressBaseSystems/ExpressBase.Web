@@ -16,7 +16,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -111,7 +113,10 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		//--------------MANAGE USER START------------------------------------
+		
+		
 
+	
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
 			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3
@@ -122,6 +127,12 @@ namespace ExpressBase.Web.Controllers
 			//var ip2 = HttpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
 			//string ip =  this.Request.HttpContext.Connection.RemoteIpAddress.ToString();
 			//string ip3 = GetRequestIP();
+
+			//HttpClient client = new HttpClient(); 
+			////string result = await client.GetStringAsync("http://freegeoip.net/json");
+			//string result = await client.GetStringAsync("http://ip-api.com/json");
+			//IpApiResponse ooo = JsonConvert.DeserializeObject<IpApiResponse>(result);
+			
 
 			Dictionary<string, string> dict = new Dictionary<string, string>();				
 			//List<EbRole> Sysroles = new List<EbRole>();
@@ -395,66 +406,69 @@ namespace ExpressBase.Web.Controllers
 			return temp;
 		}
 
-		public string GetRequestIP(bool tryUseXForwardHeader = true)
-		{
-			string ip = null;
 
-			// todo support new "Forwarded" header (2014) https://en.wikipedia.org/wiki/X-Forwarded-For
+		//--------------------- TEST IP -------------------------------------------
 
-			// X-Forwarded-For (csv list):  Using the First entry in the list seems to work
-			// for 99% of cases however it has been suggested that a better (although tedious)
-			// approach might be to read each IP from right to left and use the first public IP.
-			// http://stackoverflow.com/a/43554000/538763
-			//
-			if (tryUseXForwardHeader)
-				ip = SplitCsv(GetHeaderValueAs<string>("X-Forwarded-For")).FirstOrDefault();
+		//public string GetRequestIP(bool tryUseXForwardHeader = true)
+		//{
+		//	string ip = null;
 
-			// RemoteIpAddress is always null in DNX RC1 Update1 (bug).
-			if (String.IsNullOrWhiteSpace(ip) && this.Request.HttpContext?.Connection?.RemoteIpAddress != null)
-				ip = this.Request.HttpContext.Connection.RemoteIpAddress.ToString();
+		//	// todo support new "Forwarded" header (2014) https://en.wikipedia.org/wiki/X-Forwarded-For
 
-			if (String.IsNullOrWhiteSpace(ip))
-				ip = GetHeaderValueAs<string>("REMOTE_ADDR");
+		//	// X-Forwarded-For (csv list):  Using the First entry in the list seems to work
+		//	// for 99% of cases however it has been suggested that a better (although tedious)
+		//	// approach might be to read each IP from right to left and use the first public IP.
+		//	// http://stackoverflow.com/a/43554000/538763
+		//	//
+		//	if (tryUseXForwardHeader)
+		//		ip = SplitCsv(GetHeaderValueAs<string>("X-Forwarded-For")).FirstOrDefault();
 
-			// _httpContextAccessor.HttpContext?.Request?.Host this is the local host.
+		//	// RemoteIpAddress is always null in DNX RC1 Update1 (bug).
+		//	if (String.IsNullOrWhiteSpace(ip) && this.Request.HttpContext?.Connection?.RemoteIpAddress != null)
+		//		ip = this.Request.HttpContext.Connection.RemoteIpAddress.ToString();
 
-			if (String.IsNullOrWhiteSpace(ip))
-				throw new Exception("Unable to determine caller's IP.");
+		//	if (String.IsNullOrWhiteSpace(ip))
+		//		ip = GetHeaderValueAs<string>("REMOTE_ADDR");
 
-			return ip;
-		}
+		//	// _httpContextAccessor.HttpContext?.Request?.Host this is the local host.
 
-		public T GetHeaderValueAs<T>(string headerName)
-		{
-			StringValues values;
+		//	if (String.IsNullOrWhiteSpace(ip))
+		//		throw new Exception("Unable to determine caller's IP.");
 
-			if (this.Request.HttpContext?.Request?.Headers?.TryGetValue(headerName, out values) ?? false)
-			{
-				string rawValues = values.ToString();   // writes out as Csv when there are multiple.
+		//	return ip;
+		//}
 
-				if (!rawValues.IsNullOrEmpty())
-					return (T)Convert.ChangeType(values.ToString(), typeof(T));
-			}
-			return default(T);
-		}
+		//public T GetHeaderValueAs<T>(string headerName)
+		//{
+		//	StringValues values;
 
-		public static List<string> SplitCsv(string csvList, bool nullOrWhitespaceInputReturnsNull = false)
-		{
-			if (string.IsNullOrWhiteSpace(csvList))
-				return nullOrWhitespaceInputReturnsNull ? null : new List<string>();
+		//	if (this.Request.HttpContext?.Request?.Headers?.TryGetValue(headerName, out values) ?? false)
+		//	{
+		//		string rawValues = values.ToString();   // writes out as Csv when there are multiple.
 
-			return csvList
-				.TrimEnd(',')
-				.Split(',')
-				.AsEnumerable<string>()
-				.Select(s => s.Trim())
-				.ToList();
-		}
+		//		if (!rawValues.IsNullOrEmpty())
+		//			return (T)Convert.ChangeType(values.ToString(), typeof(T));
+		//	}
+		//	return default(T);
+		//}
 
-		public static bool IsNullOrWhitespace(string s)
-		{
-			return String.IsNullOrWhiteSpace(s);
-		}
+		//public static List<string> SplitCsv(string csvList, bool nullOrWhitespaceInputReturnsNull = false)
+		//{
+		//	if (string.IsNullOrWhiteSpace(csvList))
+		//		return nullOrWhitespaceInputReturnsNull ? null : new List<string>();
+
+		//	return csvList
+		//		.TrimEnd(',')
+		//		.Split(',')
+		//		.AsEnumerable<string>()
+		//		.Select(s => s.Trim())
+		//		.ToList();
+		//}
+
+		//public static bool IsNullOrWhitespace(string s)
+		//{
+		//	return String.IsNullOrWhiteSpace(s);
+		//}
 
 	}
 }

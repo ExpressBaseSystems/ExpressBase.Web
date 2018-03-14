@@ -40,10 +40,11 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public void test(string name, int appid)
+        public void test(string desc, int appid)
         {
             Dictionary<string, object> xx = new Dictionary<string, object>();
-            xx["AppName"] = name;
+            xx["AppName"] = "EXPRESSbase bot(Chatbot)";
+            xx["DescApp"] = desc;
             var ds = this.ServiceClient.Get(new CreateApplicationRequest { Colvalues = xx , appid = appid});
         }
     }

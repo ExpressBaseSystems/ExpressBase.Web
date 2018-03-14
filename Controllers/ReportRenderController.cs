@@ -22,6 +22,7 @@ using System.Web;
 using System.Text;
 using Newtonsoft.Json;
 using ExpressBase.Web2;
+using ExpressBase.Security;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -38,7 +39,9 @@ namespace ExpressBase.Web.Controllers
             ReportRenderResponse resultlist1 = null;
             try
             {
-                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid });
+                var x = string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc);
+                User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname= user.FullName});
                 resultlist1.StreamWrapper.Memorystream.Position = 0;
             }
             catch (Exception e)

@@ -62,7 +62,7 @@ namespace ExpressBase.Web.Components
             else{
                 ViewBag.Owner_Id = ViewBag.Uid;
                 User u = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
-                ViewBag.Owner_Name =u.FirstName;
+                ViewBag.Owner_Name =u.FullName;
                 ViewBag.Owner_Ts = DateTime.UtcNow;
             }
             return View();

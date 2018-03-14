@@ -245,7 +245,7 @@ namespace ExpressBase.Web.Controllers
 
 		public int UpdateAnonymousUserInfo(int itemid, string name, string email, string phone, string remarks)
 		{
-			UpdateAnonymousUserResponse temp = this.ServiceClient.Post<UpdateAnonymousUserResponse>(new UpdateAnonymousUserRequest { Id = itemid, FullName = name, EmailID = email, PhoneNumber = phone, Remarks = remarks });
+			UpdateAnonymousUserResponse temp = this.ServiceClient.Post<UpdateAnonymousUserResponse>(new UpdateAnonymousUserRequest { Id = itemid, FullName = name.IsNullOrEmpty() ? "":name, EmailID = email.IsNullOrEmpty()?"":email, PhoneNumber = phone.IsNullOrEmpty()?"":phone, Remarks = remarks.IsNullOrEmpty()?"":remarks });
 			return temp.RowAffected;
 		}
 

@@ -3,7 +3,7 @@
     this.ToggleId = params.ToggleId;
     this.fonts = EbFonts;
     this.fontObject = $.isEmptyObject(fontEditobj) ? { Font: "Times-Roman", Size: 14, Style: 0 , color: "#333333", Caps: false, Strikethrough: false, Underline: false } : fontEditobj ;
-
+    this.ItextFonts = ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'];
     this.fontStyle = {
         0: "normal",
         2: "italic",
@@ -13,10 +13,10 @@
 
     this.createModal = function () {
         var modalHTML = `<div class="fup" id="${this.ContainerId}fontEditor"><div class="imgup-bg">
-            <div class="imgup-Cont font-editor-contaner"><div class="modal-header">
+            <div class="imgup-Cont font-editor-contaner" style="height: 70VH;"><div class="modal-header">
             <button type="button" class="close" onclick="$('\#${this.ContainerId}fontEditor .imgup-bg\').hide(500);" >&times;</button>
             <h4 class="modal-title" style="display:inline;">Font Editor </h4></div>
-           <div class="modal-body">
+           <div class="modal-body" style="height: auto;">
             <div class="FE-section" id="${this.ContainerId}FE-section"></div>
             <div class="FE-sectionMprop" id="${this.ContainerId}FE-sectionMprop"></div>
             <div class="FE-preview form-group" style="margin-left: 20px">
@@ -74,11 +74,14 @@
 
     this.loadFontFamily = function () {
         var pos = 0;
-        $.each(this.fonts.items, function (idx, font) {
-            $('#googleFont')
-                .append(
-                $("<option tabindex='1' value='" + font.family + "'>" + font.family + "</option>"));
-        });
+        for (let i = 0; i < this.ItextFonts.length; i++) {
+            $('#googleFont').append($("<option tabindex='1' value='" + this.ItextFonts[i] + "'>" + this.ItextFonts[i] + "</option>"));
+        }      
+        //$.each(this.fonts.items, function (idx, font) {
+        //    $('#googleFont')
+        //        .append(
+        //        $("<option tabindex='1' value='" + font.family + "'>" + font.family + "</option>"));
+        //});
     }
 
     this.loadFontSize = function () {

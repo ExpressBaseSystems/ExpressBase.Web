@@ -22,7 +22,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.copyStack = null;
     this.copyORcut = null;
 
-    this.repExtern = new ReportExtended(this.objCollection);
+    this.repExtern = new ReportExtended(this);
     this.RbCommon = new RbCommon(this);
     this.pg = new Eb_PropertyGrid("propGrid");
 

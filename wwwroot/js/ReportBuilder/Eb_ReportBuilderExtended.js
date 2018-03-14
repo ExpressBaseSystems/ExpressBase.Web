@@ -1,10 +1,16 @@
-﻿var ReportExtended = function (collection) {
-    this.objCollection = collection;
+﻿var ReportExtended = function (Rpt_obj) {
+    this.Rpt = Rpt_obj;
     this.sideBar = $("#side-toolbar");
     this.pageContainer = $("#page-outer-cont");
     this.pGcontainer = $("#PGgrid-report");
     this.dpiX = $(".get_ScreenDpi_div").height();
     this.GroupSelect = [];
+
+    if (!this.Rpt.isNew) {
+        ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'].forEach(function (item) {
+            $("head").append($("<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=" + item +"''/>"));
+        });
+    }
 
     this.headerSecSplitter = function (array, Harr) {
         var HR = Harr.length > 0 ? Harr : [20, 20, 20, 20, 20];        
@@ -339,15 +345,10 @@
                 "font-weight": weight,
                 "text-transform": caps,
                 "color": _font.color
-            });
+            });            
         }
     };
-
-    this.RefreshFontControl = function (_object) {
-
-    };
-
-
+    
     this.minMaxToolbar();
     this.keyClickDoc();
 }

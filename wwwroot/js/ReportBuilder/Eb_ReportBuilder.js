@@ -7,7 +7,7 @@ var summaryFunc = {
     4: "Sum"
 }
 var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
-    const containment = ".page";
+    var containment = ".page";
     this.EbObject = dsobj;
     this.isNew = $.isEmptyObject(this.EbObject) ? true : false;
     this.objCollection = {};
@@ -142,10 +142,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         $('.headersections,.multiSplit').css("height", $('.page').height());
         $(".rulerleft").css("height", $('.page').height());
         this.repExtern.OndragOfSections();
-    }
+    };
 
     this.createHeaderBox = function () {
-        
         $("#PageContainer").append(`<div class='headersections' style='height:${this.height};'></div>
                                     <div class='multiSplit' id='multiSplit' style='height:${ this.height};'></div>
                                     <div class='headersections-report-layer' style='display:none;height:${this.height};'></div>`);
@@ -169,7 +168,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.pageSplitters = function () {                
         var j = 0;
-        this.HH = [];
+        this.HA = [];
         for (var sections in this.EbObjectSections) {
             $("#page").append(`<div class='${sections}s' eb-type='${sections}' id='${this.EbObjectSections[sections]}' 
             data_val='${j++}' style='width :100%;position: relative'> </div>`);
@@ -179,29 +178,32 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             else
                 this.appendSubSection(sections, this.EditObj[this.repExtern.mapCollectionToSection(sections)].$values); 
         }
-        this.repExtern.headerSecSplitter(this.sectionArray, this.HH);
+        this.repExtern.headerSecSplitter(this.sectionArray, this.HA);
         this.headerBox1_Split();
     };//add page sections
 
     this.appendSubSection = function (sections, subSecArray) {
-        var idArr = [], hArr = [];
+        var idArr = [], hArr = [], total=0;
         for (len = 0; len < subSecArray.length; len++) {
             var SubSec_obj = new EbObjects["Eb" + sections](this.EbObjectSections[sections] + len);
             $("#" + this.EbObjectSections[sections]).append(SubSec_obj.$Control.outerHTML());
             SubSec_obj.SectionHeight = "100%";
-            SubSec_obj.BackColor = "transparent";
+            SubSec_obj.BackColor = "#ffffff";
             if (!this.isNew) {                
                 this.repExtern.replaceProp(SubSec_obj, subSecArray[len]); 
                 idArr.push("#" + SubSec_obj.EbSid);
-                hArr.push(SubSec_obj.Height);               
+                hArr.push(SubSec_obj.Height);
+                total += parseInt(SubSec_obj.Height);
             }
             this.objCollection[this.EbObjectSections[sections] + len ] = SubSec_obj;
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
             this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.            
         }
-        if (!this.isNew) 
-            idArr.length > 1 ? this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr)) : null ;
+        if (!this.isNew) {
+            this.HA.push(total);
+            idArr.length > 1 ? this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr)) : null;
+        }
     };
 
     this.headerBox1_Split = function () {
@@ -214,13 +216,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.headerScaling = function () {
-        this.repExtern.multisplit();
-        this.repExtern.box();
+        this.repExtern.multisplit(this.HA);
+        this.repExtern.box(this.HA);
         this.appendMultisplitBox();        
     };
 
     this.appendMultisplitBox = function () {
         $("#page").children().not(".gutter,.pageReSizeHandle").each(this.appMultisplBoxEXE.bind(this));
+        this.repExtern.splitterOndragFn();
     };
 
     this.appMultisplBoxEXE = function (i, obj) {
@@ -233,10 +236,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             var focid = id.substring(0, id.indexOf('s')) + id.slice(-1);
             $("#" + id).attr("onclick", "$('#" + focid + "').focus();");
             idArr.push("#" + id);
-            hArr.push($(obj).height());
+            hArr.push($(obj).outerHeight());
         }
         if (!this.isNew)
-            this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr));
+            idArr.length > 1 ? this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr)):null;
     };
 
     this.splitButton = function () {
@@ -262,7 +265,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.$sec.children('.gutter').remove();
             var SubSec_obj = new EbObjects["Eb" + objType](id);
             this.$sec.append(SubSec_obj.$Control.outerHTML());
-            SubSec_obj.BackColor = "transparent";
+            SubSec_obj.BackColor = "#ffffff";
             this.objCollection[id] = SubSec_obj;
             this.RefreshControl(SubSec_obj);
             this.pg.addToDD(SubSec_obj);
@@ -728,12 +731,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.setpageSize = function (obj) {
         this.type = obj.PaperSize;
         if (obj.PaperSize !== 5) {
-            this.height = this.pages[this.type].height;
-            this.width = this.pages[this.type].width;
+            this.height = this.repExtern.convertPointToPixel(this.pages[this.type].height) + "px";
+            this.width = this.repExtern.convertPointToPixel(this.pages[this.type].width) + "px";
             $('.ruler,.rulerleft').empty();
             this.ruler();
             $(".headersections,.multiSplit").css({ "height": this.height });
-            $("#page").css({ "height": this.height, "width": this.width });
+            $("#page,#page-reportLayer").css({ "height": this.height, "width": this.width });
+            $(".headersections-report-layer").css({ "height": this.height});
+
         }
         else if (obj.PaperSize === 5) {
             if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
@@ -745,15 +750,23 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                 $("#page").css({ "height": this.height, "width": this.width });
             }
         }
+        this.repExtern.OndragOfSections();
+        this.repExtern.splitterOndragFn();
     };//page size change fn
 
     this.setpageMode = function (obj) {
+        //if ($("#page").css("display") === "none")
+        //    $(".headersections-report-layer,#page-reportLayer").hide();
+        //else
+        //    $(".page").show();
         [this.height, this.width] = [this.width, this.height];
-        this.repExtern.splitterOndragFn();
         $('.ruler,.rulerleft').empty();
         this.ruler();
         $(".headersections,.multiSplit").css({ "height": this.height });
-        $("#page").css({ "height": this.height, "width": this.width });
+        $("#page,#page-reportLayer").css({ "height": this.height, "width": this.width });      
+        $(".headersections-report-layer").css({ "height": this.height });
+        this.repExtern.OndragOfSections();
+        this.repExtern.splitterOndragFn();
     };//page layout lands/port
 
     this.setSplitArrayFSec = function (i, obj) {

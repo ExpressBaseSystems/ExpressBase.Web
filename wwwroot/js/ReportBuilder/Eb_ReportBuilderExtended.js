@@ -13,7 +13,7 @@
     }
 
     this.headerSecSplitter = function (array, Harr) {
-        var HR = Harr.length > 0 ? Harr : [20, 20, 20, 20, 20];        
+        var HR = Harr.length > 0 ? this.convertPixelToPercent(Harr) : [20, 20, 20, 20, 20];        
         Split(array, {
             direction: 'vertical',
             cursor: 'row-resize',
@@ -34,11 +34,12 @@
         this.splitterOndragFn();
     };
 
-    this.multisplit = function () {
+    this.multisplit = function (Harr) {
+        var HR = Harr.length > 0 ? this.convertPixelToPercent(Harr) : [20, 20, 20, 20, 20]; 
         Split(['#rptheadHbox', '#pgheadHbox', '#detailHbox', '#pgfooterHbox', '#rptfooterHbox'], {
             direction: 'vertical',
             cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
+            sizes: HR,
             minSize: 33,
             gutterSize: 5,
             onDrag: this.onDragMultiSplit.bind(this) 
@@ -54,11 +55,12 @@
         this.splitterOndragFn();
     };
 
-    this.box = function () {
+    this.box = function (Harr) {
+        var HR = Harr.length > 0 ? this.convertPixelToPercent(Harr) : [20, 20, 20, 20, 20]; 
         Split(['#box0', '#box1', '#box2', '#box3', '#box4'], {
             direction: 'vertical',
             cursor: 'row-resize',
-            sizes: [20, 20, 20, 20, 20],
+            sizes: HR,
             minSize: 33,
             gutterSize: 5,
             onDrag: this.ondragOfBox.bind(this)

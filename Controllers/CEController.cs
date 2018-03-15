@@ -19,6 +19,7 @@ using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using System.Reflection;
 using ExpressBase.Common.Structures;
+using ExpressBase.Common.Data;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -355,7 +356,7 @@ namespace ExpressBase.Web.Controllers
             var redis = this.Redis;
             var sscli = this.ServiceClient;
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
-            var paramsList = new List<Dictionary<string, object>>();
+            var paramsList = new List<Param>();
             if (parameter == null)
             {
                 paramsList = null;
@@ -365,9 +366,12 @@ namespace ExpressBase.Web.Controllers
                 Newtonsoft.Json.Linq.JArray ja = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(parameter);
                 foreach (Newtonsoft.Json.Linq.JToken jt in ja)
                 {
-                    var _dict = new Dictionary<string, object>();
+                    var _dict = new Param();
                     foreach (Newtonsoft.Json.Linq.JProperty jp in jt.Children())
-                        _dict.Add(jp.Name, jp.Value.ToString());
+                    {
+                        _dict.Name = jp.Name;
+                        _dict.Value = jp.Value.ToString();
+                    }
                     paramsList.Add(_dict);
                 }
 

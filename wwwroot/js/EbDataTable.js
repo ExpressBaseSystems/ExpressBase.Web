@@ -46,9 +46,9 @@ var Agginfo = function (col, deci) {
 };
 
 var filter_obj = function (colu, oper, valu) {
-    this.c = colu;
-    this.o = oper;
-    this.v = valu;
+    this.Column = colu;
+    this.Operator = oper;
+    this.Value = valu;
 };
 
 var coldef = function (d, t, v, w, n, ty, cls) {
@@ -515,20 +515,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             //o.dom = "<'col-md-12 noPadding'B>rt";
             o.ajax = {
-                url: this.ssurl + '/ds/data/' + this.dsid,
-                //url:"../dv/getData",
+                //url: this.ssurl + '/ds/data/' + this.dsid,
+                url: "../dv/getData",
                 type: 'POST',
                 //timeout: 180000,
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                },
+                //beforeSend: function (xhr) {
+                //    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+                //},
                 //crossDomain: true,
-                timeout: 180000,
-                async: true,
-                error: function (req, status, xhr) {
-                }
+                //timeout: 180000,
+                //async: true,
+                //error: function (req, status, xhr) {
+                //}
             };
         }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
@@ -550,10 +550,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         delete dq.columns; delete dq.order; delete dq.search;
         dq.RefId = this.EbObject.DataSourceRefId;
         var serachItems = this.repopulate_filter_arr();
-        dq.TFilters = JSON.stringify(serachItems);
+        dq.TFilters = serachItems ;
         if (this.filterValues === null || this.filterValues === undefined || this.filterValues.length === 0 || filterChanged)
             this.filterValues = this.getFilterValues("filter");
-        dq.Params = JSON.stringify(this.filterValues);
+        dq.Params =  this.filterValues ;
         //dq.rowData = this.rowData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
@@ -561,6 +561,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.filterFlag = true;
         }
 
+        //var x = new Object();
+        //x.xx = JSON.stringify(dq);
         return dq;
     };
 

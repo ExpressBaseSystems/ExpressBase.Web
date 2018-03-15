@@ -12,9 +12,9 @@ function getCookieVal(a) {
 }
 
 function fltr_obj(type, name, value) {
-    this.type = type;
-    this.name = name;
-    this.value = value;
+    this.Type = type;
+    this.Name = name;
+    this.Value = value;
 };
 
 

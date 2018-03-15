@@ -32,6 +32,7 @@
     this.IsDpndgCtrEdt = false;
     this.FB = null;
     this.FBResponse = {};
+    this.userDtls = {};
     this.ssurl = ssurl;
     this.userLoc = {};
 
@@ -91,8 +92,11 @@
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": null,
                 "wc": "bc",
-                "anon_email": email,
-                "anon_phno": phno
+
+                "anon_phno": phno,
+                "user_ip": this.userDtls.ip,
+                "user_browser": this.userDtls.browser,
+                "user_name": this.userDtls.name || null,
             }, function (result) {
                 this.hideTypingAnim();
                 if (result === null)
@@ -126,8 +130,10 @@
         this.postmenuClick(e);
         if (this.CurFormIdx === 0)
             this.login2FB();
-        else
+        else {
             this.collectContacts();
+
+        }
     }.bind(this);
 
     this.collectContacts = function () {
@@ -416,11 +422,10 @@
         }
         if (this.isAlreadylogined) {
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
-
             /////////////////////////////////////////////////
-            setTimeout(function () {
-                $(".btn-box").find("[idx=0]").click();
-            }.bind(this), this.typeDelay * 2 + 100);
+            //setTimeout(function () {
+            //    $(".btn-box").find("[idx=0]").click();
+            //}.bind(this), this.typeDelay * 2 + 100);
         }
         else {
             this.msgFromBot(`Hello ${this.FBResponse.name}, ${greeting}`);
@@ -877,7 +882,10 @@
                 "socialId": this.FBResponse.id,
                 "wc": "bc",
                 "anon_email": null,
-                "anon_phno": null
+                "anon_phno": null,
+                "user_ip": this.userDtls.ip,
+                "user_browser": this.userDtls.browser,
+                "user_name": this.userDtls.name || null,
             }, function (result) {
                 this.hideTypingAnim();
                 if (result === null)
@@ -898,6 +906,7 @@
     this.FBLogined = function () {
         this.FB.api('/me?fields=id,name,picture', function (response) {
             this.FBResponse = response;
+            chatBotObj.userDtls.name = this.FBResponse.name;
             this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
             this.greetings();
         }.bind(this));

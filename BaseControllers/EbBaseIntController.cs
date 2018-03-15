@@ -56,17 +56,20 @@ namespace ExpressBase.Web.Controllers
 
                 this.ServiceClient.BearerToken = bToken;
                 this.ServiceClient.RefreshToken = rToken;
+                this.ServiceClient.Headers.Add("rToken", rToken);
 
                 if (this.MqClient != null)
                 {
                     this.MqClient.BearerToken = bToken;
                     this.MqClient.RefreshToken = rToken;
+                    this.MqClient.Headers.Add("rToken", rToken);
                 }
 
                 if(this.FileClient != null)
                 {
                     this.FileClient.BearerToken = bToken;
                     this.FileClient.RefreshToken = rToken;
+                    this.FileClient.Headers.Add("rToken", rToken);
                 }
 
                 var controller = context.Controller as Controller;
@@ -99,6 +102,8 @@ namespace ExpressBase.Web.Controllers
             if (ControllerContext.ActionDescriptor.ActionName != "Logout")
             {
                 if (!string.IsNullOrEmpty(this.ServiceClient.BearerToken))
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                if (!string.IsNullOrEmpty(this.FileClient.BearerToken))
                     Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
             }
 

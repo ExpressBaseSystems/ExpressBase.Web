@@ -1,11 +1,52 @@
-﻿function getToken() {
+﻿function beforeSendXhr(xhr) {
     var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
-    return b ? b.pop() : '';
+    var tok = b ? b.pop() : '';
+    if (isJwtTokExpired(tok)) {
+        var x = new XMLHttpRequest();
+        x.open("POST", "http://localhost:8000/access-token", false);
+        x.send({ refreshtoken: getrToken() });
+        if (x.status === 200)
+            tok = JSON.parse(x.responseText).accessToken;
+    }
+    xhr.setRequestHeader("Authorization", "Bearer " + tok);
 }
+
+function getToken() {
+    var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
+    var tok = b ? b.pop() : '';
+    if (isJwtTokExpired(tok)) {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8000/access-token",
+            data: { refreshtoken: getrToken() },
+            success: function (d) {
+                document.cookie = "bToken=" + d.accessToken
+            }
+        });
+    }
+    else
+        return tok;
+}
+
+function parseJwt(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace('-', '+').replace('_', '/');
+    return JSON.parse(window.atob(base64));
+}
+
+function isJwtTokExpired(token) {
+    return (parseJwt(token).exp < Date.now() / 1000);
+}
+
 function getrToken() {
     var b = document.cookie.match('(^|;)\\s*rToken\\s*=\\s*([^;]+)');
     return b ? b.pop() : '';
 }
+
+function getTok() {
+    return getCookieVal("bToken");
+}
+
 function getCookieVal(a) {
     var b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
     return b ? b.pop() : '';
@@ -41,7 +82,7 @@ function fltr_obj(type, name, value) {
 
 Array.prototype.contains = function (element) {
     for (var i = 0; i < this.length; i++) {
-        if (this[i] == element) {
+        if (this[i] === element) {
             return true;
         }
     }
@@ -63,7 +104,7 @@ function isPrintable(e) {
 
     var valid = 
         (keycode > 47 && keycode < 58)   || // number keys
-        keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
+        keycode === 32 || keycode === 13   || // spacebar & return key(s) (if you want to allow carriage returns)
         (keycode > 64 && keycode < 91)   || // letter keys
         (keycode > 95 && keycode < 112)  || // numpad keys
         (keycode > 185 && keycode < 193) || // ;=,-./` (in order)

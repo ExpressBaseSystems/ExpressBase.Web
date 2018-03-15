@@ -259,8 +259,8 @@
                                 <button class="form-control" title="Generate API Key">Generate JWT Key</button>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group" id="divStatus">
+                        <div class="col-md-2" id="" >
+                            <div class="form-group" id="divStatus" style="display: none;">
                                 <label style="font-family: open sans; font-weight: 300;">User Status</label>
                                 <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="0" checked>Active</label>
                                 <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="1">Suspend</label>
@@ -343,7 +343,7 @@
                 </div>
             </div>
             <div class="modal-footer" style="">
-                <button id="btnUpdatePwd" type="button" class="btn btn-default" style="">Update</button>
+                <button id="btnUpdatePwd" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Update</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>

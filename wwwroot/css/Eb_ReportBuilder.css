@@ -1,4 +1,9 @@
-﻿/*side menuBar*/
+﻿.get_ScreenDpi_div {
+    height: 1in;
+    width: 1in;
+    display:none;
+}
+/*side menuBar*/
 .tool-box-items {
     margin-left: 0px !important;
     margin-top: 2px !important;
@@ -775,4 +780,42 @@
     background: #336699;
     color: white;
     outline: none;
+}
+.track_line_vert1 {
+    position: fixed;
+    height: 100%;
+    width: 1px;
+    border-left: 2px dotted #55f;
+    z-index: 150;
+    margin-left: 78px;
+}
+.track_line_vert2 {
+    position: fixed;
+    height: 100%;
+    width: 1px;
+    border-left: 2px dotted #55f;
+    z-index: 150;
+    right:calc(16.6666% + 10px);
+}
+._head_vert1 {
+    width: 0;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #5555ff;
+    margin-left: -11px;
+    margin-top: -7px;
+    cursor:pointer;
+}
+._head_vert2 {
+    width: 0;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #5555ff;
+    margin-left: -11px;
+    margin-top: -7px;
+    cursor: pointer;
 }

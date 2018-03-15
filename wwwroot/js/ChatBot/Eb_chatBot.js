@@ -32,6 +32,7 @@
     this.IsDpndgCtrEdt = false;
     this.FB = null;
     this.FBResponse = {};
+    this.userDtls = {};
     this.ssurl = ssurl;
     this.userLoc = {};
 
@@ -71,9 +72,9 @@
         $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
-        $('body').confirmation({
-            selector: '.eb-chatBox'
-        });
+        //$('body').confirmation({
+        //    selector: '.eb-chatBox'
+        //});
     };
 
     this.contactSubmit = function (e) {
@@ -91,8 +92,11 @@
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": null,
                 "wc": "bc",
-                "anon_email": email,
-                "anon_phno": phno
+
+                "anon_phno": phno,
+                "user_ip": this.userDtls.ip,
+                "user_browser": this.userDtls.browser,
+                "user_name": this.userDtls.name || null,
             }, function (result) {
                 this.hideTypingAnim();
                 if (result === null)
@@ -126,8 +130,10 @@
         this.postmenuClick(e);
         if (this.CurFormIdx === 0)
             this.login2FB();
-        else
+        else {
             this.collectContacts();
+
+        }
     }.bind(this);
 
     this.collectContacts = function () {
@@ -416,11 +422,10 @@
         }
         if (this.isAlreadylogined) {
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
-
             /////////////////////////////////////////////////
-            setTimeout(function () {
-                $(".btn-box").find("[idx=0]").click();
-            }.bind(this), this.typeDelay * 2 + 100);
+            //setTimeout(function () {
+            //    $(".btn-box").find("[idx=0]").click();
+            //}.bind(this), this.typeDelay * 2 + 100);
         }
         else {
             this.msgFromBot(`Hello ${this.FBResponse.name}, ${greeting}`);
@@ -642,20 +647,18 @@
 
     this.initEDCP = function () {
         this.$DPEBtn = $(`[name=ctrledit]`).filter(`[idx=${this.__idx}]`).closest(".msg-wraper-user");
-        //this.$DPEBtn.confirmation('destroy')
         this.$DPEBtn.confirmation({
             placement: 'bottom',
             title: "Edit this field and restart from related point !",
             btnOkLabel: " Edit ",
             btnOkClass: "btn btn-sm btn-warning",
-            //btnCancelClass: "btn-xs btn-primary",
             btnOkIcon: "glyphicon glyphicon-pencil",
             btnCancelIcon:"glyphicon glyphicon-remove-circle",
             onConfirm: this.editDpndCtrl,
-            onCancel: function () {
-                alert("cancel");
-                //this.$DPEBtn.confirmation('destroy');
-            }.bind(this)
+            //onCancel: function () {
+            //    alert("cancel");
+            //    //this.$DPEBtn.confirmation('destroy');
+            //}.bind(this)
         }).confirmation('show');
     }.bind(this);
 
@@ -879,7 +882,10 @@
                 "socialId": this.FBResponse.id,
                 "wc": "bc",
                 "anon_email": null,
-                "anon_phno": null
+                "anon_phno": null,
+                "user_ip": this.userDtls.ip,
+                "user_browser": this.userDtls.browser,
+                "user_name": this.userDtls.name || null,
             }, function (result) {
                 this.hideTypingAnim();
                 if (result === null)
@@ -900,6 +906,7 @@
     this.FBLogined = function () {
         this.FB.api('/me?fields=id,name,picture', function (response) {
             this.FBResponse = response;
+            chatBotObj.userDtls.name = this.FBResponse.name;
             this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
             this.greetings();
         }.bind(this));

@@ -3,10 +3,11 @@
     flex-direction: column;
     position: fixed;
     right: 24px;
-    bottom: 10px;
+    bottom: 8px;
     width: 28%;
     height: 90%;
-    border-radius: 10px;
+    overflow:hidden;
+    border-radius: 7px;
     background-color: white;
     min-width: 300px;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
@@ -25,7 +26,7 @@
     visibility: hidden;
     width: 100%;
     flex: 1 1 auto;
-    border-radius: 0px 0px 3.5px 3.5px;
+    /*border-radius: 0px 0px 3.5px 3.5px;*/
 }
 /*amal*/
 /*.ebbot_iframe {
@@ -60,7 +61,7 @@
         height: 100%;
     }
 
-    .ebbot_iframe {
+    .eb_iframecont {
         border-radius: 0px;
     }
 }
@@ -84,7 +85,7 @@
 
 .eb-chat-head {
     background-color: var( --ebbotThemeColor );
-    border-radius: 3px 3px 0px 0px;
+    /*border-radius: 3px 3px 0px 0px;*/
     color: white;
     padding: 5px 15px;
 }

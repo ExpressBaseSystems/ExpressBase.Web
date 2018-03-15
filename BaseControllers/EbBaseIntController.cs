@@ -104,7 +104,7 @@ namespace ExpressBase.Web.Controllers
                 if (!string.IsNullOrEmpty(this.ServiceClient.BearerToken))
                     Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
                 if (!string.IsNullOrEmpty(this.FileClient.BearerToken))
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.FileClient.BearerToken, new CookieOptions());
             }
 
             base.OnActionExecuted(context);

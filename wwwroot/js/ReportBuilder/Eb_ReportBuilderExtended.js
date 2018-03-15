@@ -8,7 +8,7 @@
 
     if (!this.Rpt.isNew) {
         ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'].forEach(function (item) {
-            $("head").append($("<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=" + item +"''/>"));
+            $("head").append($("<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family='" + item +"'/>"));
         });
     }
 

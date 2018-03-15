@@ -146,6 +146,8 @@
         </div>
         <div class="col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-lg-offset-2 col-md-offset-2 page-outer-cont" id="page-outer-cont">
             <div class="page-outer-container">
+                <div class="tracker_drag track_line_vert1"><div class="_head_vert1"></div></div>
+                <div class="tracker_drag track_line_vert2"><div class="_head_vert2"></div></div>
                 <div class="ruler-top">
                     <div class="title">
                         <select class="form-control rulerUnit" id="rulerUnit">
@@ -259,6 +261,9 @@
         }
             $("#Rptbgimg").change(function () {
                 setBackgroud(this);
-            });
+        });
+
+        $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container" });
+            
     });
 </script>

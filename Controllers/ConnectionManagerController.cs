@@ -7,18 +7,33 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using Newtonsoft.Json;
+using ExpressBase.Common.ServiceClients;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
     public class ConnectionManagerController : EbBaseIntController
     {
-        public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
+        public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _mqc, _sfc)
+        {
+        }
 
         [HttpGet]
         public IActionResult RefreshConnections()
         {
-            this.ServiceClient.Post<bool>(new RefreshSolutionConnectionsRequest());
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult RefreshConnections(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+
+            this.MqClient.Post<bool>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
+            {
+                SolutionId = req["solutionId"]
+            });
+
             return View();
         }
 

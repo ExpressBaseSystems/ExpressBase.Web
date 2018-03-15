@@ -17,6 +17,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.RefId = refid;
     this.height = null;
     this.width = null;
+    this.designHeight = null;
     this.type = 2;
     this.rulertype = "cm";
     this.copyStack = null;
@@ -104,7 +105,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             $ruler.append($tick);
         }
 
-        var $rulerleft = $('.rulerleft').css({ "height": this.height });
+        var $rulerleft = $('.rulerleft').css({ "height": this.designHeight });
         for (i = 0, step = 0; i < $rulerleft.innerHeight() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
             $tick = $('<div>');
             if (step === 0) {
@@ -127,7 +128,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.createPage = function () {
         this.createHeaderBox();
-        $("#PageContainer").append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.height}'></div>
+        $("#PageContainer").append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.designHeight}'></div>
                                     <div class='page-reportLayer' id='page-reportLayer' style='display:none;position:relative;width:${this.width};height:${this.height}'></div>`);
         $(".page").resizable({
             handles: "s",
@@ -145,8 +146,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.createHeaderBox = function () {
-        $("#PageContainer").append(`<div class='headersections' style='height:${this.height};'></div>
-                                    <div class='multiSplit' id='multiSplit' style='height:${ this.height};'></div>
+        $("#PageContainer").append(`<div class='headersections' style='height:${this.designHeight};'></div>
+                                    <div class='multiSplit' id='multiSplit' style='height:${ this.designHeight};'></div>
                                     <div class='headersections-report-layer' style='display:none;height:${this.height};'></div>`);
         for (var i = 0; i < 5; i++) {
             $("#multiSplit").append(`<div class='multiSplitHbox' data_val='${i}' eb-type='MultiSplitBox' id='box${i}' style='width: 100%;'></div>`);
@@ -760,11 +761,13 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         //else
         //    $(".page").show();
         [this.height, this.width] = [this.width, this.height];
+        this.designHeight = this.height;
         $('.ruler,.rulerleft').empty();
         this.ruler();
         $(".headersections,.multiSplit").css({ "height": this.height });
-        $("#page,#page-reportLayer").css({ "height": this.height, "width": this.width });      
-        $(".headersections-report-layer").css({ "height": this.height });
+        $("#page").css({ "height": this.height, "width": this.width });  
+        $("#page-reportLayer").css({ "height": this.designHeight, "width": this.width });
+        $(".headersections-report-layer").css({ "height": this.designHeight });
         this.repExtern.OndragOfSections();
         this.repExtern.splitterOndragFn();
     };//page layout lands/port
@@ -885,6 +888,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.EbObject = new EbObjects["EbReport"]("Report1");
         this.height = this.repExtern.convertPointToPixel(this.pages[this.type].height) + "px";
         this.width = this.repExtern.convertPointToPixel(this.pages[this.type].width) + "px";
+        this.designHeight = this.height;
         this.EbObject.PaperSize = this.type;
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
         $('#PageContainer,.ruler,.rulerleft').empty();
@@ -897,8 +901,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.EditObj = Object.assign({}, this.EbObject);
         this.EbObject = new EbObjects["EbReport"](this.EditObj.Name);
         this.type = this.EditObj.PaperSize;
-        this.height = this.repExtern.convertPointToPixel(this.EditObj.DesignPageHeight) + "px";
+        this.height = this.repExtern.convertPointToPixel(this.EditObj.HeightPt) + "px";
         this.width = this.repExtern.convertPointToPixel(this.EditObj.WidthPt) + "px";
+        this.designHeight = this.repExtern.convertPointToPixel(this.EditObj.DesignPageHeight) + "px";
         this.repExtern.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
         $('#PageContainer,.ruler,.rulerleft').empty();
@@ -912,8 +917,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (this.EbObject === null || this.EbObject === "undefined")
             this.newReport();
         else
-            this.editReport();
-
+            this.editReport();       
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
         $("#reportLayer").on("click", function (e) {
             $(e.target).closest("div").toggleClass("layeractive");

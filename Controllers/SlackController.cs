@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Controllers
 
             string jsonToken = sToken.Replace("\\", string.Empty);
             SlackJson slackToken = JsonConvert.DeserializeObject<SlackJson>(jsonToken);
-            bool res = this.ServiceClient.Post<bool>(new SlackAuthRequest { IsNew = true, SlackJson = slackToken });
+            bool res = this.MqClient.Post<bool>(new SlackAuthAsyncRequest { IsNew = true, SlackJson = slackToken });
 
         }
 
@@ -73,7 +73,7 @@ namespace ExpressBase.Web.Controllers
                 Text = req["Text"],
             };
 
-            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 0 });
+            this.ServiceClient.Post(new SlackPostAsyncRequest { Payload = payload, PostType = 0 });
             return View();
         }
         
@@ -104,7 +104,7 @@ namespace ExpressBase.Web.Controllers
                 }
             };
 
-            this.ServiceClient.Post(new SlackPostRequest { Payload = payload, PostType = 1 });
+            this.ServiceClient.Post(new SlackPostAsyncRequest { Payload = payload, PostType = 1 });
 
             return View();
         }

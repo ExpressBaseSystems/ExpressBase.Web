@@ -16,7 +16,7 @@ namespace ExpressBase.Web2
                     options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);
                 })
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseUrls(urls: "http://*:5000/")
+                .UseUrls(urls: "http://*:41500/")
                 .UseStartup<Startup>()
                 .Build();
 

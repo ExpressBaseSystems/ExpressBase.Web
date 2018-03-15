@@ -62,6 +62,11 @@ namespace ExpressBase.Web2
                 return new EbMqClient();
             });
 
+            services.AddScoped<IEbStaticFileClient, EbStaticFileClient>(serviceProvider =>
+            {
+                return new EbStaticFileClient();
+            });
+
             StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
 
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);

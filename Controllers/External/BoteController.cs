@@ -46,7 +46,7 @@ namespace ExpressBase.Web.Controllers
             byte[] myFileContent;
             try
             {
-                UploadImageMqRequest uploadImageRequest = new UploadImageMqRequest();
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new FileMeta();
                 myFileContent = System.Convert.FromBase64String(base64);
                 uploadImageRequest.ImageByte = myFileContent;

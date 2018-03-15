@@ -1,10 +1,80 @@
-﻿<!DOCTYPE html>
-
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>RefreshConnections</title>
+    <script src="~/js/ss-utils.js"></script>
+    <script src="~/js/eventsource.min.js"></script>
+    <script>
+        $(document).on('ready', function () { });
+        //document.cookie = "ss-tok=" + getToken();
+        var source = new EventSourcePolyfill('@ViewBag.ServerEventUrl/event-stream?channels=connection-update&t=' + new Date().getTime(), {
+            headers: {
+                'Authorization': 'Bearer ' + getrToken(),
+            }
+        }); //disable cache
+        source.addEventListener('error', function (e) {
+            console.log(JSON.stringify(e));
+            addEntry({ msg: "ERROR!", cls: "error" });
+        }, false);
+
+        var $txtMsg = $("#txtMsg").focus(), usersMap = {}, activeSub = null;
+        $.ss.eventReceivers = { "document": document };
+
+        $(source).handleServerEvents({
+            handlers: {
+                onConnect: function (u) {
+                    addEntry({ msg: "CONNECTED!", cls: "open" });
+                },
+                onHeartbeat: function (msg, e) { if (console) console.log("onHeartbeat", msg, e); },
+                OnConnectionUpdateSuccess: function (m, e) {
+                    alert((JSON.stringify(m)));
+                },
+                stopListening: function () { $.ss.eventSource.close(); }
+            }
+        });
+        $(document).bindHandlers({
+            announce: function (msg) {
+                $("#announce").html(msg).fadeIn('fast');
+                setTimeout(function () { $("#announce").fadeOut('slow'); }, 2000);
+            },
+            toggle: function () {
+                $(this).toggle();
+            },
+            removeReceiver: function (name) {
+                delete $.ss.eventReceivers[name];
+            },
+            addReceiver: function (name) {
+                $.ss.eventReceivers[name] = window[name];
+            },
+            startListening: function () { $.ss.reconnectServerEventsAuth(); }
+        }).on('customEvent', function (e, msg, msgEvent) {
+            addEntry({ msg: "[event " + e.type + " message: " + msg + "]", cls: "event", channel: msgEvent.channel });
+        });
+
+        function addEntry(o) {
+            console.log("addEntry", o);
+        }
+
+        function createUser(user) {
+            return "";
+        }
+
+        var msgHistory = [], historyIndex = -1;
+    </script>
 </head>
 <body>
+    @using (Html.BeginForm("RefreshConnections", "ConnectionManager", FormMethod.Post))
+    {
+        <div class="form-group">
+            <input type="text" class="form-control" id="solutionId" name="solutionId" placeholder=@ViewBag.tenantid>
+        </div>
+        <div id="submit" class="form-group">
+            <button type="submit" class="btn btn-primary pull-right">Submit</button>
+        </div>
+    }
 </body>
 </html>

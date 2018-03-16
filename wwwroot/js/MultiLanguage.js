@@ -2,6 +2,7 @@
 
     this.ContID = settings.ContainerId;
     this.ToggleBtnId = settings.ToggleBtnId;
+    this.txtForPasteKey = settings.KeyTxtId;
     
     this.Offset = 0;
     this.resultCount = 0;
@@ -152,7 +153,8 @@
         this.txtPageNumber.on('keyup', this.keyUpActionOnTxtPageNumber.bind(this));
         this.addnewkeylink.on('click', this.onclickaddnewkeylink.bind(this));
         this.updatekeylink.on('click', this.onclickupdatekeylink.bind(this));
-        $("#btnaddgo_" + this.ContID).on('click', this.onclickaddgo.bind(this));
+        this.btnselect.on('click', this.onclickbtnselect.bind(this));
+        this.btnaddgo.on('click', this.onclickaddgo.bind(this));
         this.btnupdate.on('click', this.onclickbtnupdate.bind(this));
         this.btnadd.on('click', this.onclickbtnadd.bind(this));
         this.ulLiPagination.on('click', this.onclickUlLiPagination.bind(this));
@@ -353,6 +355,11 @@
             });
         }.bind(this));
         $('.nav-tabs a[href="#menuadd_' + this.ContID +'"]').tab('show');
+    }
+
+    this.onclickbtnselect = function () {
+        $("#" + this.txtForPasteKey).val(this.txtsearch.attr("data-value"));
+        $('#ML_Modal_' + this.ContID + ' .imgup-bg').toggle(350);
     }
 
     this.loadlang = function () {

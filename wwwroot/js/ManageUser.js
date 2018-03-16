@@ -119,7 +119,7 @@
             this.txtName.val(this.userinfo["FullName"]);
             this.txtEmail.val(this.userinfo["EmailID"]);
             this.txtPhPrimary.val(this.userinfo["PhoneNumber"]);
-            if (this.userinfo["SocialID"].trim() === "") {
+            if (this.userinfo["SocialID"].trim() !== "") {
                 $("#lblFbId").attr("data-id", this.userinfo["SocialID"]);
                 $("#userFbLink").text((this.userinfo["FullName"].trim().length > 0) ? this.userinfo["FullName"].trim() : "facebook");
             }
@@ -479,7 +479,7 @@
             alert("Validation Failed. Check all Fields");
             return;
         }
-        if (this.pwdPassword.val().length < 8) {
+        if (this.pwdPassword.val().length < 8 && this.whichMode === 1 && this.itemId < 2) {
             alert("Password Too Short");
             return;
         }            
@@ -487,11 +487,7 @@
         this.btnCreateUser.attr("disabled", "true");
 
         var oldstus = (this.itemId > 1) ? parseInt(this.userinfo["statusid"]) : -1;
-        var newstus = 0;
-        if (!this.chkboxActive.prop("checked"))
-            newstus = 1;
-        if (this.chkboxTerminate.prop("checked"))
-            newstus = 2;
+        var newstus = $("#divStatus input:radio[name='status']:checked").val();
         if (oldstus === newstus)
             newstus = oldstus + 100;//Status not changed, so adding 100 to oldstus just to infirm that no change in stus
 
@@ -514,7 +510,7 @@
         dict["usergroups"] = this.userGroupTile.getItemIds();
         dict["statusid"] = newstus;
         dict["hide"] = this.chkboxHide.prop("checked") ? "yes" : "no";
-        dict["preference"] = JSON.stringify({Locale : this.selectLocale.val(), TimeZone : this.selectTimeZone.val()});
+        dict["preference"] = JSON.stringify({ Locale: this.selectLocale.val(), TimeZone: this.selectTimeZone.val() });
 
         $.ajax({
             type: "POST",

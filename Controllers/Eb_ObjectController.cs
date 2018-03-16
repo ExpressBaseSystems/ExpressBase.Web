@@ -130,6 +130,16 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+            else if (type.Equals(EbObjectTypes.FilterDialog))
+            {
+                var typeArray = typeof(EbFilterDialog).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.FilterDialog, typeof(EbFilterDialog));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(this.Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
 
             ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;

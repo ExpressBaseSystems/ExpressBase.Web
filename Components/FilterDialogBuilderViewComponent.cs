@@ -8,8 +8,13 @@ namespace ExpressBase.Web.Components
 {
     public class FilterDialogBuilderViewComponent:ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl)
         {
+            ViewBag.dsObj = dsobj;
+            ViewBag.tabnum = tabnum;
+            ViewBag.ObjType = type;
+            ViewBag.Refid = refid;
+            ViewBag.ssurl = ssurl;
             return View();
         }
     }

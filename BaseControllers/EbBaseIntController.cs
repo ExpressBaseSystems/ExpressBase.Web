@@ -22,7 +22,7 @@ namespace ExpressBase.Web.Controllers
 
         public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public EbBaseIntController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc){ }
+        public EbBaseIntController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc) { }
 
         public EbBaseIntController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 
@@ -65,7 +65,7 @@ namespace ExpressBase.Web.Controllers
                     this.MqClient.Headers.Add("rToken", rToken);
                 }
 
-                if(this.FileClient != null)
+                if (this.FileClient != null)
                 {
                     this.FileClient.BearerToken = bToken;
                     this.FileClient.RefreshToken = rToken;
@@ -101,10 +101,12 @@ namespace ExpressBase.Web.Controllers
         {
             if (ControllerContext.ActionDescriptor.ActionName != "Logout")
             {
-                if (!string.IsNullOrEmpty(this.ServiceClient.BearerToken))
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
-                if (!string.IsNullOrEmpty(this.FileClient.BearerToken))
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.FileClient.BearerToken, new CookieOptions());
+                if (this.ServiceClient != null)
+                    if (!string.IsNullOrEmpty(this.ServiceClient.BearerToken))
+                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                if (this.FileClient != null)
+                    if (!string.IsNullOrEmpty(this.FileClient.BearerToken))
+                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.FileClient.BearerToken, new CookieOptions());
             }
 
             base.OnActionExecuted(context);

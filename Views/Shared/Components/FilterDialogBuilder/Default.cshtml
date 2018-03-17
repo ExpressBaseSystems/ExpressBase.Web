@@ -4,7 +4,7 @@
 @using ExpressBase.Common.Objects.Attributes;
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script type="text/javascript" src="~/js/"></script>
+<script type="text/javascript" src="~/js/FilterDialogBuilder/Eb_FilterFormBuilder.js"></script>
 <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css">
 <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
@@ -43,7 +43,7 @@
 
 
         <div class="dev-chat-cont">
-            <div class="eb-chat-head"><span>EXPESSbase Bot <i class="fa fa-comment pull-right" aria-hidden="true"></i></span></div>
+            <div class="eb-chat-head"><span>Filter Dialog <i class="fa fa-comment pull-right" aria-hidden="true"></i></span></div>
             <div id="form-buider-form" eb-type="@_builderType" tabindex="1" class="eb-chatBox-dev">
                 @Html.Raw(@ViewBag.html)
                 @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
@@ -72,7 +72,7 @@
     var editModeFormObj = null;
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
-     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new BotFormBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new FilterformBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
     // if edit mode
     @*if(objid){
         var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));

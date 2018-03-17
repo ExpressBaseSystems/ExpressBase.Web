@@ -55,6 +55,8 @@
             this.initStrE();
         else if (this.editor === 18)
             this.initCSE();
+        else if (this.editor === 21)
+            this.initMLE();
 
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
@@ -69,6 +71,15 @@
     };
 
     this.initFE = function (e) {
+        var contId = "fs_" + this.PGobj.wraperId;
+        $(`#${contId}fontEditor`).remove();
+        this.FontSelObj = new FontEditor({
+            ContainerId: contId,
+            ToggleId: e.target.getAttribute("name")
+        }, this.PGobj.PropsObj[this.PGobj.CurProp]);
+    };
+
+    this.initMLE = function (e) {
         var contId = "fs_" + this.PGobj.wraperId;
         $(`#${contId}fontEditor`).remove();
         this.FontSelObj = new FontEditor({

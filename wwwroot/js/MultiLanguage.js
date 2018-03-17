@@ -1,4 +1,4 @@
-﻿var MultiLanguageObj = function (settings) {
+﻿var MultiLanguageKeySelector = function (settings, curKey) {
 
     this.ContID = settings.ContainerId;
     this.ToggleBtnId = settings.ToggleBtnId;
@@ -11,33 +11,27 @@
     this.currentWindow = 1;
     this.pageSize = 50;//const
     this.windowSize = 5;//const
+    this.initKey = curKey;
     
     this.init = function () {
         this.createModal();
         this.initmodal();
-        $('#' + this.ToggleBtnId).off('click').on('click', function () {
-            $('#ML_Modal_' + this.ContID + ' .imgup-bg').toggle(350);
-            //this.initmodal();
-        }.bind(this));
+        $('#ML_Modal_' + this.ContID + ' .imgup-bg').show(350);
+        this.getKeySuggestion(true);
     };
 
     this.get = function () {
         if (this.txtsearch.val().trim() === this.txtsearch.attr("data-value")) {
-            return this.txtsearch.attr("data-object");
+            return this.txtsearch.attr("data-value");
         }
         return null;
-    }
-
-    this.set = function (txt) {
-        this.txtsearch.val(txt);
-        this.getKeySuggestion(true);
     }
 
     this.createModal = function () {
         var modalHTML = `
 <div class="fup" id="ML_Modal_${this.ContID}">
     <div class="imgup-bg">
-        <div class="imgup-Cont" style="width:1000px">
+        <div class="imgup-Cont">
             <div class="modal-header">
                 <button type="button" class="close" onclick="$('#ML_Modal_${this.ContID} .imgup-bg').hide(500);" >&times;</button>
                 <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Multi Language Key Settings.</h4> </div>
@@ -52,7 +46,7 @@
                         <div class="row" style="margin-top:20px">
                             <div class="col-md-5">
                                 <div class="input-group ">
-                                    <input id="txtsearch_${this.ContID}" title="Type to Search" type="text" data-value="" data-id="" data-object="" class="form-control" placeholder="Search">
+                                    <input id="txtsearch_${this.ContID}" value ="${this.initKey || ""}"title="Type to Search" type="text" data-value="" data-id="" data-object="" class="form-control" placeholder="Search">
                                     <span class="input-group-btn">
                                         <button id="btnsearch_${this.ContID}" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
                                     </span>
@@ -116,13 +110,15 @@
                 <div class="modal-footer-body">
                     <button id="btnadd_${this.ContID}" type="button" class="btn btn-default" style="">Add</button>
                     <button id="btnupdate_${this.ContID}" type="button" class="btn btn-default" style="">Update</button>
-                    <button id="btnselect_${this.ContID}" type="button" class="btn btn-default" style="">Select</button>
+
+                    <button type="button" name="CXE_OK" id="${this.ContID}_close" class="btn"  onclick="$('#ML_Modal_${this.ContID} .imgup-bg').hide(500);">OK</button>
+
                     <button type="button" class="btn btn-default" onclick="$('#ML_Modal_${this.ContID} .imgup-bg').hide(500);">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
-</div>;`
+</div>`;
 
         $("#" + this.ContID).append(modalHTML);
 
@@ -140,7 +136,7 @@
         this.searchtext = "";
         this.addnewkeylink = $("#addnewkeylink_" + this.ContID);
         this.updatekeylink = $("#updatekeylink_" + this.ContID);
-        this.btnselect = $("#btnselect_" + this.ContID);
+        this.btnselect = $(`#${this.ContID}_close`);
         this.btnadd = $("#btnadd_" + this.ContID);
         this.btnupdate = $("#btnupdate_" + this.ContID);
         this.btnaddgo = $("#btnaddgo_" + this.ContID);
@@ -354,13 +350,12 @@
                 }
             });
         }.bind(this));
-        $('.nav-tabs a[href="#menuadd_' + this.ContID +'"]').tab('show');
-    }
+        $('.nav-tabs a[href="#menuadd_' + this.ContID + '"]').tab('show');
+    };
 
     this.onclickbtnselect = function () {
         $("#" + this.txtForPasteKey).val(this.txtsearch.attr("data-value"));
-        $('#ML_Modal_' + this.ContID + ' .imgup-bg').toggle(350);
-    }
+    };
 
     this.loadlang = function () {
         this.divtable.find("tbody").children().remove();

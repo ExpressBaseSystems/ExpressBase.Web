@@ -351,7 +351,8 @@
             slideRight('.form-save-wraper', '#form-buider-propGrid');
         }
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-            RefreshControl(PropsObj);
+            if (PropsObj)
+                RefreshControl(PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm");
         }.bind(this);
 
 

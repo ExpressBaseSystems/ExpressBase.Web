@@ -10,7 +10,7 @@
 }
 
 .formB-box {
-    float: left;
+    display:inline-block;
     background-color: white;
     padding: 0px;
     width: auto;
@@ -37,7 +37,7 @@
 
 .form-buider-cont {
     width: inherit;
-    padding: .3vw;
+    padding: 0.3vw 2vw;
 }
 
 .contol-settings-window {
@@ -89,13 +89,14 @@
     }
 
 .form-save-wraper {
-    float: left;
-    width: 64%;
-    margin: 0px 4px;
+    display: inline-block;
+    width: 30%;
+    margin: 0px 10vw;
 }
 
 .property-grid-cont {
-    width: 22%;
+    float: right;
+    width: 24%;
     height: 95vh;
     visibility: hidden;
 }
@@ -104,6 +105,10 @@
     padding: 5px;
     margin: 3px 0px;
     border: dotted 2px var(--colorDDD);
+}
+
+.eb-chatBox-dev  div{
+    margin-top:1px;
 }
 
 .stickBtn {
@@ -130,7 +135,7 @@
 }
 
 .toolbox-cont {
-    width: 12%;
+    width: 24%;
 }
 
 .tdDropable {
@@ -238,12 +243,13 @@
     width: 100%;
     min-width: 300px;
     z-index: 99999999999999;
-    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.46);
+    box-shadow: 0px 0px 444px 0px rgba(0, 0, 0, 0.09), 0px 0px 7px 0px rgba(0, 0, 0, 0.13);
     border-radius: 3px;
 }
 
     .dev-chat-cont .eb-chatBox-dev {
         height: 600px;
+        padding: 1vw;
     }
 
     .dev-chat-cont .Eb-ctrlContainer {
@@ -364,6 +370,7 @@
 .font-editor-contaner {
     width: 60% !important;
     left: 20% !important;
+    top: 15vh !important;
 }
 
 .font_ed_focus option:focus {

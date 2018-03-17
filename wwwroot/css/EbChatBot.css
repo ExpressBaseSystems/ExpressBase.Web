@@ -558,7 +558,7 @@
 
 .table-cont, .chart-cont {
     background-color: white;
-    border: solid 1px #e0e0e0;
+    /*border: solid 1px #e0e0e0;*/
     padding: 3px;
 }
 

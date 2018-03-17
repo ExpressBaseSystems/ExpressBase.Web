@@ -2,12 +2,16 @@
     display: none;
     flex-direction: column;
     position: fixed;
-    right: 24px;
-    bottom: 8px;
+    /*right: 24px;
+    bottom: 8px;*/
+    right: 0;
+    bottom: 0;
     width: 28%;
-    height: 90%;
-    overflow:hidden;
-    border-radius: 7px;
+    /*height: 90%;*/
+    height: 100%;
+    overflow: hidden;
+    /*border-radius: 7px;*/
+    border-radius: 2px;
     background-color: white;
     min-width: 300px;
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);

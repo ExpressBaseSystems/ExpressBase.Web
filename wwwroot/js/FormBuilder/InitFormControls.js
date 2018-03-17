@@ -106,7 +106,7 @@
             $(`#${name} .location-box:eq(0)`).show();
             this.initMap(ctrls.locationCollection[0]);
         }
-        this.Bot.lastCtrlIdx++;
+        this.Bot.nxtCtrlIdx++;
         this.Bot.callGetControl();
     };
 

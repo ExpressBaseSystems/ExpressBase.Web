@@ -1,4 +1,4 @@
-﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
+﻿var FilterformBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
     this.wc = wc;
     this.cid = cid;
     this.Name = formid;
@@ -48,16 +48,14 @@
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
-        $(".Eb-ctrlContainer").each(function (i, el) {
-            this.initCtrl(el);
-        }.bind(this));
         setTimeout(function () {
             Proc(editModeObj, this.rootContainerObj);
+            this.renderCtrls();
         }.bind(this), 1000);
     };
 
     this.initCtrl = function (el) {
-        var $el = $(el);
+        var $el = el.$Control;
         var type = $el.attr("ctype").trim();
         var id = type + (this.controlCounters[type + "Counter"])++;
         $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
@@ -70,72 +68,14 @@
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
-        if (builderType === 0)
-            this.rootContainerObj = new EbObjects.EbWebForm(formid);
-        else if (builderType === 12)
-            this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
+        this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
     }
-    //if (builderType === 1)
-    //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
-    if (builderType === 0)
-        this.rootContainerObj = new EbObjects.EbWebForm(formid);
-    //else if (builderType === 12)
-    //    this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
-    //else if (builderType === 13)
-    //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
-    //else if (builderType === 14)
-    //    this.rootContainerObj = new EbObjects.UserControlObj(formid);
-    //else if (builderType === 3)
-    //    this.rootContainerObj = new EbObjects.ReportObj(formid);
-
+    
     this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
     this.curControl = null;
     this.drake = null;
-
-    //this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
-
-
-    //this.save = function () {
-    //    if (this.rootContainerObj.Name.trim() === '') {
-    //        alert("Enter a Name");
-    //        return false;
-    //    }
-    //    if (this.PGobj)
-    //        this.saveObj();
-    //    $(".eb-loaderFixed").show();
-    //    $.post("../Eb_Object/CommitEbObject", {
-    //        "_refid": this._refid,
-    //        "_json": JSON.stringify(this.rootContainerObj),
-    //        "_rel_obj": "_rel_obj1",
-    //        "_tags": "tag1"
-    //    }, this.Save_Success.bind(this));
-    //};
-    //this.commit = function () {
-    //    if (this.rootContainerObj.Name.trim() === '') {
-    //        alert("Enter a Name");
-    //        return false;
-    //    }
-    //    if (this.PGobj)
-    //        this.saveObj();
-    //    $(".eb-loaderFixed").show();
-    //    $.post("../Eb_Object/SaveEbObject", {
-    //        "_refid": this._refid,
-    //        "_json": JSON.stringify(this.rootContainerObj),
-    //        "_rel_obj": "aaa",
-    //        "_tags": "aaaa"
-    //    }, this.Save_Success.bind(this));
-    //};
-    //this.Save_Success = function (result) {
-    //    alert("Saved");
-    //    $(".eb-loaderFixed").hide();
-    //    $('.alert').remove();
-    //    $('.help').append("<div class='alert alert-success alert-dismissable'>" +
-    //        "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-    //        "<strong>Success!</strong>" +
-    //        "</div>");
-    //};
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
@@ -280,6 +220,7 @@
         }
     };
 
+    
     //this.controlCloseOnClick = function (e) {
     //    var ControlTile = $(e.target).parent().parent();
     //    var id = ControlTile.attr("id");
@@ -344,6 +285,13 @@
 
     };
 
+    this.renderCtrls = function () {
+        $.each(this.rootContainerObj.Controls.$values, function (i, ctrl) {
+            $(".eb-chatBox-dev").append(ctrl.$Control);
+            this.initCtrl(ctrl);
+        }.bind(this));
+    };
+
     //this.initCtrl = function (el) {
     //    var $EbCtrl = $(el);
     //    var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
@@ -357,7 +305,9 @@
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-    
+    this.GenerateButtons = function () {
+
+    };
 
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
@@ -385,5 +335,6 @@
             console.log("CurProp: " + CurProp);
         }.bind(this);
     };
+
     this.Init();
 };

@@ -1,5 +1,5 @@
-﻿var RbCommon = function (RbMailObj) {
-    this.RbObj = RbMailObj;
+﻿var RbCommon = function (RbMainObj) {
+    this.RbObj = RbMainObj;
     this.EbidCounter = {
         EbDataFieldTextCounter: 0,
         EbDataFieldDateTimeCounter: 0,
@@ -104,8 +104,22 @@
         3:"justify"
     }
 
-    this.start = function () {
+    this.onTrackerStop = function (e, ui) {
+        var $t = $(ui.helper);
 
+        if ($t.hasClass("track_line_vert1")) {
+            var l = $t.position().left - 240.8125;
+            this.RbObj.margin.Left = l;
+        }
+        else {
+            var r = $(".page").width() - ($t.position().left - 240.8125);
+            this.RbObj.margin.Right = r;
+        }
+           
+    };
+
+    this.start = function () {
+        $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container",stop:this.onTrackerStop.bind(this) });
     };
 
     this.start();

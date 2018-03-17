@@ -22,6 +22,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.rulertype = "cm";
     this.copyStack = null;
     this.copyORcut = null;
+    this.margin = {
+        Left: 0,
+        Right: 0
+    }; 
 
     this.repExtern = new ReportExtended(this);
     this.RbCommon = new RbCommon(this);

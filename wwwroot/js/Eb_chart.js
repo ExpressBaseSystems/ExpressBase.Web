@@ -647,12 +647,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else
             $("#graphDropdown_tab" + this.tableId).hide();
         if (this.bot) {
-            $("#columnsDisplay" + this.tableId).hide();
+            $("#columnsDisplay" + this.tableId).empty();
+            $("#columnsDisplay" + this.tableId).append(`<div class="pgHead">User:<label></label></div>`);
             $("#xy" + this.tableId).hide();
             $(".toolicons").hide();
-            $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-9");
-            $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");            
-            $("#sub_windows_sidediv_" + this.tableId).removeClass("filterCont").addClass("col-md-3").addClass("botdata_cont").show();
+            $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-9");            
+            $("#columnsDisplay" + this.tableId).removeClass("col-md-2").addClass("col-md-3").addClass("botdata_cont").show();
+
         }
     };
 
@@ -671,10 +672,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (obj.RenderAs.toString() === EbEnums.StringRenderType.Marker) {
                 this.type = "googlemap";
                 this.bot = true;
-                //this.columnInfo.Xaxis.$values.push(obj);
-                this.XLabel.push(this.cellData.split(",")[1]);
-                this.YLabel.push(this.cellData.split(",")[0]);
-                this.drawGeneralGraph();
+                var arr = this.cellData.split(",");
+                if (arr.length == 2) {
+                    this.XLabel.push(this.cellData.split(",")[1]);
+                    this.YLabel.push(this.cellData.split(",")[0]);
+                    this.drawGeneralGraph();
+                }
                 return false;
             }
         }.bind(this));

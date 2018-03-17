@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Objects;
+using ExpressBase.Common.Structures;
 using ExpressBase.Data;
 using ExpressBase.Objects;
 using ExpressBase.Objects.Objects.DVRelated;
@@ -47,7 +48,7 @@ namespace ExpressBase.Web.Components
                 //    ViewBag.data = dvObject;
                 //}
                 //else
-                if (dvobj.Columns.Count == 0)
+                if (dvobj.Columns == null  || dvobj.Columns.Count == 0)
                     ViewBag.data = getDVObject(dvobj);
                 else
                 {
@@ -73,6 +74,7 @@ namespace ExpressBase.Web.Components
             int _pos = __columns.Count+100;
 
             dvobj.Columns = new DVColumnCollection();
+            dvobj.IsPaged = columnresp.IsPaged.ToString();
             // Add Serial & Checkbox
             //dvobj.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
             //dvobj.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
@@ -82,13 +84,17 @@ namespace ExpressBase.Web.Components
             {
                 DVBaseColumn _col = null;
 
-                if (column.Type == DbType.String)
-                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos , ClassName = "tdheight" };
-                else if (column.Type == DbType.Int16 || column.Type == DbType.Int32 || column.Type == DbType.Int64 || column.Type == DbType.Double || column.Type == DbType.Decimal || column.Type == DbType.VarNumeric)
+                if ((int)column.Type == EbDbTypes.String && column.ColumnName == "socialid")
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos , ClassName = "tdheight", RenderAs = StringRenderType.Image };
+                else if ((int)column.Type == EbDbTypes.String && column.ColumnName == "latlong")
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight", RenderAs = StringRenderType.Marker };
+                else if ((int)column.Type == EbDbTypes.String)
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
+                else if ((int)column.Type == EbDbTypes.Int16 || (int)column.Type == EbDbTypes.Int32 || (int)column.Type == EbDbTypes.Int64 || (int)column.Type == EbDbTypes.Double || (int)column.Type == EbDbTypes.Decimal || (int)column.Type == EbDbTypes.VarNumeric)
                     _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight dt-body-right" };
-                else if (column.Type == DbType.Boolean)
+                else if ((int)column.Type == EbDbTypes.Boolean)
                     _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
-                else if (column.Type == DbType.DateTime || column.Type == DbType.Date || column.Type == DbType.Time)
+                else if ((int)column.Type == EbDbTypes.DateTime || (int)column.Type == EbDbTypes.Date || (int)column.Type == EbDbTypes.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
 
                 dvobj.Columns.Add(_col);

@@ -100,6 +100,10 @@
             valueHTML = '<span style="vertical-align: sub;">(C# Script)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
+        else if (type === 21) {    // If MultiLanguageKeySelector Editor
+            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" style=" width: calc(100% - 26px); direction: rtl;" />'
+                + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '"  for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
         else if (type === 17) {  //  If imageUploader
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
@@ -265,7 +269,7 @@
         for (var i in propArray) {
             prop = propArray[i];
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
-            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop) || (this.wc === "uc" && getObjByval(this.Metas, "name", prop).HideForUser))
+            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop) || (this.wc === "uc" && getObjByval(this.Metas, "name", prop).HideForUser) || getObjByval(this.Metas, "name", prop).MetaOnly)
                 continue;
             if (this.IsSortByGroup) {
                 // Check what is the group of the current property or use the default 'Other' group

@@ -227,22 +227,18 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("GoogleRelated");
         }
 
-        public void getData(string RefId)
+        public DataSourceDataResponse getData(DataSourceDataRequest request)
         {
-            var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
-            pclient.BearerToken = this.ServiceClient.BearerToken;
-            pclient.Timeout = TimeSpan.FromMinutes(3);
             DataSourceDataResponse resultlist1 = null;
             try
             {
-                resultlist1 = pclient.Get(new DataSourceDataRequest444 { RefId = RefId, Draw = 1, Start = 0, Length = 100 });
-                //var dd = DataSetCompressor.Decompress(resultlist1.StreamWrapper.Memorystream.ToBytes());
+                resultlist1 = this.ServiceClient.Get(request);
             }
             catch (Exception e)
             {
 
             }
-            //return View();
+            return resultlist1;
         }
 
         public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(int type)

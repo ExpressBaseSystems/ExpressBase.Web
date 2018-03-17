@@ -15,9 +15,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class StaticFileController : EbBaseIntController
     {
-        public StaticFileController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc) { }
-
-        // GET: /<controller>/
+        public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 
         [HttpGet("static/dp/{filename}")]
         public FileStream GetDP(string filename)
@@ -28,9 +26,9 @@ namespace ExpressBase.Web.Controllers
                 string sFilePath = string.Format("StaticFiles/{0}/dp/{1}", ViewBag.cid, filename);
                 if (!System.IO.File.Exists(sFilePath))
                 {
-                    byte[] fileByte = this.ServiceClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = "jpg" } });
+                    byte[] fileByte = this.FileClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = "jpg" } });
                     if (fileByte.IsEmpty())
-                            return System.IO.File.OpenRead("wwwroot/images/proimg.jpg");
+                        return System.IO.File.OpenRead("wwwroot/images/proimg.jpg");
                     EbFile.Bytea_ToFile(fileByte, sFilePath);
                 }
                 HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=604800";
@@ -47,13 +45,14 @@ namespace ExpressBase.Web.Controllers
             string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
             if (!System.IO.File.Exists(sFilePath))
             {
-                byte[] fileByte = this.ServiceClient.Post<byte[]>
+                byte[] fileByte = this.FileClient.Post<byte[]>
                     (new DownloadFileRequest
                     {
                         FileDetails = new FileMeta
                         {
                             FileName = filename,
-                            FileType =  filename.Split('.')[1].ToLower() }
+                            FileType = filename.Split('.')[1].ToLower()
+                        }
                     });
                 EbFile.Bytea_ToFile(fileByte, sFilePath);
             }
@@ -76,7 +75,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var req = this.HttpContext.Request.Form;
-                UploadFileMqRequest uploadFileRequest = new UploadFileMqRequest();
+                UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
 
                 if (!String.IsNullOrEmpty(tags))
@@ -107,9 +106,9 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.Split('.')[1];
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
 
-                        Id = this.ServiceClient.Post<string>(uploadFileRequest);
+                        this.FileClient.Post<bool>(uploadFileRequest);
                         url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadFileRequest.FileDetails.FileType);
-                        
+
                         resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK", initialPreview = url, objId = Id });
                     }
                 }
@@ -133,7 +132,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var req = this.HttpContext.Request.Form;
-                UploadImageMqRequest uploadImageRequest = new UploadImageMqRequest();
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new FileMeta();
                 if (!String.IsNullOrEmpty(tags))
                 {
@@ -161,7 +160,7 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split('.')[1];
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
-                        Id = this.MqClient.Post<string>(uploadImageRequest);
+                        this.FileClient.Post<bool>(uploadImageRequest);
                         url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
 
                         resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK", initialPreview = url, objId = Id });
@@ -179,27 +178,27 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public async Task<string> UploadDPAsync(string base64)
-        {            
+        {
             string Id = string.Empty;
             string url = string.Empty;
             byte[] myFileContent;
             try
-            {               
-                UploadImageMqRequest uploadImageRequest = new UploadImageMqRequest();
-                uploadImageRequest.ImageInfo = new FileMeta();               
+            {
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+                uploadImageRequest.ImageInfo = new FileMeta();
                 string base64Norm = base64.Replace("data:image/png;base64,", "");
                 myFileContent = System.Convert.FromBase64String(base64Norm);
-                uploadImageRequest.ImageByte = myFileContent;                           
+                uploadImageRequest.ImageByte = myFileContent;
                 uploadImageRequest.ImageInfo.FileType = "jpg";
-                        uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
-                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
-                        Id = this.ServiceClient.Post<string>(uploadImageRequest);
+                Id = this.FileClient.Post<string>(uploadImageRequest);
                 url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception:"+e.ToString());
+                Console.WriteLine("Exception:" + e.ToString());
                 return "upload failed";
             }
 
@@ -216,7 +215,7 @@ namespace ExpressBase.Web.Controllers
 
             List<FileMeta> FileInfoList = new List<FileMeta>();
 
-            FileInfoList = this.ServiceClient.Post(findFilesByTagRequest);
+            FileInfoList = this.FileClient.Post(findFilesByTagRequest);
 
             return FileInfoList;
         }

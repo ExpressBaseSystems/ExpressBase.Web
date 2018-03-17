@@ -5,7 +5,9 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -14,7 +16,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -109,13 +113,26 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		//--------------MANAGE USER START------------------------------------
+		
+		
 
+	
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
 			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3
 			ViewBag.Culture = CultureHelper.CulturesAsJson;
 			ViewBag.TimeZone = CultureHelper.TimezonesAsJson;
 			ViewBag.MU_Mode = Mode;
+
+			//var ip2 = HttpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
+			//string ip =  this.Request.HttpContext.Connection.RemoteIpAddress.ToString();
+			//string ip3 = GetRequestIP();
+
+			//HttpClient client = new HttpClient(); 
+			////string result = await client.GetStringAsync("http://freegeoip.net/json");
+			//string result = await client.GetStringAsync("http://ip-api.com/json");
+			//IpApiResponse ooo = JsonConvert.DeserializeObject<IpApiResponse>(result);
+			
 
 			Dictionary<string, string> dict = new Dictionary<string, string>();				
 			//List<EbRole> Sysroles = new List<EbRole>();
@@ -206,6 +223,12 @@ namespace ExpressBase.Web.Controllers
             return temp.unrespose;
 		}
 
+		public bool ChangeUserPassword(string OldPwd, string NewPwd)
+		{
+			ChangeUserPasswordResponse resp = this.ServiceClient.Post<ChangeUserPasswordResponse>(new ChangeUserPasswordRequest { OldPwd = OldPwd, NewPwd = NewPwd, Email = ViewBag.email });
+			return resp.isSuccess;
+		}
+
 
 		//--------------MANAGE ANONYMOUS USER START------------------------------------
 		public IActionResult ManageAnonymousUser(int itemid)
@@ -222,7 +245,7 @@ namespace ExpressBase.Web.Controllers
 
 		public int UpdateAnonymousUserInfo(int itemid, string name, string email, string phone, string remarks)
 		{
-			UpdateAnonymousUserResponse temp = this.ServiceClient.Post<UpdateAnonymousUserResponse>(new UpdateAnonymousUserRequest { Id = itemid, FullName = name, EmailID = email, PhoneNumber = phone, Remarks = remarks });
+			UpdateAnonymousUserResponse temp = this.ServiceClient.Post<UpdateAnonymousUserResponse>(new UpdateAnonymousUserRequest { Id = itemid, FullName = name.IsNullOrEmpty() ? "":name, EmailID = email.IsNullOrEmpty()?"":email, PhoneNumber = phone.IsNullOrEmpty()?"":phone, Remarks = remarks.IsNullOrEmpty()?"":remarks });
 			return temp.RowAffected;
 		}
 
@@ -382,6 +405,70 @@ namespace ExpressBase.Web.Controllers
 			var temp = this.ServiceClient.Post<bool>(new UniqueCheckRequest { roleName = reqRoleName });
 			return temp;
 		}
+
+
+		//--------------------- TEST IP -------------------------------------------
+
+		//public string GetRequestIP(bool tryUseXForwardHeader = true)
+		//{
+		//	string ip = null;
+
+		//	// todo support new "Forwarded" header (2014) https://en.wikipedia.org/wiki/X-Forwarded-For
+
+		//	// X-Forwarded-For (csv list):  Using the First entry in the list seems to work
+		//	// for 99% of cases however it has been suggested that a better (although tedious)
+		//	// approach might be to read each IP from right to left and use the first public IP.
+		//	// http://stackoverflow.com/a/43554000/538763
+		//	//
+		//	if (tryUseXForwardHeader)
+		//		ip = SplitCsv(GetHeaderValueAs<string>("X-Forwarded-For")).FirstOrDefault();
+
+		//	// RemoteIpAddress is always null in DNX RC1 Update1 (bug).
+		//	if (String.IsNullOrWhiteSpace(ip) && this.Request.HttpContext?.Connection?.RemoteIpAddress != null)
+		//		ip = this.Request.HttpContext.Connection.RemoteIpAddress.ToString();
+
+		//	if (String.IsNullOrWhiteSpace(ip))
+		//		ip = GetHeaderValueAs<string>("REMOTE_ADDR");
+
+		//	// _httpContextAccessor.HttpContext?.Request?.Host this is the local host.
+
+		//	if (String.IsNullOrWhiteSpace(ip))
+		//		throw new Exception("Unable to determine caller's IP.");
+
+		//	return ip;
+		//}
+
+		//public T GetHeaderValueAs<T>(string headerName)
+		//{
+		//	StringValues values;
+
+		//	if (this.Request.HttpContext?.Request?.Headers?.TryGetValue(headerName, out values) ?? false)
+		//	{
+		//		string rawValues = values.ToString();   // writes out as Csv when there are multiple.
+
+		//		if (!rawValues.IsNullOrEmpty())
+		//			return (T)Convert.ChangeType(values.ToString(), typeof(T));
+		//	}
+		//	return default(T);
+		//}
+
+		//public static List<string> SplitCsv(string csvList, bool nullOrWhitespaceInputReturnsNull = false)
+		//{
+		//	if (string.IsNullOrWhiteSpace(csvList))
+		//		return nullOrWhitespaceInputReturnsNull ? null : new List<string>();
+
+		//	return csvList
+		//		.TrimEnd(',')
+		//		.Split(',')
+		//		.AsEnumerable<string>()
+		//		.Select(s => s.Trim())
+		//		.ToList();
+		//}
+
+		//public static bool IsNullOrWhitespace(string s)
+		//{
+		//	return String.IsNullOrWhiteSpace(s);
+		//}
 
 	}
 }

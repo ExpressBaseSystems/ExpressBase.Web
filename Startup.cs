@@ -3,6 +3,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,6 @@ namespace ExpressBase.Web2
 
             if (env.IsDevelopment())
             {
-                // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
             Configuration = builder.Build();
@@ -62,20 +62,16 @@ namespace ExpressBase.Web2
                 return new EbMqClient();
             });
 
+            services.AddScoped<IEbStaticFileClient, EbStaticFileClient>(serviceProvider =>
+            {
+                return new EbStaticFileClient();
+            });
+
             StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
 
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
-
-            //container.Resolve<IServerEvents>().Start();
-
-            //var client = new ServerEventsClient("redis://YK8GtsURARN+x9qITeLj5GikW/rK/i8Uekr1ECxscLA=@ExpressBaseRedisCache.redis.cache.windows.net:6380?ssl=true");
-
-            //client.Handlers["FileUpload"] = (client1, msg) => {
-            //    //Deserialize JSON string to typed DTO
-            //    var Response = msg.Json.FromJson<UploadFileControllerResponse>();
-            //};
 
             services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
             {
@@ -89,7 +85,12 @@ namespace ExpressBase.Web2
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseApplicationInsightsRequestTelemetry();
+			app.UseForwardedHeaders(new ForwardedHeadersOptions
+			{
+				ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+			});
+
+			app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())
             {
@@ -105,7 +106,7 @@ namespace ExpressBase.Web2
 
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
+			app.UseMvc(routes =>
             {
                 routes.DefaultHandler = areaRouter;
                 routes.MapRoute(

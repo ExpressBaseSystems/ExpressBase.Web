@@ -13,6 +13,8 @@ namespace ExpressBase.Web.BaseControllers
 
         protected RedisClient Redis { get; set; }
 
+        protected EbStaticFileClient FileClient { get; set; }
+
         public EbBaseController(IServiceClient _ssclient)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
@@ -30,11 +32,39 @@ namespace ExpressBase.Web.BaseControllers
             this.MqClient = _mqc as EbMqClient;
         }
 
+        public EbBaseController(IServiceClient _ssclient, IEbStaticFileClient _sfc)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.FileClient = _sfc as EbStaticFileClient;
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.FileClient = _sfc as EbStaticFileClient;
+        }
+
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
             this.MqClient = _mqc as EbMqClient;
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IEbMqClient _mqc, IEbStaticFileClient _sfc)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.MqClient = _mqc as EbMqClient;
+            this.FileClient = _sfc as EbStaticFileClient;
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.MqClient = _mqc as EbMqClient;
+            this.FileClient = _sfc as EbStaticFileClient;
         }
     }
 }

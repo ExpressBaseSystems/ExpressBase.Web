@@ -1,0 +1,19 @@
+﻿@{ 
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<script>
+    function abcd(e) {
+        $.ajax({
+            type : "GET",
+            url: "../TestRoby/test",
+            data : { desc : "NewBot", appid : 13 },
+            success : function () {
+
+
+            }
+
+        });
+    }
+</script>
+<input type="button" onclick="abcd()"/>
+

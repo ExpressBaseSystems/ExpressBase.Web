@@ -22,9 +22,17 @@ namespace ExpressBase.Web.Controllers
 
         public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public EbBaseIntController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc){ }
+        public EbBaseIntController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc) { }
+
+        public EbBaseIntController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 
         public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc) : base(_ssclient, _redis, _mqc) { }
+
+        public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
+
+        public EbBaseIntController(IServiceClient _ssclient, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _mqc, _sfc) { }
+
+        public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _mqc, _sfc) { }
 
         public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis, IMessageQueueClient _mqFactory, IMessageProducer _mqProducer)
             : base(_ssclient, _redis)
@@ -48,11 +56,20 @@ namespace ExpressBase.Web.Controllers
 
                 this.ServiceClient.BearerToken = bToken;
                 this.ServiceClient.RefreshToken = rToken;
+                this.ServiceClient.Headers.Add("rToken", rToken);
 
                 if (this.MqClient != null)
                 {
                     this.MqClient.BearerToken = bToken;
                     this.MqClient.RefreshToken = rToken;
+                    this.MqClient.Headers.Add("rToken", rToken);
+                }
+
+                if (this.FileClient != null)
+                {
+                    this.FileClient.BearerToken = bToken;
+                    this.FileClient.RefreshToken = rToken;
+                    this.FileClient.Headers.Add("rToken", rToken);
                 }
 
                 var controller = context.Controller as Controller;
@@ -66,6 +83,7 @@ namespace ExpressBase.Web.Controllers
                 controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
                 controller.ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
                 controller.ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
+                controller.ViewBag.StaticFileServerUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STATICFILESERVER_EXT_URL);
                 controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
                 base.OnActionExecuting(context);
             }
@@ -83,8 +101,12 @@ namespace ExpressBase.Web.Controllers
         {
             if (ControllerContext.ActionDescriptor.ActionName != "Logout")
             {
-                if (!string.IsNullOrEmpty(this.ServiceClient.BearerToken))
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                if (this.ServiceClient != null)
+                    if (!string.IsNullOrEmpty(this.ServiceClient.BearerToken))
+                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                if (this.FileClient != null)
+                    if (!string.IsNullOrEmpty(this.FileClient.BearerToken))
+                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.FileClient.BearerToken, new CookieOptions());
             }
 
             base.OnActionExecuted(context);

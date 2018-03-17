@@ -15,12 +15,15 @@
             this.PGobj.PropsObj[this.PGobj.CurProp] = imgId;
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(imgId);
         }
-        else
-            if (this.editor === 14) {
-                var FSObj = this.FontSelObj.fontEdSubmit();
-                this.PGobj.PropsObj[this.PGobj.CurProp] = FSObj;
-                $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(FSObj));
-            }
+        else if (this.editor === 14) {
+            var FSObj = this.FontSelObj.fontEdSubmit();
+            this.PGobj.PropsObj[this.PGobj.CurProp] = FSObj;
+            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(FSObj));
+        }
+        else if (this.editor === 21) {
+            var mlkey = this.MLEObj.get();
+            this.PGobj.PropsObj[this.PGobj.CurProp] = mlkey;
+        }
 
 
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
@@ -39,7 +42,7 @@
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurProplabel = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp;
-        if (!(this.editor === 17 || this.editor === 14 ))
+        if (!(this.editor === 17 || this.editor === 14 || this.editor === 21))
             $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
@@ -56,7 +59,7 @@
         else if (this.editor === 18)
             this.initCSE();
         else if (this.editor === 21)
-            this.initMLE();
+            this.initMLE(e);
 
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
@@ -80,12 +83,15 @@
     };
 
     this.initMLE = function (e) {
-        var contId = "fs_" + this.PGobj.wraperId;
-        $(`#${contId}fontEditor`).remove();
-        this.FontSelObj = new FontEditor({
+        var contId = "mls_" + this.PGobj.wraperId;
+        $(`#ML_Modal_${contId}`).remove();
+
+        this.MLEObj = new MultiLanguageKeySelector({
             ContainerId: contId,
-            ToggleId: e.target.getAttribute("name")
+            ToggleBtnId: e.target.getAttribute("name"),
+            KeyTxtId: $(e.target).prev().attr("id")
         }, this.PGobj.PropsObj[this.PGobj.CurProp]);
+
     };
 
     this.initStrE = function () {
@@ -96,30 +102,30 @@
 
     this.initCE = function () {
         this.curEditorLabel = "Collection Editor";
-        var CEbody = '<div class="CE-body">'
-            + '<table class="table table-bordered editTbl">'
-            + '<tbody>'
-            + '<tr>'
+        var CEbody = `<div class="CE-body">
+            <table class="table table-bordered editTbl">
+            <tbody>
+            <tr>
 
-            + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head" >' + this.CurProplabel + ' </div>'
-            + '<div id="' + this.CE_all_ctrlsContId + '" class="CE-all-ctrlsCont"></div>'
-            + '</td>'
+            <td style="padding: 0px;">
+            <div class="CE-controls-head" >' + this.CurProplabel + ' </div>
+            <div id="' + this.CE_all_ctrlsContId + '" class="CE-all-ctrlsCont"></div>
+            </td>
 
-            + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head" > Selected </div>'
-            + '<div id="' + this.CEctrlsContId + '" class="CEctrlsCont"></div>'
-            + '</td>'
+            <td style="padding: 0px;">
+            <div class="CE-controls-head" > Selected </div>
+            <div id="' + this.CEctrlsContId + '" class="CEctrlsCont"></div>
+            </td>
 
-            + '<td style="padding: 0px;"><div id="' + this.PGobj.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>'
-            + '</tr>'
-            + '</tbody>'
-            + '</table>'
-            + '</div>';
-        var DD_html = '<div class="sub-controls-DD-cont pull-left">'
-            + '<select class="selectpicker"> </select>'
-            + '<button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>'
-            + '</div>';
+            <td style="padding: 0px;"><div id="' + this.PGobj.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>
+            </tr>
+            </tbody>
+            </table>
+            </div>`;
+        var DD_html = `<div class="sub-controls-DD-cont pull-left">
+            <select class="selectpicker"> </select>
+            <button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>
+            </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
 
         if (this.editor === 7) {
@@ -213,7 +219,7 @@
             mode: "text/x-csharp",
             lineNumbers: true,
             lineWrapping: true,
-            matchBrackets: true, 
+            matchBrackets: true,
             extraKeys: { "Ctrl-Space": "autocomplete" },
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
@@ -243,25 +249,25 @@
 
     this.initOSE = function () {
         this.curEditorLabel = "Object Selector";
-        var OSEbody = '<div class="OSE-body">'
-            + '<table class="table table-bordered editTbl">'
-            + '<tbody>'
-            + '<tr>'
-            + '<td style="padding: 0px;">'
-            + '<div class="OSE-DD-cont" > '
-            + '<select class="selectpicker">'
-            + '</select>'
-            + '</div>'
-            + '<div class="OSEctrlsCont"> </div>'
-            + '</td>'
-            + '<td style="padding: 0px;">'
-            + '<div class="CE-controls-head"> Versions </div>'
-            + '<div class="OSE-verTile-Cont"> </div>'
-            + '</td> '
-            + '</tr>'
-            + '</tbody>'
-            + '</table>'
-            + '</div>';
+        var OSEbody = `<div class="OSE-body">
+            <table class="table table-bordered editTbl">
+            <tbody>
+            <tr>
+            <td style="padding: 0px;">
+            <div class="OSE-DD-cont" > 
+            <select class="selectpicker">
+            </select>
+            </div>
+            <div class="OSEctrlsCont"> </div>
+            </td>
+            <td style="padding: 0px;">
+            <div class="CE-controls-head"> Versions </div>
+            <div class="OSE-verTile-Cont"> </div>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
         var options = "";
         var ObjTypes = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].options;
@@ -510,6 +516,7 @@
         $(this.PGobj.$wraper).append(CXVE_html);
 
         $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="fs_' + this.PGobj.wraperId + '"> </div>');
+        $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="mls_' + this.PGobj.wraperId + '"> </div>');
     }
     this.Init();
 };

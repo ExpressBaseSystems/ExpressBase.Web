@@ -102,7 +102,7 @@
         }
         else if (type === 21) {    // If MultiLanguageKeySelector Editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" style=" width: calc(100% - 26px); direction: rtl;" />'
-                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+                + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '"  for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 17) {  //  If imageUploader
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'

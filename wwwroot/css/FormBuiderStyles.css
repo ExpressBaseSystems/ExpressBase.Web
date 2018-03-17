@@ -364,6 +364,7 @@
 .font-editor-contaner {
     width: 60% !important;
     left: 20% !important;
+    top: 15vh !important;
 }
 
 .font_ed_focus option:focus {

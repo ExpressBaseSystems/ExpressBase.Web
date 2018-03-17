@@ -106,20 +106,24 @@
 
     this.onTrackerStop = function (e, ui) {
         var $t = $(ui.helper);
-
         if ($t.hasClass("track_line_vert1")) {
-            var l = $t.position().left - 240.8125;
-            this.RbObj.margin.Left = l;
+            this.RbObj.margin.Left = $t.position().left;
+            this.RbObj.EbObject.Margin.Left = this.RbObj.repExtern.convertTopoints($t.position().left);
         }
-        else {
-            var r = $(".page").width() - ($t.position().left - 240.8125);
-            this.RbObj.margin.Right = r;
+        else{
+            this.RbObj.margin.Right = $t.position().left;
+            this.RbObj.EbObject.Margin.Right = this.RbObj.repExtern.convertTopoints(parseFloat(this.RbObj.width) - $t.position().left);
         }
-           
+    };
+
+    this.windowscroll = function () {
+        $(".tracker_drag").css({ "top": $(window).scrollTop()});
+        
     };
 
     this.start = function () {
-        $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container",stop:this.onTrackerStop.bind(this) });
+        $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
+        $(window).on("scroll", this.windowscroll.bind(this));
     };
 
     this.start();

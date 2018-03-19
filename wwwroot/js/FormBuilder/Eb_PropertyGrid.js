@@ -184,7 +184,7 @@
             return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell"> &nbsp ' + displayName + '</td></tr > ';
     };
 
-    //checks an object is contained in array by name
+    //checks an object is contained in array by name case insensitive
     this.isContains = function (obj, val) {
         for (var i = 0; i < obj.length; i++)
             if (obj[i].name.toLowerCase() === val.toLowerCase())
@@ -268,8 +268,9 @@
         var prop = null;
         for (var i in propArray) {
             prop = propArray[i];
+            var _meta = getObjByval(this.Metas, "name", prop);
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
-            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop) || (this.wc === "uc" && getObjByval(this.Metas, "name", prop).HideForUser) || getObjByval(this.Metas, "name", prop).MetaOnly)
+            if (_meta === undefined || !this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || (this.wc === "uc" && _meta.HideForUser) || !this.isContains(this.Metas, prop) || ((_meta.MetaOnly === undefined) ? false : _meta.MetaOnly))
                 continue;
             if (this.IsSortByGroup) {
                 // Check what is the group of the current property or use the default 'Other' group

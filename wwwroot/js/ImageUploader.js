@@ -87,6 +87,7 @@
                 + "class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title= 'Tag' > Tag</button > ");
             $("#" + this.ContainerId + "tagbtn" + previewId).on("click", this.tagimageOnClick.bind(this));
         }
+        $("#" + this.ContainerId + "_close").prop('disabled', true);
     };//tadd tag btn
 
     this.imageOnSelect = function (e) {
@@ -137,7 +138,7 @@
             $('#' + this.ContainerId + 'obj-id').text(this.FileId);
             $(".file-preview-initial").attr("tabindex", "1");
             $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
-            $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this));
+            $("#" + this.ContainerId + "_close").prop('disabled', false).on('click', this.getId.bind(this));            
         }.bind(this);
     };
 

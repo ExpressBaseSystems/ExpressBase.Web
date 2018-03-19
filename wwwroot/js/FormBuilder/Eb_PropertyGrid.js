@@ -444,7 +444,8 @@
         var $e = $(e.target);
         //$e.removeClass("Eb-invalid");
         $.each(this.AllObjects, function (i, obj) {
-            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
+            console.log(this.CurProp);
+            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] !== undefined && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
 
                 this.Ebalert.alert({
                     head: "This property is set as Unique.",
@@ -470,7 +471,6 @@
             });
             $e.focus().addClass("Eb-invalid");
         }
-
     }.bind(this);
 
     //??

@@ -108,16 +108,16 @@
             <tr>
 
             <td style="padding: 0px;">
-            <div class="CE-controls-head" >' + this.CurProplabel + ' </div>
-            <div id="' + this.CE_all_ctrlsContId + '" class="CE-all-ctrlsCont"></div>
+            <div class="CE-controls-head">${this.CurProplabel}</div>
+            <div id="${this.CE_all_ctrlsContId}" class="CE-all-ctrlsCont"></div>
             </td>
 
             <td style="padding: 0px;">
             <div class="CE-controls-head" > Selected </div>
-            <div id="' + this.CEctrlsContId + '" class="CEctrlsCont"></div>
+            <div id="${this.CEctrlsContId}" class="CEctrlsCont"></div>
             </td>
 
-            <td style="padding: 0px;"><div id="' + this.PGobj.wraperId + '_InnerPG' + '" class="inner-PG-Cont"><div></td>
+            <td style="padding: 0px;"><div id="${this.PGobj.wraperId}_InnerPG" class="inner-PG-Cont"><div></td>
             </tr>
             </tbody>
             </table>

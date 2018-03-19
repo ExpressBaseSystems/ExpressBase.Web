@@ -88,9 +88,15 @@
         width: 100% !important;
     }
 
-.form-save-wraper {
+.bot-form-wraper {
     display: inline-block;
     width: 30%;
+    margin: 0px 10vw;
+}
+
+.web-form-wraper {
+    display: inline-block;
+    width: 100%;
     margin: 0px 10vw;
 }
 

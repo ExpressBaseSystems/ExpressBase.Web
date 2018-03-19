@@ -35,7 +35,12 @@
     justify-content: center;*/
 }
 
-.form-buider-cont {
+.web-form-buider-cont {
+    width: inherit;
+    margin: 3px;
+}
+
+.bot-form-buider-cont {
     width: inherit;
     padding: 0.3vw 2vw;
 }
@@ -96,8 +101,7 @@
 
 .web-form-wraper {
     display: inline-block;
-    width: 100%;
-    margin: 0px 10vw;
+    width: 63.5%;
 }
 
 .property-grid-cont {
@@ -142,6 +146,10 @@
 
 .toolbox-cont {
     width: 24%;
+}
+
+.web-form-buider-cont .toolbox-cont {
+    width: 12%;
 }
 
 .tdDropable {

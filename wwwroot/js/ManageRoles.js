@@ -1,12 +1,12 @@
 ﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList) {
-    this.appCollection = appCollection;
+    this.appCollection = appCollection.$values;
     this.roleId = roleId;
     this.roleInfo = roleInfo;
-    this.permission = permission;
-    this.opDict = _dict;
-    this.roleList = roleList;
-    this.r2rList = r2rList;
-    this.usersList = usersList;
+    this.permission = permission.$values;
+    this.opDict = _dict.$values;
+    this.roleList = roleList.$values;
+    this.r2rList = r2rList.$values;
+    this.usersList = usersList.$values;
     this.dependentList = [];
     this.dominantList = [];
     this.selectApp = $("#selectApp");
@@ -332,7 +332,7 @@
 
         //var _this = this;
         $('#divObjList').children().remove();
-        $.each(this.opDict.$values, function (i, value) {
+        $.each(this.opDict, function (i, value) {
             var tblColumn = [];
             var tblData = [];
 
@@ -356,7 +356,7 @@
             var appindex = $("#selectApp").find(":selected").attr("data-index");
             $.each(this.appCollection[appindex].ObjectTypes, function (j, a) {
                 if (j == value.Op_Id) {
-                    $.each(a, function (k, b) {
+                    $.each(a.$values, function (k, b) {
                         var obt= new Object();
                         obt.x0 = b.Obj_Name;
                         var appindex = $("#selectApp").find(":selected").attr("data-index");
@@ -446,7 +446,7 @@
         var roleDescription = $(this.txtRoleDescription).val().trim();
         var roleName = $(this.txtRoleName).val().trim();
 
-        $.each(this.opDict.$values, function (i, value) {
+        $.each(this.opDict, function (i, value) {
             $("#spanRemv" + value.Op_Name).trigger("click");
         });
 

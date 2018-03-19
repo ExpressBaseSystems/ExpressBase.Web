@@ -655,7 +655,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.addImageFn = function (obj) {
-        obj.Source = 'url(' + 'http://eb_roby_dev.localhost:5000/static/' + obj.Image + '.JPG) center no-repeat';
+        obj.Source = 'url(' + 'http://eb_dbpjl5pgxleq20180130063835-dev.localhost:41500/static/' + obj.Image + '.JPG) center no-repeat';
         this.RefreshControl(obj);
     };
     this.onDrag_stop = function (event, ui) {

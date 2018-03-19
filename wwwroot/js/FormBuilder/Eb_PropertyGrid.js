@@ -269,7 +269,7 @@
         for (var i in propArray) {
             prop = propArray[i];
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
-            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop) || (this.wc === "uc" && getObjByval(this.Metas, "name", prop).HideForUser) || getObjByval(this.Metas, "name", prop).MetaOnly)
+            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop) || (this.wc === "uc" && getObjByval(this.Metas, "name", prop).HideForUser) || (getObjByval(this.Metas, "name", prop).MetaOnly) ? true : false)
                 continue;
             if (this.IsSortByGroup) {
                 // Check what is the group of the current property or use the default 'Other' group
